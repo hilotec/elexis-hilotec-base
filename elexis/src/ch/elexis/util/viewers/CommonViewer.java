@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: CommonViewer.java 6130 2010-02-13 06:05:17Z rgw_ch $
+ * $Id: CommonViewer.java 6134 2010-02-13 09:51:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
@@ -37,9 +37,9 @@ import org.eclipse.ui.IViewSite;
 import ch.elexis.Desk;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.util.PersistentObjectDragSource2;
+import ch.elexis.util.PersistentObjectDragSource;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.PersistentObjectDragSource2.ISelectionRenderer;
+import ch.elexis.util.PersistentObjectDragSource.ISelectionRenderer;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.rgw.tools.Tree;
 
@@ -145,7 +145,7 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 		/*
 		 * viewer.addDragSupport(DND.DROP_COPY,new Transfer[] {TextTransfer.getInstance()},
 		 */
-		new PersistentObjectDragSource2(viewer.getControl(), new ISelectionRenderer() {
+		new PersistentObjectDragSource(viewer.getControl(), new ISelectionRenderer() {
 			
 			public List<PersistentObject> getSelection(){
 				Object[] sel = CommonViewer.this.getSelection();

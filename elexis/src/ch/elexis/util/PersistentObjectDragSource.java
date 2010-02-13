@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: PersistentObjectDragSource2.java 6132 2010-02-13 09:24:06Z rgw_ch $
+ * $Id: PersistentObjectDragSource.java 6134 2010-02-13 09:51:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -27,8 +27,8 @@ import org.eclipse.swt.widgets.Control;
 
 import ch.elexis.data.PersistentObject;
 
-public class PersistentObjectDragSource2 implements
-DragSourceListener {
+public class PersistentObjectDragSource implements DragSourceListener {
+	
 	ISelectionRenderer renderer;
 	Control dragSource;
 	List<PersistentObject> selection;
@@ -36,7 +36,7 @@ DragSourceListener {
 	
 	Transfer myTransfer = TextTransfer.getInstance();
 	
-	public PersistentObjectDragSource2(final StructuredViewer v){
+	public PersistentObjectDragSource(final StructuredViewer v){
 		dragSource=v.getControl();
 		renderer=new ISelectionRenderer(){
 			
@@ -49,8 +49,7 @@ DragSourceListener {
 		setup();
 	}
 	
-	public PersistentObjectDragSource2(final Control source,
-		final ISelectionRenderer renderer) {
+	public PersistentObjectDragSource(final Control source, final ISelectionRenderer renderer) {
 		this.renderer = renderer;
 		dragSource = source;
 		setup();
@@ -88,7 +87,7 @@ DragSourceListener {
 			event.doit = selection.get(0).isDragOK();
 		}
 		if (event.doit) {
-			PersistentObjectDragSource2.draggedObject = selection.get(0);
+			PersistentObjectDragSource.draggedObject = selection.get(0);
 		}
 	}
 	

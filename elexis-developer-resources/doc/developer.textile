@@ -1,7 +1,7 @@
 h1(#id). Elexis developer resources
 
 (c) 2010 by G. Weirich
-$Id: developer.textile 6130 2010-02-13 06:05:17Z rgw_ch $	
+$Id: developer.textile 6134 2010-02-13 09:51:29Z rgw_ch $	
 
 h2. Table of contents
 
@@ -84,7 +84,15 @@ h2. 4) Name of your Tables
 
 To avoid name clashes between the tables of different Plugins, it is mandatory that you prefix the names of the tables your plugin creates (if any) with the pluginID. For sql syntax reasons, every dot in the name must be replaced by an underscore. Thus the plugin ch.elexis.something will create a table like CH_ELEXIS_SOMETHING_TABLE1
 
-h2. 5) Documentation
+h2. 5) Coding conventions
+
+Adhering to our style guide is easy in eclipse:
+In _Window-Preferences-Java-Codestyle-Formatter_ select _import..._ and import the "elexis formatter profile":http://www.elexis.ch/files/ElexisFormatterProfile.xml.
+Then, anytime or at least before comitting your code, press CTRL-SHIFT-F to apply the style.
+(This is adapted closely to the java style guide recommended by Sun Microsystems(tm))
+
+
+h2. 6) Documentation
 
 It is recommended to document your work. Besides of the javadoc, we recommend that you include at least a 'readme.txt' or 'whatisit.textile' file in the root of your plugin that describes, what it does and what it depends on. If you want to give your users a more elaborate documentation, it should be included in a folder called doc at th root of your plugin.
 For newer documentation, we use the simple Markup-Format 'Textile'. Eclipse's Mylyn plugin can manage these files out of the box and conversion to HTML and FOP/PDF is easy. Besides this, LaTeX is still supported. If you use other formats than Textile or LaTeX, your documentation can not be genereted automatically during build.
@@ -97,8 +105,35 @@ and here:
 More information on TeX/LaTeX can be found here:
 "http://www.latex-project.org/":http://www.latex-project.org/
 
+h2. 7) Becoming a committer
+
+If you feel that you'd like to offer your work to the community, we are happy to invite you as a commiter. Being a committer gives you write access to the elexis repository, but gives you also responsabilities:
+*  Most importantly,  you need to keep the Codebase clean. You need to understand Copyright Rules and avoid committing any stuff that you copied & pasted from somewhere. 
+* Being a committer is understood as a long-term privilege / obligation. It means that you are willing to maintain and evolve some part of the code (typicaly yours :-) over time.  Commit Rights can be revoked after an extended period of inactivity, though we'd prefer to not do that and keep you being committer.
+* Commit rights will be revoked if a committer repeatedly does not adhere to coding rules and quality standards. 
+ 
+If you do not want to take this responsability, but still would like to offer your work, please send it via e-mail, so we can integrate it  in the repository for you.
+
 h1. Concepts
 
+h2. Persistentence and Database Access
+
+Elexis uses an abstraction layer to separate java's object orientated programming style from the needs of the underlying relational database. Furthermore, the abstraction layer hides differences between database brands and thus allows the elexis programmer to focus on his/her programming model without having to think about persistence.  Unlike similar abstraction layers, the elexis model does not rely on translation files or annotations. Instead, programmers are enforced to design their persistable classes in a specific way:
+All persistable classes are subclasses of ch.elexis.data.PersistentObject. The base class  has static members to connect to a database and to define mappings of object members to database fields.
+From the view of the application programmer, the database is never accessed directly. Instead, the programmer uses get and set-methods to access members of the objects, while PersistentObject cares about mapping those members to database fields accordingly. 
+All objects are created lazily, the creation process only instantiates a proxy without the need of a database access. Fields are only fetched as needed. All data are cached, and subsequent read accesses will be served from the cache during a configurable time (e.g. 20 seconds).
+In the elexis kernel, all data classes are in the package ch.elexis.data.  Classes outside the elexis kernel should never access the database directly to ensure consistency between versions.
+
+If one wants to create a new persistable class, the following steps are needed:
+
+   1. Your class must be a subclass of PersistentObject
+   2. Create a static Mapping between a database table and the members of your class.
+   3. Ensure that the table you need exists
+   4. Provide a public static load(String) - function and protected constructors without arguments and with one String argument.
+   5. Some mandatory methods must be implemented.
+
+We recommend to use the class ch.elexis.developer.resources.model.SampleDataType.java in the plugin elexis-developer-resources as a guideline on how to write such a class.
+ 
 h2. Access privileges
 
 Elexis has a hierarchical privilege system that is organized in roles and users.  The meaning of a privilege is defined by the implementor.
@@ -241,6 +276,42 @@ GlobalActions.registerActionHandler(this, exportToClipboardAction);
 Further documentation:
 
 "http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/guide/wrkAdv_keyBindings.htm":http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/guide/wrkAdv_keyBindings.htm
+
+h2. Drag&Drop
+
+Eclipse has drag&drop support by itself. Elexis offers a simplification of this technique, optimized for PersistentObject's. A data type must only override @PersistentObject#isDragOK()@ and return @true@ to become draggable.
+
+h3. Drag source
+ 
+A PersistentObjectDragSource can be attached on any control or StructuredViewer. This happens automatically on creation of such a PersistentObjectDragSource with one of its constructors:
+
+@PersistentObjectDragSource(Control c, ISelectionRenderer renderer)@
+@PersistentObjectDragSource(StructuredViewer v)@
+
+In the first case, the ISelectionRenderer must produce a java.util.List<PersistentObject> (with draggable PersistentObjects); in de second case, the Viewer must contain such PersistentObjects
+ 
+h3. Drop target
+
+An org.eclipse.swt.widgets.Control can become a drop target by attaching a PersistentObjectDropTarget to it. This is achieved by just creating such an Object via one of its constructors
+
+@PersistentObjectDropTarget(Control target, IReceiver receiver)@
+@PersistentObjectDropTarget(String name, Control target, IReceiver receiver)@
+ 
+ The IReceiver is responsible to handle the dropped PersistentObjects.
+ 
+h2. CodeSelectorTarget
+
+Sometimes, it is more convenient to select Objects to send to a Control via double click or with a key press instead of drag&drop. The problem is, that a double-click or a keystroke does not contain any information on the destination the user thinks of. This is addressed by the CodeSelectorTarget concept.
+ 
+When a selection view is openend (e. g. Leistungen or Diagnosis), the view doesn't know about its caller. Actually, it's not really opened, but just brought to the foreground and focused (maybe it's first loaded if it hasn't yet been used so far). The CodeSelectorTarget system allows a caller to announce that he wants to receive an object. When the caller has registered itself at CodeSelectorTarget (using the method setCodeSelectorTarget()), and the user selects an object in the selection view,  the caller is informed about the selection and can handle it as if it would have been dropped
+ 
+After registration as a CodeSelectorTarget, the caller should visually mark himself so that the user knows where selected objects will end up. If the selection operation has finished, the caller will be informed and can remove the visual mark.
+ 
+To avoid confusion, the selection operation is finished as soon as the selection view looses the focus.
+ 
+The caller can decide if the selection operation should should finish after one object has been selected, or if it should be possible to select multiple objects in one operation.
+ 
+See the interface ICodeSelectionTarget for more information. 
 
 h2. Internationalization (il18n)
 

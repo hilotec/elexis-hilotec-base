@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ScriptView.java 6130 2010-02-13 06:05:17Z rgw_ch $
+ *  $Id: ScriptView.java 6134 2010-02-13 09:51:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -32,7 +32,7 @@ import ch.elexis.actions.RestrictedAction;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Script;
 import ch.elexis.scripting.ScriptEditor;
-import ch.elexis.util.PersistentObjectDragSource2;
+import ch.elexis.util.PersistentObjectDragSource;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.rgw.tools.ExHandler;
@@ -85,7 +85,7 @@ public class ScriptView extends ViewPart {
 			}
 
 		});
-		new PersistentObjectDragSource2(tv);
+		new PersistentObjectDragSource(tv);
 		makeActions();
 		ViewMenus menu = new ViewMenus(getViewSite());
 		menu.createToolbar(newScriptAction);

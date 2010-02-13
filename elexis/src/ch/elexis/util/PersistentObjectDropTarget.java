@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: PersistentObjectDropTarget.java 6132 2010-02-13 09:24:06Z rgw_ch $
+ * $Id: PersistentObjectDropTarget.java 6134 2010-02-13 09:51:29Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -57,7 +57,7 @@ public class PersistentObjectDropTarget implements DropTargetListener, ICodeSele
 	public void dragEnter(DropTargetEvent event) {
 		
 		boolean bOk=false;
-		PersistentObject dropped=PersistentObjectDragSource2.getDraggedObject();;
+		PersistentObject dropped=PersistentObjectDragSource.getDraggedObject();;
 		if(rc.accept(dropped)){
 			bOk=true;
 		}
@@ -98,7 +98,7 @@ public class PersistentObjectDropTarget implements DropTargetListener, ICodeSele
 	}
 	
 	public void dropAccept(DropTargetEvent event) {
-		if(!rc.accept(PersistentObjectDragSource2.getDraggedObject())){
+		if(!rc.accept(PersistentObjectDragSource.getDraggedObject())){
 			event.detail=DND.DROP_NONE;
 		}
 		

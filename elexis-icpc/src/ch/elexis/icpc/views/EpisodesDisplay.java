@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: EpisodesDisplay.java 6133 2010-02-13 09:24:30Z rgw_ch $
+ *    $Id: EpisodesDisplay.java 6134 2010-02-13 09:51:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.icpc.views;
@@ -40,7 +40,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.icpc.Episode;
-import ch.elexis.util.PersistentObjectDragSource2;
+import ch.elexis.util.PersistentObjectDragSource;
 import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
 
@@ -63,7 +63,7 @@ public class EpisodesDisplay extends Composite {
 		tvEpisodes.setContentProvider(new EpisodecontentProvider());
 		tvEpisodes.addSelectionChangedListener(GlobalEventDispatcher
 				.getInstance().getDefaultListener());
-		/* PersistentObjectDragSource pods= */new PersistentObjectDragSource2(
+		/* PersistentObjectDragSource pods= */new PersistentObjectDragSource(
 				tvEpisodes);
 		// lvEpisodes.addDragSupport(DND.DROP_COPY, new Transfer[]
 		// {TextTransfer.getInstance()},

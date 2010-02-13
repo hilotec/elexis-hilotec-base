@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: CodeSelectorFactory.java 6130 2010-02-13 06:05:17Z rgw_ch $
+ *  $Id: CodeSelectorFactory.java 6134 2010-02-13 09:51:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -52,7 +52,7 @@ import ch.elexis.data.PersistentObjectFactory;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.Log;
-import ch.elexis.util.PersistentObjectDragSource2;
+import ch.elexis.util.PersistentObjectDragSource;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.ViewerConfigurer;
@@ -280,8 +280,8 @@ public abstract class CodeSelectorFactory implements IExecutableExtension {
 
 			// dragEnable(lbUser);
 			// dragEnable(lbPatient);
-			new PersistentObjectDragSource2(lbUser, new DragEnabler(lbUser));
-			new PersistentObjectDragSource2(lbPatient, new DragEnabler(
+			new PersistentObjectDragSource(lbUser, new DragEnabler(lbUser));
+			new PersistentObjectDragSource(lbPatient, new DragEnabler(
 					lbPatient));
 
 			try {
@@ -369,7 +369,7 @@ public abstract class CodeSelectorFactory implements IExecutableExtension {
 
 	}
 
-	static class DragEnabler implements PersistentObjectDragSource2.ISelectionRenderer {
+	static class DragEnabler implements PersistentObjectDragSource.ISelectionRenderer {
 		List list;
 
 		DragEnabler(final List list) {
