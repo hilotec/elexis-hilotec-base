@@ -1,7 +1,7 @@
 h1(#id). Elexis developer resources
 
 (c) 2010 by G. Weirich
-$Id: developer.textile 6134 2010-02-13 09:51:29Z rgw_ch $	
+$Id: developer.textile 6135 2010-02-13 11:03:49Z rgw_ch $	
 
 h2. Table of contents
 
@@ -299,19 +299,57 @@ An org.eclipse.swt.widgets.Control can become a drop target by attaching a Persi
  
  The IReceiver is responsible to handle the dropped PersistentObjects.
  
-h2. CodeSelectorTarget
+h2. CodeSelectorHandler
 
-Sometimes, it is more convenient to select Objects to send to a Control via double click or with a key press instead of drag&drop. The problem is, that a double-click or a keystroke does not contain any information on the destination the user thinks of. This is addressed by the CodeSelectorTarget concept.
+Sometimes, it is more convenient to select Objects to send to a Control via double click or with a key press instead of drag&drop. The problem is, that a double-click or a keystroke does not contain any information on the destination the user thinks of. This is addressed by the CodeSelectorHandler concept.
  
-When a selection view is openend (e. g. Leistungen or Diagnosis), the view doesn't know about its caller. Actually, it's not really opened, but just brought to the foreground and focused (maybe it's first loaded if it hasn't yet been used so far). The CodeSelectorTarget system allows a caller to announce that he wants to receive an object. When the caller has registered itself at CodeSelectorTarget (using the method setCodeSelectorTarget()), and the user selects an object in the selection view,  the caller is informed about the selection and can handle it as if it would have been dropped
+When a selection view is openend (e. g. Leistungen or Diagnosis), the view doesn't know about its caller. Actually, it's not really opened, but just brought to the foreground and focused (maybe it's first loaded if it hasn't yet been used so far). The CodeSelectorHandler system allows a caller to announce that it wants to receive an object. When the caller has registered itself with CodeSelectorHandler.getInstance().setCodeSelectorTarget(), and the user selects an object in the selection view,  the caller is informed about the selection and can handle it as if it would have been dropped
  
-After registration as a CodeSelectorTarget, the caller should visually mark himself so that the user knows where selected objects will end up. If the selection operation has finished, the caller will be informed and can remove the visual mark.
+After registration as a CodeSelectorTarget, the caller should visually mark itself so that the user knows where selected objects will end up. If the selection operation has finished, the caller will be informed and can remove the visual mark.
  
 To avoid confusion, the selection operation is finished as soon as the selection view looses the focus.
  
 The caller can decide if the selection operation should should finish after one object has been selected, or if it should be possible to select multiple objects in one operation.
  
-See the interface ICodeSelectionTarget for more information. 
+See ch.elexis.actions.CodeSelectorHandler for more information. 
+
+h2. System independent universal object identifiers: XID
+
+Objects used in an EMR System frequently do have many identifiers before they first come to our user's practice. A Patient might be identified by a Social Security Number, by a Health Insurance Card Number, by a Passport Number, an AHV Number and many more. This article will discuss how to handle such different identifiers.
+
+The task of identifying an object uniquely becomes more important as we want to share objects between different EMR systems. We might see a patient that was treated by a collegue earlier and want to receive the EMR data from this collegue. Or we want to receive laboratory values or other findings from different sources and ye be able to identify such items unambiguously.
+
+To deal with such problems while exchanging EMR data, Elexis introduces the concept of a XID (eXternal Identifier). A XID is an identifier that consists of one or more pairs of domain/id values. A Domain is a String describing the classification system. An ID is a String that describes the given object within this classification system uniquely.
+XIDs can easily be exported into an XML file. The formal description (XSD) can be found at ch.elexis.exchange.xid.xsd in the plugin elexis.
+
+In Elexis, the following API for handling XID's exists:
+
+Xid.localRegisterXIDDomain(String domain, int quality)
+This static method registers a domain for use with the XID-System. Only registered domains may be used, and any domain may only be registered once. (The method will return false if one tries to register an already registered domain).
+
+The name for the domain is any alphanumeric string that must not contain the characters # and ; XID encourages the following rule: Use a string that is guaranteed under your control. We recommend to use an URL you own as prefix for your XID-Domains., e.g. www.elexis.ch/xids/myownXidDomain. If you do not want to use such a String, you should register your XID-Domain with www.xid.ch to avoid name conflicts.
+
+Please note that this method will register your domain only locally for the database where it was issued. The registration will, however, persist between program launches and workstations accessing the same elexis database.
+
+PersistentObject#getXID(String domain)
+Return the object's XID for the given Domain. E.g. getXID(Xid.DOMAIN_AHV) will return a person's AHV-Number (if defined). Attempting to retrieve an inexistent XID will return an empty String.
+
+PersistentObject#getXID()
+This will return the "best" XID (that is the XID with the highest quality value)  defined for this object. If no XID is defined, it will return simply a GUID.
+
+PersistentObject#addXID(String Domain, String id, boolean updateIfExists)
+Attribute a  new XID to this object. Only previously registered domains are valid.
+
+Xid.findXid(String domain, String id)
+find the XID denoted by the given parameners. returns null if no such XID exists.
+
+Xid.findXID(PersistentObject ob, String domain)
+find the Xid of the given object from the specified domain. Equivalent to ob.getXid(domain)
+
+Xid.findObject(String domain, String id)
+find the object indentified by the given XID of the given domain. findObject(Xid.DOMAIN_AHV,"123.45.678.9") will retrieve the Person whose AHV is 123.45.678.9 or will return null if no such object exists in the database.
+
+
 
 h2. Internationalization (il18n)
 

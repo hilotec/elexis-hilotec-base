@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: ETFDropReceiver.java 6132 2010-02-13 09:24:06Z rgw_ch $
+ *  $Id: ETFDropReceiver.java 6135 2010-02-13 11:03:49Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 
@@ -41,23 +41,28 @@ public class ETFDropReceiver implements IReceiver{
 	}
 	
 	public boolean accept(final PersistentObject o) {
+		/*
 		if(targets.get(o.getClass())!=null){
 			return true;
 		}
 		return false;
+		 */
+		return true;
 	}
 	
 	public void dropped(final PersistentObject o, final DropTargetEvent ev) {
+		Point point=Desk.getDisplay().getCursorLocation();
+		Point mapped=Desk.getDisplay().map(null, etf.text, point);
+		Point maxOffset=etf.text.getLocationAtOffset(etf.text.getCharCount());
+		int pos=etf.text.getCharCount();
+		if(mapped.y<maxOffset.y){
+			pos=etf.text.getOffsetAtLocation(new Point(0,mapped.y));
+		}
 		IKonsExtension rec=targets.get(o.getClass());
 		if(rec!=null){
-			Point point=Desk.getDisplay().getCursorLocation();
-			Point mapped=Desk.getDisplay().map(null, etf.text, point);
-			Point maxOffset=etf.text.getLocationAtOffset(etf.text.getCharCount());
-			int pos=etf.text.getCharCount();
-			if(mapped.y<maxOffset.y){
-				pos=etf.text.getOffsetAtLocation(new Point(0,mapped.y));
-			}
 			rec.insert(o, pos);
+		}else{
+			etf.text.insert(o.getLabel());
 		}
 		
 	}
