@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TerminLabel.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: TerminLabel.java 6130 2010-02-13 06:05:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -83,7 +83,7 @@ public class TerminLabel extends Composite {
 
 		});
 		new PersistentObjectDragSource2(lbl,
-				new PersistentObjectDragSource2.Draggable() {
+				new PersistentObjectDragSource2.ISelectionRenderer() {
 
 					public List<PersistentObject> getSelection() {
 						ArrayList<PersistentObject> ret = new ArrayList<PersistentObject>();

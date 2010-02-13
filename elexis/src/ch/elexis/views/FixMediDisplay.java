@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: FixMediDisplay.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * $Id: FixMediDisplay.java 6130 2010-02-13 06:05:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -126,7 +126,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 						}
 					}
 				});
-		new PersistentObjectDragSource2(list, new PersistentObjectDragSource2.Draggable() {
+		new PersistentObjectDragSource2(list, new PersistentObjectDragSource2.ISelectionRenderer() {
 			
 			public List<PersistentObject> getSelection(){
 				Prescription pr = FixMediDisplay.this.getSelection();

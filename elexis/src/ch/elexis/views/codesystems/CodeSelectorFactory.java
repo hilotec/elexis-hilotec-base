@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: CodeSelectorFactory.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: CodeSelectorFactory.java 6130 2010-02-13 06:05:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -369,7 +369,7 @@ public abstract class CodeSelectorFactory implements IExecutableExtension {
 
 	}
 
-	static class DragEnabler implements PersistentObjectDragSource2.Draggable {
+	static class DragEnabler implements PersistentObjectDragSource2.ISelectionRenderer {
 		List list;
 
 		DragEnabler(final List list) {

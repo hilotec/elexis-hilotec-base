@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,16 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PersistentObjectDragSource2.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ * $Id: PersistentObjectDragSource2.java 6130 2010-02-13 06:05:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -25,23 +28,40 @@ import org.eclipse.swt.widgets.Control;
 
 import ch.elexis.data.PersistentObject;
 
-public class PersistentObjectDragSource2 extends DragSourceImpl implements
+public class PersistentObjectDragSource2 implements
 		DragSourceListener {
-	Draggable renderer;
+	ISelectionRenderer renderer;
 	Control dragSource;
 	List<PersistentObject> selection;
-
+	protected static PersistentObject draggedObject;
+	
 	Transfer myTransfer = TextTransfer.getInstance();
 
+	public PersistentObjectDragSource2(final StructuredViewer v){
+		dragSource=v.getControl();
+		renderer=new ISelectionRenderer(){
+
+			public List<PersistentObject> getSelection() {
+				IStructuredSelection sel=(IStructuredSelection) v.getSelection();
+				return sel.toList();
+			}
+			
+		};
+		setup();
+	}
+	
 	public PersistentObjectDragSource2(final Control source,
-			final Draggable renderer) {
+			final ISelectionRenderer renderer) {
 		this.renderer = renderer;
 		dragSource = source;
-		DragSource mine = new DragSource(source, DND.DROP_COPY);
+		setup();
+	}
+	
+	private void setup(){
+		DragSource mine = new DragSource(dragSource, DND.DROP_COPY);
 		mine.setTransfer(new Transfer[] { myTransfer });
 		mine.addDragListener(this);
 	}
-
 	public void dragFinished(final DragSourceEvent event) {
 		// TODO Auto-generated method stub
 
@@ -69,11 +89,11 @@ public class PersistentObjectDragSource2 extends DragSourceImpl implements
 			event.doit = selection.get(0).isDragOK();
 		}
 		if (event.doit) {
-			PersistentObjectDragSource.draggedObject = selection.get(0);
+			PersistentObjectDragSource2.draggedObject = selection.get(0);
 		}
 	}
 
-	public interface Draggable {
+	public interface ISelectionRenderer {
 		public List<PersistentObject> getSelection();
 	}
 }

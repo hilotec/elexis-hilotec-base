@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DiagnosenDisplay.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: DiagnosenDisplay.java 6130 2010-02-13 06:05:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -43,11 +43,11 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
 import ch.elexis.util.PersistentObjectDragSource2;
 import ch.elexis.util.PersistentObjectDropTarget;
-import ch.elexis.util.PersistentObjectDragSource2.Draggable;
+import ch.elexis.util.PersistentObjectDragSource2.ISelectionRenderer;
 import ch.elexis.views.codesystems.DiagnosenView;
 import ch.rgw.tools.ExHandler;
 
-public class DiagnosenDisplay extends Composite implements Draggable {
+public class DiagnosenDisplay extends Composite implements ISelectionRenderer {
 	Table tDg;
 	private final Hyperlink hDg;
 	private final Log log = Log.get("DiagnosenDisplay"); //$NON-NLS-1$

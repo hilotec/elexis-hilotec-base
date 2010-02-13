@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PersistentObjectDragSource.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ * $Id: PersistentObjectDragSource.java 6130 2010-02-13 06:05:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -36,7 +36,7 @@ public class PersistentObjectDragSource extends DragSourceImpl implements DragSo
 	private final StructuredViewer viewer;
 	private IStructuredSelection ts;
 	
-	public PersistentObjectDragSource(final StructuredViewer v){
+	private PersistentObjectDragSource(final StructuredViewer v){
 		viewer=v;
 		v.addDragSupport(DND.DROP_COPY, new Transfer[] {TextTransfer.getInstance()}, this);
 	}

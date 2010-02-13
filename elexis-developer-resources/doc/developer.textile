@@ -1,7 +1,7 @@
 h1(#id). Elexis developer resources
 
 (c) 2010 by G. Weirich
-$Id: developer.textile 6129 2010-02-12 17:38:15Z rgw_ch $	
+$Id: developer.textile 6130 2010-02-13 06:05:17Z rgw_ch $	
 
 h2. Table of contents
 
@@ -145,6 +145,102 @@ Note: To optimize performance, we recommend following rules:
 This ensures that listeners are only called if their view is visible to the user at the moment of the selection.
 
 The sample code of the elexis-developer-resources plugins contains extensive examples on using the ElexisEventDispatcher.
+
+h2. Keybindings
+
+This section describes how to declare keybindings using the Eclipse framework.
+You can define keybindings for any action. Eclipse provides a mechanism to ensure that there are no conflicts between plugins. This is done using "commands". A command can be seen as an abstract description of a key binding. The command itself has no keybinding assigned to it. But given a certain context, e. g. a certain view window, you can declare, that in this context, the command should have a certain key binding.
+ 
+Let's consider an action "renameAction", which is used to rename some object, e. g. a file name. You can find this example in the plugin "elexis-externe-dokumente".
+ 
+Generally, you need to define a command for each action you want to assign keybindings to. You can use existing actions already defined by Eclipse, like  e. g. "org.eclipse.ui.edit.rename", or you can define your own actions in the plugin editor.
+ 
+Each command has a unique id. The pre-defined action for renaming has the id "org.eclipse.ui.edit.rename". To use this command, you must first assign it to the action, and then register it an action handler for it.
+ 
+pre. renameAction = new Action() {
+  ...
+}
+...
+ renameAction.setActionDefinitionId(GlobalActions.RENAME_COMMAND);
+GlobalActions.registerActionHandler(this, renameAction);
+
+This should be all required to do for a pre-defined command.
+ 
+If you want to define your own key bindings, you require to define a context, a command and a binding. Let's consider an keybinding to export data to the clipboard. The key binding should be "CTRL-E".
+ 
+First, declare a new context in plugin.xml:
+ 
+pre. <extension point="org.eclipse.ui.contexts">
+  <context id="org.iatrix.view.context"
+    name="%iatrix.view.context.name"
+    parentId="org.eclipse.ui.contexts.window">
+  </context>
+</extension>  
+
+Next, declare a command (including a category, if required):
+ 
+pre. <extension point="org.eclipse.ui.commands">
+  <category
+    id="org.iatrix.commands.category"
+    name="%iatrix.commands.category">
+  </category>
+  <command
+    categoryId="org.iatrix.commands.category"
+    id="org.iatrix.commands.export_clipboard"
+    name="%iatrix.commands.export_clipboard">
+  </command>
+</extension>
+
+Then declare a binding
+
+pre. <extension point="org.eclipse.ui.bindings">
+  <key
+    commandId="org.iatrix.commands.export_clipboard"
+    contextId="org.iatrix.view.context"
+    schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+    sequence="M1+E">
+  </key>
+</extension>
+ 
+Now, the new command is known, including the context where it should be valid, and the key binding to be used.
+
+In the view, where you want to use the command, you first need to declare the context:
+
+Declare the context id and the command id as constants: 
+
+pre. private static final String VIEW_CONTEXT_ID = "org.iatrix.view.context"; //$NON-NLS-1$
+private static final String EXPORT_CLIPBOARD_COMMAND = "org.iatrix.commands.export_clipboard"; //$NON-NLS-1$
+ 
+
+At the end of your createPartControl() method, call "activateContext()", which may defined as:
+
+pre. /**
+     * Activate a context that this view uses. It will be tied to this view
+     * activation events and will be removed when the view is disposed.
+     * Copied from org.eclipse.ui.examples.contributions.InfoView.java
+     */
+    private void activateContext() {
+    	IContextService contextService = (IContextService) getSite()
+    	.getService(IContextService.class);
+    	contextService.activateContext(VIEW_CONTEXT_ID);
+    }
+
+
+Whenever the Iatrix view is active, the context "org.iatrix.view.context" will be active, and the key bindings for it will be valid.
+
+Then, assign the command to the action as in the previous example:
+
+pre. exportToClipboardAction = new Action("Export (Zwischenablage)") {
+  ...
+}
+...
+exportToClipboardAction.setActionDefinitionId(EXPORT_CLIPBOARD_COMMAND);
+GlobalActions.registerActionHandler(this, exportToClipboardAction);
+ 
+ 
+Further documentation:
+
+"http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/guide/wrkAdv_keyBindings.htm":http://help.eclipse.org/help33/topic/org.eclipse.platform.doc.isv/guide/wrkAdv_keyBindings.htm
 
 h2. Internationalization (il18n)
 
