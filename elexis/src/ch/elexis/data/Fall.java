@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *    $Id: Fall.java 6141 2010-02-14 16:21:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.dialogs.KontaktExtDialog.ExtInfoTable;
 import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Extensions;
@@ -41,14 +42,36 @@ import ch.rgw.tools.TimeTool;
  */
 public class Fall extends PersistentObject {
 
-	public static final String PATIENT_ID = "PatientID";
-	static final String TABLENAME = "FAELLE";
-	public static final String TYPE_DISEASE = "Krankheit";
-	public static final String TYPE_ACCIDENT = "Unfall";
-	public static final String TYPE_MATERNITY = "Mutterschaft";
-	public static final String TYPE_PREVENTION = "Prävention";
-	public static final String TYPE_BIRTHDEFECT = "Geburtsgebrechen";
-	public static final String TYPE_OTHER = "Anderes";
+	public static final String VVG_NAME = Messages.getString("Fall.VVG_Name"); //$NON-NLS-1$
+	public static final String PRIVATE_NAME = Messages.getString("Fall.Private_Name"); //$NON-NLS-1$
+	public static final String MV_NAME = Messages.getString("Fall.MV_Name"); //$NON-NLS-1$
+	public static final String IV_NAME = Messages.getString("Fall.IV_Name"); //$NON-NLS-1$
+	private static final String KVG_REQUIREMENTS = Messages.getString("Fall.KVGRequirements"); //$NON-NLS-1$
+	public static final String KVG_NAME = Messages.getString("Fall.KVG_Name"); //$NON-NLS-1$
+	public static final String UVG_NAME = Messages.getString("Fall.UVG_Name"); //$NON-NLS-1$
+	public static final String UVG_REQUIREMENTS = Messages.getString("Fall.UVGRequirements"); //$NON-NLS-1$
+	public static final String CONST_TARMED_DRUCKER = Messages.getString("Fall.TarmedPrinter"); //$NON-NLS-1$
+	public static final String CONST_TARMED_LEISTUNG = Messages.getString("Fall.TarmedLeistung"); //$NON-NLS-1$
+	public static final String FLD_BEHANDLUNGEN = "Behandlungen"; //$NON-NLS-1$
+	public static final String FLD_BILLING = "billing"; //$NON-NLS-1$
+	public static final String FLD_KOSTENTRAEGER = "Kostentraeger"; //$NON-NLS-1$
+	public static final String FLD_RECHNUNGSSTELLER_ID = "RechnungsstellerID"; //$NON-NLS-1$
+	public static final String FLD_DATUM_BIS = "DatumBis"; //$NON-NLS-1$
+	public static final String FLD_DATUM_VON = "DatumVon"; //$NON-NLS-1$
+	public static final String FLD_RN_PLANUNG = "RnPlanung"; //$NON-NLS-1$
+	private static final String FLD_FALL_NUMMER = "FallNummer"; //$NON-NLS-1$
+	public static final String FLD_VERS_NUMMER = "VersNummer"; //$NON-NLS-1$
+	public static final String FLD_BEZEICHNUNG = "Bezeichnung"; //$NON-NLS-1$
+	public static final String FLD_GARANT_ID = "GarantID"; //$NON-NLS-1$
+	public static final String FLD_GRUND = "Grund"; //$NON-NLS-1$
+	public static final String PATIENT_ID = "PatientID"; //$NON-NLS-1$
+	static final String TABLENAME = "FAELLE"; //$NON-NLS-1$
+	public static final String TYPE_DISEASE = Messages.getString("Fall.Disease"); //$NON-NLS-1$
+	public static final String TYPE_ACCIDENT = Messages.getString("Fall.Accident"); //$NON-NLS-1$
+	public static final String TYPE_MATERNITY = Messages.getString("Fall.Maternity"); //$NON-NLS-1$
+	public static final String TYPE_PREVENTION = Messages.getString("Fall.Prevention"); //$NON-NLS-1$
+	public static final String TYPE_BIRTHDEFECT = Messages.getString("Fall.Birthdefect"); //$NON-NLS-1$
+	public static final String TYPE_OTHER = Messages.getString("Fall.Other"); //$NON-NLS-1$
 
 	@Override
 	protected String getTableName() {
@@ -56,12 +79,12 @@ public class Fall extends PersistentObject {
 	}
 
 	static {
-		addMapping(TABLENAME, PATIENT_ID, "res=Diagnosen",
-				"DatumVon=S:D:DatumVon", "DatumBis=S:D:DatumBis", "GarantID",
-				"Behandlungen=LIST:FallID:BEHANDLUNGEN:Datum", "Bezeichnung",
-				"Grund", "xGesetz=Gesetz", "Kostentraeger=KostentrID",
-				"VersNummer", "FallNummer", "RnPlanung=BetriebsNummer",
-				"ExtInfo");
+		addMapping(TABLENAME, PATIENT_ID, "res=Diagnosen", //$NON-NLS-1$
+				"DatumVon=S:D:DatumVon", "DatumBis=S:D:DatumBis", FLD_GARANT_ID, //$NON-NLS-1$ //$NON-NLS-2$
+				"Behandlungen=LIST:FallID:BEHANDLUNGEN:Datum", FLD_BEZEICHNUNG, //$NON-NLS-1$
+				FLD_GRUND, "xGesetz=Gesetz", "Kostentraeger=KostentrID", //$NON-NLS-1$ //$NON-NLS-2$
+				FLD_VERS_NUMMER, FLD_FALL_NUMMER, "RnPlanung=BetriebsNummer", //$NON-NLS-1$
+				FLD_EXTINFO);
 	}
 
 	/**
@@ -71,7 +94,7 @@ public class Fall extends PersistentObject {
 	 * @return
 	 */
 	public TimeTool getBillingDate() {
-		String r = get("RnPlanung");
+		String r = get(FLD_RN_PLANUNG);
 		if (StringTool.isNothing(r)) {
 			return null;
 		}
@@ -89,7 +112,7 @@ public class Fall extends PersistentObject {
 	 *            Ein Zeitpunkt oder null
 	 */
 	public void setBillingDate(TimeTool dat) {
-		set("RnPlanung", dat == null ? null : dat.toString(TimeTool.DATE_GER));
+		set(FLD_RN_PLANUNG, dat == null ? null : dat.toString(TimeTool.DATE_GER));
 	}
 
 	@Override
@@ -107,13 +130,13 @@ public class Fall extends PersistentObject {
 		// are met
 		String reqs = getRequirements(getAbrechnungsSystem());
 		if (reqs != null) {
-			for (String req : reqs.split(";")) {
-				String[] r = req.split(":");
+			for (String req : reqs.split(";")) { //$NON-NLS-1$
+				String[] r = req.split(":"); //$NON-NLS-1$
 				String localReq = getInfoString(r[0]);
 				if (StringTool.isNothing(localReq)) {
 					return false;
 				}
-				if (r[1].equals("K")) {
+				if (r[1].equals("K")) { //$NON-NLS-1$
 					Kontakt k = Kontakt.load(localReq);
 					if (!k.isValid()) {
 						return false;
@@ -150,7 +173,7 @@ public class Fall extends PersistentObject {
 	Fall(final String PatientID, final String Bezeichnung, final String Grund,
 			String Abrechnungsmethode) {
 		create(null);
-		set(new String[] { PATIENT_ID, "Bezeichnung", "Grund", "DatumVon" },
+		set(new String[] { PATIENT_ID, FLD_BEZEICHNUNG, FLD_GRUND, FLD_DATUM_VON },
 				PatientID, Bezeichnung, Grund, new TimeTool()
 						.toString(TimeTool.DATE_GER));
 		if (Abrechnungsmethode == null) {
@@ -170,15 +193,15 @@ public class Fall extends PersistentObject {
 
 	/** Anfangsdatum lesen (in der Form dd.mm.yy) */
 	public String getBeginnDatum() {
-		return checkNull(get("DatumVon"));
+		return checkNull(get(FLD_DATUM_VON));
 	}
 
 	public String getBezeichnung() {
-		return checkNull(get("Bezeichnung"));
+		return checkNull(get(FLD_BEZEICHNUNG));
 	}
 
 	public void setBezeichnung(final String t) {
-		set("Bezeichnung", t);
+		set(FLD_BEZEICHNUNG, t);
 	}
 
 	/**
@@ -186,17 +209,17 @@ public class Fall extends PersistentObject {
 	 * yy-mm-dd
 	 */
 	public void setBeginnDatum(final String dat) {
-		set("DatumVon", dat);
+		set(FLD_DATUM_VON, dat);
 	}
 
 	/** Enddatum lesen oder null: Fall noch nicht abgeschlossen */
 	public String getEndDatum() {
-		return checkNull(get("DatumBis"));
+		return checkNull(get(FLD_DATUM_BIS));
 	}
 
 	/** Enddatum setzen. Setzt zugleich den Fall auf abgeschlossen */
 	public void setEndDatum(final String dat) {
-		set("DatumBis", dat);
+		set(FLD_DATUM_BIS, dat);
 	}
 
 	/**
@@ -205,7 +228,7 @@ public class Fall extends PersistentObject {
 	 * @return
 	 */
 	public Kontakt getGarant() {
-		Kontakt ret = Kontakt.load(get("GarantID"));
+		Kontakt ret = Kontakt.load(get(FLD_GARANT_ID));
 		if ((ret == null) || (!ret.isValid())) {
 			ret = getPatient();
 		}
@@ -213,12 +236,12 @@ public class Fall extends PersistentObject {
 	}
 
 	public void setGarant(final Kontakt garant) {
-		set("GarantID", garant.getId());
+		set(FLD_GARANT_ID, garant.getId());
 	}
 
 	public Rechnungssteller getRechnungssteller() {
 		Rechnungssteller ret = Rechnungssteller
-				.load(getInfoString("RechnungsstellerID"));
+				.load(getInfoString(FLD_RECHNUNGSSTELLER_ID));
 		if (!ret.isValid()) {
 			ret = null;
 		}
@@ -226,7 +249,7 @@ public class Fall extends PersistentObject {
 	}
 
 	public void setRechnungssteller(final Kontakt r) {
-		setInfoString("RechnungsstellerID", r.getId());
+		setInfoString(FLD_RECHNUNGSSTELLER_ID, r.getId());
 	}
 
 	/**
@@ -239,7 +262,7 @@ public class Fall extends PersistentObject {
 	 */
 	public Kontakt getRequiredContact(final String name) {
 		String kid = getInfoString(name);
-		if (kid.equals("")) {
+		if (kid.equals("")) { //$NON-NLS-1$
 			return null;
 		}
 		return Kontakt.load(kid);
@@ -248,10 +271,10 @@ public class Fall extends PersistentObject {
 	public void setRequiredContact(final String name, final Kontakt k) {
 		String r = getRequirements();
 		if (!StringTool.isNothing(r)) {
-			String[] req = r.split(";");
-			int idx = StringTool.getIndex(req, name + ":K");
+			String[] req = r.split(";"); //$NON-NLS-1$
+			int idx = StringTool.getIndex(req, name + ":K"); //$NON-NLS-1$
 			if (idx != -1) {
-				if (req[idx].endsWith(":K")) {
+				if (req[idx].endsWith(":K")) { //$NON-NLS-1$
 					setInfoString(name, k.getId());
 				}
 			}
@@ -275,8 +298,8 @@ public class Fall extends PersistentObject {
 	}
 
 	public void setRequiredString(final String name, final String val) {
-		String[] req = getRequirements().split(";");
-		int idx = StringTool.getIndex(req, name + ":T");
+		String[] req = getRequirements().split(";"); //$NON-NLS-1$
+		int idx = StringTool.getIndex(req, name + ":T"); //$NON-NLS-1$
 		if (idx != -1) {
 			setInfoString(name, val);
 		}
@@ -290,32 +313,32 @@ public class Fall extends PersistentObject {
 		// String is=getInfoString("Kostenträger");
 		Query<Fall> qbe = new Query<Fall>(Fall.class);
 		for (Fall fall : qbe.execute()) {
-			if (fall.getInfoString("Kostenträger").equals("")) {
-				fall.setInfoString("Kostenträger", checkNull(fall
-						.get("Kostentraeger")));
+			if (fall.getInfoString("Kostenträger").equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
+				fall.setInfoString("Kostenträger", checkNull(fall //$NON-NLS-1$
+						.get(FLD_KOSTENTRAEGER)));
 			}
-			if (fall.getInfoString("Rechnungsempfänger").equals("")) {
-				fall.setInfoString("Rechnungsempfänger", checkNull(fall
-						.get("GarantID")));
+			if (fall.getInfoString("Rechnungsempfänger").equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
+				fall.setInfoString("Rechnungsempfänger", checkNull(fall //$NON-NLS-1$
+						.get(FLD_GARANT_ID)));
 			}
-			if (fall.getInfoString("Versicherungsnummer").equals("")) {
-				fall.setInfoString("Versicherungsnummer", checkNull(fall
-						.get("VersNummer")));
+			if (fall.getInfoString("Versicherungsnummer").equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
+				fall.setInfoString("Versicherungsnummer", checkNull(fall //$NON-NLS-1$
+						.get(FLD_VERS_NUMMER)));
 			}
-			if (fall.getInfoString("Fallnummer").equals("")) {
-				fall.setInfoString("Fallnummer", checkNull(fall
-						.get("FallNummer")));
+			if (fall.getInfoString("Fallnummer").equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
+				fall.setInfoString("Fallnummer", checkNull(fall //$NON-NLS-1$
+						.get(FLD_FALL_NUMMER)));
 			}
-			if (fall.getInfoString("Unfallnummer").equals("")) {
-				fall.setInfoString("Unfallnummer", checkNull(fall
-						.get("FallNummer")));
+			if (fall.getInfoString("Unfallnummer").equals("")) { //$NON-NLS-1$ //$NON-NLS-2$
+				fall.setInfoString("Unfallnummer", checkNull(fall //$NON-NLS-1$
+						.get(FLD_FALL_NUMMER)));
 			}
 		}
 	}
 
 	@Deprecated
 	public Kontakt getArbeitgeber() {
-		String id = getInfoString("Arbeitgeber");
+		String id = getInfoString("Arbeitgeber"); //$NON-NLS-1$
 		Kontakt ret = null;
 		if (StringTool.isNothing(id)
 				|| ((ret = Kontakt.load(id)).exists() == false)) {
@@ -337,7 +360,7 @@ public class Fall extends PersistentObject {
 	@Deprecated
 	public String getVersNummer() {
 
-		return checkNull(getInfoString("Versicherungsnummer"));
+		return checkNull(getInfoString("Versicherungsnummer")); //$NON-NLS-1$
 	}
 
 	/**
@@ -346,31 +369,31 @@ public class Fall extends PersistentObject {
 	 */
 	/** Fallnummer lesen */
 	public String getFallNummer() {
-		return checkNull(get("FallNummer"));
+		return checkNull(get(FLD_FALL_NUMMER));
 	}
 
 	/** Fallnummer setzen */
 	public void setFallNummer(final String nr) {
-		set("FallNummer", nr);
+		set(FLD_FALL_NUMMER, nr);
 	}
 
 	/** Feststellen, ob der Fall noch offen ist */
 	public boolean isOpen() {
-		if (getEndDatum().equals("")) {
+		if (getEndDatum().equals("")) { //$NON-NLS-1$
 			return true;
 		}
 		return false;
 	}
 
 	public void setAbrechnungsSystem(final String system) {
-		setInfoString("billing", system);
+		setInfoString(FLD_BILLING, system);
 	}
 
 	public String getAbrechnungsSystem() {
-		String ret = getInfoString("billing");
+		String ret = getInfoString(FLD_BILLING);
 		if (StringTool.isNothing(ret)) {
 			String[] systeme = getAbrechnungsSysteme();
-			String altGesetz = get("xGesetz");
+			String altGesetz = get("xGesetz"); //$NON-NLS-1$
 			int idx = StringTool.getIndex(systeme, altGesetz);
 			if (idx == -1) {
 				ret = systeme[0];
@@ -395,7 +418,7 @@ public class Fall extends PersistentObject {
 
 	public String getRequirements() {
 		String req = getRequirements(getAbrechnungsSystem());
-		return req == null ? "" : req;
+		return req == null ? "" : req; //$NON-NLS-1$
 	}
 
 	/**
@@ -416,12 +439,12 @@ public class Fall extends PersistentObject {
 		String outputterName = getOutputterName();
 		if (outputterName.length() > 0) {
 			List<IConfigurationElement> list = Extensions
-					.getExtensions("ch.elexis.RechnungsManager");
+					.getExtensions("ch.elexis.RechnungsManager"); //$NON-NLS-1$
 			for (IConfigurationElement ic : list) {
-				if (ic.getAttribute("name").equals(outputterName)) {
+				if (ic.getAttribute("name").equals(outputterName)) { //$NON-NLS-1$
 					try {
 						IRnOutputter ret = (IRnOutputter) ic
-								.createExecutableExtension("outputter");
+								.createExecutableExtension("outputter"); //$NON-NLS-1$
 						return ret;
 					} catch (CoreException e) {
 						ExHandler.handle(e);
@@ -434,7 +457,7 @@ public class Fall extends PersistentObject {
 
 	/** Behandlungen zu diesem Fall holen */
 	public Konsultation[] getBehandlungen(final boolean sortReverse) {
-		List<String> list = getList("Behandlungen", sortReverse);
+		List<String> list = getList(FLD_BEHANDLUNGEN, sortReverse);
 		int i = 0;
 		Konsultation[] ret = new Konsultation[list.size()];
 		for (String id : list) {
@@ -445,7 +468,7 @@ public class Fall extends PersistentObject {
 	}
 
 	public Konsultation getLetzteBehandlung() {
-		List<String> list = getList("Behandlungen", true);
+		List<String> list = getList(FLD_BEHANDLUNGEN, true);
 		if (list.size() > 0) {
 			return Konsultation.load(list.get(0));
 		}
@@ -456,15 +479,15 @@ public class Fall extends PersistentObject {
 	public Konsultation neueKonsultation() {
 		if (isOpen() == false) {
 			MessageDialog
-					.openError(null, "Fall geschlossen",
-							"Zu einem abgeschlossenen Fall kann keine neue Konsultation erstellt werden");
+					.openError(null, Messages.getString("Fall.CaseClosedCaption"), //$NON-NLS-1$
+							Messages.getString("Fall.CaseClosedText")); //$NON-NLS-1$
 			return null;
 		}
 		if ((Hub.actMandant == null) || (!Hub.actMandant.exists())) {
 			SWTHelper
 					.showError(
-							"Kein Mandant ausgewält",
-							"Sie müssen erst einen Mandanten erstellen und auswählen, bevor Sie eine Konsultation erstellen können");
+							Messages.getString("Fall.NoMandatorCaption"), //$NON-NLS-1$
+							Messages.getString("Fall.NoMandatorText")); //$NON-NLS-1$
 			return null;
 		}
 		return new Konsultation(this);
@@ -475,31 +498,31 @@ public class Fall extends PersistentObject {
 	}
 
 	public String getGrund() {
-		return checkNull(get("Grund"));
+		return checkNull(get(FLD_GRUND));
 	}
 
 	public void setGrund(final String g) {
-		set("Grund", g);
+		set(FLD_GRUND, g);
 	}
 
 	@Override
 	public String getLabel() {
-		String[] f = new String[] { "Grund", "Bezeichnung", "DatumVon",
-				"DatumBis" };
+		String[] f = new String[] { FLD_GRUND, FLD_BEZEICHNUNG, FLD_DATUM_VON,
+				FLD_DATUM_BIS };
 		String[] v = new String[f.length];
 		get(f, v);
 		StringBuilder ret = new StringBuilder();
 		if (!isOpen()) {
-			ret.append("-GESCHLOSSEN- ");
+			ret.append(Messages.getString("Fall.CLOSED")); //$NON-NLS-1$
 		}
 		String ges = getAbrechnungsSystem();
-		ret.append(ges).append(": ").append(v[0]).append(" - ");
-		ret.append(v[1]).append("(");
+		ret.append(ges).append(": ").append(v[0]).append(" - "); //$NON-NLS-1$ //$NON-NLS-2$
+		ret.append(v[1]).append("("); //$NON-NLS-1$
 		String ed = v[3];
 		if ((ed == null) || StringTool.isNothing(ed.trim())) {
-			ed = " offen ";
+			ed = Messages.getString("Fall.Open"); //$NON-NLS-1$
 		}
-		ret.append(v[2]).append("-").append(ed).append(")");
+		ret.append(v[2]).append("-").append(ed).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 		return ret.toString();
 	}
 
@@ -533,12 +556,12 @@ public class Fall extends PersistentObject {
 
 	private boolean delete_dependent() {
 		Query<AUF> qAUF = new Query<AUF>(AUF.class);
-		qAUF.add("FallID", "=", getId());
+		qAUF.add(AUF.FLD_CASE_ID, Query.EQUALS, getId());
 		for (AUF auf : qAUF.execute()) {
 			auf.delete();
 		}
 		Query<Rechnung> qRn = new Query<Rechnung>(Rechnung.class);
-		qRn.add("FallID", "=", getId());
+		qRn.add(AUF.FLD_CASE_ID, Query.EQUALS, getId());
 		for (Rechnung rn : qRn.execute()) {
 			rn.delete();
 		}
@@ -556,36 +579,36 @@ public class Fall extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public String getInfoString(final String name) {
-		Hashtable extinfo = getHashtable("ExtInfo");
+		Hashtable extinfo = getHashtable(FLD_EXTINFO);
 		return checkNull((String) extinfo.get(name));
 	}
 
 	@SuppressWarnings("unchecked")
 	public void setInfoString(final String name, final String wert) {
-		Hashtable<String, String> extinfo = getHashtable("ExtInfo");
+		Hashtable<String, String> extinfo = getHashtable(FLD_EXTINFO);
 		extinfo.put(name, wert);
-		setHashtable("ExtInfo", extinfo);
+		setHashtable(FLD_EXTINFO, extinfo);
 	}
 
 	@SuppressWarnings("unchecked")
 	public void clearInfoString(final String string) {
-		Hashtable<String, String> extinfo = getHashtable("ExtInfo");
+		Hashtable<String, String> extinfo = getHashtable(FLD_EXTINFO);
 		extinfo.remove(string);
-		setHashtable("ExtInfo", extinfo);
+		setHashtable(FLD_EXTINFO, extinfo);
 
 	}
 
 	@SuppressWarnings("unchecked")
 	public Object getInfoElement(final String name) {
-		Hashtable extinfo = getHashtable("ExtInfo");
+		Hashtable extinfo = getHashtable(FLD_EXTINFO);
 		return extinfo.get(name);
 	}
 
 	@SuppressWarnings("unchecked")
 	public void setInfoElement(final String name, final Object elem) {
-		Hashtable extinfo = getHashtable("ExtInfo");
+		Hashtable extinfo = getHashtable(FLD_EXTINFO);
 		extinfo.put(name, elem);
-		setHashtable("ExtInfo", extinfo);
+		setHashtable(FLD_EXTINFO, extinfo);
 	}
 
 	@Override
@@ -619,102 +642,102 @@ public class Fall extends PersistentObject {
 		String[] ret = Hub.globalCfg.nodes(Leistungscodes.CFG_KEY);
 		if ((ret == null) || (ret.length == 0)) {
 			List<IConfigurationElement> list = Extensions
-					.getExtensions("ch.elexis.RechnungsManager");
+					.getExtensions("ch.elexis.RechnungsManager"); //$NON-NLS-1$
 			for (IConfigurationElement ic : list) {
-				if (ic.getAttribute("name").startsWith("Tarmed")) {
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/KVG/name",
-							"KVG");
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/KVG/gesetz",
-							"KVG");
+				if (ic.getAttribute("name").startsWith("Tarmed")) { //$NON-NLS-1$ //$NON-NLS-2$
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/KVG/name", //$NON-NLS-1$
+							KVG_NAME);
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/KVG/gesetz", //$NON-NLS-1$
+							"KVG"); //$NON-NLS-1$
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/KVG/leistungscodes", "TarmedLeistung");
+							+ "/KVG/leistungscodes", CONST_TARMED_LEISTUNG); //$NON-NLS-1$
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/KVG/standardausgabe", "Tarmed-Drucker");
+							+ "/KVG/standardausgabe", CONST_TARMED_DRUCKER); //$NON-NLS-1$
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/KVG/bedingungen",
-							"Kostenträger:K;Versicherungsnummer:T");
+							+ "/KVG/bedingungen", //$NON-NLS-1$
+							KVG_REQUIREMENTS);
 
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/UVG/name",
-							"UVG");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/UVG/name", //$NON-NLS-1$
+							UVG_NAME);
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/UVG/leistungscodes", "TarmedLeistung");
+							+ "/UVG/leistungscodes", CONST_TARMED_LEISTUNG); //$NON-NLS-1$
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/UVG/standardausgabe", "Tarmed-Drucker");
+							+ "/UVG/standardausgabe", CONST_TARMED_DRUCKER); //$NON-NLS-1$
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/UVG/bedingungen",
-							"Kostenträger:K;Unfallnummer:T;Unfalldatum:D");
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/UVG/gesetz",
-							"UVG");
-
-					Hub.globalCfg
-							.set(Leistungscodes.CFG_KEY + "/IV/name", "IV");
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/IV/leistungscodes", "TarmedLeistung");
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/IV/standardausgabe", "Tarmed-Drucker");
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/IV/bedingungen",
-							"Kostenträger:K;AHV-Nummer:T;Fallnummer:T");
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/IV/gesetz",
-							"IVG");
+							+ "/UVG/bedingungen", //$NON-NLS-1$
+							UVG_REQUIREMENTS);
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/UVG/gesetz", //$NON-NLS-1$
+							"UVG"); //$NON-NLS-1$
 
 					Hub.globalCfg
-							.set(Leistungscodes.CFG_KEY + "/MV/name", "MV");
+							.set(Leistungscodes.CFG_KEY + "/IV/name", IV_NAME); //$NON-NLS-1$
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/MV/leistungscodes", "TarmedLeistung");
+							+ "/IV/leistungscodes", CONST_TARMED_LEISTUNG); //$NON-NLS-1$
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/MV/standardausgabe", "Tarmed-Drucker");
+							+ "/IV/standardausgabe", CONST_TARMED_DRUCKER); //$NON-NLS-1$
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/MV/bedingungen", "Kostenträger:K");
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/MV/gesetz",
-							"MVG");
+							+ "/IV/bedingungen", //$NON-NLS-1$
+							"Kostenträger:K;AHV-Nummer:T;Fallnummer:T"); //$NON-NLS-1$
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/IV/gesetz", //$NON-NLS-1$
+							"IVG"); //$NON-NLS-1$
 
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/privat/name",
-							"privat");
+					Hub.globalCfg
+							.set(Leistungscodes.CFG_KEY + "/MV/name", MV_NAME); //$NON-NLS-1$
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/privat/leistungscodes", "TarmedLeistung");
+							+ "/MV/leistungscodes", CONST_TARMED_LEISTUNG); //$NON-NLS-1$
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/privat/standardausgabe", "Tarmed-Drucker");
+							+ "/MV/standardausgabe", CONST_TARMED_DRUCKER); //$NON-NLS-1$
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY
+							+ "/MV/bedingungen", "Kostenträger:K"); //$NON-NLS-1$ //$NON-NLS-2$
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/MV/gesetz", //$NON-NLS-1$
+							"MVG"); //$NON-NLS-1$
+
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/privat/name", //$NON-NLS-1$
+							PRIVATE_NAME);
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY
+							+ "/privat/leistungscodes", CONST_TARMED_LEISTUNG); //$NON-NLS-1$
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY
+							+ "/privat/standardausgabe", CONST_TARMED_DRUCKER); //$NON-NLS-1$
 					Hub.globalCfg.set(
-							Leistungscodes.CFG_KEY + "/privat/gesetz", "VVG");
+							Leistungscodes.CFG_KEY + "/privat/gesetz", "VVG"); //$NON-NLS-1$ //$NON-NLS-2$
 					// Hub.globalCfg.set(Leistungscodes.CFG_KEY+"/privat/bedingungen",
 					// "Rechnungsempfänger:K");
 
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/VVG/name",
-							"VVG");
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/VVG/name", //$NON-NLS-1$
+							VVG_NAME);
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/VVG/leistungscodes", "TarmedLeistung");
+							+ "/VVG/leistungscodes", CONST_TARMED_LEISTUNG); //$NON-NLS-1$
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/VVG/standardausgabe", "Tarmed-Drucker");
+							+ "/VVG/standardausgabe", CONST_TARMED_DRUCKER); //$NON-NLS-1$
 					Hub.globalCfg.set(Leistungscodes.CFG_KEY
-							+ "/VVG/bedingungen",
-							"Kostenträger:K;Versicherungsnummer:T");
-					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/VVG/gesetz",
-							"VVG");
+							+ "/VVG/bedingungen", //$NON-NLS-1$
+							KVG_REQUIREMENTS);
+					Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/VVG/gesetz", //$NON-NLS-1$
+							"VVG"); //$NON-NLS-1$
 
 					PersistentObject
 							.getConnection()
 							.exec(
-									"UPDATE VK_PREISE set typ='UVG' WHERE typ='ch.elexis.data.TarmedLeistungUVG'");
+									"UPDATE VK_PREISE set typ='UVG' WHERE typ='ch.elexis.data.TarmedLeistungUVG'"); //$NON-NLS-1$
 					PersistentObject
 							.getConnection()
 							.exec(
-									"UPDATE VK_PREISE set typ='KVG' WHERE typ='ch.elexis.data.TarmedLeistungKVG'");
+									"UPDATE VK_PREISE set typ='KVG' WHERE typ='ch.elexis.data.TarmedLeistungKVG'"); //$NON-NLS-1$
 					PersistentObject
 							.getConnection()
 							.exec(
-									"UPDATE VK_PREISE set typ='IV' WHERE typ='ch.elexis.data.TarmedLeistungIV'");
+									"UPDATE VK_PREISE set typ='IV' WHERE typ='ch.elexis.data.TarmedLeistungIV'"); //$NON-NLS-1$
 					PersistentObject
 							.getConnection()
 							.exec(
-									"UPDATE VK_PREISE set typ='MV' WHERE typ='ch.elexis.data.TarmedLeistungMV'");
+									"UPDATE VK_PREISE set typ='MV' WHERE typ='ch.elexis.data.TarmedLeistungMV'"); //$NON-NLS-1$
 					update();
 					break;
 				}
 			}
 			ret = Hub.globalCfg.nodes(Leistungscodes.CFG_KEY);
 			if (ret == null) {
-				return new String[] { "undefiniert" };
+				return new String[] { Messages.getString("Fall.Undefined") }; //$NON-NLS-1$
 			}
 		}
 		return ret;
@@ -723,48 +746,48 @@ public class Fall extends PersistentObject {
 	public static void createAbrechnungssystem(final String systemname,
 			final String codesystem, final String ausgabe,
 			final String... requirements) {
-		String key = Leistungscodes.CFG_KEY + "/" + systemname;
-		Hub.globalCfg.set(key + "/name", systemname);
-		Hub.globalCfg.set(key + "/leistungscodes", codesystem);
-		Hub.globalCfg.set(key + "/standardausgabe", ausgabe);
-		Hub.globalCfg.set(key + "/bedingungen", StringTool.join(requirements,
-				";"));
+		String key = Leistungscodes.CFG_KEY + "/" + systemname; //$NON-NLS-1$
+		Hub.globalCfg.set(key + "/name", systemname); //$NON-NLS-1$
+		Hub.globalCfg.set(key + "/leistungscodes", codesystem); //$NON-NLS-1$
+		Hub.globalCfg.set(key + "/standardausgabe", ausgabe); //$NON-NLS-1$
+		Hub.globalCfg.set(key + "/bedingungen", StringTool.join(requirements, //$NON-NLS-1$
+				";")); //$NON-NLS-1$
 	}
 
 	public static void removeAbrechnungssystem(final String systemName) {
-		Hub.globalCfg.remove(Leistungscodes.CFG_KEY + "/" + systemName);
+		Hub.globalCfg.remove(Leistungscodes.CFG_KEY + "/" + systemName); //$NON-NLS-1$
 		Hub.globalCfg.flush();
 	}
 
 	public static String getCodeSystem(final String billingSystem) {
-		String ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/"
-				+ billingSystem + "/leistungscodes", null);
+		String ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/" //$NON-NLS-1$
+				+ billingSystem + "/leistungscodes", null); //$NON-NLS-1$
 		if (ret == null) { // compatibility
 			getAbrechnungsSysteme();
-			ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/"
-					+ billingSystem + "/leistungscodes", "?");
+			ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/" //$NON-NLS-1$
+					+ billingSystem + "/leistungscodes", "?"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return ret;
 	}
 
 	public static String getDefaultPrintSystem(final String billingSystem) {
-		String ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/"
-				+ billingSystem + "/standardausgabe", null);
+		String ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/" //$NON-NLS-1$
+				+ billingSystem + "/standardausgabe", null); //$NON-NLS-1$
 		if (ret == null) { // compatibility
 			getAbrechnungsSysteme();
-			ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/"
-					+ billingSystem + "/standardausgabe", "?");
+			ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/" //$NON-NLS-1$
+					+ billingSystem + "/standardausgabe", "?"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return ret;
 	}
 
 	public static String[] getBillingSystemConstants(final String billingSystem) {
-		String bc = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/"
-				+ billingSystem + "/constants", null);
+		String bc = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/" //$NON-NLS-1$
+				+ billingSystem + "/constants", null); //$NON-NLS-1$
 		if (bc == null) {
 			return new String[0];
 		} else {
-			return bc.split("#");
+			return bc.split("#"); //$NON-NLS-1$
 		}
 	}
 
@@ -772,12 +795,12 @@ public class Fall extends PersistentObject {
 			final String constant) {
 		String[] c = getBillingSystemConstants(billingSystem);
 		for (String bc : c) {
-			String[] val = bc.split("=");
+			String[] val = bc.split("="); //$NON-NLS-1$
 			if (val[0].equalsIgnoreCase(constant)) {
 				return val[1];
 			}
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	/**
@@ -792,28 +815,28 @@ public class Fall extends PersistentObject {
 	public static void addBillingSystemConstant(final String billingSystem,
 			final String constant) {
 		if (constant.indexOf('=') != -1) {
-			String bc = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/"
-					+ billingSystem + "/constants", null);
+			String bc = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/" //$NON-NLS-1$
+					+ billingSystem + "/constants", null); //$NON-NLS-1$
 			if (bc != null) {
-				bc += "#" + constant;
+				bc += "#" + constant; //$NON-NLS-1$
 			} else {
 				bc = constant;
 			}
-			Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/" + billingSystem
-					+ "/constants", bc);
+			Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/" + billingSystem //$NON-NLS-1$
+					+ "/constants", bc); //$NON-NLS-1$
 		}
 	}
 
 	public static void removeBillingSystemConstant(final String billingSystem,
 			final String constant) {
-		String bc = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/"
-				+ billingSystem + "/constants", null);
-		bc = bc.replaceAll(constant, "");
-		bc = bc.replaceAll("##", "#");
-		bc = bc.replaceFirst("#$", "");
-		bc = bc.replaceFirst("^#", "");
-		Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/" + billingSystem
-				+ "/constants", bc);
+		String bc = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/" //$NON-NLS-1$
+				+ billingSystem + "/constants", null); //$NON-NLS-1$
+		bc = bc.replaceAll(constant, ""); //$NON-NLS-1$
+		bc = bc.replaceAll("##", "#"); //$NON-NLS-1$ //$NON-NLS-2$
+		bc = bc.replaceFirst("#$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		bc = bc.replaceFirst("^#", ""); //$NON-NLS-1$ //$NON-NLS-2$
+		Hub.globalCfg.set(Leistungscodes.CFG_KEY + "/" + billingSystem //$NON-NLS-1$
+				+ "/constants", bc); //$NON-NLS-1$
 	}
 
 	/**
@@ -826,8 +849,8 @@ public class Fall extends PersistentObject {
 	@Deprecated
 	public static String getBillingSystemAttribute(final String billingSystem,
 			final String attr) {
-		String ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/"
-				+ billingSystem + "/" + attr, "");
+		String ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/" //$NON-NLS-1$
+				+ billingSystem + "/" + attr, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		return ret;
 	}
 
@@ -839,8 +862,8 @@ public class Fall extends PersistentObject {
 	 *         K,T,D for Kontakt, Text, Date
 	 */
 	public static String getRequirements(final String billingSystem) {
-		String ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/"
-				+ billingSystem + "/bedingungen", null);
+		String ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/" //$NON-NLS-1$
+				+ billingSystem + "/bedingungen", null); //$NON-NLS-1$
 		return ret;
 	}
 

@@ -126,6 +126,49 @@ public class Messages extends NLS {
 	public static String Validator_NoMandator;
 
 	public static String Validator_NoName;
+	public static String XMLExporter_AHVInvalid;
+
+	public static String XMLExporter_Change;
+
+	public static String XMLExporter_CouldNotWriteFile;
+
+	public static String XMLExporter_Currency;
+
+	public static String XMLExporter_ErroneusBill;
+
+	public static String XMLExporter_ErrorCaption;
+
+	public static String XMLExporter_ErrorInBill;
+
+	public static String XMLExporter_IVCaseNumberInvalid;
+
+	public static String XMLExporter_MandatorErrorCaption;
+
+	public static String XMLExporter_MandatorErrorText;
+
+	public static String XMLExporter_NIFInvalid;
+
+	public static String XMLExporter_NoPatientText;
+
+	public static String XMLExporter_NoPostal;
+
+	public static String XMLExporter_PleaseEnterOutputDirectoryForBills;
+
+	public static String XMLExporter_ReadErrorCaption;
+
+	public static String XMLExporter_ReadErrorText;
+
+	public static String XMLExporter_StornoImpossibleCaption;
+
+	public static String XMLExporter_StornoImpossibleText;
+
+	public static String XMLExporter_SumMismatch;
+
+	public static String XMLExporter_TarmedForTrustCenter;
+
+	public static String XMLExporter_unknown;
+
+	public static String XMLExporter_Unknown;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

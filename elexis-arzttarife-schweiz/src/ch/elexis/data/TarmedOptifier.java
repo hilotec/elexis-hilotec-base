@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedOptifier.java 6140 2010-02-14 13:34:04Z rgw_ch $
+ * $Id: TarmedOptifier.java 6141 2010-02-14 16:21:10Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -31,8 +31,8 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class TarmedOptifier implements IOptifier {
-	private static final String TL = "TL";
-	private static final String AL = "AL";
+	private static final String TL = "TL"; //$NON-NLS-1$
+	private static final String AL = "AL"; //$NON-NLS-1$
 	public static final int OK = 0;
 	public static final int PREISAENDERUNG = 1;
 	public static final int KUMULATION = 2;
