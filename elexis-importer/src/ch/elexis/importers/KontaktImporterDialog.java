@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktImporterDialog.java 4715 2008-12-04 10:09:55Z rgw_ch $
+ *  $Id: KontaktImporterDialog.java 6137 2010-02-14 09:45:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.importers;
 
@@ -37,10 +37,10 @@ public class KontaktImporterDialog extends TitleAreaDialog {
 	@Override
 	public void create(){
 		super.create();
-		setTitle("Importiere Kontakt");
-		setMessage("Geben Sie bitte Dateityp und Datei zum importieren an");
+		setTitle(Messages.KontaktImporterDialog_ImportingContact);
+		setMessage(Messages.KontaktImporterDialog_PleaseEnterFileTypeAndFile);
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
-		getShell().setText("Importer");
+		getShell().setText(Messages.KontaktImporterDialog_ImporterCaption);
 	}
 	
 	@Override

@@ -1,7 +1,7 @@
 /**
- * (c) 2007-2008 by G. Weirich
+ * (c) 2007-2010 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 5547 2009-07-10 15:45:44Z rgw_ch $
+ * $Id: HL7.java 6137 2010-02-14 09:45:36Z rgw_ch $
  */
 
 package ch.elexis.importers;
@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.List;
 
+import ch.elexis.StringConstants;
 import ch.elexis.data.Anschrift;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Labor;
@@ -32,6 +33,12 @@ import ch.rgw.tools.Result.SEVERITY;
  * 
  */
 public class HL7 {
+	private static final String NTE = "NTE"; //$NON-NLS-1$
+	private static final String ORC = "ORC"; //$NON-NLS-1$
+	private static final String OBX = "OBX"; //$NON-NLS-1$
+	private static final String OBR = "OBR"; //$NON-NLS-1$
+
+	
 	public enum RECORDTYPE {
 		TEXT, CODED, NUMERIC, STRUCTURED, OTHER
 	};
@@ -81,22 +88,22 @@ public class HL7 {
 		File file = new File(filename);
 		this.filename = filename;
 		if (!file.canRead()) {
-			return new Result<Object>(SEVERITY.WARNING, 1, "Kann Datei nicht lesen", filename, true);
+			return new Result<Object>(SEVERITY.WARNING, 1, Messages.HL7_CannotReadFile, filename, true);
 		}
 		try {
 			FileReader fr = new FileReader(file);
 			char[] in = new char[(int) file.length()];
 			if (fr.read(in) != in.length) {
-				return new Result<Object>(SEVERITY.WARNING, 3, "EOF", filename, true);
+				return new Result<Object>(SEVERITY.WARNING, 3, "EOF", filename, true); //$NON-NLS-1$
 			}
 			String hl7raw = new String(in);
-			lines = hl7raw.split("[\\r\\n]+");
-			separator = "\\" + lines[0].substring(3, 4);
+			lines = hl7raw.split("[\\r\\n]+"); //$NON-NLS-1$
+			separator = "\\" + lines[0].substring(3, 4); //$NON-NLS-1$
 			fr.close();
-			return new Result<Object>("OK");
+			return new Result<Object>("OK"); //$NON-NLS-1$
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return new Result<Object>(SEVERITY.ERROR, 2, "Exception beim Lesen", ex.getMessage(),
+			return new Result<Object>(SEVERITY.ERROR, 2, Messages.HL7_ExceptionWhileReading, ex.getMessage(),
 				true);
 		}
 		
@@ -146,32 +153,32 @@ public class HL7 {
 	public Result<Object> getPatient(final boolean createIfNotFound){
 		Query<Patient> qbe = new Query<Patient>(Patient.class);
 		List<Patient> list = null;
-		String nachname = "";
-		String vorname = "";
-		String gebdat = "";
+		String nachname = ""; //$NON-NLS-1$
+		String vorname = ""; //$NON-NLS-1$
+		String gebdat = ""; //$NON-NLS-1$
 		String sex = Person.FEMALE;
 		
 		if (pat == null) {
-			String[] elPid = getElement("PID", 0);
+			String[] elPid = getElement("PID", 0); //$NON-NLS-1$
 			String patid = elPid[2];
 			if (StringTool.isNothing(patid)) {
 				patid = elPid[3];
 				if (StringTool.isNothing(patid)) {
 					patid = elPid[4];
 					if (patid == null) {
-						patid = "";
+						patid = ""; //$NON-NLS-1$
 					}
 				}
 			}
-			String[] pidflds = patid.split("[\\^ ]+");
+			String[] pidflds = patid.split("[\\^ ]+"); //$NON-NLS-1$
 			String pid = pidflds[pidflds.length - 1];
 			
-			String[] orc = getElement("ORC", 0);
+			String[] orc = getElement(ORC, 0);
 			if (orc.length > 2) {
 				String orderNumber = orc[2]; // Placer order number
 				if (orderNumber.length() > 0) {
 					if (orderNumber.indexOf('-') != -1) {
-						pid = StringTool.checkModulo10(orderNumber.split("-")[0]);
+						pid = StringTool.checkModulo10(orderNumber.split("-")[0]); //$NON-NLS-1$
 					} else {
 						pid = orderNumber;
 					}
@@ -179,16 +186,16 @@ public class HL7 {
 				
 			}
 			if (pid.indexOf('-') != -1) {
-				pid = StringTool.checkModulo10(pid.split("-")[0]);
+				pid = StringTool.checkModulo10(pid.split("-")[0]); //$NON-NLS-1$
 			}
 			if (pid != null) {
 				// Find a patient with the given ID
-				qbe.add("PatientNr", "=", pid);
+				qbe.add(Patient.FLD_PATID, Query.EQUALS, pid);
 				list = qbe.execute();
 			}
 			
 			if (elPid.length > 5) {
-				String[] name = elPid[5].split("\\^");
+				String[] name = elPid[5].split("\\^"); //$NON-NLS-1$
 				if (name.length > 0) {
 					nachname = name[0];
 				}
@@ -198,7 +205,7 @@ public class HL7 {
 				if (elPid.length > 7) {
 					gebdat = elPid[7];
 					if (elPid.length > 8) {
-						sex = elPid[8].equalsIgnoreCase("M") ? Person.MALE : Person.FEMALE;
+						sex = elPid[8].equalsIgnoreCase("M") ? Person.MALE : Person.FEMALE; //$NON-NLS-1$
 					} else {
 						sex = StringTool.isFemale(vorname) ? Person.FEMALE : Person.MALE;
 					}
@@ -207,16 +214,16 @@ public class HL7 {
 			if ((pid == null) || (list.size() != 1)) {
 				// We did not find the patient using the PatID, so we try the name and birthdate
 				qbe.clear();
-				qbe.add("Name", "=", StringTool.normalizeCase(nachname));
-				qbe.add("Vorname", "=", StringTool.normalizeCase(vorname));
-				qbe.add("Geburtsdatum", "=", new TimeTool(gebdat).toString(TimeTool.DATE_COMPACT));
+				qbe.add(Person.NAME, Query.EQUALS, StringTool.normalizeCase(nachname));
+				qbe.add(Person.FIRSTNAME, Query.EQUALS, StringTool.normalizeCase(vorname));
+				qbe.add(Person.BIRTHDATE, Query.EQUALS, new TimeTool(gebdat).toString(TimeTool.DATE_COMPACT));
 				list = qbe.execute();
 				if ((list != null) && (list.size() == 1)) {
 					pat = list.get(0);
 				} else {
 					if (createIfNotFound) {
-						String address = "";
-						String phone = "";
+						String address = StringConstants.EMPTY;
+						String phone = StringConstants.EMPTY;
 						if (elPid.length > 11) {
 							address = elPid[11];
 							if (elPid.length > 13) {
@@ -224,8 +231,8 @@ public class HL7 {
 							}
 						}
 						pat = new Patient(nachname, vorname, gebdat, sex);
-						pat.set("PatientNr", pid);
-						String[] adr = address.split("\\^+");
+						pat.set(Patient.FLD_PATID, pid);
+						String[] adr = address.split("\\^+"); //$NON-NLS-1$
 						Anschrift an = pat.getAnschrift();
 						if (adr.length > 0) {
 							an.setStrasse(adr[0]);
@@ -243,15 +250,15 @@ public class HL7 {
 						}
 						
 						pat.setAnschrift(an);
-						pat.set("Telefon1", phone);
+						pat.set(Patient.FLD_PHONE1, phone);
 					} else {
 						pat =
 							(Patient) KontaktSelektor.showInSync(Patient.class,
-								"Patient auswählen", "Wer ist " + nachname + " " + vorname + " ,"
-									+ gebdat + "?");
+								Messages.HL7_SelectPatient, Messages.HL7_WhoIs + nachname + " " + vorname + " ," //$NON-NLS-3$ //$NON-NLS-4$
+									+ gebdat + "?"); //$NON-NLS-1$
 						if (pat == null) {
 							return new Result<Object>(SEVERITY.WARNING, 1,
-								"Patient nicht in Datenbank", null, true);
+								Messages.HL7_PatientNotInDatabase, null, true);
 						}
 					}
 				}
@@ -261,10 +268,10 @@ public class HL7 {
 				if (nachname.length() != 0 && vorname.length() != 0) {
 					if (!KontaktMatcher.isSame(pat, nachname, vorname, gebdat)) {
 						StringBuilder sb=new StringBuilder();
-						sb.append("Namenskonflikt bei Pat. mit der ID ").append(pid).append(":\n")
-							.append("Labor: ").append(nachname).append(StringTool.space).append(vorname)
-							.append("(").append(sex).append("),").append(gebdat).append("\n")
-							.append("Datenbank: ").append(pat.getLabel());
+						sb.append(Messages.HL7_NameConflictWithID).append(pid).append(":\n") //$NON-NLS-2$
+							.append(Messages.HL7_Lab).append(nachname).append(StringTool.space).append(vorname)
+							.append("(").append(sex).append("),").append(gebdat).append("\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							.append(Messages.HL7_Database).append(pat.getLabel());
 						pat = null;
 						return new Result<Object>(SEVERITY.WARNING, 4,
 							sb.toString(), null, true);
@@ -276,11 +283,11 @@ public class HL7 {
 	}
 	
 	public Result<String> getUID(){
-		String[] msh = getElement("MSH", 0);
+		String[] msh = getElement("MSH", 0); //$NON-NLS-1$
 		if (msh.length > 9) {
 			return new Result<String>(msh[9]);
 		}
-		return new Result<String>(SEVERITY.ERROR, 1, "Invalid MSH", "Error", true);
+		return new Result<String>(SEVERITY.ERROR, 1, "Invalid MSH", "Error", true); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	/**
@@ -293,7 +300,7 @@ public class HL7 {
 		if (labor == null) {
 			if (labName == null) {
 				if (lines.length > 1) {
-					String[] orc = getElement("ORC", 0);
+					String[] orc = getElement(ORC, 0);
 					if (orc.length > 10) {
 						labName = orc[10];
 						if (labID == null) {
@@ -304,15 +311,15 @@ public class HL7 {
 			}
 			Query<Labor> qbe = new Query<Labor>(Labor.class);
 			qbe.startGroup();
-			qbe.add("Kuerzel", "LIKE", "%" + labName + "%");
+			qbe.add(Kontakt.FLD_SHORT_LABEL, Query.LIKE, "%" + labName + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 			qbe.or();
-			qbe.add("Name", "LIKE", "%" + labName + "%");
+			qbe.add(Kontakt.FLD_NAME1, Query.LIKE, "%" + labName + "%"); //$NON-NLS-1$ //$NON-NLS-2$
 			qbe.or();
-			qbe.add("Kuerzel", "=", labID);
+			qbe.add(Kontakt.FLD_SHORT_LABEL, Query.EQUALS, labID);
 			qbe.endGroup();
 			List<Labor> list = qbe.execute();
 			if (list.size() != 1) {
-				labor = new Labor(labName, "Labor " + labName);
+				labor = new Labor(labName, "Labor " + labName); //$NON-NLS-1$
 			} else {
 				labor = list.get(0);
 			}
@@ -366,7 +373,7 @@ public class HL7 {
 		}
 		
 		OBR nextOBR(final int of){
-			int n = findNext("OBR", of + 1);
+			int n = findNext(OBR, of + 1);
 			if (n == -1) {
 				return null;
 			}
@@ -392,10 +399,10 @@ public class HL7 {
 		public OBX firstOBX(){
 			int oldof = of;
 			while (++of < lines.length) {
-				if (lines[of].startsWith("OBX")) {
+				if (lines[of].startsWith(OBX)) {
 					return new OBX(this, of);
 				}
-				if (lines[of].startsWith("OBR")) {
+				if (lines[of].startsWith(OBR)) {
 					of -= 1;
 					return null;
 				}
@@ -417,10 +424,10 @@ public class HL7 {
 				if (nf >= lines.length) {
 					return null;
 				}
-				if (lines[nf].startsWith("OBX")) {
+				if (lines[nf].startsWith(OBX)) {
 					return new OBX(this, nf);
 				}
-				if (lines[nf].startsWith("OBR")) {
+				if (lines[nf].startsWith(OBR)) {
 					return null;
 				}
 				nf += 1;
@@ -451,6 +458,12 @@ public class HL7 {
 	}
 	
 	public class OBX {
+		private static final String FT = "FT"; //$NON-NLS-1$
+		private static final String TX = "TX"; //$NON-NLS-1$
+		private static final String SN = "SN"; //$NON-NLS-1$
+		private static final String MO = "MO"; //$NON-NLS-1$
+		private static final String CE = "CE"; //$NON-NLS-1$
+		private static final String NM = "NM"; //$NON-NLS-1$
 		int of;
 		String[] obxFields;
 		OBR myOBR;
@@ -469,9 +482,9 @@ public class HL7 {
 		}
 		
 		public String getItemCode(){
-			String[] fl = getField(3).split("\\^");
-			if (fl[0].startsWith("HIS-")) {
-				return "Hist";
+			String[] fl = getField(3).split("\\^"); //$NON-NLS-1$
+			if (fl[0].startsWith("HIS-")) { //$NON-NLS-1$
+				return "Hist"; //$NON-NLS-1$
 			} else {
 				return fl[0];
 			}
@@ -479,10 +492,10 @@ public class HL7 {
 		
 		public String getItemName(){
 			String raw = getField(3);
-			String[] split = raw.split("\\^");
+			String[] split = raw.split("\\^"); //$NON-NLS-1$
 			if (split.length > 1) {
-				if(split[0].startsWith("HIS-")){
-					return "Histologie";
+				if(split[0].startsWith("HIS-")){ //$NON-NLS-1$
+					return Messages.HL7_Hostologie;
 				}else{
 					return split[1];
 				}
@@ -494,18 +507,18 @@ public class HL7 {
 			StringBuilder ret = new StringBuilder();
 			int lastPos=of;
 			if (getType().equals(RECORDTYPE.TEXT)) {
-				String[] flds = getField(3).split("\\^");
+				String[] flds = getField(3).split("\\^"); //$NON-NLS-1$
 				if (flds.length > 1) {
-					while (flds[0].startsWith("HIS-")) {
+					while (flds[0].startsWith("HIS-")) { //$NON-NLS-1$
 						lastPos=of;
-						ret.append("*.").append(flds[1]).append(".*:\n").append(getField(5))
-							.append("\n\n");
+						ret.append("*.").append(flds[1]).append(".*:\n").append(getField(5)) //$NON-NLS-1$ //$NON-NLS-2$
+							.append("\n\n"); //$NON-NLS-1$
 						OBX nextOBX = myOBR.nextOBX(this);
 						if (nextOBX == null) {
 							break;
 						}
 						setPosition(nextOBX.of);
-						flds=getField(3).split("\\^");
+						flds=getField(3).split("\\^"); //$NON-NLS-1$
 					}
 					setPosition(lastPos);
 				}
@@ -519,11 +532,11 @@ public class HL7 {
 		
 		public String getUnits(){
 			String raw = getField(6);
-			String[] split = raw.split("\\^");
+			String[] split = raw.split("\\^"); //$NON-NLS-1$
 			if (split.length > 0) {
 				return split[0];
 			}
-			return "-";
+			return "-"; //$NON-NLS-1$
 		}
 		
 		public String getRefRange(){
@@ -562,16 +575,16 @@ public class HL7 {
 		
 		public RECORDTYPE getType(){
 			String type = getField(2);
-			if (type.equals("TX") || type.equals("ST") || type.equals("FT")) {
-				if (getField(5).matches("[<>]?[0-9\\.,]+")) {
+			if (type.equals(TX) || type.equals("ST") || type.equals(FT)) { //$NON-NLS-1$
+				if (getField(5).matches("[<>]?[0-9\\.,]+")) { //$NON-NLS-1$
 					return RECORDTYPE.NUMERIC;
 				}
 				return RECORDTYPE.TEXT;
-			} else if (type.equals("NM") || type.equals("MO")) {
+			} else if (type.equals(NM) || type.equals(MO)) {
 				return RECORDTYPE.NUMERIC;
-			} else if (type.equals("CE")) {
+			} else if (type.equals(CE)) {
 				return RECORDTYPE.CODED;
-			} else if (type.equals("SN")) {
+			} else if (type.equals(SN)) {
 				return RECORDTYPE.STRUCTURED;
 			} else {
 				return RECORDTYPE.OTHER;
@@ -585,9 +598,9 @@ public class HL7 {
 		 * @return true if the field is TX and contains not only numbers.
 		 */
 		public boolean isPlainText(){
-			if (getField(2).equals("TX")) {
+			if (getField(2).equals(TX)) {
 				String res = getField(5);
-				if (res.matches("[<>0-9\\.,]+")) {
+				if (res.matches("[<>0-9\\.,]+")) { //$NON-NLS-1$
 					return false;
 				} else {
 					return true;
@@ -598,34 +611,34 @@ public class HL7 {
 		
 		public boolean isNumeric(){
 			String type = getField(2);
-			if (type.equals("TX")) {
+			if (type.equals(TX)) {
 				String res = getField(5);
-				if (res.matches("<>[0-9\\.,]+")) {
+				if (res.matches("<>[0-9\\.,]+")) { //$NON-NLS-1$
 					return true;
 				}
-			} else if (type.equals("NM")) {
+			} else if (type.equals(NM)) {
 				return true;
 			}
 			return false;
 		}
 		
 		public boolean isFormattedText(){
-			return (obxFields[2].equals("FT"));
+			return (obxFields[2].equals(FT));
 		}
 		
 		public RESULTSTATUS getStatus(){
 			String stat = getField(11);
-			if (stat.equals("C")) {
+			if (stat.equals("C")) { //$NON-NLS-1$
 				return RESULTSTATUS.CORR;
-			} else if (stat.equals("D")) {
+			} else if (stat.equals("D")) { //$NON-NLS-1$
 				return RESULTSTATUS.DEL;
-			} else if (stat.equals("F")) {
+			} else if (stat.equals("F")) { //$NON-NLS-1$
 				return RESULTSTATUS.FINAL;
-			} else if (stat.equals("O")) {
+			} else if (stat.equals("O")) { //$NON-NLS-1$
 				return RESULTSTATUS.DETAIL;
-			} else if (stat.equals("P")) {
+			} else if (stat.equals("P")) { //$NON-NLS-1$
 				return RESULTSTATUS.PRELIMINARY;
-			} else if (stat.equals("R")) {
+			} else if (stat.equals("R")) { //$NON-NLS-1$
 				return RESULTSTATUS.NOTVERIFIED;
 			} else {
 				return RESULTSTATUS.UNKNOWN;
@@ -647,7 +660,7 @@ public class HL7 {
 			if (obxFields.length > f) {
 				return obxFields[f];
 			}
-			return "";
+			return StringConstants.EMPTY;
 		}
 	}
 	
@@ -662,12 +675,12 @@ public class HL7 {
 		String obxNr = obxFields[1];
 		StringBuilder ret = new StringBuilder();
 		for (int i = 0; i < hl7Rows.length; i++) {
-			if (hl7Rows[i].startsWith("NTE")) {
+			if (hl7Rows[i].startsWith(NTE)) {
 				String[] nte = hl7Rows[i].split(separator);
 				if (nte.length > 1) {
 					if (nte[1].equals(obxNr)) {
 						if (nte.length > 3) {
-							ret.append(nte[3]).append("\n");
+							ret.append(nte[3]).append(StringTool.lf);
 						}
 					}
 				}
@@ -686,21 +699,21 @@ public class HL7 {
 		StringBuffer comments = new StringBuffer();
 		
 		for (int i = 0; i < hl7Rows.length; i++) {
-			if (hl7Rows[i].startsWith("NTE")) {
+			if (hl7Rows[i].startsWith(NTE)) {
 				String[] nte = hl7Rows[i].split(separator);
 				if (nte.length > 3) {
 					String rawComment;
 					String source = nte[1];
-					if (source.matches("^0*$")) {
+					if (source.matches("^0*$")) { //$NON-NLS-1$
 						// independent comment
 						rawComment = nte[3];
 					} else {
 						// OBX comment
 						String obxName = getItemNameForNTE(source);
-						rawComment = obxName + ": " + nte[3];
+						rawComment = obxName + ": " + nte[3]; //$NON-NLS-1$
 					}
 					comments.append(rawComment);
-					comments.append("\n");
+					comments.append("\n"); //$NON-NLS-1$
 				}
 			}
 		}
@@ -725,12 +738,12 @@ public class HL7 {
 	 */
 	private String getItemNameForNTE(final String source){
 		String[] obx;
-		int i = findNext("OBX", 0);
+		int i = findNext(OBX, 0);
 		while (i != -1) {
 			obx = lines[i].split(separator);
 			if (obx[1].equals(source)) {
 				String raw = obx[3];
-				String[] split = raw.split("\\^");
+				String[] split = raw.split("\\^"); //$NON-NLS-1$
 				String obxName;
 				if (split.length > 1) {
 					obxName = split[1];
@@ -741,11 +754,11 @@ public class HL7 {
 				return obxName;
 			}
 			
-			i = findNext("OBX", i + 1);
+			i = findNext(OBX, i + 1);
 		}
 		
 		// not found
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	
 	public static TimeTool makeTime(final String datestring){

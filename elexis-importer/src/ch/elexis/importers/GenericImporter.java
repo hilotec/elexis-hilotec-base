@@ -29,7 +29,7 @@ import ch.elexis.util.SWTHelper;
  *
  */
 public class GenericImporter extends ImporterPage {
-	public static final String TITLE = "Allgemein";
+	public static final String TITLE = Messages.GenericImporter_General;
 	
 	GenericImporterBlatt importerBlatt;
 	
@@ -49,12 +49,12 @@ public class GenericImporter extends ImporterPage {
 		if(importerBlatt.doImport()){
 			return Status.OK_STATUS;
 		}
-		return new Status(Status.ERROR,"ch.elexis.import.div",1,"Fehler beim Import",null);
+		return new Status(Status.ERROR,"ch.elexis.import.div",1,Messages.GenericImporter_ErrorImporting,null); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getDescription() {
-		return "Import von beliebigen Daten aus verschiedener Quelle";
+		return Messages.GenericImporter_ImportGeneralText;
 	}
 
 	@Override

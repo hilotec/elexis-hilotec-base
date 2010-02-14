@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ConflictResolveDialog.java 4104 2008-07-05 19:23:25Z rgw_ch $
+ * $Id: ConflictResolveDialog.java 6137 2010-02-14 09:45:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.matchers;
@@ -45,7 +45,7 @@ public class ConflictResolveDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		setTitle("Nähere Angaben zum Import");
+		setTitle(Messages.ConflictResolveDialog_ImportCaption);
 		setMessage(mine.getLabel());
 	}
 
@@ -55,10 +55,10 @@ public class ConflictResolveDialog extends TitleAreaDialog {
 		super.okPressed();
 	}
 	
-	final static String resolve1="Es kann nicht automatisch entschieden werden, "+
-	"ob # in der Datenbank enthalten ist, bzw. welchem existierenden Kontakt dies entspricht.\n"+
-	"Bitte wählen Sie unten aus, welchem Kontakt dieser neue Eintrag entspricht oder ob ein Kontakt "+
-	"für diesen Eintrag neu erstellt werden soll.";
+	final static String resolve1=Messages.ConflictResolveDialog_CannotDecideAutomatically+
+	Messages.ConflictResolveDialog_whethercontainedinDatavase+
+	Messages.ConflictResolveDialog_Pleaseselectbelow+
+	Messages.ConflictResolveDialog_OrCreateNew;
 
 	public Kontakt getResult() {
 		return res;

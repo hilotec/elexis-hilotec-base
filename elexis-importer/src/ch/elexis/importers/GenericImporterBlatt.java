@@ -8,7 +8,7 @@
  * Contributors:
  *    D. Lutz - initial implementation
  *    
- * $Id: GenericImporterBlatt.java 4745 2008-12-04 21:37:38Z rgw_ch $
+ * $Id: GenericImporterBlatt.java 6137 2010-02-14 09:45:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
@@ -57,7 +57,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.data.Artikel;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
@@ -78,23 +80,23 @@ public class GenericImporterBlatt extends Composite {
 	static final String LASTFIELDS_KEY = "ImporterPage/" + GenericImporter.TITLE + "/lastfields"; //$NON-NLS-1$ //$NON-NLS-2$
 	
 	static final String[] METHODS = new String[] {
-		"XLS"
+		"XLS" //$NON-NLS-1$
 	};
 	private static final int XLS = 0;
 	
 	int method = XLS;
-	String filename = "";
+	String filename = StringConstants.EMPTY;
 	
 	Label lbFileName;
 	Combo cbMethods;
 	
-	private Log log = Log.get("GenericImporter");
+	private Log log = Log.get("GenericImporter"); //$NON-NLS-1$
 	
 	public GenericImporterBlatt(Composite parent){
 		super(parent, SWT.NONE);
 		setLayout(new GridLayout(2, false));
-		new Label(this, SWT.NONE).setText("Dateityp");
-		new Label(this, SWT.NONE).setText("Datei");
+		new Label(this, SWT.NONE).setText(Messages.GenericImporterBlatt_FileType);
+		new Label(this, SWT.NONE).setText(Messages.GenericImporterBlatt_File);
 		cbMethods = new Combo(this, SWT.SINGLE);
 		cbMethods.setItems(METHODS);
 		cbMethods.select(0);
@@ -112,22 +114,22 @@ public class GenericImporterBlatt extends Composite {
 			public void widgetSelected(SelectionEvent e){
 				FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
 				String file = fd.open();
-				lbFileName.setText(StringTool.isNothing(file) ? "" : file);
+				lbFileName.setText(StringTool.isNothing(file) ? StringConstants.EMPTY : file);
 				filename = lbFileName.getText();
 				Hub.localCfg.set(FILENAME_KEY, filename);
 			}
 		});
-		bLoad.setText("Datei wählen");
+		bLoad.setText(Messages.GenericImporterBlatt_SelectFile);
 		lbFileName = new Label(this, SWT.NONE);
 		lbFileName.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
 		
-		String file = Hub.localCfg.get(FILENAME_KEY, "");
+		String file = Hub.localCfg.get(FILENAME_KEY, StringConstants.EMPTY);
 		if (!StringTool.isNothing(file)) {
 			filename = file;
 			lbFileName.setText(file);
 		} else {
-			filename = "";
-			lbFileName.setText("Bitte Dateityp und Datei wählen");
+			filename = StringConstants.EMPTY;
+			lbFileName.setText(Messages.GenericImporterBlatt_PleaseSelectFile);
 		}
 	}
 	
@@ -175,7 +177,7 @@ public class GenericImporterBlatt extends Composite {
 			addPage(mappingPage);
 			addPage(syncPage);
 			
-			setWindowTitle("Allgemeine Daten importieren");
+			setWindowTitle(Messages.GenericImporterBlatt_GeneralFileImport);
 			
 			initInput();
 		}
@@ -223,11 +225,11 @@ public class GenericImporterBlatt extends Composite {
 			private HashMap<String, Integer> inputFieldIndices = new HashMap<String, Integer>();
 			
 			MappingPage(){
-				super("Mapping", "Mapping", null);
+				super("Mapping", "Mapping", null); //$NON-NLS-1$ //$NON-NLS-2$
 				String description =
-					"Bitte wählen Sie in der oberen Liste den passenden Typ. "
-						+ "Unten werde die entsprechenden Felder automatisch ausgewählt. "
-						+ "Bei Bedarf können Sie diese Felder anpassen.";
+					Messages.GenericImporterBlatt_PleaseSelectType
+						+ Messages.GenericImporterBlatt_LowerFieldSelectedAutoamtcally
+						+ Messages.GenericImporterBlatt_ChangeIfNeeded;
 				setDescription(description);
 			}
 			
@@ -408,49 +410,49 @@ public class GenericImporterBlatt extends Composite {
 				Field field;
 				
 				if (template instanceof Person) {
-					fields.add(new Field("Name", true));
-					fields.add(new Field("Vorname", true));
-					fields.add(new Field("Zusatz"));
-					fields.add(new Field("Geburtsdatum", true));
-					fields.add(new Field("Geschlecht"));
-					fields.add(new Field("Strasse"));
-					fields.add(new Field("Plz"));
-					fields.add(new Field("Ort"));
-					fields.add(new Field("Land"));
-					fields.add(new Field("Telefon1"));
-					fields.add(new Field("Telefon2"));
-					fields.add(new Field("Natel"));
-					fields.add(new Field("Fax"));
-					fields.add(new Field("E-Mail"));
-					fields.add(new Field("Website"));
-					fields.add(new Field("Titel"));
-					fields.add(new Field("Kuerzel"));
-					fields.add(new Field("Bemerkung"));
+					fields.add(new Field(Person.NAME, true));
+					fields.add(new Field(Person.FIRSTNAME, true));
+					fields.add(new Field("Zusatz")); //$NON-NLS-1$
+					fields.add(new Field(Person.BIRTHDATE, true));
+					fields.add(new Field(Person.SEX));
+					fields.add(new Field(Kontakt.FLD_STREET));
+					fields.add(new Field(Kontakt.FLD_ZIP));
+					fields.add(new Field(Kontakt.FLD_PLACE));
+					fields.add(new Field(Kontakt.FLD_COUNTRY));
+					fields.add(new Field(Kontakt.FLD_PHONE1));
+					fields.add(new Field(Kontakt.FLD_PHONE2));
+					fields.add(new Field(Kontakt.FLD_MOBILEPHONE));
+					fields.add(new Field(Kontakt.FLD_FAX));
+					fields.add(new Field(Kontakt.FLD_E_MAIL));
+					fields.add(new Field(Kontakt.FLD_WEBSITE));
+					fields.add(new Field(Person.TITLE));
+					fields.add(new Field(Person.FLD_SHORT_LABEL));
+					fields.add(new Field(Person.FLD_REMARK));
 				} else if (template instanceof Organisation) {
-					fields.add(new Field("Name"));
-					fields.add(new Field("Zusatz1"));
-					fields.add(new Field("Ansprechperson"));
-					fields.add(new Field("Tel. direkt"));
-					fields.add(new Field("Kuerzel"));
-					fields.add(new Field("Strasse"));
-					fields.add(new Field("Plz"));
-					fields.add(new Field("Ort"));
-					fields.add(new Field("Land"));
-					fields.add(new Field("Telefon1"));
-					fields.add(new Field("Telefon2"));
-					fields.add(new Field("E-Mail"));
-					fields.add(new Field("Website"));
-					fields.add(new Field("Fax"));
-					fields.add(new Field("Bemerkung"));
+					fields.add(new Field(Organisation.FLD_NAME1));
+					fields.add(new Field("Zusatz1")); //$NON-NLS-1$
+					fields.add(new Field("Ansprechperson")); //$NON-NLS-1$
+					fields.add(new Field("Tel. direkt")); //$NON-NLS-1$
+					fields.add(new Field(Organisation.FLD_SHORT_LABEL));
+					fields.add(new Field(Organisation.FLD_STREET));
+					fields.add(new Field(Organisation.FLD_ZIP));
+					fields.add(new Field(Organisation.FLD_PLACE));
+					fields.add(new Field(Organisation.FLD_COUNTRY));
+					fields.add(new Field(Organisation.FLD_PHONE1));
+					fields.add(new Field(Organisation.FLD_PHONE2));
+					fields.add(new Field(Organisation.FLD_E_MAIL));
+					fields.add(new Field(Organisation.FLD_WEBSITE));
+					fields.add(new Field(Organisation.FLD_FAX));
+					fields.add(new Field(Organisation.FLD_REMARK));
 				} else if (template instanceof Artikel) {
-					fields.add(new Field("SubID", true));
-					fields.add(new Field("Name"));
-					fields.add(new Field("Maxbestand"));
-					fields.add(new Field("Minbestand"));
-					fields.add(new Field("Istbestand"));
-					fields.add(new Field("Typ"));
-					fields.add(new Field("Codeclass"));
-					fields.add(new Field("LieferantID"));
+					fields.add(new Field(Artikel.FLD_SUB_ID, true));
+					fields.add(new Field(Artikel.FLD_NAME));
+					fields.add(new Field(Artikel.MAXBESTAND));
+					fields.add(new Field(Artikel.MINBESTAND));
+					fields.add(new Field(Artikel.ISTBESTAND));
+					fields.add(new Field(Artikel.FLD_TYP));
+					fields.add(new Field(Artikel.FLD_CODECLASS));
+					fields.add(new Field(Artikel.FLD_LIEFERANT_ID));
 				} else {
 					// unknown type
 				}
@@ -648,7 +650,7 @@ public class GenericImporterBlatt extends Composite {
 						if (element instanceof Field) {
 							Field field = (Field) element;
 							if (field.isKey) {
-								text = field.toString() + "*";
+								text = field.toString() + "*"; //$NON-NLS-1$
 							} else {
 								text = field.toString();
 							}
@@ -668,13 +670,13 @@ public class GenericImporterBlatt extends Composite {
 				topArea.setLayout(new GridLayout(2, false));
 				
 				label = new Label(topArea, SWT.NONE);
-				label.setText("Typ:");
+				label.setText("Typ:"); //$NON-NLS-1$
 				
 				typesViewer = new ComboViewer(topArea, SWT.DROP_DOWN | SWT.READ_ONLY);
 				typesViewer.setContentProvider(arrayContentProvider);
 				typesViewer.setLabelProvider(typeLabelProvider);
 				List<Object> types = new ArrayList<Object>();
-				types.add("Bitte auswählen");
+				types.add(Messages.GenericImporterBlatt_PleaseSelect);
 				types.addAll(getTypes());
 				typesViewer.setInput(types);
 				typesViewer.setSelection(new StructuredSelection(typesViewer.getElementAt(0)));
@@ -689,10 +691,10 @@ public class GenericImporterBlatt extends Composite {
 				bottomArea.setLayout(new GridLayout(2, true));
 				
 				label = new Label(bottomArea, SWT.NONE);
-				label.setText("Felder Excel");
+				label.setText(Messages.GenericImporterBlatt_FieldsExcel);
 				
 				label = new Label(bottomArea, SWT.NONE);
-				label.setText("Felder Elexis");
+				label.setText(Messages.GenericImporterBlatt_FieldsElexis);
 				
 				FormData fd;
 				
@@ -711,7 +713,7 @@ public class GenericImporterBlatt extends Composite {
 				leftArea.setLayout(new FormLayout());
 				
 				addButton = new Button(leftArea, SWT.PUSH);
-				addButton.setText("+");
+				addButton.setText("+"); //$NON-NLS-1$
 				addButton.addSelectionListener(new SelectionListener() {
 					public void widgetSelected(SelectionEvent e){
 						addInputField();
@@ -721,7 +723,7 @@ public class GenericImporterBlatt extends Composite {
 				});
 				
 				delButton = new Button(leftArea, SWT.PUSH);
-				delButton.setText("-");
+				delButton.setText("-"); //$NON-NLS-1$
 				delButton.addSelectionListener(new SelectionListener() {
 					public void widgetSelected(SelectionEvent e){
 						delInputField();
@@ -731,7 +733,7 @@ public class GenericImporterBlatt extends Composite {
 				});
 				
 				upButton = new Button(leftArea, SWT.PUSH);
-				upButton.setText("^");
+				upButton.setText("^"); //$NON-NLS-1$
 				upButton.addSelectionListener(new SelectionListener() {
 					public void widgetSelected(SelectionEvent e){
 						upInputField();
@@ -741,7 +743,7 @@ public class GenericImporterBlatt extends Composite {
 				});
 				
 				downButton = new Button(leftArea, SWT.PUSH);
-				downButton.setText("v");
+				downButton.setText("v"); //$NON-NLS-1$
 				downButton.addSelectionListener(new SelectionListener() {
 					public void widgetSelected(SelectionEvent e){
 						downInputField();
@@ -751,7 +753,7 @@ public class GenericImporterBlatt extends Composite {
 				});
 				
 				keyButton = new Button(leftArea, SWT.PUSH);
-				keyButton.setText("K");
+				keyButton.setText("K"); //$NON-NLS-1$
 				keyButton.addSelectionListener(new SelectionListener() {
 					public void widgetSelected(SelectionEvent e){
 						keyInputField();
@@ -812,7 +814,7 @@ public class GenericImporterBlatt extends Composite {
 				rightArea.setLayout(new FormLayout());
 				
 				addButton = new Button(rightArea, SWT.PUSH);
-				addButton.setText("+");
+				addButton.setText("+"); //$NON-NLS-1$
 				addButton.addSelectionListener(new SelectionListener() {
 					public void widgetSelected(SelectionEvent e){
 						addDbField();
@@ -822,7 +824,7 @@ public class GenericImporterBlatt extends Composite {
 				});
 				
 				delButton = new Button(rightArea, SWT.PUSH);
-				delButton.setText("-");
+				delButton.setText("-"); //$NON-NLS-1$
 				delButton.addSelectionListener(new SelectionListener() {
 					public void widgetSelected(SelectionEvent e){
 						delDbField();
@@ -832,7 +834,7 @@ public class GenericImporterBlatt extends Composite {
 				});
 				
 				upButton = new Button(rightArea, SWT.PUSH);
-				upButton.setText("^");
+				upButton.setText("^"); //$NON-NLS-1$
 				upButton.addSelectionListener(new SelectionListener() {
 					public void widgetSelected(SelectionEvent e){
 						upDbField();
@@ -842,7 +844,7 @@ public class GenericImporterBlatt extends Composite {
 				});
 				
 				downButton = new Button(rightArea, SWT.PUSH);
-				downButton.setText("v");
+				downButton.setText("v"); //$NON-NLS-1$
 				downButton.addSelectionListener(new SelectionListener() {
 					public void widgetSelected(SelectionEvent e){
 						downDbField();
@@ -852,7 +854,7 @@ public class GenericImporterBlatt extends Composite {
 				});
 				
 				keyButton = new Button(rightArea, SWT.PUSH);
-				keyButton.setText("K");
+				keyButton.setText("K"); //$NON-NLS-1$
 				keyButton.addSelectionListener(new SelectionListener() {
 					public void widgetSelected(SelectionEvent e){
 						keyDbField();
@@ -927,14 +929,14 @@ public class GenericImporterBlatt extends Composite {
 		}
 		
 		class SyncPage extends WizardPage {
-			private static final String PLUGIN_ID = "ch.elexis.importer.div";
+			private static final String PLUGIN_ID = "ch.elexis.importer.div"; //$NON-NLS-1$
 			
 			private static final String IMG_DATABASE =
-				"ch.elexis.importers.GenericImporter_database";
-			private static final String IMG_DATABASE_PATH = "rsc/database.png";
+				"ch.elexis.importers.GenericImporter_database"; //$NON-NLS-1$
+			private static final String IMG_DATABASE_PATH = "rsc/database.png"; //$NON-NLS-1$
 			private static final String IMG_CONFLICT =
-				"ch.elexis.importers.GenericImporter_conflict";
-			private static final String IMG_CONFLICT_PATH = "rsc/conflict.png";
+				"ch.elexis.importers.GenericImporter_conflict"; //$NON-NLS-1$
+			private static final String IMG_CONFLICT_PATH = "rsc/conflict.png"; //$NON-NLS-1$
 			
 			private static final int IMAGE_INPUT_ONLY = 1;
 			private static final int IMAGE_DB_ONLY = 2;
@@ -954,8 +956,8 @@ public class GenericImporterBlatt extends Composite {
 			private SyncElement currentSyncElement = null;
 			
 			SyncPage(){
-				super("Synchronize", "Synchronize", null);
-				setDescription("Daten anpassen");
+				super("Synchronize", "Synchronize", null); //$NON-NLS-1$ //$NON-NLS-2$
+				setDescription(Messages.GenericImporterBlatt_MatchData);
 			}
 			
 			private Image getImage(int id){
@@ -989,7 +991,7 @@ public class GenericImporterBlatt extends Composite {
 				composite.setLayout(new GridLayout(1, false));
 				
 				Button refreshButton = new Button(composite, SWT.PUSH);
-				refreshButton.setText("Aktualisieren");
+				refreshButton.setText(Messages.GenericImporterBlatt_update);
 				refreshButton.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e){
 						refresh();
@@ -1069,7 +1071,7 @@ public class GenericImporterBlatt extends Composite {
 					}
 					
 					public String getColumnText(Object element, int columnIndex){
-						String text = "";
+						String text = ""; //$NON-NLS-1$
 						
 						// commonly used variables
 						int fieldIndex;
@@ -1111,18 +1113,18 @@ public class GenericImporterBlatt extends Composite {
 									} else {
 										// values differ, show both values
 										if (dbValue != null) {
-											text = inputValue + "/" + dbValue;
+											text = inputValue + "/" + dbValue; //$NON-NLS-1$
 										} else {
-											text = inputValue + "/";
+											text = inputValue + "/"; //$NON-NLS-1$
 										}
 									}
 								} else {
 									if (dbValue != null) {
 										// only dbValue available
-										text = "/" + dbValue;
+										text = "/" + dbValue; //$NON-NLS-1$
 									} else {
 										// no value available
-										text = "/";
+										text = "/"; //$NON-NLS-1$
 									}
 								}
 								
@@ -1206,9 +1208,9 @@ public class GenericImporterBlatt extends Composite {
 				
 				// import new elements button
 				new Label(composite, SWT.NONE)
-					.setText("Alle neuen Daten importieren (ACHTUNG: Gefährlich!!!)");
+					.setText(Messages.GenericImporterBlatt_ImportAllDataNew);
 				importNewButton = new Button(composite, SWT.PUSH);
-				importNewButton.setText("Alle neuen Daten importieren");
+				importNewButton.setText(Messages.GenericImporterBlatt_ImportAllDataNewCaption);
 				importNewButton.setImage(getImage(IMAGE_INPUT_ONLY));
 				importNewButton.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e){
@@ -1220,9 +1222,9 @@ public class GenericImporterBlatt extends Composite {
 				
 				// import new elements button
 				new Label(composite, SWT.NONE)
-					.setText("Ausgewählte Daten aktualisieren (ACHTUNG: überschreibt bestehende Daten.)");
+					.setText(Messages.GenericImporterBlatt_UpdateSelectedData);
 				updateButton = new Button(composite, SWT.PUSH);
-				updateButton.setText("Alle Werte importieren");
+				updateButton.setText(Messages.GenericImporterBlatt_ImportAllValues);
 				updateButton.setImage(getImage(IMAGE_DIFF));
 				updateButton.addSelectionListener(new SelectionAdapter() {
 					public void widgetSelected(SelectionEvent e){
@@ -1261,7 +1263,7 @@ public class GenericImporterBlatt extends Composite {
 				// first column: image
 				TableColumn imageColumn = new TableColumn(table, SWT.LEFT);
 				imageColumn.setWidth(IMAGE_COLUMN_WIDTH);
-				imageColumn.setText("");
+				imageColumn.setText(""); //$NON-NLS-1$
 				
 				if (mappingPage.isPageComplete()) {
 					int columnsCount = mappingPage.inputChosenFields.size();
@@ -1277,7 +1279,7 @@ public class GenericImporterBlatt extends Composite {
 						String dbName = mappingPage.dbChosenFields.get(i).name;
 						String name = dbName;
 						if (!inputName.equals(dbName)) {
-							name = inputName + "/" + name;
+							name = inputName + "/" + name; //$NON-NLS-1$
 						}
 						columns[i].setText(name);
 					}
@@ -1325,7 +1327,7 @@ public class GenericImporterBlatt extends Composite {
 								// get value from excel, eliminate leading and trailing white space
 								value = row.get(index).trim();
 							} else {
-								value = "";
+								value = ""; //$NON-NLS-1$
 							}
 							rowMap.put(key, value);
 						}
@@ -1371,7 +1373,7 @@ public class GenericImporterBlatt extends Composite {
 				for (KeyFields keyField : keyFields) {
 					String name = keyField.dbName;
 					String value = inputObject.get(keyField.inputName);
-					query.add(name, "=", value);
+					query.add(name, "=", value); //$NON-NLS-1$
 				}
 				List<PersistentObject> dbObjects = query.execute();
 				if (dbObjects != null && dbObjects.size() > 0) {
@@ -1602,7 +1604,7 @@ public class GenericImporterBlatt extends Composite {
 				}
 				
 				public String getColumnText(Object element, int columnIndex){
-					String text = "";
+					String text = ""; //$NON-NLS-1$
 					
 					// commonly used variables
 					int fieldIndex;
@@ -1622,7 +1624,7 @@ public class GenericImporterBlatt extends Composite {
 								key = mappingPage.inputChosenFields.get(fieldIndex).name;
 								text = inputObject.get(key);
 							} else {
-								text = "";
+								text = ""; //$NON-NLS-1$
 							}
 							break;
 						case SyncElement.DB_ONLY:
@@ -1631,7 +1633,7 @@ public class GenericImporterBlatt extends Composite {
 								key = mappingPage.dbChosenFields.get(fieldIndex).name;
 								text = dbObject.get(key);
 							} else {
-								text = "";
+								text = ""; //$NON-NLS-1$
 							}
 							break;
 						case SyncElement.DIFF:
@@ -1657,7 +1659,7 @@ public class GenericImporterBlatt extends Composite {
 							}
 							break;
 						case SyncElement.UNKNOWN:
-							text = "?";
+							text = "?"; //$NON-NLS-1$
 							break;
 						}
 					}

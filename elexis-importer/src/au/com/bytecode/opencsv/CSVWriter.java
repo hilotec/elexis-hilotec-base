@@ -66,7 +66,7 @@ public class CSVWriter {
     public static final char NO_QUOTE_CHARACTER = '\u0000';
     
     /** Default line terminator uses platform encoding. */
-    public static final String DEFAULT_LINE_END = "\n";
+    public static final String DEFAULT_LINE_END = "\n"; //$NON-NLS-1$
 
     private static final SimpleDateFormat
     	TIMESTAMP_FORMATTER = 
@@ -196,7 +196,7 @@ public class CSVWriter {
     private static String getColumnValue(ResultSet rs, int colType, int colIndex)
     		throws SQLException, IOException {
 
-    	String value = "";
+    	String value = ""; //$NON-NLS-1$
     	
 		switch (colType)
 		{
@@ -226,7 +226,7 @@ public class CSVWriter {
 			case Types.NUMERIC:
 				BigDecimal bd = rs.getBigDecimal(colIndex);
 				if (bd != null) {
-					value = "" + bd.doubleValue();
+					value = "" + bd.doubleValue(); //$NON-NLS-1$
 				}
 			break;
 			case Types.INTEGER:
@@ -234,7 +234,7 @@ public class CSVWriter {
 			case Types.SMALLINT:
 				int intValue = rs.getInt(colIndex);
 				if (!rs.wasNull()) {
-					value = "" + intValue;
+					value = "" + intValue; //$NON-NLS-1$
 				}
 			break;
 			case Types.JAVA_OBJECT:
@@ -267,13 +267,13 @@ public class CSVWriter {
 				value = rs.getString(colIndex);
 			break;
 			default:
-				value = "";
+				value = ""; //$NON-NLS-1$
 		}
 
 		
 		if (value == null)
 		{
-			value = "";
+			value = ""; //$NON-NLS-1$
 		}
 		
 		return value;

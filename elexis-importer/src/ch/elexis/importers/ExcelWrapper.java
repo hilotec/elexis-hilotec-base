@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *  $Id: ExcelWrapper.java 5904 2009-12-26 10:31:15Z rgw_ch $
+ *  $Id: ExcelWrapper.java 6137 2010-02-14 09:45:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.importers;
@@ -118,7 +118,7 @@ public class ExcelWrapper {
 			if (cell != null) {
 				switch (cell.getCellType()) {
 				case HSSFCell.CELL_TYPE_BLANK:
-					ret.add("");
+					ret.add(""); //$NON-NLS-1$
 					break;
 				case HSSFCell.CELL_TYPE_BOOLEAN:
 					ret.add(Boolean.toString(cell.getBooleanCellValue()));
@@ -133,7 +133,7 @@ public class ExcelWrapper {
 								TimeTool tt = new TimeTool(date.getTime());
 								ret.add(tt.toString(TimeTool.FULL_MYSQL));
 							} else {
-								ret.add("");
+								ret.add(""); //$NON-NLS-1$
 							}
 						} else if (types[i].equals(Double.class)) {
 							ret.add(Double.toString(cell.getNumericCellValue()));
@@ -153,12 +153,12 @@ public class ExcelWrapper {
 					ret.add(cell.toString());
 					break;
 				default:
-					ret.add("unknown cell type");
+					ret.add(Messages.ExcelWrapper_ErrorUnknownCellType);
 				}
 				
 			} else {
 				// empty cell
-				ret.add("");
+				ret.add(""); //$NON-NLS-1$
 			}
 		}
 		return ret;
@@ -193,6 +193,6 @@ public class ExcelWrapper {
 		if (row.size() > col) {
 			return row.get(col);
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 }

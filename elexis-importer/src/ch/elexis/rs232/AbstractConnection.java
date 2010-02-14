@@ -71,7 +71,7 @@ public abstract class AbstractConnection implements PortEventListener {
 		final ComPortListener l){
 		listener = l;
 		myPort = port;
-		mySettings = settings.split(",");
+		mySettings = settings.split(","); //$NON-NLS-1$
 		name = portName;
 	}
 	
@@ -91,7 +91,7 @@ public abstract class AbstractConnection implements PortEventListener {
 						try {
 							Thread.sleep(1000);
 							final String in =
-								FileTool.readTextFile(new File(simulate)).replaceAll("\\r\\n", "\r");
+								FileTool.readTextFile(new File(simulate)).replaceAll("\\r\\n", "\r"); //$NON-NLS-1$ //$NON-NLS-2$
 							listener.gotData(mine, in.getBytes());
 						} catch (Exception ex) {
 
@@ -137,7 +137,7 @@ public abstract class AbstractConnection implements PortEventListener {
 		try {
 			sPort = (SerialPort) portId.open(name, 1000);
 		} catch (PortInUseException e) {
-			throw new SerialConnectionException("Com-Port wird verwendet!");
+			throw new SerialConnectionException(Messages.AbstractConnection_ComPortInUse);
 		}
 		
 		// Set the parameters of the connection. If they won't set, close the
@@ -156,7 +156,7 @@ public abstract class AbstractConnection implements PortEventListener {
 			is = sPort.getInputStream();
 		} catch (IOException e) {
 			sPort.close();
-			throw new SerialConnectionException("Error opening i/o streams");
+			throw new SerialConnectionException("Error opening i/o streams"); //$NON-NLS-1$
 		}
 		
 		// Add this object as an event listener for the serial port.
@@ -164,7 +164,7 @@ public abstract class AbstractConnection implements PortEventListener {
 			sPort.addEventListener(this);
 		} catch (TooManyListenersException e) {
 			sPort.close();
-			throw new SerialConnectionException("too many listeners added");
+			throw new SerialConnectionException("too many listeners added"); //$NON-NLS-1$
 		}
 		
 		// Set notifyOnDataAvailable to true to allow event driven input.
@@ -178,7 +178,7 @@ public abstract class AbstractConnection implements PortEventListener {
 		try {
 			sPort.enableReceiveTimeout(30);
 		} catch (UnsupportedCommOperationException e) {
-			throw new SerialConnectionException("Unsupported Com operation");
+			throw new SerialConnectionException("Unsupported Com operation"); //$NON-NLS-1$
 		}
 		bOpen = true;
 	}
@@ -206,7 +206,7 @@ public abstract class AbstractConnection implements PortEventListener {
 			parameters.setDatabits(oldDatabits);
 			parameters.setStopbits(oldStopbits);
 			parameters.setParity(oldParity);
-			throw new SerialConnectionException("Unsupported parameter");
+			throw new SerialConnectionException("Unsupported parameter"); //$NON-NLS-1$
 		}
 		
 		// Set flow control.
@@ -214,7 +214,7 @@ public abstract class AbstractConnection implements PortEventListener {
 			sPort
 				.setFlowControlMode(parameters.getFlowControlIn() | parameters.getFlowControlOut());
 		} catch (UnsupportedCommOperationException e) {
-			throw new SerialConnectionException("Unsupported flow control");
+			throw new SerialConnectionException("Unsupported flow control"); //$NON-NLS-1$
 		}
 	}
 	
@@ -376,7 +376,7 @@ public abstract class AbstractConnection implements PortEventListener {
 				
 				public void run(IProgressMonitor monitor) throws InvocationTargetException,
 					InterruptedException{
-					monitor.setTaskName("Bitte warten..");
+					monitor.setTaskName(Messages.AbstractConnection_PleaseWait);
 					while (!monitor.isCanceled() && System.currentTimeMillis() < endTime && !closed) {
 						if (count == 160) {
 							monitor.beginTask(text, 100);

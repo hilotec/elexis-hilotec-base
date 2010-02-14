@@ -40,14 +40,14 @@ import ch.rgw.tools.TimeTool;
  */
 public class Presets {
 	// we'll use these local XID's to reference the external data
-	private final static String IMPORT_XID="elexis.ch/importPresets";
-	private final static String KONTAKTID=IMPORT_XID+"/KID";
-	private static Log log=Log.get("Preset import");
-	public static final String INSURANCE="Kostenträger";
-	public static final String INSURANCE_NUMBER="Versicherungsnummer";
+	private final static String IMPORT_XID="elexis.ch/importPresets"; //$NON-NLS-1$
+	private final static String KONTAKTID=IMPORT_XID+"/KID"; //$NON-NLS-1$
+	private static Log log=Log.get("Preset import"); //$NON-NLS-1$
+	public static final String INSURANCE=Messages.Presets_Insurance;
+	public static final String INSURANCE_NUMBER=Messages.Presets_InsuranceNumber;
 	
 	static{
-		Xid.localRegisterXIDDomainIfNotExists(KONTAKTID, "Frühere ID",Xid.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(KONTAKTID, Messages.Presets_PreviousID,Xid.ASSIGNMENT_LOCAL);
 	}
 	public static final boolean importUniversal(final ExcelWrapper exw, final boolean bKeepID, final IProgressMonitor moni){
 		exw.setFieldTypes(new Class[]{
@@ -59,7 +59,7 @@ public class Presets {
 				String.class,String.class,Integer.class});  // Ort, Postanschrift, EAN
 		int first=exw.getFirstRow();
 		int last=exw.getLastRow();
-		moni.beginTask("Import Kontaktdaten (Universalimporter)", last-first);
+		moni.beginTask(Messages.Presets_ImportingContacts, last-first);
 		int counter=0;
 		for(int i=exw.getFirstRow()+1;i<=exw.getLastRow();i++){
 			String[] row=exw.getRow(i).toArray(new String[0]);
@@ -88,13 +88,13 @@ public class Presets {
 			String ort=StringTool.getSafe(row, 16);
 			String natel=StringTool.getSafe(row, 13);
 			Kontakt k=null;
-			if(StringTool.isNothing(typ)|| typ.equals("0")){
+			if(StringTool.isNothing(typ)|| typ.equals("0")){ //$NON-NLS-1$
 				k=KontaktMatcher.findOrganisation(bez1, strasse, plz, ort, CreateMode.CREATE);
 				if(k==null){
 					continue;
 				}
-				k.set("Zusatz1", bez2);
-				k.set("Bezeichnung3", zusatz);
+				k.set("Zusatz1", bez2); //$NON-NLS-1$
+				k.set("Bezeichnung3", zusatz); //$NON-NLS-1$
 			}else{
 				String sex=StringTool.getSafe(row, 8);
 				String gebdat=StringTool.getSafe(row, 7);
@@ -102,11 +102,11 @@ public class Presets {
 				if(k==null){
 					continue;
 				}
-				k.set("Titel", titel);
-				k.set("Zusatz", zusatz);
+				k.set("Titel", titel); //$NON-NLS-1$
+				k.set("Zusatz", zusatz); //$NON-NLS-1$
 			}
 			moni.subTask(k.getLabel());
-			k.set(new String[]{"E-Mail","Website","Telefon1","Telefon2","Natel","Strasse","Plz","Ort","Anschrift"},
+			k.set(new String[]{"E-Mail","Website","Telefon1","Telefon2","Natel","Strasse","Plz","Ort","Anschrift"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 					StringTool.getSafe(row, 9),
 					StringTool.getSafe(row, 10),
 					StringTool.getSafe(row, 11),
@@ -116,7 +116,7 @@ public class Presets {
 					plz,
 					ort,
 					StringTool.getSafe(row, 17));
-			if(EAN.matches("[0-9]{13,13}")){
+			if(EAN.matches("[0-9]{13,13}")){ //$NON-NLS-1$
 				k.addXid(Xid.DOMAIN_EAN, EAN, true);
 			}
 			moni.worked(1);
@@ -153,7 +153,7 @@ public class Presets {
 		});
 		int first=exw.getFirstRow();
 		int last=exw.getLastRow();
-		moni.beginTask("Import Patientendaten Hertel", last-first);
+		moni.beginTask("Import Patientendaten Hertel", last-first); //$NON-NLS-1$
 		for(int i=first+1;i<last;i++){
 			String[] row=exw.getRow(i).toArray(new String[0]);
 	
@@ -205,15 +205,15 @@ public class Presets {
 			 String iv=StringTool.getSafe(row, 37);
 			 Patient pat=(Patient)Xid.findObject(KONTAKTID, row[0]); // avoid duplicate import
 			if(pat==null){	
-				pat=new Patient(name,vorname,gebdat,sex.toLowerCase().startsWith("m") ? Person.MALE : Person.FEMALE);
-				pat.set("PatientNr",row[0]);
+				pat=new Patient(name,vorname,gebdat,sex.toLowerCase().startsWith("m") ? Person.MALE : Person.FEMALE); //$NON-NLS-1$
+				pat.set("PatientNr",row[0]); //$NON-NLS-1$
 				pat.addXid(KONTAKTID, row[0], false);
 			}
 			 moni.subTask(pat.getLabel());
-			 pat.set(new String[]{"Strasse","Plz","Ort","Land","Telefon1","Telefon2",
-					 	"Natel","E-Mail","Titel","Gruppe","Zusatz"}, 
+			 pat.set(new String[]{"Strasse","Plz","Ort","Land","Telefon1","Telefon2", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+					 	"Natel","E-Mail","Titel","Gruppe","Zusatz"},  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					 strasse,plz,ort,
-					 land.equalsIgnoreCase("schweiz") ? "CH" : "",
+					 land.equalsIgnoreCase(Messages.Presets_Switzerland) ? "CH" : "", //$NON-NLS-2$ //$NON-NLS-3$
 					 telp1,telp2,tel3,email,titel,arztn,zusatz
 			);
 			if(!StringTool.isNothing(ahvnr)){
@@ -221,35 +221,35 @@ public class Presets {
 			}
 			if(!StringTool.isNothing(kk)){
 				Query<Kontakt> qbe=new Query<Kontakt>(Kontakt.class);
-				qbe.add("Bezeichnung1","=" , kk);
+				qbe.add("Bezeichnung1","=" , kk); //$NON-NLS-1$ //$NON-NLS-2$
 				List<Kontakt> res=qbe.execute();
 				Kontakt k=null;
 				if(res.size()>0){
 					k=res.get(0);
 				}else{
-					k=new Organisation(kk,"KK");
-					k.set("Kuerzel","KK");
+					k=new Organisation(kk,Messages.Presets_KKKuerzel);
+					k.set("Kuerzel",Messages.Presets_KKKuerzel); //$NON-NLS-1$
 				}
-				Fall fall=pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(), "KVG");
+				Fall fall=pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(), Messages.Presets_KVGAbkuerzung);
 				fall.setGarant(pat);
 				fall.setRequiredContact(INSURANCE, k);
 				fall.setRequiredString(INSURANCE_NUMBER, kknr);
 			}
 			if(!StringTool.isNothing(unfallvers)){
 				Query<Kontakt> qbe=new Query<Kontakt>(Kontakt.class);
-				qbe.add("Bezeichnung1","=" , unfallvers);
+				qbe.add("Bezeichnung1","=" , unfallvers); //$NON-NLS-1$ //$NON-NLS-2$
 				List<Kontakt> res=qbe.execute();
 				Kontakt k=null;
 				if(res.size()>0){
 					k=res.get(0);
 				}else{
-					k=new Organisation(unfallvers,"UVG");
-					k.set("Kuerzel", "UVG");
+					k=new Organisation(unfallvers,Messages.Presets_UVGAbkuerzung);
+					k.set("Kuerzel", Messages.Presets_UVGAbkuerzung); //$NON-NLS-1$
 				}
-				Fall fall=pat.neuerFall("Unfall", "Unfall", "UVG");
+				Fall fall=pat.neuerFall(Messages.Presets_Unfall, Messages.Presets_Unfall, Messages.Presets_UVGAbkürzung);
 				fall.setGarant(k);
 				fall.setRequiredContact(INSURANCE, k);
-				fall.setRequiredString("Unfallnummer",unfallnr);
+				fall.setRequiredString(Messages.Presets_Unfallnummer,unfallnr);
 			}
 			moni.worked(1);
 		}
@@ -265,17 +265,17 @@ public class Presets {
 		});
 		int first=exw.getFirstRow();
 		int last=exw.getLastRow();
-		moni.beginTask("Import Patientendaten Russi", last-first);
+		moni.beginTask("Import Patientendaten Russi", last-first); //$NON-NLS-1$
 		for(int i=first+1;i<last;i++){
 			String[] row=exw.getRow(i).toArray(new String[0]);
 			if(Xid.findObject(KONTAKTID, row[0])!=null){	// avoid duplicate import
 				continue;
 			}
-			String[] name=StringTool.getSafe(row,1).split("\\s",2);
+			String[] name=StringTool.getSafe(row,1).split("\\s",2); //$NON-NLS-1$
 			String gdraw=StringTool.getSafe(row, 2);
 			String gebdat=new TimeTool(gdraw).toString(TimeTool.DATE_GER);
-			String gender=StringTool.getSafe(row,9).startsWith("W") ? "w" : "m";
-			Patient pat=new Patient(name[0],name.length>1 ? name[1] : "-",gebdat,gender);
+			String gender=StringTool.getSafe(row,9).startsWith("W") ? "w" : "m"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Patient pat=new Patient(name[0],name.length>1 ? name[1] : "-",gebdat,gender); //$NON-NLS-1$
 			String patcode=new StringBuilder().append(pat.getLabel()).append(pat.getPatCode()).toString();
 			moni.subTask(patcode);
 			log.log(patcode, Log.INFOS);
@@ -285,19 +285,19 @@ public class Presets {
 			an.setPlz(StringTool.getSafe(row,4));
 			an.setOrt(StringTool.getSafe(row,5));
 			pat.setAnschrift(an);
-			pat.set("Telefon1", StringTool.getSafe(row,6));
-			pat.set("Natel", StringTool.getSafe(row,7));
-			pat.set("Telefon2", StringTool.getSafe(row,8));
+			pat.set("Telefon1", StringTool.getSafe(row,6)); //$NON-NLS-1$
+			pat.set("Natel", StringTool.getSafe(row,7)); //$NON-NLS-1$
+			pat.set("Telefon2", StringTool.getSafe(row,8)); //$NON-NLS-1$
 			if(!StringTool.isNothing(StringTool.getSafe(row,10))){
-				Organisation org=KontaktMatcher.findOrganisation(row[10], "", "", "", CreateMode.CREATE);
-				Fall fall=pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(), "KVG");
-				fall.setRequiredContact("Kostenträger", org);
+				Organisation org=KontaktMatcher.findOrganisation(row[10], "", "", "", CreateMode.CREATE); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				Fall fall=pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(), Messages.Presets_KVGAbkuerzung);
+				fall.setRequiredContact(Messages.Presets_Insurance, org);
 				fall.setGarant(pat);
 			}
 			if(!StringTool.isNothing(StringTool.getSafe(row,11))){
-				Organisation org=KontaktMatcher.findOrganisation(row[11], "", "", "", CreateMode.CREATE);
-				Fall fall=pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(), "UVG");
-				fall.setRequiredContact("Kostenträger", org);
+				Organisation org=KontaktMatcher.findOrganisation(row[11], "", "", "", CreateMode.CREATE); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				Fall fall=pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(), Messages.Presets_UVGAbkuerzung);
+				fall.setRequiredContact(Messages.Presets_Insurance, org);
 				fall.setGarant(org);
 			}
 			moni.worked(1);

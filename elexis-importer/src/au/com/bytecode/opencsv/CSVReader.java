@@ -191,7 +191,7 @@ public class CSVReader {
         do {
         	if (inQuotes) {
                 // continuing a quoted section, reappend newline
-                sb.append("\n");
+                sb.append("\n"); //$NON-NLS-1$
                 nextLine = getNextLine();
                 if (nextLine == null)
                     break;

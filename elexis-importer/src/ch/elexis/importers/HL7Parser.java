@@ -23,11 +23,11 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class HL7Parser {
-	private static final String COMMENT_NAME = "Kommentar";
-	private static final String COMMENT_CODE = "kommentar";
-	private static final String COMMENT_GROUP = "00 Kommentar";
+	private static final String COMMENT_NAME = Messages.HL7Parser_CommentName;
+	private static final String COMMENT_CODE = Messages.HL7Parser_CommentCode;
+	private static final String COMMENT_GROUP = Messages.HL7Parser_CommentGroup;
 
-	public String myLab = "?";
+	public String myLab = "?"; //$NON-NLS-1$
 
 	public HL7Parser(String mylab) {
 		myLab = mylab;
@@ -37,7 +37,7 @@ public class HL7Parser {
 		Result<Kontakt> res = hl7.getLabor();
 		if (!res.isOK()) {
 			return new Result<Object>(Result.SEVERITY.ERROR, 1,
-					"Lab not found", hl7.getFilename(), true);
+					Messages.HL7Parser_LabNotFound, hl7.getFilename(), true);
 		}
 		final Kontakt labor = res.get();
 		Result<Object> r2 = hl7.getPatient(createPatientIfNotFound);
@@ -55,10 +55,10 @@ public class HL7Parser {
 			while (obx != null) {
 				String itemname = obx.getItemName();
 				Query<LabItem> qbe = new Query<LabItem>(LabItem.class);
-				qbe.add("LaborID", "=", labor.getId());
+				qbe.add("LaborID", "=", labor.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 				// disabled, this would avoid renaming the title
 				// qbe.add("titel", "=", itemname);
-				qbe.add("kuerzel", "=", obx.getItemCode());
+				qbe.add("kuerzel", "=", obx.getItemCode()); //$NON-NLS-1$ //$NON-NLS-2$
 				List<LabItem> list = qbe.execute();
 				LabItem li = null;
 				if (list.size() < 1) {
@@ -68,32 +68,32 @@ public class HL7Parser {
 					}
 					li = new LabItem(obx.getItemCode(), itemname, labor, obx
 							.getRefRange(), obx.getRefRange(), obx.getUnits(),
-							typ, "Z Automatisch_" + dat, Integer
+							typ, Messages.HL7Parser_AutomaticAddedGroup + dat, Integer
 									.toString(nummer++));
 				} else {
 					li = list.get(0);
 				}
 				LabResult lr;
 				Query<LabResult> qr = new Query<LabResult>(LabResult.class);
-				qr.add("PatientID", "=", pat.getId());
-				qr.add("Datum", "=", obr.getDate().toString(TimeTool.DATE_GER));
-				qr.add("ItemID", "=", li.getId());
+				qr.add("PatientID", "=", pat.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+				qr.add("Datum", "=", obr.getDate().toString(TimeTool.DATE_GER)); //$NON-NLS-1$ //$NON-NLS-2$
+				qr.add("ItemID", "=", li.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 				List<LabResult> qrr = qr.execute();
 				if (qrr.size() != 0) {
 					LabResult lrr = qrr.get(0);
 
 					if (!SWTHelper.askYesNo(
-							"Laborwert wurde schon importiert: "
+							Messages.HL7Parser_LabAlreadyImported
 									+ pat.getLabel(), lrr.getLabel()
-									+ " Überschreiben?")) {
+									+ Messages.HL7Parser_AskOverwrite)) {
 						obx = obr.nextOBX(obx);
 						continue;
 					}
 				}
 				if (obx.isFormattedText() || (obx.isPlainText())) {
-					lr = new LabResult(pat, obr.getDate(), li, "text", obx
+					lr = new LabResult(pat, obr.getDate(), li, "text", obx //$NON-NLS-1$
 							.getResultValue()
-							+ "\n" + obx.getComment());
+							+ "\n" + obx.getComment()); //$NON-NLS-1$
 				} else {
 					lr = new LabResult(pat, obr.getDate(), li, obx
 							.getResultValue(), obx.getComment());
@@ -117,33 +117,33 @@ public class HL7Parser {
 
 				// find LabItem
 				Query<LabItem> qbe = new Query<LabItem>(LabItem.class);
-				qbe.add("LaborID", "=", labor.getId());
-				qbe.add("titel", "=", COMMENT_NAME);
-				qbe.add("kuerzel", "=", COMMENT_CODE);
+				qbe.add("LaborID", "=", labor.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+				qbe.add("titel", "=", COMMENT_NAME); //$NON-NLS-1$ //$NON-NLS-2$
+				qbe.add("kuerzel", "=", COMMENT_CODE); //$NON-NLS-1$ //$NON-NLS-2$
 				List<LabItem> list = qbe.execute();
 				LabItem li = null;
 				if (list.size() < 1) {
 					// LabItem doesn't yet exist
 					LabItem.typ typ = LabItem.typ.TEXT;
-					li = new LabItem(COMMENT_CODE, COMMENT_NAME, labor, "", "",
-							"", typ, COMMENT_GROUP, Integer.toString(nummer++));
+					li = new LabItem(COMMENT_CODE, COMMENT_NAME, labor, "", "", //$NON-NLS-1$ //$NON-NLS-2$
+							"", typ, COMMENT_GROUP, Integer.toString(nummer++)); //$NON-NLS-1$
 				} else {
 					li = list.get(0);
 				}
 
 				// add LabResult
 				Query<LabResult> qr = new Query<LabResult>(LabResult.class);
-				qr.add("PatientID", "=", pat.getId());
-				qr.add("Datum", "=", commentsDate.toString(TimeTool.DATE_GER));
-				qr.add("ItemID", "=", li.getId());
+				qr.add("PatientID", "=", pat.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+				qr.add("Datum", "=", commentsDate.toString(TimeTool.DATE_GER)); //$NON-NLS-1$ //$NON-NLS-2$
+				qr.add("ItemID", "=", li.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 				if (qr.execute().size() == 0) {
 					// only add coments not yet existing
-					new LabResult(pat, commentsDate, li, "Text", comments);
+					new LabResult(pat, commentsDate, li, "Text", comments); //$NON-NLS-1$
 				}
 			}
 		}
 
-		return new Result<Object>("OK");
+		return new Result<Object>("OK"); //$NON-NLS-1$
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class HL7Parser {
 	 */
 	public Result<?> importFile(final File file, final File archiveDir,
 			boolean bCreatePatientIfNotExists) {
-		HL7 hl7 = new HL7("Labor " + myLab, myLab);
+		HL7 hl7 = new HL7("Labor " + myLab, myLab); //$NON-NLS-1$
 		Result<Object> r = hl7.load(file.getAbsolutePath());
 		if (r.isOK()) {
 			Result<?> ret = parse(hl7, bCreatePatientIfNotExists);
@@ -172,17 +172,17 @@ public class HL7Parser {
 							if (!file.renameTo(newFile)) {
 								SWTHelper
 										.showError(
-												"Fehler beim Archivieren",
-												"Die Datei "
+												Messages.HL7Parser_ErrorArchiving,
+												Messages.HL7Parser_TheFile
 														+ file
 																.getAbsolutePath()
-														+ " konnte nicht ins Archiv verschoben werden.");
+														+ Messages.HL7Parser_CouldNotMoveToArchive);
 							}
 						}
 					}
 				}
 			} else {
-				ResultAdapter.displayResult(ret, "Fehler beim Einlesen");
+				ResultAdapter.displayResult(ret, Messages.HL7Parser_ErrorReading);
 			}
 			ElexisEventDispatcher.reload(LabItem.class);
 			return ret;
@@ -202,7 +202,7 @@ public class HL7Parser {
 						return true;
 					}
 				} else {
-					if (pathname.getName().toLowerCase().endsWith(".hl7")) {
+					if (pathname.getName().toLowerCase().endsWith(".hl7")) { //$NON-NLS-1$
 						return true;
 					}
 				}
@@ -218,7 +218,7 @@ public class HL7Parser {
 				if (res == null) {
 					res = r;
 				} else {
-					res.add(r.getSeverity(), 1, "", null, true);
+					res.add(r.getSeverity(), 1, "", null, true); //$NON-NLS-1$
 				}
 			}
 		}

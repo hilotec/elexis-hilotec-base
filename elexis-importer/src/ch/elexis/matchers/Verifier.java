@@ -25,7 +25,7 @@ public class Verifier {
 			return k;
 		}
 		KontaktSelektor ksl=new KontaktSelektor(Hub.getActiveShell(),
-				k.getClass(),t,"Bitte wählen Sie den korrekten Kontakt aus oder brechen Sie ab");
+				k.getClass(),t,Messages.Verifier_PleaseSelectCorrectContact);
 		if(ksl.open()==Dialog.OK){
 			return (Kontakt)ksl.getSelection();
 		}
@@ -57,15 +57,15 @@ public class Verifier {
 			parent.setLayout(new FillLayout());
 			table=new Table(parent,SWT.NONE);
 			TableColumn c1=new TableColumn(table,SWT.NONE);
-			c1.setText("Name");
+			c1.setText(Messages.Verifier_NameHeading);
 			c1.setWidth(200);
 			TableColumn c2=new TableColumn(table,SWT.NONE);
-			c2.setText("Adresse");
+			c2.setText(Messages.Verifier_AddressHeading);
 			c2.setWidth(200);
 			for(Kontakt k:list){
 				TableItem it=new TableItem(table,SWT.NONE);
 				it.setText(0, k.getLabel(true));
-				it.setText(1,k.get("Strasse")+" "+k.get("Ort"));
+				it.setText(1,k.get("Strasse")+" "+k.get("Ort")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			return table;
 		}

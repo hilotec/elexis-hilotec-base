@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Connection.java 5720 2009-09-14 08:35:10Z michael_imhof $
+ * $Id: Connection.java 6137 2010-02-14 09:45:36Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.rs232;
@@ -71,7 +71,7 @@ public class Connection implements PortEventListener {
 			final String settings, final ComPortListener l) {
 		listener = l;
 		myPort = port;
-		mySettings = settings.split(",");
+		mySettings = settings.split(","); //$NON-NLS-1$
 		name = portName;
 	}
 
@@ -90,7 +90,7 @@ public class Connection implements PortEventListener {
 					public void run() {
 						try {
 							Thread.sleep(1000);
-							final String in = FileTool.readTextFile(new File(simulate)).replaceAll("\\r\\n", "\r");
+							final String in = FileTool.readTextFile(new File(simulate)).replaceAll("\\r\\n", "\r"); //$NON-NLS-1$ //$NON-NLS-2$
 							listener.gotChunk(mine, in);
 						} catch (Exception ex) {
 
@@ -155,7 +155,7 @@ public class Connection implements PortEventListener {
 			is = sPort.getInputStream();
 		} catch (IOException e) {
 			sPort.close();
-			throw new SerialConnectionException("Error opening i/o streams");
+			throw new SerialConnectionException("Error opening i/o streams"); //$NON-NLS-1$
 		}
 
 		// Add this object as an event listener for the serial port.
@@ -163,7 +163,7 @@ public class Connection implements PortEventListener {
 			sPort.addEventListener(this);
 		} catch (TooManyListenersException e) {
 			sPort.close();
-			throw new SerialConnectionException("too many listeners added");
+			throw new SerialConnectionException("too many listeners added"); //$NON-NLS-1$
 		}
 
 		// Set notifyOnDataAvailable to true to allow event driven input.
@@ -205,7 +205,7 @@ public class Connection implements PortEventListener {
 			parameters.setDatabits(oldDatabits);
 			parameters.setStopbits(oldStopbits);
 			parameters.setParity(oldParity);
-			throw new SerialConnectionException("Unsupported parameter");
+			throw new SerialConnectionException("Unsupported parameter"); //$NON-NLS-1$
 		}
 
 		// Set flow control.
@@ -213,7 +213,7 @@ public class Connection implements PortEventListener {
 			sPort.setFlowControlMode(parameters.getFlowControlIn()
 					| parameters.getFlowControlOut());
 		} catch (UnsupportedCommOperationException e) {
-			throw new SerialConnectionException("Unsupported flow control");
+			throw new SerialConnectionException("Unsupported flow control"); //$NON-NLS-1$
 		}
 	}
 

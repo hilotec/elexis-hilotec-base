@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KontaktImporter.java 3211 2007-09-26 16:06:00Z rgw_ch $
+ *  $Id: KontaktImporter.java 6137 2010-02-14 09:45:36Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.importers;
 
@@ -43,36 +43,36 @@ public class KontaktImporter extends ImporterPage {
 		if(importer.doImport(monitor)){
 			return Status.OK_STATUS;
 		}
-		return new Status(Status.ERROR,"ch.elexis.import.div",1,"Fehler beim Import",null);
+		return new Status(Status.ERROR,"ch.elexis.import.div",1,Messages.KontaktImporter_ErrorImport,null); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getDescription() {
-		return "Import von Kontaktdaten aus verschiedener Quelle";
+		return Messages.KontaktImporter_ExplanationImport;
 	}
 
 	@Override
 	public String getTitle() {
-		return "Kontakte";
+		return Messages.KontaktImporter_Title;
 	}
 
 	static Kontakt queryKontakt(final String name,final String vorname, final String strasse, final String plz, final String ort, final boolean createIfMissing){
 		Query<Kontakt> qbe=new Query<Kontakt>(Kontakt.class);
-		List<Kontakt> res=qbe.queryFields(new String[]{"Bezeichnung1","Bezeichnung2","Strasse","Plz","Ort"}, 
+		List<Kontakt> res=qbe.queryFields(new String[]{"Bezeichnung1","Bezeichnung2","Strasse","Plz","Ort"},  //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 				new String[]{name,vorname,strasse,plz,ort}, false);
 		if((res!=null) && (res.size()>0)) 			
 		{
 			Kontakt found=res.get(0);
 			StringBuilder s1=new StringBuilder();
 			StringBuilder s2=new StringBuilder();
-			s1.append(found.get("Bezeichnung1")).append(", ").append(found.get("Bezeichnung2"))
-				.append(" - ").append(found.get("Strasse")).append(" ")
-				.append(found.get("Plz")).append(" ").append(found.get("Ort"));
+			s1.append(found.get("Bezeichnung1")).append(", ").append(found.get("Bezeichnung2")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				.append(" - ").append(found.get("Strasse")).append(" ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				.append(found.get("Plz")).append(" ").append(found.get("Ort")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			
-			s2.append(name).append(", ").append(vorname).append(" - ")
-				.append(strasse).append(" ").append(plz).append(" ").append(ort);
+			s2.append(name).append(", ").append(vorname).append(" - ") //$NON-NLS-1$ //$NON-NLS-2$
+				.append(strasse).append(" ").append(plz).append(" ").append(ort); //$NON-NLS-1$ //$NON-NLS-2$
 			
-			if(SWTHelper.askYesNo("Kontakte identisch", "Bezeichnen \n"+s1.toString()+" und\n"+s1.toString()+"\ndenselben Kontakt?")){
+			if(SWTHelper.askYesNo(Messages.KontaktImporter_AskSameTitle, Messages.KontaktImporter_AskSameText1+s1.toString()+Messages.KontaktImporter_AskSameAnd+s1.toString()+Messages.KontaktImporter_AskSameText2)){
 				return found;
 			}
 		}
