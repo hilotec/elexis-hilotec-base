@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BriefAuswahl.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *    $Id: BriefAuswahl.java 6138 2010-02-14 09:46:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -60,7 +60,7 @@ import ch.rgw.tools.ExHandler;
 public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 		IActivationListener, ISaveablePart2 {
 
-	public final static String ID = "ch.elexis.BriefAuswahlView";
+	public final static String ID = "ch.elexis.BriefAuswahlView"; //$NON-NLS-1$
 	private final FormToolkit tk;
 	private Form form;
 	private Action briefNeuAction, briefLadenAction, editNameAction;
@@ -77,7 +77,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 	@Override
 	public void createPartControl(final Composite parent) {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Alle,").append(Brief.UNKNOWN).append(",").append(Brief.AUZ)
+		sb.append(Messages.getString("BriefAuswahlAllLetters")).append(Brief.UNKNOWN).append(",").append(Brief.AUZ) //$NON-NLS-1$
 				.append(",").append(Brief.RP).append(",").append(Brief.LABOR);
 		String cats = Hub.globalCfg.get(PreferenceConstants.DOC_CATEGORY, sb
 				.toString());
@@ -151,7 +151,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 			public void run() {
 				Patient pat = (Patient)ElexisEventDispatcher.getSelected(Patient.class);
 				if (pat == null) {
-					form.setText("Kein Patient ausgewählt");
+					form.setText(Messages.getString("BriefAuswahlNoPatientSelected")); //$NON-NLS-1$
 				} else {
 					form.setText(pat.getLabel());
 					CTabItem sel = ctab.getSelection();
@@ -184,7 +184,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 								Query<Brief> qbe = new Query<Brief>(Brief.class);
 								qbe.add(Brief.PATIENT_ID, Query.EQUALS, actPat
 										.getId());
-								if (cat.equals("Alle")) {
+								if (cat.equals(Messages.getString("BriefAuswahlAllLetters2"))) { //$NON-NLS-1$
 									qbe.add(Brief.TYPE, Query.NOT_EQUAL,
 											Brief.TEMPLATE);
 								} else {
@@ -207,7 +207,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 							SWT.V_SCROLL, cv));
 			cv.create(vc, this, SWT.NONE, getViewSite());
 			vc.getContentProvider().startListening();
-			Button bLoad = tk.createButton(this, "Laden", SWT.PUSH);
+			Button bLoad = tk.createButton(this, Messages.getString("BriefAuswahlLoadButtonText"), SWT.PUSH); //$NON-NLS-1$
 			bLoad.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
@@ -218,8 +218,8 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 						if ((o != null) && (o.length > 0)) {
 							Brief brief = (Brief) o[0];
 							if (tv.openDocument(brief) == false) {
-								SWTHelper.alert("Fehler",
-										"Konnte Text nicht laden");
+								SWTHelper.alert(Messages.getString("BriefAuswahlErrorHeading"), //$NON-NLS-1$
+										Messages.getString("BriefAuswahlCouldNotLoadText")); //$NON-NLS-1$
 							}
 						} else {
 							tv.createDocument(null, null);
@@ -236,7 +236,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 	}
 
 	private void makeActions() {
-		briefNeuAction = new Action("Neu...") {
+		briefNeuAction = new Action(Messages.getString("BriefAuswahlNewButtonText")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				TextView tv = null;
@@ -265,7 +265,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 				}
 			}
 		};
-		briefLadenAction = new Action("Öffnen") {
+		briefLadenAction = new Action(Messages.getString("BriefAuswahlOpenButtonText")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				try {
@@ -278,8 +278,8 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 						if ((o != null) && (o.length > 0)) {
 							Brief brief = (Brief) o[0];
 							if (tv.openDocument(brief) == false) {
-								SWTHelper.alert("Fehler",
-										"Konnte Text nicht laden");
+								SWTHelper.alert(Messages.getString("BriefAuswahlErrorHeading"), //$NON-NLS-1$
+										Messages.getString("BriefAuswahlCouldNotLoadText")); //$NON-NLS-1$
 							}
 						} else {
 							tv.createDocument(null, null);
@@ -292,14 +292,14 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 
 			}
 		};
-		deleteAction = new Action("Löschen") {
+		deleteAction = new Action(Messages.getString("BriefAuswahlDeleteButtonText")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				CTabItem sel = ctab.getSelection();
 				if ((sel != null)
 						&& SWTHelper
-								.askYesNo("Dokument löschen",
-										"Wollen Sie dieses Dokument wirklich unwiderruflich löschen?")) {
+								.askYesNo(Messages.getString("BriefAuswahlDeleteConfirmHeading"), //$NON-NLS-1$
+										Messages.getString("BriefAuswahlDeleteConfirmText"))) { //$NON-NLS-1$
 					CommonViewer cv = (CommonViewer) sel.getData();
 					Object[] o = cv.getSelection();
 					if ((o != null) && (o.length > 0)) {
@@ -311,7 +311,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 
 			}
 		};
-		editNameAction = new Action("Umbenennen...") {
+		editNameAction = new Action(Messages.getString("BriefAuswahlRenameButtonText")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				CTabItem sel = ctab.getSelection();
@@ -322,8 +322,8 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 						Brief brief = (Brief) o[0];
 						InputDialog id = new InputDialog(
 								getViewSite().getShell(),
-								"Neuer Betreff",
-								"Geben Sie bitte den neuen Betreff für das Dokument ein",
+								Messages.getString("BriefAuswahlNewSubjectHeading"), //$NON-NLS-1$
+								Messages.getString("BriefAuswahlNewSubjectText"), //$NON-NLS-1$
 								brief.getBetreff(), null);
 						if (id.open() == Dialog.OK) {
 							brief.setBetreff(id.getValue());
@@ -339,17 +339,17 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 		 * } };
 		 */
 		briefLadenAction.setImageDescriptor(Hub
-				.getImageDescriptor("rsc/document_text.png"));
-		briefLadenAction.setToolTipText("Dokument zum Bearbeiten öffnen");
+				.getImageDescriptor("rsc/document_text.png")); //$NON-NLS-1$
+		briefLadenAction.setToolTipText(Messages.getString("BriefAuswahlOpenLetterForEdit")); //$NON-NLS-1$
 		briefNeuAction.setImageDescriptor(Hub
-				.getImageDescriptor("rsc/document__plus.png"));
-		briefNeuAction.setToolTipText("Einen neues Dokument erstellen");
+				.getImageDescriptor("rsc/document__plus.png")); //$NON-NLS-1$
+		briefNeuAction.setToolTipText(Messages.getString("BriefAuswahlCreateNewDocument")); //$NON-NLS-1$
 		editNameAction.setImageDescriptor(Hub
-				.getImageDescriptor("rsc/document__pencil.png"));
-		editNameAction.setToolTipText("Dokument umbenennen");
+				.getImageDescriptor("rsc/document__pencil.png")); //$NON-NLS-1$
+		editNameAction.setToolTipText(Messages.getString("BriefAuswahlRenameDocument")); //$NON-NLS-1$
 		deleteAction.setImageDescriptor(Hub
-				.getImageDescriptor("rsc/document__minus.png"));
-		deleteAction.setToolTipText("Dokument löschen");
+				.getImageDescriptor("rsc/document__minus.png")); //$NON-NLS-1$
+		deleteAction.setToolTipText(Messages.getString("BriefAuswahlDeleteDocument")); //$NON-NLS-1$
 	}
 
 	public void activation(final boolean mode) {
