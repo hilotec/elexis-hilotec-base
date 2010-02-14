@@ -29,7 +29,7 @@ public class TarmedCodeProvider implements ITreeContentProvider,
 	
 	public TarmedCodeProvider(CommonViewer mine){
 		root=new LazyTree<TarmedLeistung>(null,null,ltl);
-		qbe.add(parentColumn, "=", "NIL");
+		qbe.add(parentColumn, Query.EQUALS, "NIL");
 		qbe.orderBy(true, "ID");
 		for(TarmedLeistung tl:qbe.execute()){
 			new LazyTree<TarmedLeistung>(root,tl,ltl);
@@ -57,7 +57,7 @@ public class TarmedCodeProvider implements ITreeContentProvider,
 			LazyTree tr=(LazyTree)element;
 			qbe.clear();
 			TarmedLeistung tl=(TarmedLeistung)tr.contents;
-			return (qbe.findSingle(parentColumn, "=", tl.getId())!=null);
+			return (qbe.findSingle(parentColumn, Query.EQUALS, tl.getId())!=null);
 		}
 		return false;
 	}
@@ -131,8 +131,8 @@ public class TarmedCodeProvider implements ITreeContentProvider,
 			 qbe.clear();
 			 TarmedLeistung tl=(TarmedLeistung) l.contents;
 			 if(tl!=null){
-				 qbe.add(parentColumn,"=",tl.getId()); //$NON-NLS-1$
-				 qbe.orderBy(true, "ID");
+				 qbe.add(parentColumn,Query.EQUALS,tl.getId()); //$NON-NLS-1$
+				 qbe.orderBy(true,"ID");
 				 for(TarmedLeistung tlc:qbe.execute()){
 					 new LazyTree<TarmedLeistung>(l,tlc,ltl);
 				 }
@@ -142,7 +142,7 @@ public class TarmedCodeProvider implements ITreeContentProvider,
 		public boolean hasChildren(LazyTree l) {
 			qbe.clear();
 			 TarmedLeistung tl=(TarmedLeistung) l.contents;
-			return qbe.findSingle(parentColumn, "=", tl.getId())!=null;
+			return qbe.findSingle(parentColumn, Query.EQUALS, tl.getId())!=null;
 		}
 		
 	}

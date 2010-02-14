@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LaborLeistung.java 5354 2009-06-13 20:03:52Z rgw_ch $
+ * $Id: LaborLeistung.java 6142 2010-02-14 16:37:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -20,12 +20,14 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class LaborLeistung extends VerrechenbarAdapter {
-	public static final String XIDDOMAIN = "www.xid.ch/id/analysenliste_ch/";
+	public static final String FLD_NAME = "Name";
+	private static final String TABLENAME = "ARTIKEL";
+	public static final String XIDDOMAIN = "www.xid.ch/id/analysenliste_ch/"; //$NON-NLS-1$
 	
 	static {
 		addMapping(
-			"ARTIKEL", "Name", "Text=Name", "EK_Preis", "VK_Preis", "Typ", "Code=SubID", "ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Laborleistung", Xid.ASSIGNMENT_LOCAL);
+			TABLENAME, FLD_NAME, "Text=Name", "EK_Preis", "VK_Preis", "Typ", "Code=SubID", "ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Laborleistung", Xid.ASSIGNMENT_LOCAL); //$NON-NLS-1$
 	}
 
 	public String getXidDomain(){
@@ -50,7 +52,7 @@ public class LaborLeistung extends VerrechenbarAdapter {
 	
 	@Override
 	protected String getTableName(){
-		return "ARTIKEL"; //$NON-NLS-1$
+		return TABLENAME; //$NON-NLS-1$
 	}
 	
 	/*
@@ -124,12 +126,12 @@ public class LaborLeistung extends VerrechenbarAdapter {
 	}
 	
 	public double getFactor(final TimeTool date, final Fall fall){
-		double ret = getVKMultiplikator(date, "EAL");
+		double ret = getVKMultiplikator(date, "EAL"); //$NON-NLS-1$
 		if (ret == 1.0) { // compatibility layer
-			ret = getVKMultiplikator(date, "ch.elexis.data.LaborLeistung");
+			ret = getVKMultiplikator(date, "ch.elexis.data.LaborLeistung"); //$NON-NLS-1$
 			if (ret != 1.0) {
 				PersistentObject.getConnection().exec(
-					"UPDATE VK_PREISE set typ='EAL' WHERE typ='ch.elexis.data.LaborLeistung'");
+					"UPDATE VK_PREISE set typ='EAL' WHERE typ='ch.elexis.data.LaborLeistung'"); //$NON-NLS-1$
 			}
 		}
 		return ret;

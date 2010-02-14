@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TrustCenters.java 4088 2008-06-30 11:51:42Z rgw_ch $
+ * $Id: TrustCenters.java 6142 2010-02-14 16:37:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -69,27 +69,27 @@ public class TrustCenters {
 		tc.put("Ctésias", CTESIAS); //$NON-NLS-1$
 		tcEAN.put(CTESIAS, "7601001370210"); //$NON-NLS-1$
 		tc.put("GallOnet", GALLONET); //$NON-NLS-1$
-		tcEAN.put(GALLONET, "7601001370241");
+		tcEAN.put(GALLONET, "7601001370241"); //$NON-NLS-1$
 		tc.put("hawatrust", HAWATRUST); //$NON-NLS-1$
-		tcEAN.put(HAWATRUST, "7601001370159");
+		tcEAN.put(HAWATRUST, "7601001370159"); //$NON-NLS-1$
 		tc.put("+medkey", MEDKEY); //$NON-NLS-1$
-		tcEAN.put(MEDKEY, "7601001370333");
+		tcEAN.put(MEDKEY, "7601001370333"); //$NON-NLS-1$
 		tc.put("PonteNova", PONTENOVA); //$NON-NLS-1$
-		tcEAN.put(PONTENOVA, "7601001370203");
+		tcEAN.put(PONTENOVA, "7601001370203"); //$NON-NLS-1$
 		tc.put("syndata", SYNDATA); //$NON-NLS-1$
-		tcEAN.put(SYNDATA, "7601001370166");
+		tcEAN.put(SYNDATA, "7601001370166"); //$NON-NLS-1$
 		tc.put("TC Aargau", TC_AARGAU); //$NON-NLS-1$
-		tcEAN.put(TC_AARGAU, "7601001370135");
+		tcEAN.put(TC_AARGAU, "7601001370135"); //$NON-NLS-1$
 		tc.put("thurcare", THURCARE); //$NON-NLS-1$
-		tcEAN.put(THURCARE, "7601001370173");
+		tcEAN.put(THURCARE, "7601001370173"); //$NON-NLS-1$
 		tc.put("TC Ticino", TC_TICINO); //$NON-NLS-1$
-		tcEAN.put(TC_TICINO, "7601001370722");
+		tcEAN.put(TC_TICINO, "7601001370722"); //$NON-NLS-1$
 		tc.put("TC züridoc", ZUERIDOC); //$NON-NLS-1$
-		tcEAN.put(ZUERIDOC, "7601001370456");
+		tcEAN.put(ZUERIDOC, "7601001370456"); //$NON-NLS-1$
 		tc.put("trustmed", TRUSTMED); //$NON-NLS-1$
-		tcEAN.put(TRUSTMED, "7601001370227");
+		tcEAN.put(TRUSTMED, "7601001370227"); //$NON-NLS-1$
 		tc.put("TC test", TC_TEST); //$NON-NLS-1$
-		tcEAN.put(TC_TEST, "7601001370128");
+		tcEAN.put(TC_TEST, "7601001370128"); //$NON-NLS-1$
 		
 	}
 	

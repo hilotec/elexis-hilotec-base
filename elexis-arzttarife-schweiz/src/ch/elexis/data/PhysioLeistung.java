@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * $Id: PhysioLeistung.java 5192 2009-02-24 15:48:29Z rgw_ch $
+ * $Id: PhysioLeistung.java 6142 2010-02-14 16:37:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -21,6 +21,12 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class PhysioLeistung extends VerrechenbarAdapter {
+	public static final String FLD_BIS = "bis";
+	public static final String FLD_VON = "von";
+	public static final String FLD_TP = "TP";
+	private static final String VALUE_VERSION = "VERSION";
+	public static final String FLD_TITEL = "Titel";
+	public static final String FLD_ZIFFER = "Ziffer";
 	public static final String VERSION = "0.0.1";
 	private static final String TABLENAME = "CH_ELEXIS_ARZTTARIFE_CH_PHYSIO";
 	private static final String XIDDOMAIN = "www.xid.ch/id/physiotarif";
@@ -33,21 +39,21 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 			+ "CREATE INDEX cheacp on " + TABLENAME + " (ziffer);";
 	
 	static {
-		addMapping(TABLENAME, "von=S:D:validFrom", "bis=S:D:validUntil", "Ziffer", "Titel",
-			"text=description", "TP");
+		addMapping(TABLENAME, "von=S:D:validFrom", "bis=S:D:validUntil", FLD_ZIFFER, FLD_TITEL,
+			"text=description", FLD_TP);
 		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Physiotarif", Xid.ASSIGNMENT_LOCAL);
-		PhysioLeistung pv = PhysioLeistung.load("VERSION");
+		PhysioLeistung pv = PhysioLeistung.load(VALUE_VERSION);
 		if (!pv.exists()) {
 			createOrModifyTable(createDB);
-			pv.create("VERSION");
-			pv.set("Ziffer", VERSION);
+			pv.create(VALUE_VERSION);
+			pv.set(FLD_ZIFFER, VERSION);
 		}
 	}
 	
 	public PhysioLeistung(String code, String text, String tp, String validFrom, String validUntil){
 		create(null);
 		set(new String[] {
-			"Ziffer", "Titel", "TP", "von", "bis"
+			FLD_ZIFFER, FLD_TITEL, FLD_TP, FLD_VON, FLD_BIS
 		}, code, text, tp, TimeTool.BEGINNING_OF_UNIX_EPOCH, TimeTool.END_OF_UNIX_EPOCH);
 	}
 	
@@ -58,7 +64,7 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	
 	public String[] getDisplayedFields(){
 		return new String[] {
-			"Ziffer", "Titel"
+			FLD_ZIFFER, FLD_TITEL
 		};
 	}
 	
@@ -67,7 +73,7 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	}
 	
 	public int getTP(TimeTool date, Fall fall){
-		return checkZero(get("TP"));
+		return checkZero(get(FLD_TP));
 	}
 	
 	public static PhysioLeistung load(String id){
@@ -93,19 +99,19 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	public String getLabel(){
 		String[] res = new String[2];
 		get(new String[] {
-			"Ziffer", "Titel"
+			FLD_ZIFFER, FLD_TITEL
 		}, res);
 		return new StringBuilder().append(res[0]).append(" ").append(res[1]).toString();
 	}
 	
 	@Override
 	public String getText(){
-		return get("Titel");
+		return get(FLD_TITEL);
 	}
 	
 	@Override
 	public String getCode(){
-		return get("Ziffer");
+		return get(FLD_ZIFFER);
 	}
 	
 	@Override

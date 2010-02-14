@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich, medshare and Elexis
+ * Copyright (c) 2009-2010, G. Weirich, medshare and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PhysioImporter.java 5192 2009-02-24 15:48:29Z rgw_ch $
+ * $Id: PhysioImporter.java 6142 2010-02-14 16:37:56Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 

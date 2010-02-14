@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: TarmedLeistung.java 5703 2009-09-01 09:35:43Z rgw_ch $
+ * $Id: TarmedLeistung.java 6142 2010-02-14 16:37:56Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -45,6 +45,15 @@ import ch.rgw.tools.JdbcLink.Stm;
  * 
  */
 public class TarmedLeistung extends VerrechenbarAdapter {
+	private static final String FLD_GUELTIG_BIS = "GueltigBis";
+	private static final String FLD_GUELTIG_VON = "GueltigVon";
+	private static final String FLD_TP_TL = "TP_TL";
+	private static final String FLD_TP_AL = "TP_AL";
+	private static final String FLD_SPARTE = "Sparte";
+	private static final String FLD_DIGNI_QUANTI = "DigniQuanti";
+	private static final String FLD_DIGNI_QUALI = "DigniQuali";
+	private static final String FLD_TEXT = "Text";
+	public static final String FLD_NICK = "Nick";
 	public static final String XIDDOMAIN = "www.xid.ch/id/tarmedsuisse";
 	Hashtable<String, String> ext;
 	private static final String VERSION = "1.1.1";
@@ -75,24 +84,24 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 			}
 
 		}
-		addMapping("TARMED", "Parent", "DigniQuali", "DigniQuanti", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				"Sparte", "Text=tx255", "Name=tx255", "Nick=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		addMapping("TARMED", "Parent", FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				FLD_SPARTE, "Text=tx255", "Name=tx255", "Nick=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				"GueltigVon=S:D:GueltigVon", "GueltigBis=S:D:GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
 		);
 		TarmedLeistung tlv = TarmedLeistung.load("Version");
 		if (!tlv.exists()) {
 			tlv = new TarmedLeistung();
 			tlv.create("Version");
-			tlv.set("Nick", VERSION);
+			tlv.set(FLD_NICK, VERSION);
 		}
-		VersionInfo vi = new VersionInfo(tlv.get("Nick"));
+		VersionInfo vi = new VersionInfo(tlv.get(FLD_NICK));
 		if (vi.isOlder("1.1.0")) {
 			createOrModifyTable(upd110);
-			tlv.set("Nick", VERSION);
+			tlv.set(FLD_NICK, VERSION);
 		}
-		if(vi.isOlder("1.1.1")){
+		if(vi.isOlder(VERSION)){
 			createOrModifyTable("Update TARMED set gueltigbis='20993112' where id='39.0305'");
-			tlv.set("Nick", VERSION);
+			tlv.set(FLD_NICK, VERSION);
 		}
 		tarmedComparator = new TarmedComparator();
 		tarmedOptifier = new TarmedOptifier();
@@ -169,7 +178,7 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 		j.exec("INSERT INTO TARMED_EXTENSION (CODE) VALUES (" + getWrappedId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		set(
 				new String[] {
-						"Parent", "DigniQuali", "DigniQuanti", "Sparte"}, parent, DigniQuali, DigniQuanti, sparte); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+						"Parent", FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, FLD_SPARTE}, parent, DigniQuali, DigniQuanti, sparte); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 
 	/*
@@ -198,12 +207,12 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 	/** Text liefern */
 	@Override
 	public String getText(){
-		return get("Text"); //$NON-NLS-1$
+		return get(FLD_TEXT); //$NON-NLS-1$
 	}
 
 	/** Text setzen (wird nur vom Importer gebraucht */
 	public void setText(final String tx){
-		set("Text", tx); //$NON-NLS-1$
+		set(FLD_TEXT, tx); //$NON-NLS-1$
 	}
 
 	/** Erweiterte Informationen laden */
@@ -273,37 +282,37 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 
 	/** Qualitative Dignität holen (als code) */
 	public String getDigniQuali(){
-		return checkNull(get("DigniQuali")); //$NON-NLS-1$
+		return checkNull(get(FLD_DIGNI_QUALI)); //$NON-NLS-1$
 	}
 
 	/** Qualitative Dignität als Text holen */
 	public String getDigniQualiAsText(){
-		return checkNull(getTextForDigniQuali(get("DigniQuali"))); //$NON-NLS-1$
+		return checkNull(getTextForDigniQuali(get(FLD_DIGNI_QUALI))); //$NON-NLS-1$
 	}
 
 	/** Qualitative Dinität setzen (Wird nur vom Importer gebraucht) */
 	public void setDigniQuali(final String dql){
-		set("DigniQuali", dql); //$NON-NLS-1$
+		set(FLD_DIGNI_QUALI, dql); //$NON-NLS-1$
 	}
 
 	/** Quantitative Dignität als code holen */
 	public String getDigniQuanti(){
-		return checkNull(get("DigniQuanti")); //$NON-NLS-1$
+		return checkNull(get(FLD_DIGNI_QUANTI)); //$NON-NLS-1$
 	}
 
 	/** Quantitative Dignität als Text holen */
 	public String getDigniQuantiAsText(){
-		return checkNull(getTextForDigniQuanti(get("DigniQuanti"))); //$NON-NLS-1$
+		return checkNull(getTextForDigniQuanti(get(FLD_DIGNI_QUANTI))); //$NON-NLS-1$
 	}
 
 	/** Sparte holen (als Code) */
 	public String getSparte(){
-		return checkNull(get("Sparte")); //$NON-NLS-1$
+		return checkNull(get(FLD_SPARTE)); //$NON-NLS-1$
 	}
 
 	/** Sparte als Text holen */
 	public String getSparteAsText(){
-		return checkNull(getTextForSparte(get("Sparte"))); //$NON-NLS-1$
+		return checkNull(getTextForSparte(get(FLD_SPARTE))); //$NON-NLS-1$
 	}
 
 	/** Name des verwendeten Codesystems holen (liefert immer "Tarmed") */
@@ -389,12 +398,12 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 
 	public int getAL(){
 		loadExtension();
-		return (int) Math.round(checkZeroDouble(ext.get("TP_AL")) * 100); //$NON-NLS-1$
+		return (int) Math.round(checkZeroDouble(ext.get(FLD_TP_AL)) * 100); //$NON-NLS-1$
 	}
 
 	public int getTL(){
 		loadExtension();
-		return (int) Math.round(checkZeroDouble(ext.get("TP_TL")) * 100); //$NON-NLS-1$
+		return (int) Math.round(checkZeroDouble(ext.get(FLD_TP_TL)) * 100); //$NON-NLS-1$
 	}
 
 	/**
@@ -422,8 +431,8 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 
 	public int getTP(final TimeTool date, final Fall fall){
 		loadExtension();
-		String t = ext.get("TP_TL"); //$NON-NLS-1$
-		String a = ext.get("TP_AL"); //$NON-NLS-1$
+		String t = ext.get(FLD_TP_TL); //$NON-NLS-1$
+		String a = ext.get(FLD_TP_AL); //$NON-NLS-1$
 		double tl = 0.0;
 		double al = 0.0;
 		try {
@@ -449,7 +458,7 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 	 * @return the GueltigVon value as a TimeTool object, or null if the value is not defined
 	 */
 	public TimeTool getGueltigVon(){
-		String value = get("GueltigVon");
+		String value = get(FLD_GUELTIG_VON);
 		if (!StringTool.isNothing(value)) {
 			return new TimeTool(value);
 		} else {
@@ -463,7 +472,7 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 	 * @return the GueltigBis value as a TimeTool object, or null if the value is not defined
 	 */
 	public TimeTool getGueltigBis(){
-		String value = get("GueltigBis");
+		String value = get(FLD_GUELTIG_BIS);
 		if (!StringTool.isNothing(value)) {
 			return new TimeTool(value);
 		} else {

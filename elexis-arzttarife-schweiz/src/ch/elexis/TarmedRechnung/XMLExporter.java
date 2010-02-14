@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 6141 2010-02-14 16:21:10Z rgw_ch $
+ * $Id: XMLExporter.java 6142 2010-02-14 16:37:56Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -652,7 +652,7 @@ public class XMLExporter implements IRnOutputter {
 				IVerrechenbar v = vv.getVerrechenbar();
 				
 				if (v == null) {
-					log.log(Messages.XMLExporter_ErroneusBill + rn.getNr() + " Null-Verrechenbar bei Kons " //$NON-NLS-2$
+					log.log(Messages.XMLExporter_ErroneusBill + rn.getNr() + " Null-Verrechenbar bei Kons " //$NON-NLS-2$ //$NON-NLS-1$
 						+ b.getLabel(), Log.ERRORS);
 					continue;
 				}
