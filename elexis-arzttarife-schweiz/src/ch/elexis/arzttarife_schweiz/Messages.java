@@ -108,6 +108,10 @@ public class Messages extends NLS {
 	public static String TarmedImporter_chapter;
 	public static String TarmedOptifier_codemax; 
 	public static String TarmedOptifier_BadType;
+	public static String TarmedOptifier_NoMoreValid;
+
+	public static String TarmedOptifier_NotYetValid;
+
 	public static String TarmedImporter_singleLst;
 	public static String TarmedImporter_enterSource; 
 	public static String TarmedImporter_setupSource; 

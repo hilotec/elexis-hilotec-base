@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsDrucker.java 4874 2008-12-30 09:56:08Z rgw_ch $
+ * $Id: RechnungsDrucker.java 6140 2010-02-14 13:34:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -76,7 +76,7 @@ public class RechnungsDrucker implements IRnOutputter {
 						for (Rechnung rn : rechnungen) {
 							try {
 								if (rnp.doPrint(rn, type, bSaveFileAsSelected ? dirname
-									+ File.separator + rn.getNr() + ".xml" : null, bESRSelected,
+									+ File.separator + rn.getNr() + ".xml" : null, bESRSelected, //$NON-NLS-1$
 									bFormsSelected, !bIgnoreFaultsSelected, monitor) == false) {
 									String errms =
 										Messages.RechnungsDrucker_TheBill + rn.getNr()
@@ -92,14 +92,14 @@ public class RechnungsDrucker implements IRnOutputter {
 									|| (status_vorher == RnStatus.MAHNUNG_3)) {
 									rn.setStatus(status_vorher + 1);
 								}
-								rn.addTrace(Rechnung.OUTPUT, getDescription() + ": "
+								rn.addTrace(Rechnung.OUTPUT, getDescription() + ": " //$NON-NLS-1$
 									+ RnStatus.getStatusText(rn.getStatus()));
 							} catch (Exception ex) {
 								String msg = ex.getMessage();
 								if (msg == null) {
-									msg = "interner Fehler";
+									msg = Messages.RechnungsDrucker_MessageErrorInternal;
 								}
-								SWTHelper.showError("Fehler beim Drucken der Rechnung "
+								SWTHelper.showError(Messages.RechnungsDrucker_MessageErrorWhilePrinting
 									+ rn.getNr(), msg);
 								errors++;
 							}
@@ -153,10 +153,10 @@ public class RechnungsDrucker implements IRnOutputter {
 			
 		});
 		Group cSaveCopy = new Group(ret, SWT.NONE);
-		cSaveCopy.setText("Datei für TrustCenter");
+		cSaveCopy.setText(Messages.RechnungsDrucker_FileForTrustCenter);
 		cSaveCopy.setLayout(new GridLayout(2, false));
 		bSaveFileAs = new Button(cSaveCopy, SWT.CHECK);
-		bSaveFileAs.setText("auch als XML für TrustCenter speichern");
+		bSaveFileAs.setText(Messages.RechnungsDrucker_AskSaveForTrustCenter);
 		bSaveFileAs.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		bSaveFileAs.setSelection(Hub.localCfg.get(PreferenceConstants.RNN_SAVECOPY, false));
 		bSaveFileAs.addSelectionListener(new SelectionAdapter() {
@@ -168,15 +168,15 @@ public class RechnungsDrucker implements IRnOutputter {
 		});
 		
 		Button bSelectFile = new Button(cSaveCopy, SWT.PUSH);
-		bSelectFile.setText("Verzeichnis:");
+		bSelectFile.setText(Messages.RechnungsDrucker_Directory);
 		bSelectFile.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				DirectoryDialog ddlg = new DirectoryDialog(parent.getShell());
 				dirname = ddlg.open();
 				if (dirname == null) {
-					SWTHelper.alert("Verzeichnisname fehlr",
-						"Sie müssen ein existierendes Verzeichnis auswählen");
+					SWTHelper.alert(Messages.RechnungsDrucker_DirNameMissingCaption,
+						Messages.RechnungsDrucker_DirnameMissingText);
 				} else {
 					Hub.localCfg.set(PreferenceConstants.RNN_EXPORTDIR, dirname);
 					tName.setText(dirname);
@@ -184,7 +184,7 @@ public class RechnungsDrucker implements IRnOutputter {
 			}
 		});
 		tName = new Text(cSaveCopy, SWT.BORDER | SWT.READ_ONLY);
-		tName.setText(Hub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR, ""));
+		tName.setText(Hub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR, "")); //$NON-NLS-1$
 		return ret;
 	}
 	

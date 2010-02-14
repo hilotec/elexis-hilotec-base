@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedOptifier.java 5361 2009-06-18 12:07:37Z rgw_ch $
+ * $Id: TarmedOptifier.java 6140 2010-02-14 13:34:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -31,6 +31,8 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class TarmedOptifier implements IOptifier {
+	private static final String TL = "TL";
+	private static final String AL = "AL";
 	public static final int OK = 0;
 	public static final int PREISAENDERUNG = 1;
 	public static final int KUMULATION = 2;
@@ -51,8 +53,8 @@ public class TarmedOptifier implements IOptifier {
 			if (iv instanceof TarmedLeistung) {
 				TarmedLeistung tl = (TarmedLeistung) iv;
 				String tcid = tl.getCode();
-				if ((tcid.equals("35.0020")) || (tcid.equals("04.1930"))
-					|| tcid.startsWith("00.25")) {
+				if ((tcid.equals("35.0020")) || (tcid.equals("04.1930")) //$NON-NLS-1$ //$NON-NLS-2$
+					|| tcid.startsWith("00.25")) { //$NON-NLS-1$
 					postponed.add(tl);
 				}
 			}
@@ -87,22 +89,22 @@ public class TarmedOptifier implements IOptifier {
 			}
 			// Gültigkeit gemäss Datum prüfen
 			TimeTool date = new TimeTool(kons.getDatum());
-			String dVon = ((TarmedLeistung) code).get("GueltigVon");
+			String dVon = ((TarmedLeistung) code).get("GueltigVon"); //$NON-NLS-1$
 			if (!StringTool.isNothing(dVon)) {
 				TimeTool tVon = new TimeTool(dVon);
 				if (date.isBefore(tVon)) {
 					return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, NOTYETVALID, code
 						.getCode()
-						+ " noch nicht gültig", null, false);
+						+ Messages.TarmedOptifier_NotYetValid, null, false);
 				}
 			}
-			String dBis = ((TarmedLeistung) code).get("GueltigBis");
+			String dBis = ((TarmedLeistung) code).get("GueltigBis"); //$NON-NLS-1$
 			if (!StringTool.isNothing(dBis)) {
 				TimeTool tBis = new TimeTool(dBis);
 				if (date.isAfter(tBis)) {
 					return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, NOMOREVALID, code
 						.getCode()
-						+ " nicht mehr gültig", null, false);
+						+ Messages.TarmedOptifier_NoMoreValid, null, false);
 				}
 			}
 			Verrechnet check = null;
@@ -154,8 +156,8 @@ public class TarmedOptifier implements IOptifier {
 						}
 					}
 				}
-				check.setDetail("AL", Integer.toString(tc.getAL()));
-				check.setDetail("TL", Integer.toString(tc.getTL()));
+				check.setDetail(AL, Integer.toString(tc.getAL()));
+				check.setDetail(TL, Integer.toString(tc.getTL()));
 				lst.add(check);
 			}
 			/*
@@ -199,13 +201,13 @@ public class TarmedOptifier implements IOptifier {
 			
 			// double factor = PersistentObject.checkZeroDouble(check.get("VK_Scale"));
 			// Abzug für Praxis-Op. (alle TL von OP I auf 40% reduzieren)
-			if (tcid.equals("35.0020")) {
+			if (tcid.equals("35.0020")) { //$NON-NLS-1$
 				
 				double sum = 0.0;
 				for (Verrechnet v : lst) {
 					if (v.getVerrechenbar() instanceof TarmedLeistung) {
 						TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
-						if (tl.getSparteAsText().equals("OP I")) {
+						if (tl.getSparteAsText().equals("OP I")) { //$NON-NLS-1$
 							/*
 							 * int tech = tl.getTL(); double abzug = tech 4.0 / 10.0; sum -= abzug;
 							 */
@@ -216,7 +218,7 @@ public class TarmedOptifier implements IOptifier {
 				
 				// check.setPreis(new Money(sum));
 				check.setTP(sum);
-				check.setDetail("TL", Double.toString(sum));
+				check.setDetail(TL, Double.toString(sum));
 				check.setPrimaryScaleFactor(-0.4);
 				/*
 				 * double sum=0.0; for(Verrechnet v:lst){ if(v.getVerrechenbar() instanceof
@@ -228,7 +230,7 @@ public class TarmedOptifier implements IOptifier {
 			}
 
 			// Zuschläge für Insellappen 50% auf AL und TL bei 1910,20,40,50
-			else if (tcid.equals("04.1930")) {
+			else if (tcid.equals("04.1930")) { //$NON-NLS-1$
 				double sumAL = 0.0;
 				double sumTL = 0.0;
 				for (Verrechnet v : lst) {
@@ -236,8 +238,8 @@ public class TarmedOptifier implements IOptifier {
 						TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
 						String tlc = tl.getCode();
 						int z = v.getZahl();
-						if (tlc.equals("04.1910") || tlc.equals("04.1920") || tlc.equals("04.1940")
-							|| tlc.equals("04.1950")) {
+						if (tlc.equals("04.1910") || tlc.equals("04.1920") || tlc.equals("04.1940") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							|| tlc.equals("04.1950")) { //$NON-NLS-1$
 							sumAL += tl.getAL() * z;
 							sumTL += tl.getTL() * z;
 							// double al = (tl.getAL() * 15) / 10.0;
@@ -250,8 +252,8 @@ public class TarmedOptifier implements IOptifier {
 				// sum = sum * factor / 100.0;
 				// check.setPreis(new Money(sum));
 				check.setTP(sumAL + sumTL);
-				check.setDetail("AL", Double.toString(sumAL));
-				check.setDetail("TL", Double.toString(sumTL));
+				check.setDetail(AL, Double.toString(sumAL));
+				check.setDetail(TL, Double.toString(sumTL));
 				check.setPrimaryScaleFactor(0.5);
 			}
 			// Notfall-Zuschläge
@@ -279,7 +281,7 @@ public class TarmedOptifier implements IOptifier {
 					}
 					// check.setPreis(sum.multiply(factor));
 					check.setTP(sum);
-					check.setDetail("AL", Double.toString(sum));
+					check.setDetail(AL, Double.toString(sum));
 					check.setPrimaryScaleFactor(0.25);
 					break;
 				case 40: // 22-7: 180 TP
@@ -299,7 +301,7 @@ public class TarmedOptifier implements IOptifier {
 					}
 					// check.setPreis(sum.multiply(factor));
 					check.setTP(sum);
-					check.setDetail("AL", Double.toString(sum));
+					check.setDetail(AL, Double.toString(sum));
 					check.setPrimaryScaleFactor(0.5);
 					break;
 				

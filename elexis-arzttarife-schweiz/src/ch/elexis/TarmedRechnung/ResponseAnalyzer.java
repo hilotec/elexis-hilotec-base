@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ResponseAnalyzer.java 4381 2008-09-07 13:58:32Z rgw_ch $
+ * $Id: ResponseAnalyzer.java 6140 2010-02-14 13:34:04Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -36,11 +36,11 @@ import ch.rgw.tools.Result;
  */
 public class ResponseAnalyzer {
 	final static Namespace ns =
-		Namespace.getNamespace("invoice", "http://www.xmlData.ch/xmlInvoice/XSD");
+		Namespace.getNamespace("invoice", "http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$ //$NON-NLS-2$
 	final static Namespace xsi =
-		Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+		Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance"); //$NON-NLS-1$ //$NON-NLS-2$
 	final static Namespace nsSchema =
-		Namespace.getNamespace("schemaLocation", "http://www.xmlData.ch/xmlInvoice/XSD");
+		Namespace.getNamespace("schemaLocation", "http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	Document responseDoc;
 	Element eRoot;
@@ -81,18 +81,18 @@ public class ResponseAnalyzer {
 			return false;
 		}
 		StringBuilder ret = new StringBuilder();
-		Element eHeader = eRoot.getChild("header", ns);
-		Element eSender = eHeader.getChild("sender", ns);
-		Element eIntermediate = eHeader.getChild("intermediate", ns);
-		Element eRecipient = eHeader.getChild("recipient", ns);
-		ret.append("Sender: ").append(eSender.getAttributeValue("ean_party")).append("\n");
-		ret.append("Intermediär: ").append(eIntermediate.getAttributeValue("ean_party")).append(
-			"\n");
-		ret.append("Empfänger: ").append(eRecipient.getAttributeValue("ean_party")).append("\n");
-		Element eInvoice = eRoot.getChild("invoice", ns);
+		Element eHeader = eRoot.getChild("header", ns); //$NON-NLS-1$
+		Element eSender = eHeader.getChild("sender", ns); //$NON-NLS-1$
+		Element eIntermediate = eHeader.getChild("intermediate", ns); //$NON-NLS-1$
+		Element eRecipient = eHeader.getChild("recipient", ns); //$NON-NLS-1$
+		ret.append("Sender: ").append(eSender.getAttributeValue("ean_party")).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		ret.append(Messages.ResponseAnalyzer_Intermediate).append(eIntermediate.getAttributeValue("ean_party")).append( //$NON-NLS-2$
+			"\n"); //$NON-NLS-1$
+		ret.append(Messages.ResponseAnalyzer_Receiver).append(eRecipient.getAttributeValue("ean_party")).append("\n"); //$NON-NLS-2$ //$NON-NLS-3$
+		Element eInvoice = eRoot.getChild("invoice", ns); //$NON-NLS-1$
 		int tr = -1;
 		if (eInvoice != null) {
-			String rnId = eInvoice.getAttributeValue("invoice_id");
+			String rnId = eInvoice.getAttributeValue("invoice_id"); //$NON-NLS-1$
 			tr = rnId.lastIndexOf('0');
 			if (tr == -1) {
 				rnNr = rnId;
@@ -103,70 +103,70 @@ public class ResponseAnalyzer {
 				rnNr = rnId.substring(tr + 1);
 			}
 		} else {
-			rnNr = "0";
+			rnNr = "0"; //$NON-NLS-1$
 		}
 		
 		rn = Rechnung.getFromNr(rnNr);
 		if (rn == null) {
-			ret.append("Die in der Antwort genannte Rechnung ist nicht bekannt!");
+			ret.append(Messages.ResponseAnalyzer_BillIsNotKnown);
 		} else {
-			ret.append("Rechnungsnummer: ").append(rnNr).append("\n");
-			ret.append("Patient: ").append(rn.getFall().getPatient().getLabel()).append("\n");
-			ret.append("Datum: ").append(rn.getDatumRn()).append("\n----------------------\n");
+			ret.append(Messages.ResponseAnalyzer_BillNumber).append(rnNr).append("\n"); //$NON-NLS-2$
+			ret.append(Messages.ResponseAnalyzer_Patient).append(rn.getFall().getPatient().getLabel()).append("\n"); //$NON-NLS-2$
+			ret.append(Messages.ResponseAnalyzer_Date).append(rn.getDatumRn()).append("\n----------------------\n"); //$NON-NLS-2$
 		}
-		ret.append("Status:\n______\n");
-		Element eStatus = eRoot.getChild("status", ns);
+		ret.append(Messages.ResponseAnalyzer_State);
+		Element eStatus = eRoot.getChild(Messages.ResponseAnalyzer_State2, ns);
 		List<Element> lStatus = eStatus.getChildren();
 		if (lStatus.size() != 1) {
-			ret.append("Nicht standardgemäss deklariert.\n");
+			ret.append(Messages.ResponseAnalyzer_NotDeclaredCorrectly);
 		} else {
 			Element eStatusType = lStatus.get(0);
-			Element eError = eStatusType.getChild("error", ns);
-			Element eExpl = eStatusType.getChild("explanation", ns);
-			String explanation = "Keine Erläuterung angegeben";
+			Element eError = eStatusType.getChild("error", ns); //$NON-NLS-1$
+			Element eExpl = eStatusType.getChild("explanation", ns); //$NON-NLS-1$
+			String explanation = "Keine Erläuterung angegeben"; //$NON-NLS-1$
 			if (eExpl != null) {
 				explanation = eExpl.getText();
 			}
 			status = eStatusType.getName().toLowerCase();
-			if (status.equals("rejected")) {
-				ret.append("Zurückgewiesen.\n").append(explanation).append("\n");
+			if (status.equals("rejected")) { //$NON-NLS-1$
+				ret.append(Messages.ResponseAnalyzer_StateRejected).append(explanation).append("\n"); //$NON-NLS-2$
 				if (eError != null) {
-					ret.append("Fehlercode: ");
-					ret.append(eError.getAttributeValue("major")).append(".");
-					ret.append(eError.getAttributeValue("minor")).append("->");
-					ret.append(eError.getAttributeValue("error")).append("\n");
+					ret.append(Messages.ResponseAnalyzer_ErrorCode);
+					ret.append(eError.getAttributeValue("major")).append("."); //$NON-NLS-1$ //$NON-NLS-2$
+					ret.append(eError.getAttributeValue("minor")).append("->"); //$NON-NLS-1$ //$NON-NLS-2$
+					ret.append(eError.getAttributeValue("error")).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				resume.add(new Result<String>(Result.SEVERITY.ERROR, 1, "Rejected", ret.toString(), true));
+				resume.add(new Result<String>(Result.SEVERITY.ERROR, 1, "Rejected", ret.toString(), true)); //$NON-NLS-1$
 				rn.reject(REJECTCODE.REJECTED_BY_PEER, explanation);
 				
-			} else if (status.equals("calledin")) {
-				ret.append("Weitere Informationen angefordert.\n").append(explanation).append("\n");
+			} else if (status.equals("calledin")) { //$NON-NLS-1$
+				ret.append(Messages.ResponseAnalyzer_MoreInformationsRequested).append(explanation).append("\n"); //$NON-NLS-2$
 				if (eError != null) {
-					ret.append("Code: ").append(eError.getAttributeValue("major"));
+					ret.append(Messages.ResponseAnalyzer_Code).append(eError.getAttributeValue("major")); //$NON-NLS-2$
 				}
-			} else if (status.equals("pending")) {
-				ret.append("In Bearbeitung.\n").append(explanation).append("\n");
-			} else if (status.equals("resend")) {
-				ret.append("Bitte nochmal senden.\n").append(explanation).append("\n");
-			} else if (status.equals("modified")) {
-				ret.append("Korrigiert.\n").append(explanation).append("\n");
+			} else if (status.equals("pending")) { //$NON-NLS-1$
+				ret.append(Messages.ResponseAnalyzer_Pending).append(explanation).append("\n"); //$NON-NLS-2$
+			} else if (status.equals("resend")) { //$NON-NLS-1$
+				ret.append(Messages.ResponseAnalyzer_PleaseResend).append(explanation).append(Messages.ResponseAnalyzer_56);
+			} else if (status.equals(Messages.ResponseAnalyzer_57)) {
+				ret.append(Messages.ResponseAnalyzer_58).append(explanation).append(Messages.ResponseAnalyzer_59);
 				if (eError != null) {
-					ret.append("Korrekturcode: ");
-					ret.append(eError.getAttributeValue("major")).append(".").append(
-						eError.getAttributeValue("minor")).append(" -> ").append(
-						eError.getAttributeValue("error")).append("\n");
+					ret.append(Messages.ResponseAnalyzer_60);
+					ret.append(eError.getAttributeValue(Messages.ResponseAnalyzer_61)).append(Messages.ResponseAnalyzer_62).append(
+						eError.getAttributeValue(Messages.ResponseAnalyzer_63)).append(Messages.ResponseAnalyzer_64).append(
+						eError.getAttributeValue(Messages.ResponseAnalyzer_65)).append(Messages.ResponseAnalyzer_66);
 				}
-			} else if (status.equals("anulment")) {
-				ret.append("Storno.\n").append(explanation).append("\n");
+			} else if (status.equals(Messages.ResponseAnalyzer_67)) {
+				ret.append(Messages.ResponseAnalyzer_68).append(explanation).append(Messages.ResponseAnalyzer_69);
 				List<Element> reasons = eStatusType.getChildren();
 				Element eReason = reasons.get(0);
-				ret.append(eReason.getName()).append("\n");
-			} else if (status.equals("creditadvice")) {
-				ret.append("Gutschrift.\n").append(explanation).append("\n");
+				ret.append(eReason.getName()).append(Messages.ResponseAnalyzer_70);
+			} else if (status.equals(Messages.ResponseAnalyzer_71)) {
+				ret.append(Messages.ResponseAnalyzer_72).append(explanation).append(Messages.ResponseAnalyzer_73);
 				Element eAnswer = (Element) eStatusType.getChildren().get(0);
-				ret.append(eAnswer.getName()).append("\n");
+				ret.append(eAnswer.getName()).append(Messages.ResponseAnalyzer_74);
 			} else {
-				ret.append("Unbekannter Statustyp\n");
+				ret.append(Messages.ResponseAnalyzer_75);
 			}
 		}
 		resume = new Result<String>(ret.toString());
