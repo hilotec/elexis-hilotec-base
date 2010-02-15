@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ResponseAnalyzer.java 6140 2010-02-14 13:34:04Z rgw_ch $
+ * $Id: ResponseAnalyzer.java 6143 2010-02-15 20:52:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -86,9 +86,9 @@ public class ResponseAnalyzer {
 		Element eIntermediate = eHeader.getChild("intermediate", ns); //$NON-NLS-1$
 		Element eRecipient = eHeader.getChild("recipient", ns); //$NON-NLS-1$
 		ret.append("Sender: ").append(eSender.getAttributeValue("ean_party")).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		ret.append(Messages.ResponseAnalyzer_Intermediate).append(eIntermediate.getAttributeValue("ean_party")).append( //$NON-NLS-2$
+		ret.append(Messages.ResponseAnalyzer_Intermediate).append(eIntermediate.getAttributeValue("ean_party")).append( //$NON-NLS-2$ //$NON-NLS-1$
 			"\n"); //$NON-NLS-1$
-		ret.append(Messages.ResponseAnalyzer_Receiver).append(eRecipient.getAttributeValue("ean_party")).append("\n"); //$NON-NLS-2$ //$NON-NLS-3$
+		ret.append(Messages.ResponseAnalyzer_Receiver).append(eRecipient.getAttributeValue("ean_party")).append("\n");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 		Element eInvoice = eRoot.getChild("invoice", ns); //$NON-NLS-1$
 		int tr = -1;
 		if (eInvoice != null) {
@@ -110,9 +110,9 @@ public class ResponseAnalyzer {
 		if (rn == null) {
 			ret.append(Messages.ResponseAnalyzer_BillIsNotKnown);
 		} else {
-			ret.append(Messages.ResponseAnalyzer_BillNumber).append(rnNr).append("\n"); //$NON-NLS-2$
-			ret.append(Messages.ResponseAnalyzer_Patient).append(rn.getFall().getPatient().getLabel()).append("\n"); //$NON-NLS-2$
-			ret.append(Messages.ResponseAnalyzer_Date).append(rn.getDatumRn()).append("\n----------------------\n"); //$NON-NLS-2$
+			ret.append(Messages.ResponseAnalyzer_BillNumber).append(rnNr).append("\n"); //$NON-NLS-2$ //$NON-NLS-1$
+			ret.append(Messages.ResponseAnalyzer_Patient).append(rn.getFall().getPatient().getLabel()).append("\n"); //$NON-NLS-2$ //$NON-NLS-1$
+			ret.append(Messages.ResponseAnalyzer_Date).append(rn.getDatumRn()).append("\n----------------------\n"); //$NON-NLS-2$ //$NON-NLS-1$
 		}
 		ret.append(Messages.ResponseAnalyzer_State);
 		Element eStatus = eRoot.getChild(Messages.ResponseAnalyzer_State2, ns);
@@ -129,7 +129,7 @@ public class ResponseAnalyzer {
 			}
 			status = eStatusType.getName().toLowerCase();
 			if (status.equals("rejected")) { //$NON-NLS-1$
-				ret.append(Messages.ResponseAnalyzer_StateRejected).append(explanation).append("\n"); //$NON-NLS-2$
+				ret.append(Messages.ResponseAnalyzer_StateRejected).append(explanation).append("\n"); //$NON-NLS-2$ //$NON-NLS-1$
 				if (eError != null) {
 					ret.append(Messages.ResponseAnalyzer_ErrorCode);
 					ret.append(eError.getAttributeValue("major")).append("."); //$NON-NLS-1$ //$NON-NLS-2$
@@ -140,12 +140,12 @@ public class ResponseAnalyzer {
 				rn.reject(REJECTCODE.REJECTED_BY_PEER, explanation);
 				
 			} else if (status.equals("calledin")) { //$NON-NLS-1$
-				ret.append(Messages.ResponseAnalyzer_MoreInformationsRequested).append(explanation).append("\n"); //$NON-NLS-2$
+				ret.append(Messages.ResponseAnalyzer_MoreInformationsRequested).append(explanation).append("\n"); //$NON-NLS-2$ //$NON-NLS-1$
 				if (eError != null) {
-					ret.append(Messages.ResponseAnalyzer_Code).append(eError.getAttributeValue("major")); //$NON-NLS-2$
+					ret.append(Messages.ResponseAnalyzer_Code).append(eError.getAttributeValue("major")); //$NON-NLS-2$ //$NON-NLS-1$
 				}
 			} else if (status.equals("pending")) { //$NON-NLS-1$
-				ret.append(Messages.ResponseAnalyzer_Pending).append(explanation).append("\n"); //$NON-NLS-2$
+				ret.append(Messages.ResponseAnalyzer_Pending).append(explanation).append("\n"); //$NON-NLS-2$ //$NON-NLS-1$
 			} else if (status.equals("resend")) { //$NON-NLS-1$
 				ret.append(Messages.ResponseAnalyzer_PleaseResend).append(explanation).append(Messages.ResponseAnalyzer_56);
 			} else if (status.equals(Messages.ResponseAnalyzer_57)) {

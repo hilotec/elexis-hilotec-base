@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PhysioPrefs.java 5141 2009-02-17 10:25:04Z rgw_ch $
+ * $Id: PhysioPrefs.java 6143 2010-02-15 20:52:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.preferences.inputs.MultiplikatorEditor;
 
 public class PhysioPrefs extends PreferencePage implements IWorkbenchPreferencePage {
-	public static final String TP_ID = "Physio";
+	public static final String TP_ID = "Physio"; //$NON-NLS-1$
 	
 	@Override
 	protected Control createContents(final Composite parent){

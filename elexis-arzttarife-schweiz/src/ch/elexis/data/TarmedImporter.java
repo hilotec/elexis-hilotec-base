@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz	 - Import from different DBMS
  * 
- * $Id: TarmedImporter.java 6142 2010-02-14 16:37:56Z rgw_ch $
+ * $Id: TarmedImporter.java 6143 2010-02-15 20:52:17Z rgw_ch $
  *******************************************************************************/
 
 // 8.12.07 G.Weirich avoid duplicate imports
@@ -45,7 +45,7 @@ import ch.rgw.tools.JdbcLink.Stm;
  */
 public class TarmedImporter extends ImporterPage {
 
-	private static final String SRC_ENCODING = "iso-8859-1";
+	private static final String SRC_ENCODING = "iso-8859-1"; //$NON-NLS-1$
 
 	JdbcLink j, pj;
 	Stm source, dest;
@@ -130,7 +130,7 @@ public class TarmedImporter extends ImporterPage {
 				if (subcap != -1) {
 					parent = code.substring(0, subcap);
 				}
-				if ((!tl.exists()) || (!parent.equals(tl.get("Parent")))) {
+				if ((!tl.exists()) || (!parent.equals(tl.get("Parent")))) { //$NON-NLS-1$
 					tl = new TarmedLeistung(code, parent, "", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 				tl.setText(txt);
@@ -144,21 +144,21 @@ public class TarmedImporter extends ImporterPage {
 				.prepareStatement("UPDATE TARMED_EXTENSION SET MED_INTERPRET=?,TECH_INTERPRET=? WHERE CODE=?"); //$NON-NLS-1$
 			count = 0;
 			while (res.next() == true) {
-				String cc = res.getString("LNR");
-				if (cc.equals("39.0305") || cc.equals("39.0300")) {
+				String cc = res.getString("LNR"); //$NON-NLS-1$
+				if (cc.equals("39.0305") || cc.equals("39.0300")) { //$NON-NLS-1$ //$NON-NLS-2$
 					System.out.println(cc);
 				}
 				TarmedLeistung tl = TarmedLeistung.load(cc);
 				if (tl.exists()) {
-					tl.set("DigniQuanti", convert(res, "QT_DIGNITAET"));
-					tl.set("Sparte", convert(res, "Sparte"));
+					tl.set("DigniQuanti", convert(res, "QT_DIGNITAET")); //$NON-NLS-1$ //$NON-NLS-2$
+					tl.set("Sparte", convert(res, "Sparte")); //$NON-NLS-1$ //$NON-NLS-2$
 				} else {
 					tl = new TarmedLeistung(cc, res.getString("KNR"), //$NON-NLS-1$
 							"0000", convert(res, "QT_DIGNITAET"), convert(res, "Sparte")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 				tl.set(new String[] {
-						"GueltigVon", "GueltigBis"
-				}, res.getString("GUELTIG_VON"), res.getString("GUELTIG_BIS"));
+						"GueltigVon", "GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
+				}, res.getString("GUELTIG_VON"), res.getString("GUELTIG_BIS")); //$NON-NLS-1$ //$NON-NLS-2$
 				Stm sub = j.getStatement();
 				String dqua =
 					sub
@@ -338,7 +338,7 @@ public class TarmedImporter extends ImporterPage {
 	private String convert(ResultSet res, String field) throws Exception{
 		byte[] raw = res.getBytes(field);
 		if (raw == null) {
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		return new String(raw, SRC_ENCODING);
 	}

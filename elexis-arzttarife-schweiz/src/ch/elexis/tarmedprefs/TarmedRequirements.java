@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedRequirements.java 6142 2010-02-14 16:37:56Z rgw_ch $
+ * $Id: TarmedRequirements.java 6143 2010-02-15 20:52:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
@@ -21,30 +21,30 @@ import ch.rgw.tools.StringTool;
 
 public class TarmedRequirements {
 
-	public static final String INSURANCE="Kostenträger";
-	public static final String INSURANCE_NUMBER="Versicherungsnummer";
-	public static final String CASE_NUMBER="Fallnummer";
-	public static final String INTERMEDIATE="Intermediär";
-	public static final String ACCIDENT_NUMBER="Unfallnummer";
-	public final static String SSN ="AHV-Nummer";
-	public static final String EAN_PSEUDO="2000000000000";
-	public static final String EAN_PROVIDER="ean_provider";
-	public static final String EAN_RESPONSIBLE="ean_responsible";
+	public static final String INSURANCE=Messages.getString("TarmedRequirements.KostentraegerName"); //$NON-NLS-1$
+	public static final String INSURANCE_NUMBER=Messages.getString("TarmedRequirements.InsuranceNumberName"); //$NON-NLS-1$
+	public static final String CASE_NUMBER=Messages.getString("TarmedRequirements.CaseNumberName"); //$NON-NLS-1$
+	public static final String INTERMEDIATE=Messages.getString("TarmedRequirements.IntermediateName"); //$NON-NLS-1$
+	public static final String ACCIDENT_NUMBER=Messages.getString("TarmedRequirements.AccidentNumberName"); //$NON-NLS-1$
+	public final static String SSN =Messages.getString("TarmedRequirements.SSNName"); //$NON-NLS-1$
+	public static final String EAN_PSEUDO="2000000000000"; //$NON-NLS-1$
+	public static final String EAN_PROVIDER="ean_provider"; //$NON-NLS-1$
+	public static final String EAN_RESPONSIBLE="ean_responsible"; //$NON-NLS-1$
 	
-	public static final String ACCIDENT_DATE="Unfalldatum";
-	public static final String CASE_LAW="Gesetz";
+	public static final String ACCIDENT_DATE=Messages.getString("TarmedRequirements.AccidentDate"); //$NON-NLS-1$
+	public static final String CASE_LAW=Messages.getString("TarmedRequirements.Law"); //$NON-NLS-1$
 	
 	public static final String BILLINGSYSTEM_NAME="TarmedLeistung";
 	public static final String OUTPUTTER_NAME="Tarmed-Drucker";
 	
-	public static final String DOMAIN_KSK="www.xid.ch/id/ksk";
-	public static final String DOMAIN_NIF="www.xid.ch/id/nif";
-	public final static String DOMAIN_RECIPIENT_EAN="www.xid.ch/id/recipient_ean";
+	public static final String DOMAIN_KSK="www.xid.ch/id/ksk"; //$NON-NLS-1$
+	public static final String DOMAIN_NIF="www.xid.ch/id/nif"; //$NON-NLS-1$
+	public final static String DOMAIN_RECIPIENT_EAN="www.xid.ch/id/recipient_ean"; //$NON-NLS-1$
 
 	static{
-		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_KSK, "KSK/ZSR-Nr", Xid.ASSIGNMENT_REGIONAL);
-		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_NIF, "NIF", Xid.ASSIGNMENT_REGIONAL);
-		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_RECIPIENT_EAN, "rEAN", Xid.ASSIGNMENT_REGIONAL);
+		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_KSK, Messages.getString("TarmedRequirements.kskName"), Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
+		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_NIF, Messages.getString("TarmedRequirements.NifName"), Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
+		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_RECIPIENT_EAN, "rEAN", Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
 	}
 	
 	public static String getEAN(final Kontakt k){
@@ -54,7 +54,7 @@ public class TarmedRequirements {
 		String ret= k.getXid(Xid.DOMAIN_EAN);
 		// compatibility layer
 		if(ret.length()==0){
-			ret=k.getInfoString("EAN");
+			ret=k.getInfoString("EAN"); //$NON-NLS-1$
 			if(ret.length()>0){
 				setEAN(k,ret);
 			}
@@ -69,7 +69,7 @@ public class TarmedRequirements {
 	public static String getRecipientEAN(final Kontakt k){
 		String ret= k.getXid(DOMAIN_RECIPIENT_EAN);
 		if(ret.length()==0){
-			ret="unknown";
+			ret="unknown"; //$NON-NLS-1$
 		}
 		return ret.trim();
 	}
@@ -91,8 +91,8 @@ public class TarmedRequirements {
 	 */
 	public static String getProviderEAN(final Fall fall){
 		String ean=fall.getRequiredString(EAN_PROVIDER).trim();
-		if(!ean.matches("(20[0-9]{11}|76[0-9]{11}|unknown|[A-Z][0-9]{6})")){
-			return "unknown";
+		if(!ean.matches("(20[0-9]{11}|76[0-9]{11}|unknown|[A-Z][0-9]{6})")){ //$NON-NLS-1$
+			return "unknown"; //$NON-NLS-1$
 		}
 		return ean;
 	}
@@ -104,8 +104,8 @@ public class TarmedRequirements {
 	 */
 	public static String getResponsibleEAN(final Fall fall){
 		String ean=fall.getRequiredString(EAN_RESPONSIBLE).trim();
-		if(!ean.matches("(20[0-9]{11}|76[0-9]{11}|unknown|[A-Z][0-9]{6})")){
-			return "unknown";
+		if(!ean.matches("(20[0-9]{11}|76[0-9]{11}|unknown|[A-Z][0-9]{6})")){ //$NON-NLS-1$
+			return "unknown"; //$NON-NLS-1$
 		}
 		return ean;
 	}
@@ -119,14 +119,14 @@ public class TarmedRequirements {
 	 * @return bei bCompact true eine KSK wie G123456, sonst eine wie G 1234.56 
 	 */
 	public static String normalizeKSK(String KSK, boolean bCompact){
-		if(!KSK.matches("[a-zA-Z] ?[0-9]{4,4}\\.?[0-9]{2,2}")){
-			return "invalid";
+		if(!KSK.matches("[a-zA-Z] ?[0-9]{4,4}\\.?[0-9]{2,2}")){ //$NON-NLS-1$
+			return "invalid"; //$NON-NLS-1$
 		}
-		KSK=KSK.replaceAll("[^a-zA-Z0-9]", "");
+		KSK=KSK.replaceAll("[^a-zA-Z0-9]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		if(bCompact){
 			return KSK;
 		}
-		KSK=KSK.substring(0,1)+" "+KSK.substring(1, 5)+"."+KSK.substring(5);
+		KSK=KSK.substring(0,1)+" "+KSK.substring(1, 5)+"."+KSK.substring(5); //$NON-NLS-1$ //$NON-NLS-2$
 		return KSK.trim();
 	}
 	
@@ -134,20 +134,20 @@ public class TarmedRequirements {
 		String ret= k.getXid(DOMAIN_KSK);
 		// compatibility layer
 		if(ret.length()==0){
-			ret=k.getInfoString("KSK");
+			ret=k.getInfoString("KSK"); //$NON-NLS-1$
 			if(ret.length()>0){
 				setKSK(k,ret);
 			}
 		}
 		// end
-		return ret.replaceAll("[\\s\\.\\-]", "").trim();
+		return ret.replaceAll("[\\s\\.\\-]", "").trim(); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	public static String getNIF(final Kontakt k){
 		String ret= k.getXid(DOMAIN_NIF);
 		// compatibility layer
 		if(ret.length()==0){
-			ret=k.getInfoString("NIF");
+			ret=k.getInfoString("NIF"); //$NON-NLS-1$
 			if(ret.length()>0){
 				setNIF(k,ret);
 			}
@@ -157,7 +157,7 @@ public class TarmedRequirements {
 	}
 	
 	public static boolean setEAN(final Kontakt k,final String ean){
-		if(!ean.matches("[0-9]{13,13}")){
+		if(!ean.matches("[0-9]{13,13}")){ //$NON-NLS-1$
 			return false;
 		}
 		k.addXid(Xid.DOMAIN_EAN, ean, true);
@@ -195,17 +195,17 @@ public class TarmedRequirements {
 		if(StringTool.isNothing(billingSystem)){
 			billingSystem=Fall.getAbrechnungsSysteme()[0];
 		}
-		String gesetz=fall.getRequiredString("Gesetz");
+		String gesetz=fall.getRequiredString("Gesetz"); //$NON-NLS-1$
 		if(gesetz.length()==0){
 			gesetz=Fall.getBillingSystemConstant(billingSystem, CASE_LAW);
 		}
 		if(gesetz.length()==0){	// compatibility. To be removed
-			gesetz=Fall.getBillingSystemAttribute(billingSystem, "gesetz");
+			gesetz=Fall.getBillingSystemAttribute(billingSystem, "gesetz"); //$NON-NLS-1$
 		}
 		if(gesetz.length()==0){
-			if(billingSystem.matches("KVG|UVG|MV|VVG")){
+			if(billingSystem.matches("KVG|UVG|MV|VVG")){ //$NON-NLS-1$
 				gesetz=billingSystem;
-			}else if(billingSystem.equalsIgnoreCase("iv")){
+			}else if(billingSystem.equalsIgnoreCase("iv")){ //$NON-NLS-1$
 					gesetz="ivg";
 			}
 		}
@@ -224,7 +224,7 @@ public class TarmedRequirements {
 		String tcname=getTCName(mandant);
 		Integer nr=TrustCenters.tc.get(tcname);
 		if(nr==null){
-			return "00";
+			return "00"; //$NON-NLS-1$
 		}
 		return Integer.toString(nr);
 	}
@@ -235,6 +235,6 @@ public class TarmedRequirements {
 	
 	public static boolean hasTCContract(Kontakt mandant){
 		String hc=(String)mandant.getInfoElement(PreferenceConstants.USETC);
-		return "1".equals(hc);
+		return "1".equals(hc); //$NON-NLS-1$
 	}
 }

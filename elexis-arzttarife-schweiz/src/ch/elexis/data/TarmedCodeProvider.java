@@ -21,16 +21,16 @@ public class TarmedCodeProvider implements ITreeContentProvider,
 	CommonViewer cv;
 	Query<TarmedLeistung> qbe=new Query<TarmedLeistung>(TarmedLeistung.class);
 	TreeListener ltl=new TreeListener();
-	static final String parentColumn="Parent";
+	static final String parentColumn="Parent"; //$NON-NLS-1$
 	static final TimeTool today=new TimeTool();
 	final Filter filter=new Filter();
-	private String code="";
-	private String text="";
+	private String code=""; //$NON-NLS-1$
+	private String text=""; //$NON-NLS-1$
 	
 	public TarmedCodeProvider(CommonViewer mine){
 		root=new LazyTree<TarmedLeistung>(null,null,ltl);
-		qbe.add(parentColumn, Query.EQUALS, "NIL");
-		qbe.orderBy(true, "ID");
+		qbe.add(parentColumn, Query.EQUALS, "NIL"); //$NON-NLS-1$
+		qbe.orderBy(true, "ID"); //$NON-NLS-1$
 		for(TarmedLeistung tl:qbe.execute()){
 			new LazyTree<TarmedLeistung>(root,tl,ltl);
 		}
@@ -132,7 +132,7 @@ public class TarmedCodeProvider implements ITreeContentProvider,
 			 TarmedLeistung tl=(TarmedLeistung) l.contents;
 			 if(tl!=null){
 				 qbe.add(parentColumn,Query.EQUALS,tl.getId()); //$NON-NLS-1$
-				 qbe.orderBy(true,"ID");
+				 qbe.orderBy(true,"ID"); //$NON-NLS-1$
 				 for(TarmedLeistung tlc:qbe.execute()){
 					 new LazyTree<TarmedLeistung>(l,tlc,ltl);
 				 }
@@ -191,12 +191,12 @@ public class TarmedCodeProvider implements ITreeContentProvider,
 					}
 				}
 				if(lt.contents instanceof TarmedLeistung){
-					if(from.set(tl.get("GueltigVon"))){
+					if(from.set(tl.get("GueltigVon"))){ //$NON-NLS-1$
 						if(from.isAfter(today)){
 							return false;
 						}
 					}
-					if(until.set(tl.get("GueltigBis"))){
+					if(until.set(tl.get("GueltigBis"))){ //$NON-NLS-1$
 						if(until.isBefore(today)){
 							return false;
 						}

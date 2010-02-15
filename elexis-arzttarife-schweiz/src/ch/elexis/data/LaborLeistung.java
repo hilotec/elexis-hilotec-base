@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LaborLeistung.java 6142 2010-02-14 16:37:56Z rgw_ch $
+ * $Id: LaborLeistung.java 6143 2010-02-15 20:52:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -20,8 +20,8 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class LaborLeistung extends VerrechenbarAdapter {
-	public static final String FLD_NAME = "Name";
-	private static final String TABLENAME = "ARTIKEL";
+	public static final String FLD_NAME = "Name"; //$NON-NLS-1$
+	private static final String TABLENAME = "ARTIKEL"; //$NON-NLS-1$
 	public static final String XIDDOMAIN = "www.xid.ch/id/analysenliste_ch/"; //$NON-NLS-1$
 	
 	static {

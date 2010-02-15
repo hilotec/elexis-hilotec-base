@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LaborleistungPrefs.java 3098 2007-09-05 15:34:33Z rgw_ch $
+ * $Id: LaborleistungPrefs.java 6143 2010-02-15 20:52:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.tarmedprefs;
@@ -26,7 +26,7 @@ public class LaborleistungPrefs extends PreferencePage implements
 
 	@Override
 	protected Control createContents(final Composite parent) {
-		return new MultiplikatorEditor(parent,"EAL"); 
+		return new MultiplikatorEditor(parent,"EAL");  //$NON-NLS-1$
 	}
 
 	public void init(final IWorkbench workbench) {

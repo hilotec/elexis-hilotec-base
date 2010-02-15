@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: RnPrintView2.java 6056 2010-02-03 12:28:21Z rgw_ch $
+ * $Id: RnPrintView2.java 6143 2010-02-15 20:52:17Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -25,6 +25,7 @@ import org.jdom.Element;
 import org.jdom.Namespace;
 
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.TarmedRechnung.TarmedACL;
 import ch.elexis.TarmedRechnung.XMLExporter;
 import ch.elexis.actions.ElexisEventDispatcher;
@@ -156,25 +157,25 @@ public class RnPrintView2 extends ViewPart {
 		
 		String printer = null;
 		XMLExporter xmlex = new XMLExporter();
-		DecimalFormat df = new DecimalFormat("0.00"); //$NON-NLS-1$
+		DecimalFormat df = new DecimalFormat(StringConstants.DOUBLE_ZERO); 
 		Document xmlRn = xmlex.doExport(rn, saveFile, rnType, doVerify);
 		if (rn.getStatus() == RnStatus.FEHLERHAFT) {
 			return false;
 		}
-		Element invoice = xmlRn.getRootElement().getChild("invoice",
+		Element invoice = xmlRn.getRootElement().getChild(XMLExporter.ELEMENT_INVOICE,
 			XMLExporter.ns);
-		Element balance = invoice.getChild("balance", XMLExporter.ns);
-		paymentMode = "TG"; // fall.getPaymentMode();
-		Element eTiers = invoice.getChild("tiers_garant", XMLExporter.ns);
+		Element balance = invoice.getChild(XMLExporter.ELEMENT_BALANCE, XMLExporter.ns);
+		paymentMode = XMLExporter.TIERS_GARANT; // fall.getPaymentMode();
+		Element eTiers = invoice.getChild(XMLExporter.ELEMENT_TIERS_GARANT, XMLExporter.ns);
 		if (eTiers == null) {
-			eTiers = invoice.getChild("tiers_payant", XMLExporter.ns);
-			paymentMode = "TP";
+			eTiers = invoice.getChild(XMLExporter.ELEMENT_TIERS_PAYANT, XMLExporter.ns);
+			paymentMode = XMLExporter.TIERS_PAYANT;
 		}
 		
 		String tcCode = null;
-		if (TarmedRequirements.hasTCContract(rs) && paymentMode.equals("TG")) {
+		if (TarmedRequirements.hasTCContract(rs) && paymentMode.equals(XMLExporter.TIERS_GARANT)) {
 			tcCode = TarmedRequirements.getTCCode(rs);
-		} else if (paymentMode.equals("TP")) {
+		} else if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
 			tcCode = "01";
 		}
 		ElexisEventDispatcher.fireSelectionEvents(rn,fall,pat,rs);
@@ -194,7 +195,7 @@ public class RnPrintView2 extends ViewPart {
 		
 		Kontakt adressat;
 		
-		if (paymentMode.equals("TP")) { //$NON-NLS-1$
+		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
 			adressat = fall.getRequiredContact(TarmedRequirements.INSURANCE);
 		} else {
 			adressat = fall.getGarant();
@@ -207,9 +208,9 @@ public class RnPrintView2 extends ViewPart {
 		ESR esr = new ESR(rs.getInfoString(ta.ESRNUMBER), rs
 			.getInfoString(ta.ESRSUB), userdata, ESR.ESR27);
 		Money mDue = XMLTool.xmlDoubleToMoney(balance
-			.getAttributeValue("amount_due"));
+			.getAttributeValue(XMLExporter.ATTR_AMOUNT_DUE));
 		Money mPaid = XMLTool.xmlDoubleToMoney(balance
-			.getAttributeValue("amount_prepaid"));
+			.getAttributeValue(XMLExporter.ATTR_AMOUNT_PREPAID));
 		String offenRp = mDue.getCentsAsString();
 		// Money mEZDue=new Money(xmlex.mTotal);
 		Money mEZDue = new Money(mDue); // XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_obligations"));
@@ -232,45 +233,45 @@ public class RnPrintView2 extends ViewPart {
 			List<Zahlung> extra = rn.getZahlungen();
 			Kontakt bank = Kontakt.load(rs.getInfoString(ta.RNBANK));
 			final StringBuilder sb = new StringBuilder();
-			String sTarmed = balance.getAttributeValue("amount_tarmed");
-			String sMedikament = balance.getAttributeValue("amount_drug");
-			String sAnalysen = balance.getAttributeValue("amount_lab");
-			String sMigel = balance.getAttributeValue("amount_migel");
-			String sPhysio = balance.getAttributeValue("amount_physio");
-			String sOther = balance.getAttributeValue("amount_unclassified");
+			String sTarmed = balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_TARMED);
+			String sMedikament = balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_DRUG);
+			String sAnalysen = balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_LAB);
+			String sMigel = balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_MIGEL);
+			String sPhysio = balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_PHYSIO);
+			String sOther = balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_UNCLASSIFIED);
 			sb.append(Messages.RnPrintView_tarmedPoints).append(sTarmed)
-			.append("\n");
+			.append(StringConstants.LF);
 			sb.append(Messages.RnPrintView_medicaments).append(sMedikament)
-			.append("\n");
+			.append(StringConstants.LF);
 			sb.append(Messages.RnPrintView_labpoints).append(sAnalysen).append(
-			"\n");
+					StringConstants.LF);
 			sb.append(Messages.RnPrintView_migelpoints).append(sMigel).append(
-			"\n");
+					StringConstants.LF);
 			sb.append(Messages.RnPrintView_physiopoints).append(sPhysio)
-			.append("\n");
+			.append(StringConstants.LF);
 			sb.append(Messages.RnPrintView_otherpoints).append(sOther).append(
-			"\n");
+					StringConstants.LF);
 			
 			for (Zahlung z : extra) {
 				Money betrag = new Money(z.getBetrag()).multiply(-1.0);
 				if (!betrag.isNegative()) {
 					sb
 					.append(z.getBemerkung())
-					.append(":\t").append(betrag.getAmountAsString()).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+					.append(":\t").append(betrag.getAmountAsString()).append(StringConstants.LF); //$NON-NLS-1$ 
 					mEZDue.addMoney(betrag);
 				}
 			}
-			sb.append("--------------------------------------").append("\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append("--------------------------------------").append(StringConstants.LF); //$NON-NLS-1$ 
 			
 			sb.append(Messages.RnPrintView_sum).append(mEZDue);
 			
 			if (!mPaid.isZero()) {
 				sb.append(Messages.RnPrintView_prepaid).append(
-					mPaid.getAmountAsString()).append("\n");
+					mPaid.getAmountAsString()).append(StringConstants.LF);
 				// sb.append("Noch zu zahlen:\t").append(xmlex.mDue.getAmountAsString()).append("\n");
 				sb.append(Messages.RnPrintView_topay).append(
 					mEZDue.subtractMoney(mPaid).roundTo5()
-					.getAmountAsString()).append("\n");
+					.getAmountAsString()).append(StringConstants.LF);
 			}
 			
 			text.getPlugin().setFont("Serif", SWT.NORMAL, 9); //$NON-NLS-1$
@@ -368,11 +369,11 @@ public class RnPrintView2 extends ViewPart {
 			}
 		}
 		
-		Element services = detail.getChild("services", ns); //$NON-NLS-1$
+		Element services = detail.getChild(XMLExporter.ELEMENT_SERVICES, ns); //$NON-NLS-1$
 		SortedList<Element> ls = new SortedList(services.getChildren(),
 			new RnComparator());
 		
-		Element remark = invoice.getChild("remark"); //$NON-NLS-1$
+		Element remark = invoice.getChild(XMLExporter.ELEMENT_REMARK); //$NON-NLS-1$
 		if (remark != null) {
 			final String rem = remark.getText();
 			text.getPlugin().findOrReplace(Messages.RnPrintView_remark,
@@ -437,7 +438,7 @@ public class RnPrintView2 extends ViewPart {
 			sb.append("1\t1\t"); //$NON-NLS-1$
 			String pfl = s.getAttributeValue("obligation"); //$NON-NLS-1$
 			String vat = getValue(s, "vat_rate"); //$NON-NLS-1$
-			String am = s.getAttributeValue("amount"); //$NON-NLS-1$
+			String am = s.getAttributeValue(XMLExporter.ATTR_AMOUNT); //$NON-NLS-1$
 			// double dLine=Double.parseDouble(am);
 			double dLine;
 			try {
@@ -647,7 +648,7 @@ public class RnPrintView2 extends ViewPart {
 		String titel;
 		String titelMahnung;
 		
-		if (paymentMode.equals("TP")) { //$NON-NLS-1$
+		if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) { //$NON-NLS-1$
 			titel = Messages.RnPrintView_tbBill;
 			
 			switch (rn.getStatus()) {
@@ -708,12 +709,12 @@ public class RnPrintView2 extends ViewPart {
 			if (dat != 0) {
 				return dat;
 			}
-			String t0 = e0.getAttributeValue("tariff_type");
-			String t1 = e1.getAttributeValue("tariff_type");
+			String t0 = e0.getAttributeValue(XMLExporter.ATTR_TARIFF_TYPE);
+			String t1 = e1.getAttributeValue(XMLExporter.ATTR_TARIFF_TYPE);
 			if (t0.equals("001")) { // tarmed-tarmed: nach code sortieren
 				if (t1.equals("001")) {
-					String c0 = e0.getAttributeValue("code");
-					String c1 = e1.getAttributeValue("code");
+					String c0 = e0.getAttributeValue(XMLExporter.ATTR_CODE);
+					String c1 = e1.getAttributeValue(XMLExporter.ATTR_CODE);
 					return c0.compareTo(c1);
 				} else {
 					return -1; // tarmed immer oberhab nicht-tarmed

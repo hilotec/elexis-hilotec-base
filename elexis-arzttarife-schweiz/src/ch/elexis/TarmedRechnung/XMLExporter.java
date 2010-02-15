@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 6142 2010-02-14 16:37:56Z rgw_ch $
+ * $Id: XMLExporter.java 6143 2010-02-15 20:52:17Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -112,9 +112,11 @@ import ch.rgw.tools.XMLTool;
  * 
  */
 public class XMLExporter implements IRnOutputter {
+	public static final String ELEMENT_TIERS_PAYANT = "tiers_payant";
+	public static final String ELEMENT_TIERS_GARANT = "tiers_garant";
 	private static final String ELEMENT_EMAIL = "email"; //$NON-NLS-1$
 	private static final String ELEMENT_ONLINE = "online"; //$NON-NLS-1$
-	private static final String ATTR_CODE = "code"; //$NON-NLS-1$
+	public static final String ATTR_CODE = "code"; //$NON-NLS-1$
 	private static final String ICPC = "ICPC"; //$NON-NLS-1$
 	private static final String BY_CONTRACT = "by_contract"; //$NON-NLS-1$
 	private static final String BIRTHDEFECT = "birthdefect"; //$NON-NLS-1$
@@ -152,13 +154,13 @@ public class XMLExporter implements IRnOutputter {
 	private static final String ATTR_BILLING_ROLE = "billing_role"; //$NON-NLS-1$
 	private static final String ATTR_EAN_RESPONSIBLE = "ean_responsible"; //$NON-NLS-1$
 	private static final String ATTR_EAN_PROVIDER = "ean_provider"; //$NON-NLS-1$
-	private static final String ATTR_TARIFF_TYPE = "tariff_type"; //$NON-NLS-1$
+	public static final String ATTR_TARIFF_TYPE = "tariff_type"; //$NON-NLS-1$
 	private static final String ATTR_TREATMENT = "treatment"; //$NON-NLS-1$
 	private static final String ELEMENT_RECORD_TARMED = "record_tarmed"; //$NON-NLS-1$
 	private static final String VK_SCALE = "VK_Scale"; //$NON-NLS-1$
 	private static final String TL = "TL"; //$NON-NLS-1$
 	private static final String AL = "AL"; //$NON-NLS-1$
-	private static final String ELEMENT_REMARK = "remark"; //$NON-NLS-1$
+	public static final String ELEMENT_REMARK = "remark"; //$NON-NLS-1$
 	private static final String ATTR_CASE_ID = "case_id"; //$NON-NLS-1$
 	private static final String ATTR_INVOICE_DATE = "invoice_date"; //$NON-NLS-1$
 	private static final String ATTR_INVOICE_ID = "invoice_id"; //$NON-NLS-1$
@@ -182,27 +184,27 @@ public class XMLExporter implements IRnOutputter {
 	private static final String ELEMENT_REQUEST = "request"; //$NON-NLS-1$
 	public static final String TIERS_GARANT = "TG"; //$NON-NLS-1$
 	public static final String TIERS_PAYANT = "TP"; //$NON-NLS-1$
-	private static final String ATTR_AMOUNT_PHYSIO = "amount_physio"; //$NON-NLS-1$
-	private static final String ATTR_AMOUNT_MIGEL = "amount_migel"; //$NON-NLS-1$
-	private static final String ATTR_AMOUNT_LAB = "amount_lab"; //$NON-NLS-1$
-	private static final String ATTR_AMOUNT_DRUG = "amount_drug"; //$NON-NLS-1$
-	private static final String ATTR_AMOUNT_UNCLASSIFIED = "amount_unclassified"; //$NON-NLS-1$
-	private static final String ATTR_AMOUNT_CANTONAL = "amount_cantonal"; //$NON-NLS-1$
-	private static final String ATTR_AMOUNT_TARMED_TT = "amount_tarmed.tt"; //$NON-NLS-1$
-	private static final String ATTR_AMOUNT_TARMED_MT = "amount_tarmed.mt"; //$NON-NLS-1$
-	private static final String ATTR_AMOUNT_TARMED = "amount_tarmed"; //$NON-NLS-1$
-	private static final String ATTR_AMOUNT = "amount"; //$NON-NLS-1$
-	private static final String ATTR_AMOUNT_TT = "amount.tt"; //$NON-NLS-1$
-	private static final String ATTR_AMOUNT_MT = "amount.mt"; //$NON-NLS-1$
-	private static final String ATTR_QUANTITY = "quantity"; //$NON-NLS-1$
-	private static final String ATTR_AMOUNT_DUE = "amount_due"; //$NON-NLS-1$
-	private static final String ELEMENT_SERVICES = "services"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_PHYSIO = "amount_physio"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_MIGEL = "amount_migel"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_LAB = "amount_lab"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_DRUG = "amount_drug"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_UNCLASSIFIED = "amount_unclassified"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_CANTONAL = "amount_cantonal"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_TARMED_TT = "amount_tarmed.tt"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_TARMED_MT = "amount_tarmed.mt"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_TARMED = "amount_tarmed"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT = "amount"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_TT = "amount.tt"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_MT = "amount.mt"; //$NON-NLS-1$
+	public static final String ATTR_QUANTITY = "quantity"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_DUE = "amount_due"; //$NON-NLS-1$
+	public static final String ELEMENT_SERVICES = "services"; //$NON-NLS-1$
 	private static final String ELEMENT_DETAIL = "detail"; //$NON-NLS-1$
 	private static final String ATTR_RESEND = "resend"; //$NON-NLS-1$
 	private static final String ATTR_AMOUNT_OBLIGATIONS = "amount_obligations"; //$NON-NLS-1$
-	private static final String ATTR_AMOUNT_PREPAID = "amount_prepaid"; //$NON-NLS-1$
-	private static final String ELEMENT_BALANCE = "balance"; //$NON-NLS-1$
-	private static final String ELEMENT_INVOICE = "invoice"; //$NON-NLS-1$
+	public static final String ATTR_AMOUNT_PREPAID = "amount_prepaid"; //$NON-NLS-1$
+	public static final String ELEMENT_BALANCE = "balance"; //$NON-NLS-1$
+	public static final String ELEMENT_INVOICE = "invoice"; //$NON-NLS-1$
 	public static final Namespace ns =
 		Namespace.getNamespace(ELEMENT_INVOICE, "http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
 	public static final String FIELDNAME_TIMESTAMPXML = "TimeStampXML"; //$NON-NLS-1$
@@ -652,7 +654,7 @@ public class XMLExporter implements IRnOutputter {
 				IVerrechenbar v = vv.getVerrechenbar();
 				
 				if (v == null) {
-					log.log(Messages.XMLExporter_ErroneusBill + rn.getNr() + " Null-Verrechenbar bei Kons " //$NON-NLS-2$ //$NON-NLS-1$
+					log.log(Messages.XMLExporter_ErroneusBill + rn.getNr() + " Null-Verrechenbar bei Kons " //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-1$
 						+ b.getLabel(), Log.ERRORS);
 					continue;
 				}
@@ -933,14 +935,14 @@ public class XMLExporter implements IRnOutputter {
 		
 		Element eTiers = null;
 		if (tiers.equals(TIERS_GARANT)) {
-			eTiers = new Element("tiers_garant", ns); // 11020 //$NON-NLS-1$
+			eTiers = new Element(ELEMENT_TIERS_GARANT, ns); // 11020 //$NON-NLS-1$
 			String paymentPeriode = actMandant.getInfoString("rnfrist"); //$NON-NLS-1$
 			if (StringTool.isNothing(paymentPeriode)) {
 				paymentPeriode = "30"; //$NON-NLS-1$
 			}
 			eTiers.setAttribute("payment_periode", "P" + paymentPeriode + "D"); // 11021 //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		} else {
-			eTiers = new Element("tiers_payant", ns); // 11260 //$NON-NLS-1$
+			eTiers = new Element(ELEMENT_TIERS_PAYANT, ns); // 11260 //$NON-NLS-1$
 			// to simplify things for now we do no accept modifications
 			eTiers.setAttribute("invoice_modification", "false"); // 11262 //$NON-NLS-1$ //$NON-NLS-2$
 			eTiers.setAttribute("purpose", ELEMENT_INVOICE); // 11265 //$NON-NLS-1$

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsPrefs.java 4773 2008-12-08 13:37:29Z rgw_ch $
+ * $Id: RechnungsPrefs.java 6143 2010-02-15 20:52:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.tarmedprefs;
@@ -77,8 +77,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	
 	static final String[] ExtFlds =
 		{
-			"Anrede", "Kanton", "EAN=" + Xid.DOMAIN_EAN, "NIF=" + TarmedRequirements.DOMAIN_NIF,
-			"KSK=" + TarmedRequirements.DOMAIN_KSK, ta.ESR5OR9, ta.ESRPLUS, ta.TIERS, ta.SPEC,
+			"Anrede", "Kanton", "EAN=" + Xid.DOMAIN_EAN, "NIF=" + TarmedRequirements.DOMAIN_NIF, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"KSK=" + TarmedRequirements.DOMAIN_KSK, ta.ESR5OR9, ta.ESRPLUS, ta.TIERS, ta.SPEC, //$NON-NLS-1$
 			ta.KANTON, ta.LOCAL, ta.DIAGSYS
 		};
 	
@@ -340,12 +340,12 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		tESRPrinterCorrectionY.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tESRPrinterCorrectionY.addFocusListener(fontsTextListener);
 		
-		new Label(fonts, SWT.NONE).setText(Messages.getString("RechnungsPrefs.horrzBaseOffset"));
+		new Label(fonts, SWT.NONE).setText(Messages.getString("RechnungsPrefs.horrzBaseOffset")); //$NON-NLS-1$
 		tESRPrintCorrectionBaseX = new Text(fonts, SWT.BORDER | SWT.SINGLE);
 		tESRPrintCorrectionBaseX.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tESRPrintCorrectionBaseX.addFocusListener(fontsTextListener);
 		
-		new Label(fonts, SWT.NONE).setText(Messages.getString("RechnungenPrefs.vertBaseOffset"));
+		new Label(fonts, SWT.NONE).setText(Messages.getString("RechnungenPrefs.vertBaseOffset")); //$NON-NLS-1$
 		tESRPrintCorrectionBaseY = new Text(fonts, SWT.BORDER | SWT.SINGLE);
 		tESRPrintCorrectionBaseY.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tESRPrintCorrectionBaseY.addFocusListener(fontsTextListener);
