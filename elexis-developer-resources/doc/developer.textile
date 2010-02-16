@@ -1,7 +1,7 @@
-h1(#id). Elexis developer resources
+h1. Elexis developer resources
 
-(c) 2010 by G. Weirich
-$Id: developer.textile 6135 2010-02-13 11:03:49Z rgw_ch $	
+p(klein). (c) 2010 by G. Weirich
+ $Id: developer.textile 6146 2010-02-16 05:50:51Z rgw_ch $	
 
 h2. Table of contents
 
@@ -36,6 +36,7 @@ After installing the subclipse plugin, open the "SVN Repository exploring" persp
 ** mysql-adapter 
 ** h2-adapter
 ** postgresql-adapter
+* elexis-developer-resources (recommended sample plugin)
 
 h2. Create a run configuration
 
