@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Hub.java 6060 2010-02-03 21:19:23Z rgw_ch $
+ *    $Id: Hub.java 6147 2010-02-16 14:49:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -33,6 +33,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
 import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventCascade;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
@@ -221,10 +222,12 @@ public class Hub extends AbstractUIPlugin {
 		plugin = this;
 		startUpBundle();
 		ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
+		ElexisEventCascade.getInstance().start();
 	}
 	
 	@Override
 	public void stop(final BundleContext context) throws Exception {
+		ElexisEventCascade.getInstance().stop();
 		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
 		heart.stop();
 		plugin = null;
@@ -411,7 +414,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 6060 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 6147 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt"); //$NON-NLS-1$

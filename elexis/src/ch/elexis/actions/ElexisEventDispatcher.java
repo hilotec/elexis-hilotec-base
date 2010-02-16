@@ -26,6 +26,8 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import ch.elexis.ElexisException;
 import ch.elexis.Hub;
+import ch.elexis.data.Fall;
+import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
@@ -57,6 +59,7 @@ public class ElexisEventDispatcher extends Job {
 	private boolean bStop = false;
 	private final Lock eventQueueLock = new ReentrantLock(true);
 	private final Log log = Log.get("EventDispatcher");
+	int listenerCount=0;
 	
 	public static ElexisEventDispatcher getInstance(){
 		if (theInstance == null) {
@@ -138,6 +141,7 @@ public class ElexisEventDispatcher extends Job {
 					ed.addListener(el);
 				} else {
 					listeners.add(el);
+					listenerCount++;
 				}
 			}
 		}
@@ -160,6 +164,7 @@ public class ElexisEventDispatcher extends Job {
 					ed.removeListener(el);
 				} else {
 					listeners.remove(el);
+					listenerCount--;
 				}
 			}
 		}
@@ -303,7 +308,26 @@ public class ElexisEventDispatcher extends Job {
 			}
 			if (ee != null) {
 				if (Hub.plugin.DEBUGMODE) {
-					log.log(ee.getObjectClass().getName(), Log.DEBUGMSG);
+					StringBuilder sb=new StringBuilder();
+					synchronized(sb){
+						sb.append(ee.getObjectClass().getName());
+						if(ee.getObject()!=null){
+							sb.append(": ").append(ee.getObject().getLabel());
+						}
+						if(getSelectedPatient()!=null){
+							sb.append("\nPat: ").append(getSelected(Patient.class).getLabel());
+						}
+						if(getSelected(Fall.class)!=null){
+							sb.append("\nFall: ").append(getSelected(Fall.class).getLabel());
+						}
+						if(getSelected(Konsultation.class)!=null){
+							sb.append("\nKons: ").append(getSelected(Konsultation.class).getLabel());
+						}
+						sb.append("\nto ").append(listenerCount).append("listeners.");
+						sb.append("\n--------------\n");
+					}
+					log.log(sb.toString(),Log.INFOS);
+					
 				}
 				synchronized (listeners) {
 					for (ElexisEventListener l : listeners) {

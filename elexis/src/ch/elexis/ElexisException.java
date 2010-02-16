@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich and Elexis
+ * Copyright (c) 2009-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: ElexisException.java 5845 2009-11-28 08:44:19Z rgw_ch $
+ *    $Id: ElexisException.java 6147 2010-02-16 14:49:46Z rgw_ch $
  *******************************************************************************/
 package ch.elexis;
 

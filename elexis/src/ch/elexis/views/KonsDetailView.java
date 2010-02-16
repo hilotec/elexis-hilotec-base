@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: KonsDetailView.java 6136 2010-02-13 11:54:50Z rgw_ch $
+ *  $Id: KonsDetailView.java 6147 2010-02-16 14:49:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -97,6 +97,7 @@ ISaveablePart2 {
 	private Konsultation actKons;
 	FormToolkit tk;
 	Form form;
+	//Patient actPat;
 	
 	private DiagnosenDisplay dd;
 	private VerrechnungsDisplay vd;
@@ -115,6 +116,7 @@ ISaveablePart2 {
 			Patient pat = (Patient) ev.getObject();
 			if (pat != null) {
 				setKons(pat.getLetzteKons(false));
+				//actPat=pat;
 			}
 			
 		}
@@ -367,6 +369,7 @@ ISaveablePart2 {
 			dd.setDiagnosen(b);
 			vd.setLeistungen(b);
 			text.setEnabled(true);
+			ElexisEventDispatcher.fireSelectionEvent(b);
 			/*
 			 * if ((ElexisEventDispatcher.getSelected(Konsultation.class) == null) ||
 			 * (!ElexisEventDispatcher.getSelected(Konsultation.class).getId().equals( b.getId())))
