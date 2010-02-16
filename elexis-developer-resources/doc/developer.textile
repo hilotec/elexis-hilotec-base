@@ -1,7 +1,7 @@
 h1. Elexis developer resources
 
 p(klein). (c) 2010 by G. Weirich
- $Id: developer.textile 6146 2010-02-16 05:50:51Z rgw_ch $	
+ $Id: developer.textile 6148 2010-02-16 15:36:15Z rgw_ch $	
 
 h2. Table of contents
 
@@ -95,8 +95,8 @@ Then, anytime or at least before comitting your code, press CTRL-SHIFT-F to appl
 
 h2. 6) Documentation
 
-It is recommended to document your work. Besides of the javadoc, we recommend that you include at least a 'readme.txt' or 'whatisit.textile' file in the root of your plugin that describes, what it does and what it depends on. If you want to give your users a more elaborate documentation, it should be included in a folder called doc at th root of your plugin.
-For newer documentation, we use the simple Markup-Format 'Textile'. Eclipse's Mylyn plugin can manage these files out of the box and conversion to HTML and FOP/PDF is easy. Besides this, LaTeX is still supported. If you use other formats than Textile or LaTeX, your documentation can not be genereted automatically during build.
+It is recommended to document your work. Besides of the javadoc, we recommend that you include at least a 'readme.txt' or 'whatisit.textile' file in the root of your plugin that describes, what it does and what it depends on. If you want to give your users a more elaborate documentation, it should be included in a folder called doc at the root of your plugin.
+For newer documentation, we use the simple Markup-Format 'Textile'. Eclipse's Mylyn plugin can manage these files out of the box and conversion to HTML and FOP/PDF is easy. Besides this, LaTeX is still supported. If you use other formats than Textile or LaTeX, your documentation can not be generated automatically during build.
 
 More information on the wikitext editor and the textile format can be found here:
 "http://www.peterfriese.de/getting-started-with-wikitext/":http://www.peterfriese.de/getting-started-with-wikitext/
@@ -109,7 +109,7 @@ More information on TeX/LaTeX can be found here:
 h2. 7) Becoming a committer
 
 If you feel that you'd like to offer your work to the community, we are happy to invite you as a commiter. Being a committer gives you write access to the elexis repository, but gives you also responsabilities:
-*  Most importantly,  you need to keep the Codebase clean. You need to understand Copyright Rules and avoid committing any stuff that you copied & pasted from somewhere. 
+*  Most importantly,  you need to keep the Codebase clean. You need to understand Copyright Rules and avoid committing any stuff that you copied & pasted from somewhere. Additionally, you must ensure, that the code in the repository always compiles
 * Being a committer is understood as a long-term privilege / obligation. It means that you are willing to maintain and evolve some part of the code (typicaly yours :-) over time.  Commit Rights can be revoked after an extended period of inactivity, though we'd prefer to not do that and keep you being committer.
 * Commit rights will be revoked if a committer repeatedly does not adhere to coding rules and quality standards. 
  

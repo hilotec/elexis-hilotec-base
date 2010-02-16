@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: KonsDetailView.java 6147 2010-02-16 14:49:46Z rgw_ch $
+ *  $Id: KonsDetailView.java 6148 2010-02-16 15:36:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -369,7 +369,7 @@ ISaveablePart2 {
 			dd.setDiagnosen(b);
 			vd.setLeistungen(b);
 			text.setEnabled(true);
-			ElexisEventDispatcher.fireSelectionEvent(b);
+			//ElexisEventDispatcher.fireSelectionEvent(b);
 			/*
 			 * if ((ElexisEventDispatcher.getSelected(Konsultation.class) == null) ||
 			 * (!ElexisEventDispatcher.getSelected(Konsultation.class).getId().equals( b.getId())))
