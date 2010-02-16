@@ -1,7 +1,7 @@
 h1. Elexis developer resources
 
 p(klein). (c) 2010 by G. Weirich
- $Id: developer.textile 6148 2010-02-16 15:36:15Z rgw_ch $	
+ $Id: developer.textile 6149 2010-02-16 22:03:35Z rgw_ch $	
 
 h2. Table of contents
 
@@ -127,11 +127,11 @@ In the elexis kernel, all data classes are in the package ch.elexis.data.  Class
 
 If one wants to create a new persistable class, the following steps are needed:
 
-   1. Your class must be a subclass of PersistentObject
-   2. Create a static Mapping between a database table and the members of your class.
-   3. Ensure that the table you need exists
-   4. Provide a public static load(String) - function and protected constructors without arguments and with one String argument.
-   5. Some mandatory methods must be implemented.
+# Your class must be a subclass of PersistentObject
+# Create a static Mapping between a database table and the members of your class.
+# Ensure that the table you need exists (if not, it must be created with an SQL script or an external program)
+# Provide a public static load(String) - function and protected constructors without arguments and with one String argument.
+# Some mandatory methods must be implemented.
 
 We recommend to use the class ch.elexis.developer.resources.model.SampleDataType.java in the plugin elexis-developer-resources as a guideline on how to write such a class.
  
