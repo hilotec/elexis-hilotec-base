@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: ElexisEventCascade.java 6147 2010-02-16 14:49:46Z rgw_ch $
+ *    $Id: ElexisEventCascade.java 6150 2010-02-17 06:59:26Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -17,8 +17,8 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 
 /**
- * This cascade makes sure, that the three central elements are always selected synchroneusly: Patient,
- * Case and consultation.
+ * This cascade makes sure, that the three central elements are always selected synchroneously: Patient,
+ * case and consultation.
  * @author gerry
  *
  */

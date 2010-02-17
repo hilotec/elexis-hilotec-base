@@ -1,11 +1,13 @@
 h1. Elexis developer resources
 
 p(klein). (c) 2010 by G. Weirich
- $Id: developer.textile 6149 2010-02-16 22:03:35Z rgw_ch $	
+ $Id: developer.textile 6150 2010-02-17 06:59:26Z rgw_ch $	
 
 h2. Table of contents
 
 {toc}
+
+"Back to the elexis site":http://www.elexis.ch
 
 h2. Preface
 
