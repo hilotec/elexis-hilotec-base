@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: RechnungsDrucker.java 6140 2010-02-14 13:34:04Z rgw_ch $
+ * 
+ * $Id: RechnungsDrucker.java 6151 2010-02-17 14:05:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;
@@ -35,6 +35,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
 
 import ch.elexis.Hub;
+import ch.elexis.actions.ElexisEventCascade;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
@@ -64,57 +65,57 @@ public class RechnungsDrucker implements IRnOutputter {
 		rnPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		final Result<Rechnung> res = new Result<Rechnung>();
-		
+		ElexisEventCascade.getInstance().stop();
 		try {
 			rnp = (RnPrintView2) rnPage.showView(RnPrintView2.ID);
 			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
 				new IRunnableWithProgress() {
-					public void run(final IProgressMonitor monitor){
-						monitor.beginTask(Messages.RechnungsDrucker_PrintingBills, rechnungen
-							.size() * 10);
-						int errors = 0;
-						for (Rechnung rn : rechnungen) {
-							try {
-								if (rnp.doPrint(rn, type, bSaveFileAsSelected ? dirname
+				public void run(final IProgressMonitor monitor){
+					monitor.beginTask(Messages.RechnungsDrucker_PrintingBills, rechnungen
+						.size() * 10);
+					int errors = 0;
+					for (Rechnung rn : rechnungen) {
+						try {
+							if (rnp.doPrint(rn, type, bSaveFileAsSelected ? dirname
 									+ File.separator + rn.getNr() + ".xml" : null, bESRSelected, //$NON-NLS-1$
 									bFormsSelected, !bIgnoreFaultsSelected, monitor) == false) {
-									String errms =
-										Messages.RechnungsDrucker_TheBill + rn.getNr()
-											+ Messages.RechnungsDrucker_Couldntbeprintef;
-									res.add(Result.SEVERITY.ERROR, 1, errms, rn, true);
-									errors++;
-									continue;
-								}
-								int status_vorher = rn.getStatus();
-								if ((status_vorher == RnStatus.OFFEN)
+								String errms =
+									Messages.RechnungsDrucker_TheBill + rn.getNr()
+									+ Messages.RechnungsDrucker_Couldntbeprintef;
+								res.add(Result.SEVERITY.ERROR, 1, errms, rn, true);
+								errors++;
+								continue;
+							}
+							int status_vorher = rn.getStatus();
+							if ((status_vorher == RnStatus.OFFEN)
 									|| (status_vorher == RnStatus.MAHNUNG_1)
 									|| (status_vorher == RnStatus.MAHNUNG_2)
 									|| (status_vorher == RnStatus.MAHNUNG_3)) {
-									rn.setStatus(status_vorher + 1);
-								}
-								rn.addTrace(Rechnung.OUTPUT, getDescription() + ": " //$NON-NLS-1$
-									+ RnStatus.getStatusText(rn.getStatus()));
-							} catch (Exception ex) {
-								String msg = ex.getMessage();
-								if (msg == null) {
-									msg = Messages.RechnungsDrucker_MessageErrorInternal;
-								}
-								SWTHelper.showError(Messages.RechnungsDrucker_MessageErrorWhilePrinting
-									+ rn.getNr(), msg);
-								errors++;
+								rn.setStatus(status_vorher + 1);
 							}
-						}
-						monitor.done();
-						if (errors == 0) {
-							SWTHelper.showInfo(Messages.RechnungsDrucker_PrintingFinished,
-								Messages.RechnungsDrucker_AllFinishedNoErrors);
-						} else {
-							SWTHelper.showError(Messages.RechnungsDrucker_ErrorsWhilePrinting,
-								Integer.toString(errors)
-									+ Messages.RechnungsDrucker_ErrorsWhiilePrintingAdvice);
+							rn.addTrace(Rechnung.OUTPUT, getDescription() + ": " //$NON-NLS-1$
+								+ RnStatus.getStatusText(rn.getStatus()));
+						} catch (Exception ex) {
+							String msg = ex.getMessage();
+							if (msg == null) {
+								msg = Messages.RechnungsDrucker_MessageErrorInternal;
+							}
+							SWTHelper.showError(Messages.RechnungsDrucker_MessageErrorWhilePrinting
+								+ rn.getNr(), msg);
+							errors++;
 						}
 					}
-				}, null);
+					monitor.done();
+					if (errors == 0) {
+						SWTHelper.showInfo(Messages.RechnungsDrucker_PrintingFinished,
+							Messages.RechnungsDrucker_AllFinishedNoErrors);
+					} else {
+						SWTHelper.showError(Messages.RechnungsDrucker_ErrorsWhilePrinting,
+							Integer.toString(errors)
+							+ Messages.RechnungsDrucker_ErrorsWhiilePrintingAdvice);
+					}
+				}
+			}, null);
 			
 			rnPage.hideView(rnp);
 			
@@ -123,8 +124,10 @@ public class RechnungsDrucker implements IRnOutputter {
 			res.add(Result.SEVERITY.ERROR, 2, ex.getMessage(), null, true);
 			ErrorDialog.openError(null, Messages.RechnungsDrucker_ErrorsWhilePrinting,
 				Messages.RechnungsDrucker_CouldntOpenPrintView, ResultAdapter
-					.getResultAsStatus(res));
+				.getResultAsStatus(res));
 			return res;
+		}finally {
+			ElexisEventCascade.getInstance().start();
 		}
 		return res;
 	}
