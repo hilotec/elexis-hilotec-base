@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: BlockSelector.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * 
+ *  $Id: BlockSelector.java 6153 2010-02-19 18:34:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -56,7 +56,7 @@ import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
 public class BlockSelector extends CodeSelectorFactory {
 	IAction deleteAction, renameAction, createAction, exportAction;
 	CommonViewer cv;
-
+	
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
 		this.cv = cv;
@@ -64,37 +64,37 @@ public class BlockSelector extends CodeSelectorFactory {
 		MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new IMenuListener() {
-
+			
 			public void menuAboutToShow(IMenuManager manager) {
 				manager.add(renameAction);
 				manager.add(deleteAction);
-
+				
 			}
 		});
 		FieldDescriptor<?>[] lbName = new FieldDescriptor<?>[] { new FieldDescriptor<Leistungsblock>(
-				"Name") };
+		"Name") };
 		cv.setContextMenu(mgr);
-
+		
 		SelectorPanelProvider slp = new SelectorPanelProvider(lbName, true);
 		slp.addActions(createAction, exportAction);
 		ViewerConfigurer vc = new ViewerConfigurer(
-				new BlockContentProvider(cv), new DefaultLabelProvider(), slp,
-				new ViewerConfigurer.DefaultButtonProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE,
-						SWT.NONE, null));
+			new BlockContentProvider(cv), new DefaultLabelProvider(), slp,
+			new ViewerConfigurer.DefaultButtonProvider(),
+			new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE,
+				SWT.NONE, null));
 		return vc;
 	}
-
+	
 	@Override
 	public Class<? extends PersistentObject> getElementClass() {
 		return Leistungsblock.class;
 	}
-
+	
 	@Override
 	public void dispose() {
-
+		
 	}
-
+	
 	private void makeActions() {
 		deleteAction = new Action("Block löschen") {
 			@Override
@@ -113,15 +113,15 @@ public class BlockSelector extends CodeSelectorFactory {
 				if (o instanceof Leistungsblock) {
 					Leistungsblock lb = (Leistungsblock) o;
 					InputDialog dlg = new InputDialog(
-							Desk.getTopShell(),
-							"Block umbenennen",
-							"Geben Sie bitte einen neuen Namen für den Block ein",
-							lb.get("Name"), null);
+						Desk.getTopShell(),
+						"Block umbenennen",
+						"Geben Sie bitte einen neuen Namen für den Block ein",
+						lb.get("Name"), null);
 					if (dlg.open() == Dialog.OK) {
 						lb.set("Name", dlg.getValue());
 						cv.notify(CommonViewer.Message.update);
 					}
-
+					
 				}
 			}
 		};
@@ -130,11 +130,11 @@ public class BlockSelector extends CodeSelectorFactory {
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 				setToolTipText("Neuen Block erstellen");
 			}
-
+			
 			@Override
 			public void run() {
 				String[] v = cv.getConfigurer().getControlFieldProvider()
-						.getValues();
+				.getValues();
 				if (v != null && v.length > 0 && v[0] != null
 						&& v[0].length() > 0) {
 					Leistungsblock lb = new Leistungsblock(v[0], Hub.actMandant);
@@ -147,7 +147,7 @@ public class BlockSelector extends CodeSelectorFactory {
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EXPORT));
 				setToolTipText("Exportiert alle Blöcke in eine XML-Datei");
 			}
-
+			
 			@Override
 			public void run() {
 				// Handler.execute(null, ExportiereBloeckeCommand.ID, null);
@@ -160,60 +160,60 @@ public class BlockSelector extends CodeSelectorFactory {
 			}
 		};
 	}
-
+	
 	static class BlockContentProvider2 extends TreeDataLoader {
 		ViewerFilter filter;
-
+		
 		public BlockContentProvider2(CommonViewer cv,
-				Query<? extends PersistentObject> qbe, String parentField) {
+			Query<? extends PersistentObject> qbe, String parentField) {
 			super(cv, qbe, parentField);
 		}
-
+		
 	}
-
+	
 	public static class BlockContentProvider implements
-			ViewerConfigurer.CommonContentProvider, ITreeContentProvider {
+	ViewerConfigurer.CommonContentProvider, ITreeContentProvider {
 		CommonViewer cv;
 		ViewerFilter filter;
-		private ElexisEventListenerImpl eeli_lb = new ElexisEventListenerImpl(
-				Leistungsblock.class) {
-
+		private final ElexisEventListenerImpl eeli_lb = new ElexisEventListenerImpl(
+			Leistungsblock.class) {
+			
 			public void catchElexisEvent(ElexisEvent ev) {
 				cv.notify(CommonViewer.Message.update);
 			}
 		};
-
+		
 		BlockContentProvider(CommonViewer c) {
 			cv = c;
 		}
-
+		
 		public void startListening() {
 			cv.getConfigurer().getControlFieldProvider()
-					.addChangeListener(this);
+			.addChangeListener(this);
 			ElexisEventDispatcher.getInstance().addListeners(eeli_lb);
-
+			
 		}
-
+		
 		public void stopListening() {
 			cv.getConfigurer().getControlFieldProvider().removeChangeListener(
-					this);
+				this);
 			ElexisEventDispatcher.getInstance().removeListeners(eeli_lb);
 		}
-
+		
 		public Object[] getElements(Object inputElement) {
 			Query<Leistungsblock> qbe = new Query<Leistungsblock>(
 					Leistungsblock.class);
 			qbe.orderBy(false, new String[] { "Name" });
 			return qbe.execute().toArray();
 		}
-
+		
 		public void dispose() {
 			stopListening();
 		}
-
+		
 		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		}
-
+		
 		/** Vom ControlFieldProvider */
 		public void changed(HashMap<String, String> vals) {
 			TreeViewer tv = (TreeViewer) cv.getViewerWidget();
@@ -227,45 +227,45 @@ public class BlockSelector extends CodeSelectorFactory {
 			} else {
 				cv.notify(CommonViewer.Message.notempty);
 				filter = (ViewerFilter) cv.getConfigurer()
-						.getControlFieldProvider().createFilter();
+				.getControlFieldProvider().createFilter();
 				tv.addFilter(filter);
-
+				
 			}
-
+			
 		}
-
+		
 		/** Vom ControlFieldProvider */
 		public void reorder(String field) {
-
+			
 		}
-
+		
 		/** Vom ControlFieldProvider */
 		public void selected() {
 			// nothing to do
 		}
-
+		
 		public Object[] getChildren(Object parentElement) {
 			if (parentElement instanceof Leistungsblock) {
 				Leistungsblock lb = (Leistungsblock) parentElement;
 				return lb.getElements().toArray();
-
+				
 			}
 			return new Object[0];
 		}
-
+		
 		public Object getParent(Object element) {
 			return null;
 		}
-
+		
 		public boolean hasChildren(Object element) {
 			if (element instanceof Leistungsblock) {
 				return !(((Leistungsblock) element).isEmpty());
 			}
 			return false;
 		}
-
+		
 	};
-
+	
 	public static class bsPage extends cPage {
 		bsPage(CTabFolder ctab, CodeSelectorFactory cs) {
 			super(ctab);
@@ -274,14 +274,14 @@ public class BlockSelector extends CodeSelectorFactory {
 			vc = cs.createViewerConfigurer(cv);
 			cv.create(vc, this, SWT.NONE, this);
 			cv.getViewerWidget().getControl().setLayoutData(
-					SWTHelper.getFillGridData(1, true, 1, true));
+				SWTHelper.getFillGridData(1, true, 1, true));
 			vc.getContentProvider().startListening();
-
+			
 			// add double click listener for CodeSelectorTarget
 			cv.addDoubleClickListener(new DoubleClickListener() {
 				public void doubleClicked(PersistentObject obj, CommonViewer cv) {
 					ICodeSelectorTarget target = CodeSelectorHandler
-							.getInstance().getCodeSelectorTarget();
+					.getInstance().getCodeSelectorTarget();
 					if (target != null) {
 						if (obj instanceof Leistungsblock) {
 							Leistungsblock block = (Leistungsblock) obj;
@@ -293,29 +293,22 @@ public class BlockSelector extends CodeSelectorFactory {
 								}
 							}
 						} else {
-							// PersistentObject
 							target.codeSelected(obj);
 						}
-						/*
-						 * }
-						 */
 					}
 				}
 			});
 		}
-
+		
 		public void refresh() {
 			cv.notify(CommonViewer.Message.update);
 		}
-
+		
 	}
-
+	
 	@Override
 	public String getCodeSystemName() {
 		return "Block";
 	}
-
-	public void reloadContents(Class clazz) {
-
-	}
+	
 }

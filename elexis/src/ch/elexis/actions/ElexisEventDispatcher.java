@@ -59,7 +59,7 @@ public class ElexisEventDispatcher extends Job {
 	private boolean bStop = false;
 	private final Lock eventQueueLock = new ReentrantLock(true);
 	private final Log log = Log.get("EventDispatcher");
-	int listenerCount=0;
+	int listenerCount = 0;
 	
 	public static ElexisEventDispatcher getInstance(){
 		if (theInstance == null) {
@@ -209,7 +209,7 @@ public class ElexisEventDispatcher extends Job {
 			eventQueue.add(ee);
 		} finally {
 			eventQueueLock.unlock();
-			//eventQueue.notify();
+			// eventQueue.notify();
 		}
 	}
 	
@@ -238,16 +238,16 @@ public class ElexisEventDispatcher extends Job {
 	
 	/**
 	 * inform the syste, that several objects have been selected
+	 * 
 	 * @param objects
 	 */
-	public static void fireSelectionEvents(PersistentObject... objects ){
-		if(objects!=null){
-			for(PersistentObject po:objects){
-				getInstance().fire(new ElexisEvent(po,po.getClass(),ElexisEvent.EVENT_SELECTED));
+	public static void fireSelectionEvents(PersistentObject... objects){
+		if (objects != null) {
+			for (PersistentObject po : objects) {
+				getInstance().fire(new ElexisEvent(po, po.getClass(), ElexisEvent.EVENT_SELECTED));
 			}
 		}
 	}
-	
 	
 	/**
 	 * inform the system, that no object of the specified type is selected anymore
@@ -297,65 +297,66 @@ public class ElexisEventDispatcher extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor){
 		while (!bStop) {
-			ElexisEvent ee = null;
 			if (eventQueueLock.tryLock()) {
 				try {
-					if (!eventQueue.isEmpty()) {
-						ee = eventQueue.removeFirst();
+					while (!eventQueue.isEmpty()) {
+						doDispatch(eventQueue.removeFirst());
 					}
 				} finally {
 					eventQueueLock.unlock();
 				}
 			}
-			if (ee != null) {
-				if (Hub.plugin.DEBUGMODE) {
-					StringBuilder sb=new StringBuilder();
-					synchronized(sb){
-						sb.append(ee.getObjectClass().getName());
-						if(ee.getObject()!=null){
-							sb.append(": ").append(ee.getObject().getLabel());
-						}
-						if(getSelectedPatient()!=null){
-							sb.append("\nPat: ").append(getSelected(Patient.class).getLabel());
-						}
-						if(getSelected(Fall.class)!=null){
-							sb.append("\nFall: ").append(getSelected(Fall.class).getLabel());
-						}
-						if(getSelected(Konsultation.class)!=null){
-							sb.append("\nKons: ").append(getSelected(Konsultation.class).getLabel());
-						}
-						sb.append("\nto ").append(listenerCount).append("listeners.");
-						sb.append("\n--------------\n");
-					}
-					log.log(sb.toString(),Log.INFOS);
-					
-				}
-				synchronized (listeners) {
-					for (ElexisEventListener l : listeners) {
-						if (ee.matches(l.getElexisEventFilter())) {
-							l.catchElexisEvent(ee);
-						}
-					}
-				}
-			} else {
-				try {
-					Thread.sleep(50);
-				} catch (InterruptedException iex) {
-					// janusode
-				}
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException iex) {
+				// janusode
 			}
-			
 		}
 		return Status.OK_STATUS;
 	}
-	public void dump(){
-		for (ElexisEventListener el : listeners) {
+	
+	private void doDispatch(ElexisEvent ee){
+		if (Hub.plugin.DEBUGMODE) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("ElexisEventDispatcher dump: \n");
-			sb.append(el.getClass().getName()).append(": ").append(el.getElexisEventFilter().type)
-			.append(" / ").append(el.getElexisEventFilter().getObjectClass().getName()).append(
-			"\n--------------\n");
-			System.out.println(sb.toString());
+			synchronized (sb) {
+				sb.append(ee.getObjectClass().getName());
+				if (ee.getObject() != null) {
+					sb.append(": ").append(ee.getObject().getLabel());
+				}
+				if (getSelectedPatient() != null) {
+					sb.append("\nPat: ").append(getSelected(Patient.class).getLabel());
+				}
+				if (getSelected(Fall.class) != null) {
+					sb.append("\nFall: ").append(getSelected(Fall.class).getLabel());
+				}
+				if (getSelected(Konsultation.class) != null) {
+					sb.append("\nKons: ").append(getSelected(Konsultation.class).getLabel());
+				}
+				sb.append("\nto ").append(listenerCount).append("listeners.");
+				sb.append("\n--------------\n");
+			}
+			log.log(sb.toString(), Log.INFOS);
+			
 		}
+		synchronized (listeners) {
+			for (ElexisEventListener l : listeners) {
+				if (ee.matches(l.getElexisEventFilter())) {
+					l.catchElexisEvent(ee);
+				}
+			}
+		}
+		
+	}
+	
+	public void dump(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("ElexisEventDispatcher dump: \n");
+		for (ElexisEventListener el : listeners) {
+			sb.append(el.getClass().getName()).append(": ").append(el.getElexisEventFilter().type)
+			.append(" / ").append(el.getElexisEventFilter().getObjectClass().getName()).append("\n");
+			
+		}
+		sb.append("\n--------------\n");
+		System.out.println(sb.toString());
 	}
 }

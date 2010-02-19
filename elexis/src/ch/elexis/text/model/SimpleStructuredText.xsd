@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.elexis.ch/XSD/SimpleStructuredText"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:SST="http://www.elexis.ch/XSD/SimpleStructuredText">
+
+    <complexType name="ContainerType">
+    	<sequence>
+    		<element name="text" type="string" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+
+    		<choice maxOccurs="unbounded" minOccurs="0">
+    			<element name="section" type="SST:sectionType"></element>
+    			<element name="markup" type="SST:markupType"></element>
+    			<element name="xref" type="SST:xrefType"></element>
+    		</choice>
+    	</sequence>
+    	<attribute name="created" type="dateTime"></attribute>
+    	<attribute name="lastEdit" type="dateTime"></attribute>
+    	<attribute name="createdBy" type="string"></attribute>
+    	<attribute name="editedBy" type="string"></attribute>
+    </complexType>
+
+
+    <complexType name="rangeType">
+    	<attribute name="startOffset" type="int"></attribute>
+    	<attribute name="length" type="int"></attribute>
+    	<attribute name="fixed" type="boolean"></attribute>
+    </complexType>
+
+    <complexType name="sectionType">
+    	<complexContent>
+    		<extension base="SST:rangeType">
+    			<attribute name="name" type="string"></attribute>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <element name="container" type="SST:ContainerType"></element>
+
+
+    <complexType name="markupType">
+    	<complexContent>
+    		<extension base="SST:rangeType">
+    			<sequence>
+    				<element name="font" type="SST:fontType" minOccurs="0" maxOccurs="1"></element>
+    				<element name="color" type="SST:colorType" minOccurs="0" maxOccurs="1"></element>
+    			</sequence>
+    		</extension>
+    	</complexContent>
+    </complexType>
+
+    <complexType name="fontType">
+    	<attribute name="family" type="string"></attribute>
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="size" type="string"></attribute>
+    	<attribute name="weight" type="string"></attribute>
+    </complexType>
+
+    <complexType name="colorType">
+    	<attribute name="foreground" type="hexBinary"></attribute>
+    	<attribute name="background" type="hexBinary"></attribute>
+    </complexType>
+
+    <complexType name="xrefType">
+    	<attribute name="ID" type="ID"></attribute>
+    	<attribute name="name" type="string"></attribute>
+    	<attribute name="provider" type="string"></attribute>
+    	<attribute name="position" type="int"></attribute>
+    </complexType>
+</schema>

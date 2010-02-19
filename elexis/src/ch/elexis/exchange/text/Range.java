@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich and Elexis
+ * Copyright (c) 2009-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: Range.java 5224 2009-03-26 21:15:07Z rgw_ch $
+ * 
+ *  $Id: Range.java 6153 2010-02-19 18:34:28Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.text;
@@ -19,14 +19,26 @@ package ch.elexis.exchange.text;
  *
  */
 public class Range implements IRange{
-
+	
 	public int getLength() {
 		// TODO Auto-generated method stub
 		return 0;
 	}
-
+	
 	public int getPosition() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+	
+	@Override
+	public void setLength(int pos){
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void setPosition(int pos){
+		// TODO Auto-generated method stub
+		
 	}
 }
