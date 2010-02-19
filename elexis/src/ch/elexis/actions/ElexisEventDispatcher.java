@@ -209,6 +209,7 @@ public class ElexisEventDispatcher extends Job {
 			eventQueue.add(ee);
 		} finally {
 			eventQueueLock.unlock();
+			//eventQueue.notify();
 		}
 	}
 	
@@ -338,7 +339,7 @@ public class ElexisEventDispatcher extends Job {
 				}
 			} else {
 				try {
-					Thread.sleep(100);
+					Thread.sleep(50);
 				} catch (InterruptedException iex) {
 					// janusode
 				}
@@ -346,5 +347,15 @@ public class ElexisEventDispatcher extends Job {
 			
 		}
 		return Status.OK_STATUS;
+	}
+	public void dump(){
+		for (ElexisEventListener el : listeners) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("ElexisEventDispatcher dump: \n");
+			sb.append(el.getClass().getName()).append(": ").append(el.getElexisEventFilter().type)
+			.append(" / ").append(el.getElexisEventFilter().getObjectClass().getName()).append(
+			"\n--------------\n");
+			System.out.println(sb.toString());
+		}
 	}
 }
