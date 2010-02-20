@@ -8,9 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: ElexisEventCascade.java 6150 2010-02-17 06:59:26Z rgw_ch $
+ *    $Id: ElexisEventCascade.java 6154 2010-02-20 10:23:35Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
+
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -20,10 +23,11 @@ import ch.elexis.data.Patient;
  * This cascade makes sure, that the three central elements are always selected synchroneously: Patient,
  * case and consultation.
  * @author gerry
- *
+ * 
  */
 public class ElexisEventCascade {
 	private static ElexisEventCascade theInstance;
+	private final static Lock cascadeLock = new ReentrantLock(true);
 	
 	public static ElexisEventCascade getInstance(){
 		if (theInstance == null) {
@@ -37,61 +41,84 @@ public class ElexisEventCascade {
 			| ElexisEvent.EVENT_SELECTED) {
 		@Override
 		public void catchElexisEvent(ElexisEvent ev){
-			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-				Patient pat = (Patient) ev.getObject();
-				Konsultation k = pat.getLetzteKons(false);
-				if (k == null) {
-					ElexisEventDispatcher.getInstance()
-					.fire(
-						new ElexisEvent(null, Konsultation.class,
-							ElexisEvent.EVENT_DESELECTED));
-					ElexisEventDispatcher.getInstance().fire(
-						new ElexisEvent(null, Fall.class, ElexisEvent.EVENT_DESELECTED));
-				} else {
-					ElexisEventDispatcher.fireSelectionEvents(k, k.getFall());
+			if (cascadeLock.tryLock()) {
+				try {
+					if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+						Patient pat = (Patient) ev.getObject();
+						if (pat != null) {
+							Konsultation k = pat.getLetzteKons(false);
+							if (k == null) {
+								ElexisEventDispatcher.getInstance().fire(
+									new ElexisEvent(null, Konsultation.class,
+										ElexisEvent.EVENT_DESELECTED));
+								ElexisEventDispatcher.getInstance().fire(
+									new ElexisEvent(null, Fall.class,
+										ElexisEvent.EVENT_DESELECTED));
+							} else {
+								ElexisEventDispatcher.fireSelectionEvents(k, k.getFall());
+							}
+						}
+					} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
+						ElexisEventDispatcher.getInstance().fire(
+							new ElexisEvent(null, Fall.class, ElexisEvent.EVENT_DESELECTED));
+						ElexisEventDispatcher.getInstance().fire(
+							new ElexisEvent(null, Konsultation.class,
+								ElexisEvent.EVENT_DESELECTED));
+					}
+				} finally {
+					cascadeLock.unlock();
 				}
-			}else if(ev.getType()==ElexisEvent.EVENT_DESELECTED){
-				ElexisEventDispatcher.getInstance().fire(
-					new ElexisEvent(null, Fall.class, ElexisEvent.EVENT_DESELECTED));
-				ElexisEventDispatcher.getInstance()
-				.fire(
-					new ElexisEvent(null, Konsultation.class,
-						ElexisEvent.EVENT_DESELECTED));
 			}
 		}
 		
 	};
-	private final ElexisEventListenerImpl eeli_fall=new ElexisEventListenerImpl(Fall.class,ElexisEvent.EVENT_SELECTED){
+	private final ElexisEventListenerImpl eeli_fall =
+		new ElexisEventListenerImpl(Fall.class, ElexisEvent.EVENT_SELECTED) {
 		public void catchElexisEvent(ElexisEvent ev){
-			Fall fall=(Fall)ev.getObject();
-			Patient pat=fall.getPatient();
-			if(pat!=null){
-				ElexisEventDispatcher.fireSelectionEvent(pat);
-				Konsultation[] k=fall.getBehandlungen(true);
-				if(k!=null && k.length>0){
-					ElexisEventDispatcher.fireSelectionEvents(k[0]);
+			if (cascadeLock.tryLock()) {
+				try {
+					Fall fall = (Fall) ev.getObject();
+					if (fall != null) {
+						Patient pat = fall.getPatient();
+						if (pat != null) {
+							ElexisEventDispatcher.fireSelectionEvent(pat);
+							Konsultation[] k = fall.getBehandlungen(true);
+							if (k != null && k.length > 0) {
+								ElexisEventDispatcher.fireSelectionEvents(k[0]);
+							}
+						}
+					}
+				} finally {
+					cascadeLock.unlock();
 				}
 			}
 		}
 	};
 	
-	private final ElexisEventListenerImpl eeli_kons=new ElexisEventListenerImpl(Konsultation.class,ElexisEvent.EVENT_SELECTED){
+	private final ElexisEventListenerImpl eeli_kons =
+		new ElexisEventListenerImpl(Konsultation.class, ElexisEvent.EVENT_SELECTED) {
 		public void catchElexisEvent(ElexisEvent ev){
-			Konsultation k=(Konsultation) ev.getObject();
-			Fall fall=k.getFall();
-			if(fall!=null){
-				Patient pat=fall.getPatient();
-				ElexisEventDispatcher.fireSelectionEvents(pat,fall);
+			if (cascadeLock.tryLock()) {
+				try {
+					Konsultation k = (Konsultation) ev.getObject();
+					Fall fall = k.getFall();
+					if (fall != null) {
+						Patient pat = fall.getPatient();
+						ElexisEventDispatcher.fireSelectionEvents(pat, fall);
+					}
+				} finally {
+					cascadeLock.unlock();
+				}
 			}
 		}
 	};
 	
 	public void start(){
-		ElexisEventDispatcher.getInstance().addListeners(eeli_fall,eeli_kons,eeli_pat);
+		ElexisEventDispatcher.getInstance().addListeners(eeli_fall, eeli_kons, eeli_pat);
 	}
 	
 	public void stop(){
-		ElexisEventDispatcher.getInstance().removeListeners(eeli_fall,eeli_kons,eeli_pat);
+		ElexisEventDispatcher.getInstance().removeListeners(eeli_fall, eeli_kons, eeli_pat);
 	}
 	
 	private ElexisEventCascade(){}

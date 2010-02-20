@@ -14,7 +14,6 @@
 package ch.elexis.actions;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -57,7 +56,7 @@ public class ElexisEventDispatcher extends Job {
 	private final HashMap<Class<?>, PersistentObject> lastSelection;
 	private final LinkedList<ElexisEvent> eventQueue;
 	private boolean bStop = false;
-	private final Lock eventQueueLock = new ReentrantLock(true);
+	private final static Lock eventQueueLock = new ReentrantLock(true);
 	private final Log log = Log.get("EventDispatcher");
 	int listenerCount = 0;
 	
@@ -182,34 +181,38 @@ public class ElexisEventDispatcher extends Job {
 	 * @param ee
 	 *            the event to fire.
 	 */
-	public void fire(ElexisEvent ee){
-		if (ee.getType() == ElexisEvent.EVENT_SELECTED) {
-			PersistentObject po = lastSelection.get(ee.getObjectClass());
-			if (po != null) {
-				if (po.equals(ee.getObject())) {
-					return;
+	public void fire(ElexisEvent... ees){
+		for (ElexisEvent ee : ees) {
+			if (ee.getType() == ElexisEvent.EVENT_SELECTED) {
+				PersistentObject po = lastSelection.get(ee.getObjectClass());
+				if (po != null) {
+					if (po.equals(ee.getObject())) {
+						continue;
+					}
 				}
+				lastSelection.put(ee.getObjectClass(), ee.getObject());
+			} else if (ee.getType() == ElexisEvent.EVENT_DESELECTED) {
+				lastSelection.remove(ee.getObjectClass());
 			}
-			lastSelection.put(ee.getObjectClass(), ee.getObject());
-		} else if (ee.getType() == ElexisEvent.EVENT_DESELECTED) {
-			lastSelection.remove(ee.getObjectClass());
-		}
-		IElexisEventDispatcher ied = dispatchers.get(ee.getObjectClass());
-		if (ied != null) {
-			ied.fire(ee);
-		}
-		eventQueueLock.lock();
-		try {
-			Iterator<ElexisEvent> it = eventQueue.iterator();
-			while (it.hasNext()) {
-				if (it.next().isSame(ee)) {
-					it.remove();
+			IElexisEventDispatcher ied = dispatchers.get(ee.getObjectClass());
+			if (ied != null) {
+				ied.fire(ee);
+			}
+			eventQueueLock.lock();
+			try {
+				/*
+				Iterator<ElexisEvent> it = eventQueue.iterator();
+				while (it.hasNext()) {
+					if (it.next().isSame(ee)) {
+						it.remove();
+					}
 				}
+				 */
+				eventQueue.add(ee);
+			} finally {
+				eventQueueLock.unlock();
+				// eventQueue.notify();
 			}
-			eventQueue.add(ee);
-		} finally {
-			eventQueueLock.unlock();
-			// eventQueue.notify();
 		}
 	}
 	
@@ -237,15 +240,17 @@ public class ElexisEventDispatcher extends Job {
 	}
 	
 	/**
-	 * inform the syste, that several objects have been selected
+	 * inform the system, that several objects have been selected
 	 * 
 	 * @param objects
 	 */
 	public static void fireSelectionEvents(PersistentObject... objects){
 		if (objects != null) {
-			for (PersistentObject po : objects) {
-				getInstance().fire(new ElexisEvent(po, po.getClass(), ElexisEvent.EVENT_SELECTED));
+			ElexisEvent[] ees=new ElexisEvent[objects.length];
+			for (int i=0;i<objects.length;i++) {
+				ees[i]=new ElexisEvent(objects[i], objects[i].getClass(), ElexisEvent.EVENT_SELECTED);
 			}
+			getInstance().fire(ees);
 		}
 	}
 	
@@ -345,7 +350,7 @@ public class ElexisEventDispatcher extends Job {
 				}
 			}
 		}
-		
+		Thread.yield();
 	}
 	
 	public void dump(){
@@ -353,7 +358,8 @@ public class ElexisEventDispatcher extends Job {
 		sb.append("ElexisEventDispatcher dump: \n");
 		for (ElexisEventListener el : listeners) {
 			sb.append(el.getClass().getName()).append(": ").append(el.getElexisEventFilter().type)
-			.append(" / ").append(el.getElexisEventFilter().getObjectClass().getName()).append("\n");
+			.append(" / ").append(el.getElexisEventFilter().getObjectClass().getName()).append(
+			"\n");
 			
 		}
 		sb.append("\n--------------\n");
