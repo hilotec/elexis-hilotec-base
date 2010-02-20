@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    
- *  $Id: BillSummary.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: BillSummary.java 6155 2010-02-20 15:36:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -48,7 +48,6 @@ import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.Zahlung;

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BriefAuswahl.java 6138 2010-02-14 09:46:11Z rgw_ch $
+ *    $Id: BriefAuswahl.java 6155 2010-02-20 15:36:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -43,7 +43,6 @@ import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Patient;
-import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.DocumentSelectDialog;
 import ch.elexis.preferences.PreferenceConstants;

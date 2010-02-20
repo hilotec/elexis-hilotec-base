@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  * 
- *  $Id: Activator.java 6154 2010-02-20 10:23:35Z rgw_ch $
+ *  $Id: Activator.java 6155 2010-02-20 15:36:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -173,9 +173,13 @@ public class Activator extends AbstractUIPlugin {
 							}
 						}
 					}
-					
+					Konsultation k=pat.getLetzteKons(false);
+					if(k!=null){
+						ElexisEventDispatcher.fireSelectionEvents(k,k.getFall());
+					}
+					ElexisEventDispatcher.getInstance().waitUntilEventQueueIsEmpty(100);
 				}
-			} finally {
+			}finally {
 				ElexisEventCascade.getInstance().start();
 			}
 		}

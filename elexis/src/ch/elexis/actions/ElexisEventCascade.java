@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: ElexisEventCascade.java 6154 2010-02-20 10:23:35Z rgw_ch $
+ *    $Id: ElexisEventCascade.java 6155 2010-02-20 15:36:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -43,6 +43,7 @@ public class ElexisEventCascade {
 		public void catchElexisEvent(ElexisEvent ev){
 			if (cascadeLock.tryLock()) {
 				try {
+					ElexisEventDispatcher.getInstance().waitUntilEventQueueIsEmpty(100);
 					if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 						Patient pat = (Patient) ev.getObject();
 						if (pat != null) {
