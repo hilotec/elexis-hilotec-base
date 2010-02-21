@@ -371,8 +371,18 @@ public class ElexisEventDispatcher extends Job {
 		Thread.yield();
 	}
 
+	/**
+	 * Let the dispatcher Thread empty the queue. If the queue is empty, this method returns
+	 * immediately. Otherwise, the current thread waits until it is empty or the provided wasit time 
+	 * has expired.
+	 * @param millis The time to wait bevor returning
+	 * @return false if waiting was interrupted
+	 */
 	public boolean waitUntilEventQueueIsEmpty(long millis) {
 		synchronized (eventQueue) {
+			if(eventQueue.isEmpty()){
+				return true;
+			}
 			try {
 				eventQueue.wait(millis);
 				return true;

@@ -3,6 +3,7 @@ package ch.elexis.text.model;
 import java.io.CharArrayReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.jdom.Document;
@@ -115,5 +116,13 @@ public class SimpleStructuredText {
 		String ret=text.substring(pos, end);
 		text.delete(pos, end);
 		return ret;
+	}
+	
+	public void addRange(IRange r){
+		ranges.add(r);
+	}
+	
+	public List<IRange> getRanges(){
+		return Collections.unmodifiableList(ranges);
 	}
 }
