@@ -15,6 +15,8 @@ package ch.elexis.actions;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -53,16 +55,16 @@ import ch.elexis.util.Log;
  * @author gerry
  * 
  */
-public class ElexisEventDispatcher extends Job {
-	private final LinkedList<ElexisEventListener> listeners;
+public final class ElexisEventDispatcher extends Job {
+	private final List<ElexisEventListener> listeners;
 	private static ElexisEventDispatcher theInstance;
-	private final HashMap<Class<?>, IElexisEventDispatcher> dispatchers;
-	private final HashMap<Class<?>, PersistentObject> lastSelection;
+	private final Map<Class<?>, IElexisEventDispatcher> dispatchers;
+	private final Map<Class<?>, PersistentObject> lastSelection;
 	private final LinkedList<ElexisEvent> eventQueue;
-	private boolean bStop = false;
-	private final static Lock eventQueueLock = new ReentrantLock(true);
+	private transient boolean bStop = false;
+	private static Lock eventQueueLock = new ReentrantLock(true);
 	private final Log log = Log.get("EventDispatcher");
-	int listenerCount = 0;
+	private int listenerCount = 0;
 
 	public static ElexisEventDispatcher getInstance() {
 		if (theInstance == null) {
@@ -90,7 +92,7 @@ public class ElexisEventDispatcher extends Job {
 	 * a given class. The main purpose of this feature is to allow plugins to
 	 * take care of their data classes by themselves.
 	 * 
-	 * @param ec
+	 * @param eventClass
 	 *            A Subclass of PersistentObject the dispatcher will take care
 	 *            of
 	 * @param ied
@@ -99,13 +101,15 @@ public class ElexisEventDispatcher extends Job {
 	 *             if there is already a dispatcher registered for that class.
 	 */
 
-	public void registerDispatcher(Class<? extends PersistentObject> ec,
-			IElexisEventDispatcher ied) throws ElexisException {
-		if (dispatchers.get(ec) != null) {
+	public void registerDispatcher(
+			final Class<? extends PersistentObject> eventClass,
+			final IElexisEventDispatcher ied) throws ElexisException {
+		if (dispatchers.get(eventClass) != null) {
 			throw new ElexisException(getClass(), "Duplicate dispatcher for "
-					+ ec.getName(), ElexisException.EE_DUPLICATE_DISPATCHER);
+					+ eventClass.getName(),
+					ElexisException.EE_DUPLICATE_DISPATCHER);
 		}
-		dispatchers.put(ec, ied);
+		dispatchers.put(eventClass, ied);
 	}
 
 	/**
@@ -119,8 +123,9 @@ public class ElexisEventDispatcher extends Job {
 	 *             if the dispatcher was not registered, or if the class was
 	 *             registered with a different dispatcher
 	 */
-	public void unregisterDispatcher(Class<? extends PersistentObject> ec,
-			IElexisEventDispatcher ied) throws ElexisException {
+	public void unregisterDispatcher(
+			final Class<? extends PersistentObject> ec,
+			final IElexisEventDispatcher ied) throws ElexisException {
 		if (ied != dispatchers.get(ec)) {
 			throw new ElexisException(getClass(),
 					"Tried to remove unowned dispatcher " + ec.getName(),
@@ -138,11 +143,11 @@ public class ElexisEventDispatcher extends Job {
 	 *            one ore more ElexisEventListeners that have to return valid
 	 *            values on el.getElexisEventFilter()
 	 */
-	public void addListeners(ElexisEventListener... els) {
+	public void addListeners(final ElexisEventListener... els) {
 		synchronized (listeners) {
 			for (ElexisEventListener el : els) {
-				ElexisEvent ev = el.getElexisEventFilter();
-				Class<?> cl = ev.getObjectClass();
+				ElexisEvent event = el.getElexisEventFilter();
+				Class<?> cl = event.getObjectClass();
 				IElexisEventDispatcher ed = dispatchers.get(cl);
 				if (ed != null) {
 					ed.addListener(el);
@@ -164,7 +169,7 @@ public class ElexisEventDispatcher extends Job {
 	public void removeListeners(ElexisEventListener... els) {
 		synchronized (listeners) {
 			for (ElexisEventListener el : els) {
-				ElexisEvent ev = el.getElexisEventFilter();
+				final ElexisEvent ev = el.getElexisEventFilter();
 				Class<?> cl = ev.getObjectClass();
 				IElexisEventDispatcher ed = dispatchers.get(cl);
 				if (ed != null) {
@@ -191,7 +196,7 @@ public class ElexisEventDispatcher extends Job {
 	 * @param ee
 	 *            the event to fire.
 	 */
-	public void fire(ElexisEvent... ees) {
+	public void fire(final ElexisEvent... ees) {
 		for (ElexisEvent ee : ees) {
 			if (ee.getType() == ElexisEvent.EVENT_SELECTED) {
 				PersistentObject po = lastSelection.get(ee.getObjectClass());
@@ -372,24 +377,26 @@ public class ElexisEventDispatcher extends Job {
 	}
 
 	/**
-	 * Let the dispatcher Thread empty the queue. If the queue is empty, this method returns
-	 * immediately. Otherwise, the current thread waits until it is empty or the provided wasit time 
-	 * has expired.
-	 * @param millis The time to wait bevor returning
+	 * Let the dispatcher Thread empty the queue. If the queue is empty, this
+	 * method returns immediately. Otherwise, the current thread waits until it
+	 * is empty or the provided wasit time has expired.
+	 * 
+	 * @param millis
+	 *            The time to wait bevor returning
 	 * @return false if waiting was interrupted
 	 */
 	public boolean waitUntilEventQueueIsEmpty(long millis) {
 		synchronized (eventQueue) {
-			if(eventQueue.isEmpty()){
-				return true;
-			}
-			try {
-				eventQueue.wait(millis);
-				return true;
-			} catch (InterruptedException e) {
-				return false;
+			if (!eventQueue.isEmpty()) {
+				try {
+					eventQueue.wait(millis);
+					return true;
+				} catch (InterruptedException e) {
+					// janusode
+				}
 			}
 		}
+		return false;
 	}
 
 	public void dump() {
