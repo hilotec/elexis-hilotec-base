@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: SampleView.java 6128 2010-02-12 16:05:28Z rgw_ch $
+ *    $Id: SampleView.java 6159 2010-02-24 21:41:47Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.developer.resources.view;
@@ -71,7 +71,7 @@ public class SampleView extends ViewPart implements IActivationListener {
 	FlatDataLoader fdl;
 	
 	/**
-	 * A sample action to create a new SampleDataType
+	 * Sample actions to create and delete SampleDataTypes
 	 */
 	private RestrictedAction newSDTAction, deleteSDTAction;
 	
@@ -143,6 +143,7 @@ public class SampleView extends ViewPart implements IActivationListener {
 		@Override
 		public void runInUi(ElexisEvent ev){
 			newSDTAction.reflectRight();
+			deleteSDTAction.reflectRight();
 			cv.getViewerWidget().refresh(true);
 		}
 	};

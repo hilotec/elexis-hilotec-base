@@ -1,7 +1,7 @@
 h1. Elexis developer resources
 
 p(klein). (c) 2010 by G. Weirich
- $Id: developer.textile 6150 2010-02-17 06:59:26Z rgw_ch $	
+ $Id: developer.textile 6159 2010-02-24 21:41:47Z rgw_ch $	
 
 h2. Table of contents
 
@@ -119,7 +119,7 @@ If you do not want to take this responsability, but still would like to offer yo
 
 h1. Concepts
 
-h2. Persistentence and Database Access
+h2. Persistence and Database Access
 
 Elexis uses an abstraction layer to separate java's object orientated programming style from the needs of the underlying relational database. Furthermore, the abstraction layer hides differences between database brands and thus allows the elexis programmer to focus on his/her programming model without having to think about persistence.  Unlike similar abstraction layers, the elexis model does not rely on translation files or annotations. Instead, programmers are enforced to design their persistable classes in a specific way:
 All persistable classes are subclasses of ch.elexis.data.PersistentObject. The base class  has static members to connect to a database and to define mappings of object members to database fields.
