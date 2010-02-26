@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: PersistentObjectDropTarget.java 6134 2010-02-13 09:51:29Z rgw_ch $
+ * $Id: PersistentObjectDropTarget.java 6164 2010-02-26 18:17:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -23,8 +23,8 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Control;
 
 import ch.elexis.Hub;
+import ch.elexis.actions.ICodeSelectorTarget;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.views.codesystems.ICodeSelectorTarget;
 
 /**
  * Universelles DropTarget für PersistentObjects

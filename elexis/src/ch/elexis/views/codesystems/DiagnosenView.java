@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: DiagnosenView.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * 
+ *  $Id: DiagnosenView.java 6164 2010-02-26 18:17:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -28,99 +28,120 @@ import ch.elexis.actions.CodeSelectorHandler;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.data.ICodeElement;
 import ch.elexis.views.codesystems.CodeSelectorFactory.cPage;
 
-public class DiagnosenView extends ViewPart implements IActivationListener,
-		ISaveablePart2 {
+public class DiagnosenView extends ViewPart implements IActivationListener, ISaveablePart2 {
 	public final static String ID = "ch.elexis.DiagnosenView"; //$NON-NLS-1$
 	CTabFolder ctab;
 	CTabItem selected;
-
-	public DiagnosenView() {
-	}
-
+	
+	public DiagnosenView(){}
+	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		parent.setLayout(new FillLayout());
 		ctab = new CTabFolder(parent, SWT.BOTTOM);
 		ctab.setSimple(false);
 		ctab.addSelectionListener(new SelectionAdapter() {
-
+			
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
+				selected = ctab.getSelection();
 				if (selected != null) {
 					cPage page = (cPage) selected.getControl();
-					page.cv.getConfigurer().getControlFieldProvider()
-							.clearValues();
+					if (page == null) {
+						page =
+							new cPage(ctab, (ICodeElement) selected.getData(),
+								(CodeSelectorFactory) selected.getData("csf"));
+						selected.setControl(page);
+						// parent.redraw();
+					}
+					page.cv.getConfigurer().getControlFieldProvider().clearValues();
 				}
-				selected = ctab.getSelection();
 				((cPage) selected.getControl()).refresh();
 				setFocus();
 			}
-
+			
 		});
-
-		CodeSelectorFactory.makeTabs(ctab, getViewSite(),
-				"ch.elexis.Diagnosecode"); //$NON-NLS-1$
-
+		
+		CodeSelectorFactory.makeTabs(ctab, getViewSite(), "ch.elexis.Diagnosecode"); //$NON-NLS-1$
+		
 		GlobalEventDispatcher.addActivationListener(this, this);
 	}
-
-	public void dispose() {
+	
+	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		super.dispose();
 	}
-
+	
 	@Override
-	public void setFocus() {
-		if ((ctab != null) && (ctab.getSelection() != null)) {
-			ctab.setFocus();
-			((CodeSelectorFactory.cPage) ctab.getSelection().getControl())
-					.refresh();
+	public void setFocus(){
+		if (selected == null) {
+			if (ctab.getItems().length > 0) {
+				selected = ctab.getSelection();
+			}
+		}
+		if (selected != null) {
+			cPage page = (cPage) selected.getControl();
+			if (page == null) {
+				//SWTHelper.alert(CAPTION_ERROR, "cPage=null"); //$NON-NLS-1$
+				page =
+					new cPage(ctab, (ICodeElement) selected.getData(),
+						(CodeSelectorFactory) selected.getData("csf"));
+				selected.setControl(page);
+				// parent.redraw();
+			}
+			page.cv.getConfigurer().getControlFieldProvider().setFocus();
 		}
 	}
-
-	public void activation(boolean mode) {
+	
+	public void activation(boolean mode){
 		if (mode == false) {
 			if (selected != null) {
 				cPage page = (cPage) selected.getControl();
 				page.cv.getConfigurer().getControlFieldProvider().clearValues();
 			}
-
+			
 			// remove any ICodeSelectiorTarget, since it's no more needed
 			CodeSelectorHandler.getInstance().removeCodeSelectorTarget();
+		} else {
+			if (selected != null) {
+				cPage page = (cPage) selected.getControl();
+				page.refresh();
+			}
+			
 		}
-
+		
 	}
-
-	public void visible(boolean mode) {
-	}
-
+	
+	public void visible(boolean mode){}
+	
 	/*
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir
-	 * benötigen das Interface nur, um das Schliessen einer View zu verhindern,
-	 * wenn die Perspektive fixiert ist. Gibt es da keine einfachere Methode?
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
+	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
+	 * Gibt es da keine einfachere Methode?
 	 */
-	public int promptToSaveOnClose() {
+	public int promptToSaveOnClose(){
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
 				: ISaveablePart2.NO;
 	}
-
-	public void doSave(IProgressMonitor monitor) { /* leer */
+	
+	public void doSave(IProgressMonitor monitor){ /* leer */
 	}
-
-	public void doSaveAs() { /* leer */
+	
+	public void doSaveAs(){ /* leer */
 	}
-
-	public boolean isDirty() {
+	
+	public boolean isDirty(){
 		return true;
 	}
-
-	public boolean isSaveAsAllowed() {
+	
+	public boolean isSaveAsAllowed(){
 		return false;
 	}
-
-	public boolean isSaveOnCloseNeeded() {
+	
+	public boolean isSaveOnCloseNeeded(){
 		return true;
 	}
 }

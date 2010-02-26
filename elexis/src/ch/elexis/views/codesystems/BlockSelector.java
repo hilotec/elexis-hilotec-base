@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: BlockSelector.java 6153 2010-02-19 18:34:28Z rgw_ch $
+ *  $Id: BlockSelector.java 6164 2010-02-26 18:17:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -38,6 +38,7 @@ import ch.elexis.actions.CodeSelectorHandler;
 import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListenerImpl;
+import ch.elexis.actions.ICodeSelectorTarget;
 import ch.elexis.actions.TreeDataLoader;
 import ch.elexis.commands.ExportiereBloeckeCommand;
 import ch.elexis.data.ICodeElement;

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ChapterDisplay.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *    $Id: ChapterDisplay.java 6164 2010-02-26 18:17:09Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc.views;
 
@@ -31,6 +31,7 @@ import org.eclipse.ui.forms.widgets.Section;
 
 import ch.elexis.Desk;
 import ch.elexis.actions.CodeSelectorHandler;
+import ch.elexis.actions.ICodeSelectorTarget;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.icpc.IcpcCode;
@@ -41,7 +42,6 @@ import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.util.viewers.ViewerConfigurer.ContentProviderAdapter;
-import ch.elexis.views.codesystems.ICodeSelectorTarget;
 import ch.rgw.tools.StringTool;
 
 public class ChapterDisplay extends Composite {

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: CodeSelectorFactory.java 6153 2010-02-19 18:34:28Z rgw_ch $
+ *  $Id: CodeSelectorFactory.java 6164 2010-02-26 18:17:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -44,6 +44,7 @@ import ch.elexis.actions.CodeSelectorHandler;
 import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListenerImpl;
+import ch.elexis.actions.ICodeSelectorTarget;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.ICodeElement;
 import ch.elexis.data.Patient;
@@ -61,23 +62,21 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
 /**
- * Bereitstellung der Auswahlliste für Codes aller Art: Oben häufigste des
- * Anwenders, in der Mitte häufigste des Patienten, unten ganze Systenatik
+ * Bereitstellung der Auswahlliste für Codes aller Art: Oben häufigste des Anwenders, in der Mitte
+ * häufigste des Patienten, unten ganze Systenatik
  * 
  * @author Gerry
  * 
  */
 public abstract class CodeSelectorFactory implements IExecutableExtension {
-	private static final String CAPTION_ERROR = Messages
-	.getString("CodeSelectorFactory.error"); //$NON-NLS-1$
+	private static final String CAPTION_ERROR = Messages.getString("CodeSelectorFactory.error"); //$NON-NLS-1$
 	/** Anzahl der in den oberen zwei Listen zu haltenden Elemente */
 	public static int ITEMS_TO_SHOW_IN_MFU_LIST = 15;
 	
-	public CodeSelectorFactory() {
-	}
+	public CodeSelectorFactory(){}
 	
-	public void setInitializationData(IConfigurationElement config,
-		String propertyName, Object data) throws CoreException {
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+	throws CoreException{
 		
 	}
 	
@@ -89,50 +88,47 @@ public abstract class CodeSelectorFactory implements IExecutableExtension {
 	
 	public abstract String getCodeSystemName();
 	
-	public String getCodeSystemCode() {
+	public String getCodeSystemCode(){
 		return "999"; //$NON-NLS-1$
 	}
 	
-	public PersistentObject findElement(String code) {
-		String s = getElementClass().getName() + StringConstants.DOUBLECOLON
-		+ code;
+	public PersistentObject findElement(String code){
+		String s = getElementClass().getName() + StringConstants.DOUBLECOLON + code;
 		return Hub.poFactory.createFromString(s);
 	}
 	
-	public static void makeTabs(CTabFolder ctab, IViewSite site, String point) {
-		ITEMS_TO_SHOW_IN_MFU_LIST = Hub.userCfg.get(
-			PreferenceConstants.USR_MFU_LIST_SIZE, 15);
-		java.util.List<IConfigurationElement> list = Extensions
-		.getExtensions(point);
+	public static void makeTabs(CTabFolder ctab, IViewSite site, String point){
+		ITEMS_TO_SHOW_IN_MFU_LIST = Hub.userCfg.get(PreferenceConstants.USR_MFU_LIST_SIZE, 15);
+		java.util.List<IConfigurationElement> list = Extensions.getExtensions(point);
 		ctab.setSimple(false);
 		
 		if (list != null) {
 			for (IConfigurationElement ic : list) {
 				try {
-					PersistentObjectFactory po = (PersistentObjectFactory) ic
-					.createExecutableExtension("ElementFactory"); //$NON-NLS-1$
-					CodeSelectorFactory cs = (CodeSelectorFactory) ic
-					.createExecutableExtension("CodeSelectorFactory"); //$NON-NLS-1$
-					if (cs == null) {
-						SWTHelper.alert(CAPTION_ERROR,
-						"CodeSelectorFactory is null"); //$NON-NLS-1$
+					PersistentObjectFactory po =
+						(PersistentObjectFactory) ic.createExecutableExtension("ElementFactory"); //$NON-NLS-1$
+					CodeSelectorFactory codeSelectorFactory =
+						(CodeSelectorFactory) ic.createExecutableExtension("CodeSelectorFactory"); //$NON-NLS-1$
+					if (codeSelectorFactory == null) {
+						SWTHelper.alert(CAPTION_ERROR, "CodeSelectorFactory is null"); //$NON-NLS-1$
 					}
-					ICodeElement ics = (ICodeElement) po.createTemplate(cs
-						.getElementClass());
-					if (ics == null) {
+					ICodeElement codeElement =
+						(ICodeElement) po.createTemplate(codeSelectorFactory.getElementClass());
+					if (codeElement == null) {
 						SWTHelper.alert(CAPTION_ERROR, "CodeElement is null"); //$NON-NLS-1$
 					}
-					String cname = ics.getCodeSystemName();
-					if (StringTool.isNothing(cname)) {
+					String codeSystemName = codeElement.getCodeSystemName();
+					if (StringTool.isNothing(codeSystemName)) {
 						SWTHelper.alert(CAPTION_ERROR, "codesystemname"); //$NON-NLS-1$
-						cname = "??"; //$NON-NLS-1$
+						codeSystemName = "??"; //$NON-NLS-1$
 					}
-					CTabItem ct = new CTabItem(ctab, SWT.NONE);
+					CTabItem tabItem = new CTabItem(ctab, SWT.NONE);
 					
-					ct.setText(cname);
-					ct.setData(ics);
-					cPage page = new cPage(ctab, site, ics, cs);
-					ct.setControl(page);
+					tabItem.setText(codeSystemName);
+					tabItem.setData(codeElement);
+					tabItem.setData("csf", codeSelectorFactory);
+					//cPage page = new cPage(ctab, codeElement, codeSelectorFactory);
+					//tabItem.setControl(page);
 					
 				} catch (CoreException ex) {
 					ExHandler.handle(ex);
@@ -144,111 +140,103 @@ public abstract class CodeSelectorFactory implements IExecutableExtension {
 		}
 	}
 	
+	/**
+	 * If the user resizes the parts of the selector, we'll remember the new size
+	 * @author gerry
+	 *
+	 */
 	private static class ResizeListener extends ControlAdapter {
 		private final String k;
 		private final SashForm mine;
 		
-		ResizeListener(SashForm form, String key) {
+		ResizeListener(SashForm form, String key){
 			k = key;
 			mine = form;
 		}
 		
 		@Override
-		public void controlResized(ControlEvent e) {
+		public void controlResized(ControlEvent e){
 			int[] weights = mine.getWeights();
 			StringBuilder v = new StringBuilder();
-			v.append(Integer.toString(weights[0]))
-			.append(",").append(Integer.toString(weights[1])) //$NON-NLS-1$
+			v.append(Integer.toString(weights[0])).append(",").append(Integer.toString(weights[1])) //$NON-NLS-1$
 			.append(",").append(Integer.toString(weights[2])); //$NON-NLS-1$
-			Hub.localCfg.set(k, v.toString());
-			
+			Hub.userCfg.set(k, v.toString());
 		}
 		
 	}
 	
+	/**
+	 * Display page for one codesystem. Upper part: MFU user, middle part: MFU patient, lower part: All codes
+	 * @author gerry
+	 *
+	 */
 	public static class cPage extends Composite {
-		IViewSite site;
-		ICodeElement template;
-		java.util.List<String> lUser, lPatient;
-		ArrayList<PersistentObject> alPatient;
-		ArrayList<PersistentObject> alUser;
-		List lbPatient, lbUser;
+		
+		private ICodeElement template;
+		private java.util.List<String> lUserMFU, lPatientMFU;
+		private ArrayList<PersistentObject> alPatient;
+		private ArrayList<PersistentObject> alUser;
+		private List lbPatientMFU, lbUserMFU;
 		CommonViewer cv;
 		ViewerConfigurer vc;
 		int[] sashWeights = null;
 		ResizeListener resizeListener;
 		
-		private final ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(
-			Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
+		private final ElexisEventListenerImpl eeli_user =
+			new ElexisEventListenerImpl(Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
 			
-			public void runInUi(ElexisEvent ev) {
-				lbPatient.setFont(Desk
-					.getFont(PreferenceConstants.USR_DEFAULTFONT));
-				lbUser.setFont(Desk
-					.getFont(PreferenceConstants.USR_DEFAULTFONT));
+			public void runInUi(ElexisEvent ev){
+				lbPatientMFU.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
+				lbUserMFU.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
 				cv.getViewerWidget().getControl().setFont(
 					Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
 				refresh();
 			}
 		};
 		
-		/*
-		private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(
-				Patient.class) {
-
-			public void runInUi(ElexisEvent ev) {
-				refresh();
-
-			}
-		};
-		 */
-		
-		protected cPage(CTabFolder ctab) {
+		protected cPage(CTabFolder ctab){
 			super(ctab, SWT.NONE);
 		}
 		
-		cPage(final CTabFolder ctab, final IViewSite s, final ICodeElement v,
-			final CodeSelectorFactory cs) {
+		cPage(final CTabFolder ctab, final ICodeElement codeElement, final CodeSelectorFactory codeSelectorFactory){
 			super(ctab, SWT.NONE);
-			template = v;
-			site = s;
+			template = codeElement;
 			setLayout(new FillLayout());
 			SashForm sash = new SashForm(this, SWT.VERTICAL | SWT.SMOOTH);
-			String cfgKey = "ansicht/codesystem/" + v.getCodeSystemName(); //$NON-NLS-1$
+			String cfgKey = "ansicht/codesystem/" + codeElement.getCodeSystemName(); //$NON-NLS-1$
 			resizeListener = new ResizeListener(sash, cfgKey);
-			String sashW = Hub.localCfg.get(cfgKey, "20,20,60"); //$NON-NLS-1$
+			String sashW = Hub.userCfg.get(cfgKey, "20,20,60"); //$NON-NLS-1$
 			sashWeights = new int[3];
 			int i = 0;
 			for (String sw : sashW.split(",")) { //$NON-NLS-1$
 				sashWeights[i++] = Integer.parseInt(sw);
 			}
-			Group gUser = new Group(sash, SWT.NONE);
-			gUser.addControlListener(resizeListener);
-			gUser.setText(Messages
-				.getString("CodeSelectorFactory.yourMostFrequent")); //$NON-NLS-1$
-			gUser.setLayout(new FillLayout());
-			gUser.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-			lbUser = new List(gUser, SWT.MULTI | SWT.V_SCROLL);
+			Group gUserMFU = new Group(sash, SWT.NONE);
+			gUserMFU.addControlListener(resizeListener);
+			gUserMFU.setText(Messages.getString("CodeSelectorFactory.yourMostFrequent")); //$NON-NLS-1$
+			gUserMFU.setLayout(new FillLayout());
+			gUserMFU.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			lbUserMFU = new List(gUserMFU, SWT.MULTI | SWT.V_SCROLL);
 			
-			Group gPatient = new Group(sash, SWT.NONE);
-			gPatient.addControlListener(resizeListener);
-			gPatient.setText(Messages
-				.getString("CodeSelectorFactory.patientsMostFrequent")); //$NON-NLS-1$
-			gPatient.setLayout(new FillLayout());
-			gPatient.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-			lbPatient = new List(gPatient, SWT.MULTI | SWT.V_SCROLL);
+			Group gPatientMFU = new Group(sash, SWT.NONE);
+			gPatientMFU.addControlListener(resizeListener);
+			gPatientMFU.setText(Messages.getString("CodeSelectorFactory.patientsMostFrequent")); //$NON-NLS-1$
+			gPatientMFU.setLayout(new FillLayout());
+			gPatientMFU.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			lbPatientMFU = new List(gPatientMFU, SWT.MULTI | SWT.V_SCROLL);
 			
 			Group gAll = new Group(sash, SWT.NONE);
 			gAll.setText(Messages.getString("CodeSelectorFactory.all")); //$NON-NLS-1$
 			gAll.setLayout(new GridLayout());
 			cv = new CommonViewer();
-			Iterable<IAction> actions = v.getActions(null);
+			// Add context medu to viewer, if actions are defined
+			Iterable<IAction> actions = codeElement.getActions(null);
 			if (actions != null) {
 				MenuManager menu = new MenuManager();
 				menu.setRemoveAllWhenShown(true);
 				menu.addMenuListener(new IMenuListener() {
-					public void menuAboutToShow(IMenuManager manager) {
-						Iterable<IAction> actions = v.getActions(null);
+					public void menuAboutToShow(IMenuManager manager){
+						Iterable<IAction> actions = codeElement.getActions(null);
 						for (IAction ac : actions) {
 							manager.add(ac);
 						}
@@ -257,7 +245,7 @@ public abstract class CodeSelectorFactory implements IExecutableExtension {
 				});
 				cv.setContextMenu(menu);
 			}
-			vc = cs.createViewerConfigurer(cv);
+			vc = codeSelectorFactory.createViewerConfigurer(cv);
 			Composite cvc = new Composite(gAll, SWT.NONE);
 			cvc.setLayout(new GridLayout());
 			cvc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -268,29 +256,30 @@ public abstract class CodeSelectorFactory implements IExecutableExtension {
 			
 			// add double click listener for CodeSelectorTarget
 			cv.addDoubleClickListener(new DoubleClickListener() {
-				public void doubleClicked(PersistentObject obj, CommonViewer cv) {
-					ICodeSelectorTarget target = CodeSelectorHandler
-					.getInstance().getCodeSelectorTarget();
+				public void doubleClicked(PersistentObject obj, CommonViewer cv){
+					ICodeSelectorTarget target =
+						CodeSelectorHandler.getInstance().getCodeSelectorTarget();
 					if (target != null) {
 						target.codeSelected(obj);
 					}
 				}
 			});
 			
-			doubleClickEnable(lbUser);
-			doubleClickEnable(lbPatient);
+			doubleClickEnable(lbUserMFU);
+			doubleClickEnable(lbPatientMFU);
 			
 			// dragEnable(lbUser);
 			// dragEnable(lbPatient);
-			new PersistentObjectDragSource(lbUser, new DragEnabler(lbUser));
-			new PersistentObjectDragSource(lbPatient, new DragEnabler(
-				lbPatient));
+			new PersistentObjectDragSource(lbUserMFU, new DragEnabler(lbUserMFU));
+			new PersistentObjectDragSource(lbPatientMFU, new DragEnabler(lbPatientMFU));
 			
 			try {
 				sash.setWeights(sashWeights);
 			} catch (Throwable t) {
 				ExHandler.handle(t);
-				sash.setWeights(new int[] { 20, 20, 60 });
+				sash.setWeights(new int[] {
+					20, 20, 60
+				});
 			}
 			
 			ElexisEventDispatcher.getInstance().addListeners(eeli_user);
@@ -303,64 +292,60 @@ public abstract class CodeSelectorFactory implements IExecutableExtension {
 		 * @see org.eclipse.swt.widgets.Widget#dispose()
 		 */
 		@Override
-		public void dispose() {
+		public void dispose(){
 			vc.getContentProvider().stopListening();
 			ElexisEventDispatcher.getInstance().removeListeners(eeli_user);
 			super.dispose();
 		}
 		
-		public void refresh() {
-			lbUser.removeAll();
+		public void refresh(){
+			lbUserMFU.removeAll();
 			if (Hub.actUser == null) {
 				// Hub.log.log("ActUser ist null!", Log.ERRORS);
 				return;
 			}
 			if (template == null) {
-				Hub.log
-				.log(
-					Messages.getString("CodeSelectorFactory.16"), Log.ERRORS); //$NON-NLS-1$
+				Hub.log.log(Messages.getString("CodeSelectorFactory.16"), Log.ERRORS); //$NON-NLS-1$
 				return;
 			}
-			lUser = Hub.actUser.getStatForItem(template.getClass().getName());
+			lUserMFU = Hub.actUser.getStatForItem(template.getClass().getName());
 			alUser = new ArrayList<PersistentObject>();
-			lbUser.setData(alUser);
+			lbUserMFU.setData(alUser);
 			for (int i = 0; i < ITEMS_TO_SHOW_IN_MFU_LIST; i++) {
-				if (i >= lUser.size()) {
+				if (i >= lUserMFU.size()) {
 					break;
 				}
-				PersistentObject po = Hub.poFactory.createFromString(lUser
-					.get(i));
+				PersistentObject po = Hub.poFactory.createFromString(lUserMFU.get(i));
 				alUser.add(po);
 				String lbl = po.getLabel();
 				if (StringTool.isNothing(lbl)) {
 					lbl = "?"; //$NON-NLS-1$
 					continue;
 				}
-				lbUser.add(lbl);
+				lbUserMFU.add(lbl);
 			}
-			lbPatient.removeAll();
+			lbPatientMFU.removeAll();
 			
 			Patient act = ElexisEventDispatcher.getSelectedPatient();
 			if (act != null) {
-				lPatient = act.getStatForItem(template.getClass().getName());
+				lPatientMFU = act.getStatForItem(template.getClass().getName());
 			} else {
-				lPatient = new java.util.ArrayList<String>();
+				lPatientMFU = new java.util.ArrayList<String>();
 			}
 			alPatient = new ArrayList<PersistentObject>();
-			lbPatient.setData(alPatient);
+			lbPatientMFU.setData(alPatient);
 			for (int i = 0; i < ITEMS_TO_SHOW_IN_MFU_LIST; i++) {
-				if (i >= lPatient.size()) {
+				if (i >= lPatientMFU.size()) {
 					break;
 				}
-				PersistentObject po = Hub.poFactory.createFromString(lPatient
-					.get(i));
+				PersistentObject po = Hub.poFactory.createFromString(lPatientMFU.get(i));
 				if (po != null) {
 					alPatient.add(po);
 					String label = po.getLabel();
 					if (label == null) {
-						lbPatient.add("?"); //$NON-NLS-1$
+						lbPatientMFU.add("?"); //$NON-NLS-1$
 					} else {
-						lbPatient.add(label);
+						lbPatientMFU.add(label);
 					}
 				}
 			}
@@ -372,14 +357,13 @@ public abstract class CodeSelectorFactory implements IExecutableExtension {
 	static class DragEnabler implements PersistentObjectDragSource.ISelectionRenderer {
 		List list;
 		
-		DragEnabler(final List list) {
+		DragEnabler(final List list){
 			this.list = list;
 		}
 		
-		public java.util.List<PersistentObject> getSelection() {
+		public java.util.List<PersistentObject> getSelection(){
 			int sel = list.getSelectionIndex();
-			ArrayList<PersistentObject> backing = (ArrayList<PersistentObject>) list
-			.getData();
+			ArrayList<PersistentObject> backing = (ArrayList<PersistentObject>) list.getData();
 			PersistentObject po = backing.get(sel);
 			ArrayList<PersistentObject> ret = new ArrayList<PersistentObject>();
 			ret.add(po);
@@ -389,23 +373,23 @@ public abstract class CodeSelectorFactory implements IExecutableExtension {
 	}
 	
 	// add double click listener for ICodeSelectorTarget
-	static void doubleClickEnable(final List list) {
+	static void doubleClickEnable(final List list){
 		list.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				// normal selection, do nothing
 			}
 			
-			public void widgetDefaultSelected(SelectionEvent e) {
+			public void widgetDefaultSelected(SelectionEvent e){
 				// double clicked
 				
 				int sel = list.getSelectionIndex();
 				if (sel != -1) {
-					ArrayList<PersistentObject> backing = (ArrayList<PersistentObject>) list
-					.getData();
+					ArrayList<PersistentObject> backing =
+						(ArrayList<PersistentObject>) list.getData();
 					PersistentObject po = backing.get(sel);
 					
-					ICodeSelectorTarget target = CodeSelectorHandler
-					.getInstance().getCodeSelectorTarget();
+					ICodeSelectorTarget target =
+						CodeSelectorHandler.getInstance().getCodeSelectorTarget();
 					if (target != null) {
 						target.codeSelected(po);
 					}

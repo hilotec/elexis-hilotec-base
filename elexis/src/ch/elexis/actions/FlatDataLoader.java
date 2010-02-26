@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: FlatDataLoader.java 6039 2010-02-01 11:04:53Z rgw_ch $
+ * $Id: FlatDataLoader.java 6164 2010-02-26 18:17:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -55,6 +55,9 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 	 * From @see DelayableJob.IWorker
 	 */
 	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params){
+		if(isSuspended()){
+			return Status.CANCEL_STATUS;
+		}
 		final TableViewer tv = (TableViewer) cv.getViewerWidget();
 		if (filtered != null) {
 			filtered.clear();

@@ -13,6 +13,7 @@ import ch.elexis.data.Query;
 import ch.elexis.medikamente.bag.data.BAGMedi;
 import ch.elexis.medikamente.bag.data.BAGMediFactory;
 import ch.elexis.selectors.FieldDescriptor;
+import ch.elexis.selectors.FieldDescriptor.Typ;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.SelectorPanelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
@@ -29,11 +30,11 @@ public class BAGMediSelector extends CodeSelectorFactory {
 	CommonViewer cv;
 	SelectorPanelProvider slp;
 	FieldDescriptor<?>[] fields =
-		{
-			new FieldDescriptor<BAGMedi>(FIELD_NAME),
-			new FieldDescriptor<BAGMedi>(FIELD_SUBSTANCE),
-			new FieldDescriptor<BAGMedi>(FIELD_NOTES)
-		};
+	{
+		new FieldDescriptor<BAGMedi>("Name", FIELD_NAME, FieldDescriptor.Typ.STRING,null),
+		new FieldDescriptor<BAGMedi>("Substanz", FIELD_SUBSTANCE, Typ.STRING,null),
+		new FieldDescriptor<BAGMedi>("Notizen",FIELD_NOTES,Typ.STRING,null)
+	};
 	BagMediContentProvider fdl;
 	
 	@Override

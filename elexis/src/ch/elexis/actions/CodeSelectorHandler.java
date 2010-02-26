@@ -8,12 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation, based on original Code by D.Lutz
  *    
- * $Id: CodeSelectorHandler.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * $Id: CodeSelectorHandler.java 6164 2010-02-26 18:17:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
 
-import ch.elexis.views.codesystems.ICodeSelectorTarget;
 
 public class CodeSelectorHandler {
 	private static CodeSelectorHandler theInstance;

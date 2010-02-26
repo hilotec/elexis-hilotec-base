@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: PersistentObjectLoader.java 6118 2010-02-12 06:15:42Z rgw_ch $
+ * $Id: PersistentObjectLoader.java 6164 2010-02-26 18:17:09Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -38,7 +38,7 @@ import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
  * 
  */
 public abstract class PersistentObjectLoader implements CommonContentProvider,
-		IWorker {
+IWorker {
 	public final static String PARAM_FIELDNAMES = "fieldnames"; //$NON-NLS-1$
 	public final static String PARAM_VALUES = "fieldvalues"; //$NON-NLS-1$
 	protected CommonViewer cv;
@@ -47,19 +47,20 @@ public abstract class PersistentObjectLoader implements CommonContentProvider,
 	// protected IFilter viewerFilter;
 	protected DelayableJob dj;
 	protected String orderField;
-
+	private boolean bSuspended;
+	
 	public PersistentObjectLoader(CommonViewer cv,
-			Query<? extends PersistentObject> qbe) {
+		Query<? extends PersistentObject> qbe) {
 		this.cv = cv;
 		this.qbe = qbe;
 		dj = new DelayableJob(
-				Messages.getString("PersistentObjectLoader.2"), this); //$NON-NLS-1$
+			Messages.getString("PersistentObjectLoader.2"), this); //$NON-NLS-1$
 	}
-
+	
 	public Query<? extends PersistentObject> getQuery() {
 		return qbe;
 	}
-
+	
 	/**
 	 * start listening the selector fields of the ControlField of the loader's
 	 * CommonViewer. If the user enters text or clicks the headings, a changed()
@@ -70,34 +71,35 @@ public abstract class PersistentObjectLoader implements CommonContentProvider,
 		// cv.getConfigurer().getControlFieldProvider().createFilter();
 		cv.getConfigurer().getControlFieldProvider().addChangeListener(this);
 	}
-
+	
 	/**
 	 * stop listening the selector fields
 	 */
 	public void stopListening() {
 		cv.getConfigurer().getControlFieldProvider().removeChangeListener(this);
 	}
-
+	
 	public Object[] getElements(Object inputElement) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	public void dispose() {
 		stopListening();
 	}
-
+	
+	/**
+	 * This will be called by the CommonViewer on construction
+	 */
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		dj.launch(0);
-
 	}
-
+	
 	/**
 	 * One or more of the ControlField's selectors habe been changed. We'll wait
 	 * a moment for more changes before we launch the loader.
-	 * 
-	 * @param fields
-	 *            the field names
+	 * Use this method also to force a restart of the loader programatically (values can be null)
+
 	 * @param values
 	 *            the new values
 	 */
@@ -113,7 +115,7 @@ public abstract class PersistentObjectLoader implements CommonContentProvider,
 		dj.setRuntimeData(PARAM_VALUES, values);
 		dj.launch(DelayableJob.DELAY_ADAPTIVE);
 	}
-
+	
 	/**
 	 * The user request reordering of the table
 	 * 
@@ -124,23 +126,23 @@ public abstract class PersistentObjectLoader implements CommonContentProvider,
 		setOrderField(field);
 		dj.launch(20);
 	}
-
+	
 	public void selected() {
-
+		
 	}
-
+	
 	public void addQueryFilter(QueryFilter fp) {
 		synchronized (queryFilters) {
 			queryFilters.add(fp);
 		}
 	}
-
+	
 	public void removeQueryFilter(QueryFilter fp) {
 		synchronized (queryFilters) {
 			queryFilters.remove(fp);
 		}
 	}
-
+	
 	public void applyQueryFilters() {
 		synchronized (queryFilters) {
 			for (QueryFilter fp : queryFilters) {
@@ -148,11 +150,11 @@ public abstract class PersistentObjectLoader implements CommonContentProvider,
 			}
 		}
 	}
-
+	
 	public void setOrderField(String name) {
 		orderField = name;
 	}
-
+	
 	/**
 	 * a FilterProvider can modify the Query of this Loader. It will be called
 	 * before each reload.
@@ -163,6 +165,13 @@ public abstract class PersistentObjectLoader implements CommonContentProvider,
 	public interface QueryFilter {
 		public void apply(Query<? extends PersistentObject> qbe);
 	}
-
+	
+	public void setSuspended(boolean bSuspend){
+		bSuspended=bSuspend;
+	}
+	
+	public boolean isSuspended(){
+		return bSuspended;
+	}
 	// protected abstract void applyViewerFilter();
 }
