@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,11 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ActiveControl.java 5355 2009-06-14 10:35:19Z rgw_ch $
+ *  $Id: ActiveControl.java 6163 2010-02-26 06:20:50Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.selectors;
 
 import java.util.LinkedList;
-import java.util.Properties;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
@@ -67,8 +66,6 @@ public abstract class ActiveControl extends Composite {
 	 * 
 	 * @param parent
 	 *            the parent Composite
-	 * @param properties
-	 *            TODO
 	 * @param show
 	 *            ho to display the label
 	 */
