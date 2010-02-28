@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: EnhancedTextField.java 6043 2010-02-01 14:34:06Z rgw_ch $
+ *  $Id: EnhancedTextField.java 6174 2010-02-28 18:08:40Z toni_schranz $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -626,6 +626,44 @@ public class EnhancedTextField extends Composite {
 	public String getDocumentAsText(){
 		XMLOutputter xo = new XMLOutputter(Format.getRawFormat());
 		return xo.outputString(getDocument());
+	}
+	
+	public String getSelectedText()
+	{
+		return text.getSelectionText();
+	}
+	
+	public String getWordUnderCursor()
+	{
+		int start, end;
+		int pos = text.getCaretOffset();
+		String s = text.getText();
+		
+		for (start = pos-1; start >= 0; start--)
+		{
+			char c = s.charAt(start);
+			
+			if (c == ' ' || c=='\n' || c=='\t' || c=='.' || c==',' || c==';' || c==':' || c=='!' || c=='?')
+			{
+				start++;
+				break;
+			}
+		}
+		
+		for (end = pos; end < s.length(); end++)
+		{
+			char c = s.charAt(end);
+			
+			if (c == ' ' || c=='\n' || c=='\t' || c=='.' || c==',' || c==';' || c==':' || c=='!' || c=='?')
+			{
+				break;
+			}
+		}
+		
+		if (start < 0) start = 0;
+		if (end > s.length()) end = s.length();
+		
+		return s.substring(start, end);
 	}
 	
 	Samdas.XRef findLinkRef(int cp){
