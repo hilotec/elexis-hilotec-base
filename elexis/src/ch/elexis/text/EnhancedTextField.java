@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: EnhancedTextField.java 6174 2010-02-28 18:08:40Z toni_schranz $
+ *  $Id: EnhancedTextField.java 6175 2010-02-28 18:48:12Z toni_schranz $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -628,11 +628,19 @@ public class EnhancedTextField extends Composite {
 		return xo.outputString(getDocument());
 	}
 	
+	/**
+	 * Liefert den Selektierten Inhalt des Textfelds zurück
+	 * @return Den Selektierten Text, <code>String.empty</code> falls nichts ausgewählt
+	 */
 	public String getSelectedText()
 	{
 		return text.getSelectionText();
 	}
 	
+	/**
+	 * Gibt das Wort des Inhalts zurück das durch den Cursor berührt wird
+	 * @return Das mit dem Cursor berührte Wort des Textfelds, <code>String.empty</code> falls kein Wort berührt wird
+	 */
 	public String getWordUnderCursor()
 	{
 		int start, end;
