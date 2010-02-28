@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: DBImage.java 6058 2010-02-03 15:02:13Z rgw_ch $
+ *    $Id: DBImage.java 6166 2010-02-28 12:43:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 
 import ch.elexis.Desk;
@@ -83,7 +84,8 @@ public class DBImage extends PersistentObject {
 		byte[] in=getBinary(FLD_IMAGE);
 		ByteArrayInputStream bais=new ByteArrayInputStream(in);
 		try{
-			Image ret=new Image(Desk.getDisplay(),bais);
+			ImageData idata=new ImageData(bais);
+			Image ret=new Image(Desk.getDisplay(),idata);
 			return ret;
 		}catch(Exception ex){
 			SWTHelper.showError("Image Error", "Ungültiges Bild", "Das Bild ist ungültig "+ex.getMessage());
@@ -91,6 +93,23 @@ public class DBImage extends PersistentObject {
 		}
 	}
 	
+	public Image getImageScaledTo(int width, int height, boolean bShrinkOnly){
+		byte[] in=getBinary(FLD_IMAGE);
+		ByteArrayInputStream bais=new ByteArrayInputStream(in);
+		try{
+			ImageData idata=new ImageData(bais);
+			if(idata.width!=width || idata.height!=height){
+				idata=idata.scaledTo(width, height);
+			}
+			Image ret=new Image(Desk.getDisplay(),idata);
+			return ret;
+		}catch(Exception ex){
+			SWTHelper.showError("Image Error", "Ungültiges Bild", "Das Bild ist ungültig "+ex.getMessage());
+			return null;
+		}
+	
+	
+	}
 	public static DBImage find(String prefix, String name){
 		Query<DBImage> qbe=new Query<DBImage>(DBImage.class);
 		if(StringTool.isNothing(prefix)){

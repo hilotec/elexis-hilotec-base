@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Sticker.java 6058 2010-02-03 15:02:13Z rgw_ch $
+ *    $Id: Sticker.java 6166 2010-02-28 12:43:20Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -64,6 +64,7 @@ public class Sticker extends PersistentObject implements Comparable<Sticker>{
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new GridLayout(2,false));
 		Image img=getImage();
+		
 		GridData gd1=null;
 		GridData gd2=null;;
 		Composite cImg=new Composite(ret,SWT.NONE);
@@ -88,7 +89,7 @@ public class Sticker extends PersistentObject implements Comparable<Sticker>{
 		if(image!=null){
 			Image ret=Desk.getImage(image.getName());
 			if(ret==null){
-				ret=image.getImage();
+				ret=image.getImageScaledTo(16, 16, false);
 				Desk.getImageRegistry().put(image.getName(), ret);
 			}
 			return ret;

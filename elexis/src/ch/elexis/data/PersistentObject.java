@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: PersistentObject.java 6074 2010-02-04 15:18:22Z michael_imhof $
+ *    $Id: PersistentObject.java 6166 2010-02-28 12:43:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -777,6 +777,10 @@ public abstract class PersistentObject implements ISelectable{
 		+ Sticker.LINKTABLE + " WHERE obj=?";
 	private static PreparedStatement queryStickers = null;
 	
+	/**
+	 * Return all Stickers attributed to this objecz
+	 * @return A possibly empty list of Stickers
+	 */
 	@SuppressWarnings("unchecked")
 	public List<Sticker> getStickers() {
 		String ID = new StringBuilder().append("ETK").append(getId())
@@ -802,7 +806,7 @@ public abstract class PersistentObject implements ISelectable{
 			res.close();
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return null;
+			return ret;
 		}
 		Collections.sort(ret);
 		cache.put(ID, ret, getCacheTime());

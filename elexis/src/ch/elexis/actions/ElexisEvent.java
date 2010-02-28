@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: ElexisEvent.java 6048 2010-02-01 20:35:29Z rgw_ch $
+ * $Id: ElexisEvent.java 6166 2010-02-28 12:43:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -18,7 +18,14 @@ import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 
-public class ElexisEvent {
+/**
+ *	A universal event object. Can optionally created with a priority  
+ * 
+ * Note: Note: this class has a natural ordering that is inconsistent with equals 
+ * @author gerry
+ *
+ */
+public final class ElexisEvent implements Comparable<ElexisEvent>{
 	/** The Object was newly created */
 	public static final int EVENT_CREATE = 0x0001;
 	/** The object is about to be deleted */
@@ -36,16 +43,39 @@ public class ElexisEvent {
 	/** the mandator changed */
 	public static final int EVENT_MANDATOR_CHANGED = 0x080;
 	
-	PersistentObject obj;
-	Class<?> objClass;
-	int type;
 	
+	public static final int PRIORITY_HIGH=1000;
+	public static final int PRIORITY_NORMAL=10000;
+	public static final int PRIORITY_LOW=100000;
+	private final PersistentObject obj;
+	private final Class<?> objClass;
+	final int type;
+	private final int priority;
+	
+	/**
+	 * Create an ElexisEvent with default priority
+	 * @param o the PersistentObject that sources the event
+	 * @param c The object classs of the event source
+	 * @param type the type of Event. One of the EVENT_ constants
+	 */
 	public ElexisEvent(final PersistentObject o, final Class<?> c, final int type){
+		this(o,c,type,PRIORITY_NORMAL);
+	}
+	
+	/**
+	 * Create an ElexisEvent with explicitely set priority
+	 * @param o the PersistentObject that sources the event
+	 * @param c The object classs of the event source
+	 * @param type the type of Event. One of the EVENT_ constants
+	 * @param priority the priority for this event. One of the PRIORITY_ Constants or any other int value. 
+	 * An Event will be fired before all other events with same or lower priority.
+	 */
+	public ElexisEvent(final PersistentObject o,Class<?> c, int type, int priority){
 		obj = o;
 		objClass = c;
 		this.type = type;
+		this.priority=priority;
 	}
-	
 	/**
 	 * Retrieve the object this event is about.
 	 * 
@@ -151,5 +181,10 @@ public class ElexisEvent {
 	public static ElexisEvent createPatientEvent(){
 		return new ElexisEvent(ElexisEventDispatcher.getSelectedPatient(), Patient.class,
 			EVENT_SELECTED);
+	}
+
+	@Override
+	public int compareTo(ElexisEvent o) {
+		return priority-o.priority;
 	}
 }

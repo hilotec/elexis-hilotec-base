@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -53,7 +54,7 @@ public final class ElexisEventDispatcher extends Job {
 	private static ElexisEventDispatcher theInstance;
 	private final Map<Class<?>, IElexisEventDispatcher> dispatchers;
 	private final Map<Class<?>, PersistentObject> lastSelection;
-	private final LinkedList<ElexisEvent> eventQueue;
+	private final PriorityQueue<ElexisEvent> eventQueue;
 	private transient boolean bStop = false;
 	private static Lock eventQueueLock = new ReentrantLock(true);
 	private final Log log = Log.get("EventDispatcher");
@@ -75,7 +76,7 @@ public final class ElexisEventDispatcher extends Job {
 		listeners = new LinkedList<ElexisEventListener>();
 		dispatchers = new HashMap<Class<?>, IElexisEventDispatcher>();
 		lastSelection = new HashMap<Class<?>, PersistentObject>();
-		eventQueue = new LinkedList<ElexisEvent>();
+		eventQueue=new PriorityQueue<ElexisEvent>(50);
 	}
 	
 	/**
@@ -203,7 +204,7 @@ public final class ElexisEventDispatcher extends Job {
 				 * Iterator<ElexisEvent> it = eventQueue.iterator(); while (it.hasNext()) { if
 				 * (it.next().isSame(ee)) { it.remove(); } }
 				 */
-				eventQueue.add(ee);
+				eventQueue.offer(ee);
 			} finally {
 				eventQueueLock.unlock();
 				// eventQueue.notify();
@@ -299,7 +300,7 @@ public final class ElexisEventDispatcher extends Job {
 	protected IStatus run(IProgressMonitor monitor){
 		synchronized (eventQueue) {
 			while (!eventQueue.isEmpty()) {
-				doDispatch(eventQueue.removeFirst());
+				doDispatch(eventQueue.poll());
 			}
 			eventQueue.notifyAll();
 		}
