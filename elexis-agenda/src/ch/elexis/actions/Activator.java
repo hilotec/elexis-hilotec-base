@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  * 
- *  $Id: Activator.java 6164 2010-02-26 18:17:09Z rgw_ch $
+ *  $Id: Activator.java 6168 2010-02-28 14:55:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.actions;
 
@@ -41,7 +41,7 @@ public class Activator extends AbstractUIPlugin {
 	private static Activator plugin;
 	
 	public static Log log = Log.get("Agenda"); //$NON-NLS-1$
-	public static String IMG_HOME = "ch.elexis.agenda.home";
+	public static final String IMG_HOME = "ch.elexis.agenda.home";
 	private String actResource;
 	private TimeTool actDate;
 	
@@ -57,23 +57,14 @@ public class Activator extends AbstractUIPlugin {
 	 * 
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext )
 	 */
-	public void start(BundleContext context) throws Exception{
+	public void start(final BundleContext context) throws Exception{
 		super.start(context);
 		AgendaActions.makeActions();
 		// log.log("activated", Log.DEBUGMSG);
 		Desk.getImageRegistry().put(IMG_HOME, getImageDescriptor("icons/calendar_view_day.png"));
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext )
-	 */
-	public void stop(BundleContext context) throws Exception{
-		// pinger.pause(true);
-		plugin = null;
-		super.stop(context);
-	}
+	
 	
 	/**
 	 * Returns the shared instance
@@ -91,7 +82,7 @@ public class Activator extends AbstractUIPlugin {
 	 *            the path
 	 * @return the image descriptor
 	 */
-	public static ImageDescriptor getImageDescriptor(String path){
+	public static ImageDescriptor getImageDescriptor(final String path){
 		return AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.agenda", path); //$NON-NLS-1$
 	}
 	
@@ -106,7 +97,7 @@ public class Activator extends AbstractUIPlugin {
 		return actResource;
 	}
 	
-	public void setActResource(String resname){
+	public void setActResource(final String resname){
 		actResource = resname;
 		Hub.userCfg.set(PreferenceConstants.AG_BEREICH, resname);
 	}
@@ -118,21 +109,21 @@ public class Activator extends AbstractUIPlugin {
 		return new TimeTool(actDate);
 	}
 	
-	public void setActDate(String date){
+	public void setActDate(final String date){
 		if (actDate == null) {
 			actDate = new TimeTool();
 		}
 		actDate.set(date);
 	}
 	
-	public void setActDate(TimeTool date){
+	public void setActDate(final TimeTool date){
 		if (actDate == null) {
 			actDate = new TimeTool();
 		}
 		actDate.set(date);
 	}
 	
-	public TimeTool addDays(int day){
+	public TimeTool addDays(final int day){
 		if (actDate == null) {
 			actDate = new TimeTool();
 		}
@@ -143,32 +134,32 @@ public class Activator extends AbstractUIPlugin {
 	/**
 	 * propagate a termin selection through the system
 	 * 
-	 * @param t
+	 * @param termin
 	 */
-	public void dispatchTermin(Termin t){
-		Patient pat = t.getPatient();
-		ElexisEventDispatcher.fireSelectionEvent(t);
+	public void dispatchTermin(final Termin termin){
+		final Patient pat = termin.getPatient();
+		ElexisEventDispatcher.fireSelectionEvent(termin);
 		if (pat != null) {
 			ElexisEventCascade.getInstance().stop();
 			try {
 				ElexisEventDispatcher.fireSelectionEvent(pat);
-				Konsultation kons =
+				final Konsultation kons =
 					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 				
-				String sVgl = getActDate().toString(TimeTool.DATE_COMPACT);
+				final String sVgl = getActDate().toString(TimeTool.DATE_COMPACT);
 				if ((kons == null)
 						|| // Falls nicht die richtige Kons selektiert ist, passende
 						// Kons für heute suchen
 						!(kons.getFall().getPatient().getId().equals(pat.getId()))
 						|| !(new TimeTool(kons.getDatum()).toString(TimeTool.DATE_COMPACT).equals(sVgl))) {
-					Fall[] faelle = pat.getFaelle();
-					TimeTool ttVgl = new TimeTool();
+					final Fall[] faelle = pat.getFaelle();
+					final TimeTool ttVgl = new TimeTool();
 					for (Fall f : faelle) {
-						Konsultation[] konsen = f.getBehandlungen(true);
-						for (Konsultation k : konsen) {
-							ttVgl.set(k.getDatum());
+						final Konsultation[] konsen = f.getBehandlungen(true);
+						for (Konsultation konsultation : konsen) {
+							ttVgl.set(konsultation.getDatum());
 							if (ttVgl.toString(TimeTool.DATE_COMPACT).equals(sVgl)) {
-								ElexisEventDispatcher.fireSelectionEvents(k,k.getFall());
+								ElexisEventDispatcher.fireSelectionEvents(konsultation,konsultation.getFall());
 								return;
 							}
 						}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ACLContributor.java 4969 2009-01-18 16:53:06Z rgw_ch $
+ *  $Id: ACLContributor.java 6168 2010-02-28 14:55:06Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.agenda.acl;
 
@@ -63,8 +63,7 @@ public class ACLContributor implements IACLContributor {
 	/**
 	 * react on errors reserving rights
 	 */
-	public ACE[] reject(ACE[] acl){
-		// TODO Auto-generated method stub
+	public ACE[] reject(final ACE[] acl ){
 		return null;
 	}
 	
