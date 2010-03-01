@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Hub.java 6153 2010-02-19 18:34:28Z rgw_ch $
+ *    $Id: Hub.java 6178 2010-03-01 17:25:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -77,7 +77,7 @@ public class Hub extends AbstractUIPlugin {
 	public static final String COMMAND_PREFIX = PLUGIN_ID + ".commands."; //$NON-NLS-1$
 	static final String neededJRE = "1.5.0"; //$NON-NLS-1$
 	public static final String Version = "2.1.0"; //$NON-NLS-1$
-	public static final String DBVersion = "1.8.5"; //$NON-NLS-1$
+	public static final String DBVersion = "1.8.6"; //$NON-NLS-1$
 	static final String[] mine = {
 		"ch.elexis", "ch.rgw"}; //$NON-NLS-1$ //$NON-NLS-2$
 	private static List<ShutdownJob> shutdownJobs = new LinkedList<ShutdownJob>();
@@ -415,7 +415,7 @@ public class Hub extends AbstractUIPlugin {
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
 	 */
 	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 6153 $"; //$NON-NLS-1$
+		String SVNREV = "$LastChangedRevision: 6178 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (withdate == true) {
 			File base = new File(getBasePath() + "/rsc/compiletime.txt"); //$NON-NLS-1$

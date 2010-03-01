@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: FlatDataLoader.java 6164 2010-02-26 18:17:09Z rgw_ch $
+ * $Id: FlatDataLoader.java 6178 2010-03-01 17:25:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -29,8 +29,8 @@ import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 
 /**
- * A PersistentObjectLoader for flat tables. This is also an ILazyContentProvider for
- * Structured Viewers and a ContentProvider for @see CommonViewer
+ * A PersistentObjectLoader for flat tables. This is also an ILazyContentProvider for Structured
+ * Viewers and a ContentProvider for @see CommonViewer
  * 
  * @author Gerry
  * 
@@ -46,16 +46,18 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 	
 	/**
 	 * Constructor without CommonViewer. Do not in Connection with CommonViewers
+	 * 
 	 * @param qbe
 	 */
 	public FlatDataLoader(Query<? extends PersistentObject> qbe){
-		super(null,qbe);
+		super(null, qbe);
 	}
+	
 	/**
 	 * From @see DelayableJob.IWorker
 	 */
 	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params){
-		if(isSuspended()){
+		if (isSuspended()) {
 			return Status.CANCEL_STATUS;
 		}
 		final TableViewer tv = (TableViewer) cv.getViewerWidget();
@@ -90,26 +92,29 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 	}
 	
 	public void setResult(List<PersistentObject> res){
-		raw=res;
+		raw = res;
 	}
+	
 	/**
-	 * prepare the query so it returns the appropriate Objects on execute().
-	 * The default implemetation lets the ControlFieldProvider set the query.
-	 * Subclasses may override
+	 * prepare the query so it returns the appropriate Objects on execute(). The default
+	 * implemetation lets the ControlFieldProvider set the query. Subclasses may override
 	 */
 	protected void setQuery(){
 		qbe.clear();
-		ControlFieldProvider cfp=cv.getConfigurer().getControlFieldProvider();
-		if(cfp!=null){
+		ControlFieldProvider cfp = cv.getConfigurer().getControlFieldProvider();
+		if (cfp != null) {
 			cfp.setQuery(qbe);
 		}
 	}
+	
 	public void updateElement(int index){
-		if (index >= 0 && index < filtered.size()) {
-			Object o = filtered.get(index);
-			if (o != null) {
-				TableViewer tv = (TableViewer) cv.getViewerWidget();
-				tv.replace(filtered.get(index), index);
+		if (filtered != null) {
+			if (index >= 0 && index < filtered.size()) {
+				Object o = filtered.get(index);
+				if (o != null) {
+					TableViewer tv = (TableViewer) cv.getViewerWidget();
+					tv.replace(filtered.get(index), index);
+				}
 			}
 		}
 	}

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: DBUpdate.java 6058 2010-02-03 15:02:13Z rgw_ch $
+ * $Id: DBUpdate.java 6178 2010-03-01 17:25:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -37,7 +37,8 @@ public class DBUpdate {
 		"1.3.0", "1.3.1", "1.3.2", "1.3.3", "1.3.4", "1.3.5", "1.3.6", "1.3.7", "1.3.8",
 		"1.3.9", "1.3.10", "1.3.11", "1.3.12", "1.3.13", "1.4.0", "1.4.1", "1.4.2", "1.4.3",
 		"1.4.4", "1.4.5", "1.4.6", "1.5.0", "1.6.0", "1.6.1", "1.6.2", "1.6.3", "1.6.4",
-		"1.7.0", "1.7.1", "1.7.2", "1.8.0", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5"
+		"1.7.0", "1.7.1", "1.7.2", "1.8.0", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5",
+		"1.8.6"
 	};
 	static final String[] cmds =
 	{
@@ -268,7 +269,13 @@ public class DBUpdate {
 		"Outputter		VARCHAR(80),"+
 		"ExtInfo		BLOB);"+
 		"create INDEX bal_i1 ON OUTPUT_LOG (ObjectID);"+
-		"ALTER TABLE DBIMAGE ADD Prefix VARCHAR(80);"
+		"ALTER TABLE DBIMAGE ADD Prefix VARCHAR(80);",
+		
+		// 1.8.6
+		"CREATE TABLE ETIKETTEN_OBJCLASS_LINK("+
+		"objclass VARCHAR(80),"+
+		"sticker VARCHAR(25));"+
+		"CREATE INDEX eol1 on ETIKETTEN_OBJCLASS_LINK(objclass);"
 		
 		
 	};
