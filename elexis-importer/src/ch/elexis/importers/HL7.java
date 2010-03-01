@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2010 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 6137 2010-02-14 09:45:36Z rgw_ch $
+ * $Id: HL7.java 6181 2010-03-01 18:25:34Z rgw_ch $
  */
 
 package ch.elexis.importers;
@@ -37,7 +37,6 @@ public class HL7 {
 	private static final String ORC = "ORC"; //$NON-NLS-1$
 	private static final String OBX = "OBX"; //$NON-NLS-1$
 	private static final String OBR = "OBR"; //$NON-NLS-1$
-
 	
 	public enum RECORDTYPE {
 		TEXT, CODED, NUMERIC, STRUCTURED, OTHER
@@ -88,7 +87,8 @@ public class HL7 {
 		File file = new File(filename);
 		this.filename = filename;
 		if (!file.canRead()) {
-			return new Result<Object>(SEVERITY.WARNING, 1, Messages.HL7_CannotReadFile, filename, true);
+			return new Result<Object>(SEVERITY.WARNING, 1, Messages.HL7_CannotReadFile, filename,
+					true);
 		}
 		try {
 			FileReader fr = new FileReader(file);
@@ -103,8 +103,8 @@ public class HL7 {
 			return new Result<Object>("OK"); //$NON-NLS-1$
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return new Result<Object>(SEVERITY.ERROR, 2, Messages.HL7_ExceptionWhileReading, ex.getMessage(),
-				true);
+			return new Result<Object>(SEVERITY.ERROR, 2, Messages.HL7_ExceptionWhileReading, ex
+					.getMessage(), true);
 		}
 		
 	}
@@ -216,7 +216,8 @@ public class HL7 {
 				qbe.clear();
 				qbe.add(Person.NAME, Query.EQUALS, StringTool.normalizeCase(nachname));
 				qbe.add(Person.FIRSTNAME, Query.EQUALS, StringTool.normalizeCase(vorname));
-				qbe.add(Person.BIRTHDATE, Query.EQUALS, new TimeTool(gebdat).toString(TimeTool.DATE_COMPACT));
+				qbe.add(Person.BIRTHDATE, Query.EQUALS, new TimeTool(gebdat)
+				.toString(TimeTool.DATE_COMPACT));
 				list = qbe.execute();
 				if ((list != null) && (list.size() == 1)) {
 					pat = list.get(0);
@@ -240,8 +241,8 @@ public class HL7 {
 								an.setOrt(adr[1]);
 								if (adr.length > 2) {
 									an
-										.setPlz(adr[2].length() > 5 ? adr[2].substring(0, 4)
-												: adr[2]);
+									.setPlz(adr[2].length() > 5 ? adr[2].substring(0, 4)
+											: adr[2]);
 									if (adr.length > 3) {
 										an.setLand(adr[3]);
 									}
@@ -254,11 +255,11 @@ public class HL7 {
 					} else {
 						pat =
 							(Patient) KontaktSelektor.showInSync(Patient.class,
-								Messages.HL7_SelectPatient, Messages.HL7_WhoIs + nachname + " " + vorname + " ," //$NON-NLS-3$ //$NON-NLS-4$
-									+ gebdat + "?"); //$NON-NLS-1$
+								Messages.HL7_SelectPatient, Messages.HL7_WhoIs + nachname + " "
+								+ vorname + " ," + gebdat + "?"); //$NON-NLS-1$
 						if (pat == null) {
 							return new Result<Object>(SEVERITY.WARNING, 1,
-								Messages.HL7_PatientNotInDatabase, null, true);
+									Messages.HL7_PatientNotInDatabase, null, true);
 						}
 					}
 				}
@@ -267,14 +268,14 @@ public class HL7 {
 				pat = list.get(0);
 				if (nachname.length() != 0 && vorname.length() != 0) {
 					if (!KontaktMatcher.isSame(pat, nachname, vorname, gebdat)) {
-						StringBuilder sb=new StringBuilder();
-						sb.append(Messages.HL7_NameConflictWithID).append(pid).append(":\n") //$NON-NLS-2$
-							.append(Messages.HL7_Lab).append(nachname).append(StringTool.space).append(vorname)
-							.append("(").append(sex).append("),").append(gebdat).append("\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							.append(Messages.HL7_Database).append(pat.getLabel());
+						StringBuilder sb = new StringBuilder();
+						sb.append(Messages.HL7_NameConflictWithID).append(pid).append(":\n")
+						.append(Messages.HL7_Lab).append(nachname).append(StringTool.space)
+						.append(vorname)
+						.append("(").append(sex).append("),").append(gebdat).append("\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						.append(Messages.HL7_Database).append(pat.getLabel());
 						pat = null;
-						return new Result<Object>(SEVERITY.WARNING, 4,
-							sb.toString(), null, true);
+						return new Result<Object>(SEVERITY.WARNING, 4, sb.toString(), null, true);
 					}
 				}
 			}
@@ -452,6 +453,9 @@ public class HL7 {
 				}
 			}
 			TimeTool tt = makeTime(date);
+			if (tt == null) {
+				return new TimeTool();
+			}
 			return tt;
 		}
 		
@@ -477,6 +481,7 @@ public class HL7 {
 			of = off;
 			obxFields = lines[of].split(separator);
 		}
+		
 		public String getObxNr(){
 			return obxFields[1];
 		}
@@ -494,9 +499,9 @@ public class HL7 {
 			String raw = getField(3);
 			String[] split = raw.split("\\^"); //$NON-NLS-1$
 			if (split.length > 1) {
-				if(split[0].startsWith("HIS-")){ //$NON-NLS-1$
+				if (split[0].startsWith("HIS-")) { //$NON-NLS-1$
 					return Messages.HL7_Hostologie;
-				}else{
+				} else {
 					return split[1];
 				}
 			}
@@ -505,20 +510,20 @@ public class HL7 {
 		
 		public String getResultValue(){
 			StringBuilder ret = new StringBuilder();
-			int lastPos=of;
+			int lastPos = of;
 			if (getType().equals(RECORDTYPE.TEXT)) {
 				String[] flds = getField(3).split("\\^"); //$NON-NLS-1$
 				if (flds.length > 1) {
 					while (flds[0].startsWith("HIS-")) { //$NON-NLS-1$
-						lastPos=of;
+						lastPos = of;
 						ret.append("*.").append(flds[1]).append(".*:\n").append(getField(5)) //$NON-NLS-1$ //$NON-NLS-2$
-							.append("\n\n"); //$NON-NLS-1$
+						.append("\n\n"); //$NON-NLS-1$
 						OBX nextOBX = myOBR.nextOBX(this);
 						if (nextOBX == null) {
 							break;
 						}
 						setPosition(nextOBX.of);
-						flds=getField(3).split("\\^"); //$NON-NLS-1$
+						flds = getField(3).split("\\^"); //$NON-NLS-1$
 					}
 					setPosition(lastPos);
 				}
@@ -762,10 +767,12 @@ public class HL7 {
 	}
 	
 	public static TimeTool makeTime(final String datestring){
-		String date = datestring.substring(0, 8);
-		TimeTool ret = new TimeTool();
-		if (ret.set(date)) {
-			return ret;
+		if (datestring.length() >= 8) {
+			String date = datestring.substring(0, 8);
+			TimeTool ret = new TimeTool();
+			if (ret.set(date)) {
+				return ret;
+			}
 		}
 		return null;
 	}
