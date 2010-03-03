@@ -19,19 +19,42 @@
     	<attribute name="lastEdit" type="dateTime"></attribute>
     	<attribute name="createdBy" type="string"></attribute>
     	<attribute name="editedBy" type="string"></attribute>
+    	<attribute name="version" type="SST:versionType">
+    	</attribute>
+    	<attribute name="generator" type="string"></attribute>
+    	<attribute name="generatorVersion" type="SST:versionType"></attribute>
     </complexType>
 
 
     <complexType name="rangeType">
-    	<attribute name="startOffset" type="int"></attribute>
-    	<attribute name="length" type="int"></attribute>
-    	<attribute name="fixed" type="boolean"></attribute>
+    	<attribute name="startOffset" type="int" use="required"></attribute>
+    	<attribute name="length" type="int" use="required"></attribute>
+    	<attribute name="fixed" type="boolean" use="optional"></attribute>
     </complexType>
 
     <complexType name="sectionType">
     	<complexContent>
     		<extension base="SST:rangeType">
     			<attribute name="name" type="string"></attribute>
+    			<attribute name="position">
+    				<simpleType>
+    					<restriction base="string">
+    						<pattern value="\d+,\d+,\d+,\d+"></pattern>
+    					</restriction>
+    				</simpleType>
+    			</attribute>
+    			<attribute name="type">
+    				<simpleType>
+    					<restriction base="string">
+    						<enumeration value="header"></enumeration>
+    						<enumeration value="footer"></enumeration>
+    						<enumeration value="paragraph"></enumeration>
+    						<enumeration value="address"></enumeration>
+    						<enumeration value="subject"></enumeration>
+    					</restriction>
+    				</simpleType>
+    			</attribute>
+    			<attribute name="contents" type="string"></attribute>
     		</extension>
     	</complexContent>
     </complexType>
@@ -68,4 +91,9 @@
     	<attribute name="provider" type="string"></attribute>
     	<attribute name="position" type="int"></attribute>
     </complexType>
+    <simpleType name="versionType">
+    	<restriction base="string">
+    		<pattern value="\d+\.\d+\.\d+(\.\w+)?"></pattern>
+    	</restriction>
+    </simpleType>
 </schema>

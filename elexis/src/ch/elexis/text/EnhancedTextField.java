@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: EnhancedTextField.java 6175 2010-02-28 18:48:12Z toni_schranz $
+ *  $Id: EnhancedTextField.java 6183 2010-03-03 06:59:11Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -82,9 +82,9 @@ public class EnhancedTextField extends Composite {
 	StyledText text;
 	Hashtable<String, IKonsExtension> hXrefs;
 	ETFDropReceiver dropper;
-	List<Samdas.XRef> links;
-	List<Samdas.Markup> markups;
-	List<Samdas.Range> ranges;
+	private List<Samdas.XRef> links;
+	private List<Samdas.Markup> markups;
+	private List<Samdas.Range> ranges;
 	Samdas samdas;
 	Samdas.Record record;
 	boolean dirty;
