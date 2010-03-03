@@ -1,50 +1,98 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema targetNamespace="http://www.elexis.ch/XSD/SimpleStructuredText"
-	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
-	xmlns:SST="http://www.elexis.ch/XSD/SimpleStructuredText">
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:SSD="http://www.elexis.ch/XSD/SimpleStructuredText">
 
     <complexType name="ContainerType">
     	<sequence>
-    		<element name="text" type="string" maxOccurs="1"
+            <element name="displayHint" type="SSD:displayHintType" maxOccurs="1" minOccurs="0">
+            	<annotation>
+            		<documentation>A hint how to display this document best.</documentation>
+            	</annotation></element>
+            <element name="text" type="string" maxOccurs="1"
     			minOccurs="1">
+    			<annotation>
+    				<documentation>
+    					The textual context of the document
+    				</documentation>
+    			</annotation>
     		</element>
 
     		<choice maxOccurs="unbounded" minOccurs="0">
-    			<element name="section" type="SST:sectionType"></element>
-    			<element name="markup" type="SST:markupType"></element>
-    			<element name="xref" type="SST:xrefType"></element>
+    			<element name="section" type="SSD:sectionType"></element>
+    			<element name="markup" type="SSD:markupType"></element>
+    			<element name="xref" type="SSD:xrefType"></element>
     		</choice>
     	</sequence>
-    	<attribute name="created" type="dateTime"></attribute>
-    	<attribute name="lastEdit" type="dateTime"></attribute>
-    	<attribute name="createdBy" type="string"></attribute>
-    	<attribute name="editedBy" type="string"></attribute>
-    	<attribute name="version" type="SST:versionType">
+    	<attribute name="created" type="dateTime">
+    		<annotation>
+    			<documentation>Time and date of creation of this document
+</documentation>
+    		</annotation></attribute>
+    	<attribute name="lastEdit" type="dateTime">
+    		<annotation>
+    			<documentation>Time an date of last editing of this document</documentation>
+    		</annotation></attribute>
+    	<attribute name="createdBy" type="string">
+    		<annotation>
+    			<documentation>Name of the person that created  of this document</documentation>
+    		</annotation></attribute>
+    	<attribute name="editedBy" type="string">
+    		<annotation>
+    			<documentation>Name of the person that edited this document last</documentation>
+    		</annotation></attribute>
+    	<attribute name="version" type="SSD:versionType">
+            <annotation>
+            	<documentation>Version of the SimpleStructuredDocument to use</documentation>
+            </annotation>
     	</attribute>
-    	<attribute name="generator" type="string"></attribute>
-    	<attribute name="generatorVersion" type="SST:versionType"></attribute>
+    	<attribute name="generator" type="string">
+    		<annotation>
+    			<documentation>Program that generated this document</documentation>
+    		</annotation></attribute>
+    	<attribute name="generatorVersion" type="SSD:versionType">
+    		<annotation>
+    			<documentation>Version of the generating program</documentation>
+    		</annotation></attribute>
     </complexType>
 
 
     <complexType name="rangeType">
-    	<attribute name="startOffset" type="int" use="required"></attribute>
+    	<attribute name="startOffset" type="int" use="required">
+    		<annotation>
+    			<documentation>Start position as characters from the beginning of the document.</documentation></annotation></attribute>
     	<attribute name="length" type="int" use="required"></attribute>
     	<attribute name="fixed" type="boolean" use="optional"></attribute>
     </complexType>
 
     <complexType name="sectionType">
-    	<complexContent>
-    		<extension base="SST:rangeType">
-    			<attribute name="name" type="string"></attribute>
+        <annotation>
+        	<documentation>A section of the document</documentation>
+        </annotation>
+        <complexContent>
+    		<extension base="SSD:rangeType">
+    			<attribute name="name" type="string">
+    				<annotation>
+    					<documentation>Name of this section (free form)</documentation>
+    				</annotation></attribute>
     			<attribute name="position">
-    				<simpleType>
-    					<restriction base="string">
+                    <annotation>
+                    	<documentation>A position hint for displaying the Section. Four integers indicating x,y,width and height. Units are the same as indicated in the displayHint element
+</documentation>
+                    </annotation>
+                    <simpleType>
+                        <annotation>
+                        	<documentation></documentation>
+                        </annotation>
+                        <restriction base="string">
     						<pattern value="\d+,\d+,\d+,\d+"></pattern>
     					</restriction>
     				</simpleType>
     			</attribute>
     			<attribute name="type">
-    				<simpleType>
+                    <annotation>
+                    	<documentation>Some predefined section types</documentation>
+                    </annotation>
+                    <simpleType>
     					<restriction base="string">
     						<enumeration value="header"></enumeration>
     						<enumeration value="footer"></enumeration>
@@ -54,20 +102,23 @@
     					</restriction>
     				</simpleType>
     			</attribute>
-    			<attribute name="contents" type="string"></attribute>
+    			<attribute name="contents" type="string">
+    				<annotation>
+    					<documentation>Contents as mimetype.</documentation>
+    				</annotation></attribute>
     		</extension>
     	</complexContent>
     </complexType>
 
-    <element name="container" type="SST:ContainerType"></element>
+    <element name="container" type="SSD:ContainerType"></element>
 
 
     <complexType name="markupType">
     	<complexContent>
-    		<extension base="SST:rangeType">
+    		<extension base="SSD:rangeType">
     			<sequence>
-    				<element name="font" type="SST:fontType" minOccurs="0" maxOccurs="1"></element>
-    				<element name="color" type="SST:colorType" minOccurs="0" maxOccurs="1"></element>
+    				<element name="font" type="SSD:fontType" minOccurs="0" maxOccurs="1"></element>
+    				<element name="color" type="SSD:colorType" minOccurs="0" maxOccurs="1"></element>
     			</sequence>
     		</extension>
     	</complexContent>
@@ -96,4 +147,28 @@
     		<pattern value="\d+\.\d+\.\d+(\.\w+)?"></pattern>
     	</restriction>
     </simpleType>
+
+    <complexType name="displayHintType">
+    	<attribute name="paperformat">
+    		<simpleType>
+    			<restriction base="string">
+    				<enumeration value="A4"></enumeration>
+    				<enumeration value="A5"></enumeration>
+    				<enumeration value="A6"></enumeration>
+    				<enumeration value="Letter"></enumeration>
+    				<enumeration value="floating"></enumeration>
+    			</restriction>
+    		</simpleType>
+    	</attribute>
+    	<attribute name="units">
+    		<simpleType>
+    			<restriction base="string">
+    				<enumeration value="px"></enumeration>
+    				<enumeration value="pt"></enumeration>
+    				<enumeration value="mm"></enumeration>
+    				<enumeration value="in"></enumeration>
+    			</restriction>
+    		</simpleType>
+    	</attribute>
+    </complexType>
 </schema>
