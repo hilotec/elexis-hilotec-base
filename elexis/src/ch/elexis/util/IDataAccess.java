@@ -33,6 +33,11 @@ public interface IDataAccess {
 	public static final int OBJECT_NOT_FOUND = 2;
 	
 	public static class Element {
+		private final TYPE typ;
+		private final String name;
+		private final Class<? extends PersistentObject> reference;
+		private final int numOfParams;
+		
 		public Element(final TYPE typ, final String name,
 			final Class<? extends PersistentObject> ref, final int numOfParams){
 			this.typ = typ;
@@ -48,12 +53,17 @@ public interface IDataAccess {
 		public String getName(){
 			return name;
 		}
-		
-		TYPE typ;
-		String name;
-		Class<? extends PersistentObject> reference;
-		int numOfParams;
 	}
+	
+	/**
+	 * Name of the data accessor to display 
+	 */
+	public String getName();
+	
+	/**
+	 * Short description to the data accessor
+	 */
+	public String getDescription();
 	
 	/**
 	 * return a list of all data provided by this interface
