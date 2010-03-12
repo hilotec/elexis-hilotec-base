@@ -246,14 +246,15 @@ public class PlatzhalterView extends ViewPart {
 
 		// IDataAccess Implementations
 		List<IDataAccess> dataAccessList = Extensions.getClasses(
-				"ch.elexis.DataAccess", "Class");//$NON-NLS-1$
+				"ch.elexis.DataAccess", "class");//$NON-NLS-1$
 		for (IDataAccess dataAccess : dataAccessList) {
 			PlatzhalterTreeData treeData = new PlatzhalterTreeData(dataAccess
 					.getName(), "", dataAccess.getDescription());
 			for (Element element : dataAccess.getList()) {
 				treeData.addChild(new PlatzhalterTreeData(element.getName(),
-						element.getName(), element.getName()));
+						element.getPlaceholder(), element.getName()));
 			}
+			root.addChild(treeData);
 		}
 
 		return root.getChildren();
