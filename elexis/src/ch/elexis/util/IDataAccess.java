@@ -35,13 +35,15 @@ public interface IDataAccess {
 	public static class Element {
 		private final TYPE typ;
 		private final String name;
+		private final String placeholder;
 		private final Class<? extends PersistentObject> reference;
 		private final int numOfParams;
 		
-		public Element(final TYPE typ, final String name,
+		public Element(final TYPE typ, final String name, final String ph,
 			final Class<? extends PersistentObject> ref, final int numOfParams){
 			this.typ = typ;
 			this.name = name;
+			this.placeholder = ph;
 			this.reference = ref;
 			this.numOfParams = numOfParams;
 		}
@@ -52,6 +54,10 @@ public interface IDataAccess {
 		
 		public String getName(){
 			return name;
+		}
+		
+		public String getPlaceholder(){
+			return placeholder;
 		}
 	}
 	
