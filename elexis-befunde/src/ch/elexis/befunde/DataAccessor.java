@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    A. Kaufmann - Allow extraction of single fields and of first occurance
  *    
- * $Id: DataAccessor.java 5360 2009-06-18 09:53:05Z rgw_ch $
+ * $Id: DataAccessor.java 6190 2010-03-12 12:48:26Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.befunde;
@@ -58,11 +58,21 @@ public class DataAccessor implements IDataAccess {
 			}
 		}
 	}
+	
+	public String getDescription() {
+		return "Daten im Befunde Plugin";
+	}
+
+	public String getName() {
+		return "Befunde-Data";
+	}
+
+
 
 	public List<Element> getList() {
 		ArrayList<Element> ret = new ArrayList<Element>(parameters.size());
 		for (String n : parameters) {
-			ret.add(new IDataAccess.Element(IDataAccess.TYPE.STRING, n,
+			ret.add(new IDataAccess.Element(IDataAccess.TYPE.STRING, n, "Befunde-Data:Patient:" + n,
 					Patient.class, 1));
 		}
 		return ret;
