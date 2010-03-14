@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsExtension.java 4746 2008-12-04 21:38:00Z rgw_ch $
+ *  $Id: KonsExtension.java 6197 2010-03-14 12:25:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatnotizen;
@@ -24,10 +24,11 @@ import org.eclipse.swt.custom.StyleRange;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.text.EnhancedTextField;
+import ch.elexis.text.IRichTextDisplay;
 import ch.elexis.util.IKonsExtension;
 
 public class KonsExtension implements IKonsExtension {
-	EnhancedTextField mine = null;
+	IRichTextDisplay mine = null;
 	
 	/**
 	 * Die Darstellung unserer Hyperlinks. Da wir alle Hyperlinks gleich darstellen, interessieren
@@ -81,7 +82,7 @@ public class KonsExtension implements IKonsExtension {
 	
 	}
 	
-	public String connect(EnhancedTextField tf){
+	public String connect(IRichTextDisplay tf){
 		mine = tf;
 		return "privatnotizen";
 	}
