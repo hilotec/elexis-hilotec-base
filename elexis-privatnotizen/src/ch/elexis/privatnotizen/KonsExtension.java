@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsExtension.java 6197 2010-03-14 12:25:22Z rgw_ch $
+ *  $Id: KonsExtension.java 6199 2010-03-14 14:42:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.privatnotizen;
@@ -23,7 +23,6 @@ import org.eclipse.swt.custom.StyleRange;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.text.EnhancedTextField;
 import ch.elexis.text.IRichTextDisplay;
 import ch.elexis.util.IKonsExtension;
 
