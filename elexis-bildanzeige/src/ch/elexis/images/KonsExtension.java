@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: KonsExtension.java 6014 2010-01-31 19:17:37Z rgw_ch $
+ *    $Id: KonsExtension.java 6194 2010-03-14 12:13:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.images;
@@ -23,14 +23,14 @@ import org.eclipse.swt.graphics.ImageLoader;
 import org.eclipse.swt.widgets.FileDialog;
 
 import ch.elexis.Desk;
-import ch.elexis.text.EnhancedTextField;
+import ch.elexis.text.IRichTextDisplay;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 
 public class KonsExtension implements IKonsExtension {
-	EnhancedTextField mine;
-	public String connect(EnhancedTextField tf) {
+	IRichTextDisplay mine;
+	public String connect(IRichTextDisplay tf) {
 		mine=tf;
 		return "bildanzeige"; //$NON-NLS-1$
 	}

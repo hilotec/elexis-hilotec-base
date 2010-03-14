@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsExtension.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: KonsExtension.java 6194 2010-03-14 12:13:27Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.icpc;
 
@@ -24,13 +24,14 @@ import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.Konsultation;
 import ch.elexis.text.EnhancedTextField;
+import ch.elexis.text.IRichTextDisplay;
 import ch.elexis.util.IKonsExtension;
 
 public class KonsExtension implements IKonsExtension {
-	EnhancedTextField mine;
+	IRichTextDisplay mine;
 	static final String EPISODE_TITLE = "Problem: ";
 
-	public String connect(final EnhancedTextField tf) {
+	public String connect(final IRichTextDisplay tf) {
 		mine = tf;
 		mine.addDropReceiver(Episode.class, this);
 		return Activator.PLUGIN_ID;

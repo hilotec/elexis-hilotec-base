@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: EnhancedTextField.java 6183 2010-03-03 06:59:11Z rgw_ch $
+ *  $Id: EnhancedTextField.java 6194 2010-03-14 12:13:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -75,7 +75,7 @@ import ch.rgw.tools.StringTool;
  * @author Gerry
  * 
  */
-public class EnhancedTextField extends Composite {
+public class EnhancedTextField extends Composite implements IRichTextDisplay {
 	public static final String MACRO_KEY = "enhancedtextfield/macro_key"; //$NON-NLS-1$
 	public static final String MACRO_KEY_DEFAULT = "#"; //$NON-NLS-1$
 	

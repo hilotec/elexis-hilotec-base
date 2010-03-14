@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: BaseView.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: BaseView.java 6194 2010-03-14 12:13:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -73,14 +73,14 @@ public abstract class BaseView extends ViewPart implements HeartListener,
 	MenuManager menu = new MenuManager();
 	protected Activator agenda = Activator.getDefault();
 
-	private ElexisEventListenerImpl eeli_termin = new ElexisEventListenerImpl(
+	private final ElexisEventListenerImpl eeli_termin = new ElexisEventListenerImpl(
 			Termin.class, ElexisEvent.EVENT_RELOAD) {
 		public void runInUi(ElexisEvent ev) {
 			internalRefresh();
 		}
 	};
 
-	private ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(
+	private final ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(
 			Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
 		public void runInUi(ElexisEvent ev) {
 			updateActions();

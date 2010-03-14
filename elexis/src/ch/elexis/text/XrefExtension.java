@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: XrefExtension.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ *  $Id: XrefExtension.java 6194 2010-03-14 12:13:27Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 
@@ -21,20 +21,22 @@ import org.eclipse.ui.PartInitException;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.data.Brief;
+import ch.elexis.exchange.text.IRange;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.views.TextView;
 import ch.rgw.tools.ExHandler;
 
 public class XrefExtension implements IKonsExtension {
 	public static final String providerID = "ch.elexis.text.DocXRef"; //$NON-NLS-1$
-	EnhancedTextField tx;
+	IRichTextDisplay tx;
 	
-	public String connect(EnhancedTextField tf){
+	public String connect(IRichTextDisplay tf){
 		tx = tf;
 		return providerID;
 	}
 	
 	public boolean doLayout(StyleRange n, String provider, String id){
+		
 		n.background = Desk.getColor(Desk.COL_LIGHTBLUE);
 		n.foreground = Desk.getColor(Desk.COL_GREY20);
 		return true;

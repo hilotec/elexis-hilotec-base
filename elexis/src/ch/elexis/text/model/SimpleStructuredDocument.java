@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.swt.custom.StyledTextContent;
 import org.eclipse.swt.custom.TextChangeListener;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -17,12 +16,16 @@ import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 import ch.elexis.ElexisException;
+import ch.elexis.Hub;
+import ch.elexis.exchange.XChangeContainer;
 import ch.elexis.exchange.text.IRange;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.XMLTool;
 
 /**
  * SimpleStructuredText is an XML format to define structured texts. To simplify
- * interretation for different readers with different capabilities, text and
+ * interpretation for different readers with different capabilities, text and
  * structure are strictly separated.
  * 
  * @author gerry
@@ -92,11 +95,24 @@ public class SimpleStructuredDocument{
 
 	/**
 	 * Convert the contents to a SimpleStructuredDocument file. 
+	 * @param bCreateHeader if false, a representation without header information is created
 	 * @return
 	 */
-	public String toXML() {
+	public String toXML(boolean bCreateHeader) {
 		Document doc = new Document();
 		Element eRoot = new Element(ELEM_ROOT, ns);
+		if(!bCreateHeader){
+			eRoot.setAttribute("created", new TimeTool().toString(TimeTool.DATETIME_XML));
+			eRoot.setAttribute("lastEdit", new TimeTool().toString(TimeTool.DATETIME_XML));
+			eRoot.setAttribute("createdBy", Hub.actMandant.getPersonalia());
+			eRoot.setAttribute("editedBy",Hub.actUser.getPersonalia());
+			eRoot.setAttribute("version",VERSION);
+			eRoot.setAttribute("generator",Hub.APPLICATION_NAME);
+			eRoot.setAttribute("generatorVersion",Hub.Version);
+			eRoot.addNamespaceDeclaration(XChangeContainer.nsxsi);
+			eRoot.addNamespaceDeclaration(XChangeContainer.nsschema);
+		
+		}
 		Element eText = new Element(ELEM_TEXT, ns);
 		eText.setText(contents.toString());
 		doc.setRootElement(eRoot);

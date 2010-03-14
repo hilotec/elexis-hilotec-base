@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Plannables.java 5641 2009-08-18 08:45:21Z rgw_ch $
+ *  $Id: Plannables.java 6194 2010-03-14 12:13:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.util;
@@ -36,7 +36,7 @@ import ch.rgw.tools.TimeTool;
  * @author Gerry
  * 
  */
-public class Plannables {
+public final class Plannables {
 	private Plannables(){}
 	
 	private static DecimalFormat df = new DecimalFormat("00");

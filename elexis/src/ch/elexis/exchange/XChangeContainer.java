@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: XChangeContainer.java 5899 2009-12-24 12:42:10Z rgw_ch $
+ * $Id: XChangeContainer.java 6194 2010-03-14 12:13:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -123,7 +123,7 @@ public class XChangeContainer {
 			.getId()));
 		doc.setRootElement(eRoot);
 		
-		eHeader.setAttribute(ATTR_CREATOR_NAME, "Elexis");
+		eHeader.setAttribute(ATTR_CREATOR_NAME, Hub.APPLICATION_NAME);
 		eHeader.setAttribute(ATTR_CREATOR_ID, "ch.elexis");
 		eHeader.setAttribute(ATTR_CREATOR_VERSION, Hub.Version);
 		eHeader.setAttribute(ATTR_PROTOCOL_VERSION, XChangeContainer.Version);

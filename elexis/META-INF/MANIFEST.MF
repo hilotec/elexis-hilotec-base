@@ -150,6 +150,7 @@ Export-Package: .,
    org.jdom,
    org.eclipse.swt.widgets,
    org.eclipse.jface.dialogs",
+ ch.elexis.text.model,
  ch.elexis.util;
   uses:="ch.rgw.tools,
    org.eclipse.core.runtime,

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ExternalLink.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ *  $Id: ExternalLink.java 6194 2010-03-14 12:13:27Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 
@@ -19,6 +19,7 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.program.Program;
 
 import ch.elexis.Desk;
+import ch.elexis.exchange.text.IRange;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
@@ -26,7 +27,7 @@ import ch.rgw.tools.ExHandler;
 public class ExternalLink implements IKonsExtension {
 	public static final String ID="ch.elexis.text.ExternalLink"; //$NON-NLS-1$
 	//EnhancedTextField mine;
-	public String connect(EnhancedTextField tf) {
+	public String connect(IRichTextDisplay tf) {
 		tf.addXrefHandler(ID, this);
 		return ID;
 	}

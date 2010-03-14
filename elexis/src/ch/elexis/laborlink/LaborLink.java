@@ -9,7 +9,7 @@
  *    D. Lutz - initial implementation
  *    G. Weirich - Adapted for API changes
  * 
- *    $Id: LaborLink.java 6043 2010-02-01 14:34:06Z rgw_ch $
+ *    $Id: LaborLink.java 6194 2010-03-14 12:13:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.laborlink;
@@ -53,6 +53,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Reminder;
 import ch.elexis.text.EnhancedTextField;
+import ch.elexis.text.IRichTextDisplay;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.viewers.DefaultLabelProvider;
@@ -64,9 +65,10 @@ public class LaborLink implements IKonsExtension {
 	
 	private static final String LABOR_COLOR = "ffc8c8";
 	
-	EnhancedTextField textField;
+	IRichTextDisplay textField;
 	
-	public String connect(EnhancedTextField textField){
+	@Override
+	public String connect(IRichTextDisplay textField){
 		this.textField = textField;
 		return PROVIDER_ID;
 	}

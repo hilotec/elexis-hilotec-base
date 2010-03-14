@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IKonsExtension.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ * $Id: IKonsExtension.java 6194 2010-03-14 12:13:27Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -18,6 +18,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.StyleRange;
 
 import ch.elexis.text.EnhancedTextField;
+import ch.elexis.text.IRichTextDisplay;
 
 /**
  * Erweiterung für Konsultationseinträge. Wird vom Extensionpoint KonsExtensions benötigt Eine
@@ -45,7 +46,7 @@ public interface IKonsExtension extends IExecutableExtension {
 	 *            das TextField, an das diese Extension gebunden wird
 	 * @return einen Namen, der diese Extension eindeutig identifiziert
 	 */
-	public String connect(EnhancedTextField tf);
+	public String connect(IRichTextDisplay tf);
 	
 	/**
 	 * Einen Querverweis für die Darstellung layouten
