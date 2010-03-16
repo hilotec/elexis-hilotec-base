@@ -13,11 +13,11 @@ public class PlatzhalterProperties extends AbstractProperties {
 	private static Log log = Log.get("PlatzhalterProperties"); //$NON-NLS-1$
 
 	private final static String PLATZHALTER_FILENAME = "Platzhalter.txt";
-	
+
 	protected String getFilename() {
 		return PLATZHALTER_FILENAME;
 	}
-	
+
 	/**
 	 * Read contents. Every line is divided in <br>
 	 * <p>
@@ -31,9 +31,9 @@ public class PlatzhalterProperties extends AbstractProperties {
 		PlatzhalterTreeData noKategorie = new PlatzhalterTreeData(
 				"Keine Kategorie", "",
 				"Platzhalter die keiner Kategorie zugeordnet werden können");
-		
+
 		KategorieProperties katProperties = new KategorieProperties();
-		
+
 		Map<String, PlatzhalterTreeData> catTreeMap = new HashMap<String, PlatzhalterTreeData>();
 		catTreeMap.put(noKategorie.getName(), noKategorie);
 
@@ -44,7 +44,7 @@ public class PlatzhalterProperties extends AbstractProperties {
 			String category = noKategorie.getName();
 			String name = "";
 			int openBracket = keyString.indexOf("[");
-			int	closeBracket = keyString.lastIndexOf("]");
+			int closeBracket = keyString.lastIndexOf("]");
 			int firstPoint = keyString.indexOf(".");
 			if (firstPoint < 0) {
 				firstPoint = keyString.indexOf(":");
@@ -53,7 +53,7 @@ public class PlatzhalterProperties extends AbstractProperties {
 				// starts with point. This is wrong
 				keyString = keyString.substring(1);
 			}
-			if (openBracket < 0) { 
+			if (openBracket < 0) {
 				// no bracket -> no key
 				if (closeBracket > 0) {
 					keyString = keyString.substring(0, closeBracket);
@@ -61,7 +61,7 @@ public class PlatzhalterProperties extends AbstractProperties {
 				name = keyString;
 				if (firstPoint < 0) {
 					// no point
-					category = keyString; 
+					category = keyString;
 				} else {
 					category = keyString.substring(0, firstPoint);
 				}
@@ -73,7 +73,7 @@ public class PlatzhalterProperties extends AbstractProperties {
 					name = keyString.substring(openBracket + 1, closeBracket);
 					category = keyString.substring(0, openBracket);
 					if (category.endsWith(".") || category.endsWith(":")) {
-						category = category.substring(0, category.length() -1);
+						category = category.substring(0, category.length() - 1);
 					}
 				}
 			}
@@ -86,26 +86,31 @@ public class PlatzhalterProperties extends AbstractProperties {
 				}
 				if (categoryPtd == null) {
 					String description = katProperties.getDescription(category);
-					categoryPtd = new PlatzhalterTreeData(category, "", description);
+					categoryPtd = new PlatzhalterTreeData(category, "",
+							description);
 					catTreeMap.put(category, categoryPtd);
 					root.addChild(categoryPtd);
 				}
 				String displayName = name;
-				if (displayName.startsWith(category) && displayName.length() > category.length()) {
+				boolean startsWithCat = displayName.startsWith(category + ".")
+						|| displayName.startsWith(category + ":");
+				if (startsWithCat && displayName.length() > category.length()) {
 					displayName = displayName.substring(category.length());
-					if (displayName.startsWith(".") || displayName.startsWith(":")) {
+					if (displayName.startsWith(".")
+							|| displayName.startsWith(":")) {
 						displayName = displayName.substring(1);
 					}
 				}
 				if (value == null || value.length() == 0) {
 					value = displayName;
 				}
-				categoryPtd.addChild(new PlatzhalterTreeData(displayName, "[" + name + "]", value));
+				categoryPtd.addChild(new PlatzhalterTreeData(displayName, "["
+						+ name + "]", value));
 			} else {
 				log.log("Platzhalter ist leer", Log.INFOS);
 			}
 		}
-		
+
 		if (noKategorie.getChildren().size() > 0) {
 			root.addChild(noKategorie);
 		}
