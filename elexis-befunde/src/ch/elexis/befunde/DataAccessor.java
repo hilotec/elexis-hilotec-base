@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    A. Kaufmann - Allow extraction of single fields and of first occurance
  *    
- * $Id: DataAccessor.java 6193 2010-03-12 13:04:20Z michael_imhof $
+ * $Id: DataAccessor.java 6204 2010-03-16 08:02:51Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.befunde;
@@ -67,12 +67,19 @@ public class DataAccessor implements IDataAccess {
 		return "Befunde-Data";
 	}
 
+	/**
+	 * Retourniert Platzhalter für die Integration im Textsystem.
+	 * @return
+	 */
+	private String getPlatzhalter(final String befund) {
+		return "[Befunde-Data:Patient:" + befund + "]";
+	}
 
 
 	public List<Element> getList() {
 		ArrayList<Element> ret = new ArrayList<Element>(parameters.size());
 		for (String n : parameters) {
-			ret.add(new IDataAccess.Element(IDataAccess.TYPE.STRING, n, "[Befunde-Data:Patient:" + n + "]",
+			ret.add(new IDataAccess.Element(IDataAccess.TYPE.STRING, n, getPlatzhalter(n),
 					Patient.class, 1));
 		}
 		return ret;
