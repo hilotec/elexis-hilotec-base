@@ -15,6 +15,7 @@ Adressat.Anschrift=Anschrift des Adressaten.
 Adressat.Bezeichnung1=Bezeichnung des Adressaten.
 Adressat:mw:Er/Sie='Er' oder 'Sie' je nach Geschlecht
 Adressat:mw:Herr/Frau='Herr' oder 'Frau' je nach Geschlecht
+Adressat.[Sehr geehrte[Adressat:mwn:r Herr [Adressat.Name]/ Frau [Adressat.Name]/ Damen und Herren]=Komplette Anrede
 
 Anwender.Name=Name des aktuell eingeloggten Anwenders.
 Anwender.Vorname=Vorname des aktuell eingeloggten Anwenders.
