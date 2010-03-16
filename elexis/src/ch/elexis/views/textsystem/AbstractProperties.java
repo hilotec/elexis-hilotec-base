@@ -273,7 +273,7 @@ public abstract class AbstractProperties extends Properties {
 					valueStart = keyLen + 1;
 					hasSep = true;
 					break;
-				} else if ((c == ' ' || c == '\t' || c == '\f')
+				} else if ((c == '\t' || c == '\f')
 						&& !precedingBackslash) {
 					valueStart = keyLen + 1;
 					break;
@@ -287,7 +287,7 @@ public abstract class AbstractProperties extends Properties {
 			}
 			while (valueStart < limit) {
 				c = lr.lineBuf[valueStart];
-				if (c != ' ' && c != '\t' && c != '\f') {
+				if (c != '\t' && c != '\f') {
 					if (!hasSep && (c == '=')) {
 						hasSep = true;
 					} else {
