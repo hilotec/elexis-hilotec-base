@@ -10,7 +10,7 @@
  *    A. Kaufmann - Allow extraction of single fields and of first occurance
  *    A. Kaufmann - copied from befunde-Plugin and adapted to new data structure 
  *    
- * $Id: DataAccessor.java 6195 2010-03-14 12:15:50Z rgw_ch $
+ * $Id: DataAccessor.java 6200 2010-03-16 07:26:09Z michael_imhof $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.data;
@@ -35,13 +35,21 @@ public class DataAccessor implements IDataAccess {
 	}
 	
 	/**
+	 * Retourniert Platzhalter für die Integration im Textsystem.
+	 * @return
+	 */
+	private String getPlatzhalter(final MessungTyp typ) {
+		return typ.getName();
+	}
+	
+	/**
 	 * Liste mit den verfuegbaren Messungstypen holen
 	 */
 	public List<Element> getList(){
 		ArrayList<Element> ret = new ArrayList<Element>();
 		for (MessungTyp typ : config.getTypes()) {
 			ret.add(new IDataAccess.Element(IDataAccess.TYPE.STRING,
-				typ.getName(), Patient.class, 1));
+				typ.getName(), getPlatzhalter(typ), Patient.class, 1));
 		}
 		return ret;
 	}
