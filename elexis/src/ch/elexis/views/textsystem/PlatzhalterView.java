@@ -212,19 +212,19 @@ public class PlatzhalterView extends ViewPart {
 		});
 		
 		
-		// Drag & Drop
+		// Drag & Drop		
 		DragSource dragSource = new DragSource(viewer.getTree(), DND.DROP_COPY);
 		dragSource.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		dragSource.addDragListener(new DragSourceAdapter() {
+			public void dragStart(DragSourceEvent event) {
+		        event.doit = getSelectedKey() != null;
+		  	}
+			
 			public void dragSetData(DragSourceEvent event) {
 				if (TextTransfer.getInstance().isSupportedType(event.dataType)) {
 					String key = getSelectedKey();
 					if (key != null) {
 						event.data = key;
-					} else {
-						event.doit = false;
-						event.dataType = null;
-						event.data = null;
 					}
 				}
 			}
