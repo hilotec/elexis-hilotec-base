@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -26,7 +27,7 @@ public abstract class AbstractProperties extends Properties {
 
 	private static Log log = Log.get("AbstractProperties"); //$NON-NLS-1$
 
-	private final static String DIRECTORY = "platzhalter";
+	private final static String DIRECTORY = "platzhalter"; //$NON-NLS-1$
 
 	/**
 	 * Filename
@@ -37,7 +38,7 @@ public abstract class AbstractProperties extends Properties {
 	 * Returns location of the properties file inside of the elexis plugin
 	 */
 	private String getPlatzhalterFilenamePath() throws IOException {
-		URL url = Platform.getBundle("ch.elexis").getEntry("/");
+		URL url = Platform.getBundle("ch.elexis").getEntry("/"); //$NON-NLS-1$ //$NON-NLS-2$
 		url = FileLocator.toFileURL(url);
 		String bundleLocation = url.getPath();
 		return bundleLocation + File.separator + DIRECTORY + File.separator
@@ -53,8 +54,9 @@ public abstract class AbstractProperties extends Properties {
 			reader = new FileReader(filenamePath);
 			load(reader);
 		} catch (IOException e) {
-			log.log(e, "Kann Platzhalter-Datei " + filenamePath
-					+ " nicht lesen!", Log.ERRORS);
+			log.log(e, MessageFormat.format(
+					Messages.AbstractProperties_message_FileNotFound, filenamePath),
+					Log.ERRORS);
 		} finally {
 			if (reader != null) {
 				try {
@@ -489,7 +491,7 @@ public abstract class AbstractProperties extends Properties {
 							break;
 						default:
 							throw new IllegalArgumentException(
-									"Malformed \\uxxxx encoding.");
+									"Malformed \\uxxxx encoding."); //$NON-NLS-1$
 						}
 					}
 					out[outLen++] = (char) value;

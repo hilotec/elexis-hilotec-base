@@ -30,6 +30,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.part.ViewPart;
@@ -140,6 +141,11 @@ public class PlatzhalterView extends ViewPart {
 	public void createPartControl(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(1, false));
+		
+		Text txtInfo = new Text(composite, SWT.MULTI | SWT.READ_ONLY | SWT.BORDER | SWT.WRAP);
+		txtInfo.setText(Messages.PlatzhalterView_message_Info);
+		GridDataFactory.fillDefaults().grab(true, false).applyTo(txtInfo);
+		
 		viewer = new TreeViewer(composite);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(
 				viewer.getTree());
@@ -154,10 +160,10 @@ public class PlatzhalterView extends ViewPart {
 		Menu menu = popupMenuManager.createContextMenu(viewer.getTree());
 		viewer.getTree().setMenu(menu);
 		
-		final Action copyAction = new Action("&Kopieren@Ctrl+C") {
+		final Action copyAction = new Action(Messages.PlatzhalterView_menu_copy) {
 			@Override
 			public String getId() {
-				return "copyId";
+				return "copyId"; //$NON-NLS-1$
 			}
 			@Override
 			public void run() {
@@ -238,7 +244,7 @@ public class PlatzhalterView extends ViewPart {
 	 */
 	@SuppressWarnings("unchecked")
 	private SortedList<PlatzhalterTreeData> getTreeData() {
-		PlatzhalterTreeData root = new PlatzhalterTreeData("Root", "", "");
+		PlatzhalterTreeData root = new PlatzhalterTreeData("Root", "", ""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
 		// Basis Platzhalter
 		PlatzhalterProperties props = new PlatzhalterProperties();
@@ -246,10 +252,10 @@ public class PlatzhalterView extends ViewPart {
 
 		// IDataAccess Implementations
 		List<IDataAccess> dataAccessList = Extensions.getClasses(
-				"ch.elexis.DataAccess", "class");//$NON-NLS-1$
+				"ch.elexis.DataAccess", "class");//$NON-NLS-1$ //$NON-NLS-2$
 		for (IDataAccess dataAccess : dataAccessList) {
 			PlatzhalterTreeData treeData = new PlatzhalterTreeData(dataAccess
-					.getName(), "", dataAccess.getDescription());
+					.getName(), "", dataAccess.getDescription()); //$NON-NLS-1$
 			for (Element element : dataAccess.getList()) {
 				treeData.addChild(new PlatzhalterTreeData(element.getName(),
 						element.getPlaceholder(), element.getName()));
