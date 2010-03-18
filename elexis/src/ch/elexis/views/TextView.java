@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextView.java 6219 2010-03-18 12:28:08Z michael_imhof $
+ *  $Id: TextView.java 6228 2010-03-18 14:02:57Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -94,9 +94,6 @@ public class TextView extends ViewPart implements IActivationListener {
 	@Override
 	public void dispose() {
 		GlobalEventDispatcher.removeActivationListener(this, this);
-		if (txt != null) {
-			txt.dispose();
-		}
 		actBrief = null;
 		super.dispose();
 	}
