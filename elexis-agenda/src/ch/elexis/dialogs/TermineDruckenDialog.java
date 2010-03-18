@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TermineDruckenDialog.java 5641 2009-08-18 08:45:21Z rgw_ch $
+ *  $Id: TermineDruckenDialog.java 6221 2010-03-18 12:29:07Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -37,78 +37,86 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback {
 	
 	public TermineDruckenDialog(Shell shell, Termin[] liste){
 		super(shell);
-		this.liste=liste;
+		this.liste = liste;
 	}
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
+	protected Control createDialogArea(Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new FillLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		
-		String template = Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE,
+		String template =
+			Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE,
 				PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE_DEFAULT);
 		
-		text=new TextContainer(getShell());
+		text = new TextContainer(getShell());
 		text.getPlugin().createContainer(ret, this);
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
 		text.createFromTemplateName(null, template, Brief.UNKNOWN, Hub.actUser, "Agenda");
 		/*
-		String[][] termine=new String[liste.length+1][3];
-		termine[0]=new String[]{"Datum", "Zeit","Bei"};
-		for(int i=0;i<liste.length;i++){
-			TimeTool day=new TimeTool(liste[i].getDay());
-			termine[i+1][0]=day.toString(TimeTool.DATE_GER);
-			termine[i+1][1]=Plannables.getStartTimeAsString(liste[i]);
-			termine[i+1][2]=liste[i].getBereich();
-		}
-		text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
-		text.getPlugin().insertTable("[Termine]", ITextPlugin.FIRST_ROW_IS_HEADER, termine, new int[]{20,20,60});
+		 * String[][] termine=new String[liste.length+1][3]; termine[0]=new String[]{"Datum",
+		 * "Zeit","Bei"}; for(int i=0;i<liste.length;i++){ TimeTool day=new
+		 * TimeTool(liste[i].getDay()); termine[i+1][0]=day.toString(TimeTool.DATE_GER);
+		 * termine[i+1][1]=Plannables.getStartTimeAsString(liste[i]);
+		 * termine[i+1][2]=liste[i].getBereich(); } text.getPlugin().setFont("Helvetica",
+		 * SWT.NORMAL, 9); text.getPlugin().insertTable("[Termine]",
+		 * ITextPlugin.FIRST_ROW_IS_HEADER, termine, new int[]{20,20,60});
 		 */
-		StringBuilder sb=new StringBuilder();
-		for(Termin t:liste){
-			TimeTool day=new TimeTool(t.getDay());
-			sb.append(day.toString(TimeTool.WEEKDAY))
-				.append(", ")
-			 	.append(day.toString(TimeTool.DATE_GER)).append(" - ")
-				.append(Plannables.getStartTimeAsString(t)).append("\n");
+		StringBuilder sb = new StringBuilder();
+		for (Termin t : liste) {
+			TimeTool day = new TimeTool(t.getDay());
+			sb.append(day.toString(TimeTool.WEEKDAY)).append(", ").append(
+				day.toString(TimeTool.DATE_GER)).append(" - ").append(
+				Plannables.getStartTimeAsString(t)).append("\n");
 		}
 		text.replace("\\[Termine\\]", sb.toString());
 		
 		return ret;
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		setMessage("Terminliste ausdrucken");
 		setTitle("Terminliste");
 		getShell().setText("Agenda");
 		getShell().setSize(800, 700);
-	
+		
 	}
-
+	
 	@Override
-	protected void okPressed() {
+	protected void okPressed(){
 		super.okPressed();
 	}
-
-	public void save() {
-	}
-
-	public boolean saveAs() {
+	
+	public void save(){}
+	
+	public boolean saveAs(){
 		return false;
 	}
-
-	public boolean doPrint() {
+	
+	public boolean doPrint(){
 		if (text == null) {
 			// text container is not initialized
 			return false;
 		}
 		
-		String printer = Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_NAME, "");
-		String tray = Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY, null);
+		String printer =
+			Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_NAME, "");
+		String tray =
+			Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY, null);
 		
-		return text.getPlugin().print(printer, tray, false);
+		return text.getPlugin().print(printer, tray, true);
+	}
+	
+	@Override
+	public boolean close(){
+		boolean closed = super.close();
+		if (text != null) {
+			text.dispose();
+		}
+		return closed;
 	}
 }
