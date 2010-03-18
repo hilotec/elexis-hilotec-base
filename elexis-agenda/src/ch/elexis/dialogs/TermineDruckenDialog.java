@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TermineDruckenDialog.java 6221 2010-03-18 12:29:07Z michael_imhof $
+ *  $Id: TermineDruckenDialog.java 6223 2010-03-18 12:31:00Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -108,7 +108,7 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback {
 		String tray =
 			Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY, null);
 		
-		return text.getPlugin().print(printer, tray, true);
+		return text.getPlugin().print(printer, tray, false);
 	}
 	
 	@Override
