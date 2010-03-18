@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: KonsZumVerrechnenView.java 6220 2010-03-18 12:28:39Z michael_imhof $
+ *  $Id: KonsZumVerrechnenView.java 6229 2010-03-18 14:03:16Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -925,15 +925,6 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 		public boolean saveAs() {
 			// TODO Auto-generated method stub
 			return false;
-		}
-
-		@Override
-		public boolean close(){
-			boolean closed = super.close();
-			if (text != null) {
-				text.dispose();
-			}
-			return closed;
 		}
 	}
 }
