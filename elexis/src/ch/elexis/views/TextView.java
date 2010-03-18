@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TextView.java 6218 2010-03-18 12:26:14Z michael_imhof $
+ *  $Id: TextView.java 6219 2010-03-18 12:28:08Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -50,7 +50,7 @@ public class TextView extends ViewPart implements IActivationListener {
 	private Brief actBrief;
 	private Log log = Log.get("TextView"); //$NON-NLS-1$
 	private IAction briefLadenAction, loadTemplateAction,
-			loadSysTemplateAction, printTrayAction, saveTemplateAction, showMenuAction,
+			loadSysTemplateAction, saveTemplateAction, showMenuAction,
 			showToolbarAction, importAction, newDocAction;
 	private ViewMenus menus;
 
@@ -72,7 +72,7 @@ public class TextView extends ViewPart implements IActivationListener {
 			menus = new ViewMenus(getViewSite());
 			// menus.createToolbar(briefNeuAction);
 			menus.createMenu(newDocAction, briefLadenAction,
-					loadTemplateAction, loadSysTemplateAction, printTrayAction,
+					loadTemplateAction, loadSysTemplateAction,
 					saveTemplateAction, showMenuAction, showToolbarAction,
 					importAction);
 			GlobalEventDispatcher.addActivationListener(this, this);
@@ -178,13 +178,6 @@ public class TextView extends ViewPart implements IActivationListener {
 				}
 			}
 		};
-		
-		printTrayAction = new Action("Druckschachttest") { //$NON-NLS-1$
-			public void run() {
-				new PrintToTrayDialog(getSite().getShell(), txt.getPlugin()).open();
-			}
-		};
-		
 		saveTemplateAction = new Action(Messages
 				.getString("TextView.saveAsTemplate")) { //$NON-NLS-1$
 			@Override
