@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: GlobalActions.java 6127 2010-02-12 15:44:52Z rgw_ch $
+ * $Id: GlobalActions.java 6215 2010-03-18 12:23:37Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -74,6 +74,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
 import ch.elexis.dialogs.DateSelectorDialog;
+import ch.elexis.dialogs.EtiketteDruckenDialog;
 import ch.elexis.dialogs.NeuerFallDialog;
 import ch.elexis.dialogs.SelectFallDialog;
 import ch.elexis.preferences.PreferenceConstants;
@@ -100,15 +101,15 @@ public class GlobalActions {
 	
 	public static IWorkbenchAction exitAction, newWindowAction, copyAction, cutAction, pasteAction;
 	public static IAction loginAction, importAction, testAction, aboutAction, helpAction,
-	prefsAction;
+			prefsAction;
 	public static IAction connectWizardAction, changeMandantAction, savePerspectiveAction,
-	savePerspectiveAsAction;
+			savePerspectiveAsAction;
 	public static IAction savePerspectiveAsDefaultAction, resetPerspectiveAction, homeAction,
-	fixLayoutAction;
+			fixLayoutAction;
 	public static IAction printEtikette, printBlatt, printAdresse, printVersionedEtikette;
 	public static IAction printRoeBlatt;
 	public static IAction delFallAction, delKonsAction, openFallaction, filterAction,
-	reopenFallAction, makeBillAction, planeRechnungAction;
+			reopenFallAction, makeBillAction, planeRechnungAction;
 	public static IAction moveBehandlungAction, redateAction, neueKonsAction, neuerFallAction;
 	
 	public static MenuManager perspectiveMenu, viewMenu;
@@ -140,45 +141,45 @@ public class GlobalActions {
 		prefsAction = ActionFactory.PREFERENCES.create(window);
 		prefsAction.setText(Messages.getString("GlobalActions.Preferences")); //$NON-NLS-1$
 		savePerspectiveAction = new Action(Messages.getString("GlobalActions.SavePerspective")) { //$NON-NLS-1$
-			{
-				setId("savePerspektive"); //$NON-NLS-1$
-				// setActionDefinitionId(Hub.COMMAND_PREFIX+"savePerspektive"); //$NON-NLS-1$
-				setToolTipText(Messages.getString("GlobalActions.SavePerspectiveToolTip")); //$NON-NLS-1$
-				setImageDescriptor(Hub.getImageDescriptor("rsc/save.gif")); //$NON-NLS-1$
-			}
-			
-			@Override
-			public void run(){
-				mainWindow.getActivePage().savePerspective();
-			}
-		};
+				{
+					setId("savePerspektive"); //$NON-NLS-1$
+					// setActionDefinitionId(Hub.COMMAND_PREFIX+"savePerspektive"); //$NON-NLS-1$
+					setToolTipText(Messages.getString("GlobalActions.SavePerspectiveToolTip")); //$NON-NLS-1$
+					setImageDescriptor(Hub.getImageDescriptor("rsc/save.gif")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					mainWindow.getActivePage().savePerspective();
+				}
+			};
 		
 		helpAction = new Action(Messages.getString("GlobalActions.ac_handbook")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_BOOK));
-				setToolTipText(Messages.getString("GlobalActions.ac_openhandbook")); //$NON-NLS-1$
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_BOOK));
+					setToolTipText(Messages.getString("GlobalActions.ac_openhandbook")); //$NON-NLS-1$
+					
+				}
 				
-			}
-			
-			@Override
-			public void run(){
-				File base = new File(Hub.getBasePath()).getParentFile().getParentFile();
-				String book = base.getAbsolutePath() + File.separator + "elexis.pdf"; //$NON-NLS-1$
-				Program proggie = Program.findProgram(".pdf"); //$NON-NLS-1$
-				if (proggie != null) {
-					proggie.execute(book);
-				} else {
-					if (Program.launch(book) == false) {
-						
-						try {
-							Runtime.getRuntime().exec(book);
-						} catch (Exception e) {
-							ExHandler.handle(e);
+				@Override
+				public void run(){
+					File base = new File(Hub.getBasePath()).getParentFile().getParentFile();
+					String book = base.getAbsolutePath() + File.separator + "elexis.pdf"; //$NON-NLS-1$
+					Program proggie = Program.findProgram(".pdf"); //$NON-NLS-1$
+					if (proggie != null) {
+						proggie.execute(book);
+					} else {
+						if (Program.launch(book) == false) {
+							
+							try {
+								Runtime.getRuntime().exec(book);
+							} catch (Exception e) {
+								ExHandler.handle(e);
+							}
 						}
 					}
 				}
-			}
-		};
+			};
 		savePerspectiveAsAction = ActionFactory.SAVE_PERSPECTIVE.create(window);
 		
 		// ActionFactory.SAVE_PERSPECTIVE.create(window);
@@ -186,489 +187,551 @@ public class GlobalActions {
 		resetPerspectiveAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REFRESH));
 		
 		homeAction = new Action(Messages.getString("GlobalActions.Home")) { //$NON-NLS-1$
-			{
-				setId("home"); //$NON-NLS-1$
-				setActionDefinitionId(Hub.COMMAND_PREFIX + "home"); //$NON-NLS-1$
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_HOME));
-				setToolTipText(Messages.getString("GlobalActions.HomeToolTip")); //$NON-NLS-1$
-				help.setHelp(this, "ch.elexis.globalactions.homeAction"); //$NON-NLS-1$
-			}
-			
-			@Override
-			public void run(){
-				// String
-				// perspektive=Hub.actUser.getInfoString("StartPerspektive");
-				String perspektive =
-					Hub.localCfg.get(Hub.actUser + DEFAULTPERSPECTIVECFG, null);
-				if (StringTool.isNothing(perspektive)) {
-					perspektive = PatientPerspektive.ID;
+				{
+					setId("home"); //$NON-NLS-1$
+					setActionDefinitionId(Hub.COMMAND_PREFIX + "home"); //$NON-NLS-1$
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_HOME));
+					setToolTipText(Messages.getString("GlobalActions.HomeToolTip")); //$NON-NLS-1$
+					help.setHelp(this, "ch.elexis.globalactions.homeAction"); //$NON-NLS-1$
 				}
-				try {
-					IWorkbenchWindow win = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					PlatformUI.getWorkbench().showPerspective(perspektive, win);
-					// Hub.heart.resume(true);
-				} catch (Exception ex) {
-					ExHandler.handle(ex);
+				
+				@Override
+				public void run(){
+					// String
+					// perspektive=Hub.actUser.getInfoString("StartPerspektive");
+					String perspektive =
+						Hub.localCfg.get(Hub.actUser + DEFAULTPERSPECTIVECFG, null);
+					if (StringTool.isNothing(perspektive)) {
+						perspektive = PatientPerspektive.ID;
+					}
+					try {
+						IWorkbenchWindow win = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+						PlatformUI.getWorkbench().showPerspective(perspektive, win);
+						// Hub.heart.resume(true);
+					} catch (Exception ex) {
+						ExHandler.handle(ex);
+					}
 				}
-			}
-		};
+			};
 		savePerspectiveAsDefaultAction =
 			new Action(Messages.getString("GlobalActions.saveasstartperspective")) { //$NON-NLS-1$
-			{
-				setId("start"); //$NON-NLS-1$
-				// setActionDefinitionId(Hub.COMMAND_PREFIX+"startPerspective");
-			}
-			
-			@Override
-			public void run(){
-				IPerspectiveDescriptor p = mainWindow.getActivePage().getPerspective();
-				Hub.localCfg.set(Hub.actUser + DEFAULTPERSPECTIVECFG, p.getId());
-				// Hub.actUser.setInfoElement("StartPerspektive",p.getId());
-			}
-			
-		};
-		loginAction = new Action(Messages.getString("GlobalActions.Login")) { //$NON-NLS-1$
-			{
-				setId("login"); //$NON-NLS-1$
-				setActionDefinitionId(Hub.COMMAND_PREFIX + "login");} //$NON-NLS-1$
-			
-			@Override
-			public void run(){
-				try {
-					IWorkbenchWindow win = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-					IWorkbenchWindow[] wins = PlatformUI.getWorkbench().getWorkbenchWindows();
-					for (IWorkbenchWindow w : wins) {
-						if (!w.equals(win)) {
-							w.close();
-						}
-					}
-					ch.elexis.data.Anwender.logoff();
-					adaptForUser();
-					LoginDialog dlg = new LoginDialog(win.getShell());
-					dlg.create();
-					dlg.setTitle(Messages.getString("GlobalActions.LoginDialogTitle")); //$NON-NLS-1$
-					dlg.setMessage(Messages.getString("GlobalActions.LoginDialogMessage")); //$NON-NLS-1$
-					// dlg.getButton(IDialogConstants.CANCEL_ID).setText("Beenden");
-					dlg.getShell().setText(
-						Messages.getString("GlobalActions.LoginDialogShelltext")); //$NON-NLS-1$
-					if (dlg.open() == Dialog.CANCEL) {
-						exitAction.run();
-					}
-				} catch (Exception ex) {
-					ExHandler.handle(ex);
+				{
+					setId("start"); //$NON-NLS-1$
+					// setActionDefinitionId(Hub.COMMAND_PREFIX+"startPerspective");
 				}
-				System.out.println("login"); //$NON-NLS-1$
-			}
-		};
+				
+				@Override
+				public void run(){
+					IPerspectiveDescriptor p = mainWindow.getActivePage().getPerspective();
+					Hub.localCfg.set(Hub.actUser + DEFAULTPERSPECTIVECFG, p.getId());
+					// Hub.actUser.setInfoElement("StartPerspektive",p.getId());
+				}
+				
+			};
+		loginAction = new Action(Messages.getString("GlobalActions.Login")) { //$NON-NLS-1$
+				{
+					setId("login"); //$NON-NLS-1$
+					setActionDefinitionId(Hub.COMMAND_PREFIX + "login");} //$NON-NLS-1$
+				
+				@Override
+				public void run(){
+					try {
+						IWorkbenchWindow win = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+						IWorkbenchWindow[] wins = PlatformUI.getWorkbench().getWorkbenchWindows();
+						for (IWorkbenchWindow w : wins) {
+							if (!w.equals(win)) {
+								w.close();
+							}
+						}
+						ch.elexis.data.Anwender.logoff();
+						adaptForUser();
+						LoginDialog dlg = new LoginDialog(win.getShell());
+						dlg.create();
+						dlg.setTitle(Messages.getString("GlobalActions.LoginDialogTitle")); //$NON-NLS-1$
+						dlg.setMessage(Messages.getString("GlobalActions.LoginDialogMessage")); //$NON-NLS-1$
+						// dlg.getButton(IDialogConstants.CANCEL_ID).setText("Beenden");
+						dlg.getShell().setText(
+							Messages.getString("GlobalActions.LoginDialogShelltext")); //$NON-NLS-1$
+						if (dlg.open() == Dialog.CANCEL) {
+							exitAction.run();
+						}
+					} catch (Exception ex) {
+						ExHandler.handle(ex);
+					}
+					System.out.println("login"); //$NON-NLS-1$
+				}
+			};
 		importAction = new Action(Messages.getString("GlobalActions.Import")) { //$NON-NLS-1$
-			{
-				setId("import"); //$NON-NLS-1$
-				setActionDefinitionId(Hub.COMMAND_PREFIX + "import");} //$NON-NLS-1$
-			
-			@Override
-			public void run(){
-				// cnv.open();
-				Importer imp =
-					new Importer(mainWindow.getShell(), "ch.elexis.FremdDatenImport"); //$NON-NLS-1$
-				imp.create();
-				imp.setMessage(Messages.getString("GlobalActions.ImportDlgMessage")); //$NON-NLS-1$
-				imp.getShell().setText(Messages.getString("GlobalActions.ImportDlgShelltext")); //$NON-NLS-1$
-				imp.setTitle(Messages.getString("GlobalActions.ImportDlgTitle")); //$NON-NLS-1$
-				imp.open();
-			}
-		};
+				{
+					setId("import"); //$NON-NLS-1$
+					setActionDefinitionId(Hub.COMMAND_PREFIX + "import");} //$NON-NLS-1$
+				
+				@Override
+				public void run(){
+					// cnv.open();
+					Importer imp =
+						new Importer(mainWindow.getShell(), "ch.elexis.FremdDatenImport"); //$NON-NLS-1$
+					imp.create();
+					imp.setMessage(Messages.getString("GlobalActions.ImportDlgMessage")); //$NON-NLS-1$
+					imp.getShell().setText(Messages.getString("GlobalActions.ImportDlgShelltext")); //$NON-NLS-1$
+					imp.setTitle(Messages.getString("GlobalActions.ImportDlgTitle")); //$NON-NLS-1$
+					imp.open();
+				}
+			};
 		
 		connectWizardAction = new Action(Messages.getString("GlobalActions.Connection")) { //$NON-NLS-1$
-			{
-				setId("connectWizard"); //$NON-NLS-1$
-				setActionDefinitionId(Hub.COMMAND_PREFIX + "connectWizard"); //$NON-NLS-1$
-			}
-			
-			@Override
-			public void run(){
-				WizardDialog wd =
-					new WizardDialog(mainWindow.getShell(), new DBConnectWizard());
-				wd.open();
-			}
-			
-		};
+				{
+					setId("connectWizard"); //$NON-NLS-1$
+					setActionDefinitionId(Hub.COMMAND_PREFIX + "connectWizard"); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					WizardDialog wd =
+						new WizardDialog(mainWindow.getShell(), new DBConnectWizard());
+					wd.open();
+				}
+				
+			};
 		
 		changeMandantAction = new Action(Messages.getString("GlobalActions.Mandator")) { //$NON-NLS-1$
-			{
-				setId("changeMandant"); //$NON-NLS-1$
-				// setActionDefinitionId(Hub.COMMAND_PREFIX+"changeMandant"); //$NON-NLS-1$
-			}
-			
-			@Override
-			public void run(){
-				ChangeMandantDialog cmd = new ChangeMandantDialog();
-				if (cmd.open() == org.eclipse.jface.dialogs.Dialog.OK) {
-					Mandant n = cmd.result;
-					if (n != null) {
-						Hub.setMandant(n);
+				{
+					setId("changeMandant"); //$NON-NLS-1$
+					// setActionDefinitionId(Hub.COMMAND_PREFIX+"changeMandant"); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					ChangeMandantDialog cmd = new ChangeMandantDialog();
+					if (cmd.open() == org.eclipse.jface.dialogs.Dialog.OK) {
+						Mandant n = cmd.result;
+						if (n != null) {
+							Hub.setMandant(n);
+						}
 					}
 				}
-			}
-		};
+			};
 		printKontaktEtikette = new Action(Messages.getString("GlobalActions.PrintContactLabel")) { //$NON-NLS-1$
-			{
-				setToolTipText(Messages.getString("GlobalActions.PrintContactLabelToolTip")); //$NON-NLS-1$
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADRESSETIKETTE));
-			}
-			
-			@Override
-			public void run(){
-				printAdr((Kontakt) ElexisEventDispatcher.getSelected(Kontakt.class));
-			}
-		};
+				{
+					setToolTipText(Messages.getString("GlobalActions.PrintContactLabelToolTip")); //$NON-NLS-1$
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADRESSETIKETTE));
+				}
+				
+				@Override
+				public void run(){
+					Kontakt kontakt = (Kontakt) ElexisEventDispatcher.getSelected(Kontakt.class);
+					if (kontakt == null) {
+						SWTHelper.showInfo("Kein Kontakt ausgewählt", "Bitte wählen Sie vor dem Drucken einen Kontakt!");
+						return;
+					}
+					EtiketteDruckenDialog dlg =
+						new EtiketteDruckenDialog(mainWindow.getShell(), kontakt, "AdressEtikette");
+					dlg.setTitle(Messages.getString("GlobalActions.PrintContactLabel"));
+					dlg.setMessage(Messages.getString("GlobalActions.PrintContactLabelToolTip"));
+					dlg.setBlockOnOpen(false);
+					dlg.open();
+					if (dlg.doPrint()) {
+						dlg.close();
+					} else {
+						SWTHelper
+							.alert("Fehler beim Drucken",
+								"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+					}
+				}
+			};
 		
 		printAdresse = new Action(Messages.getString("GlobalActions.PrintAddressLabel")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADRESSETIKETTE));
-				setToolTipText(Messages.getString("GlobalActions.PrintAddressLabelToolTip")); //$NON-NLS-1$
-			}
-			
-			@Override
-			public void run(){
-				printAdr((Patient) ElexisEventDispatcher.getSelected(Patient.class));
-				System.out.println(Messages.getString("GlobalActions.45")); //$NON-NLS-1$
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADRESSETIKETTE));
+					setToolTipText(Messages.getString("GlobalActions.PrintAddressLabelToolTip")); //$NON-NLS-1$
+				}
 				
-			}
-			
-		};
+				@Override
+				public void run(){
+					Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
+					if (actPatient == null) {
+						SWTHelper.showInfo("Kein Patient ausgewählt", "Bitte wählen Sie vor dem Drucken einen Patient!");
+						return;
+					}
+					
+					EtiketteDruckenDialog dlg =
+						new EtiketteDruckenDialog(mainWindow.getShell(), actPatient,
+							"AdressEtikette");
+					dlg.setTitle(Messages.getString("GlobalActions.PrintAddressLabel"));
+					dlg.setMessage(Messages.getString("GlobalActions.PrintAddressLabelToolTip"));
+					dlg.setBlockOnOpen(false);
+					dlg.open();
+					if (dlg.doPrint()) {
+						dlg.close();
+					} else {
+						SWTHelper
+							.alert("Fehler beim Drucken",
+								"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+					}
+				}
+			};
 		
 		printVersionedEtikette =
 			new Action(Messages.getString("GlobalActions.PrintVersionedLabel")) { //$NON-NLS-1$
-			{
-				setToolTipText(Messages.getString("GlobalActions.PrintVersionedLabelToolTip")); //$NON-NLS-1$
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_VERSIONEDETIKETTE));
-			}
-			
-			@Override
-			public void run(){
-				PrinterData pd = getPrinterData("Etiketten"); //$NON-NLS-1$
-				if (pd != null) {
-					// 25.01.2010 patch tschaller: page orientation of printer
-					// driver is not handled correctly (we always get porttrait
-					// even when the printer settings have landscape stored)
-					Integer iOrientation = -1;
-					String sOrientation =
-						Hub.localCfg.get("Drucker/Etiketten/Ausrichtung", null); //$NON-NLS-1$
-					try {
-						iOrientation = Integer.parseInt(sOrientation);
-					} catch (NumberFormatException ex) {}
-					if (iOrientation != -1)
-						pd.orientation = iOrientation;
-					Printer prn = new Printer(pd);
-					if (prn.startJob(Messages.getString("GlobalActions.PrintLabelJobName")) == true) { //$NON-NLS-1$
-						GC gc = new GC(prn);
-						int y = 0;
-						prn.startPage();
-						
-						Patient actPatient =
-							(Patient) ElexisEventDispatcher.getSelected(Patient.class);
-						String pid = StringTool.addModulo10(actPatient.getPatCode()) + "-" //$NON-NLS-1$
-						+ new TimeTool().toString(TimeTool.TIME_COMPACT);
-						gc.drawString(
-							Messages.getString("GlobalActions.OrderID") + ": " + pid, 0, 0); //$NON-NLS-1$ //$NON-NLS-2$
-						FontMetrics fmt = gc.getFontMetrics();
-						y += fmt.getHeight();
-						String pers = actPatient.getPersonalia();
-						gc.drawString(pers, 0, y);
-						y += fmt.getHeight();
-						gc
-						.drawString(actPatient.getAnschrift().getEtikette(false, false), 0,
-							y);
-						y += fmt.getHeight();
-						StringBuilder tel = new StringBuilder();
-						tel
-						.append(Messages.getString("GlobalActions.PhoneHomeLabelText")).append(actPatient.get("Telefon1")) //$NON-NLS-1$ //$NON-NLS-2$
-						.append(Messages.getString("GlobalActions.PhoneWorkLabelText")).append(actPatient.get("Telefon2")) //$NON-NLS-1$ //$NON-NLS-2$
-						.append(Messages.getString("GlobalActions.PhoneMobileLabelText")).append(actPatient.get("Natel")); //$NON-NLS-1$ //$NON-NLS-2$
-						gc.drawString(tel.toString(), 0, y);
-						prn.endPage();
-						prn.endJob();
-						prn.dispose();
+				{
+					setToolTipText(Messages.getString("GlobalActions.PrintVersionedLabelToolTip")); //$NON-NLS-1$
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_VERSIONEDETIKETTE));
+				}
+				
+				@Override
+				public void run(){
+					Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
+					if (actPatient == null) {
+						SWTHelper.showInfo("Kein Patient ausgewählt", "Bitte wählen Sie vor dem Drucken einen Patient!");
+						return;
+					}
+					EtiketteDruckenDialog dlg =
+						new EtiketteDruckenDialog(mainWindow.getShell(), actPatient,
+							"PatientEtiketteAuftrag");
+					dlg.setTitle(Messages.getString("GlobalActions.PrintVersionedLabel"));
+					dlg.setMessage(Messages.getString("GlobalActions.PrintVersionedLabelToolTip"));
+					dlg.setBlockOnOpen(false);
+					dlg.open();
+					if (dlg.doPrint()) {
+						dlg.close();
 					} else {
-						MessageDialog
-						.openError(
-							mainWindow.getShell(),
-							Messages.getString("GlobalActions.PrinterErrorTitle"), Messages.getString("GlobalActions.PrinterErrorMessage")); //$NON-NLS-1$ //$NON-NLS-2$
-						
+						SWTHelper
+							.alert("Fehler beim Drucken",
+								"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
 					}
 				}
-			}
-		};
+			};
 		
 		printEtikette = new Action(Messages.getString("GlobalActions.PrintLabel")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PATIENTETIKETTE));
-				setToolTipText(Messages.getString("GlobalActions.PrintLabelToolTip")); //$NON-NLS-1$
-			}
-			
-			@Override
-			public void run(){
-				PrinterData pd = getPrinterData("Etiketten"); //$NON-NLS-1$
-				if (pd != null) {
-					// 25.01.2010 patch tschaller: page orientation of printer
-					// driver is not handled correctly (we always get porttrait
-					// even when the printer settings have landscape stored)
-					Integer iOrientation = -1;
-					String sOrientation =
-						Hub.localCfg.get("Drucker/Etiketten/Ausrichtung", null); //$NON-NLS-1$
-					try {
-						iOrientation = Integer.parseInt(sOrientation);
-					} catch (NumberFormatException ex) {}
-					if (iOrientation != -1)
-						pd.orientation = iOrientation;
-					Printer prn = new Printer(pd);
-					if (prn.startJob(Messages.getString("GlobalActions.PrintLabelJobName")) == true) { //$NON-NLS-1$
-						GC gc = new GC(prn);
-						int y = 0;
-						prn.startPage();
-						Patient actPatient =
-							(Patient) ElexisEventDispatcher.getSelected(Patient.class);
-						gc
-						.drawString(
-							Messages.getString("GlobalActions.PatientIDLabelText") + actPatient.getPatCode(), 0, 0); //$NON-NLS-1$
-						FontMetrics fmt = gc.getFontMetrics();
-						y += fmt.getHeight();
-						String pers = actPatient.getPersonalia();
-						gc.drawString(pers, 0, y);
-						y += fmt.getHeight();
-						gc
-						.drawString(actPatient.getAnschrift().getEtikette(false, false), 0,
-							y);
-						y += fmt.getHeight();
-						StringBuilder tel = new StringBuilder();
-						tel
-						.append(Messages.getString("GlobalActions.PhoneHomeLabelText")).append(actPatient.get("Telefon1")) //$NON-NLS-1$ //$NON-NLS-2$
-						.append(Messages.getString("GlobalActions.PhoneWorkLabelText")).append(actPatient.get("Telefon2")) //$NON-NLS-1$ //$NON-NLS-2$
-						.append(Messages.getString("GlobalActions.PhoneMobileLabelText")).append(actPatient.get("Natel")); //$NON-NLS-1$ //$NON-NLS-2$
-						gc.drawString(tel.toString(), 0, y);
-						prn.endPage();
-						prn.endJob();
-						prn.dispose();
-					} else {
-						MessageDialog
-						.openError(
-							mainWindow.getShell(),
-							Messages.getString("GlobalActions.PrinterErrorTitle"), Messages.getString("GlobalActions.PrinterErrorMessage")); //$NON-NLS-1$ //$NON-NLS-2$
-						
-					}
-					
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PATIENTETIKETTE));
+					setToolTipText(Messages.getString("GlobalActions.PrintLabelToolTip")); //$NON-NLS-1$
 				}
-			}
-			
-		};
+				
+				@Override
+				public void run(){
+					Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
+					if (actPatient == null) {
+						SWTHelper.showInfo("Kein Patient ausgewählt", "Bitte wählen Sie vor dem Drucken einen Patient!");
+						return;
+					}
+					EtiketteDruckenDialog dlg =
+						new EtiketteDruckenDialog(mainWindow.getShell(),
+							actPatient,
+							"PatientEtikette");
+					dlg.setTitle(Messages.getString("GlobalActions.PrintLabel"));
+					dlg.setMessage(Messages.getString("GlobalActions.PrintLabelToolTip"));
+					dlg.setBlockOnOpen(false);
+					dlg.open();
+					if (dlg.doPrint()) {
+						dlg.close();
+					} else {
+						SWTHelper
+							.alert("Fehler beim Drucken",
+								"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+					}
+				}
+			};
 		
 		printBlatt = new Action(Messages.getString("GlobalActions.PrintEMR")) { //$NON-NLS-1$
-			@Override
-			public void run(){
-				Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
-				String printer = Hub.localCfg.get("Drucker/Einzelblatt/Name", null); //$NON-NLS-1$
-				String tray = Hub.localCfg.get("Drucker/Einzelblatt/Schacht", null); //$NON-NLS-1$
-				
-				MessageBox mb =
-					new MessageBox(Desk.getDisplay().getActiveShell(), SWT.ICON_INFORMATION
-						| SWT.OK | SWT.CANCEL);
-				mb.setText("Papier einlegen"); //$NON-NLS-1$
-				mb.setMessage("Bitte legen Sie im Einzelblatteinzug Papier ein."); //$NON-NLS-1$
-				if (mb.open() == SWT.OK) {
-					new TemplateDrucker("KG-Deckblatt", printer, tray).doPrint(actPatient); //$NON-NLS-1$
+				@Override
+				public void run(){
+					Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
+					String printer = Hub.localCfg.get("Drucker/Einzelblatt/Name", null); //$NON-NLS-1$
+					String tray = Hub.localCfg.get("Drucker/Einzelblatt/Schacht", null); //$NON-NLS-1$
+					
+					MessageBox mb =
+						new MessageBox(Desk.getDisplay().getActiveShell(), SWT.ICON_INFORMATION
+							| SWT.OK | SWT.CANCEL);
+					mb.setText("Papier einlegen"); //$NON-NLS-1$
+					mb.setMessage("Bitte legen Sie im Einzelblatteinzug Papier ein."); //$NON-NLS-1$
+					if (mb.open() == SWT.OK) {
+						new TemplateDrucker("KG-Deckblatt", printer, tray).doPrint(actPatient); //$NON-NLS-1$
+					}
 				}
-			}
-		};
+			};
 		printRoeBlatt = new Action(Messages.getString("GlobalActions.PrintXRay")) { //$NON-NLS-1$
-			@Override
-			public void run(){
-				Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
-				String printer = Hub.localCfg.get("Drucker/A4/Name", null); //$NON-NLS-1$
-				String tray = Hub.localCfg.get("Drucker/A4/Schacht", null); //$NON-NLS-1$
-				
-				new TemplateDrucker("Roentgen-Blatt", printer, tray).doPrint(actPatient); //$NON-NLS-1$
-			}
-		};
+				@Override
+				public void run(){
+					Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
+					String printer = Hub.localCfg.get("Drucker/A4/Name", null); //$NON-NLS-1$
+					String tray = Hub.localCfg.get("Drucker/A4/Schacht", null); //$NON-NLS-1$
+					
+					new TemplateDrucker("Roentgen-Blatt", printer, tray).doPrint(actPatient); //$NON-NLS-1$
+				}
+			};
 		
 		fixLayoutAction =
 			new Action(Messages.getString("GlobalActions.LockPerspectives"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
-			{
-				setToolTipText(Messages.getString("GlobalActions.LockPerspectivesToolTip")); //$NON-NLS-1$
-			}
-			
-			@Override
-			public void run(){
-				// store the current value in the user's configuration
-				Hub.userCfg
-				.set(PreferenceConstants.USR_FIX_LAYOUT, fixLayoutAction.isChecked());
-			}
-		};
+				{
+					setToolTipText(Messages.getString("GlobalActions.LockPerspectivesToolTip")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					// store the current value in the user's configuration
+					Hub.userCfg
+						.set(PreferenceConstants.USR_FIX_LAYOUT, fixLayoutAction.isChecked());
+				}
+			};
 		makeBillAction = new Action(Messages.getString("GlobalActions.MakeBill")) { //$NON-NLS-1$
-			@Override
-			public void run(){
-				Fall actFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
-				Mandant mnd = Hub.actMandant;
-				if (actFall != null && mnd != null) {
-					String mndid = mnd.getId();
-					Konsultation[] bhdl = actFall.getBehandlungen(false);
-					ArrayList<Konsultation> lBehdl = new ArrayList<Konsultation>(bhdl.length);
-					for (Konsultation b : bhdl) {
-						Rechnung rn = b.getRechnung();
-						if (rn == null) { // || rn.getStatus() ==
-							// RnStatus.STORNIERT) {
-							if (b.getMandant().getId().equals(mndid)) {
-								lBehdl.add(b);
+				@Override
+				public void run(){
+					Fall actFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+					Mandant mnd = Hub.actMandant;
+					if (actFall != null && mnd != null) {
+						String mndid = mnd.getId();
+						Konsultation[] bhdl = actFall.getBehandlungen(false);
+						ArrayList<Konsultation> lBehdl = new ArrayList<Konsultation>(bhdl.length);
+						for (Konsultation b : bhdl) {
+							Rechnung rn = b.getRechnung();
+							if (rn == null) { // || rn.getStatus() ==
+								// RnStatus.STORNIERT) {
+								if (b.getMandant().getId().equals(mndid)) {
+									lBehdl.add(b);
+								}
 							}
 						}
+						Result<Rechnung> res = Rechnung.build(lBehdl);
+						if (!res.isOK()) {
+							ErrorDialog.openError(mainWindow.getShell(), Messages
+								.getString("GlobalActions.Error"), Messages //$NON-NLS-1$
+								.getString("GlobalActions.BillErrorMessage"), ResultAdapter //$NON-NLS-1$
+								.getResultAsStatus(res));
+							// Rechnung rn=(Rechnung)res.get();
+							// rn.storno(true);
+							// rn.delete();
+							
+						}
 					}
-					Result<Rechnung> res = Rechnung.build(lBehdl);
-					if (!res.isOK()) {
-						ErrorDialog.openError(mainWindow.getShell(), Messages
-							.getString("GlobalActions.Error"), Messages //$NON-NLS-1$
-							.getString("GlobalActions.BillErrorMessage"), ResultAdapter //$NON-NLS-1$
-							.getResultAsStatus(res));
-						// Rechnung rn=(Rechnung)res.get();
-						// rn.storno(true);
-						// rn.delete();
-						
-					}
+					// setFall(actFall,null);
 				}
-				// setFall(actFall,null);
-			}
-		};
+			};
 		moveBehandlungAction = new Action(Messages.getString("GlobalActions.AssignCase")) { //$NON-NLS-1$
-			@Override
-			public void run(){
-				// Object[] s=behandlViewer.getSelection();
-				Konsultation k =
-					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-				if (k == null) {
-					MessageDialog
-					.openInformation(
-						mainWindow.getShell(),
-						Messages.getString("GlobalActions.NoKonsSelected"), Messages.getString("GlobalActions.NoKonsSelectedMessage")); //$NON-NLS-1$ //$NON-NLS-2$
-					return;
-				}
-				
-				SelectFallDialog dlg = new SelectFallDialog(mainWindow.getShell());
-				if (dlg.open() == Dialog.OK) {
-					Fall f = dlg.result;
-					if (f != null) {
-						k.setFall(f);
-						ElexisEventDispatcher.fireSelectionEvent(f);
+				@Override
+				public void run(){
+					// Object[] s=behandlViewer.getSelection();
+					Konsultation k =
+						(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+					if (k == null) {
+						MessageDialog
+							.openInformation(
+								mainWindow.getShell(),
+								Messages.getString("GlobalActions.NoKonsSelected"), Messages.getString("GlobalActions.NoKonsSelectedMessage")); //$NON-NLS-1$ //$NON-NLS-2$
+						return;
+					}
+					
+					SelectFallDialog dlg = new SelectFallDialog(mainWindow.getShell());
+					if (dlg.open() == Dialog.OK) {
+						Fall f = dlg.result;
+						if (f != null) {
+							k.setFall(f);
+							ElexisEventDispatcher.fireSelectionEvent(f);
+						}
 					}
 				}
-			}
-		};
+			};
 		redateAction = new Action(Messages.getString("GlobalActions.Redate")) { //$NON-NLS-1$
-			@Override
-			public void run(){
-				Konsultation k =
-					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-				if (k == null) {
-					MessageDialog
-					.openInformation(
-						mainWindow.getShell(),
-						Messages.getString("GlobalActions.NoKonsSelected"), Messages.getString("GlobalActions.NoKonsSelectedMessage")); //$NON-NLS-1$ //$NON-NLS-2$
-					return;
+				@Override
+				public void run(){
+					Konsultation k =
+						(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+					if (k == null) {
+						MessageDialog
+							.openInformation(
+								mainWindow.getShell(),
+								Messages.getString("GlobalActions.NoKonsSelected"), Messages.getString("GlobalActions.NoKonsSelectedMessage")); //$NON-NLS-1$ //$NON-NLS-2$
+						return;
+					}
+					
+					DateSelectorDialog dlg = new DateSelectorDialog(mainWindow.getShell());
+					if (dlg.open() == Dialog.OK) {
+						TimeTool date = dlg.getSelectedDate();
+						k.setDatum(date.toString(TimeTool.DATE_GER), false);
+						ElexisEventDispatcher.fireSelectionEvent(k);
+					}
 				}
-				
-				DateSelectorDialog dlg = new DateSelectorDialog(mainWindow.getShell());
-				if (dlg.open() == Dialog.OK) {
-					TimeTool date = dlg.getSelectedDate();
-					k.setDatum(date.toString(TimeTool.DATE_GER), false);
-					ElexisEventDispatcher.fireSelectionEvent(k);
-				}
-			}
-		};
+			};
 		delFallAction = new Action(Messages.getString("GlobalActions.DeleteCase")) { //$NON-NLS-1$
-			@Override
-			public void run(){
-				Fall actFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
-				if ((actFall != null) && (actFall.delete(false) == false)) {
-					SWTHelper.alert(Messages
-						.getString("GlobalActions.CouldntDeleteCaseMessage"), //$NON-NLS-1$
-						Messages.getString("GlobalActions.CouldntDeleteCaseExplanation") + //$NON-NLS-1$
-						Messages.getString("GlobalActions.93")); //$NON-NLS-1$
+				@Override
+				public void run(){
+					Fall actFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+					if ((actFall != null) && (actFall.delete(false) == false)) {
+						SWTHelper.alert(Messages
+							.getString("GlobalActions.CouldntDeleteCaseMessage"), //$NON-NLS-1$
+							Messages.getString("GlobalActions.CouldntDeleteCaseExplanation") + //$NON-NLS-1$
+								Messages.getString("GlobalActions.93")); //$NON-NLS-1$
+					}
+					ElexisEventDispatcher.reload(Fall.class);
 				}
-				ElexisEventDispatcher.reload(Fall.class);
-			}
-		};
+			};
 		delKonsAction = new Action(Messages.getString("GlobalActions.DeleteKons")) { //$NON-NLS-1$
-			@Override
-			public void run(){
-				Konsultation k =
-					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-				if ((k != null) && (k.delete(false) == false)) {
-					SWTHelper.alert(Messages.getString("GlobalActions.CouldntDeleteKons"), //$NON-NLS-1$
-						Messages.getString("GlobalActions.CouldntDeleteKonsExplanation") + //$NON-NLS-1$
-						Messages.getString("GlobalActions.97")); //$NON-NLS-1$
+				@Override
+				public void run(){
+					Konsultation k =
+						(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+					if ((k != null) && (k.delete(false) == false)) {
+						SWTHelper.alert(Messages.getString("GlobalActions.CouldntDeleteKons"), //$NON-NLS-1$
+							Messages.getString("GlobalActions.CouldntDeleteKonsExplanation") + //$NON-NLS-1$
+								Messages.getString("GlobalActions.97")); //$NON-NLS-1$
+					}
+					ElexisEventDispatcher.clearSelection(Konsultation.class);
+					if (k != null) {
+						ElexisEventDispatcher.fireSelectionEvent(k.getFall());
+					}
 				}
-				ElexisEventDispatcher.clearSelection(Konsultation.class);
-				if (k != null) {
-					ElexisEventDispatcher.fireSelectionEvent(k.getFall());
-				}
-			}
-		};
+			};
 		openFallaction = new Action(Messages.getString("GlobalActions.EditCase")) { //$NON-NLS-1$
 			
-			@Override
-			public void run(){
-				try {
-					Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-					.showView(FallDetailView.ID);
-					// getViewSite().getPage().showView(FallDetailView.ID);
-				} catch (Exception ex) {
-					ExHandler.handle(ex);
-				}
-			}
-			
-		};
-		reopenFallAction = new Action(Messages.getString("GlobalActions.ReopenCase")) { //$NON-NLS-1$
-			@Override
-			public void run(){
-				Fall actFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
-				if (actFall != null) {
-					actFall.setEndDatum(""); //$NON-NLS-1$
-				}
-			}
-		};
-		neueKonsAction = new Action(Messages.getString("GlobalActions.NewKons")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
-				setToolTipText(Messages.getString("GlobalActions.NewKonsToolTip")); //$NON-NLS-1$
-			}
-			
-			@Override
-			public void run(){
-				Konsultation.neueKons(null);
-			}
-		};
-		neuerFallAction = new Action(Messages.getString("GlobalActions.NewCase")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
-				setToolTipText(Messages.getString("GlobalActions.NewCaseToolTip")); //$NON-NLS-1$
-			}
-			
-			@Override
-			public void run(){
-				Patient pat = ElexisEventDispatcher.getSelectedPatient();
-				if (pat != null) {
-					NeuerFallDialog nfd = new NeuerFallDialog(mainWindow.getShell(), null);
-					if (nfd.open() == Dialog.OK) {
-						
+				@Override
+				public void run(){
+					try {
+						Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+							.showView(FallDetailView.ID);
+						// getViewSite().getPage().showView(FallDetailView.ID);
+					} catch (Exception ex) {
+						ExHandler.handle(ex);
 					}
 				}
-			}
-		};
-		planeRechnungAction = new Action(Messages.getString("GlobalActions.plaBill")) { //$NON-NLS-1$
-			public void run(){
 				
-			}
-		};
+			};
+		reopenFallAction = new Action(Messages.getString("GlobalActions.ReopenCase")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					Fall actFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+					if (actFall != null) {
+						actFall.setEndDatum(""); //$NON-NLS-1$
+					}
+				}
+			};
+		neueKonsAction = new Action(Messages.getString("GlobalActions.NewKons")) { //$NON-NLS-1$
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
+					setToolTipText(Messages.getString("GlobalActions.NewKonsToolTip")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					Konsultation.neueKons(null);
+				}
+			};
+		neuerFallAction = new Action(Messages.getString("GlobalActions.NewCase")) { //$NON-NLS-1$
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
+					setToolTipText(Messages.getString("GlobalActions.NewCaseToolTip")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					Patient pat = ElexisEventDispatcher.getSelectedPatient();
+					if (pat != null) {
+						NeuerFallDialog nfd = new NeuerFallDialog(mainWindow.getShell(), null);
+						if (nfd.open() == Dialog.OK) {
+
+						}
+					}
+				}
+			};
+		planeRechnungAction = new Action(Messages.getString("GlobalActions.plaBill")) { //$NON-NLS-1$
+				public void run(){
+
+				}
+			};
 	}
 	
+	protected void printPatient(final Patient patient){
+		PrinterData pd = getPrinterData("Etiketten"); //$NON-NLS-1$
+		if (pd != null) {
+			// 25.01.2010 patch tschaller: page orientation of printer
+			// driver is not handled correctly (we always get porttrait
+			// even when the printer settings have landscape stored)
+			Integer iOrientation = -1;
+			String sOrientation = Hub.localCfg.get("Drucker/Etiketten/Ausrichtung", null); //$NON-NLS-1$
+			try {
+				iOrientation = Integer.parseInt(sOrientation);
+			} catch (NumberFormatException ex) {}
+			if (iOrientation != -1)
+				pd.orientation = iOrientation;
+			Printer prn = new Printer(pd);
+			if (prn.startJob(Messages.getString("GlobalActions.PrintLabelJobName")) == true) { //$NON-NLS-1$
+				GC gc = new GC(prn);
+				int y = 0;
+				prn.startPage();
+				gc
+					.drawString(
+						Messages.getString("GlobalActions.PatientIDLabelText") + patient.getPatCode(), 0, 0); //$NON-NLS-1$
+				FontMetrics fmt = gc.getFontMetrics();
+				y += fmt.getHeight();
+				String pers = patient.getPersonalia();
+				gc.drawString(pers, 0, y);
+				y += fmt.getHeight();
+				gc.drawString(patient.getAnschrift().getEtikette(false, false), 0, y);
+				y += fmt.getHeight();
+				StringBuilder tel = new StringBuilder();
+				tel
+					.append(Messages.getString("GlobalActions.PhoneHomeLabelText")).append(patient.get("Telefon1")) //$NON-NLS-1$ //$NON-NLS-2$
+					.append(Messages.getString("GlobalActions.PhoneWorkLabelText")).append(patient.get("Telefon2")) //$NON-NLS-1$ //$NON-NLS-2$
+					.append(Messages.getString("GlobalActions.PhoneMobileLabelText")).append(patient.get("Natel")); //$NON-NLS-1$ //$NON-NLS-2$
+				gc.drawString(tel.toString(), 0, y);
+				prn.endPage();
+				prn.endJob();
+				prn.dispose();
+			} else {
+				MessageDialog
+					.openError(
+						mainWindow.getShell(),
+						Messages.getString("GlobalActions.PrinterErrorTitle"), Messages.getString("GlobalActions.PrinterErrorMessage")); //$NON-NLS-1$ //$NON-NLS-2$
+				
+			}
+		}
+	}
 	
+	protected void printPatientAuftragsnummer(final Patient patient){
+		PrinterData pd = getPrinterData("Etiketten"); //$NON-NLS-1$
+		if (pd != null) {
+			// 25.01.2010 patch tschaller: page orientation of printer
+			// driver is not handled correctly (we always get porttrait
+			// even when the printer settings have landscape stored)
+			Integer iOrientation = -1;
+			String sOrientation = Hub.localCfg.get("Drucker/Etiketten/Ausrichtung", null); //$NON-NLS-1$
+			try {
+				iOrientation = Integer.parseInt(sOrientation);
+			} catch (NumberFormatException ex) {}
+			if (iOrientation != -1)
+				pd.orientation = iOrientation;
+			Printer prn = new Printer(pd);
+			if (prn.startJob(Messages.getString("GlobalActions.PrintLabelJobName")) == true) { //$NON-NLS-1$
+				GC gc = new GC(prn);
+				int y = 0;
+				prn.startPage();
+				String pid = StringTool.addModulo10(patient.getPatCode()) + "-" //$NON-NLS-1$
+					+ new TimeTool().toString(TimeTool.TIME_COMPACT);
+				gc.drawString(Messages.getString("GlobalActions.OrderID") + ": " + pid, 0, 0); //$NON-NLS-1$ //$NON-NLS-2$
+				FontMetrics fmt = gc.getFontMetrics();
+				y += fmt.getHeight();
+				String pers = patient.getPersonalia();
+				gc.drawString(pers, 0, y);
+				y += fmt.getHeight();
+				gc.drawString(patient.getAnschrift().getEtikette(false, false), 0, y);
+				y += fmt.getHeight();
+				StringBuilder tel = new StringBuilder();
+				tel
+					.append(Messages.getString("GlobalActions.PhoneHomeLabelText")).append(patient.get("Telefon1")) //$NON-NLS-1$ //$NON-NLS-2$
+					.append(Messages.getString("GlobalActions.PhoneWorkLabelText")).append(patient.get("Telefon2")) //$NON-NLS-1$ //$NON-NLS-2$
+					.append(Messages.getString("GlobalActions.PhoneMobileLabelText")).append(patient.get("Natel")); //$NON-NLS-1$ //$NON-NLS-2$
+				gc.drawString(tel.toString(), 0, y);
+				prn.endPage();
+				prn.endJob();
+				prn.dispose();
+			} else {
+				MessageDialog
+					.openError(
+						mainWindow.getShell(),
+						Messages.getString("GlobalActions.PrinterErrorTitle"), Messages.getString("GlobalActions.PrinterErrorMessage")); //$NON-NLS-1$ //$NON-NLS-2$
+				
+			}
+		}
+	}
 	
 	protected void printAdr(final Kontakt k){
 		// 25.01.2010 patch tschaller: there was always the printer selection
@@ -704,9 +767,9 @@ public class GlobalActions {
 				prn.dispose();
 			} else {
 				MessageDialog
-				.openError(
-					mainWindow.getShell(),
-					Messages.getString("GlobalActions.PrinterErrorTitle"), Messages.getString("GlobalActions.PrinterErrorMessage")); //$NON-NLS-1$ //$NON-NLS-2$
+					.openError(
+						mainWindow.getShell(),
+						Messages.getString("GlobalActions.PrinterErrorTitle"), Messages.getString("GlobalActions.PrinterErrorMessage")); //$NON-NLS-1$ //$NON-NLS-2$
 				
 			}
 			
