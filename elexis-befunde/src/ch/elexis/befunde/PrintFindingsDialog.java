@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PrintFindingsDialog.java 6222 2010-03-18 12:29:25Z michael_imhof $
+ *  $Id: PrintFindingsDialog.java 6225 2010-03-18 14:01:32Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -72,14 +72,5 @@ public class PrintFindingsDialog extends TitleAreaDialog implements ICallback {
 	public boolean saveAs() {
 		// TODO Auto-generated method stub
 		return false;
-	}
-		
-	@Override
-	public boolean close(){
-		boolean closed = super.close();
-		if (text != null) {
-			text.dispose();
-		}
-		return closed;
 	}
 }
