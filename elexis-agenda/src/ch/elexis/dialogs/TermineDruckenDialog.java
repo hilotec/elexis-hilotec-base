@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TermineDruckenDialog.java 6223 2010-03-18 12:31:00Z michael_imhof $
+ *  $Id: TermineDruckenDialog.java 6226 2010-03-18 14:01:45Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -30,7 +30,6 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
 public class TermineDruckenDialog extends TitleAreaDialog implements ICallback {
-	
 	Termin[] liste;
 	
 	private TextContainer text = null;
@@ -109,14 +108,5 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback {
 			Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY, null);
 		
 		return text.getPlugin().print(printer, tray, false);
-	}
-	
-	@Override
-	public boolean close(){
-		boolean closed = super.close();
-		if (text != null) {
-			text.dispose();
-		}
-		return closed;
 	}
 }
