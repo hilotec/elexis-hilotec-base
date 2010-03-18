@@ -63,6 +63,7 @@ Mandant.Telefon1
 Mandant:mw:Er/Sie='Er' oder 'Sie' je nach Geschlecht
 Mandant:mw:Herr/Frau='Herr' oder 'Frau' je nach Geschlecht
 
+Patient.Auftragsnummer=Auftragsnummer des aktuell selektierten Patienten
 Patient.Name=Name des aktuell selektierten Patienten
 Patient.Vorname=Vorname des aktuell selektierten Patienten
 Patient.Titel=Titel des aktuell selektierten Patienten
