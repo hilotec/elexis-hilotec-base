@@ -27,7 +27,6 @@ import ch.elexis.text.ITextPlugin.ICallback;
 import ch.elexis.util.SWTHelper;
 
 public class EtiketteDruckenDialog extends TitleAreaDialog implements ICallback {
-	
 	final Kontakt kontakt;
 	final String template;
 	
@@ -72,15 +71,6 @@ public class EtiketteDruckenDialog extends TitleAreaDialog implements ICallback 
 		setTitle(title);
 		getShell().setText(title);
 		getShell().setSize(800, 700);
-	}
-	
-	@Override
-	public boolean close(){
-		boolean closed = super.close();
-		if (text != null) {
-			text.dispose();
-		}
-		return closed;
 	}
 
 	@Override
