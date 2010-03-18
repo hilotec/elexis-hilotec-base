@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: AUFZeugnis.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: AUFZeugnis.java 6231 2010-03-18 14:03:43Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -36,9 +36,6 @@ public class AUFZeugnis extends ViewPart implements ICallback, IActivationListen
 	@Override
 	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
-		if (text != null) {
-			text.dispose();
-		}
 		super.dispose();
 	}
 	
