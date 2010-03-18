@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation based on RnPrintView
  *
- * $Id: KGPrintView.java 6218 2010-03-18 12:26:14Z michael_imhof $
+ * $Id: KGPrintView.java 6227 2010-03-18 14:02:17Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -79,9 +79,6 @@ public class KGPrintView extends ViewPart {
 	@Override
 	public void dispose() {
 		clearItems();
-		if (text != null) {
-			text.dispose();
-		}
 		super.dispose();
 	}
 

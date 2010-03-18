@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BestellBlatt.java 6218 2010-03-18 12:26:14Z michael_imhof $
+ *    $Id: BestellBlatt.java 6227 2010-03-18 14:02:17Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -93,13 +93,5 @@ public class BestellBlatt extends ViewPart implements ICallback {
 	public boolean saveAs(){
 		// TODO Automatisch erstellter Methoden-Stub
 		return false;
-	}
-	
-	@Override
-	public void dispose() {
-		if (text != null) {
-			text.dispose();
-		}
-		super.dispose();
 	}
 }

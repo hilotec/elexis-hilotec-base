@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: PatHeuteView.java 6218 2010-03-18 12:26:14Z michael_imhof $
+ * $Id: PatHeuteView.java 6227 2010-03-18 14:02:17Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -842,15 +842,6 @@ ISaveablePart2, BackgroundJobListener {
 		public boolean saveAs() {
 			// TODO Auto-generated method stub
 			return false;
-		}
-
-		@Override
-		public boolean close(){
-			boolean closed = super.close();
-			if (text != null) {
-				text.dispose();
-			}
-			return closed;
 		}
 	}
 	

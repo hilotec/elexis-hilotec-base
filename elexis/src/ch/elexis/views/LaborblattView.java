@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborblattView.java 5324 2009-05-29 15:30:24Z rgw_ch $
+ *  $Id: LaborblattView.java 6227 2010-03-18 14:02:17Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -36,14 +36,6 @@ public class LaborblattView extends ViewPart implements ICallback {
 	TextContainer text;
 
 	public LaborblattView() {
-	}
-
-	@Override
-	public void dispose() {
-		if (text != null) {
-			text.dispose();
-		}
-		super.dispose();
 	}
 
 	@Override
