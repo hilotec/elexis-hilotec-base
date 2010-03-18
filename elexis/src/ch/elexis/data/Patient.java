@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Patient.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ *  $Id: Patient.java 6214 2010-03-18 10:43:26Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -530,6 +530,12 @@ public class Patient extends Person {
 		return true;
 	}
 
+	public String getAuftragsnummer(){
+		String pid = StringTool.addModulo10(getPatCode()) + "-" //$NON-NLS-1$
+		+ new TimeTool().toString(TimeTool.TIME_COMPACT);
+		return pid;
+	}
+	
 	public String getAlter() {
 		TimeTool now = new TimeTool();
 		TimeTool bd = new TimeTool(getGeburtsdatum());
