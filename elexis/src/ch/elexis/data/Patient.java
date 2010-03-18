@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Patient.java 6214 2010-03-18 10:43:26Z rgw_ch $
+ *  $Id: Patient.java 6232 2010-03-18 15:30:24Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -529,13 +529,22 @@ public class Patient extends Person {
 	public boolean isDragOK() {
 		return true;
 	}
-
+	
+	/**
+	 * Eine Auftragsnummer erstellen. Diese enthält die Patientennummer ergänzt mit der
+	 * Modulo10-Prüfsumme über diese Nummer, plus die aktuelle Uhrzeit als -hhmm
+	 * @return eine verifizierbare Auftragsnummer.
+	 */
 	public String getAuftragsnummer(){
 		String pid = StringTool.addModulo10(getPatCode()) + "-" //$NON-NLS-1$
 		+ new TimeTool().toString(TimeTool.TIME_COMPACT);
 		return pid;
 	}
 	
+	/**
+	 * Das Alter des Patienten in Jahren errechnen
+	 * @return Das Alter in ganzen Jahren als String
+	 */
 	public String getAlter() {
 		TimeTool now = new TimeTool();
 		TimeTool bd = new TimeTool(getGeburtsdatum());
