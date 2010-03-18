@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PrintFindingsDialog.java 2516 2007-06-12 15:56:07Z rgw_ch $
+ *  $Id: PrintFindingsDialog.java 6222 2010-03-18 12:29:25Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -28,6 +28,7 @@ import ch.elexis.util.SWTHelper;
 
 public class PrintFindingsDialog extends TitleAreaDialog implements ICallback {
 	String[][] fields;
+	private TextContainer text;
 	
 	public PrintFindingsDialog(Shell parentShell, String[][] fields) {
 		super(parentShell);
@@ -37,7 +38,7 @@ public class PrintFindingsDialog extends TitleAreaDialog implements ICallback {
 			@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite ret=new Composite(parent,SWT.NONE);
-		TextContainer text=new TextContainer(getShell());
+		text=new TextContainer(getShell());
 		ret.setLayout(new FillLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		text.getPlugin().createContainer(ret, this);
@@ -73,4 +74,12 @@ public class PrintFindingsDialog extends TitleAreaDialog implements ICallback {
 		return false;
 	}
 		
+	@Override
+	public boolean close(){
+		boolean closed = super.close();
+		if (text != null) {
+			text.dispose();
+		}
+		return closed;
+	}
 }
