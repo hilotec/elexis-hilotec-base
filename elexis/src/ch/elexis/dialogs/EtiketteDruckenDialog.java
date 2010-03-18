@@ -102,6 +102,6 @@ public class EtiketteDruckenDialog extends TitleAreaDialog implements ICallback 
 		String printer = Hub.localCfg.get("Drucker/Etiketten/Name", "");
 		String tray = Hub.localCfg.get("Drucker/Etiketten/Schacht", null);
 
-		return text.getPlugin().print(printer, tray, true);
+		return text.getPlugin().print(printer, tray, false);
 	}
 }
