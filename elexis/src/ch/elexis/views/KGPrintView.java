@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation based on RnPrintView
  *
- * $Id: KGPrintView.java 5322 2009-05-29 10:59:45Z rgw_ch $
+ * $Id: KGPrintView.java 6218 2010-03-18 12:26:14Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -37,6 +37,7 @@ public class KGPrintView extends ViewPart {
 
 	CTabFolder ctab;
 	private int existing;
+	private TextContainer text;
 
 	public KGPrintView() {
 	}
@@ -51,7 +52,7 @@ public class KGPrintView extends ViewPart {
 	CTabItem addItem(final String template, final String title,
 			final Kontakt adressat) {
 		CTabItem ret = new CTabItem(ctab, SWT.NONE);
-		TextContainer text = new TextContainer(getViewSite());
+		text = new TextContainer(getViewSite());
 		ret.setControl(text.getPlugin().createContainer(ctab, new ICallback() {
 			public void save() {
 			}
@@ -78,6 +79,9 @@ public class KGPrintView extends ViewPart {
 	@Override
 	public void dispose() {
 		clearItems();
+		if (text != null) {
+			text.dispose();
+		}
 		super.dispose();
 	}
 

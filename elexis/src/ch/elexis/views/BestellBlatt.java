@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: BestellBlatt.java 5322 2009-05-29 10:59:45Z rgw_ch $
+ *    $Id: BestellBlatt.java 6218 2010-03-18 12:26:14Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -95,4 +95,11 @@ public class BestellBlatt extends ViewPart implements ICallback {
 		return false;
 	}
 	
+	@Override
+	public void dispose() {
+		if (text != null) {
+			text.dispose();
+		}
+		super.dispose();
+	}
 }

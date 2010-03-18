@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: PatHeuteView.java 6132 2010-02-13 09:24:06Z rgw_ch $
+ * $Id: PatHeuteView.java 6218 2010-03-18 12:26:14Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.views;
 
@@ -731,6 +731,7 @@ ISaveablePart2, BackgroundJobListener {
 		IVerrechenbar[] lfiltered;
 		int[] numLeistung;
 		Money[] perLeistung;
+		private TextContainer text;
 		
 		public TerminListeDialog(final Shell shell) {
 			super(shell);
@@ -739,7 +740,7 @@ ISaveablePart2, BackgroundJobListener {
 		@Override
 		protected Control createDialogArea(final Composite parent) {
 			Composite ret = new Composite(parent, SWT.NONE);
-			TextContainer text = new TextContainer(getShell());
+			text = new TextContainer(getShell());
 			ret.setLayout(new FillLayout());
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			text.getPlugin().createContainer(ret, this);
@@ -842,7 +843,15 @@ ISaveablePart2, BackgroundJobListener {
 			// TODO Auto-generated method stub
 			return false;
 		}
-		
+
+		@Override
+		public boolean close(){
+			boolean closed = super.close();
+			if (text != null) {
+				text.dispose();
+			}
+			return closed;
+		}
 	}
 	
 	private final class DropReceiver implements

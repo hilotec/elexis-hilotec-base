@@ -8,7 +8,7 @@
  * Contributors:
  *    Daniel Lutz - initial implementation based on RnPrintView
  *    
- * $Id: TemplatePrintView.java 5326 2009-05-29 20:08:32Z rgw_ch $
+ * $Id: TemplatePrintView.java 6218 2010-03-18 12:26:14Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -38,6 +38,8 @@ public class TemplatePrintView extends ViewPart {
 	CTabFolder ctab;
 	private int existing;
 	
+	private TextContainer text;
+	
 	public TemplatePrintView(){}
 	
 	@Override
@@ -49,7 +51,7 @@ public class TemplatePrintView extends ViewPart {
 	
 	CTabItem addItem(final String template, final String title, final Kontakt adressat){
 		CTabItem ret = new CTabItem(ctab, SWT.NONE);
-		TextContainer text = new TextContainer(getViewSite());
+		text = new TextContainer(getViewSite());
 		ret.setControl(text.getPlugin().createContainer(ctab, new ICallback() {
 			public void save(){}
 			
@@ -76,6 +78,9 @@ public class TemplatePrintView extends ViewPart {
 	@Override
 	public void dispose(){
 		clearItems();
+		if (text != null) {
+			text.dispose();
+		}
 		super.dispose();
 	}
 	

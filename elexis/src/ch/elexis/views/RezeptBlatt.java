@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: RezeptBlatt.java 6058 2010-02-03 15:02:13Z rgw_ch $
+ *  $Id: RezeptBlatt.java 6218 2010-03-18 12:26:14Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -146,6 +146,5 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	
 	public Image getSymbol(){
 		return Desk.getImage(Desk.IMG_PRINTER);
-	}
-	
+	}	
 }
