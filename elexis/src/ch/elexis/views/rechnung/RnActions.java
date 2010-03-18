@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: RnActions.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * $Id: RnActions.java 6220 2010-03-18 12:28:39Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -427,6 +427,7 @@ public class RnActions {
 	static class RnListeDruckDialog extends TitleAreaDialog implements
 			ICallback {
 		ArrayList<Rechnung> rnn;
+		private TextContainer text;
 
 		public RnListeDruckDialog(final Shell shell, final Object[] tree) {
 			super(shell);
@@ -460,7 +461,7 @@ public class RnActions {
 		@Override
 		protected Control createDialogArea(final Composite parent) {
 			Composite ret = new Composite(parent, SWT.NONE);
-			TextContainer text = new TextContainer(getShell());
+			text = new TextContainer(getShell());
 			ret.setLayout(new FillLayout());
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			text.getPlugin().createContainer(ret, this);
@@ -526,6 +527,15 @@ public class RnActions {
 		public boolean saveAs() {
 			// TODO Auto-generated method stub
 			return false;
+		}
+		
+		@Override
+		public boolean close(){
+			boolean closed = super.close();
+			if (text != null) {
+				text.dispose();
+			}
+			return closed;
 		}
 
 	}
