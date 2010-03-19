@@ -8,7 +8,7 @@
  * Contributors:
  *    M. Imhof - initial implementation
  *    
- *  $Id: EtiketteDruckenDialog.java 6233 2010-03-19 10:38:03Z rgw_ch $
+ *  $Id: EtiketteDruckenDialog.java 6237 2010-03-19 11:24:39Z michael_imhof $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -30,8 +30,8 @@ public class EtiketteDruckenDialog extends TitleAreaDialog implements ICallback 
 	final Kontakt kontakt;
 	final String template;
 	
-	String message = "Etikette ausdrucken";
 	String title = "Etikette";
+	String message = "Etikette ausdrucken";
 	
 	private TextContainer text = null;
 	
@@ -41,12 +41,12 @@ public class EtiketteDruckenDialog extends TitleAreaDialog implements ICallback 
 		this.template = _template;
 	}
 
-	public void setMessage(String message) {
-		this.message = message;
+	public void setMessage(String newMessage) {
+		this.message = newMessage;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setTitle(String newTitle) {
+		this.title = newTitle;
 	}
 
 	@Override
@@ -63,13 +63,14 @@ public class EtiketteDruckenDialog extends TitleAreaDialog implements ICallback 
 		
 		return ret;
 	}
+	
 
 	@Override
 	public void create() {
 		super.create();
-		setMessage(message);
-		setTitle(title);
-		getShell().setText(title);
+		super.setTitle(title);
+		super.setMessage(message);
+		getShell().setText("Etikette");
 		getShell().setSize(800, 700);
 	}
 
