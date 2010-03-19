@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: KontakteView.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ * $Id: KontakteView.java 6238 2010-03-19 15:50:41Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -212,7 +212,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 				String[] flds = cv.getConfigurer().getControlFieldProvider().getValues();
 				String[] predef =
 					new String[] {
-					flds[1], flds[2], StringConstants.EMPTY, StringConstants.EMPTY,
+					flds[1], flds[2], StringConstants.EMPTY, 
 					flds[3], flds[4], flds[5]
 				};
 				KontaktErfassenDialog ked =
