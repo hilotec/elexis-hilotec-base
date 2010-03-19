@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PrinterPreferencePage.java 6217 2010-03-18 12:24:57Z michael_imhof $
+ * $Id: PrinterPreferencePage.java 6235 2010-03-19 11:20:20Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -74,7 +74,7 @@ public class PrinterPreferencePage extends PreferencePage implements
 		cEtiketten.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		cEtiketten.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				setEtikettenSelection();
+				setEtikettenSelection(cEtiketten.getSelection());
 			}
 		});
 		
@@ -128,8 +128,9 @@ public class PrinterPreferencePage extends PreferencePage implements
 		
 		tEtiketten.setText(Hub.localCfg.get("Drucker/Etiketten/Name",StringTool.leer)); //$NON-NLS-1$
 		tEtikettenschacht.setText(Hub.localCfg.get("Drucker/Etiketten/Schacht",StringTool.leer)); //$NON-NLS-1$
-		cEtiketten.setSelection(Hub.localCfg.get("Drucker/Etiketten/Choose", false)); //$NON-NLS-1$
-		setEtikettenSelection();
+		boolean selection = Hub.localCfg.get("Drucker/Etiketten/Choose", false);
+		cEtiketten.setSelection(selection); //$NON-NLS-1$
+		setEtikettenSelection(selection);
 		tA4ESR.setText(Hub.localCfg.get("Drucker/A4ESR/Name",StringTool.leer)); //$NON-NLS-1$
 		tA4ESRSchacht.setText(Hub.localCfg.get("Drucker/A4ESR/Schacht",StringTool.leer)); //$NON-NLS-1$
 		tA4.setText(Hub.localCfg.get("Drucker/A4/Name",StringTool.leer)); //$NON-NLS-1$
@@ -168,9 +169,7 @@ public class PrinterPreferencePage extends PreferencePage implements
 		
 	};
 	
-	private void setEtikettenSelection() {
-		boolean selection = cEtiketten.getSelection();
-		
+	private void setEtikettenSelection(boolean selection) {
 		if (selection) {
 			tEtiketten.setText(StringTool.leer);
 			tEtiketten.setData(null);
@@ -190,6 +189,7 @@ public class PrinterPreferencePage extends PreferencePage implements
 	public boolean performOk() {
 		Hub.localCfg.set("Drucker/Etiketten/Name",tEtiketten.getText()); //$NON-NLS-1$
 		Hub.localCfg.set("Drucker/Etiketten/Schacht",tEtikettenschacht.getText()); //$NON-NLS-1$
+		Hub.localCfg.set("Drucker/Etiketten/Choose",cEtiketten.getSelection()); //$NON-NLS-1$
 		Object data = tEtiketten.getData();
 		if (data instanceof PrinterData) {
 			PrinterData pdata = (PrinterData) data;
