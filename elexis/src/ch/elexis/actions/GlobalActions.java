@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: GlobalActions.java 6215 2010-03-18 12:23:37Z michael_imhof $
+ * $Id: GlobalActions.java 6236 2010-03-19 11:21:25Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -328,14 +328,20 @@ public class GlobalActions {
 						new EtiketteDruckenDialog(mainWindow.getShell(), kontakt, "AdressEtikette");
 					dlg.setTitle(Messages.getString("GlobalActions.PrintContactLabel"));
 					dlg.setMessage(Messages.getString("GlobalActions.PrintContactLabelToolTip"));
-					dlg.setBlockOnOpen(false);
-					dlg.open();
-					if (dlg.doPrint()) {
-						dlg.close();
+					if (isDirectPrint()) {
+						dlg.setBlockOnOpen(false);
+						dlg.open();
+						if (dlg.doPrint()) {
+							dlg.close();
+						} else {
+							SWTHelper
+									.alert(
+											"Fehler beim Drucken",
+											"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+						}
 					} else {
-						SWTHelper
-							.alert("Fehler beim Drucken",
-								"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+						dlg.setBlockOnOpen(true);
+						dlg.open();
 					}
 				}
 			};
@@ -359,14 +365,20 @@ public class GlobalActions {
 							"AdressEtikette");
 					dlg.setTitle(Messages.getString("GlobalActions.PrintAddressLabel"));
 					dlg.setMessage(Messages.getString("GlobalActions.PrintAddressLabelToolTip"));
-					dlg.setBlockOnOpen(false);
-					dlg.open();
-					if (dlg.doPrint()) {
-						dlg.close();
+					if (isDirectPrint()) {
+						dlg.setBlockOnOpen(false);
+						dlg.open();
+						if (dlg.doPrint()) {
+							dlg.close();
+						} else {
+							SWTHelper
+									.alert(
+											"Fehler beim Drucken",
+											"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+						}
 					} else {
-						SWTHelper
-							.alert("Fehler beim Drucken",
-								"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+						dlg.setBlockOnOpen(true);
+						dlg.open();
 					}
 				}
 			};
@@ -390,14 +402,20 @@ public class GlobalActions {
 							"PatientEtiketteAuftrag");
 					dlg.setTitle(Messages.getString("GlobalActions.PrintVersionedLabel"));
 					dlg.setMessage(Messages.getString("GlobalActions.PrintVersionedLabelToolTip"));
-					dlg.setBlockOnOpen(false);
-					dlg.open();
-					if (dlg.doPrint()) {
-						dlg.close();
+					if (isDirectPrint()) {
+						dlg.setBlockOnOpen(false);
+						dlg.open();
+						if (dlg.doPrint()) {
+							dlg.close();
+						} else {
+							SWTHelper
+									.alert(
+											"Fehler beim Drucken",
+											"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+						}
 					} else {
-						SWTHelper
-							.alert("Fehler beim Drucken",
-								"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+						dlg.setBlockOnOpen(true);
+						dlg.open();
 					}
 				}
 			};
@@ -421,14 +439,20 @@ public class GlobalActions {
 							"PatientEtikette");
 					dlg.setTitle(Messages.getString("GlobalActions.PrintLabel"));
 					dlg.setMessage(Messages.getString("GlobalActions.PrintLabelToolTip"));
-					dlg.setBlockOnOpen(false);
-					dlg.open();
-					if (dlg.doPrint()) {
-						dlg.close();
+					if (isDirectPrint()) {
+						dlg.setBlockOnOpen(false);
+						dlg.open();
+						if (dlg.doPrint()) {
+							dlg.close();
+						} else {
+							SWTHelper
+									.alert(
+											"Fehler beim Drucken",
+											"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+						}
 					} else {
-						SWTHelper
-							.alert("Fehler beim Drucken",
-								"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+						dlg.setBlockOnOpen(true);
+						dlg.open();
 					}
 				}
 			};
@@ -800,6 +824,14 @@ public class GlobalActions {
 		}
 		
 		return pd;
+	}
+	
+	/**
+	 * Return true if direct printing on defined printer. 
+	 * If false, the user has to choose the printer and print himself
+	 */
+	private boolean isDirectPrint() {
+		return Hub.localCfg.get("Drucker/Etiketten/Choose", false);
 	}
 	
 	/**
