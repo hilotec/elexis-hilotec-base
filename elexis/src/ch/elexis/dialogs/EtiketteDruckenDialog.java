@@ -1,14 +1,14 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    G. Weirich - initial implementation
+ *    M. Imhof - initial implementation
  *    
- *  $Id: TermineDruckenDialog.java 5641 2009-08-18 08:45:21Z rgw_ch $
+ *  $Id: EtiketteDruckenDialog.java 6233 2010-03-19 10:38:03Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
