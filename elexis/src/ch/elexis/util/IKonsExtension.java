@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IKonsExtension.java 6211 2010-03-16 19:46:31Z rgw_ch $
+ * $Id: IKonsExtension.java 6242 2010-03-20 12:29:52Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.StyleRange;
 
-import ch.elexis.exchange.text.IRange;
 import ch.elexis.text.IRichTextDisplay;
+import ch.elexis.text.model.IRange;
 
 /**
  * Erweiterung für Konsultationseinträge. Wird vom Extensionpoint KonsExtensions

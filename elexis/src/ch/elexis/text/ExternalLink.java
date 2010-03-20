@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ExternalLink.java 6194 2010-03-14 12:13:27Z rgw_ch $
+ *  $Id: ExternalLink.java 6242 2010-03-20 12:29:52Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.text;
 
@@ -19,7 +19,7 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.program.Program;
 
 import ch.elexis.Desk;
-import ch.elexis.exchange.text.IRange;
+import ch.elexis.text.model.IRange;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
