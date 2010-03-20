@@ -10,7 +10,7 @@
  *    A. Kaufmann - better support for IDataAccess
  *    H. Marlovits - introduced SQL Fields
  * 
- *  $Id: TextContainer.java 6068 2010-02-04 12:14:09Z rgw_ch $
+ *  $Id: TextContainer.java 6240 2010-03-20 12:21:03Z marlovitsh $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -18,8 +18,10 @@ package ch.elexis.text;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -444,16 +446,16 @@ public class TextContainer {
 	 *         [SQL|<FeldTrenner>:<Hier kommt die SQL-Abfrage hin>]
 	 *         [SQL|<FeldTrenner>|<DatensatzTrenner>:<Hier kommt die SQL-Abfrage hin>]
 	 * 
-	 * Die Feldtrenner kÃ¶nnen beliebige Strings sein.
+	 * Die Feldtrenner können beliebige Strings sein.
 	 * Wird kein FeldTrenner respektive kein DatensatzTrenner angegeben, so werden Defaults verwendet:
-	 *    fÃ¼r FeldTrenner:      Tab     \t
-	 *    fÃ¼r DatensatzTrenner: newLine \n
-	 * In den Trennern kÃ¶nnen die escape characters \n, \r, \t, \f, \b verwendet werden.
-	 * Octal-Escapes werden zur Zeit nich unterstÃ¼tzt.
+	 *    für FeldTrenner:      Tab     \t
+	 *    für DatensatzTrenner: newLine \n
+	 * In den Trennern können die escape characters \n, \r, \t, \f, \b verwendet werden.
+	 * Octal-Escapes werden zur Zeit nicht unterstützt.
 	 * 
-	 * In der SQL-Abfrage kÃ¶nnen alle Ã¼blichen direkten und indirekten Platzhalter verwendet werden,
+	 * In der SQL-Abfrage können alle üblichen direkten und indirekten Platzhalter verwendet werden,
 	 * zBsp [Patient.ID] oder [Fall.ID], [Mandant.Vorname], [Konsultation.Datum] etc.
-	 * Diese werden zuerst ersetzt. Danach wird die eigentliche Abfrage durchgefÃ¼hrt.
+	 * Diese werden zuerst ersetzt. Danach wird die eigentliche Abfrage durchgeführt.
 	 * 
 	 * Um die im Datenbankfeld "ExtInfo" gespeichterten Daten abzurufen, ist die folgende Hilfssyntax als
 	 * Feldabfrage vorgesehen:
@@ -462,10 +464,10 @@ public class TextContainer {
 	 *          Das Feld Beruf wurde in den Einstellungen "Zusatzfelder in Patient-Detail-Blatt" definiert
 	 * 
 	 * 
-	 * Auf diese Weise lÃ¤sst sich so ziemlich alles in ziemlich jeglicher Form zur Darstellung extrahieren.
+	 * Auf diese Weise lässt sich so ziemlich alles in ziemlich jeglicher Form zur Darstellung extrahieren.
 	 * 
 	 * 
-	 * Bespiele:
+	 * Beispiele:
 	 * 
 	 * Abfrage:
 	 * [SQL:select chr(9) || prozent || '%', to_char(to_date(datumvon, 'yyyymmdd'), 'dd.mm.yyyy'), '-',
@@ -479,7 +481,7 @@ public class TextContainer {
 	 *      select extinfo:KONTAKT.Beruf, extinfo:KONTAKT.Ledigname, Bezeichnung1, Bezeichnung2
 	 *      from KONTAKT where id ='[Patient.ID]' or id='1029']
 	 * Resultat:
-	 * Schreiner_   _BÃ¼nzli_    _HagenmÃ¼ller_  _Margrit
+	 * Schreiner_   _Bünzli_    _Hagenmüller_  _Margrit
 	 * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	 * Lehrer_      _Germann_   _Marlovits_    _Annegret
 	 * 
@@ -544,7 +546,20 @@ public class TextContainer {
 		}
 		
 		// execute query
-		ResultSet rs = stm.query(sql);
+		java.sql.Connection conn = j.getConnection();
+		Statement statement = null;
+		ResultSet rs = null;
+		try {
+			statement = conn.createStatement();
+			rs = statement.executeQuery(sql);
+		} catch (SQLException e1) {
+			j.releaseStatement(stm);
+			try {
+				statement.close();
+			} catch (SQLException e) {
+			}
+			return "[???" + b + " ***" + e1.getMessage() + "*** ???]";
+		}
 		
 		// create result by reading rows/fields and extracting hashTable fields from extInfo
 		String fieldContent = "";
@@ -578,7 +593,7 @@ public class TextContainer {
 							}
 						}
 						// append field to result
-						result = result + delimiter + fieldContent;
+						result = result + delimiter + (fieldContent == null ? "" : fieldContent);
 						delimiter = fieldDelimiter;
 					} catch (Exception e) {
 						// this just catches the case where i > num of columns...
@@ -589,10 +604,18 @@ public class TextContainer {
 			}
 		} catch (SQLException e) {
 			j.releaseStatement(stm);
-			e.printStackTrace();
+			try {
+				statement.close();
+			} catch (SQLException e1) {
+			}
+			return "[???" + b + " ***" + e.getMessage() + "*** ???]";
 		}
-		// aufrÃ¤umen
+		// aufräumen
 		j.releaseStatement(stm);
+		try {
+			statement.close();
+		} catch (SQLException e) {
+		}
 		return result;
 	}
 	
