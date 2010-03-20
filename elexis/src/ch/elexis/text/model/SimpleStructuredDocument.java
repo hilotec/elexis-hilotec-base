@@ -20,8 +20,6 @@ import org.jdom.output.XMLOutputter;
 import ch.elexis.ElexisException;
 import ch.elexis.Hub;
 import ch.elexis.exchange.XChangeContainer;
-import ch.elexis.exchange.text.IMarkup;
-import ch.elexis.exchange.text.IRange;
 import ch.elexis.text.Samdas;
 import ch.elexis.text.Samdas.XRef;
 import ch.elexis.util.IKonsExtension;
@@ -101,6 +99,9 @@ public class SimpleStructuredDocument {
 		}
 	}
 
+	public String getPlaintext(){
+		return contents.toString();
+	}
 	private void parseSamdas(Element eRoot) {
 		Element eRecord = eRoot.getChild("record", ns);
 		List<Element> eXRef = eRecord.getChildren("xref", ns);

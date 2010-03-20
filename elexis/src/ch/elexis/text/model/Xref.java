@@ -1,6 +1,5 @@
 package ch.elexis.text.model;
 
-import ch.elexis.exchange.text.IXref;
 
 public class Xref extends Range implements IXref{
 	String provider;

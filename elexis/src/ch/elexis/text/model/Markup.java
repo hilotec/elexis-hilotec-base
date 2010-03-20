@@ -1,6 +1,5 @@
 package ch.elexis.text.model;
 
-import ch.elexis.exchange.text.IMarkup;
 
 public class Markup extends Range implements IMarkup {
 	IMarkup.TYPE type;
