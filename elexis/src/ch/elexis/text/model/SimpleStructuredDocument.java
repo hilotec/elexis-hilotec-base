@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.TextChangeListener;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -20,12 +18,8 @@ import org.jdom.output.XMLOutputter;
 import ch.elexis.ElexisException;
 import ch.elexis.Hub;
 import ch.elexis.exchange.XChangeContainer;
-import ch.elexis.text.Samdas;
-import ch.elexis.text.Samdas.XRef;
-import ch.elexis.util.IKonsExtension;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.XMLTool;
 
 /**
  * SimpleStructuredText is an XML format to define structured texts. To simplify
@@ -257,6 +251,10 @@ public class SimpleStructuredDocument {
 
 	public void replaceTextRange(int start, int replaceLength, String newText) {
 		contents.replace(start, start + replaceLength, newText);
+	}
+
+	public void removeRange(IRange range) {
+		ranges.remove(range);
 	}
 
 }
