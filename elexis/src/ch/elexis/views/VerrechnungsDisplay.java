@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: VerrechnungsDisplay.java 6178 2010-03-01 17:25:51Z rgw_ch $
+ *  $Id: VerrechnungsDisplay.java 6246 2010-03-20 19:42:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -170,7 +170,7 @@ public class VerrechnungsDisplay extends Composite {
 		}
 	}
 	
-	void setLeistungen(Konsultation b) {
+	public void setLeistungen(Konsultation b) {
 		List<Verrechnet> lgl = b.getLeistungen();
 		tVerr.setRedraw(false);
 		tVerr.removeAll();

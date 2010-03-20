@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: KonsDetailView.java 6148 2010-02-16 15:36:15Z rgw_ch $
+ *  $Id: KonsDetailView.java 6246 2010-03-20 19:42:29Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -91,7 +91,7 @@ ISaveablePart2 {
 	static Log log = Log.get("Detail"); //$NON-NLS-1$
 	Hashtable<String, IKonsExtension> hXrefs;
 	EnhancedTextField text;
-	Label lBeh, lVersion;
+	private Label lBeh, lVersion;
 	Hyperlink hlMandant;
 	Combo cbFall;
 	private Konsultation actKons;
