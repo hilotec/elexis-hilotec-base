@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.TextChangeListener;
 import org.jdom.Document;
 import org.jdom.Element;
@@ -18,7 +20,11 @@ import org.jdom.output.XMLOutputter;
 import ch.elexis.ElexisException;
 import ch.elexis.Hub;
 import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.exchange.text.IMarkup;
 import ch.elexis.exchange.text.IRange;
+import ch.elexis.text.Samdas;
+import ch.elexis.text.Samdas.XRef;
+import ch.elexis.util.IKonsExtension;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
@@ -31,9 +37,9 @@ import ch.rgw.tools.XMLTool;
  * @author gerry
  * 
  */
-public class SimpleStructuredDocument{
-	public static final String VERSION="1.0.0";
-	public static final String GENERATOR="Elexis";
+public class SimpleStructuredDocument {
+	public static final String VERSION = "1.0.0";
+	public static final String GENERATOR = "Elexis";
 	public static final String ELEM_ROOT = "SimpleStructuredDocument"; //$NON-NLS-1$
 	public static final String ELEM_TEXT = "text"; //$NON-NLS-1$
 	public static final String ELEM_RECORD = "record"; //$NON-NLS-1$
@@ -55,13 +61,18 @@ public class SimpleStructuredDocument{
 	}
 
 	/**
-	 * Parse an input String. Can parse plain text, Samdas or SimpleStructuredDocument
+	 * Parse an input String. Can parse plain text, Samdas or
+	 * SimpleStructuredDocument
+	 * 
 	 * @param input
-	 * @param bAppend if true, new inpout will appended. If false, current contents will be erased first.
-	 * @throws ElexisException if an XML input could not be parsed
+	 * @param bAppend
+	 *            if true, new inpout will appended. If false, current contents
+	 *            will be erased first.
+	 * @throws ElexisException
+	 *             if an XML input could not be parsed
 	 */
-	public void loadSST(String input, boolean bAppend) throws ElexisException {
-		if(!bAppend){
+	public void loadText(String input, boolean bAppend) throws ElexisException {
+		if (!bAppend) {
 			contents.setLength(0);
 			ranges.clear();
 		}
@@ -71,13 +82,10 @@ public class SimpleStructuredDocument{
 				CharArrayReader car = new CharArrayReader(input.toCharArray());
 				Document doc = builder.build(car);
 				Element eRoot = doc.getRootElement();
-				Element eText = eRoot.getChild(ELEM_TEXT, ns);
-				contents.append(eText.getText());
-				List<Element> eSections = eRoot.getChildren("section", ns);
-				for (Element e : eSections) {
-					ranges.add(new Section(e.getAttributeValue("name"), Integer
-							.parseInt(e.getAttributeValue("startOffset")),
-							Integer.parseInt(e.getAttributeValue("length"))));
+				if (eRoot.getName().equals("EMR")) {
+					parseSamdas(eRoot);
+				} else if (eRoot.getName().equals(ELEM_ROOT)) {
+					parseSSD(eRoot);
 				}
 			} catch (JDOMException jde) {
 				ExHandler.handle(jde);
@@ -93,25 +101,77 @@ public class SimpleStructuredDocument{
 		}
 	}
 
+	private void parseSamdas(Element eRoot) {
+		Element eRecord = eRoot.getChild("record", ns);
+		List<Element> eXRef = eRecord.getChildren("xref", ns);
+		Element eText = eRecord.getChild("text", ns);
+		contents.append(eText.getText());
+		List<Element> eMarkup = eRecord.getChildren("markup", ns);
+		for (Element el : eXRef) {
+			int pos = Integer.parseInt(el.getAttributeValue("from"));
+			int len = Integer.parseInt(el.getAttributeValue("length"));
+			String provider = el.getAttributeValue("provider");
+			String id = el.getAttributeValue("id");
+			ranges.add(new Xref(pos, len, provider, id));
+		}
+		for (Element el : eMarkup) {
+			int pos = Integer.parseInt(el.getAttributeValue("from"));
+			int len = Integer.parseInt(el.getAttributeValue("length"));
+			String type = el.getAttributeValue("type");
+			IMarkup.TYPE t = IMarkup.TYPE.NORMAL;
+			if (type.equalsIgnoreCase("emphasized")) {
+				t = IMarkup.TYPE.EM;
+			} else if (type.equals("bold")) {
+				t = IMarkup.TYPE.BOLD;
+			} else if (type.equalsIgnoreCase("italic")) { //$NON-NLS-1$
+				t = IMarkup.TYPE.ITALIC;
+			} else if (type.equalsIgnoreCase("underlined")) { //$NON-NLS-1$
+				t = IMarkup.TYPE.UNDERLINE;
+			} else if (type.equalsIgnoreCase("strikethru")) {
+				t = IMarkup.TYPE.STRIKETHRU;
+			}
+			Markup m = new Markup(pos, len, t);
+			ranges.add(m);
+		}
+
+	}
+
+	private void parseSSD(Element eRoot) {
+		Element eText = eRoot.getChild(ELEM_TEXT, ns);
+		contents.append(eText.getText());
+		List<Element> eSections = eRoot.getChildren("section", ns);
+		for (Element e : eSections) {
+			ranges.add(new Section(e.getAttributeValue("name"), Integer
+					.parseInt(e.getAttributeValue("startOffset")), Integer
+					.parseInt(e.getAttributeValue("length"))));
+		}
+
+	}
+
 	/**
-	 * Convert the contents to a SimpleStructuredDocument file. 
-	 * @param bCreateHeader if false, a representation without header information is created
+	 * Convert the contents to a SimpleStructuredDocument file.
+	 * 
+	 * @param bCreateHeader
+	 *            if false, a representation without header information is
+	 *            created
 	 * @return
 	 */
 	public String toXML(boolean bCreateHeader) {
 		Document doc = new Document();
 		Element eRoot = new Element(ELEM_ROOT, ns);
-		if(!bCreateHeader){
-			eRoot.setAttribute("created", new TimeTool().toString(TimeTool.DATETIME_XML));
-			eRoot.setAttribute("lastEdit", new TimeTool().toString(TimeTool.DATETIME_XML));
+		if (!bCreateHeader) {
+			eRoot.setAttribute("created", new TimeTool()
+					.toString(TimeTool.DATETIME_XML));
+			eRoot.setAttribute("lastEdit", new TimeTool()
+					.toString(TimeTool.DATETIME_XML));
 			eRoot.setAttribute("createdBy", Hub.actMandant.getPersonalia());
-			eRoot.setAttribute("editedBy",Hub.actUser.getPersonalia());
-			eRoot.setAttribute("version",VERSION);
-			eRoot.setAttribute("generator",Hub.APPLICATION_NAME);
-			eRoot.setAttribute("generatorVersion",Hub.Version);
+			eRoot.setAttribute("editedBy", Hub.actUser.getPersonalia());
+			eRoot.setAttribute("version", VERSION);
+			eRoot.setAttribute("generator", Hub.APPLICATION_NAME);
+			eRoot.setAttribute("generatorVersion", Hub.Version);
 			eRoot.addNamespaceDeclaration(XChangeContainer.nsxsi);
 			eRoot.addNamespaceDeclaration(XChangeContainer.nsschema);
-		
+
 		}
 		Element eText = new Element(ELEM_TEXT, ns);
 		eText.setText(contents.toString());
@@ -182,7 +242,6 @@ public class SimpleStructuredDocument{
 	public String getLineDelimiter() {
 		return "\n";
 	}
-
 
 	public String getTextRange(int start, int length) {
 		if (start < 0 || start > contents.length()) {

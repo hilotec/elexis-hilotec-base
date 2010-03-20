@@ -8,12 +8,12 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: IMarkup.java 5224 2009-03-26 21:15:07Z rgw_ch $
+ *  $Id: IMarkup.java 6239 2010-03-20 12:12:03Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.text;
 
 public interface IMarkup extends IRange {
-	public enum TYPE{BOLD,EM,UNDERLINE,ITALIC,STRIKETHRU};
+	public enum TYPE{NORMAL,BOLD,EM,UNDERLINE,ITALIC,STRIKETHRU};
 	public TYPE getType();
 }
