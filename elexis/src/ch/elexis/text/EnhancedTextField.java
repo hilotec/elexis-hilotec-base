@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: EnhancedTextField.java 6194 2010-03-14 12:13:27Z rgw_ch $
+ *  $Id: EnhancedTextField.java 6247 2010-03-21 06:36:34Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -96,7 +96,7 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 	private static Pattern underline = Pattern.compile("_\\S+_"); //$NON-NLS-1$
 	private IAction copyAction, cutAction, pasteAction;
 	private IMenuListener globalMenuListener;
-	private final ElexisEventListener ucl = new UserChangeListener();
+	private final ElexisEventListener eeli_user = new UserChangeListener();
 	
 	public void addMenuListener(IMenuListener ml){
 		menuMgr.addMenuListener(ml);
@@ -146,7 +146,7 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 			}
 		};
 		ApplicationActionBarAdvisor.editMenu.addMenuListener(globalMenuListener);
-		ElexisEventDispatcher.getInstance().addListeners(ucl);
+		ElexisEventDispatcher.getInstance().addListeners(eeli_user);
 	}
 	
 	public void disconnectGlobalActions(IViewSite site){
@@ -155,7 +155,7 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 		actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(), null);
 		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), null);
 		ApplicationActionBarAdvisor.editMenu.removeMenuListener(globalMenuListener);
-		ElexisEventDispatcher.getInstance().removeListeners(ucl);
+		ElexisEventDispatcher.getInstance().removeListeners(eeli_user);
 		
 	}
 	
