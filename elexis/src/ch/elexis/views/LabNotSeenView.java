@@ -233,7 +233,14 @@ public class LabNotSeenView extends ViewPart implements HeartListener {
 		unseen = LabResult.getUnseen().toArray(new LabResult[0]);
 		Desk.getDisplay().asyncExec(new Runnable() {
 			public void run() {
-				tv.refresh();
+				if (tv != null) {
+					synchronized (tv) {
+						if (tv.getControl() != null
+								&& !tv.getControl().isDisposed()) {
+							tv.refresh();
+						}
+					}
+				}
 			}
 		});
 
