@@ -18,6 +18,7 @@ import org.jdom.output.XMLOutputter;
 import ch.elexis.ElexisException;
 import ch.elexis.Hub;
 import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.text.Samdas.XRef;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
@@ -30,6 +31,18 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class SimpleStructuredDocument {
+	private static final String ATTR_TYPE = "type";
+	private static final String ATTR_START_OFFSET = "startOffset";
+	private static final String ELEM_XREF = "xref";
+	private static final String ELEM_SECTION = "section";
+	private static final String ELEM_MARKUP = "markup";
+	private static final String ATTR_TYPE_STRIKETHRU = "strikethru";
+	private static final String ATTR_TYPE_UNDERLINED = "underlined";
+	private static final String ATTR_TYPE_ITALIC = "italic";
+	private static final String ATTR_TYPE_BOLD = "bold";
+	private static final String ATTR_TYPE_EMPHASIZED = "emphasized";
+	private static final String ATTR_LENGTH = "length";
+	private static final String ATTR_SAMDAS_FROM = "from";
 	public static final String VERSION = "1.0.0";
 	public static final String GENERATOR = "Elexis";
 	public static final String ELEM_ROOT = "SimpleStructuredDocument"; //$NON-NLS-1$
@@ -98,31 +111,31 @@ public class SimpleStructuredDocument {
 	}
 	private void parseSamdas(Element eRoot) {
 		Element eRecord = eRoot.getChild("record", ns);
-		List<Element> eXRef = eRecord.getChildren("xref", ns);
+		List<Element> eXRef = eRecord.getChildren(ELEM_XREF, ns);
 		Element eText = eRecord.getChild("text", ns);
 		contents.append(eText.getText());
-		List<Element> eMarkup = eRecord.getChildren("markup", ns);
+		List<Element> eMarkup = eRecord.getChildren(ELEM_MARKUP, ns);
 		for (Element el : eXRef) {
-			int pos = Integer.parseInt(el.getAttributeValue("from"));
-			int len = Integer.parseInt(el.getAttributeValue("length"));
+			int pos = Integer.parseInt(el.getAttributeValue(ATTR_SAMDAS_FROM));
+			int len = Integer.parseInt(el.getAttributeValue(ATTR_LENGTH));
 			String provider = el.getAttributeValue("provider");
 			String id = el.getAttributeValue("id");
 			ranges.add(new Xref(pos, len, provider, id));
 		}
 		for (Element el : eMarkup) {
-			int pos = Integer.parseInt(el.getAttributeValue("from"));
-			int len = Integer.parseInt(el.getAttributeValue("length"));
-			String type = el.getAttributeValue("type");
+			int pos = Integer.parseInt(el.getAttributeValue(ATTR_SAMDAS_FROM));
+			int len = Integer.parseInt(el.getAttributeValue(ATTR_LENGTH));
+			String type = el.getAttributeValue(ATTR_TYPE);
 			IMarkup.TYPE t = IMarkup.TYPE.NORMAL;
-			if (type.equalsIgnoreCase("emphasized")) {
+			if (type.equalsIgnoreCase(ATTR_TYPE_EMPHASIZED)) {
 				t = IMarkup.TYPE.EM;
-			} else if (type.equals("bold")) {
+			} else if (type.equals(ATTR_TYPE_BOLD)) {
 				t = IMarkup.TYPE.BOLD;
-			} else if (type.equalsIgnoreCase("italic")) { //$NON-NLS-1$
+			} else if (type.equalsIgnoreCase(ATTR_TYPE_ITALIC)) { //$NON-NLS-1$
 				t = IMarkup.TYPE.ITALIC;
-			} else if (type.equalsIgnoreCase("underlined")) { //$NON-NLS-1$
+			} else if (type.equalsIgnoreCase(ATTR_TYPE_UNDERLINED)) { //$NON-NLS-1$
 				t = IMarkup.TYPE.UNDERLINE;
-			} else if (type.equalsIgnoreCase("strikethru")) {
+			} else if (type.equalsIgnoreCase(ATTR_TYPE_STRIKETHRU)) {
 				t = IMarkup.TYPE.STRIKETHRU;
 			}
 			Markup m = new Markup(pos, len, t);
@@ -131,16 +144,45 @@ public class SimpleStructuredDocument {
 
 	}
 
+	
 	private void parseSSD(Element eRoot) {
 		Element eText = eRoot.getChild(ELEM_TEXT, ns);
 		contents.append(eText.getText());
-		List<Element> eSections = eRoot.getChildren("section", ns);
+		List<Element> eSections = eRoot.getChildren(ELEM_SECTION, ns);
 		for (Element e : eSections) {
 			ranges.add(new Section(e.getAttributeValue("name"), Integer
-					.parseInt(e.getAttributeValue("startOffset")), Integer
-					.parseInt(e.getAttributeValue("length"))));
+					.parseInt(e.getAttributeValue(ATTR_START_OFFSET)), Integer
+					.parseInt(e.getAttributeValue(ATTR_LENGTH))));
 		}
-
+		List<Element> eMarkups=eRoot.getChildren(ELEM_MARKUP,ns);
+		for(Element el: eMarkups){
+			int pos = Integer.parseInt(el.getAttributeValue(ATTR_START_OFFSET));
+			int len = Integer.parseInt(el.getAttributeValue(ATTR_LENGTH));
+			String type = el.getAttributeValue(ATTR_TYPE);
+			IMarkup.TYPE t = IMarkup.TYPE.NORMAL;
+			if (type.equalsIgnoreCase(ATTR_TYPE_EMPHASIZED)) {
+				t = IMarkup.TYPE.EM;
+			} else if (type.equals(ATTR_TYPE_BOLD)) {
+				t = IMarkup.TYPE.BOLD;
+			} else if (type.equalsIgnoreCase(ATTR_TYPE_ITALIC)) { //$NON-NLS-1$
+				t = IMarkup.TYPE.ITALIC;
+			} else if (type.equalsIgnoreCase(ATTR_TYPE_UNDERLINED)) { //$NON-NLS-1$
+				t = IMarkup.TYPE.UNDERLINE;
+			} else if (type.equalsIgnoreCase(ATTR_TYPE_STRIKETHRU)) {
+				t = IMarkup.TYPE.STRIKETHRU;
+			}
+			Markup m = new Markup(pos, len, t);
+			ranges.add(m);
+		}
+		List<Element> eXRef = eRoot.getChildren(ELEM_XREF, ns);
+		for (Element el : eXRef) {
+			int pos = Integer.parseInt(el.getAttributeValue(ATTR_START_OFFSET));
+			int len = Integer.parseInt(el.getAttributeValue(ATTR_LENGTH));
+			String provider = el.getAttributeValue("provider");
+			String id = el.getAttributeValue("id");
+			ranges.add(new Xref(pos, len, provider, id));
+		}
+	
 	}
 
 	/**
@@ -154,7 +196,7 @@ public class SimpleStructuredDocument {
 	public String toXML(boolean bCreateHeader) {
 		Document doc = new Document();
 		Element eRoot = new Element(ELEM_ROOT, ns);
-		if (!bCreateHeader) {
+		if (bCreateHeader) {
 			eRoot.setAttribute("created", new TimeTool()
 					.toString(TimeTool.DATETIME_XML));
 			eRoot.setAttribute("lastEdit", new TimeTool()
@@ -174,20 +216,39 @@ public class SimpleStructuredDocument {
 		eRoot.addContent(eText);
 		for (IRange r : ranges) {
 			if (r instanceof Section) {
-				Element eSection = new Element("section", ns);
+				Element eSection = new Element(ELEM_SECTION, ns);
 				eSection.setAttribute("name", ((Section) r).getName());
-				eSection.setAttribute("startOffset", Integer.toString(r
+				eSection.setAttribute(ATTR_START_OFFSET, Integer.toString(r
 						.getPosition()));
 				eSection
-						.setAttribute("length", Integer.toString(r.getLength()));
+						.setAttribute(ATTR_LENGTH, Integer.toString(r.getLength()));
 				eRoot.addContent(eSection);
+			}else if(r instanceof Markup){
+				Element eMarkup=new Element(ELEM_MARKUP,ns);
+				String m="normal";
+				switch(((Markup)r).type){
+				case EM:
+					m=ATTR_TYPE_EMPHASIZED; break;
+				case BOLD: m=ATTR_TYPE_BOLD; break;
+				case ITALIC: m=ATTR_TYPE_ITALIC; break;
+				case UNDERLINE: m=ATTR_TYPE_UNDERLINED; break;
+				case STRIKETHRU: m=ATTR_TYPE_STRIKETHRU; break;
+				}
+				eMarkup.setAttribute(ATTR_TYPE, m);
+				eMarkup.setAttribute(ATTR_START_OFFSET,Integer.toString(r.getPosition()));
+				eMarkup.setAttribute(ATTR_LENGTH,Integer.toString(r.getPosition()));
+		
+			}else if(r instanceof XRef){
+				Element eXRef=new Element(ELEM_XREF,ns);
+				eRoot.addContent(eXRef);
 			}
 		}
 		XMLOutputter xout = new XMLOutputter(Format.getCompactFormat());
 		return xout.outputString(doc);
 	}
 
-	public void insert(String t, int pos) {
+	public void insert(Object ins, String replaced, int pos) {
+		String t=(String)ins;
 		if (pos > contents.length() || pos < 0) {
 			contents.append(t);
 		} else {
