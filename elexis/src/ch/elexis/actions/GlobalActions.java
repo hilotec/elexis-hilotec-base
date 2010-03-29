@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: GlobalActions.java 6236 2010-03-19 11:21:25Z michael_imhof $
+ * $Id: GlobalActions.java 6252 2010-03-29 19:48:34Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.actions;
@@ -831,7 +831,7 @@ public class GlobalActions {
 	 * If false, the user has to choose the printer and print himself
 	 */
 	private boolean isDirectPrint() {
-		return Hub.localCfg.get("Drucker/Etiketten/Choose", false);
+		return !Hub.localCfg.get("Drucker/Etiketten/Choose", true);
 	}
 	
 	/**
