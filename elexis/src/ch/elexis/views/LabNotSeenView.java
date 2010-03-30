@@ -62,7 +62,8 @@ public class LabNotSeenView extends ViewPart implements HeartListener {
 	LabResult[] unseen = null;
 	private long lastUpdate = 0;
 	private Log log = Log.get("LabNotSeen"); //$NON-NLS-1$
-
+	private boolean inUpdate = false;
+	
 	private static final String[] columnHeaders = {
 			Messages.getString("LabNotSeenView.patient"), Messages.getString("LabNotSeenView.parameter"), Messages.getString("LabNotSeenView.normRange"), Messages.getString("LabNotSeenView.date"), Messages.getString("LabNotSeenView.value") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	};
@@ -232,14 +233,20 @@ public class LabNotSeenView extends ViewPart implements HeartListener {
 		log.log(Level.FINE, "Heartbeat used"); //$NON-NLS-1$
 		unseen = LabResult.getUnseen().toArray(new LabResult[0]);
 		Desk.getDisplay().asyncExec(new Runnable() {
+
+
 			public void run() {
-				if (tv != null) {
-					synchronized (tv) {
-						if (tv.getControl() != null
-								&& !tv.getControl().isDisposed()) {
-							tv.refresh();
+				if (!inUpdate) {
+					inUpdate=true;
+					if (tv != null) {
+						synchronized (tv) {
+							if (tv.getControl() != null
+									&& !tv.getControl().isDisposed()) {
+								tv.refresh();
+							}
 						}
 					}
+					inUpdate=false;
 				}
 			}
 		});

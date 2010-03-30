@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: RnActions.java 6229 2010-03-18 14:03:16Z michael_imhof $
+ * $Id: RnActions.java 6253 2010-03-30 15:57:16Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views.rechnung;
@@ -500,6 +500,8 @@ public class RnActions {
 			text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9); //$NON-NLS-1$
 			text.getPlugin().insertTable("[Liste]", 0, table, new int[] { //$NON-NLS-1$
 					10, 80, 10 });
+			text.getPlugin().showMenu(true);
+			text.getPlugin().showToolbar(true);
 			return ret;
 		}
 
