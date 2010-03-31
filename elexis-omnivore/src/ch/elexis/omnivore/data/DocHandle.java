@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: DocHandle.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ *  $Id: DocHandle.java 6255 2010-03-31 07:39:46Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.omnivore.data;
@@ -143,6 +143,7 @@ public class DocHandle extends PersistentObject {
 				ext = typname.substring(r + 1);
 			}
 			File temp = File.createTempFile("omni_", "_vore." + ext);
+			temp.deleteOnExit();
 			byte[] b = getBinary("Doc");
 			if (b == null) {
 				SWTHelper.showError("Fehler beim lesen",
