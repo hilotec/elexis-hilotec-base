@@ -1,13 +1,16 @@
 /**
  * (c) 2007-2010 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 6181 2010-03-01 18:25:34Z rgw_ch $
+ * $Id: HL7.java 6254 2010-03-31 07:38:18Z rgw_ch $
  */
 
 package ch.elexis.importers;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.util.List;
 
 import ch.elexis.StringConstants;
@@ -91,15 +94,18 @@ public class HL7 {
 					true);
 		}
 		try {
-			FileReader fr = new FileReader(file);
+			FileInputStream fis=new FileInputStream(file);
+			InputStreamReader isr=new InputStreamReader(fis, "iso-8859-1");
+			//FileReader fr = new FileReader(file);
+
 			char[] in = new char[(int) file.length()];
-			if (fr.read(in) != in.length) {
+			if (isr.read(in) != in.length) {
 				return new Result<Object>(SEVERITY.WARNING, 3, "EOF", filename, true); //$NON-NLS-1$
 			}
 			String hl7raw = new String(in);
 			lines = hl7raw.split("[\\r\\n]+"); //$NON-NLS-1$
 			separator = "\\" + lines[0].substring(3, 4); //$NON-NLS-1$
-			fr.close();
+			isr.close();
 			return new Result<Object>("OK"); //$NON-NLS-1$
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
