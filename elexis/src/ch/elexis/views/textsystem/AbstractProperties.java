@@ -27,7 +27,7 @@ public abstract class AbstractProperties extends Properties {
 
 	private static Log log = Log.get("AbstractProperties"); //$NON-NLS-1$
 
-	private final static String DIRECTORY = "platzhalter"; //$NON-NLS-1$
+	private final static String DIRECTORY = "rsc/platzhalter"; //$NON-NLS-1$
 
 	/**
 	 * Filename
