@@ -239,7 +239,7 @@ public class LabNotSeenView extends ViewPart implements HeartListener {
 				if (!inUpdate) {
 					inUpdate=true;
 					if (tv != null) {
-						synchronized (tv) {
+						synchronized(tv.getControl()){
 							if (tv.getControl() != null
 									&& !tv.getControl().isDisposed()) {
 								tv.refresh();

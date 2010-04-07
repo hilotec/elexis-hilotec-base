@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz	 - Import from different DBMS
  * 
- * $Id: TarmedImporter.java 6143 2010-02-15 20:52:17Z rgw_ch $
+ * $Id: TarmedImporter.java 6257 2010-04-07 18:13:21Z rgw_ch $
  *******************************************************************************/
 
 // 8.12.07 G.Weirich avoid duplicate imports
@@ -31,6 +31,8 @@ import ch.elexis.util.ImporterPage;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.TimeSpan;
+import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.JdbcLink.Stm;
 
 /**
@@ -143,11 +145,10 @@ public class TarmedImporter extends ImporterPage {
 				pj
 				.prepareStatement("UPDATE TARMED_EXTENSION SET MED_INTERPRET=?,TECH_INTERPRET=? WHERE CODE=?"); //$NON-NLS-1$
 			count = 0;
+			TimeTool ttToday=new TimeTool();
 			while (res.next() == true) {
 				String cc = res.getString("LNR"); //$NON-NLS-1$
-				if (cc.equals("39.0305") || cc.equals("39.0300")) { //$NON-NLS-1$ //$NON-NLS-2$
-					System.out.println(cc);
-				}
+				
 				TarmedLeistung tl = TarmedLeistung.load(cc);
 				if (tl.exists()) {
 					tl.set("DigniQuanti", convert(res, "QT_DIGNITAET")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -156,9 +157,13 @@ public class TarmedImporter extends ImporterPage {
 					tl = new TarmedLeistung(cc, res.getString("KNR"), //$NON-NLS-1$
 							"0000", convert(res, "QT_DIGNITAET"), convert(res, "Sparte")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
-				tl.set(new String[] {
-						"GueltigVon", "GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
-				}, res.getString("GUELTIG_VON"), res.getString("GUELTIG_BIS")); //$NON-NLS-1$ //$NON-NLS-2$
+				//TimeSpan tsValid1=new TimeSpan(new TimeTool(tl.get("GueltigVon")), new TimeTool(tl.get("GueltigBis")));
+				TimeSpan tsValid=new TimeSpan(new TimeTool(res.getString("GUELTIG_VON")), new TimeTool(res.getString("GUELTIG_BIS")));
+				if(tsValid.contains(ttToday)){
+					tl.set(new String[] {
+							"GueltigVon", "GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
+					}, tsValid.from.toString(TimeTool.DATE_COMPACT), tsValid.until.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
+				}
 				Stm sub = j.getStatement();
 				String dqua =
 					sub
