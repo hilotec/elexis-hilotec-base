@@ -9,8 +9,9 @@
  *    G. Weirich - initial implementation
  *    A. Kaufmann - copied from befunde-Plugin and adapted to new data structure 
  *    G. Weirich - adapted to Eventhandling API Change in 2.1
+ *    M. Descher - added copy function for value
  *    
- * $Id: MessungenUebersicht.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * $Id: MessungenUebersicht.java 6259 2010-04-09 09:58:29Z marcode79 $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.views;
@@ -41,6 +42,7 @@ import ch.elexis.actions.ElexisEventListener;
 import ch.elexis.data.Patient;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
+import ch.rgw.tools.TimeTool;
 
 import com.hilotec.elexis.messwerte.data.Messung;
 import com.hilotec.elexis.messwerte.data.MessungKonfiguration;
@@ -63,6 +65,7 @@ public class MessungenUebersicht extends ViewPart implements
 
 	private Action neuAktion;
 	private Action editAktion;
+	private Action copyAktion;
 	private Action loeschenAktion;
 
 	public MessungenUebersicht() {
@@ -132,7 +135,7 @@ public class MessungenUebersicht extends ViewPart implements
 			});
 
 			ViewMenus menu = new ViewMenus(getViewSite());
-			menu.createControlContextMenu(table, editAktion, loeschenAktion,
+			menu.createControlContextMenu(table, editAktion, copyAktion, loeschenAktion,
 					neuAktion);
 		}
 
@@ -194,8 +197,7 @@ public class MessungenUebersicht extends ViewPart implements
 				CTabItem tab = tabsfolder.getSelection();
 				MessungstypSeite mts = (MessungstypSeite) tab.getControl();
 				Messung messung = new Messung(p, mts.getTyp());
-				MessungBearbeiten dialog = new MessungBearbeiten(getSite()
-						.getShell(), messung);
+				MessungBearbeiten dialog = new MessungBearbeiten(getSite().getShell(), messung, tabsfolder.getSelection().getText());
 				if (dialog.open() != Dialog.OK) {
 					messung.delete();
 				}
@@ -214,13 +216,11 @@ public class MessungenUebersicht extends ViewPart implements
 				if (ci == null) {
 					return;
 				}
-
 				MessungstypSeite seite = (MessungstypSeite) ci.getControl();
 				TableItem[] tableitems = seite.table.getSelection();
 				if (tableitems.length == 1) {
 					Messung messung = (Messung) tableitems[0].getData();
-					MessungBearbeiten dialog = new MessungBearbeiten(getSite()
-							.getShell(), messung);
+					MessungBearbeiten dialog = new MessungBearbeiten(getSite().getShell(), messung, ci.getText());
 					if (dialog.open() == Dialog.OK) {
 						aktualisieren();
 					}
@@ -228,6 +228,49 @@ public class MessungenUebersicht extends ViewPart implements
 			}
 		};
 
+		copyAktion = new Action("Messung mit aktuellem Datum kopieren") {
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_CLIPBOARD));
+				setToolTipText("Messung mit aktuellem Datum kopieren");
+			}
+			
+			public void run() {
+				CTabItem ci = tabsfolder.getSelection();
+				if (ci == null) {
+					return;
+				}
+				
+				MessungstypSeite seite = (MessungstypSeite) ci.getControl();
+				TableItem[] tableitems = seite.table.getSelection();
+				if (tableitems.length == 1) {
+					Messung messung = (Messung) tableitems[0].getData();
+					String messungsdatum = messung.getDatum();
+					TimeTool date = new TimeTool();	
+					String newdatum = date.toString(TimeTool.DATE_GER);
+					
+					if (!messungsdatum.equalsIgnoreCase(newdatum)) { //Nur wenn Messung nich vom selben Tag wie heute!!
+						System.out.println(messung.getDatum());
+						System.out.println(date.toString(TimeTool.DATE_GER));
+						
+						Messung messungnew = new Messung(messung.getPatient(), messung.getTyp());
+						messungnew.setDatum(date.toString(TimeTool.DATE_GER));
+						
+						for (Messwert messwert: messung.getMesswerte()) {
+							Messwert copytemp = messungnew.getMesswert(messwert.getName());
+							copytemp.setWert(messwert.getWert());
+						}
+						
+						aktualisieren();
+						
+					} else {
+						SWTHelper.showError("Fehler", "Datumswert des Ursprungseintrages ident zu Zieleintrag");					
+					}
+					
+				} 
+				
+			}
+		};
+		
 		loeschenAktion = new Action("Messung löschen") {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
@@ -262,7 +305,7 @@ public class MessungenUebersicht extends ViewPart implements
 	private ViewMenus erstelleMenu(IViewSite site) {
 		ViewMenus menu = new ViewMenus(site);
 		erstelleAktionen();
-		menu.createToolbar(neuAktion, editAktion, loeschenAktion);
+		menu.createToolbar(neuAktion, editAktion, copyAktion, loeschenAktion);
 		return menu;
 	}
 

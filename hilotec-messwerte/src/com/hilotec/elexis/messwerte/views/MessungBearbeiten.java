@@ -7,9 +7,10 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    A. Kaufmann - copied from befunde-Plugin and adapted to new data structure 
+ *    A. Kaufmann - copied from befunde-Plugin and adapted to new data structure
+ *    M. Descher - Override createContents to include Tab title
  *    
- * $Id: MessungBearbeiten.java 5766 2009-10-04 13:21:21Z freakypenguin $
+ * $Id: MessungBearbeiten.java 6259 2010-04-09 09:58:29Z marcode79 $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.views;
@@ -44,6 +45,7 @@ public class MessungBearbeiten extends TitleAreaDialog {
 	private Messung messung;
 	private HashMap<Messwert, Widget> widgetMap;
 	private DatePickerCombo dateWidget;
+	private String tabtitle;
 	
 	public MessungBearbeiten(final Shell parent, Messung m) {
 		super(parent);
@@ -51,6 +53,11 @@ public class MessungBearbeiten extends TitleAreaDialog {
 		widgetMap = new HashMap<Messwert, Widget>();
 	}
 	
+	public MessungBearbeiten(Shell shell, Messung m, String text) {
+		this(shell, m);
+		tabtitle = text;
+	}
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		ScrolledComposite scroll = new ScrolledComposite(parent,
@@ -85,8 +92,16 @@ public class MessungBearbeiten extends TitleAreaDialog {
 	public void create() {
 		super.create();
 		getShell().setText("Messung bearbeiten");
+		
 	}
 	
+	@Override
+	protected Control createContents(Composite parent) {
+		Control contents = super.createContents(parent);
+		setTitle(tabtitle);
+		return contents;
+	}
+
 	@Override
 	public void okPressed() {
 		TimeTool tt = new TimeTool(dateWidget.getDate().getTime());
