@@ -1,0 +1,7 @@
+eclipse=/var/lib/hudson/elexis/rcp
+rcpbase=/var/lib/hudson/rcpbase
+source=`pwd`/../..
+makeself=/usr/bin/makeself
+jre=/usr/lib/jvm/java-6-sun-1.6.0.12/jre
+dest=/var/lib/hudson/deploy
+texify=texi2pdf --silent

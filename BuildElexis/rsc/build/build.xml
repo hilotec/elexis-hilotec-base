@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 5629 2009-08-15 13:02:30Z rgw_ch $
+<!-- $Id: build.xml 6263 2010-04-13 21:31:35Z niklausgiger $
     (c) 2005-2009 by G. Weirich
     
     This file reflects my personal environment. It is not intended for
@@ -165,13 +165,12 @@
 	</target>
 
 	<target name="doc" unless="skip_texify">
-		<exec command="texify --pdf elexis.tex" dir="${source}/dokumentation" />
+		<exec command="${texify} elexis.tex" dir="${source}/dokumentation" />
 		<copy file="${source}/dokumentation/elexis.pdf" todir="${dist}"/>
 
 	</target>
 	<target name="texify" unless="skip_texify">
-		<!-- echo message="texify ${sourcedir}/doc/${pluginname}.tex" / -->
-		<exec command="texify --pdf ${sourcedir}/doc/${pluginname}.tex" dir="${sourcedir}/doc" />
+		<exec command="${texify} ${sourcedir}/doc/${pluginname}.tex" dir="${sourcedir}/doc" />
 		<copy file="${sourcedir}/doc/${pluginname}.pdf" todir="${doc}" />
 	</target>
 

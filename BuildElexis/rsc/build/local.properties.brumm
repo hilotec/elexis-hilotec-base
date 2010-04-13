@@ -3,3 +3,4 @@ source=/home/gerry/source
 makeself=/home/gerry/bin/makeself-2.1.4/makeself.sh
 nsis=c:/dev/nsis/makensis.exe
 jre=/home/gerry/bin/eclipse/jre
+texify=texify --silent --pdf

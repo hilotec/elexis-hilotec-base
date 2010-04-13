@@ -3,4 +3,4 @@ source=d:/source/eclipse
 makeself=/home/gerry/tools/makeself-2.1.4/makeself.sh
 nsis=c:/dev/nsis/makensis.exe
 jre=c:/programme/java/jre1.5.0_06
-dest=d:/software/elexis/deploy
+dest=d:/software/elexis/deploytexify=texify --pdf

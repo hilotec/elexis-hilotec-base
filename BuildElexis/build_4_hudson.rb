@@ -1,0 +1,102 @@
+#!/usr/bin/env ruby
+# Niklaus Giger (c) 2010 niklaus.giger@member.fsf.org
+#
+# 2010.04.11	Simple setup for a Eclipse-RCP environment for elexis
+#
+require 'ftools'
+
+savedDir = File.expand_path(File.dirname(__FILE__))
+# We might run in different setups.
+# But below we do not want any differnces
+searchDir = Dir.pwd
+while true
+	ld = "#{File.dirname(searchDir)}/downloads"
+	if File.directory?(ld) then
+		HudsonRoot = File.dirname(searchDir.clone)
+		puts "HudsonRoot is #{HudsonRoot}" 
+		break
+	else
+		if searchDir.length <=1 or (searchDir == File.dirname(searchDir)) then
+		puts "downloads nirgends gefunden"
+		exit 2
+		end
+	end
+	searchDir = File.dirname(searchDir)
+end
+HudsonRcp  = "#{HudsonRoot}/rcpbase"
+HudsonArgieZip = "#{HudsonRoot}/downloads/archie-1.0.2.zip"
+HudsonJintoZip =  "#{HudsonRoot}/downloads/de.guhsoft.jinto-0.13.5.zip"
+if /mswin/i.match RUBY_PLATFORM
+	RcpBase = "#{HudsonRcp}/windows"
+elsif /linux/i.match RUBY_PLATFORM
+	RcpBase = "#{HudsonRcp}/linux"
+elsif /macos/i.match RUBY_PLATFORM
+	RcpBase = "#{HudsonRcp}/mac"
+else
+	puts "Unknown Ruby-Platform #{RUBY_PLATFORM}"
+	exit 2
+end
+# We assume that we find the correct files under
+HudsonDownloads = [
+  HudsonArgieZip,
+  HudsonJintoZip,
+  ]
+# Automatisches Aufsetzen eine Workspaces für Hudson
+# wget -c http://www.sliksvn.com/pub/Slik-Subversion-1.6.9-win32.msi
+# wget -c http://www.eclipse.org/downloads/download.php?file=/technology/epp/downloads/release/galileo/SR2/eclipse-rcp-galileo-SR2-win32.zip&url=http://mirror.switch.ch/eclipse/technology/epp/downloads/release/galileo/SR2/eclipse-rcp-galileo-SR2-win32.zip&mirror_id=63
+HudsonDownloads.each{ |x|
+  if !File.exists?(x)
+    puts "Missing file #{x}"
+    exit 2
+  end
+}
+
+DryRun = false
+def system(cmd, mayFail=false)
+  puts "cd #{Dir.pwd} && #{cmd} # mayFail #{mayFail}"
+  if DryRun then return
+  else res =Kernel.system(cmd)
+  end
+  if !res and !mayFail then
+    puts "running #{cmd} #{mayFail} failed"
+    exit
+  end
+end
+
+Dir.mkdir(RcpBase) if !File.directory?(RcpBase)
+eclipse = "#{RcpBase}/rcp/eclipse"
+Dir.chdir(RcpBase)
+puts RUBY_PLATFORM
+if /linux/i.match RUBY_PLATFORM
+	from = "#{savedDir}/rsc/build/local.properties.hudson_linux"
+	to   = "#{savedDir}/rsc/build/local.properties"
+	File.copy(from, to, :verbose => true)
+	HudsonRcpTar = "#{HudsonRoot}/downloads/eclipse-rcp-galileo-SR2-linux-gtk.tar.gz"
+	if !File.exists?(eclipse)
+		system("tar -zxf #{HudsonRcpTar}")
+	end
+elsif /mswin/i.match RUBY_PLATFORM
+	from = "#{savedDir}/rsc/build/local.properties.hudson_win"
+	to   = "#{savedDir}/rsc/build/local.properties"
+	File.copy(from, to, :verbose => true)
+	HudsonRcpTar = "#{HudsonRoot}/downloads/eclipse-rcp-galileo-SR2-win32.zip"
+	if !File.exists?(eclipse+".exe")
+		system("unzip #{HudsonRcpTar}".gsub('/','\\\\'))
+	end if false
+else
+	puts "Unsupported "+RUBY_PLATFORM
+	exit 2
+end
+
+Dir.chdir(File.dirname(eclipse))
+datei="#{File.dirname(eclipse)}/plugins/ch.unibe.iam*.jar"
+if Dir.glob(datei).size == 0
+  system("unzip #{HudsonArgieZip}")
+end
+if Dir.glob("#{File.dirname(eclipse)}/features/*jinto*").size == 0
+  system("unzip #{HudsonJintoZip}")
+end
+
+Dir.chdir(savedDir+"/rsc/build")
+cmd = "ant -Dunplugged=1 doc"
+system(cmd)
