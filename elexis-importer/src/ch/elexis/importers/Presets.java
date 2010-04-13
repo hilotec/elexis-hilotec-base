@@ -66,11 +66,11 @@ public class Presets {
 			if(row==null){
 				continue;
 			}
-			
-			if(row.length!=18){
+			/*
+			if(row.length<18){
 				continue;
 			}
-			
+			*/
 			String ID=StringTool.getSafe(row,0);
 			String EAN=StringTool.getSafe(row, 17);
 			if(StringTool.isNothing(ID)){
