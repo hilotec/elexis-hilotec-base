@@ -9,13 +9,15 @@
  *    G. Weirich - initial implementation
  *    A. Kaufmann - copied from befunde-Plugin and adapted to new data structure 
  *    G. Weirich - adapted to Eventhandling API Change in 2.1
- *    M. Descher - added copy function for value
+ *    M. Descher - added copy function for value, added CSV Export for a Table
  *    
- * $Id: MessungenUebersicht.java 6259 2010-04-09 09:58:29Z marcode79 $
+ * $Id: MessungenUebersicht.java 6261 2010-04-13 11:44:32Z marcode79 $
  *******************************************************************************/
 
 package com.hilotec.elexis.messwerte.views;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 
 import org.eclipse.jface.action.Action;
@@ -67,6 +69,7 @@ public class MessungenUebersicht extends ViewPart implements
 	private Action editAktion;
 	private Action copyAktion;
 	private Action loeschenAktion;
+	private Action exportAktion;
 
 	public MessungenUebersicht() {
 		config = MessungKonfiguration.getInstance();
@@ -135,8 +138,8 @@ public class MessungenUebersicht extends ViewPart implements
 			});
 
 			ViewMenus menu = new ViewMenus(getViewSite());
-			menu.createControlContextMenu(table, editAktion, copyAktion, loeschenAktion,
-					neuAktion);
+			menu.createControlContextMenu(table, editAktion, copyAktion,
+					loeschenAktion, neuAktion, exportAktion);
 		}
 
 		/**
@@ -197,7 +200,9 @@ public class MessungenUebersicht extends ViewPart implements
 				CTabItem tab = tabsfolder.getSelection();
 				MessungstypSeite mts = (MessungstypSeite) tab.getControl();
 				Messung messung = new Messung(p, mts.getTyp());
-				MessungBearbeiten dialog = new MessungBearbeiten(getSite().getShell(), messung, tabsfolder.getSelection().getText());
+				MessungBearbeiten dialog = new MessungBearbeiten(getSite()
+						.getShell(), messung, tabsfolder.getSelection()
+						.getText());
 				if (dialog.open() != Dialog.OK) {
 					messung.delete();
 				}
@@ -220,7 +225,8 @@ public class MessungenUebersicht extends ViewPart implements
 				TableItem[] tableitems = seite.table.getSelection();
 				if (tableitems.length == 1) {
 					Messung messung = (Messung) tableitems[0].getData();
-					MessungBearbeiten dialog = new MessungBearbeiten(getSite().getShell(), messung, ci.getText());
+					MessungBearbeiten dialog = new MessungBearbeiten(getSite()
+							.getShell(), messung, ci.getText());
 					if (dialog.open() == Dialog.OK) {
 						aktualisieren();
 					}
@@ -233,44 +239,119 @@ public class MessungenUebersicht extends ViewPart implements
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_CLIPBOARD));
 				setToolTipText("Messung mit aktuellem Datum kopieren");
 			}
-			
+
 			public void run() {
 				CTabItem ci = tabsfolder.getSelection();
 				if (ci == null) {
 					return;
 				}
-				
+
 				MessungstypSeite seite = (MessungstypSeite) ci.getControl();
 				TableItem[] tableitems = seite.table.getSelection();
 				if (tableitems.length == 1) {
 					Messung messung = (Messung) tableitems[0].getData();
 					String messungsdatum = messung.getDatum();
-					TimeTool date = new TimeTool();	
+					TimeTool date = new TimeTool();
 					String newdatum = date.toString(TimeTool.DATE_GER);
-					
-					if (!messungsdatum.equalsIgnoreCase(newdatum)) { //Nur wenn Messung nich vom selben Tag wie heute!!
+
+					if (!messungsdatum.equalsIgnoreCase(newdatum)) { // Nur wenn
+						// Messung
+						// nich
+						// vom
+						// selben
+						// Tag
+						// wie
+						// heute!!
 						System.out.println(messung.getDatum());
 						System.out.println(date.toString(TimeTool.DATE_GER));
-						
-						Messung messungnew = new Messung(messung.getPatient(), messung.getTyp());
+
+						Messung messungnew = new Messung(messung.getPatient(),
+								messung.getTyp());
 						messungnew.setDatum(date.toString(TimeTool.DATE_GER));
-						
-						for (Messwert messwert: messung.getMesswerte()) {
-							Messwert copytemp = messungnew.getMesswert(messwert.getName());
+
+						for (Messwert messwert : messung.getMesswerte()) {
+							Messwert copytemp = messungnew.getMesswert(messwert
+									.getName());
 							copytemp.setWert(messwert.getWert());
 						}
-						
+
 						aktualisieren();
-						
+
 					} else {
-						SWTHelper.showError("Fehler", "Datumswert des Ursprungseintrages ident zu Zieleintrag");					
+						SWTHelper
+								.showError("Fehler",
+										"Datumswert des Ursprungseintrages ident zu Zieleintrag");
 					}
-					
-				} 
-				
+
+				}
+
 			}
 		};
-		
+
+		exportAktion = new Action("CSV Export aktuelle Tabelle") {
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EXPORT));
+				setToolTipText("CSV Export der aktuellen Tabelle");
+			}
+
+			public void run() {
+				CTabItem ci = tabsfolder.getSelection();
+				if (ci == null) {
+					return;
+				}
+
+				MessungstypSeite seite = (MessungstypSeite) ci.getControl();
+				TableItem[] tableitems = seite.table.getItems();
+
+				try {
+					String date = new TimeTool()
+							.toString(TimeTool.DATE_COMPACT);
+					String filename = ci.getText() + "-export-" + date + ".csv";
+					String fqfilename = System.getProperty("user.home")
+							+ File.separatorChar + filename;
+					FileWriter writer = new FileWriter(fqfilename);
+
+					// Get the headers Name (Unit); Name (Unit); ...
+					Messung headermessung = (Messung) tableitems[0].getData();
+					String headerstring = "datum;";
+					for (Messwert messwert : headermessung.getMesswerte()) {
+						headerstring = headerstring
+								+ messwert.getTyp().getName() + "("
+								+ messwert.getTyp().getUnit() + ")" + ";";
+					}
+					headerstring = headerstring.substring(0, headerstring
+							.length() - 1);
+					writer.append(headerstring + "\n");
+
+					for (int i = 0; i < tableitems.length; i++) {
+						Messung messung = (Messung) tableitems[i].getData();
+						String messungstring = messung.getDatum() + ";";
+						for (Messwert messwert : messung.getMesswerte()) {
+							messungstring = messungstring
+									+ messwert.getTyp()
+											.erstelleDarstellungswert(messwert)
+									+ ";";
+						}
+						messungstring = messungstring.substring(0,
+								messungstring.length() - 1);
+						writer.append(messungstring + "\n");
+					}
+
+					writer.flush();
+					writer.close();
+
+					SWTHelper.showInfo("Tabelle " + ci.getText()
+							+ " erfolgreich exportiert!", "Tabelle "
+							+ ci.getText()
+							+ " erfolgreich exportiert!\nAusgabedatei: "
+							+ fqfilename);
+				} catch (Exception e) {
+					SWTHelper.showError("Fehler bei Export!", e.toString());
+				}
+
+			}
+		};
+
 		loeschenAktion = new Action("Messung löschen") {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
@@ -305,7 +386,8 @@ public class MessungenUebersicht extends ViewPart implements
 	private ViewMenus erstelleMenu(IViewSite site) {
 		ViewMenus menu = new ViewMenus(site);
 		erstelleAktionen();
-		menu.createToolbar(neuAktion, editAktion, copyAktion, loeschenAktion);
+		menu.createToolbar(neuAktion, editAktion, copyAktion, loeschenAktion,
+				exportAktion);
 		return menu;
 	}
 
