@@ -65,9 +65,8 @@ def system(cmd, mayFail=false)
 end
 
 FileUtils.mkdir_p(RcpBase) if !File.directory?(RcpBase)
-eclipse = "#{RcpBase}/rcp/eclipse"
+eclipse = "#{RcpBase}/rcp"
 Dir.chdir(RcpBase)
-puts RUBY_PLATFORM
 if /linux/i.match RUBY_PLATFORM
 	from = "#{savedDir}/rsc/build/local.properties.hudson_linux"
 	to   = "#{savedDir}/rsc/build/local.properties"
@@ -75,6 +74,7 @@ if /linux/i.match RUBY_PLATFORM
 	HudsonRcpTar = "#{HudsonRoot}/downloads/eclipse-rcp-galileo-SR2-linux-gtk.tar.gz"
 	if !File.exists?(eclipse)
 		system("tar -zxf #{HudsonRcpTar}")
+		system("mv eclipse rcp")
 	end
 elsif /mswin/i.match RUBY_PLATFORM
 	from = "#{savedDir}/rsc/build/local.properties.hudson_win"
@@ -89,12 +89,14 @@ else
 	exit 2
 end
 
-Dir.chdir(File.dirname(eclipse))
-datei="#{File.dirname(eclipse)}/plugins/ch.unibe.iam*.jar"
+Dir.chdir(eclipse)
+datei="#{eclipse}/plugins/ch.unibe.iam*.jar"
 if Dir.glob(datei).size == 0
   system("unzip #{HudsonArgieZip}")
+else
+  puts "Found #{Dir.glob(datei)}"
 end
-if Dir.glob("#{File.dirname(eclipse)}/features/*jinto*").size == 0
+if Dir.glob("#{eclipse}/features/*jinto*").size == 0
   system("unzip #{HudsonJintoZip}")
 end
 
