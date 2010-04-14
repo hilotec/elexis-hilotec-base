@@ -4,6 +4,7 @@
 # 2010.04.11	Simple setup for a Eclipse-RCP environment for elexis
 #
 require 'ftools'
+require 'fileutils'
 
 savedDir = File.expand_path(File.dirname(__FILE__))
 # We might run in different setups.
@@ -63,7 +64,7 @@ def system(cmd, mayFail=false)
   end
 end
 
-Dir.mkdir_p(RcpBase) if !File.directory?(RcpBase)
+FileUtils.mkdir_p(RcpBase) if !File.directory?(RcpBase)
 eclipse = "#{RcpBase}/rcp/eclipse"
 Dir.chdir(RcpBase)
 puts RUBY_PLATFORM
