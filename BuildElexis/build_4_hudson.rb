@@ -13,7 +13,7 @@ while true
 	ld = "#{File.dirname(searchDir)}/downloads"
 	if File.directory?(ld) then
 		HudsonRoot = File.dirname(searchDir.clone)
-		puts "HudsonRoot is #{HudsonRoot}" 
+		puts "HudsonRoot is #{HudsonRoot}"
 		break
 	else
 		if searchDir.length <=1 or (searchDir == File.dirname(searchDir)) then
@@ -63,7 +63,7 @@ def system(cmd, mayFail=false)
   end
 end
 
-Dir.mkdir(RcpBase) if !File.directory?(RcpBase)
+Dir.mkdir_p(RcpBase) if !File.directory?(RcpBase)
 eclipse = "#{RcpBase}/rcp/eclipse"
 Dir.chdir(RcpBase)
 puts RUBY_PLATFORM
