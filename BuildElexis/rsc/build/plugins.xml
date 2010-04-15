@@ -1,4 +1,4 @@
-<!-- 
+<!--
  * Copyright (c) 2006-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: plugins.xml 5893 2009-12-22 18:38:55Z rgw_ch $
+ *
+ * $Id: plugins.xml 6270 2010-04-15 21:19:07Z niklausgiger $
 -->
 <project name="elexis-plugins" default="all" basedir="../../">
 
@@ -19,19 +19,27 @@
 		<ant antfile="../elexis-utilities/build.xml" />
 		<ant antfile="../elexis/build.xml" />
 		<ant antfile="../elexis-importer/build.xml" inheritrefs="true" />
-		<ant antfile="../elexis-simpletext/build.xml" inheritrefs="true" />
+		<available file="../elexis-simpletext/build.xml" property="simpletext.ok" />
+		<antcall target="simpletext" inheritrefs="true" />
 
-		<!-- erweiterte Basisplugins: Nicht unbedingt erforderlich, aber in der
+	<!-- erweiterte Basisplugins: Nicht unbedingt erforderlich, aber in der
              Standarddistribution dabei -->
-		<ant antfile="../elexis-artikel-schweiz/build.xml" inheritrefs="true" />
-		<ant antfile="../elexis-ebanking-schweiz/build.xml" inheritrefs="true" />
-		<ant antfile="../elexis-labortarif-ch2009/build.xml" inheritrefs="true" />
-		<ant antfile="../elexis-arzttarife-schweiz/build.xml" inheritrefs="true" />
-		<ant antfile="../elexis-befunde/build.xml" inheritrefs="true" />
-		<ant antfile="../elexis-diagnosecodes-schweiz/build.xml" inheritrefs="true" />
-		<ant antfile="../elexis-mail/build.xml" inheritrefs="true" />
-		<ant antfile="../elexis-medikamente-bag/build.xml" inheritrefs="true" />
-
+		<available file="../elexis-artikel-schweiz/build.xml" property="artikel-schweiz.ok" />
+		<antcall target="artikel-schweiz" inheritrefs="true" />
+		<available file="../elexis-ebanking-schweiz/build.xml" property="ebanking-schweiz.ok" />
+		<antcall target="ebanking-schweiz" inheritrefs="true" />
+		<available file="../elexis-labortarif-ch2009/build.xml" property="labortarif-ch2009.ok" />
+		<antcall target="labortarif-ch2009" inheritrefs="true" />
+		<available file="../elexis-arzttarife-schweiz/build.xml" property="arzttarife-schweiz.ok" />
+		<antcall target="arzttarife-schweiz" inheritrefs="true" />
+		<available file="../elexis-befunde/build.xml" property="befunde.ok" />
+		<antcall target="befunde" inheritrefs="true" />
+		<available file="../elexis-diagnosecodes-schweiz/build.xml" property="diagnosecodes-schweiz.ok" />
+		<antcall target="diagnosecodes-schweiz" inheritrefs="true" />
+		<available file="../elexis-mail/build.xml" property="mail.ok" />
+		<antcall target="mail" inheritrefs="true" />
+		<available file="../elexis-medikamente-bag/build.xml" property="medikamente-bag.ok" />
+		<antcall target="medikamente-bag" inheritrefs="true" />
 
 		<available file="../mysql-adapter/build.xml" property="mysql.ok" />
 		<antcall target="mysql" inheritrefs="true" />
@@ -183,6 +191,34 @@
 		<available file="../elexis-connect-mythic/build.xml" property="mythic.ok" />
 		<antcall target="mythic" inheritrefs="true" />
 		<antcall target="oowrapper3" inheritrefs="true" />
+	</target>
+
+	<target name="simpletext" if="simpletext.ok">
+		<ant antfile="../elexis-simpletext/build.xml" inheritrefs="true" />
+	</target>
+	<target name="artikel-schweiz" if="artikel-schweiz.ok">
+		<ant antfile="../elexis-artikel-schweiz/build.xml" inheritrefs="true" />
+	</target>
+	<target name="ebanking-schweiz" if="ebanking-schweiz.ok">
+		<ant antfile="../elexis-ebanking-schweiz/build.xml" inheritrefs="true" />
+	</target>
+	<target name="labortarif-ch2009" if="labortarif-ch2009.ok">
+		<ant antfile="../elexis-labortarif-ch2009/build.xml" inheritrefs="true" />
+	</target>
+	<target name="arzttarife-schweiz" if="arzttarife-schweiz.ok">
+		<ant antfile="../elexis-arzttarife-schweiz/build.xml" inheritrefs="true" />
+	</target>
+	<target name="befunde" if="befunde.ok">
+		<ant antfile="../elexis-befunde/build.xml" inheritrefs="true" />
+	</target>
+	<target name="diagnosecodes-schweiz" if="diagnosecodes-schweiz.ok">
+		<ant antfile="../elexis-diagnosecodes-schweiz/build.xml" inheritrefs="true" />
+	</target>
+	<target name="mail" if="mail.ok">
+		<ant antfile="../elexis-mail/build.xml" inheritrefs="true" />
+	</target>
+	<target name="medikamente-bag" if="medikamente-bag.ok">
+		<ant antfile="../elexis-medikamente-bag/build.xml" inheritrefs="true" />
 	</target>
 
 	<target name="archie" if="archie.ok">

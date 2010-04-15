@@ -26,7 +26,9 @@ while true
 end
 HudsonRcp  = "#{HudsonRoot}/rcpbase"
 HudsonArgieZip = "#{HudsonRoot}/downloads/archie-1.0.2.zip"
-HudsonJintoZip =  "#{HudsonRoot}/downloads/de.guhsoft.jinto-0.13.5.zip"
+HudsonJintoZip = "#{HudsonRoot}/downloads/de.guhsoft.jinto-0.13.5.zip"
+HudsonFindbugs = "#{HudsonRoot}/downloads/findbugs-1.3.9.zip"
+# http://downloads.sourceforge.net/project/findbugs/findbugs/1.3.9/.tar.gz?use_mirror=surfnet
 if /mswin/i.match RUBY_PLATFORM
 	RcpBase = "#{HudsonRcp}/windows"
 elsif /linux/i.match RUBY_PLATFORM
@@ -41,6 +43,7 @@ end
 HudsonDownloads = [
   HudsonArgieZip,
   HudsonJintoZip,
+  HudsonFindbugs,
   ]
 # Automatisches Aufsetzen eine Workspaces für Hudson
 # wget -c http://www.sliksvn.com/pub/Slik-Subversion-1.6.9-win32.msi
@@ -89,17 +92,22 @@ else
 	exit 2
 end
 
+Dir.chdir(RcpBase)
+datei="#{RcpBase}/findbugs-1.3.9/lib/findbugs-ant.jar"
+if Dir.glob(datei).size == 0 # works on Debian Lenny, but elsewhere?
+  system("unzip #{HudsonFindbugs}")
+  system("cp #{datei} /usr/share/ant/lib")
+end
+
 Dir.chdir(eclipse)
 datei="#{eclipse}/plugins/ch.unibe.iam*.jar"
 if Dir.glob(datei).size == 0
   system("unzip #{HudsonArgieZip}")
-else
-  puts "Found #{Dir.glob(datei)}"
 end
 if Dir.glob("#{eclipse}/features/*jinto*").size == 0
   system("unzip #{HudsonJintoZip}")
 end
 
 Dir.chdir(savedDir+"/rsc/build")
-cmd = "ant -Dunplugged=1 doc"
+cmd = "ant hudson"
 system(cmd)

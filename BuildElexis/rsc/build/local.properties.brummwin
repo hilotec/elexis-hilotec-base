@@ -4,4 +4,5 @@ makeself=/home/gerry/tools/makeself-2.1.4/makeself.sh
 nsis=e:/dev/nsis/makensis.exe
 jre=d:/software/java150/jre
 dest=d:/software/elexis/deploy
-texify=texify --silent --pdf
+texify=texify
+texifyArgs=--silent --pdf
