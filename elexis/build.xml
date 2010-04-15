@@ -23,17 +23,27 @@
 		</fileset>
 		<pathelement location="${dist}/plugins/ch.rgw.utility_${version}" />
 	</path>
-	
+
 	<target name="checkout" unless="unplugged">
 		<exec executable="svn" dir="${elexis_src}">
 			<arg line="update"/>
 		</exec>
 	</target>
-	
-	<target name="all">
+
+	<available file="${source}/ElexisBasicFeature/feature.xml"
+	      property="elexis.basic.feature"/>
+	<target name="ElexisBasicFeature" if="elexis.basic.feature">
+		<copy todir="${elexis_feature}">
+			<fileset dir="${source}/ElexisBasicFeature">
+				<include name="*.xml"/>
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="all" depends="ElexisBasicFeature">
 		<!-- README.txt kopieren -->
 	    <copy file="${elexis_src}/README.txt" todir="${dist}"/>
-	    	
+
 		<mkdir dir="${elexis_plugin}/bin"/>
 		<mkdir dir="${elexis_plugin}/lib"/>
 		<mkdir dir="${elexis_feature}"/>
@@ -58,18 +68,13 @@
 			<fileset dir="${elexis_src}/src" includes="**/*.script"/>
 			<fileset dir="${elexis_src}/src" includes="**/*.properties"/>
 		</copy>
-		<copy todir="${elexis_feature}">
-			<fileset dir="${source}/ElexisBasicFeature">
-				<include name="*.xml"/>
-			</fileset>
-		</copy>
 		<tstamp/>
 	     <copy overwrite="yes" file="${elexis_src}/rsc/compiletime.txt" todir="${elexis_plugin}/rsc">
 	       <filterset>
 	         <filter token="TODAY" value="${DSTAMP}${TSTAMP}"/>
 	       </filterset>
-	     </copy> 
-		
+	     </copy>
+
 		<javac srcdir="${elexis_src}" destdir="${elexis_plugin}/bin"
 			classpathref="eclipseclasses" debug="${debug}" optimize="${optimize}" target="${javatarget}"
 			encoding="UTF-8"/>
