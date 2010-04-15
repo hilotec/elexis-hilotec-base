@@ -43,7 +43,6 @@ end
 HudsonDownloads = [
   HudsonArgieZip,
   HudsonJintoZip,
-  HudsonFindbugs,
   ]
 # Automatisches Aufsetzen eine Workspaces für Hudson
 # wget -c http://www.sliksvn.com/pub/Slik-Subversion-1.6.9-win32.msi
