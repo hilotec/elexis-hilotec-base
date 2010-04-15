@@ -97,7 +97,7 @@ datei="#{RcpBase}/findbugs-1.3.9/lib/findbugs-ant.jar"
 if Dir.glob(datei).size == 0 # works on Debian Lenny, but elsewhere?
   system("unzip #{HudsonFindbugs}")
   system("cp #{datei} /usr/share/ant/lib")
-end
+end if false # We don't have enough privileges
 
 Dir.chdir(eclipse)
 datei="#{eclipse}/plugins/ch.unibe.iam*.jar"

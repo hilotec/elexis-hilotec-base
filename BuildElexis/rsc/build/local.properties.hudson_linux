@@ -7,3 +7,4 @@ dest=/var/lib/hudson/deploy
 texify=texi2pdf
 texifyArgs=--silent
 unplugged=true
+findbugs.home=/var/lib/hudson/rcpbase/findbugs-1.3.9
