@@ -5,8 +5,7 @@
 <project name="elexis-basis" default="all">
 	<property name="elexis_src" value="${source}/elexis/"/>
 	<property name="elexis_plugin" value="${dist}/plugins/ch.elexis_${version}"/>
-	<property name="elexis_feature"
-		value="${dist}/features/ch.elexis_${version}"/>
+	<property name="elexis_feature" value="${dist}/features/ch.elexis_${version}" />
 	<!-- Pfade für -classpath des Java-compilers festlegen -->
 	<path id="eclipseclasses">
 		<fileset dir="${dist}/plugins">
@@ -16,7 +15,7 @@
 			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${elexis_plugin}/lib">
-		    <include name="*.jar"/>
+			<include name="*.jar"/>
 		</fileset>
 		<fileset dir="${dist}/plugins/ch.rgw.utility_${version}/lib">
 			<include name="*.jar"/>
@@ -42,7 +41,7 @@
 
 	<target name="all" depends="ElexisBasicFeature">
 		<!-- README.txt kopieren -->
-	    <copy file="${elexis_src}/README.txt" todir="${dist}"/>
+		<copy file="${elexis_src}/README.txt" todir="${dist}"/>
 
 		<mkdir dir="${elexis_plugin}/bin"/>
 		<mkdir dir="${elexis_plugin}/lib"/>
@@ -69,11 +68,11 @@
 			<fileset dir="${elexis_src}/src" includes="**/*.properties"/>
 		</copy>
 		<tstamp/>
-	     <copy overwrite="yes" file="${elexis_src}/rsc/compiletime.txt" todir="${elexis_plugin}/rsc">
-	       <filterset>
-	         <filter token="TODAY" value="${DSTAMP}${TSTAMP}"/>
-	       </filterset>
-	     </copy>
+		<copy overwrite="yes" file="${elexis_src}/rsc/compiletime.txt" todir="${elexis_plugin}/rsc">
+			<filterset>
+				<filter token="TODAY" value="${DSTAMP}${TSTAMP}"/>
+			</filterset>
+		</copy>
 
 		<javac srcdir="${elexis_src}" destdir="${elexis_plugin}/bin"
 			classpathref="eclipseclasses" debug="${debug}" optimize="${optimize}" target="${javatarget}"
