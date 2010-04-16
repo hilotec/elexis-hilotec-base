@@ -1,19 +1,17 @@
 <FindBugsFilter>
-  <Match>
-    <or>
-      <Class name="org.*" />
-      <Class name="javax.*" />
-      <Class name="junit.*" />
-      <Class name="edu.*" />
-      <Class name="net.*" />
-    </or>
-  </Match>
-     <!-- A method with a dead local store false positive (medium priority).
-     <Match>
-       <Class name="com.foobar.MyClass" />
-       <Method name="someMethod" />
-       <Bug pattern="DLS_DEAD_LOCAL_STORE" />
-       <Priority value="2" />
-     </Match>
-    -->
+	<Match>
+		<or>
+			<Class name="org.*" />
+			<Class name="javax.*" />
+			<Class name="junit.*" />
+			<Class name="edu.*" />
+			<Class name="net.*" />
+		</or>
+	</Match>
+	<!--
+		A method with a dead local store false positive (medium priority).
+		<Match> <Class name="com.foobar.MyClass" /> <Method name="someMethod"
+		/> <Bug pattern="DLS_DEAD_LOCAL_STORE" /> <Priority value="2" />
+		</Match>
+	-->
 </FindBugsFilter>

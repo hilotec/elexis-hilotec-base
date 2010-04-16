@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 6271 2010-04-15 22:13:05Z niklausgiger $
+<!-- $Id: build.xml 6274 2010-04-16 17:58:33Z niklausgiger $
     (c) 2005-2009 by G. Weirich
 
     This file reflects my personal environment. It is not intended for
@@ -165,31 +165,28 @@
 	</target>
 
 	<target name="doc" unless="skip_texify">
-		<exec executable="${texify}" dir="${source}/dokumentation"
-		  failonerror="true" >
-		  <arg  line="${texifyArgs}  elexis.tex" />
+		<exec executable="${texify}" dir="${source}/dokumentation" failonerror="true">
+			<arg line="${texifyArgs}  elexis.tex" />
 		</exec>
-		<copy file="${source}/dokumentation/elexis.pdf" todir="${dist}"/>
+		<copy file="${source}/dokumentation/elexis.pdf" todir="${dist}" />
 
 	</target>
 	<target name="doc_fr" unless="skip_texify">
-		<exec executable="${texify}" dir="${source}/doc_fr"
-		  failonerror="true" >
-		  <arg  line="${texifyArgs}  elexis.tex" />
+		<exec executable="${texify}" dir="${source}/doc_fr" failonerror="true">
+			<arg line="${texifyArgs}  elexis.tex" />
 		</exec>
-		<copy file="${source}/doc_fr/elexis.pdf" tofile="${dist}/elexis_fr.pdf"/>
+		<copy file="${source}/doc_fr/elexis.pdf" tofile="${dist}/elexis_fr.pdf" />
 
 	</target>
 	<target name="texify" unless="skip_texify">
-		<exec executable="${texify}" dir="${sourcedir}/doc"
-		  failonerror="true" >
-		  <arg  line="${texifyArgs} ${sourcedir}/doc/${pluginname}.tex" />
+		<exec executable="${texify}" dir="${sourcedir}/doc" failonerror="true">
+			<arg line="${texifyArgs} ${sourcedir}/doc/${pluginname}.tex" />
 		</exec>
 		<copy file="${sourcedir}/doc/${pluginname}.pdf" todir="${doc}" />
 	</target>
 
 	<target name="updater" depends="prepare" if="updater.ok">
-		<ant antfile="rsc/build/updater.xml" inheritrefs="true"/>
+		<ant antfile="rsc/build/updater.xml" inheritrefs="true" />
 	</target>
 
 
@@ -205,7 +202,7 @@
 		</copy>
 		<antcall target="updater" />
 		<ant antfile="rsc/build/plugins.xml" target="main" inheritrefs="true" />
-		<ant antfile="../noatext/build.xml" inheritrefs="true"/>
+		<ant antfile="../noatext/build.xml" inheritrefs="true" />
 		<!-- ant antfile="../elexis-trustx-embed/build.xml" inheritrefs="true"/ -->
 		<mkdir dir="${dist}/jre" />
 		<copy todir="${dist}/jre">
@@ -224,12 +221,12 @@
 		</copy>
 		<antcall target="updater" />
 		<ant antfile="rsc/build/plugins.xml" target="main" inheritrefs="true" />
-		<ant antfile="../noatext/build.xml" inheritrefs="true"/>
+		<ant antfile="../noatext/build.xml" inheritrefs="true" />
 		<mkdir dir="${dist}/jre" />
 		<copy todir="${dist}/jre">
-					<fileset dir="${rcpbase}/windows/jre" />
-				</copy>
-		<zip basedir="${dest}/Elexis-${version}" destfile="${output}/elexis-windows-${version}.zip"/>
+			<fileset dir="${rcpbase}/windows/jre" />
+		</copy>
+		<zip basedir="${dest}/Elexis-${version}" destfile="${output}/elexis-windows-${version}.zip" />
 	</target>
 
 	<!-- Linux x86 Version der Distribution -->
@@ -246,7 +243,7 @@
 		</copy>
 		<antcall target="updater" />
 		<ant antfile="rsc/build/plugins.xml" target="main" inheritrefs="true" />
-		<ant antfile="../OOwrapper/build.xml" inheritrefs="true"/>
+		<ant antfile="../OOwrapper/build.xml" inheritrefs="true" />
 		<copy file="${rsc}/elexis.xpm" tofile="${dist}/elexis.xpm" />
 
 		<!-- we can not use the copy-task, since this doesn't preserve the attributes -->
@@ -268,7 +265,7 @@
 			<fileset dir="${rcpbase}/mac/rcp" />
 		</copy>
 		<copy file="${rsc}/elexis-mac.icns" tofile="${dist}/elexis-mac.icns" />
-		<ant antfile="rsc/build/plugins.xml" target="main" inheritrefs="true"/>
+		<ant antfile="rsc/build/plugins.xml" target="main" inheritrefs="true" />
 		<exec executable="chmod" dir="${dist}/elexis.app/Contents/MacOS">
 			<arg line="+x elexis" />
 		</exec>
@@ -279,35 +276,29 @@
 		</zip>
 	</target>
 
-	<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask"/>
-	<tstamp/>
-	<target name="findbugs" > <!-- we assume that you did build today
+	<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" />
+	<tstamp />
+	<target name="findbugs">
+		<!-- we assume that you did build today
 	  at least once everything, e.g. by calling ant hudson.
 	  We omitted this dependency here in order to be able to play with
 	  findbugs -->
-		<findbugs home="${findbugs.home}"
-			  output="html"
-			  outputFile="elexis-findbugs.html"
-			  excludeFilter="match_elexis.xml"
-			  stylesheet="fancy-hist.xsl"
-			  effort="max"
-			  reportLevel="medium"
-		  	  jvmargs="-Xms128M -Xmx768M -XX:PermSize=128M -XX:MaxPermSize=256m" >
-		  <sourcePath path="${source}/elexis-utilities/src" />
-		  <auxClassPath path="/usr/lib/eclipse/plugins" />
-		  <class location="${dest}/output/updater/ch.elexis_${version}.${DSTAMP}.zip" />
-		  <class location="${dest}/output/updater/ch.rgw.utility_${version}.${DSTAMP}.zip" />
-		  <class location="${dest}/output/updater/ch.elexis.mysql.connector_${version}.${DSTAMP}.zip" />
-		  <class location="${dest}/output/updater/ch.elexis.importer.div_${version}.${DSTAMP}.zip" />
-		  </findbugs>
+		<findbugs home="${findbugs.home}" output="html" outputFile="elexis-findbugs.html" excludeFilter="match_elexis.xml" stylesheet="fancy-hist.xsl" effort="max" reportLevel="medium" jvmargs="-Xms128M -Xmx768M -XX:PermSize=128M -XX:MaxPermSize=256m">
+			<sourcePath path="${source}/elexis-utilities/src" />
+			<auxClassPath path="/usr/lib/eclipse/plugins" />
+			<class location="${dest}/output/updater/ch.elexis_${version}.${DSTAMP}.zip" />
+			<class location="${dest}/output/updater/ch.rgw.utility_${version}.${DSTAMP}.zip" />
+			<class location="${dest}/output/updater/ch.elexis.mysql.connector_${version}.${DSTAMP}.zip" />
+			<class location="${dest}/output/updater/ch.elexis.importer.div_${version}.${DSTAMP}.zip" />
+		</findbugs>
 	</target>
 
 
 	<!-- Alles aufräumen -->
 	<target name="clean" description="Alle vom Build erstellen files löschen">
 		<delete dir="${dest}" />
-		<delete dir="${env.TEMP}/elexis-mmc"/>
-		<delete file="${env.TEMP}/elexis-mmc.jar"/>
+		<delete dir="${env.TEMP}/elexis-mmc" />
+		<delete file="${env.TEMP}/elexis-mmc.jar" />
 	</target>
 
 </project>

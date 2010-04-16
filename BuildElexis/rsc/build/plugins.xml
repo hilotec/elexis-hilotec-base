@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *
- * $Id: plugins.xml 6270 2010-04-15 21:19:07Z niklausgiger $
+ * $Id: plugins.xml 6274 2010-04-16 17:58:33Z niklausgiger $
 -->
 <project name="elexis-plugins" default="all" basedir="../../">
 
@@ -22,7 +22,7 @@
 		<available file="../elexis-simpletext/build.xml" property="simpletext.ok" />
 		<antcall target="simpletext" inheritrefs="true" />
 
-	<!-- erweiterte Basisplugins: Nicht unbedingt erforderlich, aber in der
+		<!-- erweiterte Basisplugins: Nicht unbedingt erforderlich, aber in der
              Standarddistribution dabei -->
 		<available file="../elexis-artikel-schweiz/build.xml" property="artikel-schweiz.ok" />
 		<antcall target="artikel-schweiz" inheritrefs="true" />
