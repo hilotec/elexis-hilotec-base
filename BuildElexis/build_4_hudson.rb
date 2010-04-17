@@ -73,7 +73,13 @@ Dir.chdir(RcpBase)
 if /linux/i.match RUBY_PLATFORM
   from = "#{savedDir}/rsc/build/local.properties.hudson_linux"
   to   = "#{savedDir}/rsc/build/local.properties"
-  File.copy(from, to, :verbose => true)
+  inhalt = IO.readlines(from)
+  neu    = File.open(to, "w+")
+  neu.puts(inhalt)
+  origin=File.dirname(savedDir)
+  neu.puts("source=#{origin}")
+  neu.puts("dest=#{origin}/deploy")
+
   HudsonRcpTar = "#{HudsonRoot}/downloads/eclipse-rcp-galileo-SR2-linux-gtk.tar.gz"
   if !File.exists?(eclipse)
     system("tar -zxf #{HudsonRcpTar}")
@@ -108,6 +114,3 @@ if Dir.glob("#{eclipse}/features/*jinto*").size == 0
   system("unzip #{HudsonJintoZip}")
 end
 
-Dir.chdir(savedDir+"/rsc/build")
-cmd = "ant hudson"
-system(cmd)

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 6274 2010-04-16 17:58:33Z niklausgiger $
+<!-- $Id: build.xml 6275 2010-04-17 21:36:23Z niklausgiger $
     (c) 2005-2009 by G. Weirich
 
     This file reflects my personal environment. It is not intended for
@@ -49,6 +49,8 @@
 	<description>
 	    	Elexis - die Praxis
 	</description>
+	<tstamp />
+
 	<property environment="env" />
 	<property name="version" value="2.0.0" />
 	<property name="javatarget" value="1.5" />
@@ -141,7 +143,7 @@
 	</target>
 
 	<target name="copy_plugin">
-		<echo message="${copydest} , und ${copysrc}" />
+		<echo message="${copydest} und ${copysrc}" />
 		<antcall target="checkout" />
 		<mkdir dir="${copydest}" />
 		<copy todir="${copydest}">
@@ -229,10 +231,94 @@
 		<zip basedir="${dest}/Elexis-${version}" destfile="${output}/elexis-windows-${version}.zip" />
 	</target>
 
-	<!-- Linux x86 Version der Distribution -->
+	<!-- Special building for the Continuos Integration tool Hudson -->
 	<target name="hudson" depends="prepare">
+		<delete dir="${dist}" />
+		<mkdir dir="${dist}" />
+		<checksum todir="${dist}/checksums">
+			<fileset file="${eclipse.tar.gz}" />
+			<fileset file="${archie.zip}" />
+		</checksum>
+		<echo message="untar ${eclipse.tar.gz} => ${dist}" />
+		<untar src="${eclipse.tar.gz}" dest="${dist}" compression="gzip" />
+		<move todir="${dist}/tmp">
+			<fileset dir="${dist}/eclipse" />
+		</move>
+		<move todir="${dist}">
+			<fileset dir="${dist}/tmp" />
+		</move>
+		<unzip src="${archie.zip}" dest="${dist}" />
+
 		<antcall target="updater" />
 		<ant antfile="rsc/build/plugins.xml" target="main" inheritrefs="true" />
+		<checksum totalproperty="elexis.md5.checksum">
+			<fileset dir="${dest}" />
+		</checksum>
+		<echo message="Elexis.md5.checksum ist ${elexis.md5.checksum}" />
+		<concat destfile="${dest}/../checksum.md5">${TODAY} #{TSTAMP}: Elexis.md5.checksum ist ${elexis.md5.checksum}</concat>
+	</target>
+
+	<!-- Developer documentation textile and javadoc -->
+	<target name="textile2html">
+		<delete dir="${source}/helpers/wikitext.standalone" />
+		<unzip src="${wikitext.zip}" dest="${source}/helpers" />
+		<exec executable="bash">
+			<!-- Eine Stunde lang vergeblich versucht, das gleiche mit
+		dem ant move task zu machen -->
+			<arg line="-c 'mv ${source}/helpers/mylyn* ${source}/helpers/wikitext.standalone'" />
+		</exec>
+
+		<delete includeEmptyDirs="true">
+			<fileset dir="${source}/helpers" includes="mylyn-*" />
+		</delete>
+		<!-- path to wikitext standalone package -->
+		<property name="wikitext.standalone" value="${source}/helpers/wikitext.standalone" />
+		<path id="wikitext.classpath">
+			<fileset dir="${wikitext.standalone}">
+				<include name="org.eclipse.mylyn.wikitext.*core*.jar" />
+			</fileset>
+		</path>
+
+		<!-- http://www.peterfriese.de/advanced-wikitext/
+			zeigt, wie man mehrere .textile in eine HTML-Datei umwandlen kann
+			-->
+
+		<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
+
+		<echo message="Convert textile to html using ${wikitext.zip}" />
+		<wikitext-to-html markupLanguage="Textile" multipleOutputFiles="false">
+			<fileset dir="${source}">
+				<include name="*/*.textile" />
+				<include name="*/*/*.textile" />
+			</fileset>
+		</wikitext-to-html>
+	</target>
+
+	<target name="javadoc">
+		<echo message="Creating javadoc for ${source}" />
+		<javadoc access="public" destdir="${source}/dokumentation/javadoc" windowtitle="Elexis API documentation" excludepackagenames="org,net,rb,au" charset="utf-8" author="true" version="true" use="true" maxmemory="128M">
+			<fileset dir="${source}" defaultexcludes="yes">
+				<include name="elexis/**/*.java" />
+				<include name="elexis-agenda/**/*.java" />
+				<include name="elexis-utilities/**/*.java" />
+				<!-- include name="**/*.java" / Falls man alles included läuft Javadoc nicht durch, e.g. non-UTF-8-->
+				<exclude name="Laborimport*/*/*.java" />
+				<exclude name="deploy/**" />
+				<exclude name="**/Test*.java" />
+				<exclude name="**/au/**/*.java" />
+				<exclude name="**/org/**/*.java" />
+			</fileset>
+			<doctitle>
+				<![CDATA[Elexis project API]]>
+			</doctitle>
+			<header>
+				<![CDATA[Elexis API documentation as of ${TODAY}]]>
+			</header>
+			<bottom>
+				<![CDATA[Copyright 2005-2010 by Gerry Weirich, Elexis]]>
+			</bottom>
+		</javadoc>
+		<echo message="Created javadoc in ${source}/dokumentation/javadoc" />
 	</target>
 
 	<!-- Linux x86 Version der Distribution -->
@@ -277,15 +363,20 @@
 	</target>
 
 	<taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask" />
-	<tstamp />
 	<target name="findbugs">
 		<!-- we assume that you did build today
-	  at least once everything, e.g. by calling ant hudson.
-	  We omitted this dependency here in order to be able to play with
-	  findbugs -->
-		<findbugs home="${findbugs.home}" output="html" outputFile="elexis-findbugs.html" excludeFilter="match_elexis.xml" stylesheet="fancy-hist.xsl" effort="max" reportLevel="medium" jvmargs="-Xms128M -Xmx768M -XX:PermSize=128M -XX:MaxPermSize=256m">
+		  at least once everything, e.g. by calling ant hudson.
+		  We omitted this dependency here in order to be able to play with
+		  findbugs -->
+		<delete dir="${source}/helpers/findbugs" failonerror="false" quiet="true" />
+		<unzip src="${findbugs.zip}" dest="${source}/helpers" />
+		<exec executable="bash">
+			<!-- Eine Stunde lang vergeblich versucht, das gleiche mit dem ant move task zu machen -->
+			<arg line="-c 'mv ${source}/helpers/findbugs-* ${source}/helpers/findbugs'" />
+		</exec>
+		<findbugs home="${source}/helpers/findbugs" output="html" outputFile="elexis-findbugs.html" excludeFilter="${source}/BuildElexis/rsc/build/match_elexis.xml" stylesheet="fancy-hist.xsl" effort="max" reportLevel="medium" jvmargs="-Xms128M -Xmx768M -XX:PermSize=128M -XX:MaxPermSize=256m">
 			<sourcePath path="${source}/elexis-utilities/src" />
-			<auxClassPath path="/usr/lib/eclipse/plugins" />
+			<auxClassPath path="${dist}" />
 			<class location="${dest}/output/updater/ch.elexis_${version}.${DSTAMP}.zip" />
 			<class location="${dest}/output/updater/ch.rgw.utility_${version}.${DSTAMP}.zip" />
 			<class location="${dest}/output/updater/ch.elexis.mysql.connector_${version}.${DSTAMP}.zip" />
