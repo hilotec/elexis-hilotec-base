@@ -44,7 +44,7 @@ import ag.ion.bion.officelayer.beans.IProperties;
  * Properties of a character
  * 
  * @author Miriam Sutter
- * @author Markus Krüger
+ * @author Markus KrÃ¼ger
  * @version $Revision: 10398 $
  */
 public interface ICharacterProperties extends IProperties {
@@ -69,7 +69,7 @@ public interface ICharacterProperties extends IProperties {
 	 * 
 	 * @throws TextException if any error occurs
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public void setFontSize(float fontSize) throws TextException;
   //----------------------------------------------------------------------------
@@ -89,7 +89,7 @@ public interface ICharacterProperties extends IProperties {
 	 * 
 	 * @throws TextException if any error occurs
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public void setFontBold(boolean param) throws TextException;
 	//----------------------------------------------------------------------------
@@ -109,7 +109,7 @@ public interface ICharacterProperties extends IProperties {
 	 * 
 	 * @throws TextException if any error occurs
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public void setFontItalic(boolean param) throws TextException;
 	//----------------------------------------------------------------------------
@@ -129,7 +129,7 @@ public interface ICharacterProperties extends IProperties {
 	 *  
 	 * @throws TextException if any error occurs
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public void setFontUnderline(boolean param) throws TextException;
 	//----------------------------------------------------------------------------
@@ -147,7 +147,7 @@ public interface ICharacterProperties extends IProperties {
 	 * 
 	 * @param color the font color
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public void setFontColor(int color)  throws TextException;
   //----------------------------------------------------------------------------

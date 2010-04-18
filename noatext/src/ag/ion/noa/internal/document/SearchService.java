@@ -55,7 +55,7 @@ import com.sun.star.util.XSearchable;
 /**
  * Search service for of a document.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  * @date 09.07.2006
  */ 
@@ -71,7 +71,7 @@ public class SearchService implements ISearchService {
 	 * 
 	 * @param xSearchable OpenOffice.org XSearchable interface to be used
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 09.07.2006
 	 */
 	public SearchService(XSearchable xSearchable) {
@@ -86,7 +86,7 @@ public class SearchService implements ISearchService {
 	 * 
 	 * @return result of the search
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 09.07.2006
 	 */
 	public ISearchResult findFirst(ISearchDescriptor searchDescriptor) {
@@ -106,7 +106,7 @@ public class SearchService implements ISearchService {
 	 * 
 	 * @return result of the search
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 09.07.2006
 	 */
 	public ISearchResult findAll(ISearchDescriptor searchDescriptor) {
@@ -123,7 +123,7 @@ public class SearchService implements ISearchService {
 	 * @return information whether a find all search is
 	 * supported
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 09.07.2006
 	 */
 	public boolean supportsFindAll() {
@@ -137,7 +137,7 @@ public class SearchService implements ISearchService {
 	 * 
 	 * @return converted search descriptor
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 09.07.2006
 	 */
 	protected XSearchDescriptor toXSearchDescriptor(ISearchDescriptor searchDescriptor) {

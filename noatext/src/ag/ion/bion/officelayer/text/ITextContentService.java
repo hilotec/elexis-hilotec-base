@@ -43,7 +43,7 @@ import ag.ion.noa.graphic.GraphicInfo;
 /**
  * Content service of a text document.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11508 $
  */
 public interface ITextContentService {
@@ -56,7 +56,7 @@ public interface ITextContentService {
    * 
    * @throws TextException if the paragraph can not be constructed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IParagraph constructNewParagraph() throws TextException;  
   //----------------------------------------------------------------------------
@@ -69,7 +69,7 @@ public interface ITextContentService {
    * 
    * @throws TextException if the image can not be constructed
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 09.07.2007
    */
   public ITextDocumentImage constructNewImage(GraphicInfo graphicInfo) throws TextException;  
@@ -81,7 +81,7 @@ public interface ITextContentService {
    * 
    * @throws TextException if the text content can not be inserted
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void insertTextContent(ITextContent textContent) throws TextException;
   //----------------------------------------------------------------------------
@@ -93,7 +93,7 @@ public interface ITextContentService {
    * 
    * @throws TextException if the text content can not be inserted
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void insertTextContent(ITextRange textRange, ITextContent textContent) throws TextException;
   //----------------------------------------------------------------------------
@@ -105,7 +105,7 @@ public interface ITextContentService {
    * 
    * @throws TextException if the text content can not be inserted
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void insertTextContentBefore(ITextContent newTextContent, ITextContent textContent) throws TextException;
   //----------------------------------------------------------------------------
@@ -117,7 +117,7 @@ public interface ITextContentService {
    * 
    * @throws TextException if the text content can not be inserted
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void insertTextContentAfter(ITextContent newTextContent, ITextContent textContent) throws TextException;
   //----------------------------------------------------------------------------

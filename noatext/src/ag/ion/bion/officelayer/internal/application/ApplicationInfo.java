@@ -44,7 +44,7 @@ import ag.ion.bion.officelayer.application.IApplicationProperties;
 /**
  * Information provider of an office application.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  */
 public class ApplicationInfo implements IApplicationInfo {
@@ -68,7 +68,7 @@ public class ApplicationInfo implements IApplicationInfo {
    * 
    * @throws IllegalArgumentException if the submitted home path is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ApplicationInfo(String home, IApplicationProperties applicationProperties) throws IllegalArgumentException {
     if(home == null)
@@ -86,7 +86,7 @@ public class ApplicationInfo implements IApplicationInfo {
    * @param minor minor version to be used
    * @param update update version to be used
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void setVersion(int major, int minor, int update) {
     majorVersion = major;
@@ -99,7 +99,7 @@ public class ApplicationInfo implements IApplicationInfo {
    * 
    * @return home of the office application
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public String getHome() {
     return home;
@@ -113,7 +113,7 @@ public class ApplicationInfo implements IApplicationInfo {
    * @return properties of the office application or null
    * if the properties are not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IApplicationProperties getProperties() {
     return applicationProperties;
@@ -126,7 +126,7 @@ public class ApplicationInfo implements IApplicationInfo {
    * @return major version of the office application or <code>-1</code>
    * if the major version is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public int getMajorVersion() {
     return majorVersion;
@@ -139,7 +139,7 @@ public class ApplicationInfo implements IApplicationInfo {
    * @return minor version of the office application or <code>-1</code>
    * if the minor version is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public int getMinorVersion() {
     return minorVersion;
@@ -152,7 +152,7 @@ public class ApplicationInfo implements IApplicationInfo {
    * @return update version of the office application or <code>-1</code>
    * if the update version is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public int getUpdateVersion() {
     return updateVersion;
@@ -163,7 +163,7 @@ public class ApplicationInfo implements IApplicationInfo {
    * 
    * @param applicationProperties application properties to be used
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private void intitVersion(IApplicationProperties applicationProperties) {
     String productKey = applicationProperties.getPropertyValue(IApplicationProperties.PRODUCT_KEY_PROPERTY);

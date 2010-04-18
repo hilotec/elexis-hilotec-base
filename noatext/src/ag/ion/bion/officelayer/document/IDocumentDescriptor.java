@@ -42,8 +42,8 @@ package ag.ion.bion.officelayer.document;
  * Descriptor of a document. A document descriptor can be used
  * in order to load and store documents.
  * 
- * @author Andreas Bröker
- * @author Markus Krüger
+ * @author Andreas BrÃ¶cker
+ * @author Markus KrÃ¼ger
  * @version $Revision: 10398 $
  */
 public interface IDocumentDescriptor {
@@ -54,7 +54,7 @@ public interface IDocumentDescriptor {
    * 
    * @param hidden information whether the document is hidden
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void setHidden(boolean hidden);
   //----------------------------------------------------------------------------
@@ -63,7 +63,7 @@ public interface IDocumentDescriptor {
    * 
    * @return information whether the document is hidden
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public boolean getHidden();  
   //----------------------------------------------------------------------------
@@ -72,7 +72,7 @@ public interface IDocumentDescriptor {
    * 
    * @param asTemplate information whether the document is a template
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void setAsTemplate(boolean asTemplate);
   //----------------------------------------------------------------------------
@@ -82,7 +82,7 @@ public interface IDocumentDescriptor {
    * 
    * @return information whether the document is a template
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public boolean getAsTemplate();
   //----------------------------------------------------------------------------
@@ -92,7 +92,7 @@ public interface IDocumentDescriptor {
    * 
    * @param readOnly information whether the document should be opened read only
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 13.06.2006
    */
   public void setReadOnly(boolean readOnly);
@@ -103,7 +103,7 @@ public interface IDocumentDescriptor {
    * 
    * @return information whether the document should be opened read only
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 13.06.2006
    */
   public boolean getReadOnly();
@@ -114,7 +114,7 @@ public interface IDocumentDescriptor {
    * 
    * @param asPreview information whether the document should be opened as preview
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 13.06.2006
    */
   public void setAsPreview(boolean asPreview);
@@ -125,7 +125,7 @@ public interface IDocumentDescriptor {
    * 
    * @return information whether the document should be opened as preview
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 13.06.2006
    */
   public boolean getAsPreview();
@@ -135,7 +135,7 @@ public interface IDocumentDescriptor {
    * 
    * @param author the author of the document to be set
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 24.08.2006
    */
   public void setAuthor(String author);
@@ -145,7 +145,7 @@ public interface IDocumentDescriptor {
    * 
    * @return the author of the document
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 24.08.2006
    */
   public String getAuthor();  
@@ -155,7 +155,7 @@ public interface IDocumentDescriptor {
    * 
    * @param comment the comment of the document to be set
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 24.08.2006
    */
   public void setComment(String comment);
@@ -165,7 +165,7 @@ public interface IDocumentDescriptor {
    * 
    * @return the comment of the document
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 24.08.2006
    */
   public String getComment();  
@@ -175,7 +175,7 @@ public interface IDocumentDescriptor {
    * 
    * @param title the title of the document to be set
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 24.08.2006
    */
   public void setTitle(String title);
@@ -185,7 +185,7 @@ public interface IDocumentDescriptor {
    * 
    * @return the title of the document
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 24.08.2006
    */
   public String getTitle();  
@@ -195,7 +195,7 @@ public interface IDocumentDescriptor {
    * 
    * @param baseURL the base URL of the document to be set
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 24.08.2006
    */
   public void setBaseURL(String baseURL);
@@ -205,7 +205,7 @@ public interface IDocumentDescriptor {
    * 
    * @return the base URL of the document
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 24.08.2006
    */
   public String getBaseURL();  
@@ -216,7 +216,7 @@ public interface IDocumentDescriptor {
    * 
    * @param URL the URL of the document to be set
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 24.08.2006
    */
   public void setURL(String URL);
@@ -227,7 +227,7 @@ public interface IDocumentDescriptor {
    * 
    * @return the URL of the document
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 24.08.2006
    */
   public String getURL();  

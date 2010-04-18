@@ -52,7 +52,7 @@ import com.sun.star.uno.UnoRuntime;
 /**
  * OpenOffice.org calc document.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  */
 public class SpreadsheetDocument extends AbstractDocument implements ISpreadsheetDocument {
@@ -67,7 +67,7 @@ public class SpreadsheetDocument extends AbstractDocument implements ISpreadshee
    * 
    * @throws IllegalArgumentException if the submitted OpenOffice.org interface is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public SpreadsheetDocument(XSpreadsheetDocument xSpreadsheetDocument) throws IllegalArgumentException {
     super((XComponent)UnoRuntime.queryInterface(XComponent.class, xSpreadsheetDocument));
@@ -79,7 +79,7 @@ public class SpreadsheetDocument extends AbstractDocument implements ISpreadshee
    * 
    * @return OpenOffice.org XSpreadsheet interface
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public XSpreadsheetDocument getSpreadsheetDocument() {
     return xSpreadsheetDocument;
@@ -90,7 +90,7 @@ public class SpreadsheetDocument extends AbstractDocument implements ISpreadshee
    * 
    * @return type of the document
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public String getDocumentType() {
     return IDocument.CALC;
@@ -99,7 +99,7 @@ public class SpreadsheetDocument extends AbstractDocument implements ISpreadshee
   /**
    * Reformats the document.
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public void reformat() {
     //TODO fill with logic

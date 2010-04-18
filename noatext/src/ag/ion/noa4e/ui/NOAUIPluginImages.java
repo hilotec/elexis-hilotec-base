@@ -48,7 +48,7 @@ import java.net.URL;
 /**
  * Image registry of the plugin.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 1.2 $
  */
 public class NOAUIPluginImages {
@@ -79,7 +79,7 @@ public class NOAUIPluginImages {
    * 
    * @return initialized image registry.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public static ImageRegistry initializeImageRegistry() {
     Display display= Display.getCurrent();
@@ -96,7 +96,7 @@ public class NOAUIPluginImages {
    * 
    * @return image registry
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public static ImageRegistry getImageRegistry() {
     if (imageRegistry == null) {
@@ -113,7 +113,7 @@ public class NOAUIPluginImages {
    * 
    * @return image
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public static Image getImage(String key) {
     return getImageRegistry().get(key);
@@ -126,7 +126,7 @@ public class NOAUIPluginImages {
    * 
    * @return image descriptor of the image with the submitted key
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public static ImageDescriptor getImageDescriptor(String key) {
     return getImageRegistry().getDescriptor(key);
@@ -135,7 +135,7 @@ public class NOAUIPluginImages {
   /**
    * Declares all images.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private static void declareImages() {    
     declareRegistryImage(IMG_WIZBAN_APPLICATION, WIZBAN + "application_wiz.gif"); //$NON-NLS-1$
@@ -147,7 +147,7 @@ public class NOAUIPluginImages {
    * @param key key of the image
    * @param path path the image
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private final static void declareRegistryImage(String key, String path) {
     ImageDescriptor desc= ImageDescriptor.getMissingImageDescriptor();
@@ -169,7 +169,7 @@ public class NOAUIPluginImages {
    * 
    * @throws MalformedURLException if the path is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private static URL makeImageFileURL(String imagePath) throws MalformedURLException {
     if (ICON_BASE_URL == null) {

@@ -79,8 +79,8 @@ import java.util.Vector;
  * Office connection implementation. This class bases on the implementation
  * of the OpenOffice.org API Bean package.
  * 
- * @author Andreas Bröker
- * @author Markus Krüger
+ * @author Andreas BrÃ¶cker
+ * @author Markus KrÃ¼ger
  * @version $Revision: 11514 $
  */
 public class LocalOfficeConnectionGhost implements OfficeConnection {
@@ -121,7 +121,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
   /**
    * Internal office connection wrapper.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private class OfficeConnectionWrapper implements OfficeConnection {
 
@@ -146,7 +146,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * @throws MalformedURLException
      *           if the URL is not valid
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void setUnoUrl(String url) throws MalformedURLException {
       LocalOfficeConnectionGhost.this.setUnoUrl(url);
@@ -158,7 +158,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * @param containerFactory
      *          this is a application provided AWT container factory
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void setContainerFactory(ContainerFactory containerFactory) {
       LocalOfficeConnectionGhost.this.setContainerFactory(containerFactory);
@@ -173,7 +173,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * 
      * @return the office UNO component context
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public XComponentContext getComponentContext() {
       return LocalOfficeConnectionGhost.this.getComponentContext();
@@ -190,7 +190,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * 
      * @return the office window instance
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public OfficeWindow createOfficeWindow(Container container) {
       return LocalOfficeConnectionGhost.this.createOfficeWindow(container);
@@ -199,7 +199,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
     /**
      * Closes the connection.
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void dispose() {
       LocalOfficeConnectionGhost.this.dispose();
@@ -211,7 +211,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * @param eventListener
      *          is a listener object
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void addEventListener(XEventListener eventListener) {
       LocalOfficeConnectionGhost.this.addEventListener(eventListener);
@@ -223,7 +223,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * @param eventListener
      *          is a listener object
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void removeEventListener(XEventListener eventListener) {
       LocalOfficeConnectionGhost.this.removeEventListener(eventListener);
@@ -238,7 +238,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
   /**
    * Internal local office window wrapper.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private class LocalOfficeWindowWrapper extends LocalOfficeWindow {
 
@@ -248,7 +248,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * 
      * @param officeConnection office connection to be used
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     protected LocalOfficeWindowWrapper(OfficeConnection officeConnection) {
       super(officeConnection);
@@ -263,7 +263,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
 //  /**
 //   * Internal stream processor.
 //   * 
-//   * @author Andreas Bröker
+//   * @author Andreas BrÃ¶cker
 //   */
 //  private class StreamProcessor extends Thread {
 //    
@@ -277,7 +277,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
 //     * @param inputStream input stream to be used
 //     * @param printStream print stream to be used
 //     * 
-//     * @author Andreas Bröker
+//     * @author Andreas BrÃ¶cker
 //     */ 
 //    public StreamProcessor(final java.io.InputStream inputStream, final java.io.PrintStream printStream) {
 //      this.inputStream = inputStream;
@@ -288,7 +288,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
 //    /**
 //     * Processes streams.
 //     * 
-//     * @author Andreas Bröker
+//     * @author Andreas BrÃ¶cker
 //     */
 //    public void run() {
 //      java.io.BufferedReader bufferedReader = new java.io.BufferedReader(new java.io.InputStreamReader(inputStream));
@@ -314,7 +314,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
   /**
    * Internal service in order to start the native office application.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private class OfficeService {
 
@@ -336,7 +336,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * 
      * @throws java.io.IOException if the service can not be started
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void startupService() throws java.io.IOException {
       int nSizeCmdArray = 5;
@@ -385,7 +385,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
      * 
      * @return the ammount of time to wait in seconds(?)
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public int getStartupTime() {
       return 60;
@@ -407,7 +407,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * @param officeProgressMonitor
    *          office progress monitor to be used (can be null)
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public LocalOfficeConnectionGhost(IOfficeProgressMonitor officeProgressMonitor) {
     loadNativeLibraries();
@@ -441,7 +441,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * @throws MalformedURLException
    *           if the URL is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void setUnoUrl(String url) throws java.net.MalformedURLException {
     this.url = null;
@@ -472,7 +472,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * @param containerFactory
    *          this is a application provided AWT container factory
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void setContainerFactory(ContainerFactory containerFactory) {
     this.containerFactory = containerFactory;
@@ -487,7 +487,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * 
    * @return the office UNO component context
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   synchronized public XComponentContext getComponentContext() {
     if(officeProgressMonitor != null)
@@ -505,7 +505,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * 
    * @return the office UNO component context
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   synchronized public XComponentContext getCurrentComponentContext() {
     if(officeProgressMonitor != null)
@@ -525,7 +525,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * 
    * @return the office window instance
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public OfficeWindow createOfficeWindow(Container container) {
     if(officeConnectionWrapper == null)
@@ -536,7 +536,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
   /**
    * Closes the connection.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void dispose() {
     Iterator iterator = components.iterator();
@@ -578,7 +578,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * @param eventListener
    *          is a listener object
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void addEventListener(XEventListener eventListener) {
     if(eventListener == null)
@@ -592,7 +592,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * @param eventListener
    *          is a listener object
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void removeEventListener(XEventListener eventListener) {
     if(eventListener == null)
@@ -605,7 +605,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * 
    * @return constructed component context
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private XComponentContext connect() {
     try {
@@ -722,7 +722,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * @throws com.sun.star.connection.ConnectionSetupException if the connection can not be initialized
    * @throws com.sun.star.lang.IllegalArgumentException if the submitted arguments are not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private Object resolve(XComponentContext xComponentContext, String url)
       throws com.sun.star.connection.NoConnectException,
@@ -821,7 +821,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
    * 
    * @return the path to the office program folder
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private String getProgramPath() {
     if(mProgramPath == null) {
@@ -1084,7 +1084,7 @@ public class LocalOfficeConnectionGhost implements OfficeConnection {
   /**
    * Loads the necessary native libraries. 
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 20.03.2006
    */
   private void loadNativeLibraries() {

@@ -43,7 +43,7 @@ import ag.ion.bion.officelayer.filter.IFilter;
 /**
  * Filter for XHTML format.
  * 
- * @author Markus Krüger
+ * @author Markus KrÃ¼ger
  * @version $Revision: 10398 $
  */ 
 public class XHTMLFilter extends AbstractFilter implements IFilter {
@@ -61,7 +61,7 @@ public class XHTMLFilter extends AbstractFilter implements IFilter {
 	* 
 	* @return definition of the filter
   * 
-  * @author Markus Krüger
+  * @author Markus KrÃ¼ger
   * @date 01.03.2007
 	*/
   public String getFilterDefinition(IDocument document) {
@@ -88,7 +88,7 @@ public class XHTMLFilter extends AbstractFilter implements IFilter {
    * 
    * @return file extension of the filter
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 03.04.2007
    */
   public String getFileExtension(String documentType) {

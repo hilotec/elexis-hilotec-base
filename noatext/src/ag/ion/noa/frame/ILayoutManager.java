@@ -41,8 +41,8 @@ import com.sun.star.frame.XLayoutManager;
 /**
  * Layout manager for frames.
  * 
- * @author Andreas Bröker
- * @author Markus Krüger
+ * @author Andreas BrÃ¶cker
+ * @author Markus KrÃ¼ger
  * @version $Revision: 11163 $
  * @date 2006/02/05
  */
@@ -196,7 +196,7 @@ public interface ILayoutManager {
    * 
    * @return office XLayoutManager interface
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 2006/02/05
    */
   public XLayoutManager getXLayoutManager();
@@ -208,7 +208,7 @@ public interface ILayoutManager {
    * 
    * @return information whether the UI resource is hidden after method call
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 2006/02/05
    */
   public boolean hideElement(String resourceURL);
@@ -216,7 +216,7 @@ public interface ILayoutManager {
   /**
    * Hides all bars.
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 08.12.2006
    */
   public void hideAll();
@@ -228,7 +228,7 @@ public interface ILayoutManager {
    * 
    * @return information whether the UI resource is visible after method call
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 2006/02/05
    */
   public boolean showElement(String resourceURL);
@@ -239,7 +239,7 @@ public interface ILayoutManager {
    * 
    * @param visible new visibility state
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 2006/02/05
    */
   public void setVisible(boolean visible);

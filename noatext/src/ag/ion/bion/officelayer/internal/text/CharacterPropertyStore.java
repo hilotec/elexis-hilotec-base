@@ -53,8 +53,8 @@ import ag.ion.bion.officelayer.text.TextException;
  * stoers properties belonging to characters, thus that after loosing the
  * reference of the original character we still have stored the properties
  * 
- * @author Sebastian Rösgen
- * @author Markus Krüger
+ * @author Sebastian RÃ¼sgen
+ * @author Markus KrÃ¼ger
  * @version $Revision: 10398 $
  */
 public class CharacterPropertyStore extends AbstractPropertyStore implements ICharacterPropertyStore{
@@ -76,7 +76,7 @@ public class CharacterPropertyStore extends AbstractPropertyStore implements ICh
 	 * 
 	 * @throws TextException if any error occurs
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public CharacterPropertyStore(IParagraph origin) throws TextException {
     ICharacterProperties characterProperties = origin.getCharacterProperties();
@@ -91,8 +91,8 @@ public class CharacterPropertyStore extends AbstractPropertyStore implements ICh
 	 * 
 	 * @throws TextException if any error occurs
 	 * 
-	 * @author Sebastian Rösgen
-   * @author Markus Krüger
+	 * @author Sebastian RÃ¼sgen
+   * @author Markus KrÃ¼ger
 	 */
 	public CharacterPropertyStore(ITextCursor origin) throws TextException{
     ICharacterProperties characterProperties = origin.getCharacterProperties();
@@ -105,7 +105,7 @@ public class CharacterPropertyStore extends AbstractPropertyStore implements ICh
    * 
    * @return the properties
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public IProperties getProperties() {
     return properties;
@@ -118,7 +118,7 @@ public class CharacterPropertyStore extends AbstractPropertyStore implements ICh
 	 * 
 	 * @throws TextException if any error occurs
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public float getFontSize() throws TextException {
 		return fontSize;
@@ -131,7 +131,7 @@ public class CharacterPropertyStore extends AbstractPropertyStore implements ICh
 	 * 
 	 * @throws TextException if any error occurs
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public void setFontSize(float fontSize) throws TextException {
 		this.fontSize = fontSize;
@@ -144,7 +144,7 @@ public class CharacterPropertyStore extends AbstractPropertyStore implements ICh
      * 
      * @throws TextException if the property can not be fetched
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public boolean isFontBold() throws TextException {
 		return fontBold;
@@ -157,7 +157,7 @@ public class CharacterPropertyStore extends AbstractPropertyStore implements ICh
 	 * 
 	 * @throws TextException if any error occurs
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public void setFontBold(boolean param) throws TextException {
 		fontBold = param;
@@ -170,7 +170,7 @@ public class CharacterPropertyStore extends AbstractPropertyStore implements ICh
      * 
      * @throws TextException if the property can not be fetched
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public boolean isFontItalic() throws TextException {
 		if (fontItalic != null) {
@@ -193,7 +193,7 @@ public class CharacterPropertyStore extends AbstractPropertyStore implements ICh
 	 * 
 	 * @throws TextException if any error occurs
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public void setFontItalic(boolean param) throws TextException {
 		if (param) {
@@ -211,7 +211,7 @@ public class CharacterPropertyStore extends AbstractPropertyStore implements ICh
      * 
      * @throws TextException if the property can not be fetched
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public boolean isFontUnderlined() throws TextException {
 		return fontUnderlined;
@@ -224,7 +224,7 @@ public class CharacterPropertyStore extends AbstractPropertyStore implements ICh
 	 *  
 	 * @throws TextException if any error occurs
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public void setFontUnderline(boolean param) throws TextException  {
 		this.fontUnderlined = param;
@@ -237,7 +237,7 @@ public class CharacterPropertyStore extends AbstractPropertyStore implements ICh
      * 
      * @throws TextException if the property can not be fetched
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public int getFontColor() throws TextException {
 		return fontColor;
@@ -250,7 +250,7 @@ public class CharacterPropertyStore extends AbstractPropertyStore implements ICh
      * 
      * @throws TextException if the property can not be set
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public void setFontColor(int color)  throws TextException {
 		this.fontColor = color;

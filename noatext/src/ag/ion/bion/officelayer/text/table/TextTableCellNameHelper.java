@@ -43,7 +43,7 @@ import ag.ion.bion.officelayer.text.TextException;
 /**
  * Helper in order to work with names of text table cells.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  */
 public class TextTableCellNameHelper {
@@ -65,7 +65,7 @@ public class TextTableCellNameHelper {
    * 
    * @return row index
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public static int getRowIndex(String cellName) {
     if(cellName == null)
@@ -94,7 +94,7 @@ public class TextTableCellNameHelper {
    * 
    * @return row counter value
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public static int getRowCounterValue(String cellName) {
     if(cellName == null)
@@ -109,7 +109,7 @@ public class TextTableCellNameHelper {
    * 
    * @return row counter value
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public static int getRowCounterValue(int rowIndex) {
     return rowIndex + 1;
@@ -126,7 +126,7 @@ public class TextTableCellNameHelper {
    * 
    * @throws TextException if the new calculated row counter value is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public static String moveRowCounterValue(int count, String cellName) throws TextException {
     int newRowCounterValue = getRowCounterValue(cellName) + count;
@@ -145,7 +145,7 @@ public class TextTableCellNameHelper {
    * 
    * @throws TextException if the submitted row counter value is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public static String moveRowCounterValueTo(int newRowCounterValue, String cellName) throws TextException {
     if(newRowCounterValue < 0)
@@ -160,7 +160,7 @@ public class TextTableCellNameHelper {
    * 
    * @return column index of the submitted cell name
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public static int getColumnIndex(String cellName) {
     if(cellName == null)
@@ -205,7 +205,7 @@ public class TextTableCellNameHelper {
    *              have 'G' as 2, 'H' as 1 and 'U' as 0
    * @param character the character value as known in ascii notation
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   private static int int4Letter(int level, int character) {
     int multiplyer = (int)Math.pow(52,level);
@@ -220,7 +220,7 @@ public class TextTableCellNameHelper {
    * 
    * @return column character(s) of the submitted index
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public static String getColumnCharacter(int columnIndex) {
     if(columnIndex < 26) {
@@ -249,7 +249,7 @@ public class TextTableCellNameHelper {
    * 
    * @return column characters of the submitted cell name
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public static String getColumnCharacter(String cellName) {
     if(cellName == null)
@@ -275,7 +275,7 @@ public class TextTableCellNameHelper {
    * 
    * @throws TextException if the new calculated column index is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public static String moveColumnIndex(int count, String cellName) throws TextException {
     int newColumnIndex = getColumnIndex(cellName) + count;
@@ -294,7 +294,7 @@ public class TextTableCellNameHelper {
    * 
    * @throws TextException if the submitted column index is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public static String moveColumnIndexTo(int newColumnIndex, String cellName) throws TextException {
     if(newColumnIndex < 0)
@@ -368,7 +368,7 @@ public class TextTableCellNameHelper {
 	 * @return next column name on the basis of the submitted name of 
 	 * a column
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
 	 */
 	public static String getNextColumnName(String columnName) {
 		if(columnName.length() == 1) {

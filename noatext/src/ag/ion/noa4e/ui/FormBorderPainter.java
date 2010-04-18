@@ -67,7 +67,7 @@ import org.eclipse.ui.forms.widgets.Hyperlink;
  * the paintBordersFor(...) method of the FormToolkit. Use the paintBordersFor(...)
  * method of this border painter. 
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 1.2 $
  * @date 25.02.2006
  */
@@ -81,7 +81,7 @@ public class FormBorderPainter implements PaintListener {
 	 * 
 	 * @param composite composite to be used
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 25.02.2006
 	 */
 	public static void paintBordersFor(Composite composite) {
@@ -98,7 +98,7 @@ public class FormBorderPainter implements PaintListener {
 	 *
 	 * @param paintEvent an event containing information about the paint
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 25.02.2006
 	 */
 	public void paintControl(PaintEvent paintEvent) {
@@ -164,7 +164,7 @@ public class FormBorderPainter implements PaintListener {
 	/**
 	 * Prevents instantiation.
 	 *
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 25.02.2006
 	 */
 	private FormBorderPainter() {

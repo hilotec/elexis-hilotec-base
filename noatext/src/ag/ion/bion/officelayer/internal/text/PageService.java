@@ -57,7 +57,7 @@ import com.sun.star.uno.UnoRuntime;
 /**
  * Page service of a text document.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11494 $
  */
 public class PageService implements IPageService {
@@ -72,7 +72,7 @@ public class PageService implements IPageService {
    * 
    * @throws IllegalArgumentException if the submitted text document is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public PageService(ITextDocument textDocument) throws IllegalArgumentException {
     if(textDocument == null)
@@ -85,8 +85,8 @@ public class PageService implements IPageService {
    * 
    * @return number of available pages
    * 
-   * @author Andreas Bröker
-   * @author Markus Krüger
+   * @author Andreas BrÃ¶cker
+   * @author Markus KrÃ¼ger
    */
   public int getPageCount() {
     IPageCursor pageCursor = textDocument.getViewCursorService().getViewCursor().getPageCursor();
@@ -106,7 +106,7 @@ public class PageService implements IPageService {
    * 
    * @throws TextException if the page is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IPage getPage(int index) throws TextException {
     try {

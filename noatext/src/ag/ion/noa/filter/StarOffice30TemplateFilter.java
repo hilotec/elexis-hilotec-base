@@ -43,7 +43,7 @@ import ag.ion.bion.officelayer.filter.IFilter;
 /**
  * Filter for the StarWriter 3.0 Template format.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11479 $
  * @date 09.07.2006
  */ 
@@ -60,8 +60,8 @@ public class StarOffice30TemplateFilter extends AbstractFilter implements IFilte
 	* 
 	* @return definition of the filter
   * 
-  * @author Markus Krüger
-  * @author Andreas Bröker
+  * @author Markus KrÃ¼ger
+  * @author Andreas BrÃ¶cker
 	*/
   public String getFilterDefinition(IDocument document) {
     if(document.getDocumentType().equals(IDocument.WRITER)) {
@@ -86,7 +86,7 @@ public class StarOffice30TemplateFilter extends AbstractFilter implements IFilte
    * 
    * @return file extension of the filter
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 03.04.2007
    */
   public String getFileExtension(String documentType) {
@@ -112,7 +112,7 @@ public class StarOffice30TemplateFilter extends AbstractFilter implements IFilte
 	 * 
 	 * @return name of the filter
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 14.07.2006
 	 */
 	public String getName(IDocument document) {

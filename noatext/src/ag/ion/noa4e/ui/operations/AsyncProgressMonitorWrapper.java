@@ -44,7 +44,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * Wrapper for a progress monitor. Every call to this progress monitor
  * will be delegated within an async operation to the wrapped progress monitor 
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 1.2 $
  * @date 28.06.2006
  */
@@ -61,7 +61,7 @@ public class AsyncProgressMonitorWrapper implements IProgressMonitor{
 	 * @param progressMonitor progress monitor to be wrapped
 	 * @param display display to be used
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 28.06.2006
 	 */
 	public AsyncProgressMonitorWrapper(IProgressMonitor progressMonitor, Display display) {
@@ -82,7 +82,7 @@ public class AsyncProgressMonitorWrapper implements IProgressMonitor{
 	 *  the implementation is free to indicate progress in a way which 
 	 *  doesn't require the total number of work units in advance
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 28.06.2006
 	 */
 	public void beginTask(final String name, final int totalWork) {
@@ -98,7 +98,7 @@ public class AsyncProgressMonitorWrapper implements IProgressMonitor{
 	 * or the user canceled it. This method may be called more than once 
 	 * (implementations should be prepared to handle this case).
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 28.06.2006
 	 */
 	public void done() {
@@ -116,7 +116,7 @@ public class AsyncProgressMonitorWrapper implements IProgressMonitor{
 	 * 
 	 * @param work the amount of work done
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 28.06.2006
 	 */
 	public void internalWorked(final double work) {
@@ -135,7 +135,7 @@ public class AsyncProgressMonitorWrapper implements IProgressMonitor{
 	 * @return <code>true</code> if cancellation has been requested,
 	 *    and <code>false</code> otherwise
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 28.06.2006
 	 */
 	public boolean isCanceled() {
@@ -149,7 +149,7 @@ public class AsyncProgressMonitorWrapper implements IProgressMonitor{
 	 *     been requested (but not necessarily acknowledged);
 	 *     <code>false</code> clears this flag
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 28.06.2006
 	 */
 	public void setCanceled(final boolean value) {
@@ -167,7 +167,7 @@ public class AsyncProgressMonitorWrapper implements IProgressMonitor{
 	 *
 	 * @param name the name (or description) of the main task
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 28.06.2006
 	 */
 	public void setTaskName(final String name) {
@@ -184,7 +184,7 @@ public class AsyncProgressMonitorWrapper implements IProgressMonitor{
 	 *
 	 * @param name the name (or description) of the subtask
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 28.06.2006
 	 */
 	public void subTask(final String name) {
@@ -203,7 +203,7 @@ public class AsyncProgressMonitorWrapper implements IProgressMonitor{
 	 *
 	 * @param work the number of work units just completed
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 28.06.2006
 	 */
 	public void worked(final int work) {

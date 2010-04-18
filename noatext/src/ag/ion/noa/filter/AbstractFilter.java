@@ -42,7 +42,7 @@ import ag.ion.bion.officelayer.filter.IFilter;
 /**
  * Abstract base filter.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11479 $
  * @date 09.07.2006
  */ 
@@ -58,7 +58,7 @@ public abstract class AbstractFilter implements IFilter {
 	 * @return information whether the submitted document
 	 * is supported by the filter
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 08.07.2006
 	 */
 	public boolean isSupported(IDocument document) {
@@ -75,7 +75,7 @@ public abstract class AbstractFilter implements IFilter {
 	 * @return information whether the filter constructs
 	 * a document which can not be interpreted again
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 08.07.2006
 	 */
 	public boolean isExternalFilter() {
@@ -90,7 +90,7 @@ public abstract class AbstractFilter implements IFilter {
    * 
    * @return file extension of the filter
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 03.04.2007
    */
   public String getFileExtension(IDocument document) {
@@ -107,7 +107,7 @@ public abstract class AbstractFilter implements IFilter {
 	 * 
 	 * @return name of the filter
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 14.07.2006
 	 */
 	public String getName(IDocument document) {

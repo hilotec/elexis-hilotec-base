@@ -43,8 +43,8 @@ import ag.ion.bion.officelayer.beans.IProperties;
 /**
  * Properties of a page style.
  * 
- * @author Andreas Bröker
- * @author Markus Krüger
+ * @author Andreas BrÃ¶cker
+ * @author Markus KrÃ¼ger
  * @version $Revision: 10398 $
  */
 public interface IPageStyleProperties extends IProperties {
@@ -60,7 +60,7 @@ public interface IPageStyleProperties extends IProperties {
    * 
    * @throws TextException if the property can not be set
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void setIsLandscape(boolean isLandscape) throws TextException;
   //----------------------------------------------------------------------------
@@ -71,7 +71,7 @@ public interface IPageStyleProperties extends IProperties {
    * 
    * @throws TextException if the property is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public boolean getIsLandscape() throws TextException;
   //----------------------------------------------------------------------------

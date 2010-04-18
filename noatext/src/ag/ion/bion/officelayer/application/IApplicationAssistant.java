@@ -43,7 +43,7 @@ import ag.ion.bion.officelayer.runtime.IOfficeProgressMonitor;
 /**
  * Assistant for office applications.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  */
 public interface IApplicationAssistant {
@@ -54,7 +54,7 @@ public interface IApplicationAssistant {
    * 
    * @return informations about available local office applications
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IApplicationInfo[] getLocalApplications();
   //----------------------------------------------------------------------------
@@ -65,7 +65,7 @@ public interface IApplicationAssistant {
    * 
    * @return informations about available local office applications
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IApplicationInfo[] getLocalApplications(IOfficeProgressMonitor officeProgressMonitor);
   //----------------------------------------------------------------------------
@@ -78,7 +78,7 @@ public interface IApplicationAssistant {
    * @return application info on the basis of the submitted application 
    * home path or null if the application info can not be provided
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IApplicationInfo findLocalApplicationInfo(String home);
   //----------------------------------------------------------------------------

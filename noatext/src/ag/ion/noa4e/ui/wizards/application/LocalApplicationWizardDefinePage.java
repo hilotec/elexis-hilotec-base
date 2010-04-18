@@ -83,7 +83,7 @@ import java.io.File;
 /**
  * Wizard page in order to define the path of a local OpenOffice.org application.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 1.2 $
  */
 public class LocalApplicationWizardDefinePage extends WizardPage implements IWizardPage {
@@ -107,7 +107,7 @@ public class LocalApplicationWizardDefinePage extends WizardPage implements IWiz
    * @param homePath home path of the office application to be used
    * @param applicationInfos application infos to be used (can be null)
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public LocalApplicationWizardDefinePage(String homePath, IApplicationInfo[] applicationInfos) {
     super(PAGE_NAME);
@@ -126,7 +126,7 @@ public class LocalApplicationWizardDefinePage extends WizardPage implements IWiz
    * @return selected home path of an local office application or null
    * if a home path is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public String getSelectedHomePath() {
     return selectedHomePath;
@@ -138,7 +138,7 @@ public class LocalApplicationWizardDefinePage extends WizardPage implements IWiz
    * @param visible <code>true</code> to make this page visible,
    *  and <code>false</code> to hide it
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void setVisible(boolean visible) {    
     super.setVisible(visible);    
@@ -173,7 +173,7 @@ public class LocalApplicationWizardDefinePage extends WizardPage implements IWiz
    *
    * @param parent the parent composite
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void createControl(Composite parent) {
     FormToolkit formToolkit = NOAUIPlugin.getFormToolkit();
@@ -210,7 +210,7 @@ public class LocalApplicationWizardDefinePage extends WizardPage implements IWiz
    * @param formToolkit form toolkit to be used
    * @param scrolledForm scrolled form to be used
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private void constructHomeSection(FormToolkit formToolkit, ScrolledForm scrolledForm) {
     Section section = formToolkit.createSection(scrolledForm.getBody(), Section.DESCRIPTION | Section.CLIENT_INDENT);
@@ -279,7 +279,7 @@ public class LocalApplicationWizardDefinePage extends WizardPage implements IWiz
    * @param formToolkit form toolkit to be used
    * @param scrolledForm scrolled form to be used
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private void constructApplicationsSection(FormToolkit formToolkit, ScrolledForm scrolledForm) {
     Section section = formToolkit.createSection(scrolledForm.getBody(), Section.DESCRIPTION | Section.CLIENT_INDENT);
@@ -338,7 +338,7 @@ public class LocalApplicationWizardDefinePage extends WizardPage implements IWiz
   /**
    * Checks page state.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private void checkPageState() {
     String home = textHome.getText();
@@ -388,7 +388,7 @@ public class LocalApplicationWizardDefinePage extends WizardPage implements IWiz
    * 
    * @param table table with available applications
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private void fillTable(Table table) {
     if(applicationInfos == null || table == null)
@@ -406,7 +406,7 @@ public class LocalApplicationWizardDefinePage extends WizardPage implements IWiz
    * @param table application infos table to be used
    * @param applicationInfo application info to be added
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private void addApplicationInfo(Table table, IApplicationInfo applicationInfo) {
     if(table != null && applicationInfo != null) {
@@ -433,7 +433,7 @@ public class LocalApplicationWizardDefinePage extends WizardPage implements IWiz
    * 
    * @return selected application info or null if none was selected
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private IApplicationInfo selectApplicationInfo(String home) {
     if(home == null)
@@ -464,7 +464,7 @@ public class LocalApplicationWizardDefinePage extends WizardPage implements IWiz
    * @return application info or null if an application info with the
    * submitted application home path is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private IApplicationInfo getApplicationInfo(String home) {
     if(home == null)
@@ -491,7 +491,7 @@ public class LocalApplicationWizardDefinePage extends WizardPage implements IWiz
    * 
    * @param applicationInfos application infos to be used
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private void init(IApplicationInfo[] applicationInfos) {
     if(applicationInfos == null)

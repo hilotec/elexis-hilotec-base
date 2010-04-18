@@ -41,7 +41,7 @@ package ag.ion.bion.officelayer.application;
 /**
  * Information provider of an office application.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  */
 public interface IApplicationInfo {
@@ -55,7 +55,7 @@ public interface IApplicationInfo {
    * 
    * @return home of the office application
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public String getHome();
   //----------------------------------------------------------------------------
@@ -67,7 +67,7 @@ public interface IApplicationInfo {
    * @return properties of the office application or null
    * if the properties are not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IApplicationProperties getProperties();
   //----------------------------------------------------------------------------  
@@ -78,7 +78,7 @@ public interface IApplicationInfo {
    * @return major version of the office application or <code>-1</code>
    * if the major version is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public int getMajorVersion();
   //----------------------------------------------------------------------------  
@@ -89,7 +89,7 @@ public interface IApplicationInfo {
    * @return minor version of the office application or <code>-1</code>
    * if the minor version is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public int getMinorVersion();  
   //----------------------------------------------------------------------------  
@@ -100,7 +100,7 @@ public interface IApplicationInfo {
    * @return update version of the office application or <code>-1</code>
    * if the update version is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public int getUpdateVersion();  
   //----------------------------------------------------------------------------  

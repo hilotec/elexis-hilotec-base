@@ -37,10 +37,10 @@
 package ag.ion.bion.officelayer.desktop;
 
 /**
- * URL´s of global commands.
+ * URLï¿½s of global commands.
  * 
- * @author Andreas Bröker
- * @author Markus Krüger
+ * @author Andreas BrÃ¶cker
+ * @author Markus KrÃ¼ger
  * @version $Revision: 11541 $
  * @date 14.06.2006
  */
@@ -125,7 +125,7 @@ public class GlobalCommands {
   /**
    * Prevents instantiation.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 14.06.2006 
    */
   private GlobalCommands() {

@@ -82,7 +82,7 @@ import java.io.IOException;
 /**
  * Document loading helper class. 
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11529 $
  */
 public class DocumentLoader {

@@ -43,7 +43,7 @@ import ag.ion.bion.officelayer.text.ITextTableProperties;
 /**
  * Propertystore for tablecells.
  * 
- * @author Sebastian Rösgen
+ * @author Sebastian RÃ¼sgen
  * 
  * @version $Revision: 10398 $
  */
@@ -58,7 +58,7 @@ public interface ITextTablePropertyStore extends ITextTableProperties {
 	  * 
 	  * @throws TextException
 	  * 
-	  * @author Sebastian Rösgen
+	  * @author Sebastian RÃ¼sgen
 	  */
   public void setCellWidths(int[] width);
   //----------------------------------------------------------------------------
@@ -70,7 +70,7 @@ public interface ITextTablePropertyStore extends ITextTableProperties {
 	   * 
 	   * @throws TextException
 	   * 
-	   * @author Sebastian Rösgen
+	   * @author Sebastian RÃ¼sgen
 	   */
   public void setWidth(long width);
   //----------------------------------------------------------------------------
@@ -79,7 +79,7 @@ public interface ITextTablePropertyStore extends ITextTableProperties {
    * 
    * @param number
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public void setRows(int number);
   //----------------------------------------------------------------------------
@@ -88,7 +88,7 @@ public interface ITextTablePropertyStore extends ITextTableProperties {
    * 
    * @param number
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public void setColumns(int number);
   //----------------------------------------------------------------------------
@@ -97,7 +97,7 @@ public interface ITextTablePropertyStore extends ITextTableProperties {
    * 
    * @return the count of the columns of the table
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public int getColumns();
   //----------------------------------------------------------------------------  
@@ -107,7 +107,7 @@ public interface ITextTablePropertyStore extends ITextTableProperties {
    * 
    * @return the count of the rows of the table
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public int getRows() ; 
   //----------------------------------------------------------------------------

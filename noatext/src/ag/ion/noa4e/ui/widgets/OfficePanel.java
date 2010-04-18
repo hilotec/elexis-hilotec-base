@@ -90,7 +90,7 @@ import java.net.URL;
  * The office panel can be used in order to integrate the OpenOffice.org User Interface into the SWT
  * environment.
  * 
- * @author Andreas Br�ker
+ * @author Andreas Bröcker
  * @version $Revision: 11473 $
  * @date 28.06.2006
  */
@@ -126,7 +126,7 @@ public class OfficePanel extends Composite {
 	 * @param style
 	 *            style to be used
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	public OfficePanel(Composite parent, int style){
@@ -141,7 +141,7 @@ public class OfficePanel extends Composite {
 	 * 
 	 * @return current office frame or null if an office frame is not available
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	public IFrame getFrame(){
@@ -154,7 +154,7 @@ public class OfficePanel extends Composite {
 	 * 
 	 * @return current document. Returns null if a document is not available.
 	 * 
-	 * @author Markus Kr�ger
+	 * @author Markus Krüger
 	 * @date 19.03.2007
 	 */
 	public IDocument getDocument(){
@@ -165,7 +165,7 @@ public class OfficePanel extends Composite {
 	/**
 	 * Sets focus to the office panel.
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	public boolean setFocus(){
@@ -184,7 +184,7 @@ public class OfficePanel extends Composite {
 	 * @param buildAlwaysNewFrames
 	 *            information whether a new frame should be builded for new loaded documents
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	public void setBuildAlwaysNewFrames(boolean buildAlwaysNewFrames){
@@ -199,7 +199,7 @@ public class OfficePanel extends Composite {
 	 * @param showProgressIndicator
 	 *            information whether a progress indicator should be shown during document loading
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	public void showProgressIndicator(boolean showProgressIndicator){
@@ -217,7 +217,7 @@ public class OfficePanel extends Composite {
 	 * @param documentDescriptor
 	 *            document descriptor to be used
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	public final void loadDocument(boolean fork, final String documentPath,
@@ -302,7 +302,7 @@ public class OfficePanel extends Composite {
 	/**
 	 * Disposes the office panel.
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	public void dispose(){
@@ -322,7 +322,7 @@ public class OfficePanel extends Composite {
 	 * 
 	 * @return status of the last document loading or null if a status is not available
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	public IStatus getLastLoadingStatus(){
@@ -343,7 +343,7 @@ public class OfficePanel extends Composite {
 	 *                the receiver</li>
 	 *                </ul>
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	public void setLayout(Layout layout){}
@@ -353,7 +353,7 @@ public class OfficePanel extends Composite {
 	 * Is called after a document loading operation was done. This method can be overwriten by
 	 * subclasses in order to do some work after a document loading operation was done.
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	protected void documentLoadingOperationDone(){}
@@ -365,7 +365,7 @@ public class OfficePanel extends Composite {
 	 * 
 	 * @return progress monitor
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	protected IProgressMonitor getProgressMonitor(){
@@ -380,7 +380,7 @@ public class OfficePanel extends Composite {
 	 * 
 	 * @return office application
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	protected IOfficeApplication getOfficeApplication(){
@@ -396,7 +396,7 @@ public class OfficePanel extends Composite {
 	 * 
 	 * @return information whether the office application was started
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	protected IStatus startOfficeApplication(IOfficeApplication officeApplication){
@@ -411,7 +411,7 @@ public class OfficePanel extends Composite {
 	 * @param parent
 	 *            parent to be used
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	protected void buildProgressIndicator(Composite parent){
@@ -449,7 +449,7 @@ public class OfficePanel extends Composite {
 	 * Shows progress indicator. Subclasses can overwrite this method in order to show their own
 	 * progress indicator.
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	protected void showProgressIndicator(){
@@ -464,7 +464,7 @@ public class OfficePanel extends Composite {
 	 * Hides the progress indicator. Subclasses can overwrite this method in order to hide their own
 	 * progress indicator.
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	protected void hideProgressIndicator(){}
@@ -483,7 +483,7 @@ public class OfficePanel extends Composite {
 	 * @throws CoreException
 	 *             if the document can not be loaded
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	private void loadDocument(String documentPath, IDocumentDescriptor documentDescriptor,
@@ -519,7 +519,7 @@ public class OfficePanel extends Composite {
 	/**
 	 * Shows office frame.
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	private void showOfficeFrame(){
@@ -534,7 +534,7 @@ public class OfficePanel extends Composite {
 	/**
 	 * Builds controls of the office panel.
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	private void buildControls(){
@@ -560,7 +560,7 @@ public class OfficePanel extends Composite {
 	 * @throws CoreException
 	 *             if a new office frame can not be activated
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	private IFrame activateNewFrame() throws CoreException{
@@ -615,7 +615,7 @@ public class OfficePanel extends Composite {
 	 * 
 	 * @throws CoreException
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	private URL convertToURL(String documentPath) throws CoreException{

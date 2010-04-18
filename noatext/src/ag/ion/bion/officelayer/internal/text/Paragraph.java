@@ -65,7 +65,7 @@ import com.sun.star.uno.UnoRuntime;
 /**
  * Paragraph of a text document.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11559 $
  */
 public class Paragraph extends AbstractTextComponent implements IParagraph {
@@ -81,8 +81,8 @@ public class Paragraph extends AbstractTextComponent implements IParagraph {
    *  
    * @throws IllegalArgumentException if the OpenOffice.org interface or the document is not valid
    * 
-   * @author Andreas Bröker
-   * @author Sebastian Rösgen
+   * @author Andreas BrÃ¶cker
+   * @author Sebastian RÃ¼sgen
    */
   public Paragraph(ITextDocument textDocument, XTextContent xTextContent) throws IllegalArgumentException {
     super(textDocument);
@@ -96,7 +96,7 @@ public class Paragraph extends AbstractTextComponent implements IParagraph {
    * 
    * @return OpenOffice.org XTextContent interface
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public XTextContent getXTextContent() {
     return xTextContent;
@@ -107,7 +107,7 @@ public class Paragraph extends AbstractTextComponent implements IParagraph {
    * 
    * @return text range of the text table
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 06.08.2007
    */
   public ITextRange getTextRange() {
@@ -119,7 +119,7 @@ public class Paragraph extends AbstractTextComponent implements IParagraph {
    * 
    * @return properties of the paragraph
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IParagraphProperties getParagraphProperties() {
     XPropertySet xPropertySet = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, xTextContent);
@@ -131,7 +131,7 @@ public class Paragraph extends AbstractTextComponent implements IParagraph {
    * 
    * @return characterproperties of the paragraph
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public ICharacterProperties getCharacterProperties() {
   	XPropertySet xPropertySet = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, xTextContent);
@@ -145,7 +145,7 @@ public class Paragraph extends AbstractTextComponent implements IParagraph {
    * 
    * @throws TextException if any error occurs 
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public IParagraphPropertyStore getParagraphPropertyStore() throws TextException{
   	return new ParagraphPropertyStore(this);
@@ -158,7 +158,7 @@ public class Paragraph extends AbstractTextComponent implements IParagraph {
    * 
    * @throws TextException if any error occurs getting the store
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public ICharacterPropertyStore getCharacterPropertyStore() throws TextException{
   	return new CharacterPropertyStore(this);
@@ -171,7 +171,7 @@ public class Paragraph extends AbstractTextComponent implements IParagraph {
    * 
    * @throws CloneException if the clone service could not be returned
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public ICloneService getCloneService() throws CloneException {
   	return new ParagraphCloneService(this, textDocument);
@@ -184,7 +184,7 @@ public class Paragraph extends AbstractTextComponent implements IParagraph {
    * 
    * @throws TextException if there occurs an error while fetching the text
    * 
-   * @author Sebastian Rösgen 
+   * @author Sebastian RÃ¼sgen 
    */
   public String getParagraphText() throws TextException {
   	StringBuffer buffer = new StringBuffer();
@@ -212,7 +212,7 @@ public class Paragraph extends AbstractTextComponent implements IParagraph {
    * 
    * @param text the text that should be placed
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public void setParagraphText(String text) {
   	if (text != null) {

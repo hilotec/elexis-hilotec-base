@@ -45,7 +45,7 @@ import java.awt.Color;
 /**
  * Formatted number for pure java code.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  */
 public class JavaFormattedNumber implements IJavaFormattedNumber {
@@ -63,7 +63,7 @@ public class JavaFormattedNumber implements IJavaFormattedNumber {
    * 
    * @throws IllegalArgumentException if the formatted number is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public JavaFormattedNumber(String formattedNumber, Color textColor) throws IllegalArgumentException {
     if(formattedNumber == null)
@@ -77,7 +77,7 @@ public class JavaFormattedNumber implements IJavaFormattedNumber {
    * 
    * @return formatted number
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public String getFormattedNumber() {
     return formattedNumber;
@@ -88,7 +88,7 @@ public class JavaFormattedNumber implements IJavaFormattedNumber {
    * 
    * @return text color of the number
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public Color getTextColor() {
     return textColor;

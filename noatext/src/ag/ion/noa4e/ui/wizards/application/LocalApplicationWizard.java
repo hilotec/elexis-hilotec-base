@@ -46,7 +46,7 @@ import org.eclipse.jface.wizard.Wizard;
 /**
  * Wizard in order to define the path of a local OpenOffice.org application.
  * 
- * @author Andreas Br�ker
+ * @author Andreas Bröcker
  * @version $Revision: 1.2 $
  */
 public class LocalApplicationWizard extends Wizard implements IWizard {
@@ -61,7 +61,7 @@ public class LocalApplicationWizard extends Wizard implements IWizard {
   /**
    * Constructs new LocalApplicationWizard.
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public LocalApplicationWizard() {
     this(null);
@@ -73,7 +73,7 @@ public class LocalApplicationWizard extends Wizard implements IWizard {
    * 
    * @param applicationInfos application infos to be used (can be null)
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public LocalApplicationWizard(IApplicationInfo[] applicationInfos) {
     this.applicationInfos = applicationInfos;
@@ -88,7 +88,7 @@ public class LocalApplicationWizard extends Wizard implements IWizard {
    * 
    * @param homePath home path to be edited
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public void setHomePath(String homePath) {
     this.homePath = homePath;
@@ -101,7 +101,7 @@ public class LocalApplicationWizard extends Wizard implements IWizard {
    * @return selected home path of an local office application or null
    * if a home path is not available
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public String getSelectedHomePath() {
     if(localApplicationWizardDefinePage != null)
@@ -118,7 +118,7 @@ public class LocalApplicationWizard extends Wizard implements IWizard {
    *   was accepted, and <code>false</code> to indicate
    *   that the finish request was refused
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public boolean performFinish() {
     if(localApplicationWizardDefinePage.getSelectedHomePath() != null)
@@ -129,7 +129,7 @@ public class LocalApplicationWizard extends Wizard implements IWizard {
   /**
    * Adds any last-minute pages to this wizard.
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public void addPages() {
     localApplicationWizardDefinePage = new LocalApplicationWizardDefinePage(homePath, applicationInfos);

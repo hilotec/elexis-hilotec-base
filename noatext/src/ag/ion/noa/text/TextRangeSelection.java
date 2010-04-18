@@ -45,8 +45,8 @@ import com.sun.star.uno.XInterface;
 /**
  * Selection of a text range.
  * 
- * @author Andreas Bröker
- * @author Markus Krüger
+ * @author Andreas BrÃ¶cker
+ * @author Markus KrÃ¼ger
  * @version $Revision: 11545 $
  * @date 09.07.2006
  */ 
@@ -60,7 +60,7 @@ public class TextRangeSelection implements ITextRangeSelection , IXInterfaceObje
 	 * 
 	 * @param textRange text range selection to be used
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 09.07.2006
 	 */
 	public TextRangeSelection(ITextRange textRange) {
@@ -73,7 +73,7 @@ public class TextRangeSelection implements ITextRangeSelection , IXInterfaceObje
 	 * 
 	 * @return text range of the selection
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 09.07.2006
 	 */
 	public ITextRange getTextRange() {
@@ -85,7 +85,7 @@ public class TextRangeSelection implements ITextRangeSelection , IXInterfaceObje
    * 
    * @return object implementing XInterface of the selection
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 01.08.2007
    */
   public XInterface getXInterfaceObject() {
@@ -97,7 +97,7 @@ public class TextRangeSelection implements ITextRangeSelection , IXInterfaceObje
 	 * 
 	 * @return information whether the selection is empty
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 09.07.2006
 	 */
 	public boolean isEmpty() {

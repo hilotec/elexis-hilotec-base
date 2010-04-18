@@ -97,8 +97,8 @@ import java.util.List;
 /**
  * OpenOffice.org base document implementation.
  * 
- * @author Andreas Bröker
- * @author Markus Krüger
+ * @author Andreas BrÃ¶cker
+ * @author Markus KrÃ¼ger
  * @version $Revision: 11568 $
  */
 public abstract class AbstractDocument implements IDocument {
@@ -123,7 +123,7 @@ public abstract class AbstractDocument implements IDocument {
   /**
    * Internal document listener.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private class DocumentListener implements IDocumentListener {
 
@@ -133,7 +133,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onNew(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -153,7 +153,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onLoad(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -173,7 +173,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onLoadDone(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -193,7 +193,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onLoadFinished(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -213,7 +213,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onSave(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -233,7 +233,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onSaveDone(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -253,7 +253,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onSaveFinished(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -273,7 +273,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onSaveAs(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -293,7 +293,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onSaveAsDone(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -313,7 +313,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onModifyChanged(IDocumentEvent documentEvent) {
       isModified = !isModified;
@@ -334,7 +334,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onMouseOver(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -354,7 +354,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onMouseOut(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -374,7 +374,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onFocus(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -394,7 +394,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onAlphaCharInput(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -414,7 +414,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onNonAlphaCharInput(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -434,7 +434,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onInsertStart(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -454,7 +454,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onInsertDone(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -474,7 +474,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param documentEvent source of the event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void onUnload(IDocumentEvent documentEvent) {
       if(documentListenerList != null) {
@@ -494,7 +494,7 @@ public abstract class AbstractDocument implements IDocument {
      * 
      * @param event source event
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void disposing(IEvent event) {
       if(documentListenerList != null) {
@@ -522,7 +522,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @throws IllegalArgumentException if the submitted OpenOffice.org XComponent interface is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public AbstractDocument(XComponent xComponent) throws IllegalArgumentException {
     if(xComponent == null)
@@ -539,7 +539,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @return OpenOffice.org XComponent interface 
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public XComponent getXComponent() {
     return xComponent;
@@ -550,7 +550,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @return OpenOffice.org XFrame interface
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 01.08.2007
    */
   public XFrame getXFrame() {
@@ -564,7 +564,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @return Frame of the document
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 01.08.2007
    */
   public IFrame getFrame() {
@@ -579,7 +579,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @return persistence service
    * 
-   * @author Andreas Bröker  
+   * @author Andreas BrÃ¶cker  
    */
   public IPersistenceService getPersistenceService() {
     if(persistenceService == null) {
@@ -594,7 +594,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @return scripting service of the document
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 13.06.2006
    */
   public IScriptingService getScriptingService() {
@@ -608,7 +608,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @return filter provider
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 14.07.2006
    */
   public IFilterProvider getFilterProvider() {
@@ -622,7 +622,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @return form service, or null
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 25.01.2007
    */
   public IFormService getFormService() {
@@ -641,7 +641,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @param documentModifyListener new document modify listener
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public void addDocumentModifyListener(IDocumentModifyListener documentModifyListener) {
       DocumentModifyListenerWrapper documentListenerWrapper = 
@@ -658,7 +658,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @param documentListener new document listener
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void addDocumentListener(IDocumentListener documentListener) {
     if(documentListener == null)
@@ -676,8 +676,8 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @param documentModifyListener the modif listener to be removed
    * 
-   * @author Sebastian Rösgen
-   * @author Markus Krüger
+   * @author Sebastian RÃ¼sgen
+   * @author Markus KrÃ¼ger
    */
   public void removeDocumentModifyListener(IDocumentModifyListener documentModifyListener) {
     if(modifyListenerTable != null) {
@@ -694,8 +694,8 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @param documentListener document listener
    * 
-   * @author Andreas Bröker
-   * @author Markus Krüger
+   * @author Andreas BrÃ¶cker
+   * @author Markus KrÃ¼ger
    */
   public void removeDocumentListener(IDocumentListener documentListener) {
     if(documentListener == null)
@@ -713,7 +713,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @return information whether the document was modified
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public boolean isModified() {
 //    XModifiable xModifiable = (XModifiable)UnoRuntime.queryInterface(XModifiable.class, xComponent);
@@ -737,7 +737,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @throws DocumentException if the status of the document can not be set
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void setModified(boolean modified) throws DocumentException {
     try {
@@ -759,7 +759,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @deprecated Use the IPersistenceService instead.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public URL getLocationURL() throws DocumentException {
     XModel xModel = (XModel)UnoRuntime.queryInterface(XModel.class, xComponent);
@@ -780,7 +780,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @param closeListener close listener
    * 
-   * Andreas Bröker
+   * Andreas BrÃ¶cker
    */
   public void addCloseListener(ICloseListener closeListener) {
     if(closeListener == null)
@@ -802,8 +802,8 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @param closeListener close listener
    * 
-   * @author Andreas Bröker
-   * @author Markus Krüger
+   * @author Andreas BrÃ¶cker
+   * @author Markus KrÃ¼ger
    */
   public void removeCloseListener(ICloseListener closeListener) {
     if(closeListener == null)
@@ -828,7 +828,7 @@ public abstract class AbstractDocument implements IDocument {
 	 * 
 	 * @return information wheter the document is open
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
 	 */
 	public boolean isOpen() {
 		if(xComponent != null) {
@@ -854,8 +854,8 @@ public abstract class AbstractDocument implements IDocument {
   /**
    * Closes the document.
    * 
-   * @author Andreas Bröker
-   * @author Markus Krüger
+   * @author Andreas BrÃ¶cker
+   * @author Markus KrÃ¼ger
    */
   public void close() {    
     removeDocumentListeners();
@@ -926,7 +926,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @param xModifyListener
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   private void addModifyListener(XModifyListener xModifyListener) {
     XModifyBroadcaster xModifyBroadcaster = 
@@ -941,7 +941,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @param modifyListener event listener to be added
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   private void removeModifyListener(XModifyListener modifyListener) {
     XModifyBroadcaster xModifyBroadcaster = 
@@ -958,7 +958,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @param xEventListener event listener to be added
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private void addEventListener(XEventListener xEventListener) {
     XEventBroadcaster xEventBroadcaster = (XEventBroadcaster)UnoRuntime.queryInterface(XEventBroadcaster.class, xComponent);
@@ -972,7 +972,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @param xEventListener document event listener to be removed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private void removeEventListener(XEventListener xEventListener) {
     XEventBroadcaster xEventBroadcaster = (XEventBroadcaster)UnoRuntime.queryInterface(XEventBroadcaster.class, xComponent);
@@ -986,7 +986,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @throws DocumentException if printing fails
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public void print() throws DocumentException {
     getPrintService().print();
@@ -997,7 +997,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @return the print service of the document
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 16.08.2007
    */
   public IPrintService getPrintService() {
@@ -1013,8 +1013,8 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @return true if they are equal, flase if they are different
    * 
-   * @author Markus Krüger
-   * @author Andreas Bröker
+   * @author Markus KrÃ¼ger
+   * @author Andreas BrÃ¶cker
    */
   public boolean equalsTo(IDocument compareDocument) {
     if(compareDocument == null)
@@ -1030,7 +1030,7 @@ public abstract class AbstractDocument implements IDocument {
    * Reformats the document. The default behaviour is
    * to do nothing.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 16.03.2006
    */
   public void reformat() {  	
@@ -1043,7 +1043,7 @@ public abstract class AbstractDocument implements IDocument {
 	 * 
 	 * @throws NOAException if the selection type is not supported
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 09.07.2006
 	 */
 	public void setSelection(ISelection selection) throws NOAException {
@@ -1141,7 +1141,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @return the applications service provider, or null
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 25.07.2007
    */
   public IServiceProvider getServiceProvider() {
@@ -1153,7 +1153,7 @@ public abstract class AbstractDocument implements IDocument {
    * 
    * @param serviceProvider the service provider to be set
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 25.07.2007
    */
   public void setServiceProvider(IServiceProvider serviceProvider) {
@@ -1167,8 +1167,8 @@ public abstract class AbstractDocument implements IDocument {
 	 * 
 	 * @throws NOAException if the selection type is not supported
 	 * 
-	 * @author Andreas Bröker
-	 * @author Markus Krüger
+	 * @author Andreas BrÃ¶cker
+	 * @author Markus KrÃ¼ger
 	 * @date 09.07.2006
 	 */
 	protected void setXInterfaceObjectSelection(IXInterfaceObjectSelection interfaceObject) throws NOAException {
@@ -1190,7 +1190,7 @@ public abstract class AbstractDocument implements IDocument {
   /**
    * Removes all close listeners.
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   protected void removeCloseListeners() {    
     if(closeListeners != null) {
@@ -1204,7 +1204,7 @@ public abstract class AbstractDocument implements IDocument {
   /**
    * Removes all modify listeners.
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   protected void removeModifyListeners() {    
     if(modifyListenerTable != null) {
@@ -1218,7 +1218,7 @@ public abstract class AbstractDocument implements IDocument {
   /**
    * Removes all document listeners.
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   protected void removeDocumentListeners() {    
     if(documentListenerList != null) {

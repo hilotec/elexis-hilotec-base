@@ -62,7 +62,7 @@ import java.awt.Frame;
 /**
  * The main plugin class to be used in the desktop.
  * 
- * @author Andreas Br�ker
+ * @author Andreas Bröcker
  * @version $Revision: 1.9 $
  */
 public class EditorCorePlugin extends Plugin {
@@ -83,7 +83,7 @@ public class EditorCorePlugin extends Plugin {
   /**
    * The constructor.
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public EditorCorePlugin() {
     super();
@@ -103,7 +103,7 @@ public class EditorCorePlugin extends Plugin {
    * 
    * @throws Exception if the bundle can not be started
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public void start(BundleContext context) throws Exception {
     super.start(context);
@@ -121,7 +121,7 @@ public class EditorCorePlugin extends Plugin {
    * 
    * @throws Exception if the bundle can not be stopped
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public void stop(BundleContext context) throws Exception {
     super.stop(context);
@@ -132,7 +132,7 @@ public class EditorCorePlugin extends Plugin {
    * 
    * @return shared instance
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public static EditorCorePlugin getDefault() {
     return plugin;
@@ -147,7 +147,7 @@ public class EditorCorePlugin extends Plugin {
    * @return string from the plugin's resource bundle,
    * or 'key' if not found
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public static String getResourceString(String key) {
     ResourceBundle bundle = EditorCorePlugin.getDefault().getResourceBundle();
@@ -164,7 +164,7 @@ public class EditorCorePlugin extends Plugin {
    * 
    * @return plugin's resource bundle
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public ResourceBundle getResourceBundle() {
     return resourceBundle;
@@ -176,7 +176,7 @@ public class EditorCorePlugin extends Plugin {
    * 
    * @return local office application
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public synchronized IOfficeApplication getManagedLocalOfficeApplication() {
     if(localOfficeApplication == null) {
@@ -201,7 +201,7 @@ public class EditorCorePlugin extends Plugin {
    * @return location of the libraries of the plugin or null if the location
    * can not be provided
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public String getLibrariesLocation() {
     if(librariesLocation == null) {

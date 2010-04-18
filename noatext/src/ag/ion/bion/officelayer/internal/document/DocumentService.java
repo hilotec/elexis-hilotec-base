@@ -84,7 +84,7 @@ import java.util.ArrayList;
 /**
  * Service for documents.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11529 $
  */
 public class DocumentService implements IDocumentService {
@@ -110,7 +110,7 @@ public class DocumentService implements IDocumentService {
    * 
    * @throws IllegalArgumentException if the submitted office connection is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public DocumentService(IOfficeConnection officeConnection, IServiceProvider serviceProvider) throws IllegalArgumentException {
     if(officeConnection == null)
@@ -129,7 +129,7 @@ public class DocumentService implements IDocumentService {
    * 
    * @throws NOAException if the new document can not be constructed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument constructNewDocument(String documentType, IDocumentDescriptor documentDescriptor) throws NOAException {
     return constructNewDocument(null, documentType, documentDescriptor);
@@ -158,7 +158,7 @@ public class DocumentService implements IDocumentService {
    * 
    * @throws NOAException if the new document can not be constructed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument constructNewDocument(IFrame frame, String documentType, IDocumentDescriptor documentDescriptor) throws NOAException {
     try {
@@ -223,7 +223,7 @@ public class DocumentService implements IDocumentService {
    * 
    * @throws NOAException if the document can not be contructed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 16.03.2006
    */
   public IDocument constructNewHiddenDocument(String documentType) throws NOAException {
@@ -240,7 +240,7 @@ public class DocumentService implements IDocumentService {
    * @throws DocumentException if the document can not be loaded or the URL does
    * not locate an OpenOffice.org document
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument loadDocument(String url) throws DocumentException {
     try {    	
@@ -269,7 +269,7 @@ public class DocumentService implements IDocumentService {
    * @throws NOAException if the document can not be loaded or the URL does
    * not locate an OpenOffice.org document
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 02.07.2006
    */
   public IDocument loadDocument(String url, IDocumentDescriptor documentDescriptor) throws NOAException {
@@ -297,8 +297,8 @@ public class DocumentService implements IDocumentService {
    * 
    * @throws DocumentException if the document can not be loaded
    * 
-   * @author Andreas Bröker
-   * @author Markus Krüger
+   * @author Andreas BrÃ¶cker
+   * @author Markus KrÃ¼ger
    */
   public IDocument loadDocument(InputStream inputStream, IDocumentDescriptor documentDescriptor) throws DocumentException {
     return loadDocument(null, null, inputStream, documentDescriptor);
@@ -320,7 +320,7 @@ public class DocumentService implements IDocumentService {
    * 
    * @throws DocumentException if the document can not be loaded
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument loadDocument(IFrame frame, InputStream inputStream, IDocumentDescriptor documentDescriptor) throws DocumentException {
     return loadDocument(null, frame, inputStream, documentDescriptor);
@@ -337,7 +337,7 @@ public class DocumentService implements IDocumentService {
    * 
    * @throws DocumentException if the document can not be loaded
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument loadDocument(IOfficeProgressMonitor officeProgressMonitor, InputStream inputStream, IDocumentDescriptor documentDescriptor) throws DocumentException {
     return loadDocument(officeProgressMonitor, null, inputStream, documentDescriptor);
@@ -360,7 +360,7 @@ public class DocumentService implements IDocumentService {
    * 
    * @throws DocumentException if the document can not be loaded
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument loadDocument(IOfficeProgressMonitor officeProgressMonitor, IFrame frame, InputStream inputStream, IDocumentDescriptor documentDescriptor) throws DocumentException {
     XComponent xComponent = null;
@@ -416,7 +416,7 @@ public class DocumentService implements IDocumentService {
    * @throws DocumentException if the document can not be loaded, the URL does
    * not locate an OpenOffice.org document of the submitted frame or URL is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument loadDocument(IFrame frame, String url) throws DocumentException {
     return loadDocument(frame, url, null);
@@ -434,7 +434,7 @@ public class DocumentService implements IDocumentService {
    * @throws DocumentException if the document can not be loaded, the URL does
    * not locate an OpenOffice.org document or the submitted frame or URL is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument loadDocument(IFrame frame, String url, IDocumentDescriptor documentDescriptor) throws DocumentException {
     if(frame == null)
@@ -465,7 +465,7 @@ public class DocumentService implements IDocumentService {
    * 
    * @throws DocumentException if the documents cannot be provided
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public IDocument[] getCurrentDocuments() throws DocumentException {
     try {
@@ -490,7 +490,7 @@ public class DocumentService implements IDocumentService {
   /**
    * Disposes all allocated resources.
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public void dispose() {  
   }
@@ -502,7 +502,7 @@ public class DocumentService implements IDocumentService {
    * 
    * @throws NOAException if the new database document can not be constructed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 16.03.2006
    */
   private IDatabaseDocument constructDatabaseDocument() throws NOAException {
@@ -527,7 +527,7 @@ public class DocumentService implements IDocumentService {
    * 
    * @throws Exception if the OpenOffice.org XComponentLoader can not be constructed
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   private XComponentLoader constructComponentLoader() throws Exception {
     Object oDesktop = officeConnection.getXMultiComponentFactory().createInstanceWithContext("com.sun.star.frame.Desktop", officeConnection.getXComponentContext()); //$NON-NLS-1$

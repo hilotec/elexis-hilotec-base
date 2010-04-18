@@ -90,7 +90,7 @@ import java.util.Map;
 /**
  * The main plugin class to be used in the desktop.
  * 
- * @author Andreas Br�ker
+ * @author Andreas Bröcker
  * @version $Revision: 1.3 $
  * @date 28.06.2006
  */
@@ -115,7 +115,7 @@ public class NOAUIPlugin extends AbstractUIPlugin {
 	/**
 	 * The constructor.
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	public NOAUIPlugin() {
@@ -129,7 +129,7 @@ public class NOAUIPlugin extends AbstractUIPlugin {
    * 
    * @throws Exception if the bundle can not be started
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
 	 * @date 28.06.2006
    */
 	public void start(BundleContext context) throws Exception {
@@ -143,7 +143,7 @@ public class NOAUIPlugin extends AbstractUIPlugin {
    * 
    * @throws Exception if the bundle can not be stopped
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
 	 * @date 28.06.2006
    */
 	public void stop(BundleContext context) throws Exception {
@@ -156,7 +156,7 @@ public class NOAUIPlugin extends AbstractUIPlugin {
    * 
    * @return shared instance
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
 	 * @date 28.06.2006
    */
 	public static NOAUIPlugin getDefault() {
@@ -171,7 +171,7 @@ public class NOAUIPlugin extends AbstractUIPlugin {
 	 * 
 	 * @return the image descriptor
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
@@ -183,7 +183,7 @@ public class NOAUIPlugin extends AbstractUIPlugin {
 	 * 
 	 * @return form toolkit
 	 * 
-	 * @author Andreas Br�ker
+	 * @author Andreas Bröcker
 	 * @date 28.06.2006
 	 */
   public static FormToolkit getFormToolkit() {
@@ -203,7 +203,7 @@ public class NOAUIPlugin extends AbstractUIPlugin {
    * @return information whether the office application was started or not - only 
    * if the status severity is <code>IStatus.OK</code> the application was started 
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
 	 * @date 28.06.2006
    */
   public static IStatus startLocalOfficeApplication(Shell shell, IOfficeApplication officeApplication) {        
@@ -239,7 +239,7 @@ public class NOAUIPlugin extends AbstractUIPlugin {
    * 
    * @return status information
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
 	 * @date 28.06.2006
    */
   private static IStatus internalStartApplication(final Shell shell, IOfficeApplication officeApplication) {
@@ -313,7 +313,7 @@ public class NOAUIPlugin extends AbstractUIPlugin {
    * 
    * @return status information of the activation
    *  
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    * @date 28.08.2006
    */
   private static IStatus activateOfficeApplication(IOfficeApplication officeApplication, Map configuration, Shell shell) {

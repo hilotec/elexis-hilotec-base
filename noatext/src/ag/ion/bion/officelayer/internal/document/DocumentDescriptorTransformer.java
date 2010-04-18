@@ -49,8 +49,8 @@ import java.util.List;
 /**
  * Transformer for document descriptors.
  * 
- * @author Andreas Bröker
- * @author Markus Krüger
+ * @author Andreas BrÃ¶cker
+ * @author Markus KrÃ¼ger
  * @version $Revision: 10398 $
  */
 public class DocumentDescriptorTransformer {
@@ -63,7 +63,7 @@ public class DocumentDescriptorTransformer {
    * 
    * @return converted document descriptor
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public static PropertyValue[] documentDescriptor2PropertyValues(IDocumentDescriptor documentDescriptor) {
     return documentDescriptor2PropertyValues(null, documentDescriptor);
@@ -78,8 +78,8 @@ public class DocumentDescriptorTransformer {
    * 
    * @return converted document descriptor
    * 
-   * @author Andreas Bröker
-   * @author Markus Krüger
+   * @author Andreas BrÃ¶cker
+   * @author Markus KrÃ¼ger
    */
   public static PropertyValue[] documentDescriptor2PropertyValues(PropertyValue[] propertyValues, IDocumentDescriptor documentDescriptor) {
     if(documentDescriptor == null) {

@@ -49,7 +49,7 @@ import com.sun.star.text.XTextContent;
 /**
  * Image of a text document.
  * 
- * @author Markus Krüger
+ * @author Markus KrÃ¼ger
  * @version $Revision: 10398 $
  */
 public class TextDocumentImage extends AbstractTextComponent implements ITextDocumentImage {
@@ -68,7 +68,7 @@ public class TextDocumentImage extends AbstractTextComponent implements ITextDoc
    * @throws IllegalArgumentException if the OpenOffice.org interface or the document 
    * or grpahic info is not valid
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 09.07.2007
    */
   public TextDocumentImage(ITextDocument textDocument, XTextContent xTextContent, GraphicInfo graphicInfo) throws IllegalArgumentException {
@@ -86,7 +86,7 @@ public class TextDocumentImage extends AbstractTextComponent implements ITextDoc
    * 
    * @return OpenOffice.org XTextContent interface
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 09.07.2007
    */
   public XTextContent getXTextContent() {
@@ -98,7 +98,7 @@ public class TextDocumentImage extends AbstractTextComponent implements ITextDoc
    * 
    * @return graphic information of the image
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 09.07.2007
    */
   public GraphicInfo getGraphicInfo() {

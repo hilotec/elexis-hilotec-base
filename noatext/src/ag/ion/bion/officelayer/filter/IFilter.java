@@ -66,7 +66,7 @@ import ag.ion.noa.filter.XHTMLFilter;
 /**
  * Filter for the export of documents.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11479 $
  */
 public interface IFilter {
@@ -126,7 +126,7 @@ public interface IFilter {
 	 * @return information whether the submitted document
 	 * is supported by the filter
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 08.07.2006
 	 */
 	public boolean isSupported(IDocument document);	
@@ -138,7 +138,7 @@ public interface IFilter {
 	 * @return information whether the filter constructs
 	 * a document which can not be interpreted again
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 08.07.2006
 	 */
 	public boolean isExternalFilter();
@@ -151,7 +151,7 @@ public interface IFilter {
 	 * 
 	 * @return file extension of the filter
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 08.07.2006
 	 */
 	public String getFileExtension(IDocument document);	
@@ -164,7 +164,7 @@ public interface IFilter {
    * 
    * @return file extension of the filter
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 03.04.2007
    */
   public String getFileExtension(String documentType); 
@@ -177,7 +177,7 @@ public interface IFilter {
 	 * 
 	 * @return name of the filter
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 14.07.2006
 	 */
 	public String getName(IDocument document);	

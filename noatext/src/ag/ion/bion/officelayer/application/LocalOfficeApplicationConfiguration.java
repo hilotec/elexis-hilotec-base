@@ -41,7 +41,7 @@ package ag.ion.bion.officelayer.application;
 /**
  * Configuration for local OpenOffice.org application.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  * 
  * @deprecated
@@ -58,7 +58,7 @@ public class LocalOfficeApplicationConfiguration extends AbstractOfficeConfigura
    * 
    * @throws IllegalArgumentException if the submitted home path for OpenOffice.org is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void setApplicationHomePath(String applicationHomePath) throws IllegalArgumentException {
     if(applicationHomePath == null)
@@ -71,7 +71,7 @@ public class LocalOfficeApplicationConfiguration extends AbstractOfficeConfigura
    * 
    * @return home path of OpenOffice.org
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public String getApplicationHomePath() {
     return applicationHomePath;

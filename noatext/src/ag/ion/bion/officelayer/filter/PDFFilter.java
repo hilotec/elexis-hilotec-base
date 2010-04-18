@@ -45,7 +45,7 @@ import ag.ion.noa.filter.AbstractFilter;
 /**
  * Contains information in order to export an OpenOffice.org document to PDF.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11492 $
  */
 public class PDFFilter extends AbstractFilter implements IFilter {
@@ -95,7 +95,7 @@ public class PDFFilter extends AbstractFilter implements IFilter {
 	 * @return information whether the filter constructs
 	 * a document which can not be interpreted again
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 08.07.2006
 	 */
 	public boolean isExternalFilter() {
@@ -110,7 +110,7 @@ public class PDFFilter extends AbstractFilter implements IFilter {
    * 
    * @return file extension of the filter
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 03.04.2007
    */
   public String getFileExtension(String documentType) {
@@ -148,7 +148,7 @@ public class PDFFilter extends AbstractFilter implements IFilter {
    * 
    * @return name of the filter
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 14.06.2007
    */
   public String getName(IDocument document) {

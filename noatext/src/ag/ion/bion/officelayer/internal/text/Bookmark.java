@@ -49,7 +49,7 @@ import com.sun.star.text.XTextRange;
 /**
  * Bookmark of a text document.
  * 
- * @author Markus Krüger
+ * @author Markus KrÃ¼ger
  * @version $Revision: 11549 $
  */
 public class Bookmark extends TextRange implements IBookmark, ITextRange {
@@ -66,7 +66,7 @@ public class Bookmark extends TextRange implements IBookmark, ITextRange {
    * @param xTextRange OpenOffice.org XTextRange interface
    * @param bookmarkName the name of the bookmark to be used
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public Bookmark(ITextDocument textDocument, XTextRange xTextRange, String bookmarkName) {
     super(textDocument,xTextRange);
@@ -79,7 +79,7 @@ public class Bookmark extends TextRange implements IBookmark, ITextRange {
    * 
    * @return the name of the bookmark
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 13.07.2006
    */
   public String getName() {
@@ -89,7 +89,7 @@ public class Bookmark extends TextRange implements IBookmark, ITextRange {
   /**
    * Jumps to the bookmark.
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public void jumpTo() {
     IViewCursor viewCursor = textDocument.getViewCursorService().getViewCursor();

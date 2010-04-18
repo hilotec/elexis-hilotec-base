@@ -41,7 +41,7 @@ package ag.ion.bion.officelayer.desktop;
 /**
  * Covers all OpenOffice.org desktop exceptions.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  */
 public class DesktopException extends Exception {
@@ -52,7 +52,7 @@ public class DesktopException extends Exception {
   /**
    * Constructs new DesktopException.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public DesktopException() {
     super();
@@ -63,7 +63,7 @@ public class DesktopException extends Exception {
    * 
    * @param message message to be used
    * 
-   * @author Andreas Bröker 
+   * @author Andreas BrÃ¶cker 
    */
   public DesktopException(String message) {
     super(message == null ? DEFAULT_EXCEPTION_MESSAGE : message);
@@ -74,7 +74,7 @@ public class DesktopException extends Exception {
    * 
    * @param exception exception to be used
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public DesktopException(Exception exception) {
     super(exception.getMessage() == null ? DEFAULT_EXCEPTION_MESSAGE : exception.getMessage());
@@ -87,7 +87,7 @@ public class DesktopException extends Exception {
    * @param message message to be used
    * @param exception exception to be used
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public DesktopException(String message, Exception exception) {
     super(message == null ? DEFAULT_EXCEPTION_MESSAGE : message);

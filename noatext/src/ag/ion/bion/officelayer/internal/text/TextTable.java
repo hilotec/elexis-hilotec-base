@@ -85,8 +85,8 @@ import java.util.List;
 /**
  * Table of an OpenOffice.org text document.
  * 
- * @author Andreas Bröker
- * @author Markus Krüger
+ * @author Andreas BrÃ¶cker
+ * @author Markus KrÃ¼ger
  * @version $Revision: 11561 $
  */
 public class TextTable extends AbstractTextComponent implements ITextTable {
@@ -105,7 +105,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
 	 * @throws IllegalArgumentException if the submitted text document or OpenOffice.org XTextTable interface 
    * is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
 	 */
 	public TextTable(ITextDocument textDocument, XTextTable xTextTable) throws IllegalArgumentException {
 		super(textDocument);
@@ -119,7 +119,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @return OpenOffice.org XTextContent interface
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public XTextContent getXTextContent() {
     return xTextTable;
@@ -130,7 +130,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
 	 * 
 	 * @return OpenOffice.org XTextTable interface
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
 	 */
 	public XTextTable getXTextTable() {
 		return xTextTable;
@@ -141,7 +141,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @return text range of the text table
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 31.07.2007
    */
   public ITextRange getTextRange() throws Exception {
@@ -159,7 +159,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @return properties of the text table
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextTableProperties getProperties() {
     XPropertySet xPropertySet = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, xTextTable);
@@ -171,7 +171,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @return name of the table
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public String getName() {
     XNamed xNamed = (XNamed)UnoRuntime.queryInterface(XNamed.class, xTextTable);
@@ -186,7 +186,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
 	 * 
 	 * @throws Exception if any error occurs
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
 	 */
 	public void setCellData(String cellName, XTextContent xTextContent) throws Exception {
 		XCell xCell = xTextTable.getCellByName(cellName);
@@ -203,7 +203,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
 	 * 
 	 * @throws Exception if any error occurs
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
 	 */
 	public void addCellData(String cellName, XTextContent xTextContent) throws Exception {
 		XCell xCell = xTextTable.getCellByName(cellName);
@@ -219,7 +219,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
 	 * 
 	 * @throws Exception if any error occurs
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
 	 */
 	public void setCellData(String cellName, String content) throws Exception {
 		XCell xCell = xTextTable.getCellByName(cellName);
@@ -235,7 +235,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
 	 * 
 	 * @throws Exception if any error occurs
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
 	 */
 	public void addCellData(String cellName, String content) throws Exception {
 		XCell xCell = xTextTable.getCellByName(cellName);
@@ -251,7 +251,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
 	 * 
 	 * @throws Exception if any error occurs
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
 	 */
 	public void setCellData(String cellName, double content) throws Exception {
 		XCell xCell = xTextTable.getCellByName(cellName);
@@ -266,7 +266,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
 	 * 
 	 * @throws Exception if any error occurs
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
 	 */
 	public void setCellFormula(String cellName, String formula) throws Exception {
 		XCell xCell = xTextTable.getCellByName(cellName);
@@ -280,7 +280,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws TextException if the row(s) can not be added
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void addRow(int count) throws TextException {
     if(count > 0)
@@ -295,7 +295,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws TextException if the row(s) can not be added
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void addRow(int index, int count) throws TextException {
     if(index > -1 && count > 0)
@@ -307,8 +307,8 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @return number of available rows.
    * 
-   * @author Andreas Bröker
-   * @author Markus Krüger
+   * @author Andreas BrÃ¶cker
+   * @author Markus KrÃ¼ger
    */
   public int getRowCount() {
     String[] cellNames = xTextTable.getCellNames();
@@ -329,7 +329,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws TextException if the column(s) can not be added
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void addColumn(int count) throws TextException {
     if(count > 0)
@@ -344,7 +344,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws TextException if the column(s) can not be added
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void addColumn(int index, int count) throws TextException {
     if(index > -1 && count > 0)
@@ -360,7 +360,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws TextException if the column(s) can not be added
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void addColumn(int index, int count, boolean after) throws TextException {
   	if(index > -1 && count > 0) {
@@ -382,7 +382,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws TextException if any error occurs
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public ITextTableColumn getColumn(int index) throws TextException{
     return getColumns()[index];
@@ -395,7 +395,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws TextException if any error occurs
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public ITextTableColumn[] getColumns() throws TextException {
     TextTableColumn[] textTableColumns = new TextTableColumn[getColumnCount()];
@@ -410,8 +410,8 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @return number of available columns
    * 
-   * @author Andreas Bröker
-   * @author Markus Krüger
+   * @author Andreas BrÃ¶cker
+   * @author Markus KrÃ¼ger
    */
   public int getColumnCount() {
     String[] cellNames = xTextTable.getCellNames();
@@ -430,7 +430,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws TextException if necessary properties are not available
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public void spreadColumnsEvenly() throws TextException {
     spreadColumnsEvenly(0, getColumnCount() - 1);
@@ -444,7 +444,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws TextException if necessary properties are not available
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public void spreadColumnsEvenly(int startIndex, int endIndex) throws TextException {
 	  if(endIndex > startIndex && startIndex > -1) {  
@@ -487,7 +487,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws TextException if the cell is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextTableCell getCell(String name) throws TextException {
     try {
@@ -509,7 +509,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @return cells with formulas
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public ITextTableCell[] getCellsWithFormula() {
     if(formulaCells == null)
@@ -527,7 +527,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws TextException if the cell is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextTableCell getCell(int columnIndex, int rowIndex) throws TextException {
     String columnCharacters = TextTableCellNameHelper.getColumnCharacter(columnIndex);
@@ -547,7 +547,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws TextException if the cell range is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextTableCellRange getCellRange(int firstColumnIndex, int firstRowIndex, int lastColumnIndex, int lastRowIndex) throws TextException {    
     String cellRangeName = TextTableCellNameHelper.getRangeName(firstColumnIndex,firstRowIndex,lastColumnIndex,lastRowIndex); 
@@ -575,8 +575,8 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws TextException if the cell range is not available
    * 
-   * @author Andreas Bröker
-   * @author Markus Krüger
+   * @author Andreas BrÃ¶cker
+   * @author Markus KrÃ¼ger
    */
   public ITextTableCellRange getCellRange(String cellRangeName) throws TextException {
     /*try {
@@ -603,8 +603,8 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @return text table row
    *  
-   * @author Andreas Bröker
-   * @author Markus Krüger
+   * @author Andreas BrÃ¶cker
+   * @author Markus KrÃ¼ger
    */
   public ITextTableRow[] getRows() {
     ITextTableRow[] textTableRow = new ITextTableRow[getRowCount()];    
@@ -641,7 +641,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws CloneException if the clone service could not be returned
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public ICloneService getCloneService() throws CloneException {
   	return new TextTableCloneService(this, textDocument.getXTextDocument());
@@ -655,8 +655,8 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * @return text table row
    *  
    * @author Miriam Sutter
-   * @author Andreas Bröker
-   * @author Markus Krüger
+   * @author Andreas BrÃ¶cker
+   * @author Markus KrÃ¼ger
    */
   public ITextTableRow getRow(int index) {
     if(xCellRange == null)
@@ -688,7 +688,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws TextException if the property store is not available
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public ITextTablePropertyStore getPropertyStore() throws TextException {
   	return new TextTablePropertyStore(this);
@@ -739,7 +739,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * @throws TextException if the table can not be removed
    * 
    * @author Miriam Sutter
-   * @author Andreas Bröker 
+   * @author Andreas BrÃ¶cker 
    */
   public void remove() throws TextException {
   	try {
@@ -758,7 +758,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * @return the page number where the table starts, returns -1 if page number
    * could not be determined
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public short getTableStartPageNumber() {
     String[] cellNames = xTextTable.getCellNames();
@@ -780,7 +780,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * 
    * @throws TextException if the header rows could not be set
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 21.03.2007
    */
   public void setHeaderRows(int headerRows) throws TextException {
@@ -804,7 +804,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
    * @return the page number where the table ends, returns -1 if page number
    * could not be determined
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public short getTableEndPageNumber() {
     String[] cellNames = xTextTable.getCellNames();
@@ -821,7 +821,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
   /**
    * Marks the table.
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 06.08.2007
    */
   public void markTable() {
@@ -863,7 +863,7 @@ public class TextTable extends AbstractTextComponent implements ITextTable {
   /**
    * Analyses the table for cells with formulas and put them into a list.
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   private void analyseTableFormulas() {
     formulaCells = new ArrayList();

@@ -76,7 +76,7 @@ import com.sun.star.view.XViewSettingsSupplier;
 /**
  * OpenOffice.org text document.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11538 $
  */
 public class TextDocument extends AbstractDocument implements ITextDocument {
@@ -99,7 +99,7 @@ public class TextDocument extends AbstractDocument implements ITextDocument {
    * 
    * @throws IllegalArgumentException if the submitted OpenOffice.org XTextDocument is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public TextDocument(XTextDocument xTextDocument) throws IllegalArgumentException {
     super((XComponent)UnoRuntime.queryInterface(XComponent.class, xTextDocument));
@@ -113,7 +113,7 @@ public class TextDocument extends AbstractDocument implements ITextDocument {
    * 
    * @return OpenOffice.org XTextDocument interface
    * 
-   * @author Andreas Bröker 
+   * @author Andreas BrÃ¶cker 
    */
   public XTextDocument getXTextDocument() {
     return xTextDocument;
@@ -124,7 +124,7 @@ public class TextDocument extends AbstractDocument implements ITextDocument {
    * 
    * @return type of the document
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public String getDocumentType() {
     return IDocument.WRITER;
@@ -147,7 +147,7 @@ public class TextDocument extends AbstractDocument implements ITextDocument {
    * 
    * @return page service of the document
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IPageService getPageService() {
     if(pageService == null) 
@@ -160,7 +160,7 @@ public class TextDocument extends AbstractDocument implements ITextDocument {
    * 
    * @return service for text fields
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextFieldService getTextFieldService() {    
     if(textFieldService == null)
@@ -173,7 +173,7 @@ public class TextDocument extends AbstractDocument implements ITextDocument {
    * 
    * @return text service
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextService getTextService() {
     if(textService == null)
@@ -186,7 +186,7 @@ public class TextDocument extends AbstractDocument implements ITextDocument {
    * 
    * @return view cursor service
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IViewCursorService getViewCursorService() {
     if(viewCursorService == null)
@@ -199,7 +199,7 @@ public class TextDocument extends AbstractDocument implements ITextDocument {
    * 
    * @return text table service
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextTableService getTextTableService() {
     if(textTableService == null)
@@ -212,7 +212,7 @@ public class TextDocument extends AbstractDocument implements ITextDocument {
    * 
    * @return number format service
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public INumberFormatService getNumberFormatService() {
     if(numberFormatService == null) {
@@ -234,7 +234,7 @@ public class TextDocument extends AbstractDocument implements ITextDocument {
   /**
    * Reformats the document.
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public void reformat() {
     xTextDocument.reformat();
@@ -245,7 +245,7 @@ public class TextDocument extends AbstractDocument implements ITextDocument {
 	 * 
 	 * @return search service of the searchable document
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 09.07.2006
 	 */
 	public ISearchService getSearchService() {
@@ -258,7 +258,7 @@ public class TextDocument extends AbstractDocument implements ITextDocument {
    * 
    * @return index service of the document
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 17.08.2006
    */
   public IDocumentIndexService getIndexService() {
@@ -274,7 +274,7 @@ public class TextDocument extends AbstractDocument implements ITextDocument {
    * 
    * @throws DocumentException if zoom fails
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 06.07.2007
    */
   public void zoom(short zoomType, short zoomValue) throws DocumentException {

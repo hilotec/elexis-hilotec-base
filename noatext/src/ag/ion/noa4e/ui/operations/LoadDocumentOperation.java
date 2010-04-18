@@ -56,7 +56,7 @@ import java.net.URL;
 /**
  * Operation in order to load a OpenOffice.org document. 
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 1.3 $
  */
 public class LoadDocumentOperation implements IRunnableWithProgress {
@@ -81,7 +81,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
   /**
    * Internal thread class in order load a a OpenOffice.org text document.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private class InternalThread extends Thread {
        
@@ -95,7 +95,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
     /**
      * Executes thread logic.
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void run() {
       try {
@@ -137,7 +137,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
      * 
      * @return exception - returns null if no exception was thrown
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public Exception getException() {
       return exception;
@@ -148,7 +148,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
      * 
      * @return loaded document
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public IDocument getDocument() {
       return document;
@@ -161,7 +161,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
      * @return information whether the thread has finished his
      * work
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public boolean done() {
       if(exception != null) 
@@ -183,7 +183,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
    * 
    * @throws IllegalArgumentException if the submitted office application, frame or URL is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public LoadDocumentOperation(IOfficeApplication officeApplication, IFrame frame, URL url, IDocumentDescriptor documentDescriptor) throws IllegalArgumentException {
     this(null, officeApplication, frame, url, documentDescriptor);
@@ -198,7 +198,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
    * @param url URL of the document
    * @param documentDescriptor document descriptor to be used (can be null)
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public LoadDocumentOperation(String documentType, IOfficeApplication officeApplication, IFrame frame, URL url, 
       IDocumentDescriptor documentDescriptor) {
@@ -221,7 +221,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
    * @param url URL of the document
    * @param documentDescriptor document descriptor to be used (can be null)
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public LoadDocumentOperation(String documentType, IOfficeApplication officeApplication, URL url, 
       IDocumentDescriptor documentDescriptor) {
@@ -244,7 +244,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
    * @param inputStream input stream to be used
    * @param documentDescriptor document descriptor to be used (can be null)
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 06.07.2006
    */
   public LoadDocumentOperation(String documentType, IOfficeApplication officeApplication, IFrame frame, InputStream inputStream, 
@@ -268,7 +268,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
    * @param inputStream input stream to be used
    * @param documentDescriptor document descriptor to be used (can be null)
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 10.07.2006
    */
   public LoadDocumentOperation(IOfficeApplication officeApplication, InputStream inputStream, 
@@ -281,7 +281,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
    * 
    * @param isSubTask information whether this operation is a sub task
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void setIsSubTask(boolean isSubTask) {
     this.isSubTask = isSubTask;
@@ -292,7 +292,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
    * 
    * @param updateProgressMonitor information whether the progress monitor should be updated
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 10.07.2006
    */
   public void setUpdateProgressMonitor(boolean updateProgressMonitor) {
@@ -306,7 +306,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
    * @param useStream information whether the document should be loaded by
    * an input stream
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 13.06.2006
    */
   public void setUseStream(boolean useStream) {
@@ -318,7 +318,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
    * 
    * @return exception - returns null if no exception was thrown
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public Exception getException() {
     return internalThread.getException();
@@ -333,7 +333,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
    * @return loaded document or null if no document is
    * available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument getDocument() {
     if(documentType == null)
@@ -365,7 +365,7 @@ public class LoadDocumentOperation implements IRunnableWithProgress {
    *  using <code>IProgressMonitor.isCanceled()</code>, it should exit by throwing 
    *  <code>InterruptedException</code>
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void run(IProgressMonitor progressMonitor) throws InvocationTargetException, InterruptedException {
     internalThread = new InternalThread();

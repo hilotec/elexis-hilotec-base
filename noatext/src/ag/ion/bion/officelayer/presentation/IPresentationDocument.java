@@ -45,7 +45,7 @@ import com.sun.star.presentation.XPresentationSupplier;
 /**
  * OpenOffice.org impress document.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  */
 public interface IPresentationDocument extends IDocument {
@@ -56,7 +56,7 @@ public interface IPresentationDocument extends IDocument {
    * 
    * @return OpenOffice.org XPresentationSupplier interface
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public XPresentationSupplier getPresentationSupplier();
   //----------------------------------------------------------------------------

@@ -48,8 +48,8 @@ import com.sun.star.text.XTextTable;
 /**
  * Table in a text document.
  * 
- * @author Andreas Bröker
- * @author Markus Krüger
+ * @author Andreas BrÃ¶cker
+ * @author Markus KrÃ¼ger
  * @version $Revision: 11560 $
  */
 public interface ITextTable extends ITextContent, ICloneServiceProvider {  
@@ -70,7 +70,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @return OpenOffice.org XTextContent interface
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 31.07.2007
    */
   public XTextContent getXTextContent();
@@ -80,7 +80,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @return OpenOffice.org XTextTable interface
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 31.07.2007
    */
   public XTextTable getXTextTable();
@@ -90,7 +90,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @return text range of the text table
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 31.07.2007
    */
   public ITextRange getTextRange() throws Exception;
@@ -100,7 +100,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @return properties of the text table
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextTableProperties getProperties();
   //----------------------------------------------------------------------------
@@ -109,7 +109,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @return name of the table
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public String getName();  
   //----------------------------------------------------------------------------
@@ -120,7 +120,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @throws TextException if the row(s) can not be added
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void addRow(int count) throws TextException;
   //----------------------------------------------------------------------------
@@ -132,7 +132,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @throws TextException if the row(s) can not be added
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void addRow(int index, int count) throws TextException;
   //----------------------------------------------------------------------------
@@ -141,7 +141,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @return number of available rows.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public int getRowCount();  
   //----------------------------------------------------------------------------
@@ -152,7 +152,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @throws TextException if the column(s) can not be added
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void addColumn(int count) throws TextException;
   //----------------------------------------------------------------------------
@@ -165,7 +165,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @throws TextException if the column(s) can not be added
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void addColumn(int index, int count, boolean after) throws TextException;  
   //----------------------------------------------------------------------------
@@ -177,7 +177,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @throws TextException if the column(s) can not be added
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void addColumn(int index, int count) throws TextException;  
   //----------------------------------------------------------------------------
@@ -190,7 +190,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @throws TextException if any error occurs
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public ITextTableColumn getColumn(int index) throws TextException;    
   //----------------------------------------------------------------------------
@@ -201,7 +201,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @throws TextException if any error occurs
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public ITextTableColumn[] getColumns() throws TextException;  
   //----------------------------------------------------------------------------
@@ -210,7 +210,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @return number of available columns
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public int getColumnCount();  
   //----------------------------------------------------------------------------
@@ -219,7 +219,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @throws TextException if necessary properties are not available
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public void spreadColumnsEvenly() throws TextException;  
   //----------------------------------------------------------------------------
@@ -231,7 +231,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @throws TextException if necessary properties are not available
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public void spreadColumnsEvenly(int startIndex, int endIndex) throws TextException;  
   //----------------------------------------------------------------------------
@@ -244,7 +244,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @throws TextException if the cell is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextTableCell getCell(String name) throws TextException;
   //----------------------------------------------------------------------------
@@ -253,7 +253,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @return cells with formulas
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public ITextTableCell[] getCellsWithFormula();
   //----------------------------------------------------------------------------
@@ -267,7 +267,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @throws TextException if the cell is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextTableCell getCell(int columnIndex, int rowIndex) throws TextException;  
   //----------------------------------------------------------------------------
@@ -283,7 +283,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @throws TextException if the cell range is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextTableCellRange getCellRange(int fistColumnIndex, int firstRowIndex, int lastColumnIndex, int lastRowIndex) throws TextException;
   //----------------------------------------------------------------------------
@@ -296,7 +296,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @throws TextException if the cell range is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextTableCellRange getCellRange(String cellRangeName) throws TextException;
   //----------------------------------------------------------------------------
@@ -305,7 +305,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @return text table row
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextTableRow[] getRows();  
   //----------------------------------------------------------------------------
@@ -366,7 +366,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * @return the page number where the table starts, returns -1 if page number
    * could not be determined
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public short getTableStartPageNumber();
   //----------------------------------------------------------------------------
@@ -377,7 +377,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * @return the page number where the table ends, returns -1 if page number
    * could not be determined
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public short getTableEndPageNumber();
   //----------------------------------------------------------------------------
@@ -389,7 +389,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
    * 
    * @throws TextException if the header rows could not be set
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 21.03.2007
    */
   public void setHeaderRows(int headerRows) throws TextException;
@@ -397,7 +397,7 @@ public interface ITextTable extends ITextContent, ICloneServiceProvider {
   /**
    * Marks the table.
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 06.08.2007
    */
   public void markTable();

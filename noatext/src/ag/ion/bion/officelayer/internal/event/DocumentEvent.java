@@ -49,7 +49,7 @@ import com.sun.star.uno.UnoRuntime;
 /**
  * Document event.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11530 $
  */
 public class DocumentEvent extends Event implements IDocumentEvent {
@@ -62,7 +62,7 @@ public class DocumentEvent extends Event implements IDocumentEvent {
    * 
    * @throws IllegalArgumentException if the submitted OpenOffice.org event object is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public DocumentEvent(EventObject eventOject) throws IllegalArgumentException {
     super(eventOject);
@@ -73,7 +73,7 @@ public class DocumentEvent extends Event implements IDocumentEvent {
    * 
    * @return the document of the event
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public IDocument getDocument() {
     Object object = getSourceObject();

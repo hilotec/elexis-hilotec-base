@@ -53,7 +53,7 @@ import java.util.ArrayList;
 /**
  * Collection for OpenOffice.org Uno object properties. 
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  */
 public class PropertyCollection {

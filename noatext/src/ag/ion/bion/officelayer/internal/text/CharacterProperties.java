@@ -53,7 +53,7 @@ import ag.ion.bion.officelayer.text.TextException;
  * Properties of characters.
  * 
  * @author Miriam Sutter
- * @author Markus Krüger
+ * @author Markus KrÃ¼ger
  * @version $Revision: 10398 $
  */
 public class CharacterProperties extends AbstractProperties implements ICharacterProperties {
@@ -71,7 +71,7 @@ public class CharacterProperties extends AbstractProperties implements ICharacte
    * @throws IllegalArgumentException if the OpenOffice.org interface is not valid
    * 
    * @author Miriam Sutter
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public CharacterProperties(XPropertySet xPropertySet) throws IllegalArgumentException {
     super(xPropertySet);
@@ -82,7 +82,7 @@ public class CharacterProperties extends AbstractProperties implements ICharacte
    * 
    * @return the possible property keys
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public static IPropertyKey[] getPossiblyPropertyKeys() {
     if(PROPERTY_KEYS == null) {
@@ -108,7 +108,7 @@ public class CharacterProperties extends AbstractProperties implements ICharacte
    * 
    * @return the default property keys
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public static String[] getDefaultPropertyKeys() {
     if(DEFAULT_PROPERTY_KEYS == null) {
@@ -134,7 +134,7 @@ public class CharacterProperties extends AbstractProperties implements ICharacte
    * 
    * @return the id of the property
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public String getTypeID() {
     return TYPE_ID;
@@ -167,7 +167,7 @@ public class CharacterProperties extends AbstractProperties implements ICharacte
 	 * 
 	 * @throws TextException if any error occurs
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public void setFontSize(float fontSize) throws TextException {
 		try {
@@ -213,7 +213,7 @@ public class CharacterProperties extends AbstractProperties implements ICharacte
 	 * 
 	 * @throws TextException if any error occurs
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public void setFontBold(boolean param) throws TextException {
 		try {
@@ -261,7 +261,7 @@ public class CharacterProperties extends AbstractProperties implements ICharacte
 	 * 
 	 * @throws TextException if any error occurs
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public void setFontItalic(boolean param) throws TextException {
 		try {
@@ -312,7 +312,7 @@ public class CharacterProperties extends AbstractProperties implements ICharacte
 	 *  
 	 * @throws TextException if any error occurs
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public void setFontUnderline(boolean param) throws TextException  {
 		short help = (short)(param ? 1 : 0);
@@ -353,7 +353,7 @@ public class CharacterProperties extends AbstractProperties implements ICharacte
      * 
      * @throws TextException if the property can not be set
 	 * 
-	 * @author Sebastian Rösgen
+	 * @author Sebastian RÃ¼sgen
 	 */
 	public void setFontColor(int color)  throws TextException {
 		try {

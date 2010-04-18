@@ -50,7 +50,7 @@ import java.io.InputStream;
 /**
  * Service for documents.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  */
 public interface IDocumentService extends IDisposeable {
@@ -78,7 +78,7 @@ public interface IDocumentService extends IDisposeable {
    * 
    * @throws NOAException if the new document can not be constructed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument constructNewDocument(String documentType, IDocumentDescriptor documentDescriptor) throws NOAException;  
   //----------------------------------------------------------------------------
@@ -105,7 +105,7 @@ public interface IDocumentService extends IDisposeable {
    * 
    * @throws NOAException if the new document can not be constructed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument constructNewDocument(IFrame frame, String documentType, IDocumentDescriptor documentDescriptor) throws NOAException;  
   //----------------------------------------------------------------------------
@@ -129,7 +129,7 @@ public interface IDocumentService extends IDisposeable {
    * 
    * @throws NOAException if the document can not be contructed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 16.03.2006
    */
   public IDocument constructNewHiddenDocument(String documentType) throws NOAException;  
@@ -144,7 +144,7 @@ public interface IDocumentService extends IDisposeable {
    * @throws DocumentException if the document can not be loaded or the URL does
    * not locate an OpenOffice.org document
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument loadDocument(String url) throws DocumentException;  
   //----------------------------------------------------------------------------
@@ -159,7 +159,7 @@ public interface IDocumentService extends IDisposeable {
    * @throws NOAException if the document can not be loaded or the URL does
    * not locate an OpenOffice.org document
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 02.07.2006
    */
   public IDocument loadDocument(String url, IDocumentDescriptor documentDescriptor) throws NOAException;
@@ -174,7 +174,7 @@ public interface IDocumentService extends IDisposeable {
    * 
    * @throws DocumentException if the document can not be loaded
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument loadDocument(InputStream inputStream, IDocumentDescriptor documentDescriptor) throws DocumentException;
   //----------------------------------------------------------------------------
@@ -189,7 +189,7 @@ public interface IDocumentService extends IDisposeable {
    * 
    * @throws DocumentException if the document can not be loaded
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument loadDocument(IOfficeProgressMonitor officeProgressMonitor, 
       InputStream inputStream, IDocumentDescriptor documentDescriptor) throws DocumentException;
@@ -210,7 +210,7 @@ public interface IDocumentService extends IDisposeable {
    * 
    * @throws DocumentException if the document can not be loaded
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument loadDocument(IFrame frame, InputStream inputStream, 
       IDocumentDescriptor documentDescriptor) throws DocumentException;
@@ -232,7 +232,7 @@ public interface IDocumentService extends IDisposeable {
    * 
    * @throws DocumentException if the document can not be loaded
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument loadDocument(IOfficeProgressMonitor officeProgressMonitor, IFrame frame, 
       InputStream inputStream, IDocumentDescriptor documentDescriptor) throws DocumentException;
@@ -248,7 +248,7 @@ public interface IDocumentService extends IDisposeable {
    * @throws DocumentException if the document can not be loaded, the URL does
    * not locate an OpenOffice.org document or the submitted frame is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument loadDocument(IFrame frame, String url) throws DocumentException;
   //----------------------------------------------------------------------------
@@ -264,7 +264,7 @@ public interface IDocumentService extends IDisposeable {
    * @throws DocumentException if the document can not be loaded, the URL does
    * not locate an OpenOffice.org document or the submitted frame is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocument loadDocument(IFrame frame, String url, IDocumentDescriptor documentDescriptor) throws DocumentException;  
   //----------------------------------------------------------------------------
@@ -275,7 +275,7 @@ public interface IDocumentService extends IDisposeable {
    * 
    * @throws DocumentException if the documents cannot be provided
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public IDocument[] getCurrentDocuments() throws DocumentException;
   //----------------------------------------------------------------------------

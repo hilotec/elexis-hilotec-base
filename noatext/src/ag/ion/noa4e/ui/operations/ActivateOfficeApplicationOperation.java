@@ -54,7 +54,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Operation in order to activate OpenOffice.org application.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 1.2 $
  */
 public class ActivateOfficeApplicationOperation implements IRunnableWithProgress {
@@ -69,7 +69,7 @@ public class ActivateOfficeApplicationOperation implements IRunnableWithProgress
   /**
    * Internal thread class in order start the office application.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private class InternalThread extends Thread {
        
@@ -81,7 +81,7 @@ public class ActivateOfficeApplicationOperation implements IRunnableWithProgress
     /**
      * Executes thread logic.
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public void run() {
       try {
@@ -100,7 +100,7 @@ public class ActivateOfficeApplicationOperation implements IRunnableWithProgress
      * @return OfficeApplicationException - returns null if
      * no exception was thrown
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public OfficeApplicationException getOfficeApplicationException() {
       return officeApplicationException;
@@ -113,7 +113,7 @@ public class ActivateOfficeApplicationOperation implements IRunnableWithProgress
      * @return information whether the thread has finished his
      * work
      * 
-     * @author Andreas Bröker
+     * @author Andreas BrÃ¶cker
      */
     public boolean done() {
       if(officeApplicationException != null) 
@@ -130,7 +130,7 @@ public class ActivateOfficeApplicationOperation implements IRunnableWithProgress
    * 
    * @param officeApplication office application to be started
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ActivateOfficeApplicationOperation(IOfficeApplication officeApplication) {
   	assert officeApplication != null;
@@ -144,7 +144,7 @@ public class ActivateOfficeApplicationOperation implements IRunnableWithProgress
    * @return OfficeApplicationException - returns null if
    * no exception was thrown
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public OfficeApplicationException getOfficeApplicationException() {
     return internalThread.getOfficeApplicationException();
@@ -167,7 +167,7 @@ public class ActivateOfficeApplicationOperation implements IRunnableWithProgress
    *  using <code>IProgressMonitor.isCanceled()</code>, it should exit by throwing 
    *  <code>InterruptedException</code>
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void run(IProgressMonitor progressMonitor) throws InvocationTargetException, InterruptedException {
     /**

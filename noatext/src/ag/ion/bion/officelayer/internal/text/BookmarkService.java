@@ -54,7 +54,7 @@ import java.util.List;
 /**
  * Bookmark service of a text document.
  * 
- * @author Markus Krüger
+ * @author Markus KrÃ¼ger
  * @version $Revision: 10398 $
  */
 public class BookmarkService implements IBookmarkService {
@@ -69,7 +69,7 @@ public class BookmarkService implements IBookmarkService {
    * 
    * @throws IllegalArgumentException if the text document is not valid
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public BookmarkService(ITextDocument textDocument) throws IllegalArgumentException {
     if(textDocument == null)
@@ -82,7 +82,7 @@ public class BookmarkService implements IBookmarkService {
    * 
    * @return all bookmarks
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public IBookmark[] getBookmarks() {
     try {
@@ -119,7 +119,7 @@ public class BookmarkService implements IBookmarkService {
    * 
    * @return the bookmark for the specified name, or null
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public IBookmark getBookmark(String name) {
     try {

@@ -44,7 +44,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * Progress monitor for the office layer. This office progress monitor 
  * can be used in order to wrap an Eclipse <code>IProgressMonitor</code>.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 1.2 $
  */
 public class OfficeProgressMonitor implements IOfficeProgressMonitor {
@@ -57,7 +57,7 @@ public class OfficeProgressMonitor implements IOfficeProgressMonitor {
    * 
    * @param progressMonitor progress monitor to be used
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public OfficeProgressMonitor(IProgressMonitor progressMonitor) {
     assert progressMonitor != null;
@@ -70,7 +70,7 @@ public class OfficeProgressMonitor implements IOfficeProgressMonitor {
    * @param name name of the task
    * @param totalWork total work of the task
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void beginTask(String name, int totalWork) {
     progressMonitor.beginTask(name, totalWork);
@@ -84,7 +84,7 @@ public class OfficeProgressMonitor implements IOfficeProgressMonitor {
    *
    * @param work the number of work units just completed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void worked(int work) {
     progressMonitor.worked(work);
@@ -95,7 +95,7 @@ public class OfficeProgressMonitor implements IOfficeProgressMonitor {
    * 
    * @param name name of the substask
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void beginSubTask(String name) {
     progressMonitor.subTask(name);
@@ -108,7 +108,7 @@ public class OfficeProgressMonitor implements IOfficeProgressMonitor {
    * @return information whether the progress monitor needs
    * to be notified about the end of the main task
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public boolean needsDone() {
     return false;
@@ -117,7 +117,7 @@ public class OfficeProgressMonitor implements IOfficeProgressMonitor {
   /**
    * Informs the progress monitor that the work is done.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void done() {
     progressMonitor.done();    
@@ -128,7 +128,7 @@ public class OfficeProgressMonitor implements IOfficeProgressMonitor {
    * 
    * @param canceled information whether the work was canceled
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void setCanceled(boolean canceled) {
     progressMonitor.setCanceled(canceled);
@@ -139,7 +139,7 @@ public class OfficeProgressMonitor implements IOfficeProgressMonitor {
    * 
    * @return information whether the work was canceled
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public boolean isCanceled() {
     return progressMonitor.isCanceled();

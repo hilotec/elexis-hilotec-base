@@ -46,7 +46,7 @@ import ag.ion.noa.filter.AbstractFilter;
  * Contains information in order to export an OpenOffice.org document 
  * to plain text.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11479 $
  */
 public class TextFilter extends AbstractFilter implements IFilter {
@@ -85,7 +85,7 @@ public class TextFilter extends AbstractFilter implements IFilter {
    * 
    * @return file extension of the filter
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 03.04.2007
    */
   public String getFileExtension(String documentType) {
@@ -111,7 +111,7 @@ public class TextFilter extends AbstractFilter implements IFilter {
 	 * 
 	 * @return name of the filter
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 14.07.2006
 	 */
 	public String getName(IDocument document) {

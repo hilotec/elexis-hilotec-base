@@ -57,8 +57,8 @@ import java.net.URL;
 /**
  * Office document.
  * 
- * @author Andreas Bröker
- * @author Markus Krüger
+ * @author Andreas BrÃ¶cker
+ * @author Markus KrÃ¼ger
  * @version $Revision: 11568 $
  */
 public interface IDocument extends ISelectionProvider {
@@ -124,7 +124,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @return OpenOffice.org XComponent interface 
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public XComponent getXComponent();  
   //----------------------------------------------------------------------------
@@ -133,7 +133,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @return Frame of the document
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 01.08.2007
    */
   public IFrame getFrame();  
@@ -143,7 +143,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @return persistence service
    * 
-   * @author Andreas Bröker  
+   * @author Andreas BrÃ¶cker  
    */
   public IPersistenceService getPersistenceService();
   //----------------------------------------------------------------------------
@@ -152,7 +152,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @return scripting service of the document
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 13.06.2006
    */
   public IScriptingService getScriptingService();  
@@ -162,7 +162,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @return filter provider
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 14.07.2006
    */
   public IFilterProvider getFilterProvider();  
@@ -172,7 +172,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @return form service, or null
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 25.01.2007
    */
   public IFormService getFormService();  
@@ -182,7 +182,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @param documentListener new document listener
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void addDocumentListener(IDocumentListener documentListener);
   //----------------------------------------------------------------------------
@@ -191,7 +191,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @param documentListener document listener
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void removeDocumentListener(IDocumentListener documentListener);
   //----------------------------------------------------------------------------
@@ -200,7 +200,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @return type of the document
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public String getDocumentType();  
   //----------------------------------------------------------------------------
@@ -209,7 +209,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @return information whether the document was modified
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public boolean isModified();
   //----------------------------------------------------------------------------
@@ -220,7 +220,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @throws DocumentException if the status of the document can not be set
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void setModified(boolean modified) throws DocumentException;
   //----------------------------------------------------------------------------  
@@ -229,7 +229,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @param closeListener close listener
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void addCloseListener(ICloseListener closeListener);
   //----------------------------------------------------------------------------  
@@ -238,7 +238,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @param closeListener close listener
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
 	public void removeCloseListener(ICloseListener closeListener);
   //----------------------------------------------------------------------------  
@@ -252,7 +252,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @deprecated Use the IPersistenceService instead.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public URL getLocationURL() throws DocumentException;    
   //----------------------------------------------------------------------------
@@ -261,14 +261,14 @@ public interface IDocument extends ISelectionProvider {
 	 * 
 	 * @return information whether the document is open
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
 	 */
   public boolean isOpen();
   //----------------------------------------------------------------------------
   /**
    * Closes the document.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void close();
   //----------------------------------------------------------------------------
@@ -279,14 +279,14 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @return true if they are equal, flase if they are different
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public boolean equalsTo(IDocument compareDocument);
   //----------------------------------------------------------------------------
   /**
    * Reformats the document.
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public void reformat();
   //----------------------------------------------------------------------------
@@ -295,7 +295,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @throws DocumentException if printing fails
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public void print() throws DocumentException;
   //----------------------------------------------------------------------------
@@ -304,7 +304,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @return the print service of the document
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 16.08.2007
    */
   public IPrintService getPrintService();
@@ -314,7 +314,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @param documentModifyListener new document modify listener
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public void addDocumentModifyListener(IDocumentModifyListener documentModifyListener);
   //----------------------------------------------------------------------------
@@ -323,7 +323,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @param documentModifyListener the modify listener to be removed
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public void removeDocumentModifyListener(IDocumentModifyListener documentModifyListener);
   //----------------------------------------------------------------------------
@@ -361,7 +361,7 @@ public interface IDocument extends ISelectionProvider {
    * 
    * @return the applications service provider, or null
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 25.07.2007
    */
   public IServiceProvider getServiceProvider();

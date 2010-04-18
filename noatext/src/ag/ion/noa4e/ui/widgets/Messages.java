@@ -41,7 +41,7 @@ import org.eclipse.osgi.util.NLS;
 /**
  * Native language binding.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 1.2 $
  * @date 28.06.2006
  */

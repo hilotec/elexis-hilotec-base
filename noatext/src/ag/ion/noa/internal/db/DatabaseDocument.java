@@ -50,7 +50,7 @@ import com.sun.star.uno.UnoRuntime;
 /**
  * OpenOffice.org database document.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  * @date 16.03.2006
  */
@@ -65,7 +65,7 @@ public class DatabaseDocument extends AbstractDocument implements IDatabaseDocum
 	 * @param xOfficeDatabaseDocument XOfficeDatabaseDocument OpenOffice.org interface to 
 	 * be used
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 16.03.2006
 	 */
 	public DatabaseDocument(XOfficeDatabaseDocument xOfficeDatabaseDocument) {
@@ -78,7 +78,7 @@ public class DatabaseDocument extends AbstractDocument implements IDatabaseDocum
 	 * 
 	 * @return XOfficeDatabaseDocument OpenOffice.org interface
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 16.03.2006
 	 */
 	public XOfficeDatabaseDocument getOfficeDatabaseDocument() {
@@ -90,7 +90,7 @@ public class DatabaseDocument extends AbstractDocument implements IDatabaseDocum
    * 
    * @return type of the document
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
 	 * @date 16.03.2006
    */
 	public String getDocumentType() {
@@ -100,7 +100,7 @@ public class DatabaseDocument extends AbstractDocument implements IDatabaseDocum
   /**
    * Closes the document.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 20.03.2006
    */
   public void close() {    

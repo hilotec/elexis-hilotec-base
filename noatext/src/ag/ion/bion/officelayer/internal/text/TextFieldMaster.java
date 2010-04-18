@@ -57,7 +57,7 @@ import com.sun.star.uno.UnoRuntime;
 /**
  * Interface for a master of a textfield.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11572 $
  */
 public class TextFieldMaster implements ITextFieldMaster {
@@ -77,7 +77,7 @@ public class TextFieldMaster implements ITextFieldMaster {
    * @throws IllegalArgumentException if the submitted text document or 
    * OpenOffice.org XPropertySet interface is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public TextFieldMaster(ITextDocument textDocument, XPropertySet xPropertySet) throws IllegalArgumentException {
     if(textDocument == null)
@@ -96,7 +96,7 @@ public class TextFieldMaster implements ITextFieldMaster {
    * @return name of the master of a textfield or null if a name is
    * not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public String getName() {
     try {
@@ -116,7 +116,7 @@ public class TextFieldMaster implements ITextFieldMaster {
    * @return content of the master of a textfield or null if a content
    * is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public String getContent() {
     try {
@@ -136,7 +136,7 @@ public class TextFieldMaster implements ITextFieldMaster {
    * 
    * @throws TextException if the new content can not be set
    *  
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void setContent(String content) throws TextException {
     try {
@@ -154,7 +154,7 @@ public class TextFieldMaster implements ITextFieldMaster {
    * 
    * @throws TextException if the textfields can not be fetched
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextField[] getTextFields() throws TextException {
     try {
@@ -181,7 +181,7 @@ public class TextFieldMaster implements ITextFieldMaster {
    * 
    * @throws NOAException if the new textfield can not be constructed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 16.02.2006
    */
   public ITextField constructNewTextField() throws NOAException {
@@ -200,7 +200,7 @@ public class TextFieldMaster implements ITextFieldMaster {
   /**
    * Removes the master of a textfield from the document.
    *
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void remove() {
     XComponent xComponent = (XComponent)UnoRuntime.queryInterface(XComponent.class, xPropertySet);

@@ -67,7 +67,7 @@ import java.util.Map;
 /**
  * Content service implementation of a text document.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11509 $
  */
 public class TextContentService implements ITextContentService {
@@ -91,8 +91,8 @@ public class TextContentService implements ITextContentService {
    * @throws IllegalArgumentException if the submitted text document or OpenOffice.org XText interface 
    * is not valid
    * 
-   * @author Andreas Bröker
-   * @author Sebastian Rösgen
+   * @author Andreas BrÃ¶cker
+   * @author Sebastian RÃ¼sgen
    */
   public TextContentService(ITextDocument textDocument, XMultiServiceFactory xMultiServiceFactory, XText xText) throws IllegalArgumentException {
     if(xText == null)
@@ -111,7 +111,7 @@ public class TextContentService implements ITextContentService {
    * 
    * @throws TextException if the paragraph can not be constructed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IParagraph constructNewParagraph() throws TextException {
     try {
@@ -138,7 +138,7 @@ public class TextContentService implements ITextContentService {
    * 
    * @throws TextException if the image can not be constructed
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 09.07.2007
    */
   public ITextDocumentImage constructNewImage(GraphicInfo graphicInfo) throws TextException {
@@ -188,7 +188,7 @@ public class TextContentService implements ITextContentService {
    * 
    * @throws TextException if the text content can not be inserted
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void insertTextContent(ITextContent textContent) throws TextException {
     try {     
@@ -237,7 +237,7 @@ public class TextContentService implements ITextContentService {
    * 
    * @throws TextException if the text content can not be inserted
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void insertTextContent(ITextRange textRange, ITextContent textContent) throws TextException {
     try {
@@ -281,7 +281,7 @@ public class TextContentService implements ITextContentService {
    * 
    * @throws TextException if the text content can not be inserted
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void insertTextContentBefore(ITextContent newTextContent, ITextContent textContent) throws TextException {
     try {
@@ -319,7 +319,7 @@ public class TextContentService implements ITextContentService {
    * 
    * @throws TextException if the text content can not be inserted
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void insertTextContentAfter(ITextContent newTextContent, ITextContent textContent) throws TextException {
     try {

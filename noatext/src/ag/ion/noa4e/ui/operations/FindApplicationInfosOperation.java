@@ -51,7 +51,7 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Operation in order to find OpenOffice.org application infos.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 1.2 $
  */
 public class FindApplicationInfosOperation implements IRunnableWithProgress {
@@ -64,7 +64,7 @@ public class FindApplicationInfosOperation implements IRunnableWithProgress {
    * 
    * @return constructed application info objects
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IApplicationInfo[] getApplicationsInfos() {
     return applicationInfos;
@@ -87,7 +87,7 @@ public class FindApplicationInfosOperation implements IRunnableWithProgress {
    *  using <code>IProgressMonitor.isCanceled()</code>, it should exit by throwing 
    *  <code>InterruptedException</code>
    *
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void run(IProgressMonitor progressMonitor) throws InvocationTargetException, InterruptedException {
     try {

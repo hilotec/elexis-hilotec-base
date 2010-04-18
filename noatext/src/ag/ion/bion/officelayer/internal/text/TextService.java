@@ -56,8 +56,8 @@ import com.sun.star.text.XText;
 /**
  * Text service implementation of a text document.
  * 
- * @author Andreas Bröker
- * @author Markus Krüger
+ * @author Andreas BrÃ¶cker
+ * @author Markus KrÃ¼ger
  * @version $Revision: 10398 $
  */
 public class TextService implements ITextService {
@@ -82,8 +82,8 @@ public class TextService implements ITextService {
    *  
    * @throws IllegalArgumentException if the submitted text document or OpenOffice.org XText interface is not valid
    * 
-   * @author Andreas Bröker
-   * @author Sebastian Rösgen
+   * @author Andreas BrÃ¶cker
+   * @author Sebastian RÃ¼sgen
    */
   public TextService(ITextDocument textDocument, XMultiServiceFactory xMultiServiceFactory, XText xText) throws IllegalArgumentException {
     if(textDocument == null)
@@ -102,7 +102,7 @@ public class TextService implements ITextService {
    * 
    * @return text content service
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextContentService getTextContentService() {
     if(textContentService == null)
@@ -115,7 +115,7 @@ public class TextService implements ITextService {
    * 
    * @return cursor service
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextCursorService getCursorService() {
     if(cursorService == null) 
@@ -128,7 +128,7 @@ public class TextService implements ITextService {
    * 
    * @return bookmark service
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public IBookmarkService getBookmarkService() {
     if(bookmarkService == null) 
@@ -141,7 +141,7 @@ public class TextService implements ITextService {
    * 
    * @return annotation service
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 13.07.2006
    */
   public IAnnotationService getAnnotationService() {
@@ -155,7 +155,7 @@ public class TextService implements ITextService {
    * 
    * @return text
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IText getText() {
     if(text == null)

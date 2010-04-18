@@ -53,7 +53,7 @@ import java.util.Map;
 /**
  * OpenOffice.org application.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  */
 public interface IOfficeApplication extends IDisposeable {
@@ -80,7 +80,7 @@ public interface IOfficeApplication extends IDisposeable {
    * 
    * @throws OfficeApplicationException if the submitted configuration is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * 
    * @deprecated Use setConfiguration(Map configuration) instead.
    */
@@ -93,7 +93,7 @@ public interface IOfficeApplication extends IDisposeable {
    * 
    * @throws OfficeApplicationException if the configuration is not complete
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void setConfiguration(Map configuration) throws OfficeApplicationException;  
   //----------------------------------------------------------------------------
@@ -111,7 +111,7 @@ public interface IOfficeApplication extends IDisposeable {
    * 
    * @throws OfficeApplicationException if the office application can not be activated
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void activate() throws OfficeApplicationException;
   //----------------------------------------------------------------------------
@@ -122,7 +122,7 @@ public interface IOfficeApplication extends IDisposeable {
    * 
    * @throws OfficeApplicationException if the office application can not be activated
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void activate(IOfficeProgressMonitor officeProgressMonitor) throws OfficeApplicationException;
   //----------------------------------------------------------------------------
@@ -133,7 +133,7 @@ public interface IOfficeApplication extends IDisposeable {
    * 
    * @throws OfficeApplicationException if the office application can not be deactivated
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void deactivate() throws OfficeApplicationException;
   //----------------------------------------------------------------------------
@@ -143,7 +143,7 @@ public interface IOfficeApplication extends IDisposeable {
    * 
    * @return whether the office application is active or not
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public boolean isActive();
   //----------------------------------------------------------------------------
@@ -156,7 +156,7 @@ public interface IOfficeApplication extends IDisposeable {
    * 
    * @throws OfficeApplicationException if the document service is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDocumentService getDocumentService() throws OfficeApplicationException;  
   //----------------------------------------------------------------------------
@@ -167,7 +167,7 @@ public interface IOfficeApplication extends IDisposeable {
    * 
    * @throws OfficeApplicationException if the desktop service is not available
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IDesktopService getDesktopService() throws OfficeApplicationException;
   //----------------------------------------------------------------------------
@@ -187,7 +187,7 @@ public interface IOfficeApplication extends IDisposeable {
    * @return service provider null if the application is not
    * active
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    * @date 15.08.2006
    */
   public IServiceProvider getServiceProvider();  

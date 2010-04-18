@@ -43,7 +43,7 @@ import ag.ion.bion.officelayer.filter.IFilter;
 /**
  * Filter for the Pocket Office format.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11479 $
  * @date 09.07.2006
  */ 
@@ -60,7 +60,7 @@ public class PocketOfficeFilter extends AbstractFilter implements IFilter {
 	* 
 	* @return definition of the filter
   * 
-  * @author Andreas Bröker
+  * @author Andreas BrÃ¶cker
 	*/
   public String getFilterDefinition(IDocument document) {
     if(document.getDocumentType().equals(IDocument.WRITER)) {
@@ -80,7 +80,7 @@ public class PocketOfficeFilter extends AbstractFilter implements IFilter {
    * 
    * @return file extension of the filter
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 03.04.2007
    */
   public String getFileExtension(String documentType) {

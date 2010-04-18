@@ -52,8 +52,8 @@ import com.sun.star.lang.XComponent;
 /**
  * OpenOffice.org formula document representation.
  * 
- * @author Andreas Bröker
- * @author Markus Krüger
+ * @author Andreas BrÃ¶cker
+ * @author Markus KrÃ¼ger
  * @version $Revision: 10398 $
  */
 public class FormulaDocument extends AbstractDocument implements IFormulaDocument {
@@ -68,7 +68,7 @@ public class FormulaDocument extends AbstractDocument implements IFormulaDocumen
    * 
    * @throws IllegalArgumentException if the submitted OpenOffice.org interface is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public FormulaDocument(XPropertySet xPropertySet) throws IllegalArgumentException {
     super((XComponent)UnoRuntime.queryInterface(XComponent.class, xPropertySet));
@@ -80,7 +80,7 @@ public class FormulaDocument extends AbstractDocument implements IFormulaDocumen
    * 
    * @return OpenOffice.org XPropertySet interface
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public XPropertySet getPropertySet() {
     return xPropertySet;
@@ -91,7 +91,7 @@ public class FormulaDocument extends AbstractDocument implements IFormulaDocumen
    * 
    * @return type of the document
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public String getDocumentType() {
     return IDocument.MATH;
@@ -100,7 +100,7 @@ public class FormulaDocument extends AbstractDocument implements IFormulaDocumen
   /**
    * Reformats the document.
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public void reformat() {
     //TODO fill with logic

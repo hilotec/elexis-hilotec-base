@@ -43,7 +43,7 @@ import ag.ion.bion.officelayer.clone.ICloneServiceProvider;
 /**
  * Paragraph of a text document.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11559 $
  */
 public interface IParagraph extends ITextContent, ICloneServiceProvider {
@@ -54,7 +54,7 @@ public interface IParagraph extends ITextContent, ICloneServiceProvider {
    * 
    * @return properties of the paragraph
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IParagraphProperties getParagraphProperties();
   //----------------------------------------------------------------------------
@@ -63,7 +63,7 @@ public interface IParagraph extends ITextContent, ICloneServiceProvider {
    * 
    * @return text range of the text table
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 06.08.2007
    */
   public ITextRange getTextRange();
@@ -73,7 +73,7 @@ public interface IParagraph extends ITextContent, ICloneServiceProvider {
    * 
    * @return characterproperties of the paragraph
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public ICharacterProperties getCharacterProperties();
   //----------------------------------------------------------------------------
@@ -82,7 +82,7 @@ public interface IParagraph extends ITextContent, ICloneServiceProvider {
    * 
    * @return the paragprah property store
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public IParagraphPropertyStore getParagraphPropertyStore() throws TextException;
   //----------------------------------------------------------------------------
@@ -91,7 +91,7 @@ public interface IParagraph extends ITextContent, ICloneServiceProvider {
    * 
    * @return the paragprah's character property store
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public ICharacterPropertyStore getCharacterPropertyStore() throws TextException;
   //----------------------------------------------------------------------------
@@ -100,7 +100,7 @@ public interface IParagraph extends ITextContent, ICloneServiceProvider {
    * 
    * @return the paragraph text
    * 
-   * @author Sebastian Rösgen 
+   * @author Sebastian RÃ¼sgen 
    */
   public String getParagraphText() throws TextException;
   //---------------------------------------------------------------------------- 
@@ -109,7 +109,7 @@ public interface IParagraph extends ITextContent, ICloneServiceProvider {
    * 
    * @param text the text that should be placed
    * 
-   * @author Sebastian Rösgen
+   * @author Sebastian RÃ¼sgen
    */
   public void setParagraphText(String text);
   //----------------------------------------------------------------------------

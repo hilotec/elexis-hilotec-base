@@ -92,8 +92,8 @@ import java.util.TreeSet;
 /**
  * Preferences page for local OpenOffice.org application.
  * 
- * @author Andreas Br�ker
- * @author Markus Kr�ger
+ * @author Andreas Bröcker
+ * @author Markus Krüger
  * @version $Revision: 1.2 $
  */
 public class LocalOfficeApplicationPreferencesPage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -113,7 +113,7 @@ public class LocalOfficeApplicationPreferencesPage extends PreferencePage implem
    * 
    * @param workbench workbnech to be used
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public void init(IWorkbench workbench) {   
     setDescription(Messages.LocalOfficeApplicationPreferencesPage_description_configure_application);
@@ -127,8 +127,8 @@ public class LocalOfficeApplicationPreferencesPage extends PreferencePage implem
    * 
    * @return constructed control
    * 
-   * @author Andreas Br�ker
-   * @author Markus Kr�ger
+   * @author Andreas Bröcker
+   * @author Markus Krüger
    */
   protected Control createContents(Composite parent) {
     FormToolkit formToolkit = NOAUIPlugin.getFormToolkit();
@@ -217,8 +217,8 @@ public class LocalOfficeApplicationPreferencesPage extends PreferencePage implem
    * @return false to abort the container's OK processing and true to allow 
    * the OK to happen
    * 
-   * @author Andreas Br�ker
-   * @author Markus Kr�ger
+   * @author Andreas Bröcker
+   * @author Markus Krüger
    */
   public boolean performOk() {    
     IPreferenceStore preferenceStore = new SettingsPreferenceStore(Hub.localCfg);
@@ -242,7 +242,7 @@ public class LocalOfficeApplicationPreferencesPage extends PreferencePage implem
    * 
    * @param table table to be used
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   private void initApplicationProperties(Table table) {
     try {
@@ -280,8 +280,8 @@ public class LocalOfficeApplicationPreferencesPage extends PreferencePage implem
   /**
    * Inits all preference values.
    * 
-   * @author Andreas Br�ker
-   * @author Markus Kr�ger
+   * @author Andreas Bröcker
+   * @author Markus Krüger
    * 
    * Adapted for Elexis
    * G. Weirich, 6/07
@@ -305,7 +305,7 @@ public class LocalOfficeApplicationPreferencesPage extends PreferencePage implem
    * 
    * @return information whether this preferences page is valid
    * 
-   * @author Andreas Br�ker
+   * @author Andreas Bröcker
    */
   public boolean isValid() {
     return true;

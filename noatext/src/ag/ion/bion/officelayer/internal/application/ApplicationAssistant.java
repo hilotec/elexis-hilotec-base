@@ -58,7 +58,7 @@ import java.util.Properties;
 /**
  * Assistant for office applications.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  */
 public class ApplicationAssistant implements IApplicationAssistant {
@@ -76,7 +76,7 @@ public class ApplicationAssistant implements IApplicationAssistant {
    * @throws OfficeApplicationException if the office application assitant can not
    * be constructed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ApplicationAssistant() throws OfficeApplicationException {
     this(null);
@@ -90,7 +90,7 @@ public class ApplicationAssistant implements IApplicationAssistant {
    * @throws OfficeApplicationException if the office application assitant can not
    * be constructed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ApplicationAssistant(String nativeLibPath) throws OfficeApplicationException {
     if(System.getProperty("os.name").toLowerCase().indexOf("windows") != -1) {       //$NON-NLS-1$ //$NON-NLS-2$
@@ -111,7 +111,7 @@ public class ApplicationAssistant implements IApplicationAssistant {
    * 
    * @return informations about available local office applications
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IApplicationInfo[] getLocalApplications() {
     return getLocalApplications(null);
@@ -124,8 +124,8 @@ public class ApplicationAssistant implements IApplicationAssistant {
    * 
    * @return informations about available local office applications
    * 
-   * @author Andreas Bröker
-   * @author Markus Krüger
+   * @author Andreas BrÃ¶cker
+   * @author Markus KrÃ¼ger
    */
   public IApplicationInfo[] getLocalApplications(IOfficeProgressMonitor officeProgressMonitor) {
     ArrayList arrayList = new ArrayList();
@@ -202,7 +202,7 @@ public class ApplicationAssistant implements IApplicationAssistant {
    * @return application info on the basis of the submitted application 
    * home path or null if the application info can not be provided
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public IApplicationInfo findLocalApplicationInfo(String home) {
     if(home == null)
@@ -233,7 +233,7 @@ public class ApplicationAssistant implements IApplicationAssistant {
    * @param root root file entry to be used
    * @param list list to be filled with possible office home entries
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private void findPossibleOfficeHomes(IOfficeProgressMonitor officeProgressMonitor, File root, List list) {
     if(root == null)
@@ -286,7 +286,7 @@ public class ApplicationAssistant implements IApplicationAssistant {
    * @return application properties on the basis of the submitted office home
    * path or null if the application properties can not be found
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private IApplicationProperties findApplicationProperties(String home) {
     File file = null;
@@ -313,7 +313,7 @@ public class ApplicationAssistant implements IApplicationAssistant {
    * 
    * @return possible windows registry keys of OpenOffice.org
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   private String[] getPossibleKeys() {
     /**

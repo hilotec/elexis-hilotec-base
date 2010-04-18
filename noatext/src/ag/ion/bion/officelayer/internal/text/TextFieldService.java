@@ -70,7 +70,7 @@ import java.util.List;
 /**
  * Textfield service of a text document.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 11575 $
  */
 public class TextFieldService implements ITextFieldService {
@@ -90,7 +90,7 @@ public class TextFieldService implements ITextFieldService {
    * 
    * @throws IllegalArgumentException if the OpenOffice.org interface is not valid
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public TextFieldService(ITextDocument textDocument) {
     if(textDocument == null)
@@ -109,7 +109,7 @@ public class TextFieldService implements ITextFieldService {
    * 
    * @throws TextException if the user text field can not be provided
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextFieldMaster getUserTextFieldMaster(String name) throws TextException {
     try {
@@ -144,7 +144,7 @@ public class TextFieldService implements ITextFieldService {
    * 
    * @throws TextException if the masters of the user textfields can not be constructed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextFieldMaster[] getUserTextFieldMasters(String prefix) throws TextException {
     if(prefix == null)
@@ -191,7 +191,7 @@ public class TextFieldService implements ITextFieldService {
    * 
    * @throws TextException if the masters of the user textfields can not be constructed
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public ITextFieldMaster[] getUserTextFieldMasters(String prefix, String suffix) throws TextException {
     if(prefix == null)
@@ -238,7 +238,7 @@ public class TextFieldService implements ITextFieldService {
    * 
    * @throws TextException if any error occurs during textfield creation
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextField addUserTextField(String name, String content) throws TextException {
     try {
@@ -268,7 +268,7 @@ public class TextFieldService implements ITextFieldService {
    * 
    * @throws TextException if the user textfields can not be constructed
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public ITextField[] getUserTextFields() throws TextException {
     try {
@@ -295,7 +295,7 @@ public class TextFieldService implements ITextFieldService {
    * 
    * @throws TextException if the placeholder textfields can not be constructed
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 23.01.2007
    */
   public ITextField[] getPlaceholderFields() throws TextException {
@@ -331,7 +331,7 @@ public class TextFieldService implements ITextFieldService {
    * 
    * @throws TextException if any error occurs during placeholder textfield creation
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 30.05.2007
    */
   public ITextField createPlaceholderTextField(String name, String hint, short placeholderType) throws TextException {
@@ -369,7 +369,7 @@ public class TextFieldService implements ITextFieldService {
    * 
    * @throws TextException if the master can not be returned
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 30.05.2007
    */
   public IVariableTextFieldMaster getVariableTextFieldMaster(String masterName) throws TextException {
@@ -407,7 +407,7 @@ public class TextFieldService implements ITextFieldService {
    * 
    * @throws TextException if the masters can not be returned
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 30.05.2007
    */
   public IVariableTextFieldMaster[] getVariableTextFieldMasters(String prefix) throws TextException {
@@ -450,7 +450,7 @@ public class TextFieldService implements ITextFieldService {
    * 
    * @throws TextException if any error occurs during variable textfield master creation
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 30.05.2007
    */
   public IVariableTextFieldMaster createVariableTextFieldMaster(String name, short variableType) throws TextException {
@@ -484,7 +484,7 @@ public class TextFieldService implements ITextFieldService {
    * 
    * @throws TextException if the variable textfields can not be constructed
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 29.05.2007
    */
   public ITextField[] getVariableFields(String prefix) throws TextException {
@@ -507,7 +507,7 @@ public class TextFieldService implements ITextFieldService {
    * 
    * @throws TextException if refresh fails
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 29.05.2007
    */
   public void refresh() throws TextException {

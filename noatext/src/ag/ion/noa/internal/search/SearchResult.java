@@ -58,7 +58,7 @@ import java.util.List;
 /**
  * Result of a search.
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  * @date 09.07.2006
  */ 
@@ -71,7 +71,7 @@ public class SearchResult implements ISearchResult {
 	/**
 	 * Constructs new SearchResult.
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 09.07.2006
 	 */
 	public SearchResult() {
@@ -82,7 +82,7 @@ public class SearchResult implements ISearchResult {
 	 * 
 	 * @param xIndexAccess OpenOffice.org XIndexAccess interface
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 09.07.2006
 	 */
 	public SearchResult(XIndexAccess xIndexAccess) {
@@ -95,7 +95,7 @@ public class SearchResult implements ISearchResult {
 	 * 
 	 * @param xInterface OpenOffice.org XInterface interface
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 09.07.2006
 	 */
 	public SearchResult(XInterface xInterface) {
@@ -108,7 +108,7 @@ public class SearchResult implements ISearchResult {
 	 * 
 	 * @return information whether the search result is empty
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 09.07.2006
 	 */
 	public boolean isEmpty() {
@@ -129,7 +129,7 @@ public class SearchResult implements ISearchResult {
 	 * 
 	 * @return text ranges of the search resul
 	 * 
-	 * @author Andreas Bröker
+	 * @author Andreas BrÃ¶cker
 	 * @date 09.07.2006
 	 */
 	public ITextRange[] getTextRanges() {

@@ -52,7 +52,7 @@ import java.io.IOException;
 /**
  * Document storing helper class. 
  * 
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  */
 public class DocumentWriter {

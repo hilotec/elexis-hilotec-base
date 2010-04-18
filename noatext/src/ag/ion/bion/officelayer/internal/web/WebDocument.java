@@ -54,7 +54,7 @@ import com.sun.star.uno.UnoRuntime;
  * OpenOffice.org web document.
  * 
  * @author Thomas Renken
- * @author Andreas Bröker
+ * @author Andreas BrÃ¶cker
  * @version $Revision: 10398 $
  */
 public class WebDocument extends AbstractDocument implements IWebDocument {
@@ -70,7 +70,7 @@ public class WebDocument extends AbstractDocument implements IWebDocument {
    * @throws IllegalArgumentException if the submitted OpenOffice.org interface is not valid
    * 
    * @author Thomas Renken
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public WebDocument(XTextDocument xtextDocument) throws IllegalArgumentException {
     super((XComponent)UnoRuntime.queryInterface(XComponent.class, xtextDocument));
@@ -83,7 +83,7 @@ public class WebDocument extends AbstractDocument implements IWebDocument {
    * @return OpenOffice.org XTextDocument interface
    * 
    * @author Thomas Renken
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public XTextDocument getWebDocument() {
     return xTextDocument;
@@ -95,7 +95,7 @@ public class WebDocument extends AbstractDocument implements IWebDocument {
    * @return type of the document
    * 
    * @author Thomas Renken
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public String getDocumentType() {
     return IDocument.WEB;
@@ -104,7 +104,7 @@ public class WebDocument extends AbstractDocument implements IWebDocument {
   /**
    * Reformats the document.
    * 
-   * @author Andreas Bröker
+   * @author Andreas BrÃ¶cker
    */
   public void reformat() {
     //TODO fill with logic

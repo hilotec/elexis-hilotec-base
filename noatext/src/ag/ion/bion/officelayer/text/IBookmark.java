@@ -41,7 +41,7 @@ package ag.ion.bion.officelayer.text;
 /**
  * Bookmark of a text document.
  * 
- * @author Markus Krüger
+ * @author Markus KrÃ¼ger
  * @version $Revision: 10398 $
  */
 public interface IBookmark extends ITextRange {
@@ -52,7 +52,7 @@ public interface IBookmark extends ITextRange {
    * 
    * @return the name of the bookmark
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    * @date 13.07.2006
    */
   public String getName();
@@ -60,7 +60,7 @@ public interface IBookmark extends ITextRange {
   /**
    * Jumps to the bookmark.
    * 
-   * @author Markus Krüger
+   * @author Markus KrÃ¼ger
    */
   public void jumpTo();
   //----------------------------------------------------------------------------
