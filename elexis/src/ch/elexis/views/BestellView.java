@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BestellView.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ * $Id: BestellView.java 6278 2010-04-18 16:14:15Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -377,7 +377,8 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 						.getExtensions("ch.elexis.Transporter"); //$NON-NLS-1$
 				for (IConfigurationElement ic : list) {
 					String handler = ic.getAttribute("AcceptableTypes"); //$NON-NLS-1$
-					if (handler.contains("ch.elexis.data.Bestellung")) { //$NON-NLS-1$
+					
+					if (handler !=null && handler.contains("ch.elexis.data.Bestellung")) { //$NON-NLS-1$
 						try {
 							IDataSender sender = (IDataSender) ic
 									.createExecutableExtension("ExporterClass"); //$NON-NLS-1$
