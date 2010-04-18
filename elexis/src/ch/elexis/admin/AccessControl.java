@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: AccessControl.java 6278 2010-04-18 16:14:15Z rgw_ch $
+ *    $Id: AccessControl.java 6279 2010-04-18 16:15:18Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -65,7 +65,7 @@ public class AccessControl {
 	public static final String DB_UID = "dbUID";
 	
 	// Set this to true to make any user admin (e.g. to reset admin pwd
-	private final static boolean FORCE_ADMIN = true;
+	private final static boolean FORCE_ADMIN = false;
 	
 	public static final String ALL_GROUP = StringConstants.ROLE_ALL;
 	public static final String USER_GROUP = StringConstants.ROLE_USERS;
