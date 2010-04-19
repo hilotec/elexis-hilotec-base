@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 6285 2010-04-19 21:55:58Z niklausgiger $
+<!-- $Id: build.xml 6286 2010-04-19 23:04:52Z niklausgiger $
     (c) 2005-2009 by G. Weirich
 
     This file reflects my personal environment. It is not intended for
@@ -273,6 +273,7 @@
 		<antcall target="prepare" />
 		<antcall target="rcp.win" />
 		<antcall target="rcp.unix" />
+		<echo message="eclipse.source is ${eclipse.source}" />
 		<antcall target="doc_fr" />
 		<unzip src="${archie.zip}" dest="${dist}" />
 
@@ -298,7 +299,7 @@ osgi.bundles.defaultStartLevel=4
 -->
 
 		<tar destfile="${output}/elexis-linux-i386-${version}.tgz" basedir="${dest}/Elexis-${version}" longfile="gnu" />
-		<checksum property="eclipse.md5" file="${eclipse.tar.gz}" />
+		<checksum property="eclipse.md5" file="${eclipse.source}" />
 		<checksum property="archie.md5" file="${archie.zip}" />
 		<checksum property="elexis.md5" file="${output}/elexis-linux-i386-${version}.tgz" />
 		<concat destfile="${dest}/summary">	Build completed ${TODAY} ${TSTAMP}

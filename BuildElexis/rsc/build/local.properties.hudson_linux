@@ -5,6 +5,7 @@ texify=texi2pdf
 texifyArgs=--silent
 unplugged=true
 eclipse.tar.gz=/opt/4hudson/linux/eclipse-rcp-galileo-SR2-linux-gtk.tar.gz
+eclipse.source=/opt/4hudson/linux/eclipse-rcp-galileo-SR2-linux-gtk.tar.gz
 archie.zip=/opt/4hudson/archie-1.0.2.zip
 findbugs.zip=/opt/4hudson/findbugs-1.3.9.zip
 wikitext.zip=/opt/4hudson/mylyn-wikitext-standalone-latest.zip
