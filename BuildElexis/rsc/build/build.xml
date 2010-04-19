@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 6284 2010-04-19 21:23:43Z niklausgiger $
+<!-- $Id: build.xml 6285 2010-04-19 21:55:58Z niklausgiger $
     (c) 2005-2009 by G. Weirich
 
     This file reflects my personal environment. It is not intended for
@@ -248,14 +248,23 @@
 				<includesfile name="rsc/build/eclipse_files" />
 			</patternset>
 		</untar>
+		<move tofile="${dist}/eclipse/elexis" file="${dist}/eclipse/eclipse" />
+		<chmod file="${dist}/eclipse/elexis" perm="755" />
+		<move todir="${dist}">
+			<fileset dir="${dist}/eclipse" />
+		</move>
 	</target>
 
 	<target name="rcp.win" if="has.zip">
-		<unzip src="${eclipse.zip.gz}" dest="${dist}" compression="gzip">
+		<unzip src="${eclipse.zip}" dest="${dist}">
 			<patternset>
 				<includesfile name="rsc/build/eclipse_files" />
 			</patternset>
 		</unzip>
+		<move tofile="${dist}/eclipse/elexis.exe" file="${dist}/eclipse/eclipse.exe" />
+		<move todir="${dist}">
+			<fileset dir="${dist}/eclipse" />
+		</move>
 	</target>
 	<!-- Special building for the Continuos Integration tool Hudson -->
 	<target name="hudson">
@@ -265,11 +274,6 @@
 		<antcall target="rcp.win" />
 		<antcall target="rcp.unix" />
 		<antcall target="doc_fr" />
-		<move tofile="${dist}/eclipse/elexis" file="${dist}/eclipse/eclipse" />
-		<chmod file="${dist}/eclipse/elexis" perm="755" />
-		<move todir="${dist}">
-			<fileset dir="${dist}/eclipse" />
-		</move>
 		<unzip src="${archie.zip}" dest="${dist}" />
 
 		<antcall target="doc_fr" />
@@ -324,6 +328,7 @@ ${elexis.md5} ${output}/elexis-linux-i386-${version}.tgz
 		</delete>
 		<!-- path to wikitext standalone package -->
 		<property name="wikitext.standalone" value="${source}/helpers/wikitext.standalone" />
+		<echo message="wikitext.standalone ist ${source}/helpers/wikitext.standalone" />
 		<path id="wikitext.classpath">
 			<fileset dir="${wikitext.standalone}">
 				<include name="org.eclipse.mylyn.wikitext.*core*.jar" />

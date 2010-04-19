@@ -70,16 +70,9 @@ end
 FileUtils.mkdir_p(RcpBase) if !File.directory?(RcpBase)
 eclipse = "#{RcpBase}/rcp"
 Dir.chdir(RcpBase)
+from=nil
 if /linux/i.match RUBY_PLATFORM
   from = "#{savedDir}/rsc/build/local.properties.hudson_linux"
-  to   = "#{savedDir}/rsc/build/local.properties"
-  inhalt = IO.readlines(from)
-  neu    = File.open(to, "w+")
-  neu.puts(inhalt)
-  origin=File.dirname(savedDir)
-  neu.puts("source=#{origin}")
-  neu.puts("dest=#{origin}/deploy")
-
   HudsonRcpTar = "#{HudsonRoot}/downloads/eclipse-rcp-galileo-SR2-linux-gtk.tar.gz"
   if !File.exists?(eclipse)
     system("tar -zxf #{HudsonRcpTar}")
@@ -97,6 +90,13 @@ else
   puts "Unsupported "+RUBY_PLATFORM
   exit 2
 end
+  to   = "#{savedDir}/rsc/build/local.properties"
+  inhalt = IO.readlines(from)
+  neu    = File.open(to, "w+")
+  neu.puts(inhalt)
+  origin=File.dirname(savedDir)
+  neu.puts("source=#{origin}")
+  neu.puts("dest=#{origin}/deploy")
 
 Dir.chdir(RcpBase)
 datei="#{RcpBase}/findbugs-1.3.9/lib/findbugs-ant.jar"
