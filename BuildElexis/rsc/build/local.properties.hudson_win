@@ -1,5 +1,4 @@
 rcpbase=c:/hudson/rcpbase
-eclipse=rcpbase=c:/hudson/rcpbase/windows/rcp/eclipse
 source=`pwd`/../..
 makeself=/usr/bin/makeself
 jre=c:/programme/java/jre6
@@ -8,3 +7,5 @@ texify=texify
 texifyArgs=--silent --pdf
 unplugged=true
 nsis=C:/Programme/nsis/makensis.exe
+eclipse.zip=C:\\hudson\downloads\\eclipse-rcp-galileo-SR2-win32.zip
+
