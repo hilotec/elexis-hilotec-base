@@ -8,11 +8,9 @@ import org.eclipse.jface.action.IAction;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.importers.HL7;
 import ch.elexis.importers.HL7Parser;
 import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.io.FileTool;
 import ch.rgw.tools.Result;
 
 public class Importer extends Action implements IAction {

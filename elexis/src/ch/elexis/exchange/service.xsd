@@ -3,8 +3,6 @@
 	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
 	xmlns:xChange="http://informatics.sgam.ch/xChange"
 	xmlns:Q1="xChange">
-
-
 	<include schemaLocation="xid.xsd"></include>
 	<complexType name="serviceType">
 		<annotation>
@@ -31,7 +29,6 @@
 					The name of the contractual system this service
 					belongs to (e.g. Tarmed, OKP, Analysenliste) or
 					"custom" to declare a custom service
-
 				</documentation>
 			</annotation>
 		</attribute>
