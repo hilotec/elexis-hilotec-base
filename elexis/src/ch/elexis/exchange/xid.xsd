@@ -65,6 +65,11 @@
 			</xs:annotation>
 		</xs:attribute>
 		<xs:attribute name="date" type="xs:date"></xs:attribute>
+		<xs:attribute name="usage" type="xs:int">
+			<xs:annotation>
+				<xs:documentation>Usage count of this identity. Will always be increased by one if this identity was helpful for an identification procecc.
+</xs:documentation>
+			</xs:annotation></xs:attribute>
 	</xs:complexType>
 
 </xs:schema>

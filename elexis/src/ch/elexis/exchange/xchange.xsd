@@ -61,7 +61,7 @@
 
 		<xs:sequence>
 
-			<xs:element name="xid" type="xs:string" maxOccurs="1"
+			<xs:element name="xid" type="xChange:XIDType" maxOccurs="1"
 				minOccurs="1">
 			</xs:element>
 			<xs:element minOccurs="0" maxOccurs="unbounded"
@@ -398,7 +398,7 @@
 			</xs:documentation>
 		</xs:annotation>
 		<xs:sequence>
-			<xs:element name="xid" type="xs:string" maxOccurs="1"
+			<xs:element name="xid" type="xChange:XIDType" maxOccurs="1"
 				minOccurs="1">
 			</xs:element>
 			<xs:element name="hint" type="xs:string" maxOccurs="1"
