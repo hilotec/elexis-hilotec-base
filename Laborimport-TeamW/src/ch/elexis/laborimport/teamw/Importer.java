@@ -48,6 +48,7 @@ import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
+import ch.elexis.util.FtpSemaException;
 import ch.elexis.util.FtpServer;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Log;
@@ -59,6 +60,7 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.Result.SEVERITY;
+import ch.elexis.util.FtpServer;
 
 public class Importer extends ImporterPage {
 	public static final String MY_LAB = "Team W"; //$NON-NLS-1$
@@ -76,18 +78,6 @@ public class Importer extends ImporterPage {
 	// importer type
 	private static final int FILE = 1;
 	private static final int DIRECT = 2;
-	
-	private class SemaphoreException extends Exception {
-		private static final long serialVersionUID = -2150109019599639291L;
-		
-		public SemaphoreException(String arg0){
-			super(arg0, null);
-		}
-		
-		public SemaphoreException(Throwable cause){
-			super(cause);
-		}
-	}
 	
 	public Importer(){}
 	
@@ -248,7 +238,7 @@ public class Importer extends ImporterPage {
 			if (resultPatient.isOK()) {
 				Result<Kontakt> resultKontakt = hl7.getLabor();
 				if (resultKontakt.isOK()) {
-					Patient pat = (Patient)resultPatient.get();
+					Patient pat = (Patient) resultPatient.get();
 					Kontakt labor = resultKontakt.get();
 					
 					Result<String> resultParse = parse(hl7, labor, pat);
@@ -287,68 +277,6 @@ public class Importer extends ImporterPage {
 		return resultLoad;
 	}
 	
-	protected FtpServer openConnection(String host, String user, String pwd) throws IOException{
-		FtpServer ftp = null;
-		if (ftp == null) {
-			ftp = new FtpServer();
-		}
-		
-		if (!ftp.isConnected()) {
-			ftp.connect(host);
-			ftp.mode(FtpServer.BINARY_FILE_TYPE);
-		}
-		
-		if (ftp.isConnected()) {
-			if (!ftp.login(user, pwd)) {
-				throw new IOException(ftp.getReplyStrings()[0]);
-			}
-		}
-		
-		ftp.enterLocalPassiveMode();
-		
-		return ftp;
-	}
-	
-	protected void closeConnection(FtpServer ftp) throws IOException{
-		if (ftp != null && ftp.isConnected()) {
-			ftp.disconnect();
-			ftp = null;
-		}
-	}
-	
-	protected void addSemaphore(FtpServer ftp, String downloadDir) throws SemaphoreException{
-		try {
-			uploadSemaphore(ftp);
-			// Teamw.sem checken
-			String[] filenameList = ftp.listNames();
-			for (String filename : filenameList) {
-				if (filename.toLowerCase().equals(TEAMW_SEMAPHORE)) {
-					throw new SemaphoreException(ch.elexis.laborimport.teamw.Messages
-						.getString("Importer.semaphore.error")); //$NON-NLS-1$
-				}
-			}
-		} catch (IOException e) {
-			throw new SemaphoreException(e);
-		}
-	}
-	
-	/**
-	 * praxis.sem auf FTP Server kopieren
-	 */
-	protected void uploadSemaphore(FtpServer ftp) throws IOException{
-		File file = new File(System.getProperty("user.home", "") //$NON-NLS-1$ //$NON-NLS-2$
-			+ System.getProperty("file.separator") + PRAXIS_SEMAPHORE); //$NON-NLS-1$
-		file.createNewFile();
-		ftp.uploadFile(file.getName(), file.getPath());
-	}
-	
-	/**
-	 * praxis.sem auf FTP Server löschen
-	 */
-	protected void removeSemaphore(FtpServer ftp) throws IOException{
-		ftp.deleteFile(PRAXIS_SEMAPHORE);
-	}
-	
 	private Result<?> importDirect(){
 		String batchOrFtp = Hub.globalCfg.get(PreferencePage.BATCH_OR_FTP, PreferencePage.FTP);
 		if (PreferencePage.BATCH.equals(batchOrFtp)) {
@@ -370,12 +298,12 @@ public class Importer extends ImporterPage {
 			UtilFile.getCorrectPath(Hub.globalCfg.get(PreferencePage.DL_DIR,
 				PreferencePage.DEFAULT_DL_DIR));
 		
-		FtpServer ftp = null;
+		FtpServer ftp = new FtpServer();
 		try {
 			List<String> hl7FileList = new Vector<String>();
 			try {
-				ftp = openConnection(ftpHost, user, pwd);
-				addSemaphore(ftp, downloadDir);
+				ftp.openConnection(ftpHost, user, pwd);
+				ftp.addSemaphore(downloadDir, PRAXIS_SEMAPHORE, TEAMW_SEMAPHORE);
 				
 				String[] filenameList = ftp.listNames();
 				log.log("Verbindung mit Labor " + MY_LAB //$NON-NLS-1$
@@ -392,8 +320,8 @@ public class Importer extends ImporterPage {
 					}
 				}
 			} finally {
-				removeSemaphore(ftp);
-				closeConnection(ftp);
+				ftp.removeSemaphore();
+				ftp.closeConnection();
 			}
 			
 			String header =
@@ -418,7 +346,7 @@ public class Importer extends ImporterPage {
 			result = new Result<String>(SEVERITY.ERROR, 1, e.getMessage(), MY_LAB, true);
 			ResultAdapter.displayResult(result, ch.elexis.laborimport.teamw.Messages
 				.getString("Importer.error.import")); //$NON-NLS-1$
-		} catch (SemaphoreException e) {
+		} catch (FtpSemaException e) {
 			result = new Result<String>(SEVERITY.WARNING, 1, e.getMessage(), MY_LAB, true);
 			ResultAdapter.displayResult(result, ch.elexis.laborimport.teamw.Messages
 				.getString("Importer.error.import")); //$NON-NLS-1$
