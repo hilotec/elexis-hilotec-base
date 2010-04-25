@@ -2,10 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path=""/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="var" path="JUNIT_HOME/junit.jar" sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.source_3.1.1/src/org.junit_3.8.1/junitsrc.zip"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/elexis"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/elexis-utilities"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/elexis-importer"/>
 	<classpathentry kind="lib" path="/elexis-utilities/lib/bcprov-jdk15-140.jar"/>
+	<classpathentry kind="src" path="/Laborimport-TeamW"/>
+	<classpathentry kind="lib" path="/Laborimport-TeamW/lib/commons-net-1.4.1.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>

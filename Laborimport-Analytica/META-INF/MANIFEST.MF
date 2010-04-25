@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Elexis Plugin für Import Laborwerte Analytica
+Bundle-SymbolicName: ch.elexis.laborimport_analytica;singleton:=true
+Bundle-Version: 1.2.1
+Bundle-ClassPath: lib/commons-net-1.4.1.jar,.
+Bundle-Vendor: elexis.ch
+Require-Bundle: ch.rgw.utility,
+ ch.elexis,
+ ch.elexis.importer.div,
+ org.eclipse.core.runtime,
+ org.eclipse.ui,
+ org.eclipse.ui.forms,
+ ch.elexis.laborimport.hl7.allg,
+ org.junit4,
+ org.junit
+Import-Package: junit.framework

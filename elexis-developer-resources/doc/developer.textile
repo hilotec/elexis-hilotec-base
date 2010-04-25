@@ -1,7 +1,7 @@
 h1. Elexis developer resources
 
 p(klein). (c) 2010 by G. Weirich
- $Id: developer.textile 6264 2010-04-13 21:33:24Z niklausgiger $	
+ $Id: developer.textile 6296 2010-04-25 20:49:49Z niklausgiger $	
 
 h2. Table of contents
 
@@ -14,6 +14,9 @@ h2. Preface
 Elexis is originally a physician's practice management and electronic medical record (EMR) software. It is build on the Eclipse RCP(Rich Client Platform) and therefore extensible in many ways. The kernel is relatively small and contains some simple CRM(Customer Relationship Management) elements. Specific behaviour and capabilities are  introduced with plug-ins.
 
 Elexis is distributed under the Eclipse Public License and thus can freely be extended or modifed. This article will help you in creating plugins for Elexis.
+
+This document is written using the Textile markup language. More about it can be found  in our "readme":../readme.html.
+
 
 h1. Getting started
 
@@ -42,7 +45,9 @@ After installing the subclipse plugin, open the "SVN Repository exploring" persp
 
 h2. Create a run configuration
 
-In Eclipse, chose Run-Run configurations. Right click on "Eclipse Application" and select "New". Enter an appropriate name for the project. You should see something like here:
+In Eclipse, choose Window..Preferences..General..Workspace. Set the Text-Encoding to 'UTF-8'.
+
+In Eclipse, choose Run-Run configurations. Right click on "Eclipse Application" and select "New". Enter an appropriate name for the project. You should see something like here:
 
 !runconfig1.png!
 
@@ -97,7 +102,8 @@ Then, anytime or at least before comitting your code, press CTRL-SHIFT-F to appl
 
 h2. 6) Documentation
 
-It is recommended to document your work. Besides of the javadoc, we recommend that you include at least a 'readme.txt' or 'whatisit.textile' file in the root of your plugin that describes, what it does and what it depends on. If you want to give your users a more elaborate documentation, it should be included in a folder called doc at the root of your plugin.
+It is recommended to document your work. Besides of the javadoc, we recommend that you include at least a 'readme.txt' or 'whatisit.textile' file in the root of your plugin that describes, what it does and what it depends on. If you want to give your users a more elaborate documentation, it should be included in a folder called doc at the root of your plugin. Our continuos integration tool provides you with the "latest Javadoc":http://ngiger.dyndns.org/hudson/job/Elexis-Full/lastSuccessfulBuild/artifact/dokumentation/javadoc/index.html. If you want to check whether the Javadocs for your changes are okay, go to BuildElexis/rsc/build, call ant javadoc and preview your changes "here":file:///../javadoc/index.html.
+
 For newer documentation, we use the simple Markup-Format 'Textile'. Eclipse's Mylyn plugin can manage these files out of the box and conversion to HTML and FOP/PDF is easy. Besides this, LaTeX is still supported. If you use other formats than Textile or LaTeX, your documentation can not be generated automatically during build.
 
 More information on the wikitext editor and the textile format can be found here:
@@ -108,7 +114,25 @@ and here:
 More information on TeX/LaTeX can be found here:
 "http://www.latex-project.org/":http://www.latex-project.org/
 
-h2. 7) Becoming a committer
+h2. 7) Testing and writing JUnit test cases
+
+To guarantee that your non-UI, non trivial stuff is working, write UnitTests. UI-tests and ideas/experience in how to make them work  are welcome.
+
+At the moment we put all JUnit-tests into a separate eclipse-project TestElexis. This has the advantage, that the dependencies for JUnit, etc. don't get mixed up with the sources.
+
+We migthl switch to the TPTP. But its learning curve is a little bit steeper than with JUnit. The setup demands also some more thinking. TPTP has its main advantages if you want to parameterize your testcases, set up datapools, run tests on various targets (e.g. inside your eclipse, on a remote computer with a different OS).
+
+Write your JUnit tests using the checklist:
+
+* Select the class you want to test. Right-Click..New..Java JUnit test.
+* Select JUnit 4.x, select the desired setup/tearddown methods and the methods you want to create testcases for.
+* Move the newly generated MyClassTest.java file to TestElexis/ch.elexis.tests (or deeper)
+* Add a new target for it in the TestElexis/build.xml, and make the target "junit" depend on it.
+* Test and enjoy the feeling that you will deliver quality software!
+
+As with the Javadoc you will find the results of the "last build":http://ngiger.dyndns.org/hudson/job/Elexis-Full/lastSuccessfulBuild/artifact/junit/index.html. If you run your tests manually you will find the results under elexis-developer-resources/junit.
+
+h2. 8) Becoming a committer
 
 If you feel that you'd like to offer your work to the community, we are happy to invite you as a commiter. Being a committer gives you write access to the elexis repository, but gives you also responsabilities:
 *  Most importantly,  you need to keep the Codebase clean. You need to understand Copyright Rules and avoid committing any stuff that you copied & pasted from somewhere. Additionally, you must ensure, that the code in the repository always compiles
@@ -395,9 +419,7 @@ At the moment there is very little tested on each checking, as setting up an aut
 
 Further steps will include:
 
-* Build. We will just generate all needed jars for the elexis kernel and the most commonly used plugins.
-
-* JUnit. We will add JUnit tests, wherever we find time for it. We will focus on the areas where the benefit/cost-ratio is best.
+* Add JUnit tests, wherever we find time for it. We will focus on the areas where the benefit/cost-ratio is best.
 
 * GUI-testing. We might add GUIi tests, using a tool like SWTbot, but at the moment the cost is too high for us.
 

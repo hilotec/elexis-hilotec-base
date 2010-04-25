@@ -13,7 +13,8 @@ Eclipse-LazyStart: true
 Bundle-ClassPath: .,
  lib/bsh-core-2.0b4.jar,
  lib/commons-logging-1.1.jar,
- bin/
+ bin/,
+ lib/commons-net-1.4.1.jar
 Export-Package: .,
  bsh,
  ch.elexis;
