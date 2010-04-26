@@ -17,25 +17,20 @@ import ch.rgw.tools.Log;
  */
 
 public class Resource {
-  public static final String Version(){return Messages.getString("Resource.0");} //$NON-NLS-1$
+
   Class clazz;
   String resbase;
   static Log log;
   //String basedir; 
 
-  static{
-    log=Log.get(Messages.getString("Resource.1")); //$NON-NLS-1$
-  }
   public Resource(String packagename)
   { clazz=getClass();
-    resbase=Messages.getString("Resource.2")+packagename.replace('.','/')+Messages.getString("Resource.3"); //$NON-NLS-1$ //$NON-NLS-2$
-    log.log(Messages.getString("Resource.createResource")+resbase,Log.DEBUGMSG); //$NON-NLS-1$
+    resbase="/"+packagename.replace('.','/')+"/"; 
   }
   public InputStream getInputStream(String name)
   { String resname=resbase+name;
     InputStream is=clazz.getResourceAsStream(resname);
-    if(is==null)
-    { log.log(Messages.getString("Resource.cantOpenInput"),Log.ERRORS); //$NON-NLS-1$
+    if(is==null)  { 
       return null;
     }
     return is;
@@ -74,7 +69,6 @@ public class Resource {
     { ExHandler.handle(ex);
       return null;
     }
-    log.log(Messages.getString("Resource.6")+buffer.length+Messages.getString("Resource.7"),Log.DEBUGMSG); //$NON-NLS-1$ //$NON-NLS-2$
     return buffer;
   }
   public Image getImage(String name)
@@ -84,7 +78,7 @@ public class Resource {
   }
   
   public java.net.URL getBaseDir(String rsc)
-  {	String p=Messages.getString("Resource.8")+rsc.replace('.','/'); //$NON-NLS-1$
+  {	String p="/"+rsc.replace('.','/'); //$NON-NLS-1$
   	return clazz.getResource(p);
   }
 }

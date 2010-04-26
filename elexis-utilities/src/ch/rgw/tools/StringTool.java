@@ -1033,6 +1033,21 @@ public class StringTool {
 	}
 	
 	/**
+	 * Convert first Character to uppercase. leave rest unchanged
+	 * @param orig the original String
+	 * @return the original String with first Character uppercase
+	 */
+	public static String capitalize(final String orig){
+		if (orig == null) {
+			return "";
+		}
+		if (orig.length() < 2) {
+			return orig;
+		}
+		return orig.substring(0, 1).toUpperCase()
+		+ orig.substring(1);
+	}
+	/**
 	 * Zwei Strings verleichen. Berücksichtigen, dass einer oder beide auch Null
 	 * sein könnten.
 	 * 
