@@ -1,14 +1,9 @@
 package ch.elexis.tests;
 
-import static org.junit.Assert.*;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.text.MessageFormat;
-import java.util.List;
-import java.util.Vector;
 
 import junit.framework.TestCase;
 
@@ -16,27 +11,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import ch.elexis.util.FtpSemaException;
-import ch.elexis.util.FtpServer;
-import ch.elexis.util.Log;
-import ch.elexis.util.ResultAdapter;
-import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.Result;
-import ch.rgw.tools.Result.SEVERITY;
-import junit.framework.TestCase;
-import org.apache.commons.net.ftp.FTPClient;
-import org.apache.commons.net.ftp.FTPFile;
-import ch.elexis.tests.Preferences;
+import ch.ngiger.comm.ftp.FtpSemaException;
+import ch.ngiger.comm.ftp.FtpServer;
 
 public class FtpServerTest extends TestCase {
 	FtpServer ftp = null;
 	/*
 	 * This JUnit test works against a real FTP-Server!
-	 * 
 	 */
 	String ftpHost = Preferences.getFtpServer();
-	String ftpUser =  Preferences.getElexisUsername(1);
-	String ftpPwd =  Preferences.getElexisPwd(1);
+	String ftpUser = Preferences.getElexisUsername(1);
+	String ftpPwd = Preferences.getElexisPwd(1);
 	String ftpPwdInvalid = "NoSuchPassword";
 	String downloadDir = System.getProperty("java.io.tmpdir")
 			+ System.getProperty("file.separator") + "FtpServerTest";
@@ -99,15 +84,15 @@ public class FtpServerTest extends TestCase {
 			step = 40;
 		} catch (IOException e) {
 			fail();
-		}
-		finally {
-			assert(step == 40);
+		} finally {
+			assert (step == 40);
 		}
 	}
+
 	@Test
 	public void testListFiles() {
 		int step = -1;
-		System.out.println("My passwd is "+ftpPwd);
+		System.out.println("My passwd is " + ftpPwd);
 		ftp = new FtpServer();
 		try {
 			step = 10;
@@ -130,14 +115,15 @@ public class FtpServerTest extends TestCase {
 		}
 		assertEquals(step, 50);
 	}
+
 	@Test
 	public void testGetFile() {
 		String PRAXIS_SEMAPHORE = "Praxis.Sema";
 		String LABO_SEMAPHORE = "Labo.Sema";
 		String RemoteName = "remoteName";
 		String Content = "First and \nsecond line\n";
-		String localName = downloadDir
-		+ System.getProperty("file.separator") + "TestDatei.txt";
+		String localName = downloadDir + System.getProperty("file.separator")
+				+ "TestDatei.txt";
 		String rcvName = localName + ".rcv";
 		int step = -1;
 		ftp = new FtpServer();
@@ -165,7 +151,7 @@ public class FtpServerTest extends TestCase {
 			String[] filenameList = ftp.listNames();
 			assert (filenameList.length > 0);
 			for (String filename : filenameList) {
-				System.out.println("filename list "+filename);
+				System.out.println("filename list " + filename);
 				ftp.deleteFile(filename);
 			}
 			step = 40;

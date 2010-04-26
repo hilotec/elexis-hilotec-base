@@ -7,8 +7,7 @@ Bundle-Vendor: elexis.ch
 Require-Bundle: ch.rgw.utility,
  ch.elexis,
  ch.elexis.importer.div,
+ ch.ngiger.utilites.comm;bundle-version="1.0.0",
  org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.ui.forms
-Bundle-ClassPath: lib/commons-net-1.4.1.jar,
- .

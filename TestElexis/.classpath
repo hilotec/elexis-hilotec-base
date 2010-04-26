@@ -8,6 +8,7 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/elexis-importer"/>
 	<classpathentry kind="lib" path="/elexis-utilities/lib/bcprov-jdk15-140.jar"/>
 	<classpathentry kind="src" path="/Laborimport-TeamW"/>
-	<classpathentry kind="lib" path="/Laborimport-TeamW/lib/commons-net-1.4.1.jar"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ngiger-utilities-comm"/>
+	<classpathentry kind="lib" path="/ngiger-utilities-comm/lib/commons-net-1.4.1.jar"/>
 	<classpathentry kind="output" path=""/>
 </classpath>
