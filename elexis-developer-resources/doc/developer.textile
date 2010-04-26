@@ -1,7 +1,7 @@
 h1. Elexis developer resources
 
 p(klein). (c) 2010 by G. Weirich
- $Id: developer.textile 6296 2010-04-25 20:49:49Z niklausgiger $	
+ $Id: developer.textile 6303 2010-04-26 20:25:44Z niklausgiger $	
 
 h2. Table of contents
 
@@ -130,7 +130,9 @@ Write your JUnit tests using the checklist:
 * Add a new target for it in the TestElexis/build.xml, and make the target "junit" depend on it.
 * Test and enjoy the feeling that you will deliver quality software!
 
-As with the Javadoc you will find the results of the "last build":http://ngiger.dyndns.org/hudson/job/Elexis-Full/lastSuccessfulBuild/artifact/junit/index.html. If you run your tests manually you will find the results under elexis-developer-resources/junit.
+As with the Javadoc you will find the results of the "last build":http://ngiger.dyndns.org/hudson/job/Elexis-Full/lastSuccessfulBuild/artifact/junit/index.html. 
+
+To run your tests, please have a look at the "Ants Junit Task":http://ant.apache.org/manual/OptionalTasks/junit.html, as you have to install ant and make the junit.jar available to it. E.g. by copying it from the eclipse/plugins into the lib directory, where you installed ant. Go to BuildElexis/rsc/build, call "ant junit"  and you should find the results under elexis-developer-resources/junit.
 
 h2. 8) Becoming a committer
 
