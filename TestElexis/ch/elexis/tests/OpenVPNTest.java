@@ -14,6 +14,8 @@ package ch.elexis.tests;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -21,28 +23,14 @@ import java.net.UnknownHostException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import ch.elexis.util.OpenVPN;
+
+import ch.ngiger.comm.ftp.FtpServer;
+import ch.ngiger.comm.vpn.OpenVPN;
 import ch.elexis.tests.Preferences;
 
 public class OpenVPNTest {
 	static OpenVPN ovpn;
-	static String srvName = ch.elexis.tests.Preferences.getOvpnServer();
-	
-	private boolean ping(String hostname){
-		boolean result = false;
-		try {
-			System.out.println("InetAddress "+InetAddress.getByName(hostname));
-			System.out.println("ping  "+InetAddress.getByName(hostname).isReachable(3000));
-			result = InetAddress.getByName(hostname).isReachable(3000);
-		} catch (UnknownHostException e) {
-			fail("NoSuchHost: " + hostname);
-			return false;
-		} catch (IOException e) {
-			fail("Host " + hostname + " could not be pinged");
-			return false;
-		}
-		return result;
-	}
+	static String srvName = ch.elexis.tests.Preferences.getOvpnPublic();
 	
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception{
@@ -56,28 +44,64 @@ public class OpenVPNTest {
 	public void testOpenConnection(){
 		int step = 0;
 		boolean res = false;
-		System.out.println("testOpenConnection");
-
-		try {		
-		String testUser = ch.elexis.tests.Preferences.getElexisUsername(1);
-		assertEquals("elexis-1", testUser);
-		res = ovpn.openConnection(srvName, ch.elexis.tests.Preferences.getOpenVpnInstallDir(), 0);
-		assert (res);
-		step =10 ;
-		assert (ping(srvName));
-		System.out.println("testOpenConnection ping successfull to "+srvName);
-		step =20 ;
-		}
-		finally {
-			assert(res);
-			assertEquals(step, 20);
+		String content = "Test-File to upload\n";
+		
+		try {
+			try {
+				InetAddress addr = InetAddress.getLocalHost(); // Get IP Address
+				byte[] ipAddr = addr.getAddress(); // Get hostname
+				String hostname = addr.getHostName();
+				content += hostname +" ip " + InetAddress.getLocalHost().toString() +"\n";
+			}
+		    catch (UnknownHostException e) { }
+			java.util.Date today = new java.util.Date();
+			String tStamp = new java.sql.Timestamp(today.getTime())+"";
+			content += tStamp;
+			System.out.println("testOpenConnection: starts " +tStamp);
+			String ftpSrv = ch.elexis.tests.Preferences.getOvpnFtp();
+			String testUser = ch.elexis.tests.Preferences.getElexisUsername(1);
+			assert (ovpn.ping("172.222.222.222") == false);
+			assert (ovpn.ping(srvName));
+			res = ovpn.openConnection(ch.elexis.tests.Preferences.getOvpnConfig(), ftpSrv, 20);
+			assert (res);
+			step = 10;
+			assert (ovpn.ping(srvName));
+			step = 20;
+			FtpServer ftp = new FtpServer();
+			step = 21;
+			String ftpPwd = Preferences.getElexisPwd(1);
+			System.out.println("test to " + ftpSrv + " " + testUser + " " + ftpPwd);
+			step = 24;
+			ftp.openConnection(ftpSrv, testUser, ftpPwd);
+			step = 25;
+			File temp = File.createTempFile("OpenVPNTest", ".snd");
+			FileWriter fos = new FileWriter(temp);
+			fos.write(content);
+			fos.close();
+			String remoteName = "Remote";
+			ftp.uploadFile(remoteName, temp.getAbsolutePath());
+			step = 30;
+			File tempRcv = File.createTempFile("OpenVPNTest", ".rcv");
+			step = 31;
+			ftp.downloadFile(remoteName, tempRcv.getAbsolutePath());
+			step = 50;
+		} catch (IOException e) {
+			step += 100;
+		} finally {
+			java.util.Date today = new java.util.Date();
+			String tStamp = new java.sql.Timestamp(today.getTime())+"";
+			System.out.println("testOpenConnection: finished " +tStamp);
+			if (step != 50)
+				System.out.println("could not read step 50. I am  at " + step);
+			else
+				System.out.println("up/download successful: using\n" +content);
+			assertEquals(step, 50);
 		}
 	}
 	
 	@Test
 	public void testCloseConnection(){
 		ovpn.closeConnection();
-		assert (ping(srvName));
 	}
 	
 }

@@ -25,10 +25,10 @@ public class Preferences {
 		String propName = "../BuildElexis/rsc/build/local.properties";
 		try {
 			props.load(new FileInputStream(propName));
-			System.out.println("loaded "+propName);
-		} catch (IOException e) { 
-			System.out.println("Unable to load "+propName);
-			}
+			System.out.println("loaded " + propName);
+		} catch (IOException e) {
+			System.out.println("Unable to load " + propName);
+		}
 		return props;
 	}
 	
@@ -46,7 +46,7 @@ public class Preferences {
 	 * @returns password
 	 */
 	static String getElexisPwd(int whichOne){
-		return testProperties.getProperty("elexis.test.user." + whichOne, "1234");
+		return testProperties.getProperty("elexis.test.password." + whichOne, "1234");
 	}
 	
 	/*
@@ -54,24 +54,33 @@ public class Preferences {
 	 * 
 	 * @returns IP or URL
 	 */
-	static String getOvpnServer(){
-		return testProperties.getProperty("elexis.test.ovpn.server", "172.25.1.99");
+	static String getOvpnPublic(){
+		return testProperties.getProperty("elexis.test.ovpn.public", "173.25.1.40");
 	}
 	
+	/*
+	 * Config-file for the OpenVPN. The exe is assumed to be ../bin/openvnp
+	 * 
+	 * @returns IP or URL
+	 */
+	static String getOvpnConfig(){
+		return testProperties.getProperty("elexis.test.ovpn.config", "/etc/openvpn/elexis-1.ovpn");
+	}
+	
+	/*
+	 * Server which FTP-services via OpenVPN
+	 * 
+	 * @returns IP or URL
+	 */
+	static String getOvpnFtp(){
+		return testProperties.getProperty("elexis.test.ovpn.ftp", "173.23.45.1");
+	}
+		
 	/*
 	 * Server which offers Ftp to elexis-test users
 	 */
 	static String getFtpServer(){
 		return testProperties.getProperty("elexis.test.ftp.server", "172.25.1.40");
-	}
-	
-	/*
-	 * Where is OpenVPN installed?
-	 * 
-	 * @returns String, where we found the installation
-	 */
-	static String getOpenVpnInstallDir(){
-		return testProperties.getProperty("elexis.test.opvn.exe", "/usr/bin/openvpn");
 	}
 	
 }

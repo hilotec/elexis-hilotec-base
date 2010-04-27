@@ -2,15 +2,14 @@
 <?eclipse version="3.2"?>
 <plugin>
 	<!--
-		(c) 2007 by G. Weirich
+		(c) 2010 by Niklaus Giger & Medelexis
 		All rights reserved
-		$Id: plugin.xml 116 2007-06-07 07:06:44Z gerry $
 	-->
    <extension
          point="ch.elexis.LaborDatenImport">
       <Importer
             Class="ch.elexis.laborimport.analytica.Importer"
-            name="%DataImportName"/>
+            name="Labotimport Analytica"/>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -18,7 +17,7 @@
             category="ch.elexis.preferences.transporters"
             class="ch.elexis.laborimport.analytica.PreferencePage"
             id="ch.elexis.laborimport_analytica.prefs"
-            name="Analytica Import"/>
+            name="Labor Analytica"/>
    </extension>
 
 </plugin>
