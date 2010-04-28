@@ -418,7 +418,7 @@
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
-			<xs:element name="contents" type="xs:string" maxOccurs="1"
+			<xs:element name="contents" type="xChange:contentsType" maxOccurs="1"
 				minOccurs="0">
 				<xs:annotation>
 					<xs:documentation>
@@ -452,34 +452,7 @@
 					addressed originally
 				</xs:documentation>
 			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="mimetype" type="xs:string" use="required">
-			<xs:annotation>
-				<xs:documentation>
-					Mimetype of the document
-				</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="subject" type="xs:string" use="optional">
-			<xs:annotation>
-				<xs:documentation>
-					A short description of the subject of the document
-				</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
-		<xs:attribute name="placement" type="xChange:placementType"
-			use="required">
-			<xs:annotation>
-				<xs:documentation>
-					Location of the document. Inline: base64 encoded
-					in
-					the body of this element. infile: inside the
-					xChange-file. url: at
-					the given url
-
-				</xs:documentation>
-			</xs:annotation>
-		</xs:attribute>
+		</xs:attribute>
 		<xs:attribute name="date" type="xs:date" use="required">
 			<xs:annotation>
 				<xs:documentation>
@@ -1001,5 +974,10 @@
 		<xs:attribute name="receiver" type="xs:IDREF"></xs:attribute>
 		<xs:attribute name="time" type="xs:dateTime"></xs:attribute>
 		<xs:attribute name="encounter" type="xs:IDREF"></xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="contentsType">
+		<xs:attribute name="placement" type="xChange:placementType"></xs:attribute>
+		<xs:attribute name="mimetype" type="xs:string"></xs:attribute>
 	</xs:complexType>
 </xs:schema>
