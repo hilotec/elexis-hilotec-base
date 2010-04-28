@@ -23,7 +23,7 @@ import java.util.logging.Level;
 
 public class JdbcLink {
 	public static final String getVersion(){
-		return "3.0.0";
+		return "3.1.0";
 	}
 	
 	public int lastErrorCode;
@@ -48,6 +48,7 @@ public class JdbcLink {
 	public static final int TRANSACTION_COMMIT_NOT_SUPPORTED = 23;
 	public static final int CONNECTION_CANT_CREATE_STATEMENT = 30;
 	public static final int CONNECTION_CANT_PREPARE_STAMENT = 31;
+	public static final int CONNECTION_SQL_ERROR=40;
 	
 	static {
 		log = Log.get("jdbcLink");
@@ -605,6 +606,8 @@ public class JdbcLink {
 				return res;
 			} catch (Exception e) {
 				ExHandler.handle(e);
+				lastErrorString=e.getMessage();
+				lastErrorCode=CONNECTION_SQL_ERROR;
 				log.log("Fehler bei: " + SQLText+"\n:"+e.getMessage(), Log.ERRORS);
 				return null;
 			}
