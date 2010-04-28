@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    M. Descher - Adaption (in progress)
  *    
- *  $Id: MedikamentImporterVidal.java 5149 2009-02-19 17:29:56Z rgw_ch $
+ *  $Id: MedikamentImporterVidal.java 6308 2010-04-28 10:18:07Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
@@ -54,29 +55,52 @@ public class MedikamentImporterVidal extends ImporterPage {
 	
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
-		// System.out.println(importFile);
+		//TODO: Separate First Import and Update!!
+		
 		monitor.beginTask("Importiere Vidal", -1);
 		SAXBuilder builder = new SAXBuilder();
 		monitor.subTask("Lese Datei ein");
 		Document doc = builder.build(new File(results[0]));
 		monitor.subTask("Analysiere Datei");
 		Element eRoot = doc.getRootElement();
+		
+		// Substanzen
 		Element eSubstances = eRoot.getChild("RpSubstRefs");
 		if (eSubstances != null) {
-			monitor.subTask("Lese Substancen ein");
+			monitor.subTask("Lese Substanzen ein");
+			int noOfSubstances = eSubstances.getChildren("SubstRef").size();
+			int counter = 1;
 			for (Element eSubstance : (List<Element>) eSubstances.getChildren("SubstRef")) {
-				new Substance(eSubstance.getAttributeValue("SubstID"), eSubstance
-					.getAttributeValue("SubstSalt"), eSubstance.getTextTrim());
+				String SubstID = eSubstance.getAttributeValue("SubstID");
+				String SubstSalt = eSubstance.getAttributeValue("SubstSalt");
+				String Name = eSubstance.getTextTrim();
+				monitor.subTask("Lese Substanzen ein "+"["+counter+"/"+noOfSubstances+"]: "+Name);
+				new Substance(SubstID, Name, SubstSalt);
+				counter++;
 			}
 		}
-		Element eMedis = eRoot.getChild("RpData");
+
+		// Medikamente
+		Element eMedis = eRoot.getChild("RpData"); 
+		//TODO: DataType ="F" or "U" .. assume only F now (Import, Update)
 		if (eMedis != null) {
 			monitor.subTask("Lese Medikamente ein");
-			/*
-			 * for(Element eMedi:(List<Element>)eMedis.getChildren("RpData")){ new
-			 * Medikament((String) eMedi.getAttributeValue("SName"), "Vidal2", (String) act
-			 * .get("PhZNr")); ) }
-			 */
+			int noOfMedicaments = eMedis.getChildren("RpEntry").size();
+			int counter = 1;
+			for(Element eMedi:(List<Element>) eMedis.getChildren("RpEntry")){
+				
+				String SName = eMedi.getChildText("SName");
+				String PhZNr = eMedi.getChildText("PhZNr");
+				monitor.subTask("Lese Medikamente ein "+"["+counter+"/"+noOfMedicaments+"]: "+SName);
+				Medikament medi = new Medikament(SName, "Vidal2", PhZNr);
+				String codeClass = eMedi.getChild("SSigns").getAttribute("Box").getValue().trim();
+				//TODO: Dezimahlzahlen in integer (wird in cent angegeben in der DB)
+				String EK_Preis = eMedi.getChildText("KVP").trim();
+				String VK_Preis = eMedi.getChildText("AVP").trim();
+				//---
+				medi.set(new String[] {"Codeclass","EK_Preis","VK_Preis"}, codeClass, EK_Preis, VK_Preis);
+				counter++;
+			}
 		}
 		
 		monitor.done();
@@ -93,207 +117,207 @@ public class MedikamentImporterVidal extends ImporterPage {
 		return "Medikamente (vidal v2)";
 	}
 	
-	class Handler extends org.xml.sax.helpers.DefaultHandler {
-		IProgressMonitor monitor;
-		int counter = 0;
-		// RpEntry act;
-		Hashtable<String, Object> act;
-		String actType = null;
-		StringBuilder chars;
-		Query<Medikament> qbe = new Query<Medikament>(Medikament.class);
-		
-		Handler(IProgressMonitor m){
-			monitor = m;
-		}
-		
-		@Override
-		public void endDocument() throws SAXException{
-			// TODO Auto-generated method stub
-			super.endDocument();
-		}
-		
-		@Override
-		public void startDocument() throws SAXException{
-			monitor.subTask("Starte einlesen");
-			monitor.worked(1);
-		}
-		
-		@SuppressWarnings("unchecked")
-		@Override
-		public void startElement(String uri, String localName, String qName, Attributes attr)
-			throws SAXException{
-			if (monitor.isCanceled()) {
-				throw new SAXException("Thread cancelled");
-			}
-			if (qName.equals("RpEntry")) {
-				// act=new RpEntry();
-				act = new Hashtable();
-				actType = attr.getValue("EntryType");
-				
-			} else if (qName.equals("PhZNr")
-				|| (qName.endsWith("Name"))
-				|| (qName.equals("DoLC"))
-				|| qName.equals("Storage")
-				|| (qName.equals("Quantity"))
-				|| (qName.equals("EnhUnitDesc"))
-				|| (qName.equals("KVP"))
-				|| (qName.equals("AVP"))
-				|| (qName.equals("zInh"))
-				|| (qName.equals("INDText") || (qName.equals("RuleText") || (qName
-					.equals("RemarkText"))))) {
-				chars = new StringBuilder();
-			} else if (qName.equals("RSigns")) {
-				Hashtable RSigns = new Hashtable();
-				for (String val : Medikament.RSIGNS) {
-					String cont = attr.getValue(val);
-					RSigns.put(val, cont == null ? "0" : cont);
-				}
-				act.put("RSigns", RSigns);
-				
-			} else if (qName.equals("SSigns")) {
-				Hashtable SSigns = new Hashtable();
-				String remb = attr.getValue("Remb");
-				act.put("Remb", remb);
-				for (String val : Medikament.SSIGNS) {
-					String cont = attr.getValue(val);
-					SSigns.put(val, cont == null ? "0" : cont);
-				}
-				act.put("SSigns", SSigns);
-			} else if (qName.equals("Unit")) {
-				act.put("SUnit", attr.getValue("SUnit"));
-				chars = new StringBuilder();
-			} else if (qName.equals("ZNr")) {
-				act.put("ZnrNum", attr.getValue("ZNrNum"));
-				chars = new StringBuilder();
-				
-			} else if (qName.equals("SubstRef")) {
-				act = new Hashtable();
-				act.put("SubstID", attr.getValue("SubstID"));
-				act.put("SubstSalt", attr.getValue("SubstSalt"));
-				chars = new StringBuilder();
-			}
-			
-		}
-		
-		@Override
-		public void endElement(String uri, String localName, String qName) throws SAXException{
-			if (qName.equals("RpEntry")) {
-				Medikament art = null;
-				if (actType.equals(ENTRYTYPE_INSERT)) {
-					art =
-						new Medikament((String) act.get("SName"), "Vidal", (String) act
-							.get("PhZNr"));
-				} else {
-					qbe.clear();
-					qbe.add("Typ", "=", "Vidal");
-					qbe.add("SubID", "=", (String) act.get("PhZNr")); // (String)act.get("ZnrNum"));
-					List<Medikament> list = qbe.execute();
-					if (list.size() > 0) {
-						art = list.get(0);
-						if (actType.equals(ENTRYTYPE_DELETE)) {
-							art.delete();
-							return;
-						}
-					} else {
-						art =
-							new Medikament((String) act.get("SName"), "Vidal", (String) act
-								.get("PhZNr"));
-					}
-				}
-				Hashtable extInfo = art.getHashtable("ExtInfo");
-				extInfo.put("Pharmacode", act.get("PhZNr"));
-				String box = (String) ((Hashtable) act.get("SSigns")).get("Box");
-				if (box != null) {
-					box = box.trim();
-				}
-				art.set("Codeclass", box);
-				art.set("VK_Preis", (String) act.get("KVP")); // or AVP?
-				extInfo.putAll(act);
-				art.setHashtable("ExtInfo", extInfo);
-				monitor.worked(1);
-				act = null;
-				art = null;
-				if ((counter & 64) == counter) {
-					System.gc();
-					PersistentObject.clearCache();
-				}
-				counter++;
-			} else if (qName.equals("PhZNr")) {
-				act.put("PhZNr", chars.toString());
-				chars = null;
-			} else if (qName.equals("SName")) {
-				act.put("SName", chars.toString());
-				monitor.subTask("Lese " + act.get("SName"));
-				chars = null;
-			} else if (qName.equals("OName")) {
-				act.put("OName", chars.toString());
-				chars = null;
-			} else if (qName.equals("DoLC")) {
-				act.put("DoLC", chars.toString());
-				chars = null;
-			} else if (qName.equals("Storage")) {
-				act.put("Storage", chars.toString());
-				chars = null;
-			} else if (qName.equals("Quantity")) {
-				act.put("Quantity", chars.toString());
-				chars = null;
-			} else if (qName.equals("Unit")) {
-				act.put("SUnitDesc", chars.toString());
-				chars = null;
-			} else if (qName.equals("EnhUnitDesc")) {
-				act.put("EnhUnitDesc", chars.toString());
-				chars = null;
-			} else if (qName.equals("KVP")) {
-				Money money = new Money();
-				try {
-					// Money.setLocale(new Locale("de","AT"));
-					money.addAmount(chars.toString());
-				} catch (ParseException ex) {
-					money.addCent(chars.toString().replaceFirst("[,\\.]", ""));
-				}
-				act.put("KVP", money.getCentsAsString());
-				chars = null;
-			} else if (qName.equals("AVP")) {
-				Money money = new Money();
-				try {
-					// Money.setLocale(new Locale("de","AT"));
-					money.addAmount(chars.toString());
-				} catch (ParseException ex) {
-					money.addCent(chars.toString().replaceFirst("[,\\.]", ""));
-				}
-				act.put("AVP", money.getCentsAsString());
-				chars = null;
-			} else if (qName.equals("zInh")) {
-				act.put("ZInh", chars.toString());
-				chars = null;
-			} else if (qName.equals("ZNr")) {
-				act.put("ZNr", chars.toString());
-				chars = null;
-			} else if (qName.equals("INDText")) {
-				act.put("INDText", chars.toString());
-				chars = null;
-			} else if (qName.equals("RuleText")) {
-				act.put("RuleText", chars.toString());
-				chars = null;
-			} else if (qName.equals("RemarkText")) {
-				act.put("RemarkText", chars.toString());
-				chars = null;
-			} else if (qName.equals("ATCCode")) {
-
-			} else if (qName.equals("SubstRef")) {
-				Substance subst =
-					new Substance((String) act.get("SubstID"), chars.toString(), (String) act
-						.get("SubstSalt"));
-			}
-		}
-		
-		@Override
-		public void characters(char[] ch, int start, int length) throws SAXException{
-			if (chars != null) {
-				chars.append(ch, start, length);
-			}
-		}
-		
-	}
+//	class Handler extends org.xml.sax.helpers.DefaultHandler {
+//		IProgressMonitor monitor;
+//		int counter = 0;
+//		// RpEntry act;
+//		Hashtable<String, Object> act;
+//		String actType = null;
+//		StringBuilder chars;
+//		Query<Medikament> qbe = new Query<Medikament>(Medikament.class);
+//		
+//		Handler(IProgressMonitor m){
+//			monitor = m;
+//		}
+//		
+//		@Override
+//		public void endDocument() throws SAXException{
+//			// TODO Auto-generated method stub
+//			super.endDocument();
+//		}
+//		
+//		@Override
+//		public void startDocument() throws SAXException{
+//			monitor.subTask("Starte einlesen");
+//			monitor.worked(1);
+//		}
+//		
+//		@SuppressWarnings("unchecked")
+//		@Override
+//		public void startElement(String uri, String localName, String qName, Attributes attr)
+//			throws SAXException{
+//			if (monitor.isCanceled()) {
+//				throw new SAXException("Thread cancelled");
+//			}
+//			if (qName.equals("RpEntry")) {
+//				// act=new RpEntry();
+//				act = new Hashtable();
+//				actType = attr.getValue("EntryType");
+//				
+//			} else if (qName.equals("PhZNr")
+//				|| (qName.endsWith("Name"))
+//				|| (qName.equals("DoLC"))
+//				|| qName.equals("Storage")
+//				|| (qName.equals("Quantity"))
+//				|| (qName.equals("EnhUnitDesc"))
+//				|| (qName.equals("KVP"))
+//				|| (qName.equals("AVP"))
+//				|| (qName.equals("zInh"))
+//				|| (qName.equals("INDText") || (qName.equals("RuleText") || (qName
+//					.equals("RemarkText"))))) {
+//				chars = new StringBuilder();
+//			} else if (qName.equals("RSigns")) {
+//				Hashtable RSigns = new Hashtable();
+//				for (String val : Medikament.RSIGNS) {
+//					String cont = attr.getValue(val);
+//					RSigns.put(val, cont == null ? "0" : cont);
+//				}
+//				act.put("RSigns", RSigns);
+//				
+//			} else if (qName.equals("SSigns")) {
+//				Hashtable SSigns = new Hashtable();
+//				String remb = attr.getValue("Remb");
+//				act.put("Remb", remb);
+//				for (String val : Medikament.SSIGNS) {
+//					String cont = attr.getValue(val);
+//					SSigns.put(val, cont == null ? "0" : cont);
+//				}
+//				act.put("SSigns", SSigns);
+//			} else if (qName.equals("Unit")) {
+//				act.put("SUnit", attr.getValue("SUnit"));
+//				chars = new StringBuilder();
+//			} else if (qName.equals("ZNr")) {
+//				act.put("ZnrNum", attr.getValue("ZNrNum"));
+//				chars = new StringBuilder();
+//				
+//			} else if (qName.equals("SubstRef")) {
+//				act = new Hashtable();
+//				act.put("SubstID", attr.getValue("SubstID"));
+//				act.put("SubstSalt", attr.getValue("SubstSalt"));
+//				chars = new StringBuilder();
+//			}
+//			
+//		}
+//		
+//		@Override
+//		public void endElement(String uri, String localName, String qName) throws SAXException{
+//			if (qName.equals("RpEntry")) {
+//				Medikament art = null;
+//				if (actType.equals(ENTRYTYPE_INSERT)) {
+//					art =
+//						new Medikament((String) act.get("SName"), "Vidal", (String) act
+//							.get("PhZNr"));
+//				} else {
+//					qbe.clear();
+//					qbe.add("Typ", "=", "Vidal");
+//					qbe.add("SubID", "=", (String) act.get("PhZNr")); // (String)act.get("ZnrNum"));
+//					List<Medikament> list = qbe.execute();
+//					if (list.size() > 0) {
+//						art = list.get(0);
+//						if (actType.equals(ENTRYTYPE_DELETE)) {
+//							art.delete();
+//							return;
+//						}
+//					} else {
+//						art =
+//							new Medikament((String) act.get("SName"), "Vidal", (String) act
+//								.get("PhZNr"));
+//					}
+//				}
+//				Hashtable extInfo = art.getHashtable("ExtInfo");
+//				extInfo.put("Pharmacode", act.get("PhZNr"));
+//				String box = (String) ((Hashtable) act.get("SSigns")).get("Box");
+//				if (box != null) {
+//					box = box.trim();
+//				}
+//				art.set("Codeclass", box);
+//				art.set("VK_Preis", (String) act.get("KVP")); // or AVP?
+//				extInfo.putAll(act);
+//				art.setHashtable("ExtInfo", extInfo);
+//				monitor.worked(1);
+//				act = null;
+//				art = null;
+//				if ((counter & 64) == counter) {
+//					System.gc();
+//					PersistentObject.clearCache();
+//				}
+//				counter++;
+//			} else if (qName.equals("PhZNr")) {
+//				act.put("PhZNr", chars.toString());
+//				chars = null;
+//			} else if (qName.equals("SName")) {
+//				act.put("SName", chars.toString());
+//				monitor.subTask("Lese " + act.get("SName"));
+//				chars = null;
+//			} else if (qName.equals("OName")) {
+//				act.put("OName", chars.toString());
+//				chars = null;
+//			} else if (qName.equals("DoLC")) {
+//				act.put("DoLC", chars.toString());
+//				chars = null;
+//			} else if (qName.equals("Storage")) {
+//				act.put("Storage", chars.toString());
+//				chars = null;
+//			} else if (qName.equals("Quantity")) {
+//				act.put("Quantity", chars.toString());
+//				chars = null;
+//			} else if (qName.equals("Unit")) {
+//				act.put("SUnitDesc", chars.toString());
+//				chars = null;
+//			} else if (qName.equals("EnhUnitDesc")) {
+//				act.put("EnhUnitDesc", chars.toString());
+//				chars = null;
+//			} else if (qName.equals("KVP")) {
+//				Money money = new Money();
+//				try {
+//					// Money.setLocale(new Locale("de","AT"));
+//					money.addAmount(chars.toString());
+//				} catch (ParseException ex) {
+//					money.addCent(chars.toString().replaceFirst("[,\\.]", ""));
+//				}
+//				act.put("KVP", money.getCentsAsString());
+//				chars = null;
+//			} else if (qName.equals("AVP")) {
+//				Money money = new Money();
+//				try {
+//					// Money.setLocale(new Locale("de","AT"));
+//					money.addAmount(chars.toString());
+//				} catch (ParseException ex) {
+//					money.addCent(chars.toString().replaceFirst("[,\\.]", ""));
+//				}
+//				act.put("AVP", money.getCentsAsString());
+//				chars = null;
+//			} else if (qName.equals("zInh")) {
+//				act.put("ZInh", chars.toString());
+//				chars = null;
+//			} else if (qName.equals("ZNr")) {
+//				act.put("ZNr", chars.toString());
+//				chars = null;
+//			} else if (qName.equals("INDText")) {
+//				act.put("INDText", chars.toString());
+//				chars = null;
+//			} else if (qName.equals("RuleText")) {
+//				act.put("RuleText", chars.toString());
+//				chars = null;
+//			} else if (qName.equals("RemarkText")) {
+//				act.put("RemarkText", chars.toString());
+//				chars = null;
+//			} else if (qName.equals("ATCCode")) {
+//
+//			} else if (qName.equals("SubstRef")) {
+//			//	Substance subst =
+//			//		new Substance((String) act.get("SubstID"), chars.toString(), (String) act
+//			//			.get("SubstSalt"));
+//			}
+//		}
+//		
+//		@Override
+//		public void characters(char[] ch, int start, int length) throws SAXException{
+//			if (chars != null) {
+//				chars.append(ch, start, length);
+//			}
+//		}
+//		
+//	}
 	
 }

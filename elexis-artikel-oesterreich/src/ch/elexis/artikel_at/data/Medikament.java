@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Medikament.java 5130 2009-02-13 17:33:58Z rgw_ch $
+ *  $Id: Medikament.java 6308 2010-04-28 10:18:07Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import ch.elexis.data.Artikel;
+import ch.elexis.data.Query;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
@@ -30,12 +31,17 @@ public class Medikament extends Artikel {
 	static final String JOINTTABLE = "CH_ELEXIS_AUSTRIAMEDI_JOINT";
 	static final String EXTTABLE = "CH_ELEXIS_AUSTRIAMEDI_EXT";
 	static final String ATCTABLE = "CH_ELEXIS_AUSTRIAMEDI_ATC";
+	public static final String TYPNAME = "Vidal";
+	//public static final String TYPNAME = "Vidal2";
 	
+	// Rezeptzeichen und Lagerungshinweise
 	public static final String[] RSIGNS =
 		{
 			"P1", "P5", "R1", "R2", "SG", "S1", "S5", "W1", "W2", "W6", "W7", "W8", "W9", "W10",
 			"W11", "W12", "W13", "W14", "W15", "W16"
 		};
+	
+	// Kassenzeichen und Texte der Sozialversicherung
 	public static final String[] SSIGNS =
 		{/* "Remb", */
 			"Box", "AU", "B", "CH14", "D", "DS", "F", "GF", "F6J", "IND", "K", "KF14", "KF2", "L3",
@@ -66,6 +72,12 @@ public class Medikament extends Artikel {
 				+ ":KompendiumText", "ATC=JOINT:IDATC:IDMEDI:" + ATCTABLE);
 	}
 	
+	/**
+	 * 
+	 * @param name
+	 * @param typ
+	 * @param subid Die Pharmazentralnummer PhZNr
+	 */
 	public Medikament(String name, String typ, String subid){
 		super(name, typ, subid);
 		set("Klasse", getClass().getName());
@@ -73,11 +85,12 @@ public class Medikament extends Artikel {
 	
 	@Override
 	protected String getConstraint(){
-		return "Typ='Vidal2'";
+		return new StringBuilder(Artikel.FLD_TYP).append(Query.EQUALS).append(
+				JdbcLink.wrap(TYPNAME)).toString();
 	}
 	
 	protected void setConstraint(){
-		set("Typ", "Vidal2");
+		set(Artikel.FLD_TYP, TYPNAME);
 	}
 	
 	@Override

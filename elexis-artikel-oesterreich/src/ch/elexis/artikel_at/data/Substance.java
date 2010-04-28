@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Substance.java 5183 2009-02-24 15:47:16Z rgw_ch $
+ *  $Id: Substance.java 6308 2010-04-28 10:18:07Z marcode79 $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.data;
@@ -30,11 +30,11 @@ public class Substance extends PersistentObject {
 	static final String VERSION = "0.3.0";
 	static final String createDB =
 		"CREATE TABLE " + TABLENAME + "("
-			+ "ID		VARCHAR(25) primary key,"
+			+ "ID		VARCHAR(25) primary key," //
 			+ "lastupdate BIGINT,"
 			+ "deleted	CHAR(1) default '0',"
-			+ "salt		VARCHAR(30)," // vidal-index
-			+ "name		VARCHAR(254));" 
+			+ "salt		VARCHAR(30)," 			  // Bezeichnung des Salzes (OPTIONAL)
+			+ "name		VARCHAR(254));" 		  // Bezeichnung des Wirkstoffs
 			+ "CREATE INDEX CAUSTRIAS1 ON " + TABLENAME + " (index);"
 			+ "CREATE INDEX CAUSTRIAS2 ON " + TABLENAME + " (name);" 
 			+ "INSERT INTO " + TABLENAME
@@ -42,8 +42,11 @@ public class Substance extends PersistentObject {
 	
 	
 	static {
-		addMapping(TABLENAME, "name", "index", "medis=JOINT:product:substance:"
-			+ Medikament.JOINTTABLE, "interactions=JOINT:Subst1:Subst2:" + Interaction.TABLENAME);
+		// WHAT IS THIS? Marco D. / Herzpraxis
+		//addMapping(TABLENAME, "name", "index", "medis=JOINT:product:substance:"
+		//	+ Medikament.JOINTTABLE, "interactions=JOINT:Subst1:Subst2:" + Interaction.TABLENAME);
+		// Changed to:
+		addMapping(TABLENAME, "name", "index", "salt");
 		Substance v = load("VERSION");
 		if (v.state() < PersistentObject.DELETED) {
 			createOrModifyTable(createDB);
@@ -64,7 +67,7 @@ public class Substance extends PersistentObject {
 		create(substID);
 		set(new String[] {
 			"name", "salt"
-		}, StringTool.limitLength(name, 250), salt);
+		}, StringTool.limitLength(name, 250), StringTool.limitLength(salt, 25));
 	}
 	
 	public SortedSet<Medikament> findMedis(SortedSet<Medikament> list){
