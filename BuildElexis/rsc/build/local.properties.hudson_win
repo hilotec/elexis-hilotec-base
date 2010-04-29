@@ -11,6 +11,7 @@ eclipse.zip=C:/hudson/downloads/eclipse-rcp-galileo-SR2-win32.zip
 eclipse.source=C:/hudson/downloads/eclipse-rcp-galileo-SR2-win32.zip
 archie.zip=C:/hudson/downloads/archie-1.0.2.zip
 wikitext.zip=C:/hudson/downloads/mylyn-wikitext-standalone-latest.zip
+elexis.test.eclipse=${rcpbase}/windows/rcp
 elexis.test.ftp.server=172.25.1.40
 elexis.test.ovpn.public=172.25.1.40
 elexis.test.ovpn.config=C:/Programme/openvpn/config/elexis-4.ovpn

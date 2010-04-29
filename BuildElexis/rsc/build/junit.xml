@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- 
+ * Copyright (c) 2010, Niklaus Giger
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    Niklaus Giger - initial implementation
+ *    
+ * $Id: build.xml 4519 2008-10-02 10:34:57Z rgw_ch $
+-->
+<project basedir="." default="junit" name="TestElexis">
+	<property environment="env" />
+	<ant antfile="../BuildElexis/rsc/build/build.xml" target="all" />	
+	<property file="../BuildElexis/rsc/build/local.properties" />
+	<property name="JUNIT_HOME" value="/usr/share/java" />
+	<property name="ECLIPSE_HOME" value="${elexis.test.eclipse}" />
+	<property name="elexis-utilities.location" value="${sourcedir}/../elexis-utilities" />
+	<property name="Laborimport-TeamW.location" value="../Laborimport-TeamW" />
+	<property name="junit.output.dir" value="../elexis-developer-resources/junit" />
+	<property name="elexis.location" value="${sourcedir}/../elexis" />
+	<property name="elexis.utilities" value="../elexis-utilities" />
+	<property name="elexis-importer.location" value="../elexis-importer" />
+	<property name="debuglevel" value="source,lines,vars" />
+	<property name="target" value="1.6" />
+	<property name="source" value="1.6" />
+	<property name="junitTest" value="../TestElexis" />
+	<path id="Plug-in Dependencies.libraryclasspath">
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.help.ui_3.4.1.v20090819_35x.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.help.base_3.4.0.v201002111343.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.apache.lucene_1.9.1.v20080530-1600.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.apache.lucene.analysis_1.9.1.v20080530-1600.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.help_3.4.1.v20090805_35x.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.core.expressions_3.4.101.R35x_v20100209.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.ui_3.5.2.M20100120-0800.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.swt_3.5.2.v3557f.jar" />
+		<!--		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.swt.win32.win32.x86_3.5.2.v3557f.jar" />
+-->
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.jface_3.5.2.M20100120-0800.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.core.commands_3.5.0.I20090525-2000.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.ui.workbench_3.5.2.M20100113-0800.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.core.runtime_3.5.0.v20090525.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.osgi_3.5.2.R35x_v20100126.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.equinox.common_3.5.1.R35x_v20090807-1100.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.core.jobs_3.4.100.v20090429-1800.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.core.runtime.compatibility.registry_3.2.200.v20090429-1800/runtime_registry_compatibility.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.equinox.registry_3.4.100.v20090520-1800.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.equinox.preferences_3.2.301.R35x_v20091117.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.core.contenttype_3.4.1.R35x_v20090826-0451.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.equinox.app_1.2.1.R35x_v20091203.jar" />
+		<pathelement location="${ECLIPSE_HOME}/plugins/org.eclipse.ui.forms_3.4.1.v20090714_35x.jar" />
+	</path>
+	<path id="elexis.classpath">
+		<pathelement location="${elexis.location}/bin" />
+		<pathelement location="${elexis.location}/lib/bsh-core-2.0b4.jar" />
+		<pathelement location="${elexis.location}/lib/ehcache-1.5.0.jar" />
+		<path refid="Plug-in Dependencies.libraryclasspath" />
+	</path>
+	<path id="elexis-utilities.classpath">
+		<path refid="Plug-in Dependencies.libraryclasspath" />
+		<pathelement location="${elexis-utilities.location}/bin" />
+		<pathelement location="${elexis-utilities.location}/lib/jdom.jar" />
+		<pathelement location="${elexis-utilities.location}/lib/bcprov-jdk15-140.jar" />
+	</path>
+	<path id="elexis-importer.classpath">
+		<pathelement location="${elexis-importer.location}/bin" />
+		<pathelement location="${elexis-importer.location}/RXTXcomm.jar" />
+		<pathelement location="${elexis-importer.location}/poi-3.0.1-FINAL-20070705.jar" />
+		<path refid="Plug-in Dependencies.libraryclasspath" />
+	</path>
+	<path id="Laborimport-TeamW.classpath">
+		<pathelement location="${Laborimport-TeamW.location}/bin" />
+		<path refid="Plug-in Dependencies.libraryclasspath" />
+		<pathelement location="../ngiger-utilities-comm/lib/commons-net-1.4.1.jar" />
+	</path>
+	<path id="TestElexis.classpath">
+		<pathelement location="." />
+		<pathelement location="${JUNIT_HOME}/junit4.jar" />
+		<path refid="elexis.classpath" />
+		<path refid="elexis-utilities.classpath" />
+		<path refid="elexis-importer.classpath" />
+		<pathelement location="../ngiger-utilities-comm/bin" />
+		<pathelement location="../ngiger-utilities-comm/lib/commons-net-1.4.1.jar" />
+		<pathelement location="../elexis-utilities/lib/bcprov-jdk15-140.jar" />
+		<path refid="Laborimport-TeamW.classpath" />
+		<pathelement location="../ngiger-utilities-comm/lib/commons-net-1.4.1.jar" />
+	</path>
+	<target name="init">
+		<copy includeemptydirs="false" todir=".">
+			<fileset dir=".">
+				<exclude name="**/*.launch" />
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
+	<target name="clean">
+		<delete>
+			<fileset dir="." includes="**/*.class" />
+			<fileset dir="${junit.output.dir}" />
+		</delete>
+	</target>
+	<target depends="init" name="build-project">
+		<echo message="${ant.project.name}: ${ant.file}" />
+		<javac debug="true" debuglevel="${debuglevel}" destdir="." source="${source}" target="${target}">
+			<src path="." />
+			<classpath refid="TestElexis.classpath" />
+		</javac>
+	</target>
+	<target description="Build all projects which reference this project. Useful to propagate changes." name="build-refprojects" />
+	<target description="copy Eclipse compiler jars to ant lib directory" name="init-eclipse-compiler">
+		<copy todir="${ant.library.dir}">
+			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
+		</copy>
+		<unzip dest="${ant.library.dir}">
+			<patternset includes="jdtCompilerAdapter.jar" />
+			<fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
+		</unzip>
+	</target>
+	<target description="compile project with Eclipse compiler" name="build-eclipse-compiler">
+		<property name="build.compiler" value="org.eclipse.jdt.core.JDTCompilerAdapter" />
+		<antcall target="build" />
+	</target>
+
+	<target name="build">
+		<mkdir dir="${junitTest}/bin" />
+		<javac srcdir="${junitTest}" debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8">
+			<classpath >
+				<path refid="TestElexis.classpath" />
+				<fileset dir="${junitTest}/ch">
+					<include name="*.jar" />
+				</fileset>
+	</classpath>
+		</javac>
+	</target>
+
+	<target name="TestHL7" depends="build">
+		<mkdir dir="${junit.output.dir}" />
+		<junit fork="yes" printsummary="withOutAndErr">
+			<formatter type="xml" />
+			<test name="ch.elexis.tests.TestHL7" todir="${junit.output.dir}" />
+			<classpath refid="TestElexis.classpath" />
+		</junit>
+	</target>
+	<target name="TestStringtool" depends="build">
+		<mkdir dir="${junit.output.dir}" />
+		<junit fork="yes" printsummary="withOutAndErr">
+			<formatter type="xml" />
+			<test name="ch.elexis.tests.TestStringtool" todir="${junit.output.dir}" />
+			<classpath refid="TestElexis.classpath" />
+		</junit>
+	</target>
+	<target name="FtpServerTest" depends="build">
+		<mkdir dir="${junit.output.dir}" />
+		<junit fork="yes" printsummary="withOutAndErr">
+			<formatter type="xml" />
+			<test name="ch.elexis.tests.FtpServerTest" todir="${junit.output.dir}" />
+			<classpath refid="TestElexis.classpath" />
+		</junit>
+	</target>
+	<target name="OpenVPNTest" depends="build">
+		<mkdir dir="${junit.output.dir}" />
+		<junit fork="true" printsummary="withOutAndErr">
+			<formatter type="xml" />
+			<test name="ch.elexis.tests.OpenVPNTest" todir="${junit.output.dir}" />
+			<classpath refid="TestElexis.classpath" />
+		</junit>
+	</target>
+
+	<target name="AllTests" depends="build">
+		<mkdir dir="${junit.output.dir}" />
+		<junit fork="yes" printsummary="withOutAndErr">
+			<formatter type="xml" />
+			<test name="ch.elexis.tests.AllTests" todir="${junit.output.dir}" />
+			<classpath refid="TestElexis.classpath" />
+		</junit>
+	</target>
+	<target depends="TestStringtool,TestHL7,OpenVPNTest,FtpServerTest" name="junit">
+		<junitreport todir="${junit.output.dir}">
+			<fileset dir="${junit.output.dir}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="${junit.output.dir}" />
+		</junitreport>
+	</target>
+
+</project>

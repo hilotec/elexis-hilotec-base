@@ -70,17 +70,23 @@ public class OpenVPN {
 			File myFile = new File(ovpnConfig);
 			File parent = new File(myFile.getParent());
 			String parentDir = parent.getParent();
-			String cmd = "cd " + parentDir + File.separator + "config && ";
+			String cmd ="";
+			String exe = "";
 			String os = System.getProperty("os.name").toLowerCase();
-			if (os.indexOf("win") >= 0)
+			// Under Windows we start OpenVPN here
+			if (os.indexOf("win") >= 0) {
+				cmd = "cd " + parentDir + File.separator + "config && ";
 				cmd += " start /min ";
-			File ovpnExe = new File(parentDir + File.separator + "bin" + File.separator, "openvpn");
-			cmd += " " + ovpnExe + " --config " + myFile.getName();
-			FileWriter fos = new FileWriter(temp);
-			log.log(cmd, Log.INFOS);
-			fos.write(cmd);
-			fos.close();
-			boolean res = Program.launch(temp.getAbsolutePath());
+				File ovpnExe = new File(parentDir + File.separator + "bin" + File.separator, "openvpn");
+				exe = ovpnExe.getAbsolutePath();
+				cmd += " " + ovpnExe + " --config " + myFile.getName();
+				FileWriter fos = new FileWriter(temp);
+				log.log(cmd, Log.INFOS);
+				fos.write(cmd);
+				fos.close();
+				boolean res = Program.launch(temp.getAbsolutePath());
+			}
+			// else we assume that it was launched by daemons
 			int j=0, maxWait=20;
 		    long startMs = Calendar.getInstance().getTimeInMillis();
 		   
@@ -91,12 +97,12 @@ public class OpenVPN {
 
 				if ( (actualMs - startMs) >= timeout*1000) 
 				{
-					log.log("Could not ping to server", Log.ERRORS);
+					log.log("Could not ping to server: "+ovpnIp, Log.ERRORS);
 					return false;
 				}
 				System.out.println("Pinging");
 			}
-			System.out.println("Ping was okay");
+			System.out.println("Ping was okay to server: "+ovpnIp);
 			
 		} catch (Exception ex) {
 			log.log("Could not start program", Log.ERRORS);

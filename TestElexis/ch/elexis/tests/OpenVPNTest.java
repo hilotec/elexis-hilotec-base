@@ -51,17 +51,20 @@ public class OpenVPNTest {
 				InetAddress addr = InetAddress.getLocalHost(); // Get IP Address
 				byte[] ipAddr = addr.getAddress(); // Get hostname
 				String hostname = addr.getHostName();
-				content += hostname +" ip " + InetAddress.getLocalHost().toString() +"\n";
-			}
-		    catch (UnknownHostException e) { }
+				content += hostname + " ip " + InetAddress.getLocalHost().toString() + "\n";
+			} catch (UnknownHostException e) {}
 			java.util.Date today = new java.util.Date();
-			String tStamp = new java.sql.Timestamp(today.getTime())+"";
+			String tStamp = new java.sql.Timestamp(today.getTime()) + "";
 			content += tStamp;
-			System.out.println("testOpenConnection: starts " +tStamp);
+			System.out.println("testOpenConnection: starting " + tStamp + " -> " + srvName);
+			step = 1;
 			String ftpSrv = ch.elexis.tests.Preferences.getOvpnFtp();
 			String testUser = ch.elexis.tests.Preferences.getElexisUsername(1);
+			step = 2;
 			assert (ovpn.ping("172.222.222.222") == false);
+			step = 3;
 			assert (ovpn.ping(srvName));
+			step = 4;
 			res = ovpn.openConnection(ch.elexis.tests.Preferences.getOvpnConfig(), ftpSrv, 20);
 			assert (res);
 			step = 10;
@@ -89,12 +92,12 @@ public class OpenVPNTest {
 			step += 100;
 		} finally {
 			java.util.Date today = new java.util.Date();
-			String tStamp = new java.sql.Timestamp(today.getTime())+"";
-			System.out.println("testOpenConnection: finished " +tStamp);
+			String tStamp = new java.sql.Timestamp(today.getTime()) + "";
+			System.out.println("testOpenConnection: finished " + tStamp);
 			if (step != 50)
-				System.out.println("could not read step 50. I am  at " + step);
+				System.out.println("could not reach step 50. I am  at " + step);
 			else
-				System.out.println("up/download successful: using\n" +content);
+				System.out.println("up/download successful: using\n" + content);
 			assertEquals(step, 50);
 		}
 	}
