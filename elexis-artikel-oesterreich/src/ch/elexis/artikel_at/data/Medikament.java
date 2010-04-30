@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    M. Descher - Some changes to adapt to new format
  *    
- *  $Id: Medikament.java 6308 2010-04-28 10:18:07Z marcode79 $
+ *  $Id: Medikament.java 6312 2010-04-30 14:02:51Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
@@ -31,8 +32,8 @@ public class Medikament extends Artikel {
 	static final String JOINTTABLE = "CH_ELEXIS_AUSTRIAMEDI_JOINT";
 	static final String EXTTABLE = "CH_ELEXIS_AUSTRIAMEDI_EXT";
 	static final String ATCTABLE = "CH_ELEXIS_AUSTRIAMEDI_ATC";
-	public static final String TYPNAME = "Vidal";
-	//public static final String TYPNAME = "Vidal2";
+	//public static final String TYPNAME = "Vidal";
+	public static final String TYPNAME = "Vidal2";
 	
 	// Rezeptzeichen und Lagerungshinweise
 	public static final String[] RSIGNS =
@@ -43,9 +44,9 @@ public class Medikament extends Artikel {
 	
 	// Kassenzeichen und Texte der Sozialversicherung
 	public static final String[] SSIGNS =
-		{/* "Remb", */
-			"Box", "AU", "B", "CH14", "D", "DS", "F", "GF", "F6J", "IND", "K", "KF14", "KF2", "L3",
-			"L6", "L9", "L12", "NE", "PS", "R", "RE1", "RE2", "U"
+		{ //"CH14", "KF14", "KF2", "NE", "PS" // Not existant anymore
+			"Box", "A", "AU", "B", "D", "DS", "F", "F14", "F2J", "GF", "F6J", "IND", "K", "L", "L3",
+			"L6", "L9", "L12", "N", "P", "R", "RE1", "RE2", "U"
 		};
 	
 	static final String extDB =
