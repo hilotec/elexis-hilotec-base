@@ -10,7 +10,7 @@
  *    M. Descher - Adaption (Import works; tested on RpInfo_M08_FED.xml)
  *    			   Imports Substances and Medikamente
  *    
- *  $Id: MedikamentImporterVidal.java 6312 2010-04-30 14:02:51Z marcode79 $
+ *  $Id: MedikamentImporterVidal.java 6313 2010-05-01 11:28:39Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
@@ -43,7 +43,6 @@ public class MedikamentImporterVidal extends ImporterPage {
 	private static final String ENTRYTYPE_NAME = "Vidal2";
 	
 	public MedikamentImporterVidal(){
-	// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -55,15 +54,19 @@ public class MedikamentImporterVidal extends ImporterPage {
 	
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
-		//TODO: Separate - First Import and Update!!
-		//TODO: DB extremely slow!
+		//TODO: Input File Versioning (What if same file is imported twice?)
+		//TODO: Extremely slow on MedikamentSelector2
 		//TODO: Set correct progress monitor
+		//TODO: Test cancellation check / what to do in case of cancellation?
 		//TODO: Versioning of the Vidal files? Was tested on Full Set only!
+		//TODO: AVP and KVP are parsed wrong / check Extinfo Hashset input -> Money
+		//TODO: Validate file before import?
 		
+		String importFilename = results[0];
 		monitor.beginTask("Importiere Vidal", -1);
 		SAXBuilder builder = new SAXBuilder();
 		monitor.subTask("Lese Datei ein");
-		Document doc = builder.build(new File(results[0]));
+		Document doc = builder.build(new File(importFilename));
 		monitor.subTask("Analysiere Datei");
 		Element eRoot = doc.getRootElement();
 		
@@ -178,6 +181,7 @@ public class MedikamentImporterVidal extends ImporterPage {
 				
 				counter++;
 				if ((counter & 64) == counter) {
+					if(monitor.isCanceled()) return Status.CANCEL_STATUS;
 					System.gc();
 					PersistentObject.clearCache();
 				}
