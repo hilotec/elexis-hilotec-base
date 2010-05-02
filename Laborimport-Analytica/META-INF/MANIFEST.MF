@@ -6,13 +6,10 @@ Bundle-Version: 1.2.1
 Bundle-Vendor: elexis.ch
 Require-Bundle: ch.rgw.utility,
  ch.elexis,
+ ch.ngiger.utilites.comm;bundle-version="1.0.0",
  ch.elexis.importer.div,
  org.eclipse.core.runtime,
- ch.ngiger.utilites.comm;bundle-version="1.0.0",
  org.eclipse.ui,
  org.eclipse.ui.forms,
- ch.elexis.laborimport.hl7.allg,
- org.junit4,
- org.junit
-Import-Package: junit.framework
+ ch.elexis.laborimport.hl7.allg
 Bundle-ClassPath: bin/

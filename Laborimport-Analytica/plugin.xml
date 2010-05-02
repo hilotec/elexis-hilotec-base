@@ -9,7 +9,7 @@
          point="ch.elexis.LaborDatenImport">
       <Importer
             Class="ch.elexis.laborimport.analytica.Importer"
-            name="Labotimport Analytica"/>
+            name="Laborimport Analytica"/>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">

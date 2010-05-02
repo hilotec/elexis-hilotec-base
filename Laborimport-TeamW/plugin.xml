@@ -10,7 +10,7 @@
          point="ch.elexis.LaborDatenImport">
       <Importer
             Class="ch.elexis.laborimport.teamw.Importer"
-            name="%DataImportName"/>
+            name="Laborimport TeamW"/>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
