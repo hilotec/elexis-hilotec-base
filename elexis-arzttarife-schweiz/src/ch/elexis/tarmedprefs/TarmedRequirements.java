@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedRequirements.java 6143 2010-02-15 20:52:17Z rgw_ch $
+ * $Id: TarmedRequirements.java 6317 2010-05-02 08:49:51Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.tarmedprefs;
 
@@ -39,12 +39,14 @@ public class TarmedRequirements {
 	
 	public static final String DOMAIN_KSK="www.xid.ch/id/ksk"; //$NON-NLS-1$
 	public static final String DOMAIN_NIF="www.xid.ch/id/nif"; //$NON-NLS-1$
+	public static final String DOMAIN_SUVA="www.xid.ch/id/suva"; // $NON-NLS-1$
 	public final static String DOMAIN_RECIPIENT_EAN="www.xid.ch/id/recipient_ean"; //$NON-NLS-1$
 
 	static{
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_KSK, Messages.getString("TarmedRequirements.kskName"), Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_NIF, Messages.getString("TarmedRequirements.NifName"), Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
 		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_RECIPIENT_EAN, "rEAN", Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
+		Xid.localRegisterXIDDomainIfNotExists(DOMAIN_SUVA, "Suva-Nr", Xid.ASSIGNMENT_REGIONAL);
 	}
 	
 	public static String getEAN(final Kontakt k){
@@ -74,6 +76,10 @@ public class TarmedRequirements {
 		return ret.trim();
 	}
 	
+	public static String getSuvaNr(final Kontakt k){
+		String ret=k.getXid(DOMAIN_SUVA);
+		return ret;
+	}
 	/**
 	 * Get EAN of the Intermediate where the bill shpould be sent. This must be
 	 * a Fall-requirement as defined in INTERMEDIATE and must contain the EAN
@@ -172,6 +178,9 @@ public class TarmedRequirements {
 		k.addXid(DOMAIN_NIF, nif, true);
 	}
 	
+	public static void setSuvaNr(final Kontakt k, final String SuvaNr){
+		k.addXid(DOMAIN_SUVA, SuvaNr, true);
+	}
 	public static String getAHV(final Person p){
 		String ahv=p.getXid(Xid.DOMAIN_AHV);
 		if(ahv.length()==0){
