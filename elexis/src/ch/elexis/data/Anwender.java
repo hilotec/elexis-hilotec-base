@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Anwender.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ *  $Id: Anwender.java 6324 2010-05-02 11:31:51Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -66,6 +66,7 @@ public class Anwender extends Person {
 		setLabel(Username);
 		setPwd(Password);
 		setInfoElement("Groups", "Anwender");
+		super.setConstraint();
 	}
 	
 	public Anwender(final String Name, final String Vorname, final String Geburtsdatum,

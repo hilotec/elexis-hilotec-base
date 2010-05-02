@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Mandant.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ *    $Id: Mandant.java 6324 2010-05-02 11:31:51Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
