@@ -391,10 +391,13 @@ public final class ElexisEventDispatcher extends Job {
 		StringBuilder sb = new StringBuilder();
 		sb.append("ElexisEventDispatcher dump: \n");
 		for (ElexisEventListener el : listeners) {
-			sb.append(el.getClass().getName()).append(": ").append(
-					el.getElexisEventFilter().type).append(" / ").append(
-					el.getElexisEventFilter().getObjectClass().getName())
-					.append("\n");
+			ElexisEvent filter = el.getElexisEventFilter();
+			sb.append(el.getClass().getName()).append(": ");
+			if (filter != null) {
+				sb.append(filter.type).append(" / ").append(
+						filter.getObjectClass().getName());
+			}
+			sb.append("\n");
 
 		}
 		sb.append("\n--------------\n");
