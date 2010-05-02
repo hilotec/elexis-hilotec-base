@@ -11,3 +11,4 @@ Require-Bundle: ch.rgw.utility,
  org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.ui.forms
+Bundle-ClassPath: bin/
