@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 5797 2009-11-06 07:06:35Z michael_imhof $
+ *  $Id: ApplicationWorkbenchAdvisor.java 6329 2010-05-02 21:29:57Z niklausgiger $
  *******************************************************************************/
 
 package ch.elexis;
@@ -26,6 +26,7 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 
 import ch.elexis.Hub.ShutdownJob;
 import ch.elexis.actions.GlobalActions;
+import ch.elexis.data.Anwender;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
 import ch.elexis.wizards.DBConnectWizard;
@@ -118,7 +119,14 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		dlg.getShell().setText(Messages.ApplicationWorkbenchAdvisor_7);
 		dlg.setTitle(Messages.ApplicationWorkbenchAdvisor_8);
 		dlg.setMessage(Messages.ApplicationWorkbenchAdvisor_9);
-		dlg.open();
+		
+		String username = System.getProperty("ch.elexis.username");
+		String password = System.getProperty("ch.elexis.password");
+		if (username == null || password == null || !Anwender.login(username, password) == true) {
+			Log log = Log.get("LoginDialog"); //$NON-NLS-1$
+			log.log("Bypassing LoginDialg username " + username + " " + password, Log.ERRORS);
+			dlg.open();
+		}
 		
 		/** Had to remove this, because it prevents us from starting from scratch */
 		// check if there is a valid user
@@ -152,9 +160,9 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		GlobalActions.fixLayoutAction.setChecked(false);
 		return super.preShutdown();
 	}
-
+	
 	@Override
-	public void postShutdown() {
+	public void postShutdown(){
 		Hub.postShutdown();
 		super.postShutdown();
 	}

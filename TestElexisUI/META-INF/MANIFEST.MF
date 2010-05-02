@@ -10,7 +10,11 @@ Require-Bundle: org.eclipse.swtbot.eclipse.core;bundle-version="2.0.0",
  org.eclipse.swtbot.junit4_x;bundle-version="2.0.0",
  org.eclipse.swtbot.swt.finder;bundle-version="2.0.0",
  org.hamcrest;bundle-version="1.1.0",
- org.junit4;bundle-version="4.5.0",
- org.eclipse.ui;bundle-version="3.5.1",
  ch.rgw.utility;bundle-version="2.0.0",
- ch.elexis.h2.connector;bundle-version="1.0.0"
+ ch.elexis.h2.connector;bundle-version="1.0.0",
+ org.eclipse.swtbot.eclipse.junit4.headless;bundle-version="2.0.0",
+ org.eclipse.swtbot.eclipse.ui;bundle-version="2.0.0",
+ org.apache.log4j;bundle-version="0.0.0",
+ org.eclipse.ui;bundle-version="3.5.2",
+ org.junit4
+Import-Package: ch.elexis.actions
