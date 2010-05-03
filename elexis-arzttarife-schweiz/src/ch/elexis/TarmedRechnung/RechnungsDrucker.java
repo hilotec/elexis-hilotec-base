@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: RechnungsDrucker.java 6151 2010-02-17 14:05:09Z rgw_ch $
+ * $Id: RechnungsDrucker.java 6332 2010-05-03 16:19:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.TarmedRechnung;

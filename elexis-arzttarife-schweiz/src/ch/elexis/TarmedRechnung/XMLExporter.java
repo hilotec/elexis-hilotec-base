@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 6143 2010-02-15 20:52:17Z rgw_ch $
+ * $Id: XMLExporter.java 6332 2010-05-03 16:19:22Z rgw_ch $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -101,7 +101,6 @@ import ch.rgw.tools.XMLTool;
  * Klasse durchführen. Senden Sie Verbesserungsvorschläge oder Wünsche als Mail oder direkt als
  * Patch an weirich@elexis.ch.
  * 
- * In den meisten Fällen kann diese Klasse als BlackBox zum Erstellen von Tarmed-konformen XML-Files
  * zur Weiterverarbeitung verwendet werden. DoExport(..) liefert ein JDOM-Dokument, das die
  * gewünschte Rechnung enthält. Diese kann vom Aufrufer dann an einen Intermediär oder auf einen
  * Drucker ausgegeben werden. Der Output dieses Exporters ist TrustX zertifiziert. Änderungen
