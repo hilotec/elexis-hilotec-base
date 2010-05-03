@@ -10,11 +10,12 @@
  *    M. Descher - Adaption (Import works; tested on RpInfo_M08_FED.xml)
  *    			   Imports Substances and Medikamente
  *    
- *  $Id: MedikamentImporterVidal.java 6313 2010-05-01 11:28:39Z marcode79 $
+ *  $Id: MedikamentImporterVidal.java 6330 2010-05-03 09:18:14Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
 import java.io.File;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Hashtable;
 import java.util.List;
@@ -55,7 +56,6 @@ public class MedikamentImporterVidal extends ImporterPage {
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
 		//TODO: Input File Versioning (What if same file is imported twice?)
-		//TODO: Extremely slow on MedikamentSelector2
 		//TODO: Set correct progress monitor
 		//TODO: Test cancellation check / what to do in case of cancellation?
 		//TODO: Versioning of the Vidal files? Was tested on Full Set only!
@@ -92,6 +92,7 @@ public class MedikamentImporterVidal extends ImporterPage {
 			monitor.subTask("Lese Medikamente ein");
 			int noOfMedicaments = eMedis.getChildren("RpEntry").size();
 			int counter = 1;
+			NumberFormat nf = NumberFormat.getInstance();
 			for(Element eMedi:(List<Element>) eMedis.getChildren("RpEntry")){
 				Medikament medi = null;
 				
@@ -99,21 +100,28 @@ public class MedikamentImporterVidal extends ImporterPage {
 				String SName = eMedi.getChildText("SName");
 				String PhZNr = eMedi.getChildText("PhZNr");
 				log.log("Import of "+SName, Log.TRACE);
-				Money AVP = new Money();
-					try {
-						// Money.setLocale(new Locale("de","AT"));
-						AVP.addAmount(eMedi.getChildText("AVP").trim());
+
+				Money AVP = new Money();			
+				Number AVPDouble = null;
+					try {				
+						AVPDouble = nf.parse(eMedi.getChildText("AVP").trim());
+						double AVPout = AVPDouble.doubleValue()*100;
+						int AVPint = (int) AVPout;
+						AVP.addAmount(AVPint);
 					} catch (ParseException ex) {
 						AVP.addCent(eMedi.getChildText("AVP").replaceFirst("[,\\.]", ""));
 					}
-				String VK_Preis = AVP.getCentsAsString();
 				Money KVP = new Money();
+				Number KVPDouble = null;
 					try {
-						KVP.addAmount(eMedi.getChildText("KVP").trim());
+						KVPDouble = nf.parse(eMedi.getChildText("KVP").trim());
+						double KVPout = KVPDouble.doubleValue()*100;
+						int KVPint = (int) KVPout;
+						KVP.addAmount(KVPint);
 					} catch (ParseException ex) {
 						KVP.addCent(eMedi.getChildText("KVP").replaceFirst("[,\\.]", ""));
-					}				
-				String EK_Preis = KVP.getCentsAsString();
+					}
+
 				String codeClass = eMedi.getChild("SSigns").getAttribute("Box").getValue().trim();
 				monitor.subTask("Lese Medikamente ein "+"["+counter+"/"+noOfMedicaments+"]: "+SName);
 				
@@ -132,6 +140,9 @@ public class MedikamentImporterVidal extends ImporterPage {
 					if(EnhUnitDesc != null) act.put("EnhUnitDesc", EnhUnitDesc);
 				act.put("ZInh", eMedi.getChildText("ZInh"));
 				act.put("ZNr", eMedi.getChildText("ZNr"));
+				act.put("KVP", KVP.getCentsAsString());
+				act.put("AVP", AVP.getCentsAsString());
+				
 				act.put("ZNrNum", eMedi.getChild("ZNr").getAttributeValue("ZNrNum"));
 				act.put("Remb", eMedi.getChild("SSigns").getAttributeValue("Remb"));
 					Hashtable<String, Object> RSigns = new Hashtable<String, Object>();
@@ -173,7 +184,7 @@ public class MedikamentImporterVidal extends ImporterPage {
 						medi = new Medikament(SName, ENTRYTYPE_NAME, PhZNr);
 					}								
 				}
-				medi.set(new String[] {"Codeclass", "VK_Preis", "EK_Preis"}, codeClass, VK_Preis, EK_Preis);
+				medi.set(new String[] {"Codeclass", "VK_Preis", "EK_Preis"}, codeClass, AVP.getCentsAsString(), KVP.getCentsAsString());
 				
 				Hashtable extInfo = medi.getHashtable("ExtInfo");
 				extInfo.putAll(act);
