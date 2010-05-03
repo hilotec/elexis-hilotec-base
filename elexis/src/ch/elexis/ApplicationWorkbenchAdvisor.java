@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    N. Giger - Bypass Login Dialog for development environments
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 6329 2010-05-02 21:29:57Z niklausgiger $
+ *  $Id: ApplicationWorkbenchAdvisor.java 6331 2010-05-03 16:18:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -96,13 +97,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		} catch (Exception ex) {
 			Hub.log.log("Error executing PreStartUpdate " + ex.getMessage(), Log.ERRORS); //$NON-NLS-1$
 		}
-		
-		// Hub.jobPool.activate("PatientenListe",Job.LONG);
-		// Hub.jobPool.queue("Tarmed");
-		// Hub.jobPool.queue("ICD"); //$NON-NLS-1$
-		// Hub.jobPool.queue("Plz");
-		// Hub.jobPool.queue("Anschriften");
-		
+
 		Hub.pin.initializeDisplayPreferences(Desk.getDisplay());
 		configurer.setSaveAndRestore(true);
 		Log.setAlert(null);
@@ -128,7 +123,6 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 			dlg.open();
 		}
 		
-		/** Had to remove this, because it prevents us from starting from scratch */
 		// check if there is a valid user
 		if ((Hub.actUser == null) || !Hub.actUser.isValid()) {
 			// no valid user, exit (don't consider this as an error)
