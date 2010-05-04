@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentDetail.java 2189 2007-03-30 15:51:10Z rgw_ch $
+ *  $Id: MedikamentDetail.java 6333 2010-05-04 15:02:59Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.views;
 
@@ -33,7 +33,7 @@ public class MedikamentDetail implements IDetailDisplay {
 	}
 
 	public String getTitle() {
-		return "Medikamente";
+		return "Medikamente (Vidal)";
 	}
 
 	public void display(Object obj) {

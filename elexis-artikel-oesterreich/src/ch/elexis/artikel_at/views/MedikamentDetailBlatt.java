@@ -8,12 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentDetailBlatt.java 4783 2008-12-10 06:42:57Z rgw_ch $
+ *  $Id: MedikamentDetailBlatt.java 6333 2010-05-04 15:02:59Z marcode79 $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.views;
 
 import java.util.Hashtable;
+import java.util.List;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
@@ -22,6 +23,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
@@ -35,6 +37,8 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
 import ch.elexis.artikel_at.data.Medikament;
+import ch.elexis.artikel_at.data.Substance;
+import ch.elexis.data.Query;
 import ch.elexis.util.LabeledInputField;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.LabeledInputField.InputData;
@@ -42,18 +46,18 @@ import ch.rgw.tools.ExHandler;
 
 public class MedikamentDetailBlatt extends Composite {
 	InputData[] fields=new InputData[]{
-			new InputData("Pharma-ZNr","ExtInfo",InputData.Typ.STRING,"PhZNr"),
-			new InputData("ZNr","ExtInfo",InputData.Typ.STRING,"ZNr"),
+			new InputData("Pharmazentral-Nr","ExtInfo",InputData.Typ.STRING,"PhZNr"),
+			new InputData("Zulassungs-Nr","ExtInfo",InputData.Typ.STRING,"ZNr"),
 			//new InputData("ZNrNum","ExtInfo",InputData.Typ.STRING,"ZNrNum"),
 			//new InputData("SUnit","ExtInfo",InputData.Typ.STRING,"SUnit"),
-			new InputData("DoLC","ExtInfo",InputData.Typ.STRING,"DoLC"),
+			new InputData("Letzte Änderung","ExtInfo",InputData.Typ.STRING,"DoLC"),
 			//new InputData("Storage","ExtInfo",InputData.Typ.STRING,"Storage"),
 			//new InputData("Quantity","ExtInfo",InputData.Typ.STRING,"Quantity"),
 			//new InputData("Unit","ExtInfo",InputData.Typ.STRING,"Unit"),
 			//new InputData("EnhUnitDesc","ExtInfo",InputData.Typ.STRING,"EnhUnitDesc"),
-			new InputData("KVP","ExtInfo",InputData.Typ.CURRENCY,"KVP"),
-			new InputData("AVP","ExtInfo",InputData.Typ.CURRENCY,"AVP"),
-			new InputData("ZInh","ExtInfo",InputData.Typ.STRING,"ZInh"),
+			new InputData("Kassen-VP","ExtInfo",InputData.Typ.CURRENCY,"KVP"),
+			new InputData("Apotheken-VP","ExtInfo",InputData.Typ.CURRENCY,"AVP"),
+			new InputData("Zulassungsinhaber","ExtInfo",InputData.Typ.STRING,"ZInh"),
 			new InputData("Remb","ExtInfo",InputData.Typ.STRING,"Remb")
 			
 		};
@@ -63,7 +67,8 @@ public class MedikamentDetailBlatt extends Composite {
 	Text tLagerung;
 	Text tUnit;
 	Text tIndikation, tRules, tRemarks;
-	Group gRsigns, gSsigns;
+	Label tSubstances;
+	Group gRsigns, gSsigns, gSubstances;
 	Button[] bRsigns, bSsigns;
 	Composite texte;
 	Composite parent;
@@ -80,6 +85,7 @@ public class MedikamentDetailBlatt extends Composite {
 		ret.setLayout(new GridLayout());
 		fullName=SWTHelper.createText(tk, ret, 3, SWT.BORDER|SWT.READ_ONLY|SWT.WRAP);
 		fullName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		//----
 		Group g0=new Group(ret,SWT.NONE);
 		g0.setText("Packungs- und Lagerungsangaben");
 		g0.setLayout(new GridLayout());
@@ -88,15 +94,17 @@ public class MedikamentDetailBlatt extends Composite {
 		tUnit.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tLagerung=tk.createText(g0, "",SWT.BORDER|SWT.READ_ONLY);
 		tLagerung.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		//----
 		fld=new LabeledInputField.AutoForm(ret,fields);
 		fld.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		fld.setEnabled(false);
 		tk.adapt(fld);
+		//----
 		gRsigns=new Group(ret,SWT.NONE);
-		gRsigns.setText("RSigns");
+		gRsigns.setText("Rezeptzeichen und Lagerungshinweise");
 		ColumnLayout cl1=new ColumnLayout();
-		cl1.topMargin=15;
-		cl1.bottomMargin=15;
+		cl1.topMargin=20;
+		cl1.bottomMargin=10;
 		cl1.minNumColumns=3;
 		cl1.maxNumColumns=10;
 		gRsigns.setLayout(cl1);
@@ -107,12 +115,13 @@ public class MedikamentDetailBlatt extends Composite {
 		}
 		gRsigns.setEnabled(false);
 		tk.adapt(gRsigns);
+		//----
 		gSsigns=new Group(ret,SWT.NONE);
-		gSsigns.setText("SSigns");
+		gSsigns.setText("Kassenzeichen und Texte der Sozialversicherung");
 		gSsigns.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		ColumnLayout cl2=new ColumnLayout();
-		cl2.topMargin=15;
-		cl2.bottomMargin=15;
+		cl2.topMargin=20;
+		cl2.bottomMargin=10;
 		cl2.minNumColumns=3;
 		cl2.maxNumColumns=10;
 		bSsigns=new Button[Medikament.SSIGNS.length];
@@ -122,6 +131,16 @@ public class MedikamentDetailBlatt extends Composite {
 		}
 		gSsigns.setEnabled(false);
 		tk.adapt(gSsigns);
+		//---- Substanzen
+		gSubstances = new Group(ret, SWT.NONE);
+		gSubstances.setText("Wirkstoffe");
+		gSubstances.setLayout(new GridLayout());
+		gSubstances.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tSubstances=tk.createLabel(gSubstances, "",SWT.READ_ONLY);
+		tSubstances.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		gSubstances.setEnabled(false);
+		tk.adapt(gSubstances);
+		//----
 		texte=tk.createComposite(ret);
 		texte.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		texte.setLayout(new GridLayout());
@@ -166,6 +185,26 @@ public class MedikamentDetailBlatt extends Composite {
 				String val=rsigns.get(Medikament.RSIGNS[i]);
 				bRsigns[i].setSelection(val.equals("1"));
 			}
+		}
+		
+		
+		String Substances = extInfo.get("Substances").toString();
+		if(Substances!=null){
+			StringBuilder SubstanceOut = new StringBuilder();
+			String[] SubstancesList = Substances.split("/");
+			int noOfSubstances = Integer.parseInt(SubstancesList[0]);
+			if(noOfSubstances>=1) {
+				Query<Substance> qbe = new Query<Substance>(Substance.class);
+				for(int i=1; i<=noOfSubstances; i++) {
+					qbe.clear();
+					qbe.add("ID", "=", SubstancesList[i]);
+					List<Substance> list = qbe.execute();
+					Substance subst = list.get(0);
+					SubstanceOut.append(subst.get(Substance.FLD_NAME));
+					if(i!=noOfSubstances) SubstanceOut.append(" / ");
+				}
+			}
+			tSubstances.setText(SubstanceOut.toString());
 		}
 		
 		Point s=getSize();

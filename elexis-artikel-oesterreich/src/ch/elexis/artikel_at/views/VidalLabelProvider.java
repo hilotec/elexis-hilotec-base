@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    M. Descher - Modifications due to performance problems on selector (WiP)
  *    
- *  $Id: VidalLabelProvider.java 5013 2009-01-23 16:31:10Z rgw_ch $
+ *  $Id: VidalLabelProvider.java 6333 2010-05-04 15:02:59Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.views;
 
@@ -73,19 +74,20 @@ public class VidalLabelProvider extends DefaultLabelProvider implements ITableCo
 		return null;
 	}
 	
+	// VERY SLOW FUNCTION 52% Execution Time
 	@Override
 	public String getColumnText(Object element, int columnIndex){
 		if (element instanceof Medikament) {
 			Medikament art = (Medikament) element;
-			StringBuilder ret = new StringBuilder();
-			ret.append(art.getLabel());
+			//StringBuilder ret = new StringBuilder();
+			//ret.append(art.getLabel()); // 30 %			
+			//ret.append("/").append(art.getRemb());
 			
-			ret.append("/").append(art.getRemb());
-			
-			if (art.isLagerartikel()) {
-				ret.append("(").append(Integer.toString(art.getTotalCount())).append(")");
-			}
-			return ret.toString();
+			//if (art.isLagerartikel()) { // 20% Wird nicht angezeigt?!? Wirft nur exceptions
+			//	ret.append("(").append(Integer.toString(art.getTotalCount())).append(")");
+			//}
+			//return ret.toString();
+			return art.getLabel();
 		}
 		return super.getColumnText(element, columnIndex);
 	}
@@ -96,11 +98,12 @@ public class VidalLabelProvider extends DefaultLabelProvider implements ITableCo
 	}
 	
 	public Color getForeground(Object element, int columnIndex){
-		if (element instanceof Artikel) {
-			if (((Artikel) element).isLagerartikel()) {
-				return Desk.getColor(Desk.COL_BLUE);
-			}
-		}
+		// Extremely slow function
+		//if (element instanceof Artikel) {
+		//	if (((Artikel) element).isLagerartikel()) {
+		//		return Desk.getColor(Desk.COL_BLUE);
+		//	}
+		//}
 		return null;
 	}
 	

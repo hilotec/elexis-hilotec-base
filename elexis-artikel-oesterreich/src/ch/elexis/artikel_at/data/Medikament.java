@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    M. Descher - Some changes to adapt to new format
  *    
- *  $Id: Medikament.java 6312 2010-04-30 14:02:51Z marcode79 $
+ *  $Id: Medikament.java 6333 2010-05-04 15:02:59Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
@@ -32,7 +32,7 @@ public class Medikament extends Artikel {
 	static final String JOINTTABLE = "CH_ELEXIS_AUSTRIAMEDI_JOINT";
 	static final String EXTTABLE = "CH_ELEXIS_AUSTRIAMEDI_EXT";
 	static final String ATCTABLE = "CH_ELEXIS_AUSTRIAMEDI_ATC";
-	//public static final String TYPNAME = "Vidal";
+	
 	public static final String TYPNAME = "Vidal2";
 	
 	// Rezeptzeichen und Lagerungshinweise
@@ -108,13 +108,29 @@ public class Medikament extends Artikel {
 	public String getLabel(){
 		// String ret=getInternalName();
 		// if(StringTool.isNothing(ret)){
-		StringBuilder sb = new StringBuilder();
-		sb.append(getInternalName()).append(" (").append(getExt("Quantity")).append(")");
-		String ret = sb.toString();
+		//StringBuilder sb = new StringBuilder();
+		//sb.append(getInternalName()).append(" (").append(getExt("Quantity")).append(")");
+		//String ret = sb.toString();
 		// }
-		return ret;
+		//return ret;
+		
+		// Marco D. @ Herzpraxis
+		// This function gets extremely slow, so lets remedy that by
+		// keeping it simple; is quantity necessary? / Avoid the getInternalName() Exception
+		// During Import Internal Name is set to SName (Quantity)
+		return getInternalName();
 	}
 	
+	/**
+	 * Liefert die freie Verschreibbarkeit der Arzneispezialität.
+	 * 
+	 * 0 = Arzneimittel ist nicht auf Rechnung der Krankenversicherungsträger zugelassen.
+	 * 1 = Als frei verschreibbar gilt nur eine Packungsgröße.
+	 * 2..9 = Als frei verschreibbar gilt das Doppelte, Dreifache, .. der angegebenen Menge.
+	 * Die angegebene Menge entspricht dem Inhalt einer Originalpackung.
+	 * 
+	 * @return String im Bereich [0..9] 
+	 */
 	public String getRemb(){
 		String r = getExt("Remb");
 		if (StringTool.isNothing(r)) {

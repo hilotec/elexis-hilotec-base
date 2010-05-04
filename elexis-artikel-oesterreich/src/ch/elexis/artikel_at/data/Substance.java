@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Substance.java 6308 2010-04-28 10:18:07Z marcode79 $
+ *  $Id: Substance.java 6333 2010-05-04 15:02:59Z marcode79 $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.data;
@@ -26,6 +26,7 @@ import ch.rgw.tools.VersionInfo;
 
 public class Substance extends PersistentObject {
 	static final String TABLENAME = "CH_ELEXIS_AUSTRIAMEDI_SUBSTANCE";
+	public static final String FLD_NAME = "name";
 	
 	static final String VERSION = "0.3.0";
 	static final String createDB =
@@ -46,7 +47,7 @@ public class Substance extends PersistentObject {
 		//addMapping(TABLENAME, "name", "index", "medis=JOINT:product:substance:"
 		//	+ Medikament.JOINTTABLE, "interactions=JOINT:Subst1:Subst2:" + Interaction.TABLENAME);
 		// Changed to:
-		addMapping(TABLENAME, "name", "index", "salt");
+		addMapping(TABLENAME, FLD_NAME, "index", "salt");
 		Substance v = load("VERSION");
 		if (v.state() < PersistentObject.DELETED) {
 			createOrModifyTable(createDB);

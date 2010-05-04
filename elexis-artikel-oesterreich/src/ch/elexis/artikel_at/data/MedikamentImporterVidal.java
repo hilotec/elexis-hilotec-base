@@ -10,7 +10,7 @@
  *    M. Descher - Adaption (Import works; tested on RpInfo_M08_FED.xml)
  *    			   Imports Substances and Medikamente
  *    
- *  $Id: MedikamentImporterVidal.java 6330 2010-05-03 09:18:14Z marcode79 $
+ *  $Id: MedikamentImporterVidal.java 6333 2010-05-04 15:02:59Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
@@ -18,7 +18,9 @@ import java.io.File;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -28,6 +30,8 @@ import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
+import ch.elexis.Hub;
+import ch.elexis.data.Artikel;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.ImporterPage;
@@ -56,19 +60,19 @@ public class MedikamentImporterVidal extends ImporterPage {
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
 		//TODO: Input File Versioning (What if same file is imported twice?)
-		//TODO: Set correct progress monitor
 		//TODO: Test cancellation check / what to do in case of cancellation?
 		//TODO: Versioning of the Vidal files? Was tested on Full Set only!
-		//TODO: AVP and KVP are parsed wrong / check Extinfo Hashset input -> Money
 		//TODO: Validate file before import?
 		
 		String importFilename = results[0];
-		monitor.beginTask("Importiere Vidal", -1);
+		monitor.beginTask("Importiere Vidal", 4);
 		SAXBuilder builder = new SAXBuilder();
 		monitor.subTask("Lese Datei ein");
 		Document doc = builder.build(new File(importFilename));
+		monitor.worked(1);
 		monitor.subTask("Analysiere Datei");
 		Element eRoot = doc.getRootElement();
+		monitor.worked(1);
 		
 		// Substanzen
 		Element eSubstances = eRoot.getChild("RpSubstRefs");
@@ -85,6 +89,7 @@ public class MedikamentImporterVidal extends ImporterPage {
 				counter++;
 			}
 		}
+		monitor.worked(1);
 
 		// Medikamente
 		Element eMedis = eRoot.getChild("RpData"); 
@@ -92,7 +97,8 @@ public class MedikamentImporterVidal extends ImporterPage {
 			monitor.subTask("Lese Medikamente ein");
 			int noOfMedicaments = eMedis.getChildren("RpEntry").size();
 			int counter = 1;
-			NumberFormat nf = NumberFormat.getInstance();
+			NumberFormat nf = NumberFormat.getInstance(Locale.GERMAN);
+			Money.setLocale(Locale.GERMAN);
 			for(Element eMedi:(List<Element>) eMedis.getChildren("RpEntry")){
 				Medikament medi = null;
 				
@@ -101,13 +107,13 @@ public class MedikamentImporterVidal extends ImporterPage {
 				String PhZNr = eMedi.getChildText("PhZNr");
 				log.log("Import of "+SName, Log.TRACE);
 
-				Money AVP = new Money();			
+				Money AVP = new Money();
 				Number AVPDouble = null;
 					try {				
 						AVPDouble = nf.parse(eMedi.getChildText("AVP").trim());
 						double AVPout = AVPDouble.doubleValue()*100;
 						int AVPint = (int) AVPout;
-						AVP.addAmount(AVPint);
+						AVP.addCent(AVPint);
 					} catch (ParseException ex) {
 						AVP.addCent(eMedi.getChildText("AVP").replaceFirst("[,\\.]", ""));
 					}
@@ -117,7 +123,7 @@ public class MedikamentImporterVidal extends ImporterPage {
 						KVPDouble = nf.parse(eMedi.getChildText("KVP").trim());
 						double KVPout = KVPDouble.doubleValue()*100;
 						int KVPint = (int) KVPout;
-						KVP.addAmount(KVPint);
+						KVP.addCent(KVPint);
 					} catch (ParseException ex) {
 						KVP.addCent(eMedi.getChildText("KVP").replaceFirst("[,\\.]", ""));
 					}
@@ -127,11 +133,11 @@ public class MedikamentImporterVidal extends ImporterPage {
 				
 				//TODO: Sure this is <String, Object> and not <String, String> ?
 				Hashtable<String, Object> act = new Hashtable<String, Object>();
-				act.put("PhZNr", PhZNr);
-				act.put("SName", SName);
-				act.put("OName", eMedi.getChildText("OName"));
-				act.put("DoLC", eMedi.getChildText("DoLC"));
-				String Storage = eMedi.getChildText("Storage");
+				act.put("PhZNr", PhZNr);												// Pharmazentralnummer
+				act.put("SName", SName);												// Kurzname
+				act.put("OName", eMedi.getChildText("OName"));							// offizieller Produktname
+				act.put("DoLC", eMedi.getChildText("DoLC"));							// Date of Last Change
+				String Storage = eMedi.getChildText("Storage");	
 					if(Storage != null) act.put("Storage", Storage);
 				act.put("Quantity", eMedi.getChildText("Quantity"));
 				act.put("SUnitDesc", eMedi.getChildText("Unit"));
@@ -164,6 +170,15 @@ public class MedikamentImporterVidal extends ImporterPage {
 				String RemarkText = eMedi.getChild("SSigns").getChildText("RemarkText");
 					if(RemarkText != null) act.put("RemarkText", RemarkText);
 				
+				//Substances: n/SN/SN/SN/... where n = Anzahl elemente, SN = Substanz
+				int noOfSubstances = eMedi.getChild("Substances").getChildren("Substance").size();
+				StringBuilder eMediSubstances = new StringBuilder();	
+				eMediSubstances.append(noOfSubstances);
+				for (Element eSubstance : (List<Element>) eMedi.getChild("Substances").getChildren("Substance")) {
+					eMediSubstances.append("/").append(eSubstance.getValue().trim());
+				}
+				act.put("Substances", eMediSubstances.toString());
+				
 				if (actType.equals(ENTRYTYPE_INSERT)) { // Datensatz ist zum anfuegen markiert
 					medi = new Medikament(SName, ENTRYTYPE_NAME, PhZNr);
 					
@@ -184,19 +199,23 @@ public class MedikamentImporterVidal extends ImporterPage {
 						medi = new Medikament(SName, ENTRYTYPE_NAME, PhZNr);
 					}								
 				}
-				medi.set(new String[] {"Codeclass", "VK_Preis", "EK_Preis"}, codeClass, AVP.getCentsAsString(), KVP.getCentsAsString());
+				StringBuilder sb = new StringBuilder();
+				sb.append(SName).append(" (").append(eMedi.getChildText("Quantity")).append(")").append("/").append(eMedi.getChild("SSigns").getAttributeValue("Remb"));
+				
+				medi.set(new String[] {Artikel.FLD_CODECLASS, Artikel.FLD_VK_PREIS, Artikel.FLD_EK_PREIS, Artikel.EIGENNAME}, 
+						codeClass, AVP.getCentsAsString(), KVP.getCentsAsString(), sb.toString());
 				
 				Hashtable extInfo = medi.getHashtable("ExtInfo");
 				extInfo.putAll(act);
 				medi.setHashtable("ExtInfo", extInfo);
 				
-				counter++;
-				if ((counter & 64) == counter) {
+				
+				if ((counter % 128) == 1) {
 					if(monitor.isCanceled()) return Status.CANCEL_STATUS;
 					System.gc();
 					PersistentObject.clearCache();
 				}
-
+				counter++;
 			}
 		}
 		

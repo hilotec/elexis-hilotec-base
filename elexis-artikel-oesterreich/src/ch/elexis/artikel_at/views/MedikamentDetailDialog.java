@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentDetailDialog.java 2189 2007-03-30 15:51:10Z rgw_ch $
+ *  $Id: MedikamentDetailDialog.java 6333 2010-05-04 15:02:59Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.views;
 
@@ -33,7 +33,7 @@ public class MedikamentDetailDialog extends Dialog {
 	public void create() {
 		super.create();
 		getShell().setText("Medikament-Detail");
-		getShell().setSize(700, SWT.DEFAULT);
+		getShell().setSize(800, SWT.DEFAULT);
 		getShell().pack();
 	}
 
