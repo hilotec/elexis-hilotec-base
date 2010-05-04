@@ -1,4 +1,5 @@
-A proposel to the elexis developers to switch from SVN to git.
+A proposel to the elexis developers to switch from SVN to git. See also "Elexis Forum":http://www.elexis-forum.ch/viewtopic.php?t=264
+
 Not yet adapted!  Please comment on it!
 
 (c) Niklaus Giger, 2010. niklaus.giger@member.fsf.org. started May 4, 2010
@@ -9,9 +10,13 @@ The author has struggled several time in the last 4 years to get a few patches i
 
 Often a patch had to be rewritten 3,4,5 or more times to get accepted. It was hard do conform to contradictory code styles, not forgetting the sign-off, being rebased to yet another branch, etc. One had to used "StackedGit":http://www.procode.org/stgit to split patches in more logical units and rearranging their order.  Even when it took more than a few hours to understand git and how it works with changes, git always reduced the amount of changes to be reviews to the minimum, where human intervention and brain was needed to resolve differenes.
 
-Nowadays git is stable, has nice graphical tools (Tortoise-git for windows user, EGit-plugin for eclipse, qgit and a few more) and can be fun to work with. It encourages to use branches wherever they are appropriate. Git (but also Mercurial and Bazaar) have proven to be reliable tools to which big and small projects can trust their valuable source code. 
+Nowadays git is stable, has nice graphical tools (Tortoise-git for windows user, EGit-plugin for eclipse, qgit and a few more) and can be fun to work with. It encourages to use branches wherever they are appropriate. Git (but also Mercurial and Bazaar) have proven to be reliable tools to which big and small projects can trust their valuable source code.
+
+Here you find a proposition how elexis could organize its workflow to ensure that collaboration is easy, customers can decide themselves whether they want the bleeding edge branch with their long awaited feature or a trusted version with only known bugs in it. For the developers it should be easy to switch rapidly from their pet project to their role as release/branch manager.
 
 h2. Recommended readings
+
+Here you find pointers to some good writings about "SCM":http://en.wikipedia.org/wiki/Source_Code_Management (Software-Configuration-Management) and "DVCS":http://en.wikipedia.org/wiki/Distributed_Version_Control_System (Distributed Version Control System).
 
 "Joel Spolsky":http://www.joelonsoftware.com/items/2010/03/17.html comments about his experiences. The main point is that you need to grasp a different methodology when switching from a centralized SCM to a decentralized one. He had to start thinking about changes and not versions.
 
@@ -30,25 +35,148 @@ h1. What we want to achieve
 
 h2. Tools we evaluated
 
+* Bazaar
+* Mercurial
+* Git
+
 h2. Reasons for choosing one or another
+
+All the tools matched the following criterias:
+# Free Software
+# Stable, proven for large projects
+# Support rename
+# Support branches
+# Has an eclipse plugin
+## Git -> "EGit":http://www.eclipse.org/egit/
+## Bazaar -> "BzrEclipse":http://wiki.bazaar.canonical.com/BzrEclipse
+## Mercurial  -> "Mercurial Eclipse":http://www.vectrace.com/mercurialeclipse/
+# Has a standalone graphical interface
+## Tortoise-Git
+## Tortoise-Hg
+## TortoiseBzr
+# Has a tool to convert SVN repository
+## "git svn":http://www.kernel.org/pub/software/scm/git-core/docs/git-svn.html 
+## "BzrMigration":http://wiki.bazaar.canonical.com/BzrMigration#Subversion%20%28svn%29	
+## "hg convert":http://mercurial.selenic.com/wiki/ConvertExtension#Converting_from_Subversion
+
+There is no tool that has a unique selling point. The  "popularity survey":http://martinfowler.com/bliki/VcsSurvey.html gave git a small advantage.
+
+The poll about "Neues Revision Control / Source Code Management System?":http://elexis-forum.ch/viewtopic.php?t=264 listed the 4 May 2010 at 22:10 the following results
+* Stay with subversion: 1
+* Git (http://git-scm.com): 4
+* Mercurial (http://mercurial.selenic.com): 0
+* Other: 0
+
+h3. Known deficits of EGit (Galileo)
+
+* Compared to the command line it is slow!
+* Does not honour git config --global properties for EMail, etc
+* No support for git-svn
+
+h3. Known deficits of BzrEclipse (Galileo)
+
+None known, as never worked with it.
+
+h3. Known deficits of Mercurial Eclipse (Galileo)
+
+None known, as never worked with it.
 
 h2. The winner is:
 
+To be determined.
+
 h1. Rules
+
+elexis as project wants to offer:
+
+* A stable, regularly updated version for the paying Swiss medical practitioners. This is needed to assure the long-term survival of the project.
+* A somewhat out-dated, easily installed and cost-free version (e.g. 1.4)
+* As many as needed branches for developers to implement new features, explore alternatives or whatever is considered meaningful.
+* A low entry barrier for new developers and/or other contributors (e.g. translations)
+* Pave the way for a workflow where bug tracking, testing and continuos integration give a clear picture of which bugs/problems exist for each branch. A spike of this program can be found at  "http://ngiger.dyndns.org/hudson/":http://ngiger.dyndns.org/hudson/.
+* Make it easy for developers to share patches, even if they are not yet ready for inclusion into a stable branch.
+* Avoid duplication of effort, by making development branches visible in the repository.
 
 h2. Tool independent
 
+* Each developer may maintain as many branches as he believes necessary/meaningful.
+* For performance/size reason the project may decide to give each developer a separate repository.
+* For the main branches (old-stable, stable, upcoming, important-new-ones) there is either one person or a team responsible for pulling in the changes from a developer's branch. This responsability is documented in the top readme file for each branch.
+* Commit often (e.g. every 15 minutes) as soon as you have achieved a clear micro target, e.g. added a testcase and made it pass by changing/adding some code.
+* Once you want to share your achievements, push your changes into your branch in the public visible repository. Let the world know that you made progress by posting it to gerry@weirich.ch.
+* Each push is published via a commit hook to a commit@elexis.somewhere mailing list.
+* Changes/questions can be discussed by sending an email to developer@elexis.somewhere, where each developers/contributor/interested person can get a feeling how active the elexis project is.
+
 h2. Tool specific
+
+Nothing written here until we have not decided upon a tool.
 
 h1. Examples (using git)
 
-h2. Compiler from source
+h2. Initial git setup
+
+git config --global user.name "My Name"
+git config --global user.email "<user@example.com>"
+
+h2. Compile from source
+
+git svn clone /URL of repo/ myWorkspace
+cd myWorkspace
+- Never work on the master branch.
+- Always work on your private branch!
+git checkout master -g myPetProject
+cd BuildElexis/rsc/build
+<edit local.properties>
+ant Windows|macosx|Linux
+cd /to/your/path/to/deploy
+./elexis
 
 h2. Submit a small patch
 
+<add a testcase, preferably a UnitTest>
+git commit --sign-off --message "Found a test for this stupid error" path/to/testCase
+<fix some error>
+git commit --sign-off --message "Fixed this stupid error" path/to/fileFixed
+git format-patch -2
+<will produce a file like 0002-Tound-a-test-for-this-stupid-error.patch>
+<will produce a file like 0001-Fixe-this-stupid-error.patch>
+Send this file to gerry@weirich.ch.
+
 h2. Working on a new feature
 
+- Never work on the master branch.
+- Always work on your private branch!
+git checkout master -g myPetProject
+<edit and polish your project>
+git add myFailingTests
+git add myNewDirectoryWithFilesBeneath
+git commit -m "Some work done"
+git add moreFailingTests
+git add moreFiles
+git commit -m "Good work done"
+git push remote
+Hudson will run Unit/Regressiontest on all supported OS and languages
+
 h2. Release procedure
+
+For each alpha, beta, release candiate, do
+
+* Merge patches from Old-Stable, Stable,etc
+* Hudson will run Unit/Regressiontest on all supported OS and languages
+* Commit and push
+* Merge patches from Project 1
+* Hudson will run Unit/Regressiontest on all supported OS and languages
+* Commit and push
+<...>
+* Merge patches from Project x
+* Hudson will run Unit/Regressiontest on all supported OS and languages
+* Commit and push
+* Run some manual tests
+* Update manual/documentation
+* Commit and push
+* Prepare release info
+* Commit and push
+* announce it to the concerned people
 
 h2. Commit acces to git repository
 
@@ -61,4 +189,5 @@ h2. Commit acces to git repository
 
 h1. References
 
-
+The Koha-project has also some nice drawings and explanations on how to use Git on a small project.
+http://wiki.koha.org/doku.php?id=en:development:git_usage
