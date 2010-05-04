@@ -1,0 +1,64 @@
+A proposel to the elexis developers to switch from SVN to git.
+Not yet adapted!  Please comment on it!
+
+(c) Niklaus Giger, 2010. niklaus.giger@member.fsf.org. started May 4, 2010
+
+h1. Introduction
+
+The author has struggled several time in the last 4 years to get a few patches into the LinuxPPC kernel,  Xenomai and the "U-Boot loader":http://www.denx.de/wiki/U-Boot/WebHome. In the ancient times git was a very fast moving target, graphical interfaces didn't exist and it was easy to get lost in the myriad of commands and options.
+
+Often a patch had to be rewritten 3,4,5 or more times to get accepted. It was hard do conform to contradictory code styles, not forgetting the sign-off, being rebased to yet another branch, etc. One had to used "StackedGit":http://www.procode.org/stgit to split patches in more logical units and rearranging their order.  Even when it took more than a few hours to understand git and how it works with changes, git always reduced the amount of changes to be reviews to the minimum, where human intervention and brain was needed to resolve differenes.
+
+Nowadays git is stable, has nice graphical tools (Tortoise-git for windows user, EGit-plugin for eclipse, qgit and a few more) and can be fun to work with. It encourages to use branches wherever they are appropriate. Git (but also Mercurial and Bazaar) have proven to be reliable tools to which big and small projects can trust their valuable source code. 
+
+h2. Recommended readings
+
+"Joel Spolsky":http://www.joelonsoftware.com/items/2010/03/17.html comments about his experiences. The main point is that you need to grasp a different methodology when switching from a centralized SCM to a decentralized one. He had to start thinking about changes and not versions.
+
+Martin Fowler published two very interesting threads about new trends for SCM. Some thoughts are in "http://martinfowler.com/bliki/VersionControlTools.html":http://martinfowler.com/bliki/VersionControlTools.html. He also published the results of an informal "popularity survey":http://martinfowler.com/bliki/VcsSurvey.html.
+
+Under "http://hginit.com/":http://hginit.com/ you find a nice tutorial about using Mercurial. Don't miss the point about "Subversion Re-education" if you were only using Subversion until now.
+
+Under "http://git-scm.com/documentation":http://git-scm.com/documentation the author liked the article about the "everyday use of git:"http://www.kernel.org/pub/software/scm/git/docs/everyday.html.
+
+Converters from SVN to git should read the "Git - SVN Crash Course":http://git-scm.com/course/svn.html, which gives you the one-to-one correspondance of the most used svn commands.
+
+"Version control with Git":http://oreilly.com/catalog/9780596520137 by Jon Loelinger  is a thorough guide to using Git and the possibilities it offers to customize one's workflow. It is available as PDF or paperback.
+
+
+h1. What we want to achieve
+
+h2. Tools we evaluated
+
+h2. Reasons for choosing one or another
+
+h2. The winner is:
+
+h1. Rules
+
+h2. Tool independent
+
+h2. Tool specific
+
+h1. Examples (using git)
+
+h2. Compiler from source
+
+h2. Submit a small patch
+
+h2. Working on a new feature
+
+h2. Release procedure
+
+h2. Commit acces to git repository
+
+* Submit your public ssh key to "https://sourceforge.net/apps/trac/sourceforge/wiki/SSH%20keys":https://sourceforge.net/apps/trac/sourceforge/wiki/SSH%20keys
+
+* Request write access to the project maintainer Gerry Weirich <gerry@weirich.ch>
+
+* Follow the guidelines outline on "https://sourceforge.net/apps/trac/sourceforge/wiki/Git":https://sourceforge.net/apps/trac/sourceforge/wiki/Git
+
+
+h1. References
+
+
