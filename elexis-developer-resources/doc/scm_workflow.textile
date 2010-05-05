@@ -69,9 +69,14 @@ The poll about "Neues Revision Control / Source Code Management System?":http://
 
 h3. Known deficits of EGit (Galileo)
 
-* Compared to the command line it is slow!
+* Compared to the command line a commit is slow! 
+** Version 0.7.0 took about 45 seconds for fetching the information neede for a commit. 
+** Executing "git repack" at the command line level helped a little bit (bringing it down to about 20 seconds).
+** After a update of JGit/EGit via http://download.eclipse.org/egit/updates-nightly/ to 0.8.0.20100503 this problem went away.
 * Does not honour git config --global properties for EMail, etc
 * No support for git-svn
+* No support for git checkout -b aNewBranch
+* No support for git rebase (must be called on the command line). See "egit":http://wiki.eclipse.org/EGit/User_Guide#Pulling_.28merge_or_rebase.29_new_changes_from_upstream 	
 
 h3. Known deficits of BzrEclipse (Galileo)
 
@@ -100,7 +105,7 @@ elexis as project wants to offer:
 h2. Tool independent
 
 * Each developer may maintain as many branches as he believes necessary/meaningful.
-* For performance/size reason the project may decide to give each developer a separate repository.
+* For performance/size/separation reasons the project may decide to give each developer a separate repository.
 * For the main branches (old-stable, stable, upcoming, important-new-ones) there is either one person or a team responsible for pulling in the changes from a developer's branch. This responsability is documented in the top readme file for each branch.
 * Commit often (e.g. every 15 minutes) as soon as you have achieved a clear micro target, e.g. added a testcase and made it pass by changing/adding some code.
 * Once you want to share your achievements, push your changes into your branch in the public visible repository. Let the world know that you made progress by posting it to gerry@weirich.ch.
@@ -113,51 +118,111 @@ Nothing written here until we have not decided upon a tool.
 
 h1. Examples (using git)
 
-h2. Initial git setup
+Using Eclipse built in installer add a new Software Site "EGit" from "http://download.eclipse.org/egit/updates-nightly/" to get a version as of 0.8.0.20100503 or later.
+
+h2. Initial git setup (command line only)
 
 git config --global user.name "My Name"
 git config --global user.email "<user@example.com>"
 
 h2. Compile from source
 
-git svn clone /URL of repo/ myWorkspace
-cd myWorkspace
+h3. From the command line
+
+@git  git@github.com:ngiger/elexis.git myWorkspace@
+@cd myWorkspace@
 - Never work on the master branch.
 - Always work on your private branch!
-git checkout master -g myPetProject
-cd BuildElexis/rsc/build
+@git checkout master -g myPetProject@
+@cd BuildElexis/rsc/build@
 <edit local.properties>
-ant Windows|macosx|Linux
-cd /to/your/path/to/deploy
-./elexis
+@ant Windows|macosx|Linux@
+@cd /to/your/path/to/deploy@
+@./elexis@
+
+h3. Using EGit
+
+EGit has also a "Users Guide":http://wiki.eclipse.org/EGit/User_Guide.
+
+Create a new workspace. In this example we use /opt/elexis.git
+
+Choose "File..Import..Git..Git Repository".
+!images/egit_import_1.png!
+In the "Source Git Dialog" set the "Connection Protocol" to http. Then set the URI to "http://git@github.com/ngiger/elexis.git".
+!images/egit_import_2.png!
+Press "Next". In the next dialog "Branch Selection" accept the defaults and press "Next" again.
+!images/egit_import_3.png!
+In the next dialog "Local Destination" accept the default and press "Next" again.
+!images/egit_import_4.png!
+Now it will take a few minutes to import the git repository.
+In the "Import Projects" dialog press "Finish" to enable Git Team operations on all imported projects.
+!images/egit_import_5.png!
+Now Eclipse will take some time to refresh and build the whole workspace. (For some reasons unclear to me, I got the following error popping ups).
+!images/egit_import_5.png!
+
 
 h2. Submit a small patch
 
+h3. From the command line
+
 <add a testcase, preferably a UnitTest>
-git commit --sign-off --message "Found a test for this stupid error" path/to/testCase
+@git commit --sign-off --message "Found a test for this stupid error" path/to/testCase@
 <fix some error>
-git commit --sign-off --message "Fixed this stupid error" path/to/fileFixed
-git format-patch -2
+@git commit --sign-off --message "Fixed this stupid error" path/to/fileFixed@
+@git format-patch -2@
 <will produce a file like 0002-Tound-a-test-for-this-stupid-error.patch>
 <will produce a file like 0001-Fixe-this-stupid-error.patch>
 Send this file to gerry@weirich.ch.
 
+h3. Using EGit
+
+Select the "Git Repository Explorer" perspective. Select the top-most element "elexis" and fill in your user.email/name in the Properties view.
+!images/egit_properties_1.png!
+
+Edit your tests and java files to fix the error.
+Select the project(s) where you made changes in the Packages Editor, right click and select "Team..Commit.."
+!images/egit_commit_2.png!
+!images/egit_commit_1.png!
+In the "Commit Changes" dialog, enter some meaningful text int the "Commit message". Select the "Add Signed-off-by" box in order to declare that it was really you who is the author for this patch. Set the Author/Commiter names/e-mail-addresses to the correct values.
+!images/egit_commit_3.png!
+* **TODO:** EGit does not yet support the "Create/Submit a patch". Therefore please follow the steps outlined above unter "From the command line"
+
 h2. Working on a new feature
+
+h3. From the command line
 
 - Never work on the master branch.
 - Always work on your private branch!
-git checkout master -g myPetProject
+@git checkout master -g myPetProject@
 <edit and polish your project>
-git add myFailingTests
-git add myNewDirectoryWithFilesBeneath
-git commit -m "Some work done"
-git add moreFailingTests
-git add moreFiles
-git commit -m "Good work done"
-git push remote
+@git add myFailingTests@
+@git add myNewDirectoryWithFilesBeneath@
+@git commit -m "Some work done"@
+@git add moreFailingTests@
+@git add moreFiles@
+@git commit -m "Good work done"@
+Now it is time to publish your work. 
+Setup your credentials for the repository as described in the "EGit Users Guide":http://wiki.eclipse.org/EGit/User_Guide#Eclipse_SSH_Configuration. You will need to get write access to the repository and as you probably will use git+ssh you have to enter your public SSH-key (found usually at  ~/.ssh/id_rsa.pub key) to github.com/sf.net or whereever the elexis git-repository will live.
+@git push remote@
 Hudson will run Unit/Regressiontest on all supported OS and languages
 
+h3. Using EGit
+
+With release 0.7.1 EGit does not yet offer the possibilty to create branches. Therefore quit Eclipse, go to the command shell and enter @git checkout master -g myPetProject@, then restart Eclipse.
+
+Cloning, creating a branch, editing, committing changes is the same work as for a simple patch, but repeated until you are ready to publish.
+
+Setup your credentials for the repository as described in the "EGit Users Guide":http://wiki.eclipse.org/EGit/User_Guide#Eclipse_SSH_Configuration.
+
+Go to the "Package Explorer" view. Right-click and select "Team..Push To..". The "Push to Another Repository" dialog should appear. In the "URI" field, type "h" and you will be prompted with a list of previous location. Therefore "http://git@github.com/ngiger/elexis.git" should appear. Switch the protocoll to https and enter a valid Username/Password. Then press "Next".
+!images/egit_push_1.png!
+In the "Push Ref Specification" dialog select the source/destination branches (e.g. both are "refs/heads/myPetProject"). Press "Add all branches", then "Next".
+!images/egit_push_2.png!
+If you specified an invalid username/password combination you will get an error.
+
 h2. Release procedure
+
+**TODO:** EGit as of version 0.7.1 does not support many of the commands needed from branching, rebasing. 
 
 For each alpha, beta, release candiate, do
 
@@ -175,8 +240,48 @@ For each alpha, beta, release candiate, do
 * Update manual/documentation
 * Commit and push
 * Prepare release info
+* Tag the release.  "git tag -s Version-2.1.0". This command must be run on the command line.
 * Commit and push
 * announce it to the concerned people
+
+The only operation which needs additional care and explanation is merging branches. It is a field where git shines, but only if you understand its inner workings and if you follow the rules.
+
+**Therefore we document here working on the command line. In any case, be careful and think before you type as it might cost you some work to undo errors while rebasing/tagging/merging! You have be warned!** It probably is a good idea to have a separate workspace/git clone dedicated to release work.
+
+The author will only outline the trivial case (a) everything could be merged without manual intervention and (b) merging failed but by changing a few lines. 
+
+* **(a) Trivial case**
+We assume that the following begin with a clean workspace on a branch called release-branch. E.g
+@git checkout origin/master -b release-branch@
+@git status@
+should return
+@# On branch release-branch@
+@nothing to commit (working directory clean)@
+Merging is done using
+@git merge myPetProject@
+This should produce output like:
+@Updating 7e4a71c..103ccb2@
+@Fast-forward@
+@TestElexis/ch/elexis/tests/OpenVPNTest.java |    5 +++++@
+@TestElexisUI/readme.txt                     |    5 ++++-@
+@2 files changed, 9 insertions(+), 1 deletions(-)@
+
+* **(b) Merge errors are easily resolved changing a few lines of code**
+
+Let us assume that you have a merging conflict with the branch alternate (see the 9.1.3. A Merge with a Conflict in the book by Jon Loelinger)
+@master $ git checkout master@
+@Switched to branch "master"@
+@$ git merge alternate@
+@Auto-merged file@
+@CONFLICT (content): Merge conflict in file@
+@Automatic merge failed; fix conflicts and then commit the result.@
+
+@git status@ will tell you, which files have a conflict. Resolve them manually (look for strings @<<<<<@), then tell git that you resolved the conflict by calling
+@git add path/to/conflictingFile@
+@git commit -m "Resolved conflict"@
+
+In all other cases the release manager has to understand what and why it happened, caring about altering history (which means other people want be able to synchronize correctly with the release repository), etc. Git has commands like reset, cherry-pick, revert to handle almost any kind of conflict resolution.  But figuring which command using which option is sometimes hard to figure out.
+
 
 h2. Commit acces to git repository
 
