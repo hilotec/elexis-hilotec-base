@@ -18,6 +18,7 @@ import org.eclipse.swt.SWT;
 import ch.elexis.artikel_at.data.Medikament;
 import ch.elexis.artikel_at.model.ContentProvider;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.PersistentObjectFactory;
 import ch.elexis.selectors.FieldDescriptor;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.SelectorPanelProvider;
@@ -28,19 +29,22 @@ import ch.elexis.views.codesystems.CodeSelectorFactory;
 public class MedikamentSelector2 extends CodeSelectorFactory {
 	SelectorPanelProvider slp;
 	public static final String SELECT_NAME = "Name";
-	public static final String SELECT_SUBSTANCE = "Substanz";
-	public static final String SELECT_NOTE = "Notiz";
+	//public static final String SELECT_SUBSTANCE = "Substanz";
+	//public static final String SELECT_NOTE = "Notiz";
 	FieldDescriptor<?>[] fields =
 		{
 			new FieldDescriptor<Medikament>(SELECT_NAME),
-			new FieldDescriptor<Medikament>(SELECT_SUBSTANCE),
-			new FieldDescriptor<Medikament>(SELECT_NOTE),
+			//new FieldDescriptor<Medikament>(SELECT_SUBSTANCE),
+			//new FieldDescriptor<Medikament>(SELECT_NOTE),
 		};
 	private CommonViewer cv;
 	
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
 		this.cv = cv;
+		new MedikamentContextMenu((Medikament) new PersistentObjectFactory()
+			.createTemplate(Medikament.class), cv);
+		
 		slp = new SelectorPanelProvider(fields, true);
 		ContentProvider cp = new ContentProvider(this);
 		ViewerConfigurer vc =

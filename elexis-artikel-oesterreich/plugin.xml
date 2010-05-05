@@ -21,7 +21,13 @@
       <view
             class="ch.elexis.artikel_at.views.ZeichenErklaerung"
             id="elexis-artikel-oesterreich.zeichenerklaerung"
-            name="Zeichenerklärung"/>
+            name="Zeichenerklärung">
+      </view>
+      <view
+            class="ch.elexis.artikel_at.views.FachinformationArzneimittel"
+            id="elexis-artikel-oesterreich.fachinformationarzneimittel"
+            name="Fachinformation Arzneimittel">
+      </view>
    </extension>
 
 </plugin>

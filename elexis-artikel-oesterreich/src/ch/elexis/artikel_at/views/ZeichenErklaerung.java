@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: ZeichenErklaerung.java 2185 2007-03-28 14:17:52Z rgw_ch $
+ *  $Id: ZeichenErklaerung.java 6337 2010-05-05 11:07:19Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.views;
 
@@ -28,6 +28,7 @@ public class ZeichenErklaerung extends ViewPart {
 	public void createPartControl(Composite parent) {
 		browser=new Browser(parent,SWT.NONE);
 		browser.setUrl("http://root.ami-info.at/company/ami-info/html/ZEICHEN.HTM");
+		
 	}
 
 	@Override

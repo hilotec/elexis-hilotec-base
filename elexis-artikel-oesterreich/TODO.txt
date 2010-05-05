@@ -1,0 +1,7 @@
+Offene Punkte:
+- Geschwindigkeit Selector -> Caching?
+- Importer an inkrementelle Updates anpassen
+- Adaption Context Menu
+- Browser Caches
+
+-- VOR CHECKIN SVN STRING AMI-INFO RAUSNEHMEN!!!

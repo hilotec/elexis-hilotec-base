@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentDetailBlatt.java 6333 2010-05-04 15:02:59Z marcode79 $
+ *  $Id: MedikamentDetailBlatt.java 6337 2010-05-05 11:07:19Z marcode79 $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.views;
@@ -66,9 +66,8 @@ public class MedikamentDetailBlatt extends Composite {
 	Text fullName;
 	Text tLagerung;
 	Text tUnit;
-	Text tIndikation, tRules, tRemarks;
-	Label tSubstances;
-	Group gRsigns, gSsigns, gSubstances;
+	Label tSubstances, tIndikation, tRule, tRemarks;
+	Group gRsigns, gSsigns, gSubstances, gIndikation, gRule, gRemarks;
 	Button[] bRsigns, bSsigns;
 	Composite texte;
 	Composite parent;
@@ -83,6 +82,7 @@ public class MedikamentDetailBlatt extends Composite {
 		Composite ret=form.getBody();
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
+		//--- FULL Name
 		fullName=SWTHelper.createText(tk, ret, 3, SWT.BORDER|SWT.READ_ONLY|SWT.WRAP);
 		fullName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		//----
@@ -94,7 +94,7 @@ public class MedikamentDetailBlatt extends Composite {
 		tUnit.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tLagerung=tk.createText(g0, "",SWT.BORDER|SWT.READ_ONLY);
 		tLagerung.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		//----
+		//---- PhZNr ...
 		fld=new LabeledInputField.AutoForm(ret,fields);
 		fld.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		fld.setEnabled(false);
@@ -136,17 +136,44 @@ public class MedikamentDetailBlatt extends Composite {
 		gSubstances.setText("Wirkstoffe");
 		gSubstances.setLayout(new GridLayout());
 		gSubstances.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tSubstances=tk.createLabel(gSubstances, "",SWT.READ_ONLY);
+		tSubstances=tk.createLabel(gSubstances, "",SWT.READ_ONLY|SWT.WRAP);
 		tSubstances.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		gSubstances.setEnabled(false);
 		tk.adapt(gSubstances);
-		//----
-		texte=tk.createComposite(ret);
-		texte.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		texte.setLayout(new GridLayout());
-		tIndikation=SWTHelper.createText(tk, texte, 4, SWT.READ_ONLY|SWT.WRAP);
-		tRules=SWTHelper.createText(tk, texte, 4, SWT.READ_ONLY|SWT.WRAP);
-		tRemarks=SWTHelper.createText(tk, texte, 4, SWT.READ_ONLY|SWT.WRAP);
+		//---- Indikation 
+		gIndikation = new Group(ret, SWT.NONE);
+		gIndikation.setText("Indikation");
+		gIndikation.setLayout(new GridLayout());
+		gIndikation.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tIndikation=tk.createLabel(gIndikation, "",SWT.READ_ONLY|SWT.WRAP);
+		tIndikation.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		gIndikation.setEnabled(false);
+		tk.adapt(gIndikation);
+		//---- Erläuterung zu Kassenzeichen
+		gRule = new Group(ret, SWT.NONE);
+		gRule.setText("Erläuterung zu den Kassenzeichen");
+		gRule.setLayout(new GridLayout());
+		gRule.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tRule=tk.createLabel(gRule, "",SWT.READ_ONLY|SWT.WRAP);
+		tRule.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		gRule.setEnabled(false);
+		tk.adapt(gRule);
+		//---- Erläuterung zu Kassenzeichen
+		gRemarks = new Group(ret, SWT.NONE);
+		gRemarks.setText("Hinweistext zur Verschreibung");
+		gRemarks.setLayout(new GridLayout());
+		gRemarks.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tRemarks=tk.createLabel(gRemarks, "",SWT.READ_ONLY|SWT.WRAP);
+		tRemarks.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		gRemarks.setEnabled(false);
+		tk.adapt(gRemarks);
+		//texte=tk.createComposite(ret);
+		//texte.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		//texte.setLayout(new GridLayout());
+		//tIndikation=SWTHelper.createText(tk, texte, 4, SWT.READ_ONLY|SWT.WRAP);
+		//tIndikation.setText("foo");
+		//tRules=SWTHelper.createText(tk, texte, 4, SWT.READ_ONLY|SWT.WRAP);
+		//tRemarks=SWTHelper.createText(tk, texte, 4, SWT.READ_ONLY|SWT.WRAP);
 		Hyperlink hl=tk.createHyperlink(ret, "Zeichenerklärung", SWT.NONE);
 		hl.addHyperlinkListener(new HyperlinkAdapter(){
 
@@ -160,6 +187,19 @@ public class MedikamentDetailBlatt extends Composite {
 				}
 			}
 			
+		});
+		
+		Hyperlink mkml=tk.createHyperlink(ret, "Fachinformation zum Arzneimittel", SWT.NONE);
+		mkml.addHyperlinkListener(new HyperlinkAdapter(){
+			@Override
+			public void linkActivated(HyperlinkEvent e) {
+				IWorkbenchPage qnPage=PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				try {
+					qnPage.showView(FachinformationArzneimittel.ID);
+				} catch (PartInitException e2) {
+					ExHandler.handle(e2);
+				}
+			}
 		});
 
 	}
@@ -207,18 +247,20 @@ public class MedikamentDetailBlatt extends Composite {
 			tSubstances.setText(SubstanceOut.toString());
 		}
 		
-		Point s=getSize();
-		GridData gd=(GridData)texte.getLayoutData();
-		gd.widthHint=s.x;
-		texte.setLayoutData(gd);
+		//Point s=getSize();
+		//GridData gd=(GridData)texte.getLayoutData();
+		//gd.widthHint=s.x;
+		//texte.setLayoutData(gd);
 
 		
 		String t=med.getExt("RuleText");
-		tRules.setText(t==null ? "" : t);
+		tRule.setText(t==null ? "" : t);
 		t=med.getExt("RemarkText");
 		tRemarks.setText(t==null ? "" : t);
 		t=med.getExt("INDText");
 		tIndikation.setText(t==null ? ""  : t);
+		
+		FachinformationArzneimittel.setActiveMedikament(med.getExt("PhZNr"), med.getExt("ZNr"));
 	}
 	
 }
