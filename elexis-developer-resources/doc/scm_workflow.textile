@@ -4,6 +4,8 @@ Not yet adapted!  Please comment on it!
 
 (c) Niklaus Giger, 2010. niklaus.giger@member.fsf.org. started May 4, 2010
 
+{toc}
+
 h1. Introduction
 
 The author has struggled several time in the last 4 years to get a few patches into the LinuxPPC kernel,  Xenomai and the "U-Boot loader":http://www.denx.de/wiki/U-Boot/WebHome. In the ancient times git was a very fast moving target, graphical interfaces didn't exist and it was easy to get lost in the myriad of commands and options.
@@ -291,7 +293,27 @@ h2. Commit acces to git repository
 
 * Follow the guidelines outline on "https://sourceforge.net/apps/trac/sourceforge/wiki/Git":https://sourceforge.net/apps/trac/sourceforge/wiki/Git
 
+h1. Examples using mercurial
 
+(G. Weirich)
+
+To convert an existing Subversion repository to a mercurial repository, I did the following (since the hgSubversion tools seems too complicated...)
+
+* Prepare an Eclipse instance with an empty workspace, e.g. eclipse -data my_hg_workspace
+* Install Mercurial and hgEclipse
+* Export the original Subversion Repository: 
+bc. 
+* svn export https://elexis.svn.sourceforge.net/svnroot/elexis/trunk elexis-base
+* cd elexis-base
+* hg init
+* hg add .
+* hg commit -m"Transfer von Subversion"
+ 
+* In Eclipse choose "import - Mercurial - clone repository using mercurial" and select the freshly created Repository elexis-base. Make sure the checkbox in "Checkout as project(s) in the workspace" is set.
+
+The import will create all contained projects. Repeat above steps for the elexis-addons and archie repositories
+
+Unfortunately this is a one-way conversion. Thus suited only for evaluation purposes.  
 h1. References
 
 The Koha-project has also some nice drawings and explanations on how to use Git on a small project.
