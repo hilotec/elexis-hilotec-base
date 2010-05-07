@@ -24,13 +24,20 @@ Here you find pointers to some good writings about "SCM":http://en.wikipedia.org
 
 Martin Fowler published two very interesting threads about new trends for SCM. Some thoughts are in "http://martinfowler.com/bliki/VersionControlTools.html":http://martinfowler.com/bliki/VersionControlTools.html. He also published the results of an informal "popularity survey":http://martinfowler.com/bliki/VcsSurvey.html.
 
+h3. for mercurial users
+
 Under "http://hginit.com/":http://hginit.com/ you find a nice tutorial about using Mercurial. Don't miss the point about "Subversion Re-education" if you were only using Subversion until now.
+
+See also " Mercurial: The Definitive Guide":http://hgbook.red-bean.com/by Bryan O'Sullivan.
+
+h3. For git-users
 
 Under "http://git-scm.com/documentation":http://git-scm.com/documentation the author liked the article about the "everyday use of git:"http://www.kernel.org/pub/software/scm/git/docs/everyday.html.
 
 Converters from SVN to git should read the "Git - SVN Crash Course":http://git-scm.com/course/svn.html, which gives you the one-to-one correspondance of the most used svn commands.
 
 "Version control with Git":http://oreilly.com/catalog/9780596520137 by Jon Loelinger  is a thorough guide to using Git and the possibilities it offers to customize one's workflow. It is available as PDF or paperback.
+
 
 
 h1. What we want to achieve
@@ -188,6 +195,83 @@ Select the project(s) where you made changes in the Packages Editor, right click
 In the "Commit Changes" dialog, enter some meaningful text int the "Commit message". Select the "Add Signed-off-by" box in order to declare that it was really you who is the author for this patch. Set the Author/Commiter names/e-mail-addresses to the correct values.
 !images/egit_commit_3.png!
 * **TODO:** EGit does not yet support the "Create/Submit a patch". Therefore please follow the steps outlined above unter "From the command line"
+
+h2. Basic SCM test as defined by Gerry
+
+The first setup might be done on a command line. For simplicity we will simple use a local directory RemoteServer as remote repository. (You remember that for a DSCM local and remote repositories are equal?)
+
+# Create new DSCM repository in a local directory
+# Add one(all) existing elexis project (e.g. BuildElexis)
+# Push to a remote server
+
+Now everything should be done using the eclipse and the SCM plugin.
+
+# Start eclipse with a new empty workspace A
+# Clone remote repository into workspace A
+# Start a second eclipse B with a new empty workspace B
+# Clone remote repository  into workspace B
+# Eclipse A: Change a file
+# Eclipse A: Commit the change C1
+# Eclipse A: Push it to the remote server
+# Eclipse B: Pull (You should get change C1)
+# Eclipse A: Add a new project P2 (e.g. elexis-kernel)
+# Eclipse A: Commit new P2 as change C2
+# Eclipse A: Push it to the remote server
+# Eclipse B: Fetch/Rebase (You should get change C2)
+# diff between workspace A and B should empty
+
+The command line-version of this test can be found "here":file:test_gerry.sh
+
+h3. Above example with mercurial/HgEclipse
+
+For the example here we created the empty hg repositories /opt/gerry/A and /opt/gerry/RemoteServer on the command line (@cd  /opt/gerry/A && hg init@) and an empty directory /opt/gerry/B.
+
+Now we start our first instance of eclipse to open our **workspace B** in /opt/gerry/B.
+
+Select the menu "File..Import..".  In the "Import" dialog we choose "Clone Existing Mercurial Repository" and press "Next"
+!images/hg_clone_1.png!
+After choosing the right "remote" repository "/opt/gerry/RemoteServer" in the "Mecurial clone repository wizard". Note that we choose the local directory clone, where our repository will live. Press "Next" to continue.
+!images/hg_clone_2.png!
+By pressing several times "Next" we have a new workspace populated by the project "BuildElexis".
+!images/hg_clone_3.png!
+!images/hg_clone_4.png!
+!images/hg_clone_5.png!
+
+Now we open a second eclipse **workspace A** at /opt/gerry/A. Use "File..Import..Existing projects" to import the "BuildElexis" project.
+
+In the "Package Explorer" view select the "BuildElexis" project. Using the context menu choose "Team..Share..". In the "Connect to an existing Mercurial repository" choose your workspace directory "/opt/gerry/A" and press "Finish".
+
+Add a comment line to the file "options.cmd". In the "Package Explorer" you notice, that the icon for "options.cmd" changed to indicate your modification.
+!images/hg_change_C1_1.png!
+
+In the "Package Explorer" view select the "BuildElexis" project. Using the context menu choose "Team..Commit..". In the "Commit changes to local Mercurial repository" add a decent commit message. Then press "OK".
+!images/hg_change_C1_2.png!
+
+As we are pleased with our work we will pull it to the remote server.
+In the "Package Explorer" view select the "BuildElexis" project. Using the context menu choose "Team..Push..". In the "Push changes to a repository" dialog enter the URL of the RemoteServer. Then press "Next".
+!images/hg_push_1.png!
+In the "Outgoing changesets" dialog you have the possibility to review your changes and think a second time whether they are okay or not. As we are satisfied we press "Finish".
+!images/hg_push_3.png!
+
+Now open again your eclipse **workspace B**. Now we want to fetch the changes we made in **A**.
+In the "Package Explorer" we select the the "BuildElexis" project. In the context menu we choose "Team..Pull..". In the "Pull changes from a repository" assure that that in the "Pull options" the "Update after pull" check-box is activated. Then press "Next".
+!images/hg_pull_1.png!
+In the "Incoming changesets" dialog we have the possiblity to review the changes. To accept them, press "Next".
+!images/hg_pull_2.png!
+
+Now open again your eclipse **workspace A**.
+
+Now we call on the command link @svn export https://elexis.svn.sourceforge.net/svnroot/elexis/trunk/elexis-kernel /opt/gerry/A/elexis-kernel@. Import this new project into your workspace A.
+
+In the package explorer select "elexis-kernel". In the context menu we choose "Team..Commit..". In the "Mercurial Commit" you may use the "Select/Unselect all" button to include all files for commiting.
+!images/hg_import_1.png!
+
+As before we push using "Team..Push.." this change to the RemoteServer.
+
+Now open again your eclipse **workspace B**.
+As before we pull the changes from the remote repository. Remark the comment about the new project.
+MercurialEclipse did not add the new project automatically. Therefore we have to add it manually using "File..Import..General..Existing Projects into Workspace".
+!images/hg_pull_P2_1.png!
 
 h2. Working on a new feature
 
