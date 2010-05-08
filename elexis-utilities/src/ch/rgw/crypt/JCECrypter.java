@@ -230,7 +230,7 @@ public class JCECrypter implements Cryptologist {
 			}
 			dao.flush();
 		} catch (Exception e) {
-			throw new CryptologistException("Ebcryption failed: "
+			throw new CryptologistException("Encryption failed: "
 					+ e.getMessage(),
 					CryptologistException.ERR_ENCRYPTION_FAILURE);
 		}
