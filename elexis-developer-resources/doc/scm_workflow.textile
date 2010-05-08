@@ -30,6 +30,10 @@ Under "http://hginit.com/":http://hginit.com/ you find a nice tutorial about usi
 
 See also " Mercurial: The Definitive Guide":http://hgbook.red-bean.com/by Bryan O'Sullivan.
 
+I found the following remark at "http://www.javaforge.com/project/HGE":http://www.javaforge.com/project/HGE very reassuring:
+**"Is MercurialEclipse ready for production?"**
+"Intland is eating its own dog food. We are using MercurialEclipse to develop all our commercial products, like codeBeamer, codeBeamer MR and Participate. "
+
 h3. For git-users
 
 Under "http://git-scm.com/documentation":http://git-scm.com/documentation the author liked the article about the "everyday use of git:"http://www.kernel.org/pub/software/scm/git/docs/everyday.html.
