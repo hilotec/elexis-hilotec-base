@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - case insenitive add()
  * 
- * $Id: Query.java 6023 2010-01-31 21:51:08Z rgw_ch $
+ * $Id: Query.java 6345 2010-05-09 16:35:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -75,7 +75,7 @@ public class Query<T>{
 			
 		}
 		catch(Throwable ex){
-			log.log("Konnte Methode load auf "+cl.getName()+" nicht auflösen",Log.ERRORS);
+			log.log("Query: Konnte Methode load auf "+cl.getName()+" nicht auflösen",Log.ERRORS);
 			ExHandler.handle(ex);
 		}
 		

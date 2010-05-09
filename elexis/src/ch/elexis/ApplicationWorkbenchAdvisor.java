@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    N. Giger - Bypass Login Dialog for development environments
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 6331 2010-05-03 16:18:08Z rgw_ch $
+ *  $Id: ApplicationWorkbenchAdvisor.java 6345 2010-05-09 16:35:55Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis;
@@ -109,17 +109,20 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	public void postStartup(){
 		Shell shell = getWorkbenchConfigurer().getWorkbench().getActiveWorkbenchWindow().getShell();
 		Log.setAlert(shell);
-		LoginDialog dlg = new LoginDialog(shell);
-		dlg.create();
-		dlg.getShell().setText(Messages.ApplicationWorkbenchAdvisor_7);
-		dlg.setTitle(Messages.ApplicationWorkbenchAdvisor_8);
-		dlg.setMessage(Messages.ApplicationWorkbenchAdvisor_9);
-		
 		String username = System.getProperty("ch.elexis.username");
 		String password = System.getProperty("ch.elexis.password");
-		if (username == null || password == null || !Anwender.login(username, password) == true) {
+		if (username != null && password != null){
 			Log log = Log.get("LoginDialog"); //$NON-NLS-1$
-			log.log("Bypassing LoginDialg username " + username + " " + password, Log.ERRORS);
+			log.log("Bypassing LoginDialg username " + username + " " + password, Log.ERRORS);		
+			if(!Anwender.login(username, password)){
+				log.log("Authentication failed. Exiting",Log.FATALS);
+			}
+		}else{
+			LoginDialog dlg = new LoginDialog(shell);
+			dlg.create();
+			dlg.getShell().setText(Messages.ApplicationWorkbenchAdvisor_7);
+			dlg.setTitle(Messages.ApplicationWorkbenchAdvisor_8);
+			dlg.setMessage(Messages.ApplicationWorkbenchAdvisor_9);
 			dlg.open();
 		}
 		

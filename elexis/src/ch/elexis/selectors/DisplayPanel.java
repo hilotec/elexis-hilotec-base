@@ -29,7 +29,7 @@ import ch.rgw.tools.LimitSizeStack;
  * 
  */
 public class DisplayPanel extends Composite implements ActiveControlListener {
-	boolean bCeaseFire, bExclusive;
+	private boolean bCeaseFire, bExclusive, bAutosave;
 	private LinkedList<ActiveControlListener> listeners = new LinkedList<ActiveControlListener>();
 	private LimitSizeStack<TraceElement> undoList = new LimitSizeStack<TraceElement>(
 			50);
@@ -37,11 +37,13 @@ public class DisplayPanel extends Composite implements ActiveControlListener {
 	private ToolBarManager tActions;
 	private ToolBar tb;
 	private IAction aClr;
+	private PersistentObject actObject;
 
 	public DisplayPanel(Composite parent,
 			FieldDescriptor<? extends PersistentObject>[] fields, int minCols,
 			int maxCols, IAction... actions) {
 		super(parent, SWT.NONE);
+		bAutosave=false;
 		setBackground(parent.getBackground());
 		FormLayout layout = new FormLayout();
 		layout.marginLeft = 0;
@@ -120,6 +122,7 @@ public class DisplayPanel extends Composite implements ActiveControlListener {
 	 *            referenced by ActiveControls of this Panel
 	 */
 	public void setObject(PersistentObject po) {
+		actObject=po;
 		List<ActiveControl> ctls = getControls();
 		for (ActiveControl ac : ctls) {
 			String field = ac.getProperty(ActiveControl.PROP_FIELDNAME);
@@ -128,6 +131,13 @@ public class DisplayPanel extends Composite implements ActiveControlListener {
 		layout();
 	}
 
+	/**
+	 * Set autosave behaviour
+	 * @param doSave if true: changed fields are written back to the database. false: No weiting occurs
+	 */
+	public void setAutosave(boolean doSave){
+		bAutosave=doSave;
+	}
 	/**
 	 * Add a field to the panel
 	 * 
@@ -164,6 +174,12 @@ public class DisplayPanel extends Composite implements ActiveControlListener {
 		}
 		if (!bCeaseFire) {
 			bCeaseFire = true;
+			if(bAutosave){
+				if(actObject!=null){
+					String field = ac.getProperty(ActiveControl.PROP_FIELDNAME);
+					actObject.set(field,ac.getText());
+				}
+			}
 			for (ActiveControlListener lis : listeners) {
 				lis.contentsChanged(ac);
 			}
