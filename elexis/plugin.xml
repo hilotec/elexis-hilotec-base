@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 6289 2010-04-20 14:06:31Z rgw_ch $ 
+<!-- $Id: plugin.xml 6347 2010-05-09 18:57:27Z stschenk $ 
  * Copyright (c) 2005-2020, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -472,6 +472,10 @@
             class="ch.elexis.preferences.ImporterHost"
             id="ch.elexis.preferences.transporters"
             name="%elexis.importerPrefs"/>
+      <page
+      		class="ch.elexis.preferences.Services"
+      		id="ch.elexis.preferences.onlineservices"
+      		name="%elexis.online"/>
       <!--page
             class="ch.elexis.preferences.DokumentKategorie"
             id="ch.elexis.BriefKategorienPrefs"
