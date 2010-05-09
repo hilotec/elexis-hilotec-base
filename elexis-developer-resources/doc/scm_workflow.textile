@@ -32,7 +32,11 @@ See also " Mercurial: The Definitive Guide":http://hgbook.red-bean.com/by Bryan 
 
 I found the following remark at "http://www.javaforge.com/project/HGE":http://www.javaforge.com/project/HGE very reassuring:
 **"Is MercurialEclipse ready for production?"**
-"Intland is eating its own dog food. We are using MercurialEclipse to develop all our commercial products, like codeBeamer, codeBeamer MR and Participate. "
+"Intland is eating its own dog food. We are using MercurialEclipse to develop all our commercial products, like codeBeamer, codeBeamer MR and Participate."
+
+In Switzerland there is commercial support available for mercurial. See "mercurial.ch":http://www.mercurial.ch/. There is found this good comparision by Google between "Git/Mercurial":http://code.google.com/p/support/wiki/DVCSAnalysis
+
+There a over 30 "extensions":http://mercurial.selenic.com/wiki/UsingExtensions for mercurial.
 
 h3. For git-users
 
@@ -97,7 +101,7 @@ None known, as never worked with it.
 
 h3. Known deficits of Mercurial Eclipse (Galileo)
 
-None known, as never worked with it.
+It would be nice if pulling new projects from the repository would add them automatically to the workspace.
 
 h2. The winner is:
 
@@ -413,3 +417,75 @@ h1. References
 
 The Koha-project has also some nice drawings and explanations on how to use Git on a small project.
 http://wiki.koha.org/doku.php?id=en:development:git_usage
+
+h1. (One-Time-Job): Converting the existing SVN-repositories
+
+h2. Converting to git
+
+Install git and it git svn extension.
+@git svn --svn-remote addons clone --quiet --stdlayout --prefix=addons http://elexis-addons.googlecode.com/svn /opt/elexis.git.all.clone@
+@git svn --svn-remote samples clone --quiet --stdlayout --prefix=samples/ http://archie.googlecode.com/svn/archie/ch.unibe.iam.scg.archie.samples /opt/elexis.git.all.clone@
+@git svn --svn-remote archie clone --quiet --stdlayout --prefix=archie/ http://archie.googlecode.com/svn/archie/ch.unibe.iam.scg.archie /opt/elexis.git.all.clone@
+@git svn --svn-remote elexis clone --quiet --stdlayout --prefix=elexis/ file:///opt/elexis.svnsync/mirror-svn/ /opt/elexis.git.all.clone@
+Results:
+* Runtime: Over 2 h
+* Space requirements: about 65 MB in .git directory
+* Quality:  Creates all branches/trunk. But when you checkout elexis/trunk you don't get archie, etc.
+Should probably work with submodules.
+No problems noticed while cloning. Old svn branches do not appear.
+
+
+h2. Converting to mercurial
+
+The hg-extension "hgsubversion":http://bitbucket.org/durin42/hgsubversion must be installed and enabled. Add the following lines to you @~/.hgrc@
+@[extensions]@
+@hgext.convert=@
+@svn=/path/to/python/extension/hgsubversion@
+
+To speedup the conversion we create a local SVN repository.  Use
+@svnsync init file:///opt/elexis.svnsync/mirror-svn/ https://elexis.svn.sourceforge.net/svnroot/elexis@. 
+This command takes a long time to complete,
+To keep it uptodate we call
+@svnsync sync file:///opt/elexis.svnsync/mirror-svn@.
+This command completes usually (when there is not much to update)  in less than one minute.
+
+@hg clone --quiet file:///opt/elexis.svnsync/mirror-svn /opt/elexis.hg.clone@
+
+Results:
+* Runtime:	about 6 minutes
+* Space requirements: about 84 MB in .hg directory
+* Quality:  No problems noticed while cloning. Old svn branches can be listed using @hg branches@
+
+h1. Working with sub-projects coming from different repositories
+
+This is an area where all three DVCS do not yet have a very mature support (especially not using Eclipse). Please have a look at the following pages
+* "git-submodules":https://git.wiki.kernel.org/index.php/GitSubmoduleTutorial
+* "mecurial-subrepos":http://mercurial.selenic.com/wiki/subrepos
+* "bzr-NestedTrees":http://wiki.bazaar-vcs.org/NestedTreesDesign
+
+Merging changes from external repositories is also possible using the mercurial "transplant":http://mercurial.selenic.com/wiki/TransplantExtension extension (with support from HGE).
+
+Seemlessly handling branches, changesets from different repositories in one elexis workspace would provide the following benefits:
+* Easy and accurate reference to a specified plugin/JAR used, e.g. noa
+* Archie, elexis-addon could be migrated later to another DVCS
+* Easy way to create/push-back patches to another project
+* Provider of closed-source plugins (e.g. openoffice 3.x support from medelexis) just add one or more repositories to the open source elexis workspace.
+
+h2. MercurialEclipse (Adding several SVN-repos)
+
+Open the view "Console" and select the "Mercurial Console" as the active one. This will permit you to watch, what the next steps will do. Arrange the workspace to make it look like this: 
+!images/hg_sub_projects_1.png!
+
+Open the view "Mercurial Repositories". Use the context menu in this view and select "Clone repository..". In the "Mercurila clone repository wizard" dialog add the path to the SVN archie repository, then select "Next".
+!images/hg_sub_projects_2.png!
+Now HGE will work a couple of minutes to download everything. Then the dialog "Select working directory revision" lets you select a branch or revision for checkout.
+!images/hg_sub_projects_3.png!
+In the "Import Projects" dialog accept the default to import the projects to the project. Then press "Finish".
+!images/hg_sub_projects_4.png!
+
+**Nested repositories introduce another level of directories!**
+
+* TODO: Howto add all needed repositories into one single Mercurial checkout.
+* TODO: Howto make ant/build process aware of a diffrerent workspace layout.
+* The author did not find a way howto add the needed ".hgsub" using MercurialEclipse.
+* How does Mercurial react if it cannot reach a specified repository (e.g. a closed-source repository is mentioned in an open-source project)?
