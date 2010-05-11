@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 6293 2010-04-25 15:33:09Z niklausgiger $
+<!-- $Id: build.xml 6351 2010-05-11 16:57:41Z niklausgiger $
     (c) 2005-2009 by G. Weirich
 
     This file reflects my personal environment. It is not intended for
@@ -72,7 +72,6 @@
 	<property name="elexis_plugin" value="${dist}/plugins/ch.elexis_${version}" />
 
 	<!-- Pfade für -classpath des Java-compilers festlegen -->
-
 	<path id="eclipseclasses">
 		<pathelement location="${dist}/plugins/" />
 		<pathelement location="${dist}/plugins/ch.elexis_${version}/bin" />
@@ -266,6 +265,12 @@
 			<fileset dir="${dist}/eclipse" />
 		</move>
 	</target>
+
+	<available file="../TestElexisUI/build.xml" property="TestElexisUI.ok" />
+	<target name="TestElexisUI" if="TestElexisUI.ok">
+		<ant antfile="../TestElexisUI/build.xml" inheritrefs="true" />
+	</target>
+
 	<!-- Special building for the Continuos Integration tool Hudson -->
 	<target name="hudson">
 		<delete dir="${dist}" />
@@ -281,22 +286,31 @@
 		<antcall target="doc" />
 		<antcall target="updater" />
 		<ant antfile="rsc/build/plugins.xml" target="main" inheritrefs="true" />
+		<antcall target="TestElexisUI" />
+		<delete file="${dist}/eclipse.ini" />
+		<delete dir="${dist}/configuration" />
+
 		<!-- Gibt im Moment nur Probleme ant antfile="../OOwrapper/build.xml" inheritrefs="true" / -->
 		<copy file="${rsc}/elexis.xpm" tofile="${dist}/elexis.xpm" preservelastmodified="true" />
-		<delete file="${dist}/eclipse.ini" />
-		<concat destfile="${dist}/elexis.ini">-vmargs -Xms64m -Xmx256m</concat>
-		<delete dir="${dist}/configuration" />
-		<concat destfile="${dist}/.eclipseproduct">
-#Product Runtime Configuration File
+		<concat destfile="${dist}/elexis.ini">-vmargs
+-Xms128m
+-Xmx768m
+</concat>
+
+		<concat destfile="${dist}/.eclipseproduct">#Product Runtime Configuration File
 osgi.splashPath=platform:/base/plugins/ch.elexis
 eclipse.product=ch.elexis.ElexisProduct
 osgi.bundles.defaultStartLevel=4
 osgi.bundles=org.eclipse.equinox.transforms.hook,org.eclipse.equinox.common:start,org.eclipse.update.configurator@3:start,org.eclipse.core.runtime@start
 </concat>
-		<!--
-osgi.bundles=org.eclipse.equinox.common:start,org.eclipse.update.configurator:start,org.eclipse.core.runtime@start
+
+		<concat destfile="${dist}/configuration/config.ini">#Product Runtime Configuration File
+eclipse.application=ch.elexis.ElexisApp
 osgi.bundles.defaultStartLevel=4
--->
+eclipse.product=ch.elexis.ElexisProduct
+osgi.splashPath=platform:/base/plugins/ch.elexis
+osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@3:start,org.eclipse.core.runtime@start
+</concat>
 
 		<tar destfile="${output}/elexis-linux-i386-${version}.tgz" basedir="${dest}/Elexis-${version}" longfile="gnu" />
 		<checksum property="eclipse.md5" file="${eclipse.source}" />
