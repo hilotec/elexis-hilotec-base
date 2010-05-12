@@ -1080,7 +1080,7 @@ import org.eclipse.swt.widgets.TypedListener;
 				}
 
 				case SWT.FocusOut : {
-					
+					/*
 					// validate the text input
 					try
 					{
@@ -1103,7 +1103,7 @@ import org.eclipse.swt.widgets.TypedListener;
 					{
 						text.setText(previousDate);
 					}
-
+					 */
 					if ((dp.isFocusControl()) || (arrow.isFocusControl()))
 					{
 						return;

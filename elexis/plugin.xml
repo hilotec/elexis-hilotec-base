@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 6347 2010-05-09 18:57:27Z stschenk $ 
+<!-- $Id: plugin.xml 6352 2010-05-12 17:04:22Z rgw_ch $ 
  * Copyright (c) 2005-2020, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -556,6 +556,11 @@
             class="ch.elexis.preferences.LaborPrefs2"
             id="ch.elexis.laborprefs2"
             name="Laboritems und Gruppen">
+      </page>
+      <page
+            class="ch.elexis.preferences.CDSSGroup"
+            id="ch.elexis.preferences.cdss"
+            name="%elexis.cdss">
       </page>
    </extension>
    <extension

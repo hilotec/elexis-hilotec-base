@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: DateInput.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ * $Id: DateInput.java 6352 2010-05-12 17:04:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -48,7 +48,21 @@ public class DateInput extends Composite {
 	}
 	
 	public TimeTool getDate(){
-		Date d=dpc.getDate();
-		return d==null ? null : new TimeTool(d.getTime());
+		String t=dpc.getText();
+		if(t.length()==0){
+			Date d=dpc.getDate();
+			return d==null ? null : new TimeTool(d.getTime());
+		}else{
+			if(t.matches("[0-9]{4,4}")){
+				t="01.01."+t;
+			}if(t.matches("[0-9][0-9]")){
+				t="01.01.20"+t;
+			}
+			return new TimeTool(t);
+		}
+	}
+	
+	public void setDate(TimeTool date){
+		dpc.setDate(date.getTime());
 	}
 }

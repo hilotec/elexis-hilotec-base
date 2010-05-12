@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Mandanten.java 4743 2008-12-04 21:37:02Z rgw_ch $
+ *  $Id: Mandanten.java 6352 2010-05-12 17:04:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
