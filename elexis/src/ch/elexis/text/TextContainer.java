@@ -10,7 +10,7 @@
  *    A. Kaufmann - better support for IDataAccess
  *    H. Marlovits - introduced SQL Fields
  * 
- *  $Id: TextContainer.java 6240 2010-03-20 12:21:03Z marlovitsh $
+ *  $Id: TextContainer.java 6353 2010-05-13 11:38:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -18,7 +18,6 @@ package ch.elexis.text;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -66,6 +65,7 @@ import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.preferences.PreferenceConstants;
+import ch.elexis.preferences.TextTemplatePreferences;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ScriptUtil;
@@ -76,53 +76,52 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.JdbcLink.Stm;
 
 public class TextContainer {
-	
+
 	private static final String WARNING_SIGN = "??"; //$NON-NLS-1$
 	private static final String EXTENSION_POINT_TEXT = "ch.elexis.Text"; //$NON-NLS-1$
 	private static final String MATCH_SQUARE_BRACKET = "[\\[\\]]"; //$NON-NLS-1$
-	private static final String TEMPLATE_NOT_FOUND_HEADER =
-		Messages.TextContainer_TemplateNotFoundHeader;
-	private static final String TEMPLATE_NOT_FOUND_BODY =
-		Messages.TextContainer_TemplateNotFoundBody;
-	
+	private static final String TEMPLATE_NOT_FOUND_HEADER = Messages.TextContainer_TemplateNotFoundHeader;
+	private static final String TEMPLATE_NOT_FOUND_BODY = Messages.TextContainer_TemplateNotFoundBody;
+
 	private ITextPlugin plugin = null;
 	private static Log log = Log.get("TextContainer"); //$NON-NLS-1$
 	private Shell shell;
-	public static final String MATCH_TEMPLATE =
-		"\\[[-a-zA-ZäöüÄÖÜéàè]+\\.[-a-zA-Z0-9äöüÄÖÜéàè]+\\]"; //$NON-NLS-1$
-	public static final String MATCH_INDIRECT_TEMPLATE =
-		"\\[[-a-zA-ZäöüÄÖÜéàè]+(\\.[-a-zA-Z0-9äöüÄÖÜéàè]+)+\\]"; //$NON-NLS-1$
+	public static final String MATCH_TEMPLATE = "\\[[-a-zA-ZäöüÄÖÜéàè]+\\.[-a-zA-Z0-9äöüÄÖÜéàè]+\\]"; //$NON-NLS-1$
+	public static final String MATCH_INDIRECT_TEMPLATE = "\\[[-a-zA-ZäöüÄÖÜéàè]+(\\.[-a-zA-Z0-9äöüÄÖÜéàè]+)+\\]"; //$NON-NLS-1$
 	public static final String MATCH_GENDERIZE = "\\[[a-zA-Z]+:mwn?:[^\\[]+\\]"; //$NON-NLS-1$
 	//public static final String MATCH_IDATACCESS = "\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?.*\\]"; //$NON-NLS-1$
-	public static final String MATCH_IDATACCESS =
-		"\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?[^\\]]*\\]"; //$NON-NLS-1$
+	public static final String MATCH_IDATACCESS = "\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?[^\\]]*\\]"; //$NON-NLS-1$
 	public static final String MATCH_SQLCLAUSE = "\\[SQL[^:]*:[^\\[]+\\]"; //$NON-NLS-1$
 	public static final String DISALLOWED_SQLEXPRESSIONS = "DROP,UPDATE,CREATE,INSERT"; //$NON-NLS-1$
-	
+
 	/**
-	 * Der Konstruktor sucht nach dem in den Settings definierten Textplugin Wenn er kein Textplugin
-	 * findet, wählt er ein rudimentäres Standardplugin aus (das in der aktuellen Version nur eine
-	 * Fehlermeldung ausgibt)
+	 * Der Konstruktor sucht nach dem in den Settings definierten Textplugin
+	 * Wenn er kein Textplugin findet, wählt er ein rudimentäres Standardplugin
+	 * aus (das in der aktuellen Version nur eine Fehlermeldung ausgibt)
 	 */
-	public TextContainer(){
+	public TextContainer() {
 		if (plugin == null) {
-			String ExtensionToUse = Hub.localCfg.get(PreferenceConstants.P_TEXTMODUL, null);
+			String ExtensionToUse = Hub.localCfg.get(
+					PreferenceConstants.P_TEXTMODUL, null);
 			IExtensionRegistry exr = Platform.getExtensionRegistry();
 			IExtensionPoint exp = exr.getExtensionPoint(EXTENSION_POINT_TEXT);
 			if (exp != null) {
 				IExtension[] extensions = exp.getExtensions();
 				for (IExtension ex : extensions) {
-					IConfigurationElement[] elems = ex.getConfigurationElements();
+					IConfigurationElement[] elems = ex
+							.getConfigurationElements();
 					for (IConfigurationElement el : elems) {
-						if ((ExtensionToUse == null) || el.getAttribute("name").equals( //$NON-NLS-1$
-							ExtensionToUse)) {
+						if ((ExtensionToUse == null)
+								|| el.getAttribute("name").equals( //$NON-NLS-1$
+										ExtensionToUse)) {
 							try {
-								plugin = (ITextPlugin) el.createExecutableExtension("Klasse"); //$NON-NLS-1$
+								plugin = (ITextPlugin) el
+										.createExecutableExtension("Klasse"); //$NON-NLS-1$
 							} catch (/* Core */Exception e) {
 								ExHandler.handle(e);
 							}
 						}
-						
+
 					}
 				}
 			}
@@ -131,35 +130,38 @@ public class TextContainer {
 			plugin = new DefaultTextPlugin();
 		}
 	}
-	
-	public TextContainer(final IViewSite s){
+
+	public TextContainer(final IViewSite s) {
 		this();
 		shell = s.getShell();
 	}
-	
-	public TextContainer(final Shell s){
+
+	public TextContainer(final Shell s) {
 		this();
 		shell = s;
 	}
-	
-	public void setFocus(){
+
+	public void setFocus() {
 		plugin.setFocus();
 	}
-	
-	public ITextPlugin getPlugin(){
+
+	public ITextPlugin getPlugin() {
 		return plugin;
 	}
-	
-	public void dispose(){
+
+	public void dispose() {
 		plugin.dispose();
 	}
-	
+
 	/**
-	 * Ein Dokument aus einer namentlich genannten Vorlage erstellen. Die Vorlage muss entweder dem
-	 * aktuellen Mandanten oder allen Mandanten zugeordet sein.
+	 * Ein Dokument aus einer namentlich genannten Vorlage erstellen. Die
+	 * Vorlage muss entweder dem aktuellen Mandanten oder allen Mandanten
+	 * zugeordet sein.
 	 * 
 	 * @param templatename
-	 *            Name der Vorlage
+	 *            Name der Vorlage. Wenn in der lokalen Konfiguration
+	 *            (Datei-Einstellungen-Textvorlagen) eine Alternative zu diesem
+	 *            Vorlagennamen hinterlegt ist, wird diese genommen
 	 * @param typ
 	 *            Typ des zu erstellenden Dokuments
 	 * @param adressat
@@ -168,9 +170,12 @@ public class TextContainer {
 	 *            TODO
 	 * @return Ein Brief-Objekt oder null bei Fehler
 	 */
-	
-	public Brief createFromTemplateName(final Konsultation kons, final String templatename,
-		final String typ, final Kontakt adressat, final String subject){
+
+	public Brief createFromTemplateName(final Konsultation kons,
+			final String templatenameRaw, final String typ,
+			final Kontakt adressat, final String subject) {
+		String templatename = Hub.localCfg.get(TextTemplatePreferences.BRANCH
+				+ templatenameRaw, templatenameRaw);
 		Query<Brief> qbe = new Query<Brief>(Brief.class);
 		qbe.add(Brief.TYPE, Query.EQUALS, Brief.TEMPLATE);
 		qbe.and();
@@ -182,17 +187,18 @@ public class TextContainer {
 		qbe.endGroup();
 		List<Brief> list = qbe.execute();
 		if ((list == null) || (list.size() == 0)) {
-			SWTHelper.showError(TEMPLATE_NOT_FOUND_HEADER, TEMPLATE_NOT_FOUND_BODY + templatename);
+			SWTHelper.showError(TEMPLATE_NOT_FOUND_HEADER,
+					TEMPLATE_NOT_FOUND_BODY + templatename);
 			return null;
 		}
 		Brief template = list.get(0);
 		return createFromTemplate(kons, template, typ, adressat, subject);
 	}
-	
+
 	/**
-	 * Ein Dokument aus einer Vorlage erstellen. Dabei werden Datensatz-Variablen durch die
-	 * entsprechenden Inhalte ersetzt und geschlechtsspezifische Formulierungen entsprechend
-	 * gewählt.
+	 * Ein Dokument aus einer Vorlage erstellen. Dabei werden
+	 * Datensatz-Variablen durch die entsprechenden Inhalte ersetzt und
+	 * geschlechtsspezifische Formulierungen entsprechend gewählt.
 	 * 
 	 * @param template
 	 *            die Vorlage
@@ -204,11 +210,11 @@ public class TextContainer {
 	 *            der Adressat
 	 * @return true bei Erfolg
 	 */
-	public Brief createFromTemplate(final Konsultation kons, final Brief template,
-		final String typ, Kontakt adressat, final String subject){
+	public Brief createFromTemplate(final Konsultation kons,
+			final Brief template, final String typ, Kontakt adressat,
+			final String subject) {
 		if (adressat == null) {
-			KontaktSelektor ksel =
-				new KontaktSelektor(shell, Kontakt.class,
+			KontaktSelektor ksel = new KontaktSelektor(shell, Kontakt.class,
 					Messages.TextContainer_SelectDestinationHeader,
 					Messages.TextContainer_SelectDestinationBody);
 			if (ksel.open() != Dialog.OK) {
@@ -219,45 +225,49 @@ public class TextContainer {
 		// Konsultation kons=getBehandlung();
 		if (template == null) {
 			if (plugin.createEmptyDocument()) {
-				Brief brief =
-					new Brief(subject == null ? Messages.TextContainer_EmptyDocument : subject,
-							null, Hub.actUser, adressat, kons, typ);
+				Brief brief = new Brief(
+						subject == null ? Messages.TextContainer_EmptyDocument
+								: subject, null, Hub.actUser, adressat, kons,
+						typ);
 				addBriefToKons(brief, kons);
 				return brief;
 			}
 		} else {
 			if (plugin.loadFromByteArray(template.loadBinary(), true) == true) {
-				final Brief ret =
-					new Brief(subject == null ? template.getBetreff() : subject, null, Hub.actUser,
-							adressat, kons, typ);
-				
+				final Brief ret = new Brief(subject == null ? template
+						.getBetreff() : subject, null, Hub.actUser, adressat,
+						kons, typ);
+
 				plugin.findOrReplace(MATCH_TEMPLATE, new ReplaceCallback() {
-					public Object replace(final String in){
-						return replaceFields(ret, in.replaceAll(MATCH_SQUARE_BRACKET,
-							StringTool.leer));
+					public Object replace(final String in) {
+						return replaceFields(ret, in.replaceAll(
+								MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
-				plugin.findOrReplace(MATCH_INDIRECT_TEMPLATE, new ReplaceCallback() {
-					public Object replace(final String in){
-						return replaceIndirectFields(ret, in.replaceAll(MATCH_SQUARE_BRACKET,
-							StringTool.leer));
-					}
-				});
+				plugin.findOrReplace(MATCH_INDIRECT_TEMPLATE,
+						new ReplaceCallback() {
+							public Object replace(final String in) {
+								return replaceIndirectFields(ret, in
+										.replaceAll(MATCH_SQUARE_BRACKET,
+												StringTool.leer));
+							}
+						});
 				plugin.findOrReplace(MATCH_GENDERIZE, new ReplaceCallback() {
-					public String replace(final String in){
-						return genderize(ret, in.replaceAll(MATCH_SQUARE_BRACKET, StringTool.leer));
+					public String replace(final String in) {
+						return genderize(ret, in.replaceAll(
+								MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
 				plugin.findOrReplace(MATCH_IDATACCESS, new ReplaceCallback() {
-					public Object replace(final String in){
-						return ScriptUtil.loadDataFromPlugin(in.replaceAll(MATCH_SQUARE_BRACKET,
-							StringTool.leer));
+					public Object replace(final String in) {
+						return ScriptUtil.loadDataFromPlugin(in.replaceAll(
+								MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
 				plugin.findOrReplace(MATCH_SQLCLAUSE, new ReplaceCallback() {
 					public Object replace(final String in) {
 						return replaceSQLClause(ret, in.replaceAll(
-							MATCH_SQUARE_BRACKET, StringTool.leer));
+								MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
 				saveBrief(ret, typ);
@@ -267,9 +277,9 @@ public class TextContainer {
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private Object replaceFields(final Brief brief, final String b){
+	private Object replaceFields(final Brief brief, final String b) {
 		String[] q = b.split("\\."); //$NON-NLS-1$
 		if (q.length != 2) {
 			log.log(Messages.TextContainer_BadVariableFormat + b, Log.WARNINGS); // Kann
@@ -289,10 +299,10 @@ public class TextContainer {
 		if (o == null) {
 			return WARNING_SIGN + b + WARNING_SIGN;
 		}
-		
+
 		String ret = o.get(q[1]);
 		if ((ret == null) || (ret.startsWith("**"))) { //$NON-NLS-1$
-			
+
 			if (!(o.map(PersistentObject.FLD_EXTINFO).startsWith("**"))) { //$NON-NLS-1$
 				Hashtable ext = o.getHashtable(PersistentObject.FLD_EXTINFO);
 				String an = (String) ext.get(q[1]);
@@ -303,14 +313,14 @@ public class TextContainer {
 			log.log("Nicht erkanntes Feld in " + b, Log.WARNINGS); //$NON-NLS-1$
 			return "???" + b + "???";
 		}
-		
+
 		if (ret.startsWith("<?xml")) { //$NON-NLS-1$
 			Samdas samdas = new Samdas(ret);
 			ret = samdas.getRecordText();
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Resolve an indirect field, e. g. Fall.Kostentrager.Bezeichnung1
 	 * 
@@ -320,21 +330,21 @@ public class TextContainer {
 	 *            the filed to resolv
 	 * @return the resolved value
 	 */
-	private Object replaceIndirectFields(final Brief brief, final String field){
+	private Object replaceIndirectFields(final Brief brief, final String field) {
 		String[] tokens = field.split("\\."); //$NON-NLS-1$
 		if (tokens.length <= 2) {
 			return WARNING_SIGN + field + WARNING_SIGN;
 		}
-		
+
 		String firstToken = tokens[0];
 		String valueToken = tokens[tokens.length - 1];
-		
+
 		// resolve the first field
 		PersistentObject first = resolveObject(brief, firstToken);
 		if (first == null) {
 			return WARNING_SIGN + field + WARNING_SIGN;
 		}
-		
+
 		// resolve intermediate objects
 		PersistentObject current = first;
 		for (int i = 1; i < tokens.length - 1; i++) {
@@ -344,40 +354,41 @@ public class TextContainer {
 			}
 			current = next;
 		}
-		
+
 		// resolve value
-		
+
 		PersistentObject o = current;
-		
+
 		String value = o.get(valueToken);
 		if ((value == null) || (value.startsWith("**"))) { //$NON-NLS-1$
 			log.log("Nicht erkanntes Feld in " + field, Log.WARNINGS); //$NON-NLS-1$
 			return WARNING_SIGN + field + WARNING_SIGN;
 		}
-		
+
 		if (value.startsWith("<?xml")) { //$NON-NLS-1$
 			Samdas samdas = new Samdas(value);
 			value = samdas.getRecordText();
 		}
 		return value;
 	}
-	
-	private PersistentObject resolveIndirectObject(PersistentObject parent, String field){
+
+	private PersistentObject resolveIndirectObject(PersistentObject parent,
+			String field) {
 		if (parent instanceof Fall) {
 			Fall fall = (Fall) parent;
-			
+
 			return fall.getReferencedObject(field);
 		} else {
 			// not yet supported
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Format für Genderize: [Feld:mw:formulierung Mann/formulierung Frau] oder
 	 * [Feld:mwn:mann/frau/neutral]
 	 */
-	private String genderize(final Brief brief, final String in){
+	private String genderize(final Brief brief, final String in) {
 		String[] q = in.split(":"); //$NON-NLS-1$
 		PersistentObject o = resolveObject(brief, q[0]);
 		if (o == null) {
@@ -397,7 +408,7 @@ public class TextContainer {
 		}
 		if (k.istPerson()) {
 			Person p = Person.load(k.getId());
-			
+
 			if (p.get(Person.SEX).equals(Person.MALE)) {
 				if (q[1].startsWith("m")) { //$NON-NLS-1$
 					return g[0];
@@ -416,8 +427,8 @@ public class TextContainer {
 			return g[2];
 		}
 	}
-	
-	private PersistentObject resolveObject(final Brief actBrief, final String k){
+
+	private PersistentObject resolveObject(final Brief actBrief, final String k) {
 		PersistentObject ret = null;
 		if (k.equalsIgnoreCase("Mandant")) { //$NON-NLS-1$
 			ret = Hub.actMandant;
@@ -430,121 +441,132 @@ public class TextContainer {
 				String fqname = "ch.elexis.data." + k; //$NON-NLS-1$
 				ret = ElexisEventDispatcher.getSelected(Class.forName(fqname));
 			} catch (Throwable ex) {
-				log.log(Messages.TextContainer_UnrecognizedFieldType + k, Log.WARNINGS);
+				log.log(Messages.TextContainer_UnrecognizedFieldType + k,
+						Log.WARNINGS);
 				ret = null;
 			}
 		}
 		if (ret == null) {
-			log.log(Messages.TextContainer_UnrecognizedFieldType + k, Log.WARNINGS);
+			log.log(Messages.TextContainer_UnrecognizedFieldType + k,
+					Log.WARNINGS);
 		}
 		return ret;
 	}
-	
-	/* Für eine eingebettete SQL-Abfrage in Office-Dokumenten
-	 * Format des Platzhalters, drei Varianten:
-	 *         [SQL:<Hier kommt die SQL-Abfrage hin>]
-	 *         [SQL|<FeldTrenner>:<Hier kommt die SQL-Abfrage hin>]
-	 *         [SQL|<FeldTrenner>|<DatensatzTrenner>:<Hier kommt die SQL-Abfrage hin>]
+
+	/*
+	 * Für eine eingebettete SQL-Abfrage in Office-Dokumenten Format des
+	 * Platzhalters, drei Varianten: [SQL:<Hier kommt die SQL-Abfrage hin>]
+	 * [SQL|<FeldTrenner>:<Hier kommt die SQL-Abfrage hin>]
+	 * [SQL|<FeldTrenner>|<DatensatzTrenner>:<Hier kommt die SQL-Abfrage hin>]
 	 * 
-	 * Die Feldtrenner können beliebige Strings sein.
-	 * Wird kein FeldTrenner respektive kein DatensatzTrenner angegeben, so werden Defaults verwendet:
-	 *    für FeldTrenner:      Tab     \t
-	 *    für DatensatzTrenner: newLine \n
-	 * In den Trennern können die escape characters \n, \r, \t, \f, \b verwendet werden.
+	 * Die Feldtrenner können beliebige Strings sein. Wird kein FeldTrenner
+	 * respektive kein DatensatzTrenner angegeben, so werden Defaults verwendet:
+	 * für FeldTrenner: Tab \t für DatensatzTrenner: newLine \n In den Trennern
+	 * können die escape characters \n, \r, \t, \f, \b verwendet werden.
 	 * Octal-Escapes werden zur Zeit nicht unterstützt.
 	 * 
-	 * In der SQL-Abfrage können alle üblichen direkten und indirekten Platzhalter verwendet werden,
-	 * zBsp [Patient.ID] oder [Fall.ID], [Mandant.Vorname], [Konsultation.Datum] etc.
-	 * Diese werden zuerst ersetzt. Danach wird die eigentliche Abfrage durchgeführt.
+	 * In der SQL-Abfrage können alle üblichen direkten und indirekten
+	 * Platzhalter verwendet werden, zBsp [Patient.ID] oder [Fall.ID],
+	 * [Mandant.Vorname], [Konsultation.Datum] etc. Diese werden zuerst ersetzt.
+	 * Danach wird die eigentliche Abfrage durchgeführt.
 	 * 
-	 * Um die im Datenbankfeld "ExtInfo" gespeichterten Daten abzurufen, ist die folgende Hilfssyntax als
-	 * Feldabfrage vorgesehen:
-	 *    extinfo:<TabellenName>.<FeldNameInnerhalbDerHashtableAusDerExtinfo>
-	 *    Bsp:  extinfo:KONTAKT:Beruf
-	 *          Das Feld Beruf wurde in den Einstellungen "Zusatzfelder in Patient-Detail-Blatt" definiert
+	 * Um die im Datenbankfeld "ExtInfo" gespeichterten Daten abzurufen, ist die
+	 * folgende Hilfssyntax als Feldabfrage vorgesehen:
+	 * extinfo:<TabellenName>.<FeldNameInnerhalbDerHashtableAusDerExtinfo> Bsp:
+	 * extinfo:KONTAKT:Beruf Das Feld Beruf wurde in den Einstellungen
+	 * "Zusatzfelder in Patient-Detail-Blatt" definiert
 	 * 
 	 * 
-	 * Auf diese Weise lässt sich so ziemlich alles in ziemlich jeglicher Form zur Darstellung extrahieren.
+	 * Auf diese Weise lässt sich so ziemlich alles in ziemlich jeglicher Form
+	 * zur Darstellung extrahieren.
 	 * 
 	 * 
 	 * Beispiele:
 	 * 
-	 * Abfrage:
-	 * [SQL:select chr(9) || prozent || '%', to_char(to_date(datumvon, 'yyyymmdd'), 'dd.mm.yyyy'), '-',
-	 *      to_char(to_date(datumbis, 'yyyymmdd'), 'dd.mm.yyyy') from auf where fallid='[Fall.ID]']
-	 * Resultat:
-	 *  100%   01.01.2010 - 07.01.2010
-	 *   50%   08.01.2010 - 15.01.2010
+	 * Abfrage: [SQL:select chr(9) || prozent || '%', to_char(to_date(datumvon,
+	 * 'yyyymmdd'), 'dd.mm.yyyy'), '-', to_char(to_date(datumbis, 'yyyymmdd'),
+	 * 'dd.mm.yyyy') from auf where fallid='[Fall.ID]'] Resultat: 100%
+	 * 01.01.2010 - 07.01.2010 50% 08.01.2010 - 15.01.2010
 	 * 
-	 * Abfrage>
-	 * [SQL|_\t_|\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n:
-	 *      select extinfo:KONTAKT.Beruf, extinfo:KONTAKT.Ledigname, Bezeichnung1, Bezeichnung2
-	 *      from KONTAKT where id ='[Patient.ID]' or id='1029']
-	 * Resultat:
-	 * Schreiner_   _Bünzli_    _Hagenmüller_  _Margrit
-	 * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-	 * Lehrer_      _Germann_   _Marlovits_    _Annegret
+	 * Abfrage> [SQL|_\t_|\n%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\n: select
+	 * extinfo:KONTAKT.Beruf, extinfo:KONTAKT.Ledigname, Bezeichnung1,
+	 * Bezeichnung2 from KONTAKT where id ='[Patient.ID]' or id='1029']
+	 * Resultat: Schreiner_ _Bünzli_ _Hagenmüller_ _Margrit
+	 * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Lehrer_ _Germann_ _Marlovits_ _Annegret
 	 * 
-	 **********************************************************************************************************/
-	
+	 * 
+	 * **************************************************************************
+	 * ******************************
+	 */
+
 	@SuppressWarnings("unchecked")
 	private Object replaceSQLClause(final Brief brief, final String b) {
 		// get db/statement
-		JdbcLink j=PersistentObject.getConnection();
+		JdbcLink j = PersistentObject.getConnection();
 		Stm stm = j.getStatement();
-		
-		// get fieldDelimiter and rowDelimiter from params, else provide default-values tab and newline
+
+		// get fieldDelimiter and rowDelimiter from params, else provide
+		// default-values tab and newline
 		String sql = b;
 		String sqlPrefix = sql.split(":")[0];
 		String[] sqlPrefixParts = sqlPrefix.split("\\|");
-		String fieldDelimiter = "	";	// default: tab
-		String rowDelimiter   = "\n";	// default: newline
-		if (sqlPrefixParts.length > 1)	{
+		String fieldDelimiter = "	"; // default: tab
+		String rowDelimiter = "\n"; // default: newline
+		if (sqlPrefixParts.length > 1) {
 			fieldDelimiter = sqlPrefixParts[1];
 			// replace escape sequences
 			fieldDelimiter = convertSpecialCharacters(fieldDelimiter);
 		}
-		if (sqlPrefixParts.length > 2)	{
+		if (sqlPrefixParts.length > 2) {
 			rowDelimiter = sqlPrefixParts[2];
 			// replace escape sequences
 			rowDelimiter = convertSpecialCharacters(rowDelimiter);
 		}
-		
-		// strip SQL-selector from start of string -> actual SQL-statement in sql
+
+		// strip SQL-selector from start of string -> actual SQL-statement in
+		// sql
 		sql = sql.substring(sqlPrefix.length() + 1);
-		
+
 		// SAFETY: disallow clauses with DROP, UPDATE, INSERT and CREATE
 		String[] disallowedList = DISALLOWED_SQLEXPRESSIONS.split(",");
-		for (int i = 0; i < disallowedList.length; i++)	{
+		for (int i = 0; i < disallowedList.length; i++) {
 			String disallowed = disallowedList[i];
-			Pattern p = Pattern.compile("[^_^\\w]*" + disallowed + "\\s", Pattern.MULTILINE);
+			Pattern p = Pattern.compile("[^_^\\w]*" + disallowed + "\\s",
+					Pattern.MULTILINE);
 			Matcher m = p.matcher(sql);
-			while (m.find())	{
-				return "??? '" + disallowed + "' ist in SQL-Platzhaltern nicht erlaubt ???";
+			while (m.find()) {
+				return "??? '" + disallowed
+						+ "' ist in SQL-Platzhaltern nicht erlaubt ???";
 			}
 		}
-		
+
 		// preprocess SQL-statement:
 		// enclose extinfo:<tableName>.<hashTableFieldName> with apostrophs
-		//   -> query will just return the string itself without error
+		// -> query will just return the string itself without error
 		// will be processed later
-		Pattern p = Pattern.compile("extinfo:[\\w]+\\.[\\w]+[^\\w]", Pattern.MULTILINE);
+		Pattern p = Pattern.compile("extinfo:[\\w]+\\.[\\w]+[^\\w]",
+				Pattern.MULTILINE);
 		Matcher m = p.matcher(sql);
-		while (m.find())	{
+		while (m.find()) {
 			// get extinfo
 			String part = m.group();
 			// strip the delimiter [^\\w] from the end of the string
 			String stringWithoutDelim = part.substring(0, part.length() - 1);
 			// get the delimiter [^\\w]
 			String delim = part.substring(part.length() - 1);
-			// get the part <tableName> by stripping "extinfo:" and getting then the part left of "."
-			String tablePart = stringWithoutDelim.substring("extinfo:".length()).split("\\.")[0];
-			// replace the found string: don't change original, just append fieldPart to the query
-			// this way, the query returns the contents/the hashtable right after the textSpec
+			// get the part <tableName> by stripping "extinfo:" and getting then
+			// the part left of "."
+			String tablePart = stringWithoutDelim
+					.substring("extinfo:".length()).split("\\.")[0];
+			// replace the found string: don't change original, just append
+			// fieldPart to the query
+			// this way, the query returns the contents/the hashtable right
+			// after the textSpec
 			// will be processed later
-			sql = sql.replace(m.group(), "'" + stringWithoutDelim + "', " + tablePart + ".extinfo" + delim);
+			sql = sql.replace(m.group(), "'" + stringWithoutDelim + "', "
+					+ tablePart + ".extinfo" + delim);
 		}
-		
+
 		// execute query
 		java.sql.Connection conn = j.getConnection();
 		Statement statement = null;
@@ -560,47 +582,56 @@ public class TextContainer {
 			}
 			return "[???" + b + " ***" + e1.getMessage() + "*** ???]";
 		}
-		
-		// create result by reading rows/fields and extracting hashTable fields from extInfo
+
+		// create result by reading rows/fields and extracting hashTable fields
+		// from extInfo
 		String fieldContent = "";
-		String result       = "";
+		String result = "";
 		String lRowDelimiter = "";
 		try {
 			// loop through all rows of resultSet
-			while (rs.next())	{
-				String delimiter    = "";
+			while (rs.next()) {
+				String delimiter = "";
 				result = result + lRowDelimiter;
 				lRowDelimiter = rowDelimiter;
 				// loop through columns
-				for (int i = 1; i < 1000; i++)	{ // hope 1000 cols is enough...
+				for (int i = 1; i < 1000; i++) { // hope 1000 cols is enough...
 					// list all fields, delimiter = tab
-					try	{
+					try {
 						// read field contents
 						fieldContent = rs.getString(i);
-						// if field starts with "extinfo:" then read data from db-field extinfo/hashtable
-						if ((fieldContent.length() >= "extinfo:".length()) && fieldContent.substring(0, "extinfo:".length()).equalsIgnoreCase("extinfo:"))	{
-							String extInfoSpec = fieldContent.substring("extinfo:".length());
+						// if field starts with "extinfo:" then read data from
+						// db-field extinfo/hashtable
+						if ((fieldContent.length() >= "extinfo:".length())
+								&& fieldContent.substring(0,
+										"extinfo:".length()).equalsIgnoreCase(
+										"extinfo:")) {
+							String extInfoSpec = fieldContent
+									.substring("extinfo:".length());
 							String extInfoField = extInfoSpec.split("\\.")[1];
-							// the actual blob contents can be found in the following field - read blob
+							// the actual blob contents can be found in the
+							// following field - read blob
 							i++;
-							byte[] blob =  rs.getBytes(i);
-							if (blob == null)	{
+							byte[] blob = rs.getBytes(i);
+							if (blob == null) {
 								fieldContent = "";
-							} else	{
+							} else {
 								// get hashTable, read field
 								Hashtable<Object, Object> ht = fold(blob);
 								fieldContent = (String) ht.get(extInfoField);
 							}
 						}
 						// append field to result
-						result = result + delimiter + (fieldContent == null ? "" : fieldContent);
+						result = result + delimiter
+								+ (fieldContent == null ? "" : fieldContent);
 						delimiter = fieldDelimiter;
 					} catch (Exception e) {
-						// this just catches the case where i > num of columns...
+						// this just catches the case where i > num of
+						// columns...
 						break;
 					}
 				}
-				//result = result + rowDelimiter;
+				// result = result + rowDelimiter;
 			}
 		} catch (SQLException e) {
 			j.releaseStatement(stm);
@@ -618,15 +649,16 @@ public class TextContainer {
 		}
 		return result;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private Hashtable fold(final byte[] flat){
+	private Hashtable fold(final byte[] flat) {
 		try {
 			ByteArrayInputStream bais = new ByteArrayInputStream(flat);
 			ZipInputStream zis = new ZipInputStream(bais);
 			zis.getNextEntry();
 			ObjectInputStream ois = new ObjectInputStream(zis);
-			Hashtable<Object, Object> res = (Hashtable<Object, Object>) ois.readObject();
+			Hashtable<Object, Object> res = (Hashtable<Object, Object>) ois
+					.readObject();
 			ois.close();
 			bais.close();
 			return res;
@@ -635,8 +667,8 @@ public class TextContainer {
 			return null;
 		}
 	}
-	
-	private String convertSpecialCharacters(final String in)	{
+
+	private String convertSpecialCharacters(final String in) {
 		// \ddd how to replace octal values?
 		String result = in;
 		result = result.replaceAll("\\\\n", "\n");
@@ -646,39 +678,40 @@ public class TextContainer {
 		result = result.replaceAll("\\\\f", "\f");
 		return result;
 	}
-	
-	private void addBriefToKons(final Brief brief, final Konsultation kons){
+
+	private void addBriefToKons(final Brief brief, final Konsultation kons) {
 		if (kons != null) {
 			String label = "\n[ " + brief.getLabel() + " ]"; //$NON-NLS-1$ //$NON-NLS-2$
 			kons.addXRef(XrefExtension.providerID, brief.getId(), -1, label);
 		}
 	}
-	
+
 	/**
-	 * Dokument speichern. Wenn noch kein Adressat vorhanden ist, wird eine Auswahl angeboten.
+	 * Dokument speichern. Wenn noch kein Adressat vorhanden ist, wird eine
+	 * Auswahl angeboten.
 	 * 
 	 * @param brief
 	 *            das zu speichernde Dokument
 	 * @param typ
 	 *            Typ des Dokuments
 	 */
-	public void saveBrief(Brief brief, final String typ){
+	public void saveBrief(Brief brief, final String typ) {
 		if ((brief == null) || (brief.getAdressat() == null)) {
-			KontaktSelektor ksl =
-				new KontaktSelektor(shell, Kontakt.class,
+			KontaktSelektor ksl = new KontaktSelektor(shell, Kontakt.class,
 					Messages.TextContainer_SelectAdresseeHeader,
 					Messages.TextContainer_SelectAdresseeBody);
 			if (ksl.open() == Dialog.OK) {
-				brief =
-					new Brief(Messages.TextContainer_Letter, null, Hub.actUser, (Kontakt) ksl
-						.getSelection(), Konsultation.getAktuelleKons(), typ);
+				brief = new Brief(Messages.TextContainer_Letter, null,
+						Hub.actUser, (Kontakt) ksl.getSelection(), Konsultation
+								.getAktuelleKons(), typ);
 			}
 		}
 		if (brief != null) {
 			if (StringTool.isNothing(brief.getBetreff())) {
-				InputDialog dlg =
-					new InputDialog(shell, Messages.TextContainer_SaveDocumentHeader,
-						Messages.TextContainer_SaveDocumentBody, brief.getBetreff(), null);
+				InputDialog dlg = new InputDialog(shell,
+						Messages.TextContainer_SaveDocumentHeader,
+						Messages.TextContainer_SaveDocumentBody, brief
+								.getBetreff(), null);
 				if (dlg.open() == Dialog.OK) {
 					brief.setBetreff(dlg.getValue());
 				} else {
@@ -693,20 +726,20 @@ public class TextContainer {
 			ElexisEventDispatcher.reload(Brief.class);
 		}
 	}
-	
+
 	/**
-	 * Den Aktuellen Inhalt des Textpuffers als Vorlage speichern. Name und zuzuordender Mandant
-	 * werden per Dialog erfragt.
+	 * Den Aktuellen Inhalt des Textpuffers als Vorlage speichern. Name und
+	 * zuzuordender Mandant werden per Dialog erfragt.
 	 * 
 	 */
-	public void saveTemplate(String name){
+	public void saveTemplate(String name) {
 		SaveTemplateDialog std = new SaveTemplateDialog(shell, name);
 		// InputDialog dlg=new
 		// InputDialog(getViewSite().getShell(),"Vorlage speichern","Geben Sie bitte einen Namen für die Vorlage ein","",null);
 		if (std.open() == Dialog.OK) {
 			String title = std.title;
-			Brief brief =
-				new Brief(title, null, Hub.actUser, std.selectedMand, null, Brief.TEMPLATE);
+			Brief brief = new Brief(title, null, Hub.actUser, std.selectedMand,
+					null, Brief.TEMPLATE);
 			if (std.bSysTemplate) {
 				brief.set(Brief.KONSULTATION_ID, "SYS"); //$NON-NLS-1$
 			}
@@ -718,9 +751,9 @@ public class TextContainer {
 			// text.clear();
 		}
 	}
-	
+
 	/** Einen Brief einlesen */
-	public boolean open(final Brief brief){
+	public boolean open(final Brief brief) {
 		if (brief == null) {
 			log.log(Messages.TextContainer_NullOpen, Log.WARNINGS);
 			return false;
@@ -728,12 +761,13 @@ public class TextContainer {
 		System.out.print(brief.getLabel());
 		byte[] arr = brief.loadBinary();
 		if (arr == null) {
-			log.log(Messages.TextContainer_ErroneousLetter + brief.getLabel(), Log.WARNINGS);
+			log.log(Messages.TextContainer_ErroneousLetter + brief.getLabel(),
+					Log.WARNINGS);
 			return false;
 		}
 		return plugin.loadFromByteArray(arr, false);
 	}
-	
+
 	class SaveTemplateDialog extends TitleAreaDialog {
 		Text name;
 		Combo cMands;
@@ -743,26 +777,28 @@ public class TextContainer {
 		List<Mandant> lMands;
 		Mandant selectedMand;
 		String tmplName;
-		
-		protected SaveTemplateDialog(final Shell parentShell, String templateName){
+
+		protected SaveTemplateDialog(final Shell parentShell,
+				String templateName) {
 			super(parentShell);
 			tmplName = templateName;
 		}
-		
+
 		@Override
-		public void create(){
+		public void create() {
 			super.create();
 			setTitle(Messages.TextContainer_SaveTemplateHeader);
 			setMessage(Messages.TextContainer_SaveTemplateBody);
 			getShell().setText(Messages.TextContainer_Template);
 		}
-		
+
 		@Override
-		protected Control createDialogArea(final Composite parent){
+		protected Control createDialogArea(final Composite parent) {
 			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout());
-			new Label(ret, SWT.NONE).setText(Messages.TextContainer_TemplateName);
+			new Label(ret, SWT.NONE)
+					.setText(Messages.TextContainer_TemplateName);
 			name = new Text(ret, SWT.BORDER);
 			name.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			if (tmplName != null) {
@@ -783,17 +819,17 @@ public class TextContainer {
 			btSysTemplate.setText(Messages.TextContainer_SystemTemplate);
 			return ret;
 		}
-		
+
 		@Override
-		protected void okPressed(){
+		protected void okPressed() {
 			title = name.getText();
 			if (title.length() == 0) {
 				MessageDialog.openError(getShell(),
-					Messages.TextContainer_TemplateTitleEmptyCaption,
-					Messages.TextContainer_TemplateTitleEmptyBody);
+						Messages.TextContainer_TemplateTitleEmptyCaption,
+						Messages.TextContainer_TemplateTitleEmptyBody);
 				return;
 			}
-			
+
 			bSysTemplate = btSysTemplate.getSelection();
 			int i = cMands.getSelectionIndex();
 			if (i != -1) {
@@ -807,7 +843,8 @@ public class TextContainer {
 			qbe.add(Brief.TYPE, Query.EQUALS, Brief.TEMPLATE);
 			if (selectedMand != null) {
 				qbe.startGroup();
-				qbe.add(Brief.DESTINATION_ID, Query.EQUALS, selectedMand.getId());
+				qbe.add(Brief.DESTINATION_ID, Query.EQUALS, selectedMand
+						.getId());
 				qbe.or();
 				qbe.add(Brief.DESTINATION_ID, Query.EQUALS, StringTool.leer);
 				qbe.endGroup();
@@ -818,8 +855,8 @@ public class TextContainer {
 			List<Brief> l = qbe.execute();
 			if (l.size() > 0) {
 				if (MessageDialog.openQuestion(getShell(),
-					Messages.TextContainer_TemplateExistsCaption,
-					Messages.TextContainer_TemplateExistsBody)) {
+						Messages.TextContainer_TemplateExistsCaption,
+						Messages.TextContainer_TemplateExistsBody)) {
 					Brief old = l.get(0);
 					old.delete();
 				} else {
@@ -828,125 +865,139 @@ public class TextContainer {
 			}
 			super.okPressed();
 		}
-		
+
 	}
-	
-	public boolean replace(final String pattern, final ReplaceCallback cb){
+
+	public boolean replace(final String pattern, final ReplaceCallback cb) {
 		return plugin.findOrReplace(pattern, cb);
 	}
-	
-	public boolean replace(final String pattern, final String repl){
+
+	public boolean replace(final String pattern, final String repl) {
 		return plugin.findOrReplace(pattern, new ReplaceCallback() {
-			public String replace(final String in){
+			public String replace(final String in) {
 				return repl;
 			}
 		});
 	}
-	
+
 	static class DefaultTextPlugin implements ITextPlugin {
-		private static final String expl =
-			Messages.TextContainer_NoPlugin1 + Messages.TextContainer_NoPlugin2
-			+ Messages.TextContainer_Noplugin3 + Messages.TextContainer_NoPlugin4
-			+ Messages.TextContainer_NoPLugin5;
-		
-		public Composite createContainer(final Composite parent, final ITextPlugin.ICallback h){
+		private static final String expl = Messages.TextContainer_NoPlugin1
+				+ Messages.TextContainer_NoPlugin2
+				+ Messages.TextContainer_Noplugin3
+				+ Messages.TextContainer_NoPlugin4
+				+ Messages.TextContainer_NoPLugin5;
+
+		public Composite createContainer(final Composite parent,
+				final ITextPlugin.ICallback h) {
 			parent.setLayout(new FillLayout());
 			// Composite ret=new Composite(parent,SWT.BORDER);
 			Form form = Desk.getToolkit().createForm(parent);
 			form.setText(Messages.TextContainer_NoPluginCaption);
 			form.getBody().setLayout(new FillLayout());
-			FormText ft = Desk.getToolkit().createFormText(form.getBody(), false);
+			FormText ft = Desk.getToolkit().createFormText(form.getBody(),
+					false);
 			ft.setText(expl, true, false);
 			return form.getBody();
 		}
-		
-		public void dispose(){}
-		
-		public void showMenu(final boolean b){}
-		
-		public void showToolbar(final boolean b){}
-		
-		public boolean createEmptyDocument(){
+
+		public void dispose() {
+		}
+
+		public void showMenu(final boolean b) {
+		}
+
+		public void showToolbar(final boolean b) {
+		}
+
+		public boolean createEmptyDocument() {
 			return false;
 		}
-		
-		public boolean loadFromByteArray(final byte[] bs, final boolean asTemplate){
+
+		public boolean loadFromByteArray(final byte[] bs,
+				final boolean asTemplate) {
 			return false;
 		}
-		
-		public boolean findOrReplace(final String pattern, final ReplaceCallback cb){
+
+		public boolean findOrReplace(final String pattern,
+				final ReplaceCallback cb) {
 			return false;
 		}
-		
-		public byte[] storeToByteArray(){
+
+		public byte[] storeToByteArray() {
 			return null;
 		}
-		
-		public boolean clear(){
+
+		public boolean clear() {
 			return false;
 		}
-		
+
 		public void setInitializationData(final IConfigurationElement config,
-			final String propertyName, final Object data) throws CoreException{}
-		
-		public boolean loadFromStream(final InputStream is, final boolean asTemplate){
+				final String propertyName, final Object data)
+				throws CoreException {
+		}
+
+		public boolean loadFromStream(final InputStream is,
+				final boolean asTemplate) {
 			// TODO Automatisch erstellter Methoden-Stub
 			return false;
 		}
-		
+
 		public boolean print(final String printer, final String tray,
-			final boolean waitUntilFinished){
+				final boolean waitUntilFinished) {
 			return false;
 		}
-		
-		public boolean insertTable(final String marke, final int props, final String[][] contents,
-			final int[] columnSizes){
+
+		public boolean insertTable(final String marke, final int props,
+				final String[][] contents, final int[] columnSizes) {
 			return false;
 		}
-		
-		public void setFocus(){
-			
+
+		public void setFocus() {
+
 		}
-		
-		public PageFormat getFormat(){
+
+		public PageFormat getFormat() {
 			return PageFormat.USER;
 		}
-		
-		public void setFormat(final PageFormat f){
-			
+
+		public void setFormat(final PageFormat f) {
+
 		}
-		
-		public Object insertTextAt(final int x, final int y, final int w, final int h,
-			final String text, final int adjust){
+
+		public Object insertTextAt(final int x, final int y, final int w,
+				final int h, final String text, final int adjust) {
 			return null;
 		}
-		
-		public boolean setFont(final String name, final int style, final float size){
+
+		public boolean setFont(final String name, final int style,
+				final float size) {
 			return false;
 		}
-		
-		public boolean setStyle(final int style){
+
+		public boolean setStyle(final int style) {
 			return false;
 		}
-		
-		public Object insertText(final String marke, final String text, final int adjust){
+
+		public Object insertText(final String marke, final String text,
+				final int adjust) {
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
-		public Object insertText(final Object pos, final String text, final int adjust){
+
+		public Object insertText(final Object pos, final String text,
+				final int adjust) {
 			// TODO Auto-generated method stub
 			return null;
 		}
-		
-		public String getMimeType(){
+
+		public String getMimeType() {
 			return "text/nothing"; //$NON-NLS-1$
 		}
-		
-		public void setSaveOnFocusLost(final boolean bSave){
+
+		public void setSaveOnFocusLost(final boolean bSave) {
 			// TODO Auto-generated method stub
-			
+
 		}
 	}
-	
+
 }
