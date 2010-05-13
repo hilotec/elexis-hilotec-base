@@ -1,0 +1,4 @@
+h2. using system templates vor document creation
+
+A plugin that wnats to create documents based on templates should extend ch.elexis.documentTemplates, telling the names of its
+tenplates. Elexis will replace them with local variants, if the user wants to.

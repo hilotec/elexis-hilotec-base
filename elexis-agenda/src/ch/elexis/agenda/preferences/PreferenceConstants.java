@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: PreferenceConstants.java 5298 2009-05-14 22:11:19Z rgw_ch $
+ *  $Id: PreferenceConstants.java 6354 2010-05-13 11:47:12Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.agenda.preferences;

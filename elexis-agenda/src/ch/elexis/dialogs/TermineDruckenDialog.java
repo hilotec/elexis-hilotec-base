@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TermineDruckenDialog.java 6226 2010-03-18 14:01:45Z michael_imhof $
+ *  $Id: TermineDruckenDialog.java 6354 2010-05-13 11:47:12Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.dialogs;
 
@@ -51,8 +51,8 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback {
 		
 		text = new TextContainer(getShell());
 		text.getPlugin().createContainer(ret, this);
-		text.getPlugin().showMenu(false);
-		text.getPlugin().showToolbar(false);
+		text.getPlugin().showMenu(true);
+		text.getPlugin().showToolbar(true);
 		text.createFromTemplateName(null, template, Brief.UNKNOWN, Hub.actUser, "Agenda");
 		/*
 		 * String[][] termine=new String[liste.length+1][3]; termine[0]=new String[]{"Datum",
