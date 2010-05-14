@@ -1,7 +1,7 @@
 h1. Elexis developer resources
 
 p(klein). (c) 2010 by G. Weirich
- $Id: developer.textile 6303 2010-04-26 20:25:44Z niklausgiger $	
+ $Id: developer.textile 6355 2010-05-14 04:51:52Z rgw_ch $	
 
 h2. Table of contents
 
@@ -102,9 +102,9 @@ Then, anytime or at least before comitting your code, press CTRL-SHIFT-F to appl
 
 h2. 6) Documentation
 
-It is recommended to document your work. Besides of the javadoc, we recommend that you include at least a 'readme.txt' or 'whatisit.textile' file in the root of your plugin that describes, what it does and what it depends on. If you want to give your users a more elaborate documentation, it should be included in a folder called doc at the root of your plugin. Our continuos integration tool provides you with the "latest Javadoc":http://ngiger.dyndns.org/hudson/job/Elexis-Full/lastSuccessfulBuild/artifact/dokumentation/javadoc/index.html. If you want to check whether the Javadocs for your changes are okay, go to BuildElexis/rsc/build, call ant javadoc and preview your changes "here":file:///../javadoc/index.html.
+It is recommended to document your work. Besides of the javadoc, we recommend that you include at least a 'readme.txt' or 'whatisit.textile' file in the root of your plugin that describes, what it does and what it depends on. If you want to give your users a more elaborate documentation, it should be included in a folder called doc at the root of your plugin, the main file named after the plugin. Our continuos integration tool provides you with the "latest Javadoc":http://ngiger.dyndns.org/hudson/job/Elexis-Full/lastSuccessfulBuild/artifact/dokumentation/javadoc/index.html. If you want to check whether the Javadocs for your changes are okay, go to BuildElexis/rsc/build, call ant javadoc and preview your changes "here":file:///../javadoc/index.html.
 
-For newer documentation, we use the simple Markup-Format 'Textile'. Eclipse's Mylyn plugin can manage these files out of the box and conversion to HTML and FOP/PDF is easy. Besides this, LaTeX is still supported. If you use other formats than Textile or LaTeX, your documentation can not be generated automatically during build.
+For newer documentation, we use the simple Markup-Format 'Textile'. Eclipse's Mylyn plugin can manage these files out of the box and conversion to HTML and FOP/PDF is easy. Besides this, LaTeX is still supported. If you use other formats than Textile or LaTeX, your documentation can not be generated automatically during build. Hence if your plugin is called my-cool-plugin, there should be at least one file called my-cool-plugin.tex or my-cool-plugin.textile in a folder with the name 'doc'. If so, documentation can be generated automatically.
 
 More information on the wikitext editor and the textile format can be found here:
 "http://www.peterfriese.de/getting-started-with-wikitext/":http://www.peterfriese.de/getting-started-with-wikitext/
