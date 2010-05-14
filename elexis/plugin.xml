@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
-<!-- $Id: plugin.xml 6353 2010-05-13 11:38:20Z rgw_ch $ 
+<!-- $Id: plugin.xml 6358 2010-05-14 15:34:43Z rgw_ch $ 
  * Copyright (c) 2005-2020, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -137,12 +137,6 @@
             icon="rsc/labor_view.png"
             id="ch.elexis.Labor"
             name="%elexis.labView"/>
-      <view
-            category="ch.elexis.datenKategorie"
-            class="ch.elexis.views.PatientDetailView"
-            icon="rsc/person.ico"
-            id="ch.elexis.PatDetail"
-            name="%view.name.0"/>
       <view
             category="ch.elexis.konsultationKategorie"
             class="ch.elexis.views.RezepteView"
