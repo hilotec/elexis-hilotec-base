@@ -65,6 +65,37 @@ public class TestAnalytica {
 		assert (true);
 		bot.menu("Datei").menu("Einstellungen").click();
 		SWTbotUtils.displayTreeView(bot);
+		SWTBotShell shell = bot.shell("Preferences");
+		SWTbotUtils.takeScreenshot("Preferences.png", SWTbotUtils.SHELL);		
+		SWTbotUtils.displayTreeView(shell.bot());
+		SWTBot pBot = shell.bot();
+		//pBot.clabelInGroup("Labor Analytica", "Datenaustausch");
+		//logger.info("Datenaustausc Laborimport Analytica 1");
+		SWTbotUtils.takeScreenshot("Preferences_2a.png", SWTbotUtils.SHELL);		
+
+		// pBot.treeWithLabelInGroup("Labor Analytica", "Datenaustausch");
+		// logger.info("Datenaustausc Laborimport Analytica 3");
+		// SWTbotUtils.takeScreenshot("Preferences_2c.png", SWTbotUtils.SHELL);		
+
+		pBot.cTabItemInGroup("Labor Analytica", "Datenaustausch");
+		logger.info("Datenaustausc Laborimport Analytica 2e");
+		SWTbotUtils.takeScreenshot("Preferences_2e.png", SWTbotUtils.SHELL);		
+
+		//pBot.treeWithLabel("Datenaustausch").expandNode("Labor Analytica");
+		//logger.info("Datenaustausc Laborimport Analytica 5");
+		//SWTbotUtils.takeScreenshot("Preferences_2d.png", SWTbotUtils.SHELL);		
+		pBot.cTabItemInGroup("Labor Analytica", "Datenaustausch");
+		logger.info("Datenaustausch Laborimport Analytica 2");
+		SWTbotUtils.takeScreenshot("Preferences_2b.png", SWTbotUtils.SHELL);		
+//		pBot.labelInGroup("Labor Analytica", "Datenaustausch");
+		SWTBotCCombo cbUser = pBot.ccomboBoxWithLabel("FTP Benutzername");
+		logger.info("Benutzername" + cbUser); pBot.sleep(200); 
+		cbUser.setSelection("niklausAsUser");
+		SWTBotCCombo cbPw = pBot.ccomboBoxWithLabel("FTP Passwort");
+		logger.info("password" + cbPw); pBot.sleep(200); 
+		cbUser.setSelection("1234asPw");
+		SWTbotUtils.takeScreenshot("Preferences_3.png", SWTbotUtils.SHELL);		
+		logger.info("testAnalyticaSetup.done");
 		/*
 		 * TODO: Select the correct page and verify that we can to a few things with it SWTBotTree
 		 * tree = bot.treeWithLabel("Datenaustausch"); logger.info("Got Datenaustausch tree");

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *
- * $Id: plugins.xml 6351 2010-05-11 16:57:41Z niklausgiger $
+ * $Id: plugins.xml 6361 2010-05-15 09:02:04Z niklausgiger $
 -->
 <project name="elexis-plugins" default="all" basedir="../../">
 
@@ -150,6 +150,8 @@
 
 		<available file="../Laborimport-Logolab/build.xml" property="logolab.ok" />
 		<antcall target="logolab" inheritrefs="true" />
+		<available file="../ngiger-utilities-comm/build.xml" property="ngigerutilitiescomm.ok" />
+		<antcall target="ngigerutilitiescomm" inheritrefs="true" />
 		<available file="../Laborimport-Analytica/build.xml" property="analytica.ok" />
 		<antcall target="analytica" inheritrefs="true" />
 		<available file="../Laborimport-aerztelabor-badena/build.xml" property="badena.ok" />
@@ -291,12 +293,16 @@
 		<ant antfile="../Laborimport-Logolab/build.xml" inheritrefs="true" />
 	</target>
 
-	<target name="analytica" if="analytica.ok">
-		<ant antfile="../Laborimport-Analytica/build.xml" inheritrefs="true" />
+	<target name="ngigerutilitiescomm" if="ngigerutilitiescomm.ok">
+		<ant antfile="../ngiger-utilities-comm/build.xml" inheritrefs="true" />
 	</target>
 
 	<target name="teamw" if="teamw.ok">
 		<ant antfile="../Laborimport-TeamW/build.xml" inheritrefs="true" />
+	</target>
+
+	<target name="analytica" if="analytica.ok">
+		<ant antfile="../Laborimport-Analytica/build.xml" inheritrefs="true" />
 	</target>
 
 	<target name="iatrixhelp" if="iatrixhelp.ok">

@@ -9,7 +9,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: build.xml 4529 2008-10-02 10:36:14Z rgw_ch $
+ * $Id: build.xml 6361 2010-05-15 09:02:04Z niklausgiger $
 -->
 <project name="laborimport-TeamW" default="all">
 	<!-- modify the following 2 lines -->
@@ -32,7 +32,13 @@
 				<fileset dir="${plugindir}/lib">
 					<include name="*.jar" />
 				</fileset>
-
+				<pathelement location="${dist}/plugins/ch.ngiger.utilities.comm_${version}/" />
+				<fileset dir="${plugindir}">
+					<include name="**.jar" />
+				</fileset>
+				<fileset dir="${dist}/plugins/ch.rgw.utility_${version}/lib">
+					<include name="*.jar" />
+				</fileset>
 			</classpath>
 		</javac>
 		<tstamp />

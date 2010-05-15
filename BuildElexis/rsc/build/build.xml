@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 6351 2010-05-11 16:57:41Z niklausgiger $
+<!-- $Id: build.xml 6361 2010-05-15 09:02:04Z niklausgiger $
     (c) 2005-2009 by G. Weirich
 
     This file reflects my personal environment. It is not intended for
@@ -285,10 +285,13 @@
 		<antcall target="doc_fr" />
 		<antcall target="doc" />
 		<antcall target="updater" />
+		<ant antfile="rsc/build/plugins.xml" target="elexis-pro" inheritrefs="true" />
 		<ant antfile="rsc/build/plugins.xml" target="main" inheritrefs="true" />
-		<antcall target="TestElexisUI" />
+		<ant antfile="../noatext/build.xml" inheritrefs="true" />
+		<!-- antcall target="TestElexisUI" /-->
 		<delete file="${dist}/eclipse.ini" />
 		<delete dir="${dist}/configuration" />
+		<ant antfile="../OOwrapper/build.xml" inheritrefs="true" />
 
 		<!-- Gibt im Moment nur Probleme ant antfile="../OOwrapper/build.xml" inheritrefs="true" / -->
 		<copy file="${rsc}/elexis.xpm" tofile="${dist}/elexis.xpm" preservelastmodified="true" />
