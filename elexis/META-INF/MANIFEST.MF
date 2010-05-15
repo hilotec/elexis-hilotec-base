@@ -73,6 +73,7 @@ Export-Package: .,
    org.eclipse.swt.graphics,
    org.eclipse.swt.widgets,
    org.eclipse.jface.dialogs",
+ ch.elexis.data.cache,
  ch.elexis.dialogs;
   uses:="ch.elexis.actions,
    ch.rgw.tools,
