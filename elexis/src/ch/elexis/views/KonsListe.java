@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: KonsListe.java 5970 2010-01-27 16:43:04Z rgw_ch $
+ * $Id: KonsListe.java 6364 2010-05-15 12:36:21Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -69,7 +69,12 @@ public class KonsListe extends ViewPart implements IActivationListener,
 			Fall.class) {
 
 		public void runInUi(final ElexisEvent ev) {
-			actPatient = ((Fall) ev.getObject()).getPatient();
+			Fall fall = (Fall) ev.getObject();
+			if (fall != null) {
+				actPatient = ((Fall) ev.getObject()).getPatient();
+			}else{
+				actPatient=null;
+			}
 			restart();
 		}
 	};
@@ -147,7 +152,8 @@ public class KonsListe extends ViewPart implements IActivationListener,
 				if (actPatient == null) {
 					return;
 				}
-				Fall fall = (Fall)ElexisEventDispatcher.getSelected(Fall.class);
+				Fall fall = (Fall) ElexisEventDispatcher
+						.getSelected(Fall.class);
 				if (fall == null) {
 
 					Konsultation k = actPatient.getLetzteKons(false);
