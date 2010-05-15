@@ -410,7 +410,7 @@ bc.
  
 * In Eclipse choose "import - Mercurial - clone repository using mercurial" and select the freshly created Repository elexis-base. Make sure the checkbox in "Checkout as project(s) in the workspace" is set.
 
-The import will create all contained projects. Repeat above steps for the elexis-addons and archie repositories
+The import will create all contained projects. Repeat above steps for the elexis-addons and archie repositories.
 
 Unfortunately this is a one-way conversion. Thus suited only for evaluation purposes.  
 h1. References
@@ -419,6 +419,10 @@ The Koha-project has also some nice drawings and explanations on how to use Git 
 http://wiki.koha.org/doku.php?id=en:development:git_usage
 
 h1. (One-Time-Job): Converting the existing SVN-repositories
+
+To have revisions to compare the following commands were executed:
+@ svn export https://elexis.svn.sourceforge.net/svnroot/elexis/branches/1.4 /opt/elexis.1.4@
+@ svn export https://elexis.svn.sourceforge.net/svnroot/elexis/branches/2.0 /opt/elexis.2.0@
 
 h2. Converting to git
 
@@ -433,6 +437,7 @@ Results:
 * Quality:  Creates all branches/trunk. But when you checkout elexis/trunk you don't get archie, etc.
 Should probably work with submodules.
 No problems noticed while cloning. Old svn branches do not appear.
+Compared branches 1.4 and 2.0.0 (as exported by svn) after doing a @git checkout -t 1.4@.
 
 
 h2. Converting to mercurial
@@ -450,6 +455,8 @@ To keep it uptodate we call
 This command completes usually (when there is not much to update)  in less than one minute.
 
 @hg clone --quiet file:///opt/elexis.svnsync/mirror-svn /opt/elexis.hg.clone@
+
+Compared branches 1.4 and 2.0.0 (as exported by svn) after doing a @hg checkout -r 1.4@.
 
 Results:
 * Runtime:	about 6 minutes
