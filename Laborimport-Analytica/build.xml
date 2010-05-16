@@ -19,8 +19,6 @@
 	<!-- the remainder of the file can be copied without modifications for most plugins -->
 	<property name="sourcedir" value="${source}/${pluginname}" />
 	<property name="plugindir" value="${dist}/plugins/${targetdir}" />
-
-
 	<target name="all">
 		<ant antfile="../BuildElexis/rsc/build/build.xml" target="copy_plugin">
 			<property name="copydest" value="${plugindir}" />
@@ -29,20 +27,8 @@
 		<mkdir dir="${plugindir}/lib" />
 		<javac srcdir="${sourcedir}" destdir="${plugindir}" classpathref="eclipseclasses" debug="${debug}" optimize="${optimize}" target="1.5" encoding="UTF-8">
 			<classpath>
-				<path refid="eclipseclasses" />
-				<fileset dir="${plugindir}/lib">
-					<include name="*.jar" />
-				</fileset>
-
 				<pathelement location="${dist}/plugins/ch.ngiger.utilities.comm_${version}" />
-				<fileset dir="${plugindir}">
-					<include name="**.jar" />
-				</fileset>
-				<pathelement location="${dist}/plugins/ch.ngiger.utilities.comm_${version}/lib" />
-				<fileset dir="${plugindir}">
-					<include name="**.jar" />
-				</fileset>
-				<fileset dir="${dist}/plugins/ch.rgw.utility_${version}/lib">
+				<fileset dir="${dist}/plugins/ch.ngiger.utilities.comm_${version}/lib">
 					<include name="*.jar" />
 				</fileset>
 			</classpath>
