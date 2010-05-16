@@ -1,7 +1,7 @@
 h1. Elexis developer resources
 
 p(klein). (c) 2010 by G. Weirich
- $Id: developer.textile 6355 2010-05-14 04:51:52Z rgw_ch $	
+ $Id: developer.textile 6367 2010-05-16 16:41:52Z rgw_ch $	
 
 h2. Table of contents
 
@@ -413,7 +413,7 @@ The following files belong to the plugin elexis-developer-resources:
 
 h1. Testing and integration
 
-Since April 2010 we are starting to use Hudson ("http://hudson-ci.org":http://hudson-ci.org) as a CI ("Continuos Integration":http://en.wikipedia.org/wiki/Continuous_integration) tool. It's output can be found at "http://ngiger.dyndns.org/":http://ngiger.dyndns.org/hudson. It will probably take months if not several years to achieve a good coverage of the whole elexis code base.
+Since April 2010 we are starting to use Hudson ("http://hudson-ci.org":http://hudson-ci.org) as a CI ("Continuos Integration":http://en.wikipedia.org/wiki/Continuous_integration) tool. It's output can be found at "http://ngiger.dyndns.org/hudson":http://ngiger.dyndns.org/hudson. It will probably take months if not several years to achieve a good coverage of the whole elexis code base.
 
 An interesting strategy for developing good code is Test Driven Development ("TDD":http://en.wikipedia.org/wiki/Test-driven_development), where you write first tests, which will fail. Afterwards you fill in the code to make them pass. Writing tests allows you to specify use cases first.
 
