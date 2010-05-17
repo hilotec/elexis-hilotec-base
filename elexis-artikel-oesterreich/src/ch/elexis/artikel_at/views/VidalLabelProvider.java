@@ -9,9 +9,11 @@
  *    G. Weirich - initial implementation
  *    M. Descher - Modifications due to performance problems on selector (WiP)
  *    
- *  $Id: VidalLabelProvider.java 6333 2010-05-04 15:02:59Z marcode79 $
+ *  $Id: VidalLabelProvider.java 6370 2010-05-17 16:51:48Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.views;
+
+import java.util.HashMap;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ITableColorProvider;
@@ -22,17 +24,19 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.artikel_at.data.Medikament;
-import ch.elexis.data.Artikel;
 import ch.elexis.util.Log;
 import ch.elexis.util.viewers.DefaultLabelProvider;
 
 public class VidalLabelProvider extends DefaultLabelProvider implements ITableColorProvider {
+	
+	public static HashMap<String, String> cachingImage;
+	public static HashMap<String, String> cachingLabel;
+	
 	public VidalLabelProvider(){
+		cachingImage = new HashMap<String, String>();
+		cachingLabel = new HashMap<String, String>();
+		
 		if (Desk.getImage("VidalRed") == null) {
-			ImageDescriptor imd = getImageDescriptor("rsc/redbox.ico");
-			if (imd == null) {
-				Hub.log.log("No red icon found", Log.ERRORS);
-			}
 			Desk.getImageRegistry().put("VidalRed", getImageDescriptor("rsc/redbox.ico"));
 		}
 		if (Desk.getImage("VidalGreen") == null) {
@@ -49,45 +53,51 @@ public class VidalLabelProvider extends DefaultLabelProvider implements ITableCo
 	
 	@Override
 	public Image getColumnImage(Object element, int columnIndex){
-		if (element instanceof Medikament) {
-			String box = ((Medikament) element).get("Codeclass");
-			// Hub.log.log("Box: *"+box+"*", Log.INFOS);
-			if (box != null) {
-				if (box.startsWith("R")) {
-					// Hub.log.log("Red", Log.INFOS);
-					Image img = Desk.getImage("VidalRed");
-					if (img == null) {
-						Hub.log.log("Image is null", Log.ERRORS);
-					}
-					// Hub.log.log(img.toString(), Log.INFOS);
-				} else if (box.startsWith("G")) {
-					return Desk.getImage("VidalGreen");
-				} else if (box.startsWith("Y")) {
-					return Desk.getImage("VidalYellow");
-				}
-			} else {
-				Hub.log.log("Box is Null!", Log.ERRORS);
+		String box;
+		
+		if(!(element instanceof Medikament)) {
+			return Desk.getImage(Desk.IMG_ACHTUNG);
+		}
+		Medikament art = (Medikament) element;
+		String art_id = art.getId();
+		
+		if(cachingImage.containsKey(art_id)) { box = cachingImage.get(art_id); }
+		else {
+			art = (Medikament) element;
+			box = art.get("Codeclass");
+			cachingImage.put(art_id, box);
+		}
+		
+		if (box != null) {
+			if (box.startsWith("N")) {
+				return null;
+			} else if (box.startsWith("R")) {
+				return Desk.getImage("VidalRed");
+			} else if (box.startsWith("G")) {
+				return Desk.getImage("VidalGreen");
+			} else if (box.startsWith("Y")) {
+				return Desk.getImage("VidalYellow");
 			}
 		} else {
-			return Desk.getImage(Desk.IMG_ACHTUNG);
+			Hub.log.log("Box is Null!", Log.ERRORS);
 		}
 		return null;
 	}
 	
-	// VERY SLOW FUNCTION 52% Execution Time
 	@Override
 	public String getColumnText(Object element, int columnIndex){
+		
 		if (element instanceof Medikament) {
 			Medikament art = (Medikament) element;
-			//StringBuilder ret = new StringBuilder();
-			//ret.append(art.getLabel()); // 30 %			
-			//ret.append("/").append(art.getRemb());
+			String art_id = art.getId();
+			String label;
 			
-			//if (art.isLagerartikel()) { // 20% Wird nicht angezeigt?!? Wirft nur exceptions
-			//	ret.append("(").append(Integer.toString(art.getTotalCount())).append(")");
-			//}
-			//return ret.toString();
-			return art.getLabel();
+			if(cachingLabel.containsKey(art_id)) { label = cachingLabel.get(art_id); }
+			else {
+				label =  art.getLabel();
+				cachingLabel.put(art_id, label);
+			}
+			return label;
 		}
 		return super.getColumnText(element, columnIndex);
 	}
