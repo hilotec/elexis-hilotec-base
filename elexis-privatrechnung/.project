@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>elexis-privatrechnung</name>
-	<comment></comment>
+	<name>elexis-privatrechnung-alt</name>
+	<comment>Erste Version des Privatrechnung Plugins</comment>
 	<projects>
 	</projects>
 	<buildSpec>
@@ -27,7 +27,6 @@
 		</buildCommand>
 	</buildSpec>
 	<natures>
-		<nature>net.sourceforge.texlipse.builder.TexlipseNature</nature>
 		<nature>org.eclipse.pde.PluginNature</nature>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
