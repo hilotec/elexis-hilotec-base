@@ -53,7 +53,7 @@ This is a bit tricky first, so please read carefully:
 
 # Right-click in the project explorer, select new->project...
 # Select "Plug In Project"
-# Now, this is important, *uncheck* "Use default location" and instead, select a subdirectory of your mercurial repository as location for the project. You'll want to name the subdirectory just as your project is called. *NOTE*: If you do not want to share the new project, or if you want to share it to a different repository, say, with subversion, you can just keep the default location. Elexis can keep sources from different repositories in the same workspace.
+# Now, this is important, *uncheck* "Use default location" and instead, select a subdirectory of your mercurial repository as location for the project. You'll want to name the subdirectory just as your project is called. *NOTE*: If you do not want to share the new project, or if you want to share it to a different repository, say, with subversion, you can just keep the default location. Elexis can keep sources from different repositories in the same workspace. !images/hgeclipse-3.png!
 # Click Next and proceed as you would with earlier projects.
 # After clicking "finish" wait a minute or so and you'll see that the new Plugin project is added magically to your mercurial repository. Right.Click the newly created project and select Team->Commit to write a first import of the new Project into the local mercurial repository clone. (Again, wait a minute to see the file decorations disappear as eclipse collects the diff information to the repository)
 
