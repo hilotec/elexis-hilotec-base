@@ -1,5 +1,7 @@
 h1. How to fetch the elexis sources from the mercurial repository
 
+{toc}
+
 h2. I Prerequisites
 
 * Eclipse 3.5 or newer
@@ -58,3 +60,29 @@ This is a bit tricky first, so please read carefully:
 # After clicking "finish" wait a minute or so and you'll see that the new Plugin project is added magically to your mercurial repository. Right.Click the newly created project and select Team->Commit to write a first import of the new Project into the local mercurial repository clone. (Again, wait a minute to see the file decorations disappear as eclipse collects the diff information to the repository)
 
 If you are not used to DSCM's: Mind the word "clone" above: All changes go only to your local clone. You'll need to *push* them to the master (or send the master  maintainer a *pull* request).
+
+h2. IV Advanced concepts
+
+h3. IVa Shared repository
+
+If you are a group working on the same subset of elexis, or if you are working with different Computers,  having a separate repository clone on every computer will probably not suffice to fit your needs. You'll need some "regional" master repository to collect commits from distributed local repositories. This regional master synchronizes itself with the global master.
+
+Fortunately, this is quite easy with mercurial. You need only a pc with active internet connection or a repository on a public server (such as bitbucket.org) . If you use a private server, just install mercurial there (eclipse is not required) and create a local clone with
+
+_hg clone http://elexis.hg.sourceforge.net/hgroot/elexis/elexis elexis-base_
+
+then, serve this clone with
+
+_hg serve_
+
+And everybody from your team with access to that server (e.g. via internet or via VPN) can clone it with
+
+_hg clone http://<your-url>/your-repository:8000_
+
+(You'll need some configuration to allow PUSHing, however)  
+
+h2. V Further reading
+
+"Mercurial: The definitive guide":http://hgbook.red-bean.com/
+"The Mercurial website":http://mercurial.selenic.com/
+"Short tutorial":http://hginit.com/  
