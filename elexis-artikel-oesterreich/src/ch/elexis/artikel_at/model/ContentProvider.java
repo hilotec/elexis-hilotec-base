@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ContentProvider.java 5062 2009-01-28 18:46:42Z rgw_ch $
+ * $Id: ContentProvider.java 6380 2010-05-18 11:57:21Z marcode79 $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.model;
@@ -42,17 +42,22 @@ public class ContentProvider implements CommonContentProvider {
 		msl.getConfigurer().getControlFieldProvider().removeChangeListener(this);
 	}
 	
-	public Object[] getElements(Object inputElement){
+	public Object[] getElements(Object inputElement){	
 		SelectorPanelProvider slp =
 			(SelectorPanelProvider) msl.getConfigurer().getControlFieldProvider();
 		SelectorPanel panel = slp.getPanel();
 		HashMap<String, String> values = panel.getValues();
-		qMedi.clear();
 		String m = values.get(msl.SELECT_NAME);
-		if (m.length() > 1) {
+		qMedi.clear();
+		
+		if (m.length() > 0) {
 			qMedi.add("Name", "LIKE", m + "%");
 		}
+		qMedi.orderBy(false, "Name");
 		List<Medikament> list = qMedi.execute();
+		for (Medikament medikament : list) {
+			Medikament.load(medikament.getId());
+		}	
 		return list.toArray();
 	}
 	

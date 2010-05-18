@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Artikel Österreich
 Bundle-SymbolicName: ch.elexis.artikel_at;singleton:=true
-Bundle-Version: 0.3.3
+Bundle-Version: 0.3.5
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Require-Bundle: ch.rgw.utility,
@@ -12,3 +12,5 @@ Require-Bundle: ch.rgw.utility,
  org.eclipse.ui.forms
 Bundle-ClassPath: bin/,
  .
+Bundle-Activator: ch.elexis.artikel_at.Activator
+Bundle-ActivationPolicy: lazy

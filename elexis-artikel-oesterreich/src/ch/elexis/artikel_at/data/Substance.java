@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Substance.java 6333 2010-05-04 15:02:59Z marcode79 $
+ *  $Id: Substance.java 6380 2010-05-18 11:57:21Z marcode79 $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.data;
@@ -35,7 +35,8 @@ public class Substance extends PersistentObject {
 			+ "lastupdate BIGINT,"
 			+ "deleted	CHAR(1) default '0',"
 			+ "salt		VARCHAR(30)," 			  // Bezeichnung des Salzes (OPTIONAL)
-			+ "name		VARCHAR(254));" 		  // Bezeichnung des Wirkstoffs
+			+ "name		VARCHAR(254)"			  // Bezeichnung des Wirkstoffs
+			+ ");" 		  
 			+ "CREATE INDEX CAUSTRIAS1 ON " + TABLENAME + " (index);"
 			+ "CREATE INDEX CAUSTRIAS2 ON " + TABLENAME + " (name);" 
 			+ "INSERT INTO " + TABLENAME

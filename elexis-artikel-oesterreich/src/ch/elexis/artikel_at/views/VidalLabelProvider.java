@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    M. Descher - Modifications due to performance problems on selector (WiP)
  *    
- *  $Id: VidalLabelProvider.java 6370 2010-05-17 16:51:48Z marcode79 $
+ *  $Id: VidalLabelProvider.java 6380 2010-05-18 11:57:21Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.views;
 
@@ -33,8 +33,8 @@ public class VidalLabelProvider extends DefaultLabelProvider implements ITableCo
 	public static HashMap<String, String> cachingLabel;
 	
 	public VidalLabelProvider(){
-		cachingImage = new HashMap<String, String>();
-		cachingLabel = new HashMap<String, String>();
+		if(cachingImage == null) cachingImage = new HashMap<String, String>();
+		if(cachingLabel == null) cachingLabel = new HashMap<String, String>();
 		
 		if (Desk.getImage("VidalRed") == null) {
 			Desk.getImageRegistry().put("VidalRed", getImageDescriptor("rsc/redbox.ico"));

@@ -3,5 +3,7 @@ Offene Punkte:
 - Importer an inkrementelle Updates anpassen
 - Adaption Context Menu
 - Browser Caches
+- Generate Activator to preset the Caches in VidalLabelProvider
+- Create script if Medikamente tables do not yet exist
 
 -- VOR CHECKIN SVN STRING AMI-INFO RAUSNEHMEN!!!
