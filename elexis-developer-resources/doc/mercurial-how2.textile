@@ -39,11 +39,11 @@ h2. III Repository operations
 
 h3. IIIa Pulling changes from the master repository
 
-From time to time you should integrate changes from the master repository into your clone to prevent it to differ to much from its parent. To do this, rioght-click on one of the projects from this repository and select _team->pull_. Note: This will *not* update your workspace. See next paragraph
+From time to time you should integrate changes from the master repository into your clone to prevent it to differ to much from its parent. To do this, rioght-click on one of the projects from this repository and select _team->pull_. Note: This will *not* update your workspace. See next paragraph. Note that this operation can lead to a two-headed repository since there might be changes from somewhere else that have the same origin than your own changes. You can merge the two heads with right-click on the project and _team->merge_.  If there are conflicts in the files that can't be resolved automatically, you have to resolve them manually.
 
 h3. IIIb Updating your workspace
 
-Your workspace can be set to any of the branches defined in the repository. Therefore a repository pull will not be reflected automatically in your workspace. To Update a project in  your workspace, right-click on the project and select _team->update_. Note that this operation might result in conflicts if the repository contains changes that conflict with changes in your workspace.
+Your workspace can be set to any of the branches defined in the repository. Therefore a repository pull will not be reflected automatically in your workspace. To Update a project in  your workspace, right-click on the project and select _team->update_. 
 
 h3. IIIc Comitting your changes
 
