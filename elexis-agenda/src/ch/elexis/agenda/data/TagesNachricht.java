@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    M. Descher - fixes on table creation and correct updating
  * 
- *  $Id: TagesNachricht.java 6376 2010-05-18 10:25:47Z marcode79 $
+ *  $Id: TagesNachricht.java 6377 2010-05-18 10:29:41Z marcode79 $
  *******************************************************************************/
 package ch.elexis.agenda.data;
 
@@ -38,7 +38,8 @@ public class TagesNachricht extends PersistentObject {
 		"ALTER TABLE "+TABLENAME+ " ADD lastupdate BIGINT default 0;"
 		+ "UPDATE "+TABLENAME+" SET Kurz='0.3.0' WHERE ID='1';";
 	private static final String update040=
-		"ALTER TABLE " + TABLENAME + " MODIFY ID VARCHAR(8) primary key;";
+		"ALTER TABLE " + TABLENAME + " MODIFY ID VARCHAR(8) primary key;"
+		+ "UPDATE "+TABLENAME+" SET Kurz='0.4.0' WHERE ID='1';";
 	
 	static {
 		addMapping(TABLENAME, "Zeile=Kurz", "Text=Msg");
