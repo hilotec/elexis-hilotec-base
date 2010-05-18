@@ -1,36 +1,53 @@
 h1. How to fetch the elexis sources from the mercurial repository
 
-h2. Prerequisites
+h2. I Prerequisites
 
 * Eclipse 3.5 or newer
 * the hgEclipse plugin
 * a sourceforge.net account, if you need write access
 
-h2. Steps
+h2. II Steps
 
-h3. cloning the repository 
+h3. IIa cloning the repository 
 
 # In an empty eclipse workspace, right-click in the package explorer and select _import_. Select Mercurial as souce and then _clone an existing directory_.
-# In the field _repository locaction_, enter http://elexis.hg.sourceforge.net/hgroot/elexis"
-# If you are a committer, enter your sourceforge.net username and password in the appropriate fields.
-# In the field _Clone directory name_, enter a Name for this repository, e.g. 'Elexis-Basis'.
+# In the field _repository locaction_, enter the appropriate repository location. The URL's can be retrieved here: "https://sourceforge.net/scm/?type=hg&group_id=153838":https://sourceforge.net/scm/?type=hg&group_id=153838. Note that you need different URLs for read-only and for read/write access. In Case of read/write you must enter your _sourceforge_ accoutn details in the username and password fields.
+# In the field _Clone directory name_, enter a Name for this repository, e.g. 'elexis-basis'.
 # Leave the remaining fields as-is and click "finish"
 
-This will take a quite long time (>160MB to fetch) . Time enough to think about the ideas behind Mercurial (or, more generally, distributed source code managers (DSCM)). If you know all about DSCM, you can skip this safely and continue with "checking out the sources".
+!images/hgeclipse-1.png!
+
+
+This will take a quite long time (>160MB to fetch) . Time enough to think about the ideas behind Mercurial (or, more generally, distributed source code managers (DSCM)). If you know all about DSCM, you can skip this safely and proceed to IIb, "checking out the sources".
 
 Unlike CVS or SVN, a DSCM does not rely on a single central repository. Instead, everyone who wants to use the source code, holds his or her own copy of the master repository. Such a copy is called a _clone_ in DSCM-Speak. To create a clone, you perform the operation *clone* - as you might have expected. Such a clone is in fact just a directory on your hard drive. You can make a backup by simply copying it or with any other backup mechanism you might to prefer. From this clone, you create a working directory with the sources you want to work on. Remember: The clone is really a clone of the master repository and as such it contains every single commit, tag and branch that occurred to the master repository - so you can *check out* any repository position you like to your working directory and you can easily *switch* to any other repository branch without the need for an internet connection.
 
-WIth this local clone, you can work as with any other SCM. If you know Subversion/Subclipse, you'll find this quite familiar: You *commit* your changes to the repository; you can *update*, *branch*, *tag*,  and so on. The only difference is: You do not need to bother about other members of the development team, because all changes go only to your very own repository clone and nobody will cry if you totally mess it up (not even you because you can always create a new clone from the master). If you do not want to make a new clone but only want to keep up with changes on the Master, you can *pull* your repository from the master and then *update* the source directory to adapt the changes. 
+With this local clone, you can work as with any other SCM. If you know Subversion/Subclipse, you'll find this quite familiar: You *commit* your changes to the repository; you can *update*, *branch*, *tag*,  and so on. The only difference is: You do not need to bother about other members of the development team, because all changes go only to your very own repository clone and nobody will cry if you totally mess it up (not even you because you can always create a new clone from the master). If you do not want to make a new clone but only want to keep up with changes on the Master, you can *pull* your repository from the master and then *update* the source directory to adapt the changes. 
 
 If you feel, however, that your changes should go to the master repository, you should first *pull* any changes that might have happened on the master in teh meantime, resolve all conflicts (if any) and then *push* your Repository to the master. If you do not have *push* rights, you can ask a master maintainer, to *pull* your changes, or you can send them a push request by e-mail, containing a diff of your repository to the master.  
  
-h3. Checking out the sources
+h3. IIb Checking out the sources
 
 Now the clone operation is probably findished. You are presented a dialog "Select working directory revision". Most probably you'll want the bleeding edge, and thus, you might want to select the Revision that has the tag "tip". Then click Next, and you'll see all Elexis Projects that are part of this repository. Select those you want to import into your Eclipse workspace and click finish
 
-h2. Repository operations
+!images/hgeclipse-2.png!
 
-h3. Adding a new Plugin to the Repository
+
+h2. III Repository operations
+
+h3. IIIa Pulling changes from the master repository
+
+From time to time you should integrate changes from the master repository into your clone to prevent it to differ to much from its parent. To do this, rioght-click on one of the projects from this repository and select _team->pull_. Note: This will *not* update your workspace. See next paragraph
+
+h3. IIIb Updating your workspace
+
+Your workspace can be set to any of the branches defined in the repository. Therefore a repository pull will not be reflected automatically in your workspace. To Update a project in  your workspace, right-click on the project and select _team->update_. Note that this operation might result in conflicts if the repository contains changes that conflict with changes in your workspace.
+
+h3. IIIc Comitting your changes
+
+It is recommended to commit your changes frequently. That way you have always the possibility to return to an earlier state if something went wrong. To ciommit, simply right-click on the project and select _team->commit_. Enter a commit-message and you're done.
+
+h3. IIId Adding a new Plugin to the Repository
 
 This is a bit tricky first, so please read carefully:
 
