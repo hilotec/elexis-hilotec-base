@@ -37,8 +37,8 @@ public class JdbcLink {
 	java.sql.Connection conn = null;
 	private Vector<Stm> statements;
 	public int keepStatements = 10;
-	private boolean bPoolable=true;
-	
+	private boolean bPoolable = true;
+
 	private static Log log;
 
 	public static final int CONNECT_SUCCESS = 0;
@@ -215,9 +215,10 @@ public class JdbcLink {
 		statements = new Vector<Stm>();
 	}
 
-	public void setPoolable(boolean poolable){
-		bPoolable=poolable;
+	public void setPoolable(boolean poolable) {
+		bPoolable = poolable;
 	}
+
 	/**
 	 * Utility-Funktion zum Einpacken von Strings in Hochkommata und escapen
 	 * illegaler Zeichen
@@ -312,7 +313,7 @@ public class JdbcLink {
 	 * @return ein Stm (JdbcLink-spezifische Statement-Variante)
 	 */
 	public Stm getStatement() {
-		if(!bPoolable){
+		if (!bPoolable) {
 			return createStatement();
 		}
 		if (statements == null) {
@@ -326,17 +327,17 @@ public class JdbcLink {
 				return createStatement();
 			} else {
 				Stm stm = statements.remove(0);
-				if(stm.isClosed()){
+				if (stm.isClosed()) {
 					return createStatement();
-				}else{
+				} else {
 					return stm;
 				}
-				
+
 			}
 		}
 	}
 
-	private Stm createStatement(){
+	private Stm createStatement() {
 		try {
 			return new Stm();
 		} catch (Throwable ex) {
@@ -348,6 +349,7 @@ public class JdbcLink {
 		}
 
 	}
+
 	/**
 	 * Ein Stm - Statement in den pool zurückgeben. Die Zahl der im pool zu
 	 * haltenden Statements wird mit keepStatements definiert.
@@ -356,7 +358,7 @@ public class JdbcLink {
 	 */
 
 	public void releaseStatement(Stm s) {
-		if(!bPoolable){
+		if (!bPoolable) {
 			s.delete();
 		}
 		synchronized (statements) {
@@ -605,7 +607,9 @@ public class JdbcLink {
 		public void delete() {
 			try {
 				// stm.cancel();
-				stm.close();
+				if (stm != null) {
+					stm.close();
+				}
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 				/* egal */
