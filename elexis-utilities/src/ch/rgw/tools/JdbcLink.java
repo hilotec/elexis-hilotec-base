@@ -18,14 +18,15 @@ import java.util.Vector;
 import java.util.logging.Level;
 
 /**
- * Weiterer Abstraktionslayer zum einfacheren Zugriff auf eine jdbc-fähige Datenbank
+ * Weiterer Abstraktionslayer zum einfacheren Zugriff auf eine jdbc-fähige
+ * Datenbank
  */
 
 public class JdbcLink {
-	public static final String getVersion(){
+	public static final String getVersion() {
 		return "3.1.0";
 	}
-	
+
 	public int lastErrorCode;
 	public String lastErrorString;
 	public int verMajor = 0;
@@ -36,9 +37,9 @@ public class JdbcLink {
 	java.sql.Connection conn = null;
 	private Vector<Stm> statements;
 	public int keepStatements = 10;
-	
+
 	private static Log log;
-	
+
 	public static final int CONNECT_SUCCESS = 0;
 	public static final int CONNECT_CLASSNOTFOUND = 1;
 	public static final int CONNECT_FAILED = 2;
@@ -48,66 +49,71 @@ public class JdbcLink {
 	public static final int TRANSACTION_COMMIT_NOT_SUPPORTED = 23;
 	public static final int CONNECTION_CANT_CREATE_STATEMENT = 30;
 	public static final int CONNECTION_CANT_PREPARE_STAMENT = 31;
-	public static final int CONNECTION_SQL_ERROR=40;
-	
+	public static final int CONNECTION_SQL_ERROR = 40;
+
 	static {
 		log = Log.get("jdbcLink");
 	}
-	
+
 	@SuppressWarnings("unused")
-	private JdbcLink(){ /* intentionally blank */}
-	
+	private JdbcLink() { /* intentionally blank */
+	}
+
 	/**
-	 * Bequemlichkeitsmethode, um einen JdcbLink auf eine MySQL-Datenbank zu erhalten
+	 * Bequemlichkeitsmethode, um einen JdcbLink auf eine MySQL-Datenbank zu
+	 * erhalten
 	 */
-	public static JdbcLink createMySqlLink(String host, String database){
+	public static JdbcLink createMySqlLink(String host, String database) {
 		log.log(Level.INFO, "Creating MySQL-Link");
 		String driver = "com.mysql.jdbc.Driver";
 		String connect = "jdbc:mysql://" + host + ":3306/" + database;
 		return new JdbcLink(driver, connect, "mysql");
 	}
-	
+
 	/**
-	 * Bequemlichkeitsmethode, um einen JdbcLink auf eine InProcess laufende HSQL-Datenbank zu
-	 * erhalten
+	 * Bequemlichkeitsmethode, um einen JdbcLink auf eine InProcess laufende
+	 * HSQL-Datenbank zu erhalten
 	 * 
 	 * @param database
-	 *            ein Dateiname für die zu erzeugende bzw. zu verwendende Datenbank
+	 *            ein Dateiname für die zu erzeugende bzw. zu verwendende
+	 *            Datenbank
 	 */
-	public static JdbcLink createInProcHsqlDBLink(String database){
+	public static JdbcLink createInProcHsqlDBLink(String database) {
 		log.log(Level.INFO, "Creating HSQL-In-Proc-Link");
 		String driver = "org.hsqldb.jdbcDriver";
 		String connect = "jdbc:hsqldb:" + database;
 		return new JdbcLink(driver, connect, "hsqldb");
 	}
-	
+
 	/**
-	 * Bequemlichkeitsmethode, um einen JdbcLink auf eine als Server laufende HSQL-Datenbank zu
-	 * erhalten
+	 * Bequemlichkeitsmethode, um einen JdbcLink auf eine als Server laufende
+	 * HSQL-Datenbank zu erhalten
 	 * 
 	 * @param host
 	 *            Server, auf dem die Datenbank läuft.
 	 */
-	public static JdbcLink createHsqlDBLink(String host){
+	public static JdbcLink createHsqlDBLink(String host) {
 		log.log(Level.INFO, "Creating HSQL-Link");
 		String driver = "org.hsqldb.jdbcDriver";
 		String connect = "jdbc:hsqldb:hsql://" + host;
 		return new JdbcLink(driver, connect, "hsqldb");
 	}
-	
+
 	/**
-	 * Bequemlichkeitsmethode, um einen Link auf eine H2-Datenbank zu
-	 * bekommen. Da H2 einen mysql-compatibility-mode hat, kann man
-	 * mysql als flavor angeben.
+	 * Bequemlichkeitsmethode, um einen Link auf eine H2-Datenbank zu bekommen.
+	 * Da H2 einen mysql-compatibility-mode hat, kann man mysql als flavor
+	 * angeben.
+	 * 
 	 * @param database
 	 * @return
 	 */
-	public static JdbcLink createH2Link(String database){
+	public static JdbcLink createH2Link(String database) {
 		log.log(Level.INFO, "Creating H2-Link");
-		String driver="org.h2.Driver";
-		String connect="jdbc:h2:"+database+";MODE=MySQL";
-		return new JdbcLink(driver,connect,"mysql");
+		String driver = "org.h2.Driver";
+		String connect = "jdbc:h2:" + database + ";MODE=MySQL";
+		return new JdbcLink(driver, connect, "mysql");
 	}
+
 	/**
 	 * Bequemlichkeitsmethode für einen JdbcLink auf einen 4D-Server
 	 * 
@@ -115,48 +121,48 @@ public class JdbcLink {
 	 *            de Server, auf dem die 4D-Datenbnak läuft
 	 * @return
 	 */
-	public static JdbcLink create4DLink(String host){
+	public static JdbcLink create4DLink(String host) {
 		log.log(Level.INFO, "Creating 4D-Link");
 		String driver = "com.fourd.jdbc.DriverImpl";
 		String connect = "jdbc:4d:" + host + ":19813";
 		return new JdbcLink(driver, connect, "4d");
 	}
-	
+
 	/**
 	 * Bequemlichkeitsmethode für einen JdbcLink auf einen PostgreSQL- Server
 	 * 
 	 * @param host
 	 * @return
 	 */
-	public static JdbcLink createPostgreSQLLink(String host, String database){
+	public static JdbcLink createPostgreSQLLink(String host, String database) {
 		log.log(Level.INFO, "Creating PostgreSQL-Link");
 		String driver = "org.postgresql.Driver";
 		String connect = "jdbc:postgresql://" + host + ":5432/" + database;
 		return new JdbcLink(driver, connect, "postgresql");
 	}
-	
-	public static JdbcLink createODBCLink(String dsn){
+
+	public static JdbcLink createODBCLink(String dsn) {
 		log.log(Level.INFO, "Creating ODBC-Link");
 		String driver = "sun.jdbc.odbc.JdbcOdbcDriver";
 		String connect = "jdbc:odbc:" + dsn;
 		return new JdbcLink(driver, connect, "ODBC");
 	}
-	
+
 	/**
-	 * Erstelle einen neuen jdbcLink. Es wird kein Connect-Versuch gemacht, das heisst, der
-	 * Konstruktor wird nie scheitern.
+	 * Erstelle einen neuen jdbcLink. Es wird kein Connect-Versuch gemacht, das
+	 * heisst, der Konstruktor wird nie scheitern.
 	 * 
 	 * @param driver
 	 *            Treiber-String (wie org.hsql.jdbc)
 	 * @param connect
 	 *            Connect-String (wie jdbc:odbc:data)
 	 */
-	public JdbcLink(String driver, String connect, String flavor){
+	public JdbcLink(String driver, String connect, String flavor) {
 		sDrv = driver;
 		sConn = connect;
 		DBFlavor = flavor.toLowerCase();
 	}
-	
+
 	/**
 	 * Verbindung zur Datenbank herstellen
 	 * 
@@ -166,18 +172,19 @@ public class JdbcLink {
 	 *            Passwort, kann null sein
 	 * @return errcode
 	 */
-	public boolean connect(String user, String password){
+	public boolean connect(String user, String password) {
 		try {
-			// Driver D=(Driver)Class.forName("org.gjt.mm.mysql.Driver").newInstance();
-			
+			// Driver
+			// D=(Driver)Class.forName("org.gjt.mm.mysql.Driver").newInstance();
+
 			Driver D = (Driver) Class.forName(sDrv).newInstance();
 			verMajor = D.getMajorVersion();
 			verMinor = D.getMinorVersion();
-			
+
 			// Class.forName("org.firebirdsql.jdbc.FBDriver");
 			// "jdbc:mysql://<host>:<port>/<dbname>"
 			// "jdbc:odbc:<dsn>
-			log.log(Level.INFO, "Loading database driver "+sDrv);
+			log.log(Level.INFO, "Loading database driver " + sDrv);
 			conn = DriverManager.getConnection(sConn, user, password);
 			statements = new Vector<Stm>();
 			lastErrorCode = CONNECT_SUCCESS;
@@ -201,20 +208,21 @@ public class JdbcLink {
 		log.log("Connect failed: " + lastErrorString, Log.ERRORS);
 		return false;
 	}
-	
-	public JdbcLink(Connection c){
+
+	public JdbcLink(Connection c) {
 		conn = c;
 		statements = new Vector<Stm>();
 	}
-	
+
 	/**
-	 * Utility-Funktion zum Einpacken von Strings in Hochkommata und escapen illegaler Zeichen
+	 * Utility-Funktion zum Einpacken von Strings in Hochkommata und escapen
+	 * illegaler Zeichen
 	 * 
 	 * @param s
 	 *            der String
 	 * @return Datenbankkonform eingepackte String
 	 */
-	public static String wrap(String s){
+	public static String wrap(String s) {
 		if (StringTool.isNothing(s)) {
 			return "''";
 		}
@@ -225,8 +233,8 @@ public class JdbcLink {
 			return wrap(s.getBytes(), "mysql");
 		}
 	}
-	
-	public String wrapFlavored(String s){
+
+	public String wrapFlavored(String s) {
 		if (StringTool.isNothing(s)) {
 			return "''";
 		}
@@ -237,10 +245,10 @@ public class JdbcLink {
 			return wrap(s.getBytes(), DBFlavor);
 		}
 	}
-	
+
 	/**
-	 * Utility-Funktion zum Datenbankkonformen Verpacken von byte arrays zwecks Einfügen in
-	 * BLOB-Felder.
+	 * Utility-Funktion zum Datenbankkonformen Verpacken von byte arrays zwecks
+	 * Einfügen in BLOB-Felder.
 	 * 
 	 * @param flavor
 	 *            TODO
@@ -248,8 +256,8 @@ public class JdbcLink {
 	 *            das rohe byte array
 	 * @return das verpackte array in Form eines String
 	 */
-	public static String wrap(byte[] in, String flavor){
-		
+	public static String wrap(byte[] in, String flavor) {
+
 		byte[] out = new byte[2 * in.length + 2];
 		int j = 0;
 		out[j++] = '\'';
@@ -257,7 +265,7 @@ public class JdbcLink {
 			switch (in[i]) {
 			case 0:
 			case 34:
-				
+
 			case '\'':
 				if (flavor.startsWith("hsql")) {
 					out[j++] = '\'';
@@ -280,26 +288,26 @@ public class JdbcLink {
 			return null;
 		}
 	}
-	
-	public Connection getConnection(){
+
+	public Connection getConnection() {
 		return conn;
 	}
-	
-	public String getDriverName(){
+
+	public String getDriverName() {
 		return sDrv;
 	}
-	
-	public String getConnectString(){
+
+	public String getConnectString() {
 		return sConn;
 	}
-	
+
 	/**
-	 * Ent Statement aus dem pool beziehen. Jedes mit getStatement bezogene Statement MUSS mit
-	 * releaseStatement wieder zurückgegeben werden.
+	 * Ent Statement aus dem pool beziehen. Jedes mit getStatement bezogene
+	 * Statement MUSS mit releaseStatement wieder zurückgegeben werden.
 	 * 
 	 * @return ein Stm (JdbcLink-spezifische Statement-Variante)
 	 */
-	public Stm getStatement(){
+	public Stm getStatement() {
 		if (statements == null) {
 			lastErrorCode = CONNECT_UNKNOWN_ERROR;
 			lastErrorString = "Keine Verbindung zur Datenbank";
@@ -308,30 +316,39 @@ public class JdbcLink {
 		}
 		synchronized (statements) {
 			if (statements.isEmpty()) {
-				try {
-					return new Stm();
-				} catch (Throwable ex) {
-					ExHandler.handle(ex);
-					lastErrorCode = CONNECTION_CANT_CREATE_STATEMENT;
-					lastErrorString = ex.getMessage();
-					log.log(lastErrorString, Log.ERRORS);
-					return null;
+				return createStatement();
+			} else {
+				Stm stm = statements.remove(0);
+				if(stm.isClosed()){
+					return createStatement();
+				}else{
+					return stm;
 				}
 				
-			} else {
-				return statements.remove(0);
 			}
 		}
 	}
-	
+
+	private Stm createStatement(){
+		try {
+			return new Stm();
+		} catch (Throwable ex) {
+			ExHandler.handle(ex);
+			lastErrorCode = CONNECTION_CANT_CREATE_STATEMENT;
+			lastErrorString = ex.getMessage();
+			log.log(lastErrorString, Log.ERRORS);
+			return null;
+		}
+
+	}
 	/**
-	 * Ein Stm - Statement in den pool zurückgeben. Die Zahl der im pool zu haltenden Statements
-	 * wird mit keepStatements definiert.
+	 * Ein Stm - Statement in den pool zurückgeben. Die Zahl der im pool zu
+	 * haltenden Statements wird mit keepStatements definiert.
 	 * 
 	 * @param s
 	 */
-	
-	public void releaseStatement(Stm s){
+
+	public void releaseStatement(Stm s) {
 		synchronized (statements) {
 			if (s != null) {
 				if (statements.size() < keepStatements) {
@@ -342,15 +359,16 @@ public class JdbcLink {
 			}
 		}
 	}
-	
+
 	/**
 	 * Ein Prepared Statement anlegen
 	 * 
 	 * @param sql
-	 *            Abfrage für das statement (eizusetzende Parameter müssen als ? gesetzt sein
+	 *            Abfrage für das statement (eizusetzende Parameter müssen als ?
+	 *            gesetzt sein
 	 * @return das vorkompilierte PreparedStatement
 	 */
-	public PreparedStatement prepareStatement(String sql){
+	public PreparedStatement prepareStatement(String sql) {
 		try {
 			return conn.prepareStatement(sql);
 		} catch (Exception ex) {
@@ -361,13 +379,13 @@ public class JdbcLink {
 			return null;
 		}
 	}
-	
+
 	public static final int INTEGRAL = 1;
 	public static final int TEXT = 2;
 	public static final int BINARY = 3;
 	public static final int OTHER = 4;
-	
-	public static int generalType(int t){
+
+	public static int generalType(int t) {
 		switch (t) {
 		case Types.BIGINT:
 		case Types.BIT:
@@ -376,28 +394,29 @@ public class JdbcLink {
 		case Types.SMALLINT:
 		case Types.TINYINT:
 			return INTEGRAL;
-			
+
 		case Types.VARCHAR:
 		case Types.CHAR:
 		case Types.LONGVARCHAR:
 			return TEXT;
-			
+
 		case Types.BINARY:
 		case Types.BLOB:
 		case Types.CLOB:
 		case Types.LONGVARBINARY:
 		case Types.VARBINARY:
 			return BINARY;
-			
+
 		default:
 			return OTHER;
-			
+
 		}
 	}
-	
+
 	/**
-	 * Einen String-Value aus dem aktuellen Datensatz des ResultSets holen. Es wird garantiert, dass
-	 * immer etwas zurückgeliefert wird (" " für den leeren Sring)
+	 * Einen String-Value aus dem aktuellen Datensatz des ResultSets holen. Es
+	 * wird garantiert, dass immer etwas zurückgeliefert wird (" " für den
+	 * leeren Sring)
 	 * 
 	 * @param r
 	 *            ResultSet
@@ -407,20 +426,20 @@ public class JdbcLink {
 	 * @throws Exception
 	 *             Wenn das Feld nicht definiert ist.
 	 */
-	public static String getString(ResultSet r, String field) throws Exception{
+	public static String getString(ResultSet r, String field) throws Exception {
 		String res = r.getString(field);
 		if (StringTool.isNothing(res)) {
 			return " ";
 		}
-		
+
 		return res;
 	}
-	
+
 	/**
 	 * Verbindung zur Datenbank lösen
 	 * 
 	 */
-	public synchronized void disconnect(){
+	public synchronized void disconnect() {
 		try {
 			while ((statements != null) && (!statements.isEmpty())) {
 				Stm stm = statements.remove(0);
@@ -436,18 +455,18 @@ public class JdbcLink {
 			ExHandler.handle(e);
 		}
 	}
-	
+
 	/**
 	 * Anfrage, ob die Verbindung steht
 	 * 
 	 * @todo Muss noch besser implementiert werden
 	 * @return true wenn die Verbindung steht.
 	 */
-	public boolean isAlive(){
+	public boolean isAlive() {
 		return (verMajor != 0);
 	}
-	
-	public boolean setAutoCommit(boolean value){
+
+	public boolean setAutoCommit(boolean value) {
 		try {
 			conn.setAutoCommit(value);
 			return true;
@@ -458,8 +477,8 @@ public class JdbcLink {
 			return false;
 		}
 	}
-	
-	public boolean commit(){
+
+	public boolean commit() {
 		try {
 			conn.commit();
 			return true;
@@ -469,10 +488,10 @@ public class JdbcLink {
 			lastErrorString = e.getMessage();
 			return false;
 		}
-		
+
 	}
-	
-	public boolean rollback(){
+
+	public boolean rollback() {
 		try {
 			conn.rollback();
 			return true;
@@ -483,7 +502,7 @@ public class JdbcLink {
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Unscharfes Suchen im ResultSet.
 	 * 
@@ -494,9 +513,10 @@ public class JdbcLink {
 	 * @param m
 	 *            (vorher konfigurierter) fuzzyMatcher mit der Suchbedingung
 	 * @see ch.rgw.tools.FuzzyMatcher
-	 * @return true wenn gefunden; das ResultSet steht auf der ersten oder einzigen Fundstelle.
+	 * @return true wenn gefunden; das ResultSet steht auf der ersten oder
+	 *         einzigen Fundstelle.
 	 */
-	public static boolean nextMatch(ResultSet r, String field, FuzzyMatcher m){
+	public static boolean nextMatch(ResultSet r, String field, FuzzyMatcher m) {
 		try {
 			while (r.next()) {
 				if (m.match(r.getString(field))) {
@@ -509,11 +529,11 @@ public class JdbcLink {
 		}
 		return false;
 	}
-	
-	public String dbDriver(){
+
+	public String dbDriver() {
 		return sDrv;
 	}
-	
+
 	/**
 	 * Einen String-Wert abfragen. Temporäres Statement erzeugen
 	 * 
@@ -521,48 +541,58 @@ public class JdbcLink {
 	 *            SQL-String, der ein VARCHAR-oder Text-Feld liefern sollte
 	 * @return den gefundenen String oder null: nicht gefunden
 	 */
-	public String queryString(String sql){
+	public String queryString(String sql) {
 		Stm stm = getStatement();
 		String res = stm.queryString(sql);
 		releaseStatement(stm);
 		return res;
 	}
-	
-	public int queryInt(String sql){
+
+	public int queryInt(String sql) {
 		Stm stm = getStatement();
 		int res = stm.queryInt(sql);
 		releaseStatement(stm);
 		return res;
 	}
-	
-	public boolean execScript(InputStream i, boolean translate, boolean stopOnError){
+
+	public boolean execScript(InputStream i, boolean translate,
+			boolean stopOnError) {
 		Stm stm = getStatement();
 		boolean ret = stm.execScript(i, translate, stopOnError);
 		releaseStatement(stm);
 		return ret;
 	}
-	
+
 	/**
 	 * Wrapper für Stm#exec
 	 * 
 	 * @author gerry
 	 * 
 	 */
-	public int exec(String sql){
+	public int exec(String sql) {
 		Stm stm = getStatement();
 		int res = stm.exec(sql);
 		releaseStatement(stm);
 		return res;
 	}
-	
+
 	public class Stm {
 		private Statement stm;
-		
-		Stm() throws Throwable{
+
+		Stm() throws Throwable {
 			stm = conn.createStatement();
 		}
-		
-		public void delete(){
+
+		public boolean isClosed() {
+			try {
+				return stm.isClosed();
+			} catch (Exception ex) {
+				ExHandler.handle(ex);
+				return true;
+			}
+		}
+
+		public void delete() {
 			try {
 				// stm.cancel();
 				stm.close();
@@ -572,7 +602,7 @@ public class JdbcLink {
 			}
 			stm = null;
 		}
-		
+
 		/**
 		 * Eine execute auf die Datanbank ausführen
 		 * 
@@ -580,7 +610,7 @@ public class JdbcLink {
 		 *            Von der Datenbank verstandener SQL-String
 		 * @return Zahl der affected rows.
 		 */
-		public synchronized int exec(String SQLText){
+		public synchronized int exec(String SQLText) {
 			log.log("executing " + SQLText, Log.DEBUGMSG);
 			try {
 				return stm.executeUpdate(SQLText);
@@ -590,7 +620,7 @@ public class JdbcLink {
 				return 0;
 			}
 		}
-		
+
 		/**
 		 * Eine SQL-Anfrage an die Datenbank senden
 		 * 
@@ -598,7 +628,7 @@ public class JdbcLink {
 		 *            ein Query String in von der Datenbank verstandener Syntax
 		 * @return ein ResultSet oder null bei Fehler
 		 */
-		public synchronized ResultSet query(String SQLText){
+		public synchronized ResultSet query(String SQLText) {
 			ResultSet res = null;
 			log.log("querying " + SQLText, Log.DEBUGMSG);
 			try {
@@ -606,14 +636,15 @@ public class JdbcLink {
 				return res;
 			} catch (Exception e) {
 				ExHandler.handle(e);
-				lastErrorString=e.getMessage();
-				lastErrorCode=CONNECTION_SQL_ERROR;
-				log.log("Fehler bei: " + SQLText+"\n:"+e.getMessage(), Log.ERRORS);
+				lastErrorString = e.getMessage();
+				lastErrorCode = CONNECTION_SQL_ERROR;
+				log.log("Fehler bei: " + SQLText + "\n:" + e.getMessage(),
+						Log.ERRORS);
 				return null;
 			}
-			
+
 		}
-		
+
 		/**
 		 * Eine Anzahl Werte als Vector zurückliefern
 		 * 
@@ -621,11 +652,11 @@ public class JdbcLink {
 		 *            SQL-String, der die Werte liefert
 		 * @param fields
 		 *            interessierende Felder
-		 * @return einen Vector aus Object[] Arrays mit den interessierenden Feldern aller
-		 *         gefundenen Datensätze
+		 * @return einen Vector aus Object[] Arrays mit den interessierenden
+		 *         Feldern aller gefundenen Datensätze
 		 */
 		@SuppressWarnings("unchecked")
-		public Vector queryList(String sql, String[] fields){
+		public Vector queryList(String sql, String[] fields) {
 			Vector rs = new Vector();
 			log.log("executing " + sql, Log.DEBUGMSG);
 			ResultSet res = null;
@@ -649,8 +680,8 @@ public class JdbcLink {
 			}
 			return rs;
 		}
-		
-		public String queryString(String sql){
+
+		public String queryString(String sql) {
 			ResultSet res = null;
 			try {
 				res = stm.executeQuery(sql);
@@ -667,16 +698,16 @@ public class JdbcLink {
 			}
 			return null;
 		}
-		
+
 		/**
 		 * Einen Integer-Wert abfragen.
 		 * 
 		 * @param sql
 		 *            SQL-String, der ein Integer-Feld liefern sollte
-		 * @return den ersten der Suchbedingung entsprechenden Integer-Wert oder -1: Wert nicht
-		 *         gefunden.
+		 * @return den ersten der Suchbedingung entsprechenden Integer-Wert oder
+		 *         -1: Wert nicht gefunden.
 		 */
-		public int queryInt(String sql){
+		public int queryInt(String sql) {
 			ResultSet res = null;
 			try {
 				res = stm.executeQuery(sql);
@@ -688,19 +719,22 @@ public class JdbcLink {
 			}
 			return -1;
 		}
-		
+
 		/**
-		 * Ein SQL-Script einlesen und ausführen. alles nach # bis zum Zeilenende wird ignoriert
+		 * Ein SQL-Script einlesen und ausführen. alles nach # bis zum
+		 * Zeilenende wird ignoriert
 		 * 
 		 * @param s
 		 *            der InputStream mit dem Script
 		 * @param translate
-		 *            true, wenn das Script zu den bekannten Dialekten übersetzt werden soll
+		 *            true, wenn das Script zu den bekannten Dialekten übersetzt
+		 *            werden soll
 		 * @param stopOnError
 		 *            true: Abbruch des Scripts, wenn ein Fehler auftritt
 		 * @return false wenn ein Fehler passiert ist.
 		 */
-		public boolean execScript(InputStream s, boolean translate, boolean stopOnError){
+		public boolean execScript(InputStream s, boolean translate,
+				boolean stopOnError) {
 			String sql = "<none>";
 			if (s == null) {
 				return false;
@@ -725,10 +759,10 @@ public class JdbcLink {
 			// commit();
 			return true;
 		}
-		
+
 	}
-	
-	public static String readStatement(InputStream is){
+
+	public static String readStatement(InputStream is) {
 		StringBuffer inp = new StringBuffer(1000);
 		String sql = "<none>";
 		try {
@@ -760,10 +794,10 @@ public class JdbcLink {
 			ExHandler.handle(ex);
 			return null;
 		}
-		
+
 	}
-	
-	public boolean dumpTable(BufferedWriter w, String name) throws Exception{
+
+	public boolean dumpTable(BufferedWriter w, String name) throws Exception {
 		Stm stm = getStatement();
 		ResultSet res = stm.query("SELECT * from " + name);
 		ResultSetMetaData rm = res.getMetaData();
@@ -777,7 +811,7 @@ public class JdbcLink {
 			w.write(ColNames[i] + " " + colTypes[i] + ",\n");
 		}
 		w.write(");");
-		
+
 		while ((res != null) && (res.next() == true)) {
 			w.write("INSERT INTO " + name + " (");
 			for (int i = 0; i < cols; i++) {
@@ -804,12 +838,12 @@ public class JdbcLink {
 						w.write(JdbcLink.wrap((String) o));
 					}
 					break;
-					
+
 				default:
 					String t = o.getClass().getName();
 					log.log("Unknown type " + t, Log.ERRORS);
 					throw new Exception("Cant write " + t);
-					
+
 				}
 				if (i < cols - 1) {
 					w.write(",");
@@ -822,15 +856,19 @@ public class JdbcLink {
 		releaseStatement(stm);
 		return true;
 	}
-	
-	/** Einen SQL-String in die bekannten flavors übersetzen. Basisdialekt ist mysql */
-	public String translateFlavor(String sql){
+
+	/**
+	 * Einen SQL-String in die bekannten flavors übersetzen. Basisdialekt ist
+	 * mysql
+	 */
+	public String translateFlavor(String sql) {
 		// sql=sql.toLowerCase();
 		// TODO: Konzept für case-sensitiveness klarer definieren
 		if (DBFlavor.equalsIgnoreCase("postgresql")) {
 			sql = sql.replaceAll("BLOB", "BYTEA");
 			sql = sql.replaceAll("DROP INDEX (.+?) ON .+?;", "DROP INDEX $1;");
-			sql = sql.replaceAll("MODIFY\\s+(\\w+)\\s+(.+)", "ALTER COLUMN $1 TYPE $2");
+			sql = sql.replaceAll("MODIFY\\s+(\\w+)\\s+(.+)",
+					"ALTER COLUMN $1 TYPE $2");
 			sql = sql.replaceAll("SIGNED", "INT");
 		} else if (DBFlavor.startsWith("hsqldb")) {
 			sql = sql.replaceAll("TEXT", "LONGVARCHAR");
