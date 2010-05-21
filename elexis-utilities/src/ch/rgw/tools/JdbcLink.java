@@ -37,7 +37,8 @@ public class JdbcLink {
 	java.sql.Connection conn = null;
 	private Vector<Stm> statements;
 	public int keepStatements = 10;
-
+	private boolean bPoolable=true;
+	
 	private static Log log;
 
 	public static final int CONNECT_SUCCESS = 0;
@@ -214,6 +215,9 @@ public class JdbcLink {
 		statements = new Vector<Stm>();
 	}
 
+	public void setPoolable(boolean poolable){
+		bPoolable=poolable;
+	}
 	/**
 	 * Utility-Funktion zum Einpacken von Strings in Hochkommata und escapen
 	 * illegaler Zeichen
@@ -308,6 +312,9 @@ public class JdbcLink {
 	 * @return ein Stm (JdbcLink-spezifische Statement-Variante)
 	 */
 	public Stm getStatement() {
+		if(!bPoolable){
+			return createStatement();
+		}
 		if (statements == null) {
 			lastErrorCode = CONNECT_UNKNOWN_ERROR;
 			lastErrorString = "Keine Verbindung zur Datenbank";
@@ -349,6 +356,9 @@ public class JdbcLink {
 	 */
 
 	public void releaseStatement(Stm s) {
+		if(!bPoolable){
+			s.delete();
+		}
 		synchronized (statements) {
 			if (s != null) {
 				if (statements.size() < keepStatements) {
