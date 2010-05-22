@@ -1,4 +1,4 @@
-A proposel to the elexis developers to switch from SVN to git. See also "Elexis Forum":http://www.elexis-forum.ch/viewtopic.php?t=264
+A proposel to the elexis developers to switch from SVN to Mercurial. See also "Elexis Forum":http://www.elexis-forum.ch/viewtopic.php?t=264
 
 Not yet adapted!  Please comment on it!
 
