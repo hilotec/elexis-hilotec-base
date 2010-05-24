@@ -1,6 +1,9 @@
-A proposel to the elexis developers to switch from SVN to Mercurial. See also "Elexis Forum":http://www.elexis-forum.ch/viewtopic.php?t=264
+A proposal to the elexis developers to switch from SVN to Mercurial. See also "Elexis Forum":http://www.elexis-forum.ch/viewtopic.php?t=264
 
-Not yet adapted!  Please comment on it!
+Note: As of May, 22. we decided to use mercurial for the management of the Elexis sources on sourceforge.net. The main reason for this decision was, that mercurial has a mature Eclipse integration which is crucial for most of the Elexis developers. An other small advantage was that Mercurial looks somewhat friendlier to windows-users. These points are, of course, totally biased on our own preferences and do in no way mean that other DSCMs are bad. 
+
+We keep this file to make the process transparent.
+
 
 (c) Niklaus Giger, 2010. niklaus.giger@member.fsf.org. started May 4, 2010
 
