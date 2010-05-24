@@ -69,7 +69,7 @@ If you are a group working on the same subset of elexis, or if you are working w
 
 Fortunately, this is quite easy with mercurial. You need only a pc with active internet connection or a repository on a public server (such as bitbucket.org) . If you use a private server, just install mercurial there (eclipse is not required) and create a local clone with
 
-_hg clone http://elexis.hg.sourceforge.net/hgroot/elexis/elexis elexis-base_
+_hg clone http://elexis.hg.sourceforge.net/hgroot/elexis/elexis/elexis-base_
 
 then, serve this clone with
 
@@ -77,8 +77,9 @@ _hg serve -d_
 
 And everybody from your team with access to that server (e.g. via internet or via VPN) can clone it with
 
-_hg clone http://<your-url>/your-repository:8000_
+_hg clone http://<your-url>:8000_
 
+(Maybe you'll have to change some firewall rules, though). By default, users have only read access (i.e. _clone_).
 If you want to allow push, you can either set up SSH on the server, or, if you connect through a secure path anyway, eg. inside a closed LAN or VPN, you can add the following lines to <repository>/.hg/hgrc:
 
 bc. 
@@ -88,7 +89,18 @@ push_ssl=false
 
 Do *not* use this hack for public servers since it imposes a maior security risk!
 
-This way, everyone having access to the server can pull and push their data. So your private subproject can be developed independently from the master repository. Whenever you feel that the time has come to share your work, you push your regional master to the global master.
+This way, everyone having access to the server can pull and push their data. So your private subproject can be developed independently from the master repository. Whenever you feel that the time has come to share your work, you do one of the following, depending on your preferences and access rights:
+
+* _push_ your regional master to the global master (You need push rights on the master to do this).
+* Ask a maintainer of the master to _pull_ from your repository (You need some reputation to make them do this...)
+* Create a diff od your repository to the master and send this to a maintainer of the master. This is the most informal path.
+
+h4. Web access
+
+Having set up your repository for sharing gives you an additional feature for free: Web access to your repository. Simply point your favourite web browser to the url of your repository. 
+And even more: You can subscribe to an RSS feeder that tells you whenever something changed in the repository.
+You might want to  try this with the "elexis main repositories":http://elexis.hg.sourceforge.net/hgroot/elexis
+
 
 h3. IVb Using an SVN repository as master
 
