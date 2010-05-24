@@ -23,25 +23,14 @@ h1. Getting started
 h2. Prerequisites
 
 We assume that you have good knowledge of the Java programming language and at least a basic knowledge of the Eclipse environment. Beside this you'll need:
-* Linux, Microsoft(tm) Windows(tm) 2000(tm) or newer,  Apple(tm) MacOS-X 10.4 or newer 
-* Java jdk 1,5 or higher
+* Linux, Microsoft(tm) Windows(tm) 2000(tm) or newer,  Apple(tm) MacOS-X 10.6 or newer 
+* Java jdk 1.6 or higher
 * Eclipse 3.5 sdk for your os (<a href="http://www.eclipse.org">eclipse</a>)
-* A subversion client plugin for Eclipse (e.g. sublipse; Follow the instructions <a href="http://subclipse.tigris.org/servlets/ProjectProcess?pageID=p4wYuA">here</a>)
+* A mercurial client plugin for Eclipse (we recommend "MercurialEclipse 1.6 or higher":http://javaforge.com/project/HGE. Use this update Site from within eclipse: http://cbes.javaforge.com/update)
 
-h2. Checkout the sources
+h2. Clone the repository
 
-After installing the subclipse plugin, open the "SVN Repository exploring" perspective in Eclipse and create a new repository location with the URL https://elexis.svn.sourceforge.net/svnroot/elexis/trunk.
-
-*Do not* check out the trunk as a whole. Instead select individual projects to check out. For a minimal working elexis instance, you'll need at least the following projects:
-
-* elexis
-* elexis-utilities
-* elexis-importer
-* database adapter(s), one ore more of 
-** mysql-adapter 
-** h2-adapter
-** postgresql-adapter
-* elexis-developer-resources (recommended sample plugin)
+Please follow the instructions in "mercurial-how2":mercurial-how2.html. We recommend cloning the elexis-base repository only to begin. 
 
 h2. Create a run configuration
 
