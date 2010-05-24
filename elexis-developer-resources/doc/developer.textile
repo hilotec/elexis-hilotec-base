@@ -148,9 +148,10 @@ If one wants to create a new persistable class, the following steps are needed:
 # Create a static Mapping between a database table and the members of your class.
 # Ensure that the table you need exists (if not, it must be created with an SQL script or an external program)
 # Provide a public static load(String) - function and protected constructors without arguments and with one String argument.
+# extend the ch.elexis.PersistentReference extension point by creating a subclass of PersistentObjectFactory that can create objects of your class.
 # Some mandatory methods must be implemented.
 
-We recommend to use the class ch.elexis.developer.resources.model.SampleDataType.java in the plugin elexis-developer-resources as a guideline on how to write such a class.
+We recommend to use the classes ch.elexis.developer.resources.model.SampleDataType and SampleDataTypeFactory in the plugin elexis-developer-resources as a guideline on how to write such a database model.
  
 h2. Access privileges
 
