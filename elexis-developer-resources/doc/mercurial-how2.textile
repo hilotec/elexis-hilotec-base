@@ -73,13 +73,32 @@ _hg clone http://elexis.hg.sourceforge.net/hgroot/elexis/elexis elexis-base_
 
 then, serve this clone with
 
-_hg serve_
+_hg serve -d_
 
 And everybody from your team with access to that server (e.g. via internet or via VPN) can clone it with
 
 _hg clone http://<your-url>/your-repository:8000_
 
-(You'll need some configuration to allow PUSHing, however)  
+If you want to allow push, you can either set up SSH on the server, or, if you connect through a secure path anyway, eg. inside a closed LAN or VPN, you can add the following lines to <repository>/.hg/hgrc:
+
+bc. 
+[web]
+allow_push = *
+push_ssl=false
+
+Do *not* use this hack for public servers since it imposes a maior security risk!
+
+This way, everyone having access to the server can pull and push their data. So your private subproject can be developed independently from the master repository. Whenever you feel that the time has come to share your work, you push your regional master to the global master.
+
+h3. IVb Using an SVN repository as master
+
+It is possible to use an existing SVN repository as master for a mercurial repository (and its descendants).  This can be useful for collaboration with different groups.
+If you plan to host your mercurial repository on a debian-based computer (debian, ubuntu etc), this is quite easy. Just install the package hgsvn. This gives you the following commands:
+
+* @hgimportsvn <url>@ - Checkout an existing SVN repository (If it is your first access to this svn repository, you should checkout with @svn checkout@ first to set ssh keys or username correctly) . Note that url can point to the root of the repository and hgsvn will figure out trunk/branches by itself if the repository follows svn standards.
+* @hgpullsvn@ - pull any changes from the svn repository into the mercurial repository. Note: You must di this after hgimportsvn to initialize the mercurial repository correctly
+
+After doing this, you have a chimaere repository with a  shared workspace. Use @hg update@ to integrate hg changes into the workspace. Use @hg commit@ to propagate workspace changes into hg. Use @svn update@ to fetch svn changes into the workspace. Use @svn commit@ to send workspace changes to the svn repository.  Please note: while the svn commands work on the central repository, the hg commands work only with the local hg repository. To propagate them, you must use @hg push <url>@ (or @hg pull@ from elsewhere)
 
 h2. V Further reading
 
