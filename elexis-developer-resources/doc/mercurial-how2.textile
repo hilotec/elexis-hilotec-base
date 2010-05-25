@@ -1,4 +1,4 @@
-h1. How to fetch the elexis sources from the mercurial repository
+h1. How to use Mercurial repositories with Elexis
 
 {toc}
 
@@ -12,17 +12,15 @@ h2. II Steps
 
 h3. IIa cloning the repository 
 
-# In an empty eclipse workspace, right-click in the package explorer and select _import_. Select Mercurial as souce and then _clone an existing directory_.
-# In the field _repository locaction_, enter the appropriate repository location. The URL's can be retrieved here: "https://sourceforge.net/scm/?type=hg&group_id=153838":https://sourceforge.net/scm/?type=hg&group_id=153838. Note that you need different URLs for read-only and for read/write access. In Case of read/write you must enter your _sourceforge_ accoutn details in the username and password fields.
+# In an empty eclipse workspace, right-click in the package explorer and select _import_ -> _Clone existing Mercurial repository_. 
+!images/elexis_hg_1.png!!images/elexis_hg_2.png!
+# In the field _repository location_, enter the appropriate repository location.  !images/elexis_hg_3.png! Note that you need different URLs for read-only and for read/write access. In Case of read/write you must chose an SSH connection and enter your _sourceforge_ account details in the username and password fields. In case of a read-only access, use http:// instead of ssh:// and leave the username/password-fields empty.
 # In the field _Clone directory name_, enter a Name for this repository, e.g. 'elexis-basis'.
 # Leave the remaining fields as-is and click "finish"
 
-!images/hgeclipse-1.png!
-
-
 This will take a quite long time (>160MB to fetch) . Time enough to think about the ideas behind Mercurial (or, more generally, distributed source code managers (DSCM)). If you know all about DSCM, you can skip this safely and proceed to IIb, "checking out the sources".
 
-Unlike CVS or SVN, a DSCM does not rely on a single central repository. Instead, everyone who wants to use the source code, holds his or her own copy of the master repository. Such a copy is called a _clone_ in DSCM-Speak. To create a clone, you perform the operation *clone* - as you might have expected. Such a clone is in fact just a directory on your hard drive. You can make a backup by simply copying it or with any other backup mechanism you might to prefer. From this clone, you create a working directory with the sources you want to work on. Remember: The clone is really a clone of the master repository and as such it contains every single commit, tag and branch that occurred to the master repository - so you can *check out* any repository position you like to your working directory and you can easily *switch* to any other repository branch without the need for an internet connection.
+Unlike CVS or SVN, a DSCM does not rely on a single central repository. Instead, everyone who wants to use the source code, hold their own copy of the master repository. Such a copy is called a _clone_ in DSCM-Speak. To create a clone, you perform the operation *clone* - as you might have expected. Such a clone is in fact just a directory on your hard drive. You can make a backup by simply copying it or with any other backup mechanism you might to prefer. From this clone, you create a working directory with the sources you want to work on. Remember: The clone is really a clone of the master repository and as such it contains every single commit, tag and branch that occurred to the master repository - so you can *check out* any repository position you like to your working directory and you can easily *switch* to any other repository branch without the need for an internet connection.
 
 With this local clone, you can work as with any other SCM. If you know Subversion/Subclipse, you'll find this quite familiar: You *commit* your changes to the repository; you can *update*, *branch*, *tag*,  and so on. The only difference is: You do not need to bother about other members of the development team, because all changes go only to your very own repository clone and nobody will cry if you totally mess it up (not even you because you can always create a new clone from the master). If you do not want to make a new clone but only want to keep up with changes on the Master, you can *pull* your repository from the master and then *update* the source directory to adapt the changes. 
 
@@ -30,36 +28,48 @@ If you feel, however, that your changes should go to the master repository, you 
  
 h3. IIb Checking out the sources
 
-Now the clone operation is probably findished. You are presented a dialog "Select working directory revision". Most probably you'll want the bleeding edge, and thus, you might want to select the Revision that has the tag "tip". Then click Next, and you'll see all Elexis Projects that are part of this repository. Select those you want to import into your Eclipse workspace and click finish
+Now the clone operation from IIa is probably finished. You are presented a dialog "Select working directory revision". Most probably you'll want the bleeding edge, and thus, you might want to select the Revision that has the tag "tip". Then click Next, and you'll see all Elexis Projects that are part of this repository. Select those you want to import into your Eclipse workspace and click finish
 
-!images/hgeclipse-2.png!
+!images/elexis_hg_4.png! !images/elexis_hg_5.png!
 
+After this, you'll probably see lots of errors. First try a full rebuild (Project->clean->clean all). If  some funny errors persist, you probably forgot to switch your workspace to UTF-8. 
+
+!images/elexis_hg_6.png! 
+
+Still remaining errors are mostly due to unresolved dependencies. Probably you just want to close or remove the involved projects. 
 
 h2. III Repository operations
 
 h3. IIIa Pulling changes from the master repository
 
-From time to time you should integrate changes from the master repository into your clone to prevent it to differ to much from its parent. To do this, rioght-click on one of the projects from this repository and select _team->pull_. Note: This will *not* update your workspace. See next paragraph. Note that this operation can lead to a two-headed repository since there might be changes from somewhere else that have the same origin than your own changes. You can merge the two heads with right-click on the project and _team->merge_.  If there are conflicts in the files that can't be resolved automatically, you have to resolve them manually.
+From time to time you should integrate changes from the master repository into your clone to prevent it to differ to much from its parent. To do this, right-click on one of the projects from this repository and select _team->pull_. Note: This will *not* update your workspace. See next paragraph. Note that this operation can lead to a two-headed repository since there might be changes from somewhere else that have the same origin than your own changes. You can merge the two heads with right-click on the project and _team->merge_.  If there are conflicts in the files that can't be resolved automatically, you have to resolve them manually.
 
 h3. IIIb Updating your workspace
 
 Your workspace can be set to any of the branches defined in the repository. Therefore a repository pull will not be reflected automatically in your workspace. To Update a project in  your workspace, right-click on the project and select _team->update_. 
 
-h3. IIIc Comitting your changes
+h3. IIIc Committing your changes
 
-It is recommended to commit your changes frequently. That way you have always the possibility to return to an earlier state if something went wrong. To ciommit, simply right-click on the project and select _team->commit_. Enter a commit-message and you're done.
+It is recommended to commit your changes frequently. That way you have always the possibility to return to an earlier state if something went wrong. To commit, simply right-click on the project and select _team->commit_. Enter a commit-message and you're done.
 
-h3. IIId Adding a new Plugin to the Repository
+h3. IIId Adding a new plugin to the Repository
 
 This is a bit tricky first, so please read carefully:
 
 # Right-click in the project explorer, select new->project...
 # Select "Plug In Project"
-# Now, this is important, *uncheck* "Use default location" and instead, select a subdirectory of your mercurial repository as location for the project. You'll want to name the subdirectory just as your project is called. *NOTE*: If you do not want to share the new project, or if you want to share it to a different repository, say, with subversion, you can just keep the default location. Elexis can keep sources from different repositories in the same workspace. !images/hgeclipse-3.png!
+# Now, this is important, *uncheck* "Use default location" and instead, select a subdirectory of your Mercurial repository as location for the project. You'll want to name the subdirectory just as your project is called. *NOTE*: If you do not want to share the new project, or if you want to share it to a different repository, say, with subversion, you can just keep the default location. Elexis can keep sources from different repositories in the same workspace. !images/hgeclipse-3.png!
 # Click Next and proceed as you would with earlier projects.
-# After clicking "finish" wait a minute or so and you'll see that the new Plugin project is added magically to your mercurial repository. Right.Click the newly created project and select Team->Commit to write a first import of the new Project into the local mercurial repository clone. (Again, wait a minute to see the file decorations disappear as eclipse collects the diff information to the repository)
+# After clicking "finish" wait a minute or so and you'll see that the new plugin project is added magically to your Mercurial repository. Right.Click the newly created project and select Team->Commit to write a first import of the new Project into the local Mercurial repository clone. (Again, wait a minute to see the file decorations disappear as eclipse collects the diff information to the repository)
 
 If you are not used to DSCM's: Mind the word "clone" above: All changes go only to your local clone. You'll need to *push* them to the master (or send the master  maintainer a *pull* request).
+
+h3. IIIe Removing a plugin from your workspace (but not from the repository)
+
+*WARNING*: If you right-click on the plugin and select "delete", you'll remove the project from the repository. And with the following *commit* and *push* your delete will be propagated through the hierarchy. Of course, this will not really delete anything, you can still recreate it using an older revision, but it can lead to some bad vibes within the team...
+ 
+ So you better do the following: You can, instead of removing the project, just *close* it by right-clicking an choosing "close".
+ Or, if you really want to remove it: Select _Team->disconnect_. After doing this you can safely delete it.
 
 h2. IV Advanced concepts
 
@@ -67,7 +77,7 @@ h3. IVa Shared repository
 
 If you are a group working on the same subset of elexis, or if you are working with different Computers,  having a separate repository clone on every computer will probably not suffice to fit your needs. You'll need some "regional" master repository to collect commits from distributed local repositories. This regional master synchronizes itself with the global master.
 
-Fortunately, this is quite easy with mercurial. You need only a pc with active internet connection or a repository on a public server (such as bitbucket.org) . If you use a private server, just install mercurial there (eclipse is not required) and create a local clone with
+Fortunately, this is quite easy with Mercurial. You need only a pc with active internet connection or a repository on a public server (such as bitbucket.org) . If you use a private server, just install Mercurial there (eclipse is not required) and create a local clone with
 
 _hg clone http://elexis.hg.sourceforge.net/hgroot/elexis/elexis/elexis-base_
 
@@ -97,7 +107,7 @@ This way, everyone having access to the server can pull and push their data. So 
 
 h4. Web access
 
-Having set up your repository for sharing gives you an additional feature for free: Web access to your repository. Simply point your favourite web browser to the url of your repository. 
+Having set up your repository for sharing gives you an additional feature for free: Web access to your repository. Simply point your favorite web browser to the url of your repository. 
 And even more: You can subscribe to an RSS feeder that tells you whenever something changed in the repository.
 You might want to  try this with the "elexis main repositories":http://elexis.hg.sourceforge.net/hgroot/elexis
 
@@ -105,15 +115,15 @@ You might want to  try this with the "elexis main repositories":http://elexis.hg
 h3. IVb Using an SVN repository as master
 
 It is possible to use an existing SVN repository as master for a mercurial repository (and its descendants).  This can be useful for collaboration with different groups.
-If you plan to host your mercurial repository on a debian-based computer (debian, ubuntu etc), this is quite easy. Just install the package hgsvn. This gives you the following commands:
+If you plan to host your Mercurial repository on a debian-based computer (debian, ubuntu etc), this is quite easy. Just install the package hgsvn. This gives you the following commands:
 
 * @hgimportsvn <url>@ - Checkout an existing SVN repository (If it is your first access to this svn repository, you should checkout with @svn checkout@ first to set ssh keys or username correctly) . Note that url can point to the root of the repository and hgsvn will figure out trunk/branches by itself if the repository follows svn standards.
-* @hgpullsvn@ - pull any changes from the svn repository into the mercurial repository. Note: You must di this after hgimportsvn to initialize the mercurial repository correctly
+* @hgpullsvn@ - pull any changes from the svn repository into the mercurial repository. Note: You must di this after hgimportsvn to initialize the Mercurial repository correctly
 
 After doing this, you have a chimaere repository with a  shared workspace. Use @hg update@ to integrate hg changes into the workspace. Use @hg commit@ to propagate workspace changes into hg. Use @svn update@ to fetch svn changes into the workspace. Use @svn commit@ to send workspace changes to the svn repository.  Please note: while the svn commands work on the central repository, the hg commands work only with the local hg repository. To propagate them, you must use @hg push <url>@ (or @hg pull@ from elsewhere)
 
 h2. V Further reading
 
 "Mercurial: The definitive guide":http://hgbook.red-bean.com/
-"The Mercurial website":http://mercurial.selenic.com/
+"The Mercurial web site":http://mercurial.selenic.com/
 "Short tutorial":http://hginit.com/  
