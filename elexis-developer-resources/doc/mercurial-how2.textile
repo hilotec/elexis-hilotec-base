@@ -24,7 +24,7 @@ Unlike CVS or SVN, a DSCM does not rely on a single central repository. Instead,
 
 With this local clone, you can work as with any other SCM. If you know Subversion/Subclipse, you'll find this quite familiar: You *commit* your changes to the repository; you can *update*, *branch*, *tag*,  and so on. The only difference is: You do not need to bother about other members of the development team, because all changes go only to your very own repository clone and nobody will cry if you totally mess it up (not even you because you can always create a new clone from the master). If you do not want to make a new clone but only want to keep up with changes on the Master, you can *pull* your repository from the master and then *update* the source directory to adapt the changes. 
 
-If you feel, however, that your changes should go to the master repository, you should first *pull* any changes that might have happened on the master in teh meantime, resolve all conflicts (if any) and then *push* your Repository to the master. If you do not have *push* rights, you can ask a master maintainer, to *pull* your changes, or you can send them a push request by e-mail, containing a diff of your repository to the master.  
+If you feel, however, that your changes should go to the master repository, you should first *pull* any changes that might have happened on the master in the meantime, *merge* if necessary, resolve all conflicts (if any) and then *push* your Repository to the master. If you do not have *push* rights, you can ask a master maintainer, to *pull* your changes, or you can send them a push request by e-mail, containing a diff of your repository to the master.  
  
 h3. IIb Checking out the sources
 
@@ -36,17 +36,22 @@ After this, you'll probably see lots of errors. First try a full rebuild (Projec
 
 !images/elexis_hg_6.png! 
 
-Still remaining errors are mostly due to unresolved dependencies. Probably you just want to close or remove the involved projects. 
+Still remaining errors are mostly due to unresolved dependencies. Probably you just want to close or remove the involved projects.  Or, you clone repositories with the missing projects into the same workspace, which is perfectly possible. You can even mix projects from subversion and mercurial repositories.
 
 h2. III Repository operations
 
 h3. IIIa Pulling changes from the master repository
 
-From time to time you should integrate changes from the master repository into your clone to prevent it to differ to much from its parent. To do this, right-click on one of the projects from this repository and select _team->pull_. Note: This will *not* update your workspace. See next paragraph. Note that this operation can lead to a two-headed repository since there might be changes from somewhere else that have the same origin than your own changes. You can merge the two heads with right-click on the project and _team->merge_.  If there are conflicts in the files that can't be resolved automatically, you have to resolve them manually.
+From time to time you should integrate changes from the master repository into your clone to prevent it to differ to much from its parent. To do this, right-click on one of the projects from this repository and select _team->pull_. 
+
+!images/elexis_hg_7.png!
+
+Note: In plain Mercurial, this will *not* update your workspace. See next paragraph. The Eclipse plugin gives you the option to  update after pull automatically by checking the respective checkbox in the dialog.
+Furthermore, the pull operation can lead to a two-headed repository since there might be changes from somewhere else that have the same origin than your own changes. You can merge the two heads with right-click on the project and _team->merge_.  If there are conflicts in the files that can't be resolved automatically, you have to resolve them manually. Again, the Eclipse plugin offers an option in the pull dialog to merge automatically if no unresolved conflicts are found. 
 
 h3. IIIb Updating your workspace
 
-Your workspace can be set to any of the branches defined in the repository. Therefore a repository pull will not be reflected automatically in your workspace. To Update a project in  your workspace, right-click on the project and select _team->update_. 
+Your workspace can be set to any of the branches defined in the repository. Therefore by default a repository pull will not be reflected automatically in your workspace. To Update a project in  your workspace, right-click on the project and select _team->update_. 
 
 h3. IIIc Committing your changes
 
@@ -75,11 +80,11 @@ h2. IV Advanced concepts
 
 h3. IVa Shared repository
 
-If you are a group working on the same subset of elexis, or if you are working with different Computers,  having a separate repository clone on every computer will probably not suffice to fit your needs. You'll need some "regional" master repository to collect commits from distributed local repositories. This regional master synchronizes itself with the global master.
+If you are a group working on the same subset of elexis, or if you are working with different computers,  having a separate repository clone on every computer will probably not suffice to fit your needs. You'll need some "regional" master repository to collect commits from distributed local repositories. This regional master synchronizes itself with the global master.
 
 Fortunately, this is quite easy with Mercurial. You need only a pc with active internet connection or a repository on a public server (such as bitbucket.org) . If you use a private server, just install Mercurial there (eclipse is not required) and create a local clone with
 
-_hg clone http://elexis.hg.sourceforge.net/hgroot/elexis/elexis/elexis-base_
+_hg clone http://elexis.hg.sourceforge.net/hgroot/elexis/elexis-base_
 
 then, serve this clone with
 
@@ -87,9 +92,9 @@ _hg serve -d_
 
 And everybody from your team with access to that server (e.g. via internet or via VPN) can clone it with
 
-_hg clone http://<your-url>:8000_
+_hg clone http://your-url:8000_
 
-(Maybe you'll have to change some firewall rules, though). By default, users have only read access (i.e. _clone_).
+(Maybe you'll have to change some firewall rules, though). By default, users have only read access (i.e. _clone_ and _pull_).
 If you want to allow push, you can either set up SSH on the server, or, if you connect through a secure path anyway, eg. inside a closed LAN or VPN, you can add the following lines to <repository>/.hg/hgrc:
 
 bc. 
@@ -107,7 +112,7 @@ This way, everyone having access to the server can pull and push their data. So 
 
 h4. Web access
 
-Having set up your repository for sharing gives you an additional feature for free: Web access to your repository. Simply point your favorite web browser to the url of your repository. 
+Having set up your repository for sharing gives you an additional feature for free: Web access to your repository. Simply point your favorite web browser to http://your-url:8000. 
 And even more: You can subscribe to an RSS feeder that tells you whenever something changed in the repository.
 You might want to  try this with the "elexis main repositories":http://elexis.hg.sourceforge.net/hgroot/elexis
 
@@ -117,8 +122,8 @@ h3. IVb Using an SVN repository as master
 It is possible to use an existing SVN repository as master for a mercurial repository (and its descendants).  This can be useful for collaboration with different groups.
 If you plan to host your Mercurial repository on a debian-based computer (debian, ubuntu etc), this is quite easy. Just install the package hgsvn. This gives you the following commands:
 
-* @hgimportsvn <url>@ - Checkout an existing SVN repository (If it is your first access to this svn repository, you should checkout with @svn checkout@ first to set ssh keys or username correctly) . Note that url can point to the root of the repository and hgsvn will figure out trunk/branches by itself if the repository follows svn standards.
-* @hgpullsvn@ - pull any changes from the svn repository into the mercurial repository. Note: You must di this after hgimportsvn to initialize the Mercurial repository correctly
+* @hgimportsvn <url>@ - Checkout an existing SVN repository (If it is your first access to this svn repository, you should checkout with @svn checkout@ first to set ssh keys or username correctly) . 
+* @hgpullsvn@ - pull any changes from the svn repository into the mercurial repository. Note: You must do this after hgimportsvn to initialize the Mercurial repository correctly
 
 After doing this, you have a chimaere repository with a  shared workspace. Use @hg update@ to integrate hg changes into the workspace. Use @hg commit@ to propagate workspace changes into hg. Use @svn update@ to fetch svn changes into the workspace. Use @svn commit@ to send workspace changes to the svn repository.  Please note: while the svn commands work on the central repository, the hg commands work only with the local hg repository. To propagate them, you must use @hg push <url>@ (or @hg pull@ from elsewhere)
 
