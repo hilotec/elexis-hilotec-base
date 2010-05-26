@@ -1,7 +1,7 @@
 h1. Elexis developer resources
 
 p(klein). (c) 2010 by G. Weirich
- $Id: developer.textile 6367 2010-05-16 16:41:52Z rgw_ch $	
+ $Id: developer.textile 6390 2010-05-25 12:31:24Z rgw_ch $	
 
 h2. Table of contents
 
