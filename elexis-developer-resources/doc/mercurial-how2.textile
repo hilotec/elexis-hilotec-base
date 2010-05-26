@@ -47,7 +47,10 @@ From time to time you should integrate changes from the master repository into y
 !images/elexis_hg_7.png!
 
 Note: In plain Mercurial, this will *not* update your workspace. See next paragraph. The Eclipse plugin gives you the option to  update after pull automatically by checking the respective checkbox in the dialog.
-Furthermore, the pull operation can lead to a two-headed repository since there might be changes from somewhere else that have the same origin than your own changes. You can merge the two heads with right-click on the project and _team->merge_.  If there are conflicts in the files that can't be resolved automatically, you have to resolve them manually. Again, the Eclipse plugin offers an option in the pull dialog to merge automatically if no unresolved conflicts are found. 
+The pull operation can lead to a two-headed repository since there might be changes from somewhere else that originate from the same common revision than your own changes. You can merge the two heads with right-click on the project and _team->merge_.  Again, the Eclipse plugin offers an option in the pull dialog to merge automatically if no unresolved conflicts are found. If there are conflicts in the files that can't be resolved automatically, you have to resolve them manually. HgEclipse will open some merge View depending of your operating system. Here kdiff3 as found on Windows and  KDE based Linuxes (with Gnome  you'll probably prefer 'meld'): On the leftmost side you have the file as merged up to now and the right two panels show the two parents of the merge. You can decide which lines from which parent to move into the result and then save. 
+
+!images/elexis_hg_8.png!
+
 
 h3. IIIb Updating your workspace
 
@@ -108,7 +111,7 @@ This way, everyone having access to the server can pull and push their data. So 
 
 * _push_ your regional master to the global master (You need push rights on the master to do this).
 * Ask a maintainer of the master to _pull_ from your repository (You need some reputation to make them do this...)
-* Create a diff od your repository to the master and send this to a maintainer of the master. This is the most informal path.
+* Create a diff of your repository to the master and send this to a maintainer of the master. This is the most informal path.
 
 h4. Web access
 
@@ -126,6 +129,15 @@ If you plan to host your Mercurial repository on a debian-based computer (debian
 * @hgpullsvn@ - pull any changes from the svn repository into the mercurial repository. Note: You must do this after hgimportsvn to initialize the Mercurial repository correctly
 
 After doing this, you have a chimaere repository with a  shared workspace. Use @hg update@ to integrate hg changes into the workspace. Use @hg commit@ to propagate workspace changes into hg. Use @svn update@ to fetch svn changes into the workspace. Use @svn commit@ to send workspace changes to the svn repository.  Please note: while the svn commands work on the central repository, the hg commands work only with the local hg repository. To propagate them, you must use @hg push <url>@ (or @hg pull@ from elsewhere)
+
+h3. IVc Tagging and Branching
+
+A Tag is a label that marks a specific step of development with a human understandable name.  In fact, every single commit has automatically a unique name such as c3445543dfsdfcdea,  but this is not very useful for humans. A tag is just a meaningful alias such as "elexis 2.1 beta 4 rev2". You can always create a working directory that contains such a development position by updating to that given tag.
+
+ In contrast, a branch denotes a point where the repository is split in two. Consider a public release such as "elexis 2.0". There will still be a trunk with continuous development leading to  release 2.1, but also "elexis 2.0" will not be static like a tag, but will receive bugfixes and continue eventually to 2.0.1 and so on. 
+ 
+ While it is possible in mercurial to create branches, it is more common to use clones for this purpose. So the elexis master repository has clones for elexis 1.4 and 2.0 branches.
+   
 
 h2. V Further reading
 
