@@ -24,7 +24,7 @@ import java.util.logging.Level;
 
 public class JdbcLink {
 	public static final String getVersion() {
-		return "3.1.0";
+		return "3.2.0";
 	}
 
 	public int lastErrorCode;
@@ -32,8 +32,10 @@ public class JdbcLink {
 	public int verMajor = 0;
 	public int verMinor = 0;
 	public String DBFlavor = null;
-	String sDrv;
-	String sConn;
+	private String sDrv;
+	private String sConn;
+	private String sUser;
+	private String sPwd;
 	java.sql.Connection conn = null;
 	private Vector<Stm> statements;
 	public int keepStatements = 10;
@@ -177,7 +179,8 @@ public class JdbcLink {
 		try {
 			// Driver
 			// D=(Driver)Class.forName("org.gjt.mm.mysql.Driver").newInstance();
-
+			sUser = user;
+			sPwd = password;
 			Driver D = (Driver) Class.forName(sDrv).newInstance();
 			verMajor = D.getMajorVersion();
 			verMinor = D.getMinorVersion();
@@ -636,19 +639,28 @@ public class JdbcLink {
 		}
 
 		/**
-		 * Eine SQL-Anfrage an die Datenbank senden
+		 * Eine SQL-Anfrage an die Datenbank senden. Versucht bei einem Fehler zuerst die Verbindung wieder herzustellen
 		 * 
 		 * @param SQLText
 		 *            ein Query String in von der Datenbank verstandener Syntax
 		 * @return ein ResultSet oder null bei Fehler
 		 */
 		public synchronized ResultSet query(String SQLText) {
+			return internalQuery(SQLText, false);
+		}
+
+		private ResultSet internalQuery(String SQLText, boolean inError) {
 			ResultSet res = null;
 			log.log("querying " + SQLText, Log.DEBUGMSG);
 			try {
 				res = stm.executeQuery(SQLText);
 				return res;
 			} catch (Exception e) {
+				if (!inError) {
+					if (connect(sUser, sPwd)) {
+						return internalQuery(SQLText, true);
+					}
+				}
 				ExHandler.handle(e);
 				lastErrorString = e.getMessage();
 				lastErrorCode = CONNECTION_SQL_ERROR;
