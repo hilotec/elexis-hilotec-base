@@ -58,7 +58,7 @@ Your workspace can be set to any of the branches defined in the repository. Ther
 
 h3. IIIc Committing your changes
 
-It is recommended to commit your changes frequently. That way you have always the possibility to return to an earlier state if something went wrong. To commit, simply right-click on the project and select _team->commit_. Enter a commit-message and you're done.
+It is recommended to commit your changes frequently. That way you have always the possibility to return to an earlier state if something went wrong. To commit, simply right-click on the project and select _team->commit_. Enter a commit-message and you're done. Note: This will only change your own repository. To propagate your work to the parent repository, you must *push*. The rule of thumb is: *Commit* whenever you finished a distinct piece of work, *push* whenever you want to make the sum of your commits available to others. This involves some amount of testing bevore pushing.  
 
 h3. IIId Adding a new plugin to the Repository
 
@@ -74,7 +74,7 @@ If you are not used to DSCM's: Mind the word "clone" above: All changes go only 
 
 h3. IIIe Removing a plugin from your workspace (but not from the repository)
 
-*WARNING*: If you right-click on the plugin and select "delete", you'll remove the project from the repository. And with the following *commit* and *push* your delete will be propagated through the hierarchy. Of course, this will not really delete anything, you can still recreate it using an older revision, but it can lead to some bad vibes within the team...
+*WARNING*: If you right-click on the plugin and select "delete", you'll remove the project from the repository. And with the following *commit* and *push* your delete will be propagated through the hierarchy. Of course, this will not really delete anything, you can still recreate it using an older revision, but it can lead to some bad vibrations within the team...
  
  So you better do the following: You can, instead of removing the project, just *close* it by right-clicking an choosing "close".
  Or, if you really want to remove it: Select _Team->disconnect_. After doing this you can safely delete it.
@@ -119,6 +119,10 @@ Having set up your repository for sharing gives you an additional feature for fr
 And even more: You can subscribe to an RSS feeder that tells you whenever something changed in the repository.
 You might want to  try this with the "elexis main repositories":http://elexis.hg.sourceforge.net/hgroot/elexis
 
+h4. Serving multiple repositories
+
+The _hg serve_ command only serves the repository it was called from and by doing so,  it blocks its port (normally 8000). If you want to share more repositories, you can either call it from each repository, providing a distinct port number, e.g. _hg serve -d -p 8001_.
+Or, a bit more difficult to install but more flexible when running: Serve via cgi from a webserver. I use lighttpd which is much easier to configure than the ubiquitous Apache (that seems here ovesrized)
 
 h3. IVb Using an SVN repository as master
 
