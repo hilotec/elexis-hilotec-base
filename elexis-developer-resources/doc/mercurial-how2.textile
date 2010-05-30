@@ -12,11 +12,16 @@ h2. II Steps
 
 h3. IIa cloning the repository 
 
-# In an empty eclipse workspace, right-click in the package explorer and select _import_ -> _Clone existing Mercurial repository_. 
+* In an empty eclipse workspace, right-click in the package explorer and select _import_ -> _Clone existing Mercurial repository_. 
+
 !images/elexis_hg_1.png!!images/elexis_hg_2.png!
-# In the field _repository location_, enter the appropriate repository location.  !images/elexis_hg_3.png! Note that you need different URLs for read-only and for read/write access. In Case of read/write you must chose an SSH connection and enter your _sourceforge_ account details in the username and password fields. In case of a read-only access, use http:// instead of ssh:// and leave the username/password-fields empty.
-# In the field _Clone directory name_, enter a Name for this repository, e.g. 'elexis-basis'.
-# Leave the remaining fields as-is and click "finish"
+
+* In the field _repository location_, enter the appropriate repository location.  Note that you need different URLs for read-only and for read/write access. In Case of read/write you must chose an SSH connection and enter your _sourceforge_ account details in the username and password fields. In case of a read-only access, use http:// instead of ssh:// and leave the username/password-fields empty.
+
+!images/elexis_hg_3.png! 
+
+*  In the field _Clone directory name_, enter a Name for this repository, e.g. 'elexis-basis'.
+* Leave the remaining fields as-is and click "finish"
 
 This will take a quite long time (>160MB to fetch) . Time enough to think about the ideas behind Mercurial (or, more generally, distributed source code managers (DSCM)). If you know all about DSCM, you can skip this safely and proceed to IIb, "checking out the sources".
 
