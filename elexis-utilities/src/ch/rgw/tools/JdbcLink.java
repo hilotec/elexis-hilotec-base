@@ -595,7 +595,14 @@ public class JdbcLink {
 		private Statement stm;
 
 		Stm() throws Throwable {
-			stm = conn.createStatement();
+			try {
+				stm = conn.createStatement();
+			} catch (SQLException se) {
+				if(connect(sUser,sPwd)){
+					log.log(Level.WARNING, "Stm()Trying reconnect"); 
+					stm=conn.createStatement();
+				}
+			}
 		}
 
 		public boolean isClosed() {
@@ -639,7 +646,8 @@ public class JdbcLink {
 		}
 
 		/**
-		 * Eine SQL-Anfrage an die Datenbank senden. Versucht bei einem Fehler zuerst die Verbindung wieder herzustellen
+		 * Eine SQL-Anfrage an die Datenbank senden. Versucht bei einem Fehler
+		 * zuerst die Verbindung wieder herzustellen
 		 * 
 		 * @param SQLText
 		 *            ein Query String in von der Datenbank verstandener Syntax
