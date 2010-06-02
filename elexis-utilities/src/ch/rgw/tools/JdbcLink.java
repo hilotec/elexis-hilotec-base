@@ -17,6 +17,8 @@ import java.sql.Types;
 import java.util.Vector;
 import java.util.logging.Level;
 
+import sun.security.action.GetLongAction;
+
 /**
  * Weiterer Abstraktionslayer zum einfacheren Zugriff auf eine jdbc-fähige
  * Datenbank
@@ -594,8 +596,31 @@ public class JdbcLink {
 	public class Stm {
 		private Statement stm;
 
+		private boolean reconnect() {
+			try {
+				log.log(Level.WARNING, "Stm()Trying reconnect");
+				if (connect(sUser, sPwd)) {
+					stm = conn.createStatement();
+					return true;
+				} else {
+					return false;
+				}
+			} catch (SQLException ex) {
+				log.log(Level.WARNING, "Reconnect failed " + ex.getMessage());
+				lastErrorCode = ex.getErrorCode();
+				lastErrorString = ex.getMessage();
+				return false;
+			}
+		}
+
 		Stm() throws Throwable {
-			stm = conn.createStatement();
+			try {
+				stm = conn.createStatement();
+			} catch (SQLException se) {
+				if (!reconnect()) {
+					throw (new Exception("Stm() failed " + lastErrorString));
+				}
+			}
 		}
 
 		public boolean isClosed() {
@@ -668,7 +693,7 @@ public class JdbcLink {
 				return res;
 			} catch (Exception e) {
 				if (!inError) {
-					if (connect(sUser, sPwd)) {
+					if (reconnect()) {
 						return internalQuery(SQLText, true);
 					}
 				}
