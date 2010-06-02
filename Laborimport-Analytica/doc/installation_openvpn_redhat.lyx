@@ -728,7 +728,7 @@ echo "$confFile" > /etc/openvpn/keys/$KundenName.ovpn
 
 \begin_layout Plain Layout
 
-linux2dos /etc/openvpn/keys/$KundenName.ovpn
+unix2dos /etc/openvpn/keys/$KundenName.ovpn
 \end_layout
 
 \begin_layout Plain Layout

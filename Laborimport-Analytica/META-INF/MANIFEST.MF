@@ -13,3 +13,4 @@ Require-Bundle: ch.rgw.utility,
  org.eclipse.ui.forms,
  ch.elexis.laborimport.hl7.allg
 Bundle-ClassPath: bin/
+Export-Package: ch.elexis.laborimport.analytica
