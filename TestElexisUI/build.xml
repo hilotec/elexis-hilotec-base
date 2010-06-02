@@ -32,10 +32,14 @@
 					<include name="*.jar" />
 					<include name="org.junit4_*/junit.jar" />
 				</fileset>
+				<pathelement location="${dist}/plugins/ch.elexis.laborimport_analytica_${version}" />
+				<fileset dir="${dist}/plugins/ch.elexis.laborimport_analytica_${version}/lib">
+					<include name="*.jar" />
+				</fileset>
 			</classpath>
 		</javac>
 		<tstamp />
-		<jar basedir="${sourcedir}" destfile="${plugindir}/TestElexisUI_${version}.jar" />
+		<!--jar basedir="${sourcedir}" destfile="${plugindir}/TestElexisUI_${version}.jar" /-->
 		<zip basedir="${plugindir}" destfile="${updatefiles}/${targetdir}.${DSTAMP}.zip" />
 		<ant antfile="../BuildElexis/rsc/build/build.xml" target="make_addition" />
 	</target>

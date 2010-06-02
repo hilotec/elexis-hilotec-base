@@ -25,10 +25,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith; //import org.eclipse.core.runtime.Assert;
 import org.eclipse.swtbot.swt.finder.utils.SWTUtils;
 import ch.elexis.actions.GlobalActions;
-import ch.elexis.actions.Messages;
+import ch.elexis.laborimport.analytica.Messages;
 import org.apache.log4j.*;
 import ch.elexis.uitests.core.SWTbotUtils;
-
 /*
  * Tests for the analytica labor importation
  * TODO: - Add test for setup
@@ -61,54 +60,44 @@ public class TestAnalytica {
 	
 	@Test
 	public void testAnalyticaSetup() throws Exception{
-		logger.info("testAnalyticaSetup");
-		assert (true);
-		bot.menu("Datei").menu("Einstellungen").click();
-		SWTbotUtils.displayTreeView(bot);
-		SWTBotShell shell = bot.shell("Preferences");
-		SWTbotUtils.takeScreenshot("Preferences.png", SWTbotUtils.SHELL);		
+		logger.info("testAnalyticaSetup"); //$NON-NLS-1$
+		logger.info("XX File: " +ch.elexis.uitests.Messages.getString("TestCore.File"));//$NON-NLS-1$
+		logger.info("XX File: " +ch.elexis.uitests.Messages.getString("TestCore.Preferences"));//$NON-NLS-1$
+		bot.menu(ch.elexis.uitests.Messages.getString("TestCore.File")).menu(ch.elexis.uitests.Messages.getString("TestCore.Preferences")).click(); //$NON-NLS-1$ //$NON-NLS-2$
+		SWTBotShell shell = bot.shell("Preferences"); //$NON-NLS-1$
 		SWTbotUtils.displayTreeView(shell.bot());
 		SWTBot pBot = shell.bot();
-		//pBot.clabelInGroup("Labor Analytica", "Datenaustausch");
-		//logger.info("Datenaustausc Laborimport Analytica 1");
-		SWTbotUtils.takeScreenshot("Preferences_2a.png", SWTbotUtils.SHELL);		
+		SWTbotUtils.takeScreenshot("Preferences.png", SWTbotUtils.FULL_SCREEN);		
+		logger.info("XX 1: " + ch.elexis.uitests.Messages.getString("TestCore.Datenaustausch"));
+        SWTbotUtils.takeScreenshot("Preferences_2a.png", SWTbotUtils.EDITOR);
+        SWTBotTreeItem treeItem = pBot.tree().getTreeItem(ch.elexis.uitests.Messages.getString("TestCore.Datenaustausch")).select().expand();
+        SWTbotUtils.takeScreenshot("Preferences_2b.png", SWTbotUtils.VIEW);
+        logger.info("XX 2: " + Messages.getString("PreferencePage.title.description"));
+        treeItem.getNode("Labor Analytica").select().expand();
+        SWTbotUtils.takeScreenshot("Preferences_2c.png", SWTbotUtils.SHELL);
 
-		// pBot.treeWithLabelInGroup("Labor Analytica", "Datenaustausch");
-		// logger.info("Datenaustausc Laborimport Analytica 3");
-		// SWTbotUtils.takeScreenshot("Preferences_2c.png", SWTbotUtils.SHELL);		
+		SWTBotText cbHost = pBot.textWithLabel(Messages.getString("PreferencePage.label.host")); //$NON-NLS-1$
+		cbHost.setText(System.getProperty("ch.elexis.ovpn.host")); //$NON-NLS-1$
 
-		pBot.cTabItemInGroup("Labor Analytica", "Datenaustausch");
-		logger.info("Datenaustausc Laborimport Analytica 2e");
-		SWTbotUtils.takeScreenshot("Preferences_2e.png", SWTbotUtils.SHELL);		
 
-		//pBot.treeWithLabel("Datenaustausch").expandNode("Labor Analytica");
-		//logger.info("Datenaustausc Laborimport Analytica 5");
-		//SWTbotUtils.takeScreenshot("Preferences_2d.png", SWTbotUtils.SHELL);		
-		pBot.cTabItemInGroup("Labor Analytica", "Datenaustausch");
-		logger.info("Datenaustausch Laborimport Analytica 2");
-		SWTbotUtils.takeScreenshot("Preferences_2b.png", SWTbotUtils.SHELL);		
-//		pBot.labelInGroup("Labor Analytica", "Datenaustausch");
-		SWTBotCCombo cbUser = pBot.ccomboBoxWithLabel("FTP Benutzername");
-		logger.info("Benutzername" + cbUser); pBot.sleep(200); 
-		cbUser.setSelection("niklausAsUser");
-		SWTBotCCombo cbPw = pBot.ccomboBoxWithLabel("FTP Passwort");
-		logger.info("password" + cbPw); pBot.sleep(200); 
-		cbUser.setSelection("1234asPw");
-		SWTbotUtils.takeScreenshot("Preferences_3.png", SWTbotUtils.SHELL);		
-		logger.info("testAnalyticaSetup.done");
-		/*
-		 * TODO: Select the correct page and verify that we can to a few things with it SWTBotTree
-		 * tree = bot.treeWithLabel("Datenaustausch"); logger.info("Got Datenaustausch tree");
-		 * bot.sleep(200); tree.expandNode("Datenaustausch", true);
-		 * logger.info("Got Datenaustausch expanded"); bot.sleep(200); SWTBotTree tree2 =
-		 * bot.treeWithLabel("Labor Analytica"); logger.info("Got Datenaustausch tree");
-		 * bot.sleep(200);
-		 * 
-		 * SWTBotShell shell = bot.shellWithId("Datenaustausch", "Labor Analytica");
-		 * logger.info("Got Datenaustausch/Labo Shell");
-		 * logger.info("Got Datenaustausch"+shell.toString());
-		 * SWTbotUtils.displayTreeView(shell.bot()); bot.sleep(200); // bot.getFocusedWidget();
-		 * logger.info("Got Analytica"); bot.sleep(200);
-		 */
+		SWTBotText cbDown = pBot.textWithLabel(Messages.getString("PreferencePage.label.download")); //$NON-NLS-1$
+		cbDown.setText(System.getProperty("ch.elexis.ovpn.download")); //$NON-NLS-1$
+
+		SWTBotText cbUser = pBot.textWithLabel(Messages.getString("PreferencePage.label.user")); //$NON-NLS-1$
+		cbUser.setText(System.getProperty("ch.elexis.ovpn.user")); //$NON-NLS-1$
+
+		SWTBotText cbPw = pBot.textWithLabel(Messages.getString("PreferencePage.label.password")); //$NON-NLS-1$
+		cbPw.setText(System.getProperty("ch.elexis.ovpn.password")); //$NON-NLS-1$
+
+		SWTBotText  cbOvpn = pBot.textWithLabel(Messages.getString("PreferencePage.label.ovpn")); //$NON-NLS-1$
+		cbOvpn.setText(System.getProperty("ch.elexis.ovpn.conf")); //$NON-NLS-1$
+		
+		SWTbotUtils.takeScreenshot("Preferences_3s.png", SWTbotUtils.SHELL);		 //$NON-NLS-1$
+		pBot.button("Apply").click();
+		logger.info("testAnalyticaSetup Applied"); //$NON-NLS-1$
+		pBot.button("OK").click();
+		SWTbotUtils.takeScreenshot("Preferences_4.png", SWTbotUtils.SHELL);		 //$NON-NLS-1$
+		logger.info("testAnalyticaSetup Okay"); //$NON-NLS-1$
+		assert (true);
 	}
 }

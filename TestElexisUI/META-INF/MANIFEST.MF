@@ -15,5 +15,6 @@ Require-Bundle: org.eclipse.swtbot.eclipse.core;bundle-version="0.0.0",
  org.eclipse.swtbot.eclipse.junit4.headless;bundle-version="2.0.0",
  org.apache.log4j;bundle-version="0.0.0",
  org.junit4,
- org.eclipse.swt
+ org.eclipse.swt,
+ ch.elexis.laborimport.analytica;bundle-version="1.2.1"
 Import-Package: ch.elexis.actions
