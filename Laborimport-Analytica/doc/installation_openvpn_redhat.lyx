@@ -748,6 +748,11 @@ cp /etc/openvpn/keys/$KundenName.key /home/$KundenName
 
 \begin_layout Plain Layout
 
+chown $KundenName /home/$KundenName/$KundenName.*
+\end_layout
+
+\begin_layout Plain Layout
+
 echo "$confFile" > /home/$KundenName/$KundenName.ovpn
 \end_layout
 
