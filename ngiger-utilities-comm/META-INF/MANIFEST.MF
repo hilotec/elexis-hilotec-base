@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Communication utilities for elexis
-Bundle-SymbolicName: ch.ngiger.utilites.comm;singleton:=true
+Bundle-SymbolicName: ch.ngiger.utilities.comm;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Vendor: Niklaus Giger
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

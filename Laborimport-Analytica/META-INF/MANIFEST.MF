@@ -6,11 +6,11 @@ Bundle-Version: 1.2.1
 Bundle-Vendor: elexis.ch
 Require-Bundle: ch.rgw.utility,
  ch.elexis,
- ch.ngiger.utilites.comm,
  ch.elexis.importer.div,
  org.eclipse.core.runtime,
  org.eclipse.ui,
  org.eclipse.ui.forms,
- ch.elexis.laborimport.hl7.allg
+ ch.elexis.laborimport.hl7.allg,
+ ch.ngiger.utilities.comm;bundle-version="1.0.0"
 Bundle-ClassPath: bin/
 Export-Package: ch.elexis.laborimport.analytica

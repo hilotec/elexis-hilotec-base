@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<service:service category="invisible" id="ch.ngiger.utilites.comm"
+<service:service category="invisible" id="ch.ngiger.utilities.comm"
 	name="N. Giger Communications Utilities" provider="niklaus.giger@member.fsf.org" type="Basis-System"
 	version="1.0.0" xmlns:service="http://www.medelexis.ch/services"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
