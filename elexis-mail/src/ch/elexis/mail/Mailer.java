@@ -219,7 +219,7 @@ public class Mailer {
 			return new Result<String>("Ok"); //$NON-NLS-1$
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return new Result<String>(Result.SEVERITY.ERROR, 1, ex.getMessage(),
+			return new Result<String>(Result.SEVERITY.ERROR, 1, ex.getClass().getName()+" "+ex.getMessage(),
 					Messages.Mailer_Error, true);
 
 		}
