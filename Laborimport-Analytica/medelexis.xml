@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<service:service category="feature" id="ch.elexis.laborimport_analytica" name="Laborimport Analytica" provider="niklaus.giger@member.fsf.org" type="Laboranbindung" version="0.1" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+<service:service category="feature" id="ch.elexis.laborimport_analytica" name="Laborimport Analytica" provider="support@medelexis.ch" type="Laboranbindung" version="0.1" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
   <service:conditions>
   	<service:roles>
   		<service:role priceClass="fixed-low">

@@ -17,6 +17,8 @@ import java.sql.Types;
 import java.util.Vector;
 import java.util.logging.Level;
 
+import sun.security.action.GetLongAction;
+
 /**
  * Weiterer Abstraktionslayer zum einfacheren Zugriff auf eine jdbc-fähige
  * Datenbank
@@ -474,11 +476,11 @@ public class JdbcLink {
 	/**
 	 * Anfrage, ob die Verbindung steht
 	 * 
-	 * @todo Muss noch besser implementiert werden
+	 * @todo Muss implementiert werden
 	 * @return true wenn die Verbindung steht.
 	 */
 	public boolean isAlive() {
-		return (verMajor != 0);
+		return true;
 	}
 
 	public boolean setAutoCommit(boolean value) {
@@ -594,8 +596,31 @@ public class JdbcLink {
 	public class Stm {
 		private Statement stm;
 
+		private boolean reconnect() {
+			try {
+				log.log(Level.WARNING, "Stm()Trying reconnect");
+				if (connect(sUser, sPwd)) {
+					stm = conn.createStatement();
+					return true;
+				} else {
+					return false;
+				}
+			} catch (SQLException ex) {
+				log.log(Level.WARNING, "Reconnect failed " + ex.getMessage());
+				lastErrorCode = ex.getErrorCode();
+				lastErrorString = ex.getMessage();
+				return false;
+			}
+		}
+
 		Stm() throws Throwable {
-			stm = conn.createStatement();
+			try {
+				stm = conn.createStatement();
+			} catch (SQLException se) {
+				if (!reconnect()) {
+					throw (new Exception("Stm() failed " + lastErrorString));
+				}
+			}
 		}
 
 		public boolean isClosed() {
@@ -627,29 +652,40 @@ public class JdbcLink {
 		 *            Von der Datenbank verstandener SQL-String
 		 * @return Zahl der affected rows.
 		 */
-		public synchronized int exec(String SQLText) {
+		public int exec(String sql){
+			return internalExec(sql,false);
+		}
+		
+		private synchronized int internalExec(String SQLText, boolean inError) {
 			log.log("executing " + SQLText, Log.DEBUGMSG);
 			try {
 				return stm.executeUpdate(SQLText);
 			} catch (Exception e) {
+				if(!inError){
+					if(connect(sUser, sPwd)){
+						return internalExec(SQLText,true);
+					}
+				}
 				ExHandler.handle(e);
 				log.log("Fehler bei: " + SQLText, Log.ERRORS);
 				return 0;
 			}
 		}
+		
 
 		/**
-		 * Eine SQL-Anfrage an die Datenbank senden. Versucht bei einem Fehler zuerst die Verbindung wieder herzustellen
+		 * Eine SQL-Anfrage an die Datenbank senden. Versucht bei einem Fehler
+		 * zuerst die Verbindung wieder herzustellen
 		 * 
 		 * @param SQLText
 		 *            ein Query String in von der Datenbank verstandener Syntax
 		 * @return ein ResultSet oder null bei Fehler
 		 */
-		public synchronized ResultSet query(String SQLText) {
+		public ResultSet query(String SQLText) {
 			return internalQuery(SQLText, false);
 		}
 
-		private ResultSet internalQuery(String SQLText, boolean inError) {
+		private synchronized ResultSet internalQuery(String SQLText, boolean inError) {
 			ResultSet res = null;
 			log.log("querying " + SQLText, Log.DEBUGMSG);
 			try {
@@ -657,7 +693,7 @@ public class JdbcLink {
 				return res;
 			} catch (Exception e) {
 				if (!inError) {
-					if (connect(sUser, sPwd)) {
+					if (reconnect()) {
 						return internalQuery(SQLText, true);
 					}
 				}
@@ -685,9 +721,8 @@ public class JdbcLink {
 		public Vector queryList(String sql, String[] fields) {
 			Vector rs = new Vector();
 			log.log("executing " + sql, Log.DEBUGMSG);
-			ResultSet res = null;
+			ResultSet res = internalQuery(sql, false);
 			try {
-				res = stm.executeQuery(sql);
 				if (res != null) {
 					while (res.next()) {
 						Object[] o = new Object[fields.length];
@@ -708,10 +743,9 @@ public class JdbcLink {
 		}
 
 		public String queryString(String sql) {
-			ResultSet res = null;
+			ResultSet res = internalQuery(sql, false);
 			try {
-				res = stm.executeQuery(sql);
-				if (res.next()) {
+				if (res != null && res.next()) {
 					String r = res.getString(1);
 					if ((r == null) || (r.equals("null")) || (r.equals(""))) {
 						return "";
@@ -734,10 +768,9 @@ public class JdbcLink {
 		 *         -1: Wert nicht gefunden.
 		 */
 		public int queryInt(String sql) {
-			ResultSet res = null;
+			ResultSet res = internalQuery(sql, false);
 			try {
-				res = stm.executeQuery(sql);
-				if (res.next()) {
+				if (res != null && res.next()) {
 					return res.getInt(1);
 				}
 			} catch (SQLException ex) {

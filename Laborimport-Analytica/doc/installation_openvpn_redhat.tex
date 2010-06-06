@@ -197,17 +197,18 @@ comp-lzo
 
 # Set log file verbosity.
 verb 3
-
+ 
 # Silence repeating messages
 mute 20
 mute-replay-warnings
 EndOfVar)
 
 echo "$confFile" > /etc/openvpn/keys/$KundenName.ovpn
-linux2dos /etc/openvpn/keys/$KundenName.ovpn
+unix2dos /etc/openvpn/keys/$KundenName.ovpn
 cp /etc/openvpn/keys/ca.crt /home/$KundenName/Labor-ca.crt
 cp /etc/openvpn/keys/$KundenName.crt /home/$KundenName
 cp /etc/openvpn/keys/$KundenName.key /home/$KundenName
+chown $KundenName /home/$KundenName/$KundenName.*
 echo "$confFile" > /home/$KundenName/$KundenName.ovpn
 echo /home/$KundeName/$KundenName.ovpn
 echo "Created config/key-files for $KundenName in /home/$KundenName"

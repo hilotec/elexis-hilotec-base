@@ -728,7 +728,7 @@ echo "$confFile" > /etc/openvpn/keys/$KundenName.ovpn
 
 \begin_layout Plain Layout
 
-linux2dos /etc/openvpn/keys/$KundenName.ovpn
+unix2dos /etc/openvpn/keys/$KundenName.ovpn
 \end_layout
 
 \begin_layout Plain Layout
@@ -744,6 +744,11 @@ cp /etc/openvpn/keys/$KundenName.crt /home/$KundenName
 \begin_layout Plain Layout
 
 cp /etc/openvpn/keys/$KundenName.key /home/$KundenName
+\end_layout
+
+\begin_layout Plain Layout
+
+chown $KundenName /home/$KundenName/$KundenName.*
 \end_layout
 
 \begin_layout Plain Layout

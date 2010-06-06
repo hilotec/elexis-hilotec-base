@@ -1,15 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Communication utilities for elexis
-Bundle-SymbolicName: ch.ngiger.utilites.comm;singleton:=true
+Bundle-SymbolicName: ch.ngiger.utilities.comm;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Vendor: Niklaus Giger
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: ch.ngiger.comm.ftp;uses:="org.apache.commons.net.ftp",
- ch.ngiger.comm.vpn,
+ ch.ngiger.comm.vpn;uses:="ch.elexis.util",
  org.apache.commons.net,
  org.apache.commons.net.bsd;uses:="org.apache.commons.net",
- org.apache.commons.net.ftp;uses:="org.apache.commons.net.telnet,org.apache.commons.net.ftp.parser,org.apache.commons.net",
+ org.apache.commons.net.ftp,
  org.apache.commons.net.ftp.parser;uses:="org.apache.commons.net.ftp,org.apache.oro.text.regex",
  org.apache.commons.net.io,
  org.apache.commons.net.nntp;uses:="org.apache.commons.net",

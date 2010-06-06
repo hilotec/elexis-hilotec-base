@@ -64,17 +64,6 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 
 	@Override
 	protected void createFieldEditors() {
-		final Composite parentComp = getFieldEditorParent();
-		final RadioGroupFieldEditor groupFieldEditor = new RadioGroupFieldEditor(
-				BATCH_OR_FTP, Messages.getString("PreferencePage.direktimport.label"), 2, new String[][] { //$NON-NLS-1$
-						{ Messages.getString("PreferencePage.batchscript.label"), BATCH }, { Messages.getString("PreferencePage.ftpserver.label"), FTP } }, //$NON-NLS-1$ //$NON-NLS-2$
-						parentComp, true);
-		final FileFieldEditor batchFileEditor = new FileFieldEditor(BATCH_DATEI, Messages.getString("PreferencePage.batchdatei.label"), //$NON-NLS-1$
-				parentComp);
-
-		addField(groupFieldEditor);
-		addField(batchFileEditor);
-
 		addField(new StringFieldEditor(FTP_HOST, Messages
 				.getString("PreferencePage.label.host"), getFieldEditorParent())); //$NON-NLS-1$
 		addField(new StringFieldEditor(FTP_USER, Messages

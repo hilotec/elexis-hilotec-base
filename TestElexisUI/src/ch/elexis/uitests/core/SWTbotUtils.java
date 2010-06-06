@@ -85,12 +85,13 @@ public class SWTbotUtils {
 	 */
 	public static void takeScreenshot(String filename, int what){
 		boolean res = false;
-		if (System.getProperty("ch.elexis.saveScreenshot") == null) {
-			logger.info("Skip snapshot snapshot: " + filename + " type " + what);
+		String save = System.getProperty("ch.elexis.saveScreenshot");
+		if (save == null || save.matches("false") ) {
+			logger.info("Skip snapshot "+ save + ": " + filename + " type " + what);
 			return;
 		}
 		
-		logger.info("before taking type " + what + " snapshot: " + filename);
+		logger.info("before " + save +" taking type " + what + " snapshot: " + filename);
 		if (what == FULL_SCREEN) {
 			res = SWTUtils.captureScreenshot(filename);
 			
@@ -118,14 +119,12 @@ public class SWTbotUtils {
 			
 		} else if (what == SHELL) {
 			try {
-				bot.activeShell().setFocus();
-				
+				bot.activeShell().activate();
+				res = SWTUtils.captureScreenshot(filename);
 			} catch (Exception WidgetNotFound) {
 				logger.error("no shell active at the moment");
 				return;
 			}
-			bot.activeShell().setFocus();
-			res = SWTUtils.captureScreenshot(filename, bot.getFocusedWidget());
 			
 		} else {
 			logger.error("invalid snapshot type " + what);
