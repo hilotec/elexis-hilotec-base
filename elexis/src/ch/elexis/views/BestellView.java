@@ -376,7 +376,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 				List<IConfigurationElement> list = Extensions
 						.getExtensions("ch.elexis.Transporter"); //$NON-NLS-1$
 				for (IConfigurationElement ic : list) {
-					String handler = ic.getAttribute("AcceptableTypes"); //$NON-NLS-1$
+					String handler = ic.getAttribute("type"); //$NON-NLS-1$
 					
 					if (handler !=null && handler.contains("ch.elexis.data.Bestellung")) { //$NON-NLS-1$
 						try {

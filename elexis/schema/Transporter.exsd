@@ -67,7 +67,7 @@ Import and export mediates to and from a generic format while output means an ar
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="type" type="string">
+         <attribute name="type" type="string" use="required">
             <annotation>
                <documentation>
                   Type (class name) of Objects this Transporter can handle. If type is *, this is a catch-all-transporter
