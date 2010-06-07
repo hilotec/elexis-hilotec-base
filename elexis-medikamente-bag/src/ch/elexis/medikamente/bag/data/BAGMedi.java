@@ -176,11 +176,20 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 		exi.put("Swissmedic-Nr.", row[4]);
 		exi.put("Swissmedic-Liste", row[5]);
 		try {
-			setEKPreis(new Money(row[8]));
-			setVKPreis(new Money(row[9]));
-		} catch (/* Parse */Exception ex) {
-			log.log("Parse error preis " + row[7], Log.ERRORS);
+			setEKPreis(new Money(Double.parseDouble(row[8])));
+		}catch(NumberFormatException nex){
+			setEKPreis(new Money());
+			log.log("Parse error preis " + row[7]+": "+row[8]+"/"+row[9], Log.ERRORS);
+
 		}
+		try{
+			setVKPreis(new Money(Double.parseDouble(row[9])));
+		} catch (NumberFormatException ex) {
+			setVKPreis(new Money());
+			log.log("Parse error preis " + row[7]+": "+row[8]+"/"+row[9], Log.ERRORS);
+
+		}
+		
 		if (row[10].equals("Y")) {
 			exi.put("Limitatio", "Y");
 			exi.put("LimitatioPts", row[11]);
