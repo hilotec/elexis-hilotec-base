@@ -179,14 +179,14 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 			setEKPreis(new Money(Double.parseDouble(row[8])));
 		}catch(NumberFormatException nex){
 			setEKPreis(new Money());
-			log.log("Parse error preis " + row[7]+": "+row[8]+"/"+row[9], Log.ERRORS);
+			log.log("Parse error preis " + row[7]+": "+row[8]+"/"+row[9], Log.WARNINGS);
 
 		}
 		try{
 			setVKPreis(new Money(Double.parseDouble(row[9])));
 		} catch (NumberFormatException ex) {
 			setVKPreis(new Money());
-			log.log("Parse error preis " + row[7]+": "+row[8]+"/"+row[9], Log.ERRORS);
+			log.log("Parse error preis " + row[7]+": "+row[8]+"/"+row[9], Log.WARNINGS);
 
 		}
 		
