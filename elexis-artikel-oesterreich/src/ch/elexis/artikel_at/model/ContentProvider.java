@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: ContentProvider.java 6380 2010-05-18 11:57:21Z marcode79 $
+ * $Id: ContentProvider.java 6418 2010-06-07 10:57:10Z marcode79 $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.model;
@@ -51,7 +51,7 @@ public class ContentProvider implements CommonContentProvider {
 		qMedi.clear();
 		
 		if (m.length() > 0) {
-			qMedi.add("Name", "LIKE", m + "%");
+			qMedi.add("Name", "LIKE", m+"%", true);
 		}
 		qMedi.orderBy(false, "Name");
 		List<Medikament> list = qMedi.execute();
