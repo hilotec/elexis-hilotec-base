@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project name="elexis" default="all">
+	<property file="local.properties" />
+	<property name="output" value="${base}/deploy" />
+	<property name="dox" value="${output}/dox" />
+	<property name="lib" value="${base}/lib" />
+	<property name="rcpbase" value="${base}/lib/rcpbase" />
+	<property name="dist" value="${output}/${os}/Medelexis-${version}" />
+	<property name="repositories" value="${base}/repositories" />
+
+
+	<target name="initialize">
+		<mkdir dir="${base}" />
+		<mkdir dir="${dist}" />
+		<mkdir dir="${additions}" />
+		<mkdir dir="${lib}" />
+		<mkdir dir="${rcpbase}" />
+		<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.core.jar" usetimestamp="true" />
+		<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.textile.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.textile.core.jar" usetimestamp="true" />
+		<get src="http://team.medelexis.ch/build/jdom.jar" dest="${lib}/jdom.jar" usetimestamp="true" />
+		<get src="http://www.elexis.ch/files/build/medelexis-packager.jar" dest="${lib}/medelexis-packager.jar" usetimestamp="true" />
+		<get src="http://team.medelexis.ch/build/ant-contrib-1.0b3.jar" dest="${lib}/ant-contrib.jar" usetimestamp="true" />
+		<get src="http://www.elexis.ch/files/build/linux21.tar.gz" dest="${lib}/linux.tar.gz" usetimestamp="true" />
+		<get src="http://www.elexis.ch/files/build/windows21.tar.gz" dest="${lib}/windows.tar.gz" usetimestamp="true" />
+		<get src="http://www.elexis.ch/files/build/macosx21.tar.gz" dest="${lib}/macosx.tar.gz" usetimestamp="true" />
+		<get src="http://www.elexis.ch/files/build/common21.tar.gz" dest="${lib}/common.tar.gz" usetimestamp="true" />
+		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-compiler.jar" dest="${lib}/scala-compiler.jar" usetimestamp="true" />
+		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-library.jar" dest="${lib}/scala-library.jar" usetimestamp="true" />
+		<get src="http://www.medelexis.ch/fileadmin/downloads/izpack-compiler.jar" dest="${lib}/izpack-compiler.jar" usetimestamp="true" />
+		<untar dest="${rcpbase}" compression="gzip" src="${lib}/linux.tar.gz" />
+		<untar dest="${rcpbase}" compression="gzip" src="${lib}/windows.tar.gz" />
+		<untar dest="${rcpbase}" compression="gzip" src="${lib}/macosx.tar.gz" />
+		<untar dest="${rcpbase}" compression="gzip" src="${lib}/common.tar.gz" />
+
+		<copy todir="${dist}">
+			<fileset dir="${rcpbase}/${os}/rcp" />
+			<fileset dir="${rcpbase}/common/rcp" />
+		</copy>
+		<!-- Set the classpath for wikitext common -->
+		<property name="wikitext.standalone" value="${base}/lib" />
+		<path id="wikitext.classpath">
+			<fileset dir="${wikitext.standalone}">
+				<include name="org.eclipse.mylyn.wikitext.*core*.jar" />
+			</fileset>
+		</path>
+		<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${lib}/ant-contrib.jar" />
+		<taskdef name="packager" classname="ch.medelexis.packager.Creator" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
+		<taskdef name="pluginID" classname="ch.medelexis.packager.PluginID" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
+		<taskdef name="supporter" classname="ch.medelexis.packager.SupportCreator" classpath="${lib}/medelexis-packager.jar" />
+		<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
+		<taskdef name="izpack" classpath="${lib}/izpack-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask" />
+		<taskdef resource="scala/tools/ant/antlib.xml">
+			<classpath>
+				<pathelement location="${lib}/scala-compiler.jar" />
+				<pathelement location="${lib}/scala-library.jar" />
+			</classpath>
+		</taskdef>
+	</target>
+
+	<target name="update" depends="initialize">
+		<for param="repo">
+			<path>
+				<dirset dir="${repositories}" includes="*" />
+			</path>
+			<sequential>
+				<exec executable="${hg}" dir="@{repo}">
+					<arg value="pull" />
+					<arg value="-u" />
+				</exec>
+			</sequential>
+		</for>
+	</target>
+
+	<!-- generate a plugin: Copies all non-java files and compiles java- and scala- files and builds
+		documentation if found. Creates a 
+		 medelexis-package after successful compilation, if it finds a "medelexis.xml" in the plugin.
+		 must be called with following parameters:
+		 pn:         Plugin-Name, i.e. the directory name in the repository
+		 plugindir:  The target directory in the plugins-directory of the destination
+		 repository: the repository where the sourced are
+		 cp:         Reference to the classpath to use
+		 -->
+	<target name="compile">
+		<var name="sourcedir" value="${repository}/${pn}" />
+		<echo message="create ${pn} from ${sourcedir} in ${plugindir}" />
+		<mkdir dir="${plugindir}" />
+		<copy todir="${plugindir}">
+			<fileset dir="${sourcedir}">
+				<include name="*.jar" />
+				<include name="*.xml" />
+				<include name="*.bmp" />
+				<include name="*.properties" />
+				<include name="*.script" />
+				<include name="bin/**/*.properties" />
+				<include name="icons/**/*.*" />
+				<include name="rsc/**/*.*" />
+				<include name="lib/**/*.*" />
+				<include name="META-INF/MANIFEST.MF" />
+				<include name="meta-inf/manifest.mf" />
+			</fileset>
+		</copy>
+		<copy todir="${plugindir}" failonerror="false">
+			<fileset dir="${sourcedir}/src" includes="**/*.script" />
+			<fileset dir="${sourcedir}/src" includes="**/*.properties" />
+		</copy>
+		<scalac srcdir="${sourcedir}" destdir="${plugindir}" excludes="Tests/**" encoding="UTF-8" classpathref="${cp}" />
+		<javac srcdir="${sourcedir}" destdir="${plugindir}" excludes="Tests/**" debug="${debug}" optimize="${optimize}" target="${javatarget}" encoding="UTF-8" classpathref="${cp}" />
+		<packager plugindir="${plugindir}" dest="${additions}" skipOnMissing="true" targetVersion="${version}" />
+		<mkdir dir="${dox}/${pn}" />
+		<copy todir="${dox}/${pn}" failonerror="false">
+			<fileset dir="${sourcedir}/doc" />
+		</copy>
+		<wikitext-to-html markupLanguage="Textile" overwrite="true" multipleOutputFiles="true" formatOutput="true" sourceEncoding="utf-8">
+			<fileset dir="${dox}/${pn}">
+				<include name="*.textile" />
+			</fileset>
+			<!-- stylesheet url="styles/main.css" / -->
+		</wikitext-to-html>
+		<wikitext-to-xslfo markupLanguage="Textile" sourceEncoding="utf-8" author="Elexis">
+			<fileset dir="${dox}/${pn}" includes="*.textile" />
+		</wikitext-to-xslfo>
+		<!-- create PDF 
+				<exec command="${fop.home}/fop">
+					<arg value="${dox}/${pn}/*.fo" />
+					<arg value="${dox}/${pn}/*.pdf" />
+				</exec -->
+	</target>
+
+	<!--
+	create all projects in all repositories
+	-->
+	<target name="create-all" depends="initialize">
+		<for param="repo">
+			<path>
+				<dirset dir="${repositories}" includes="*" />
+			</path>
+			<sequential>
+				<echo message="creating plugins from @{repo}" />
+				<antcall target="create">
+					<param name="repository" value="@{repo}" />
+				</antcall>
+			</sequential>
+		</for>
+	</target>
+
+	<!--
+	create all projects in a single repository
+	-->
+	<target name="create">
+		<for param="file">
+			<path>
+				<dirset dir="${repository}" includes="*" />
+			</path>
+			<sequential>
+				<echo message="@{file}" />
+				<pluginID dir="@{file}" />
+				<var name="plugindir" value="${dist}/plugins/${BundleId}_${version}.${DSTAMP}" />
+				<path id="varcp">
+					<dirset dir="${dist}/plugins" />
+					<fileset dir="${dist}/plugins">
+						<include name="**/*.jar" />
+					</fileset>
+				</path>
+
+				<antcall target="compile" inheritrefs="true">
+					<param name="pn" value="${DirName}" />
+					<param name="repository" value="${elexis.opensource}" />
+					<param name="cp" value="varcp" />
+				</antcall>
+
+			</sequential>
+		</for>
+	</target>
+
+	<!-- create the Windows Distribution -->
+	<target name="windows">
+		<property name="os" value="windows" />
+		<antcall target="create-all" />
+		<antcall target="installer" inheritrefs="true" inheritall="true" />
+	</target>
+
+	<target name="all" depends="windows" />
+</project>
