@@ -32,7 +32,9 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
 import ch.elexis.wizards.DBConnectWizard;
 import ch.rgw.io.FileTool;
+import ch.rgw.io.SqlSettings;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.net.NetTool;
 
 /**
  * Dies ist eine Eclipse-spezifische Klasse Wichtigste Funktion ist das Festlegen der initialen
@@ -75,6 +77,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 			System.exit(-1);
 		}
 		
+		Hub.localCfg=new SqlSettings(PersistentObject.getConnection(), "CLIENTCONFIG", "param", "value", "Station='"+NetTool.hostname+"'");
 		// look whether we have do to some work before creating the workbench
 		try {
 			final Class<?> up = Class.forName("ch.elexis.PreStartUpdate"); //$NON-NLS-1$

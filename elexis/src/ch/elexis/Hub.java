@@ -296,11 +296,11 @@ public class Hub extends AbstractUIPlugin {
 			Anwender.logoff();
 		}
 		if (globalCfg != null) {
-			// We should not flush acl's at this point, since this might
+			// We should not flush at this point, since this might
 			// overwrite other client's
 			// settings
 			// acl.flush();
-			globalCfg.flush();
+			// globalCfg.flush();
 		}
 		
 		// shutdownjobs are executed after the workbench has been shut down.

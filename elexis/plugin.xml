@@ -26,7 +26,6 @@
    <extension-point id="RezeptHook" name="RezeptHook" schema="schema/RezeptHook.exsd"/>
    <extension-point id="ServiceRegistry" name="ServiceRegistry" schema="schema/ServiceRegistry.exsd"/>
    <extension-point id="xCHangeContribution" name="xCHange Contribution" schema="schema/xCHangeContribution.exsd"/>
-   <extension-point id="documentTemplates" name="documentTemplates" schema="schema/documentTemplates.exsd"/>
 	
    <extension
          id="ElexisApp"
@@ -714,27 +713,6 @@
             name="%RezeptAusgabe"
             type="ch.elexis.data.Rezept">
       </Transporter>
-   </extension>
-   <extension
-         point="ch.elexis.documentTemplates">
-      <variable
-            name="Rezept">
-      </variable>
-      <variable
-            name="AUF-Zeugnis">
-      </variable>
-      <variable
-            name="PatientEtikette">
-      </variable>
-      <variable
-            name="PatientEtiketteAuftrag">
-      </variable>
-      <variable
-            name="AdressEtikette">
-      </variable>
-      <variable
-            name="Terminkarte">
-      </variable>
    </extension>
 
 </plugin>

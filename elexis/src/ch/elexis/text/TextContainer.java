@@ -153,6 +153,24 @@ public class TextContainer {
 		plugin.dispose();
 	}
 
+	private Brief loadTemplate(String name) {
+		Query<Brief> qbe = new Query<Brief>(Brief.class);
+		qbe.add(Brief.TYPE, Query.EQUALS, Brief.TEMPLATE);
+		qbe.and();
+		qbe.add(Brief.SUBJECT, Query.EQUALS, name);
+		qbe.startGroup();
+		qbe.add(Brief.DESTINATION_ID, Query.EQUALS, Hub.actMandant.getId());
+		qbe.or();
+		qbe.add(Brief.DESTINATION_ID, Query.EQUALS, StringTool.leer);
+		qbe.endGroup();
+		List<Brief> list = qbe.execute();
+		if ((list == null) || (list.size() == 0)) {
+			return null;
+		}
+		Brief template = list.get(0);
+		return template;
+	}
+
 	/**
 	 * Ein Dokument aus einer namentlich genannten Vorlage erstellen. Die
 	 * Vorlage muss entweder dem aktuellen Mandanten oder allen Mandanten
@@ -174,24 +192,18 @@ public class TextContainer {
 	public Brief createFromTemplateName(final Konsultation kons,
 			final String templatenameRaw, final String typ,
 			final Kontakt adressat, final String subject) {
-		String templatename = Hub.localCfg.get(TextTemplatePreferences.BRANCH
-				+ templatenameRaw, templatenameRaw);
-		Query<Brief> qbe = new Query<Brief>(Brief.class);
-		qbe.add(Brief.TYPE, Query.EQUALS, Brief.TEMPLATE);
-		qbe.and();
-		qbe.add(Brief.SUBJECT, Query.EQUALS, templatename);
-		qbe.startGroup();
-		qbe.add(Brief.DESTINATION_ID, Query.EQUALS, Hub.actMandant.getId());
-		qbe.or();
-		qbe.add(Brief.DESTINATION_ID, Query.EQUALS, StringTool.leer);
-		qbe.endGroup();
-		List<Brief> list = qbe.execute();
-		if ((list == null) || (list.size() == 0)) {
+		String suffix = Hub.localCfg.get(
+				TextTemplatePreferences.SUFFIX_STATION, "");
+		Brief template = loadTemplate(templatenameRaw + suffix);
+		if (template == null && suffix.length() > 0) {
+			template = loadTemplate(templatenameRaw);
+		}
+		if (template == null) {
 			SWTHelper.showError(TEMPLATE_NOT_FOUND_HEADER,
-					TEMPLATE_NOT_FOUND_BODY + templatename);
+					TEMPLATE_NOT_FOUND_BODY + templatenameRaw);
 			return null;
 		}
-		Brief template = list.get(0);
+
 		return createFromTemplate(kons, template, typ, adressat, subject);
 	}
 
@@ -493,6 +505,7 @@ public class TextContainer {
 	 * Bezeichnung2 from KONTAKT where id ='[Patient.ID]' or id='1029']
 	 * Resultat: Schreiner_ _Bünzli_ _Hagenmüller_ _Margrit
 	 * %%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Lehrer_ _Germann_ _Marlovits_ _Annegret
+	 * 
 	 * 
 	 * 
 	 * **************************************************************************
