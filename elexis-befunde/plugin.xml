@@ -68,6 +68,7 @@
             AcceptableTypes="ch.elexis.data.Paient"
             id="ch.elexis.befunde.transporter"
             name="Befunde"
+            type="ch.elexis.Messwert"
             xChangeContribution="ch.elexis.befunde.xchange.XChangeContributor">
       </Transporter>
    </extension>
