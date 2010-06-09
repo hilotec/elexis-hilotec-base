@@ -184,8 +184,8 @@ Danach kann man lokal testen, mit Hilfe von sftp 100.87.0.53.101
 
 \begin_layout Standard
 Client configuration file Pfad-Zu-Installation-Von-OpenVPN/etc/openvpn/elexis_te
-st_arzt.ovpn (ovpn ist für Windows-Clients, für Linux-Clients wäre es ebenfalls
- *.conf)
+st_arzt.ovpn (ovpn ist für Windows-Clients, für *nux-Clients muss die *.ovpn-Datei
+ nach *.conf umbenannt werden)
 \end_layout
 
 \begin_layout Standard
@@ -375,7 +375,7 @@ status open
 
 \begin_layout Plain Layout
 
-# 2010-04-10 Niklaus Giger
+# 2010-06-10 Niklaus Giger
 \end_layout
 
 \begin_layout Plain Layout
@@ -385,7 +385,13 @@ status open
 
 \begin_layout Plain Layout
 
-# *.key-Dateien sollten geheim gehalten werden
+# *.key-Dateien sollten geheim gehalten werden.
+ Müssen aber
+\end_layout
+
+\begin_layout Plain Layout
+
+#       wegen der Windows-Clients world-readable sein.
 \end_layout
 
 \begin_layout Plain Layout
@@ -584,7 +590,7 @@ proto udp
 
 \begin_layout Plain Layout
 
-remote 62.202.1.152 1194
+remote 172.23.45.1 1194
 \end_layout
 
 \begin_layout Plain Layout
@@ -733,6 +739,11 @@ unix2dos /etc/openvpn/keys/$KundenName.ovpn
 
 \begin_layout Plain Layout
 
+chown $KundenName /etc/openvpn/keys/$KundenName.*
+\end_layout
+
+\begin_layout Plain Layout
+
 cp /etc/openvpn/keys/ca.crt /home/$KundenName/Labor-ca.crt
 \end_layout
 
@@ -779,6 +790,10 @@ echo $clientConf
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Für *nux-Clients muss die *.ovpn-Datei nach *.conf umbenannt werden.
 \end_layout
 
 \begin_layout Standard
