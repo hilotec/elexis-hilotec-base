@@ -276,11 +276,6 @@ public class Importer extends ImporterPage {
 	}
 	
 	private Result<?> importDirect(){
-		String batchOrFtp = Hub.globalCfg.get(PreferencePage.BATCH_OR_FTP, PreferencePage.FTP);
-		if (PreferencePage.BATCH.equals(batchOrFtp)) {
-			return importDirectBatch();
-		}
-		
 		return importDirectFtp();
 	}
 	
@@ -317,8 +312,10 @@ public class Importer extends ImporterPage {
 					}
 				}
 			} finally {
-				ftp.removeSemaphore();
-				ftp.closeConnection();
+				if (ftp.isConnected()) {
+					ftp.removeSemaphore();
+					ftp.closeConnection();
+				}
 			}
 			
 			String header =
@@ -345,76 +342,6 @@ public class Importer extends ImporterPage {
 				.getString("Importer.error.import")); //$NON-NLS-1$
 		} catch (FtpSemaException e) {
 			result = new Result<String>(SEVERITY.WARNING, 1, e.getMessage(), MY_LAB, true);
-			ResultAdapter.displayResult(result, ch.elexis.laborimport.analytica.Messages
-				.getString("Importer.error.import")); //$NON-NLS-1$
-		}
-		
-		return result;
-	}
-	
-	private Result<?> importDirectBatch(){
-		Result<String> result =
-			new Result<String>(ch.elexis.laborimport.analytica.Messages.getString("Importer.ok")); //$NON-NLS-1$
-		
-		String batchFile =
-			UtilFile.getCorrectPath(Hub.globalCfg.get(PreferencePage.BATCH_DATEI, "")); //$NON-NLS-1$
-		String downloadDir =
-			UtilFile.getCorrectPath(Hub.globalCfg.get(PreferencePage.DL_DIR,
-				PreferencePage.DEFAULT_DL_DIR));
-		
-		if (batchFile == null || batchFile.length() == 0) {
-			return new Result<String>(SEVERITY.ERROR, 1, ch.elexis.laborimport.analytica.Messages
-				.getString("Importer.leereBatchdatei.error"), //$NON-NLS-1$
-				MY_LAB, true);
-		}
-		
-		try {
-			Process process = Runtime.getRuntime().exec(batchFile);
-			int exitValue = -1;
-			try {
-				exitValue = process.waitFor();
-			} catch (InterruptedException e) {
-				log.log(e.getMessage(), Log.INFOS);
-			}
-			if (exitValue != 0) {
-				return new Result<String>(SEVERITY.ERROR, 1,
-					ch.elexis.laborimport.analytica.Messages
-						.getString("Importer.batchFehler.error") + process.exitValue(), //$NON-NLS-1$
-					MY_LAB, true);
-			}
-			
-			List<String> hl7FileList = new Vector<String>();
-			File ddDir = new File(downloadDir);
-			
-			String[] filenameList = ddDir.list();
-			for (String filename : filenameList) {
-				if (filename.toUpperCase().endsWith("HL7")) { //$NON-NLS-1$
-					log.log("Datei <" + filename + "> downloaded.", //$NON-NLS-1$ //$NON-NLS-2$
-						Log.INFOS);
-					hl7FileList.add(filename);
-				}
-			}
-			
-			String header =
-				MessageFormat.format(ch.elexis.laborimport.analytica.Messages
-					.getString("Importer.import.header"), //$NON-NLS-1$
-					new Object[] {
-						MY_LAB
-					});
-			String question =
-				MessageFormat.format(ch.elexis.laborimport.analytica.Messages
-					.getString("Importer.import.message"), //$NON-NLS-1$
-					new Object[] {
-						hl7FileList.size(), downloadDir
-					});
-			if (SWTHelper.askYesNo(header, question)) {
-				for (String filename : hl7FileList) {
-					importFile(downloadDir + filename);
-					log.log("Datei <" + filename + "> verarbeitet.", Log.INFOS); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			}
-		} catch (IOException e) {
-			result = new Result<String>(SEVERITY.ERROR, 1, e.getMessage(), MY_LAB, true);
 			ResultAdapter.displayResult(result, ch.elexis.laborimport.analytica.Messages
 				.getString("Importer.error.import")); //$NON-NLS-1$
 		}
@@ -502,13 +429,8 @@ public class Importer extends ImporterPage {
 			Button bBrowse = new Button(this, SWT.PUSH);
 			bBrowse.setText(Messages.getString("ImporterPage.browse")); //$NON-NLS-1$
 			
-			String batchOrFtp = Hub.globalCfg.get(PreferencePage.BATCH_OR_FTP, PreferencePage.FTP);
 			String direktHerkunft =
 				ch.elexis.laborimport.analytica.Messages.getString("Importer.ftp.label"); //$NON-NLS-1$
-			if (PreferencePage.BATCH.equals(batchOrFtp)) {
-				direktHerkunft =
-					ch.elexis.laborimport.analytica.Messages.getString("Importer.batch.label"); //$NON-NLS-1$
-			}
 			bDirect = new Button(this, SWT.RADIO);
 			bDirect.setText(ch.elexis.laborimport.analytica.Messages
 				.getString("Importer.label.importDirect") + " (" + direktHerkunft + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
