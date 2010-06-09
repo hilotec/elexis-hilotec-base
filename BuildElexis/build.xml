@@ -7,6 +7,7 @@
 	<property name="rcpbase" value="${base}/lib/rcpbase" />
 	<property name="dist" value="${output}/${os}/Medelexis-${version}" />
 	<property name="repositories" value="${base}/repositories" />
+	<property name="os" value="windows"/>
 
 
 	<target name="initialize">
@@ -45,6 +46,7 @@
 		</path>
 		<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${lib}/ant-contrib.jar" />
 		<taskdef name="packager" classname="ch.medelexis.packager.Creator" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
+		<taskdef name="listDependencies" classname="ch.medelexis.packager.DependencyList" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
 		<taskdef name="pluginID" classname="ch.medelexis.packager.PluginID" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
 		<taskdef name="supporter" classname="ch.medelexis.packager.SupportCreator" classpath="${lib}/medelexis-packager.jar" />
 		<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
@@ -130,6 +132,7 @@
 	create all projects in all repositories
 	-->
 	<target name="create-all" depends="initialize">
+		<listDependencies eclipse="${platform-runtime}" dest="${output}" repositories="${repositories}" exclude="${skipPlugins}"/>
 		<for param="repo">
 			<path>
 				<dirset dir="${repositories}" includes="*" />
