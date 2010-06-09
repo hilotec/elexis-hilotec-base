@@ -77,7 +77,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 			System.exit(-1);
 		}
 		
-		Hub.localCfg=new SqlSettings(PersistentObject.getConnection(), "CLIENTCONFIG", "param", "value", "Station='"+NetTool.hostname+"'");
+		//Hub.localCfg=new SqlSettings(PersistentObject.getConnection(), "CLIENTCONFIG", "param", "value", "Station='"+NetTool.hostname+"'");
 		// look whether we have do to some work before creating the workbench
 		try {
 			final Class<?> up = Class.forName("ch.elexis.PreStartUpdate"); //$NON-NLS-1$
