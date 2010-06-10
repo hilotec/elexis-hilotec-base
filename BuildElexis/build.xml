@@ -41,20 +41,10 @@
 		<get src="http://team.medelexis.ch/build/jdom.jar" dest="${lib}/jdom.jar" usetimestamp="true" />
 		<get src="http://www.elexis.ch/files/build/medelexis-packager.jar" dest="${lib}/medelexis-packager.jar" usetimestamp="true" />
 		<get src="http://team.medelexis.ch/build/ant-contrib-1.0b3.jar" dest="${lib}/ant-contrib.jar" usetimestamp="true" />
-		<!-- get src="http://www.elexis.ch/files/build/linux21.tar.gz" dest="${lib}/linux.tar.gz" usetimestamp="true" />
-		<get src="http://www.elexis.ch/files/build/windows21.tar.gz" dest="${lib}/windows.tar.gz" usetimestamp="true" />
-		<get src="http://www.elexis.ch/files/build/macosx21.tar.gz" dest="${lib}/macosx.tar.gz" usetimestamp="true" / -->
 		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-compiler.jar" dest="${lib}/scala-compiler.jar" usetimestamp="true" />
 		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-library.jar" dest="${lib}/scala-library.jar" usetimestamp="true" />
 		<get src="http://www.medelexis.ch/fileadmin/downloads/izpack-compiler.jar" dest="${lib}/izpack-compiler.jar" usetimestamp="true" />
-		<!-- untar dest="${rcpbase}" compression="gzip" src="${lib}/linux.tar.gz" />
-		<untar dest="${rcpbase}" compression="gzip" src="${lib}/windows.tar.gz" />
-		<untar dest="${rcpbase}" compression="gzip" src="${lib}/macosx.tar.gz" />
 
-		<copy todir="${dist}">
-			<fileset dir="${rcpbase}/${os}/rcp" />
-			<fileset dir="${rcpbase}/common/rcp" />
-		</copy -->
 		<!-- Set the classpath for wikitext common -->
 		<property name="wikitext.standalone" value="${base}/lib" />
 		<path id="wikitext.classpath">
@@ -168,7 +158,13 @@ eclipse.product=ch.elexis.ElexisProduct
 osgi.splashPath=platform:/base/plugins/ch.elexis
 osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@3:start,org.eclipse.core.runtime@start
 </concat>
-
+	<copy todir="${dist}/plugins">
+		<fileset dir="${platform-runtime}/plugins">
+			<include name="com.ibm.icu.*"/>
+			<include name="org.eclipse.equinox.launcher.*"/>
+			<include name="org.eclipse.update.configurator.*"/>
+		</fileset>
+	</copy>
 		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins}" />
 		<echo message="${buildlist}"/>
 		<for param="plugin" list="${buildlist}" delimiter=",">
