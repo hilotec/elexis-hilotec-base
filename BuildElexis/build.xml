@@ -1,20 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-	This is a new Buildscript (as of 6/2010), based on the new mercurial repository structure
+	This is a new Buildscript (as of 6/2010), based on the new mercurial repository structure. 
+	It will compile all projects found in all repositories in ${repositories} except those listed
+	in ${exclude}. 
+	Eclipse parts will be pulled from an existing eclipse directory as needed.
+	
+	Prerequisites:
+	- Java 1.6
+	- A working eclipse instance
+	- a file named local.properties containing:
+		base=path/to/basedir			- the directroy where the buildenvironment is
+		hg=path/to/mercurial/binary
+	
 	
 -->
 <project name="elexis" default="all">
 	<property name="os" value="windows" />
 	<property name="version" value="2.1.0"/>
 	<property name="javatarget" value="1.6"/>
-
 	<property file="local.properties" />
+		
 	<property name="output" value="${base}/deploy" />
 	<property name="dox" value="${output}/dox" />
 	<property name="lib" value="${base}/lib" />
 	<property name="rcpbase" value="${base}/lib/rcpbase" />
-	<property name="dist" value="${output}/${os}/Medelexis-${version}" />
+	<property name="dist" value="${output}/${os}/elexis-${version}" />
 	<property name="repositories" value="${base}/repositories" />
+	<property name="additions" value="${output}/additions"/>
 	<tstamp />
 
 	<target name="initialize">
@@ -29,20 +41,20 @@
 		<get src="http://team.medelexis.ch/build/jdom.jar" dest="${lib}/jdom.jar" usetimestamp="true" />
 		<get src="http://www.elexis.ch/files/build/medelexis-packager.jar" dest="${lib}/medelexis-packager.jar" usetimestamp="true" />
 		<get src="http://team.medelexis.ch/build/ant-contrib-1.0b3.jar" dest="${lib}/ant-contrib.jar" usetimestamp="true" />
-		<get src="http://www.elexis.ch/files/build/linux21.tar.gz" dest="${lib}/linux.tar.gz" usetimestamp="true" />
+		<!-- get src="http://www.elexis.ch/files/build/linux21.tar.gz" dest="${lib}/linux.tar.gz" usetimestamp="true" />
 		<get src="http://www.elexis.ch/files/build/windows21.tar.gz" dest="${lib}/windows.tar.gz" usetimestamp="true" />
-		<get src="http://www.elexis.ch/files/build/macosx21.tar.gz" dest="${lib}/macosx.tar.gz" usetimestamp="true" />
+		<get src="http://www.elexis.ch/files/build/macosx21.tar.gz" dest="${lib}/macosx.tar.gz" usetimestamp="true" / -->
 		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-compiler.jar" dest="${lib}/scala-compiler.jar" usetimestamp="true" />
 		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-library.jar" dest="${lib}/scala-library.jar" usetimestamp="true" />
 		<get src="http://www.medelexis.ch/fileadmin/downloads/izpack-compiler.jar" dest="${lib}/izpack-compiler.jar" usetimestamp="true" />
-		<untar dest="${rcpbase}" compression="gzip" src="${lib}/linux.tar.gz" />
+		<!-- untar dest="${rcpbase}" compression="gzip" src="${lib}/linux.tar.gz" />
 		<untar dest="${rcpbase}" compression="gzip" src="${lib}/windows.tar.gz" />
 		<untar dest="${rcpbase}" compression="gzip" src="${lib}/macosx.tar.gz" />
 
 		<copy todir="${dist}">
 			<fileset dir="${rcpbase}/${os}/rcp" />
 			<fileset dir="${rcpbase}/common/rcp" />
-		</copy>
+		</copy -->
 		<!-- Set the classpath for wikitext common -->
 		<property name="wikitext.standalone" value="${base}/lib" />
 		<path id="wikitext.classpath">
@@ -137,6 +149,26 @@
 	create all projects in all repositories
 	-->
 	<target name="create-all" depends="initialize">
+		<concat destfile="${dist}/elexis.ini">-vmargs
+-Xms128m
+-Xmx768m
+</concat>
+
+		<concat destfile="${dist}/.eclipseproduct">#Product Runtime Configuration File
+osgi.splashPath=platform:/base/plugins/ch.elexis
+eclipse.product=ch.elexis.ElexisProduct
+osgi.bundles.defaultStartLevel=4
+osgi.bundles=org.eclipse.equinox.transforms.hook,org.eclipse.equinox.common:start,org.eclipse.update.configurator@3:start,org.eclipse.core.runtime@start
+</concat>
+
+		<concat destfile="${dist}/configuration/config.ini">#Product Runtime Configuration File
+eclipse.application=ch.elexis.ElexisApp
+osgi.bundles.defaultStartLevel=4
+eclipse.product=ch.elexis.ElexisProduct
+osgi.splashPath=platform:/base/plugins/ch.elexis
+osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@3:start,org.eclipse.core.runtime@start
+</concat>
+
 		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins}" />
 		<echo message="${buildlist}"/>
 		<for param="plugin" list="${buildlist}" delimiter=",">
@@ -163,6 +195,10 @@
 		<!-- create the Windows Distribution -->
 	<target name="windows">
 		<property name="os" value="windows" />
+		<move tofile="${dist}/elexis.exe" file="${platform-runtime}/eclipse.exe" />
+		<copy todir="${dist}/plugins">
+			<fileset dir="rsc/windows"/>
+		</copy>
 		<antcall target="create-all" />
 		<antcall target="installer" inheritrefs="true" inheritall="true" />
 	</target>
