@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Eigendiagnose.java 5181 2009-02-24 15:47:01Z rgw_ch $
+ *    $Id: Eigendiagnose.java 6422 2010-06-11 11:34:21Z marlovitsh $
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.data;
 
@@ -19,6 +19,7 @@ import org.eclipse.jface.action.IAction;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Verrechnet;
+import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.VersionInfo;
 
 public class Eigendiagnose extends PersistentObject implements IDiagnose {
@@ -112,5 +113,18 @@ public class Eigendiagnose extends PersistentObject implements IDiagnose {
 	
 	public String getText(){
 		return get("Text");
+	}
+	@Override
+	public boolean isDragOK(){
+		return !hasChildren();
+	}
+	public boolean hasChildren(){
+		JdbcLink link = PersistentObject.getConnection();
+		String theText = get("Text");
+		int numOfChildren = link.queryInt("select count(*) from " + TABLENAME + " where deleted = 0 and parent = " +  JdbcLink.wrap(theText));
+		if(numOfChildren > 0){
+			return true;
+		}
+		return false;
 	}
 }
