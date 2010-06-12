@@ -4,8 +4,9 @@ h1. How to use Mercurial repositories with Elexis
 
 h2. I Prerequisites
 
-* Eclipse 3.5 or newer
-* the hgEclipse plugin
+* Eclipse 3.5 or later
+* Mercurial 1.5.0 or later
+* the hgEclipse plugin, Version 1.6.0 or later
 * a sourceforge.net account, if you need write access
 
 h2. II Steps
@@ -16,7 +17,7 @@ h3. IIa cloning the repository
 
 !images/elexis_hg_1.png!!images/elexis_hg_2.png!
 
-* In the field _repository location_, enter the appropriate repository location.  Note that you need different URLs for read-only and for read/write access. In Case of read/write you must chose an SSH connection and enter your _sourceforge_ account details in the username and password fields. In case of a read-only access, use http:// instead of ssh:// and leave the username/password-fields empty.
+* In the field _repository location_, enter the appropriate repository location.  Note that you need different URLs for read-only and for read/write access. In Case of read/write you must choose an SSH connection and enter your _sourceforge_ account details in the username and password fields. In case of a read-only access, use http:// instead of ssh:// and leave the username/password-fields empty.
 
 !images/elexis_hg_3.png! 
 
@@ -25,7 +26,7 @@ h3. IIa cloning the repository
 
 This will take a quite long time (>160MB to fetch) . Time enough to think about the ideas behind Mercurial (or, more generally, distributed source code managers (DSCM)). If you know all about DSCM, you can skip this safely and proceed to IIb, "checking out the sources".
 
-Unlike CVS or SVN, a DSCM does not rely on a single central repository. Instead, everyone who wants to use the source code, hold their own copy of the master repository. Such a copy is called a _clone_ in DSCM-Speak. To create a clone, you perform the operation *clone* - as you might have guessed. Such a clone is in fact just a directory on your hard drive. You can make a backup by simply copying it or with any other backup mechanism you might to prefer. From this clone, you create a working directory with the sources you want to work on. Remember: The clone is really a clone of the master repository and as such it contains every single commit, tag and branch that occurred to the master repository - so you can *check out* any repository position you like to your working directory and you can easily *switch* to any other repository branch without the need for an internet connection.
+Unlike CVS or SVN, a DSCM does not rely on a single central repository. Instead, everyone who wants to use the source code, hold their own copy of the master repository. Such a copy is called a _clone_ in DSCM-Speak. To create a clone, you perform the operation *clone* - as you might have guessed. Such a clone is in fact just a directory on your hard drive. Note: In Linux and Mac, the directory might seem empty. It is not. It contains at least a subdirectory called .hg which is hidden in unix-like operating systems by default. You can make a backup by simply copying it or with any other backup mechanism you might to prefer. From this clone, you create a working directory with the sources you want to work on. Remember: The clone is really a clone of the master repository and as such it contains every single commit, tag and branch that occurred to the master repository - so you can *check out* any repository position you like to your working directory and you can easily *switch* to any other repository branch without the need for an internet connection.
 
 With this local clone, you can work as with any other SCM. If you know Subversion/Subclipse, you'll find this quite familiar: You *commit* your changes to the repository; you can *update*, *branch*, *tag*,  and so on. The only difference is: You do not need to bother about other members of the development team, because all changes go only to your very own repository clone and nobody will cry if you totally mess it up (not even you because you can always create a new clone from the master). If you do not want to make a new clone but only want to keep up with changes on the Master, you can *pull* your repository from the master, *merge* incoming changes with your changes and then *update* the source directory to adapt the changes. 
 
@@ -47,7 +48,7 @@ h2. III Repository operations
 
 h3. IIIa Pulling changes from the master repository
 
-From time to time you should integrate changes from the master repository into your clone to prevent it to differ to much from its parent. To do this, right-click on one of the projects from this repository and select _team->pull_. 
+From time to time you should integrate changes from the master repository into your clone to prevent it to differ to much from its parent. To do this, right-click on one of the projects from this repository and select _team->pull_.  This will pull changes of ALL projects from the same repository.
 
 !images/elexis_hg_7.png!
 
@@ -79,7 +80,7 @@ If you are not used to DSCM's: Mind the word "clone" above: All changes go only 
 
 h3. IIIe Removing a plugin from your workspace (but not from the repository)
 
-*WARNING*: If you right-click on the plugin and select "delete", you'll remove the project from the repository. And with the following *commit* and *push* your delete will be propagated through the hierarchy. Of course, this will not really delete anything, you can still recreate it using an older revision, but it can lead to some bad vibrations within the team...
+*WARNING*: If you right-click on the plugin and select "delete", you'll remove the project from the repository. And with the following *commit* and *push* your delete will be propagated through the hierarchy. Of course, this will not really delete anything, you can still recreate it using an older revision, but such actions can lead to some bad vibrations within the team...
  
  So you better do the following: You can, instead of removing the project, just *close* it by right-clicking an choosing "close".
  Or, if you really want to remove it: Select _Team->disconnect_. After doing this you can safely delete it.
@@ -127,7 +128,7 @@ You might want to  try this with the "elexis main repositories":http://elexis.hg
 h4. Serving multiple repositories
 
 The _hg serve_ command only serves the repository it was called from and by doing so,  it occupies a port (normally 8000), making it inaccessible for other instances. If you want to share more repositories, you can either call it from each repository, providing a distinct port number, e.g. _hg serve -d -p 8001_.
-Or, a bit more difficult to install but more flexible when running: Serve via cgi from a webserver. I use lighttpd which is much easier to configure than the ubiquitous Apache (that seems here ovesrized)
+Or, a bit more difficult to install but more flexible when running: Serve via cgi from a webserver. I use lighttpd which is much easier to configure than the ubiquitous Apache (that seems here oversized)
 
 h3. IVb Using an SVN repository as master
 
