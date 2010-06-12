@@ -33,7 +33,7 @@
 	
 -->
 <project name="elexis" default="all">
-	<property name="os" value="macosx"/>
+	<property name="os" value="macosx" />
 	<property name="unplugged" value="true" />
 	<property name="version" value="2.1.0" />
 	<property name="javatarget" value="1.6" />
@@ -232,12 +232,12 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 
 	<target name="macosx" depends="initialize">
 		<property name="os" value="macosx" />
-		<copy todir="${dist}/plugins">
-			<fileset dir="rsc/macosx" excludes="elexis.app" />
-		</copy>
 		<copy todir="${dist}">
-			<fileset dir="rsc/macosx" includes="elexis.app/**" />
+			<fileset dir="rsc/macosx" />
 		</copy>
+		<exec executable="chmod" dir="${dist}/elexis.app/Contents/MacOS">
+			<arg line="+x elexis" />
+		</exec>
 		<antcall target="create-all" />
 	</target>
 
