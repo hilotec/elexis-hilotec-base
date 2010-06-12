@@ -34,6 +34,7 @@
 -->
 <project name="elexis" default="all">
 	<property name="os" value="macosx"/>
+	<property name="unplugged" value="true" />
 	<property name="version" value="2.1.0" />
 	<property name="javatarget" value="1.6" />
 	<property file="local.properties" />
@@ -45,34 +46,26 @@
 	<property name="dist" value="${output}/${os}/elexis-${version}" />
 	<property name="repositories" value="${base}/repositories" />
 	<property name="additions" value="${output}/additions" />
-	<mkdir dir="${lib}"/>
-	<mkdir dir="${base}" />
-	<mkdir dir="${dist}" />
-	<mkdir dir="${additions}" />
-	<mkdir dir="${dist}/plugins" />
 
 	<tstamp />
-	<!-- Set the classpath for wikitext common -->
-	<property name="wikitext.standalone" value="${base}/lib" />
-	<path id="wikitext.classpath">
-		<fileset dir="${wikitext.standalone}">
-			<include name="org.eclipse.mylyn.wikitext.*core*.jar" />
-		</fileset>
-	</path>
-	<get src="http://www.medelexis.ch/fileadmin/downloads/izpack-compiler.jar" dest="${lib}/izpack-compiler.jar" usetimestamp="true" />
-	<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.core.jar" usetimestamp="true" />
-	<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.textile.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.textile.core.jar" usetimestamp="true" />
-	<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
-	<taskdef name="izpack" classpath="${lib}/izpack-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask" />
 
-
-	<target name="initialize">
+	<target name="downloads" unless="unplugged">
+		<get src="http://www.medelexis.ch/fileadmin/downloads/izpack-compiler.jar" dest="${lib}/izpack-compiler.jar" usetimestamp="true" />
+		<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.core.jar" usetimestamp="true" />
+		<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.textile.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.textile.core.jar" usetimestamp="true" />
 		<get src="http://team.medelexis.ch/build/jdom.jar" dest="${lib}/jdom.jar" usetimestamp="true" />
 		<get src="http://www.elexis.ch/files/build/medelexis-packager.jar" dest="${lib}/medelexis-packager.jar" usetimestamp="true" />
 		<get src="http://team.medelexis.ch/build/ant-contrib-1.0b3.jar" dest="${lib}/ant-contrib.jar" usetimestamp="true" />
 		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-compiler.jar" dest="${lib}/scala-compiler.jar" usetimestamp="true" />
 		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-library.jar" dest="${lib}/scala-library.jar" usetimestamp="true" />
-	
+	</target>
+
+	<target name="initialize" depends="downloads">
+		<mkdir dir="${lib}" />
+		<mkdir dir="${base}" />
+		<mkdir dir="${dist}" />
+		<mkdir dir="${additions}" />
+		<mkdir dir="${dist}/plugins" />
 		<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${lib}/ant-contrib.jar" />
 		<taskdef name="packager" classname="ch.medelexis.packager.Creator" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
 		<taskdef name="listDependencies" classname="ch.medelexis.packager.DependencyList" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
@@ -84,6 +77,16 @@
 				<pathelement location="${lib}/scala-library.jar" />
 			</classpath>
 		</taskdef>
+		<!-- Set the classpath for wikitext common -->
+		<property name="wikitext.standalone" value="${base}/lib" />
+		<path id="wikitext.classpath">
+			<fileset dir="${wikitext.standalone}">
+				<include name="org.eclipse.mylyn.wikitext.*core*.jar" />
+			</fileset>
+		</path>
+		<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
+		<taskdef name="izpack" classpath="${lib}/izpack-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask" />
+
 	</target>
 
 	<target name="update" depends="initialize">
@@ -217,7 +220,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 	</target>
 
 	<!-- create the Windows Distribution -->
-	<target name="windows">
+	<target name="windows" depends="initialize">
 		<property name="os" value="windows" />
 		<copy todir="${dist}/plugins">
 			<fileset dir="rsc/windows" excludes="elexis.exe" />
@@ -227,13 +230,13 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<antcall target="installer" inheritrefs="true" inheritall="true" />
 	</target>
 
-	<target name="macosx">
+	<target name="macosx" depends="initialize">
 		<property name="os" value="macosx" />
 		<copy todir="${dist}/plugins">
 			<fileset dir="rsc/macosx" excludes="elexis.app" />
 		</copy>
 		<copy todir="${dist}">
-			<fileset dir="rsc/macosx/elexis.app" includes="**" />
+			<fileset dir="rsc/macosx" includes="elexis.app/**" />
 		</copy>
 		<antcall target="create-all" />
 	</target>
