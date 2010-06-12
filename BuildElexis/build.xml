@@ -33,7 +33,7 @@
 	
 -->
 <project name="elexis" default="all">
-	<property name="os" value="windows" />
+	<property name="os" value="macosx"/>
 	<property name="version" value="2.1.0" />
 	<property name="javatarget" value="1.6" />
 	<property file="local.properties" />
@@ -45,6 +45,12 @@
 	<property name="dist" value="${output}/${os}/elexis-${version}" />
 	<property name="repositories" value="${base}/repositories" />
 	<property name="additions" value="${output}/additions" />
+	<mkdir dir="${lib}"/>
+	<mkdir dir="${base}" />
+	<mkdir dir="${dist}" />
+	<mkdir dir="${additions}" />
+	<mkdir dir="${dist}/plugins" />
+
 	<tstamp />
 	<!-- Set the classpath for wikitext common -->
 	<property name="wikitext.standalone" value="${base}/lib" />
@@ -53,26 +59,20 @@
 			<include name="org.eclipse.mylyn.wikitext.*core*.jar" />
 		</fileset>
 	</path>
+	<get src="http://www.medelexis.ch/fileadmin/downloads/izpack-compiler.jar" dest="${lib}/izpack-compiler.jar" usetimestamp="true" />
+	<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.core.jar" usetimestamp="true" />
+	<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.textile.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.textile.core.jar" usetimestamp="true" />
 	<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
 	<taskdef name="izpack" classpath="${lib}/izpack-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask" />
 
 
 	<target name="initialize">
-		<mkdir dir="${base}" />
-		<mkdir dir="${dist}" />
-		<mkdir dir="${additions}" />
-		<mkdir dir="${lib}" />
-		<mkdir dir="${rcpbase}" />
-		<mkdir dir="${dist}/plugins" />
-		<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.core.jar" usetimestamp="true" />
-		<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.textile.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.textile.core.jar" usetimestamp="true" />
 		<get src="http://team.medelexis.ch/build/jdom.jar" dest="${lib}/jdom.jar" usetimestamp="true" />
 		<get src="http://www.elexis.ch/files/build/medelexis-packager.jar" dest="${lib}/medelexis-packager.jar" usetimestamp="true" />
 		<get src="http://team.medelexis.ch/build/ant-contrib-1.0b3.jar" dest="${lib}/ant-contrib.jar" usetimestamp="true" />
 		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-compiler.jar" dest="${lib}/scala-compiler.jar" usetimestamp="true" />
 		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-library.jar" dest="${lib}/scala-library.jar" usetimestamp="true" />
-		<get src="http://www.medelexis.ch/fileadmin/downloads/izpack-compiler.jar" dest="${lib}/izpack-compiler.jar" usetimestamp="true" />
-
+	
 		<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${lib}/ant-contrib.jar" />
 		<taskdef name="packager" classname="ch.medelexis.packager.Creator" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
 		<taskdef name="listDependencies" classname="ch.medelexis.packager.DependencyList" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
@@ -219,13 +219,23 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 	<!-- create the Windows Distribution -->
 	<target name="windows">
 		<property name="os" value="windows" />
-		<move tofile="${dist}/elexis.exe" file="${platform-runtime}/eclipse.exe" />
 		<copy todir="${dist}/plugins">
 			<fileset dir="rsc/windows" excludes="elexis.exe" />
 		</copy>
 		<copy todir="${dist}" file="rsc/windows/elexis.exe" />
 		<antcall target="create-all" />
 		<antcall target="installer" inheritrefs="true" inheritall="true" />
+	</target>
+
+	<target name="macosx">
+		<property name="os" value="macosx" />
+		<copy todir="${dist}/plugins">
+			<fileset dir="rsc/macosx" excludes="elexis.app" />
+		</copy>
+		<copy todir="${dist}">
+			<fileset dir="rsc/macosx/elexis.app" includes="**" />
+		</copy>
+		<antcall target="create-all" />
 	</target>
 
 	<target name="installer">
@@ -260,7 +270,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<izpack input="rsc/installer.xml" output="${output}/${os}/medelexis-${os}-${version}-install.jar" installerType="standard" inheritAll="true" basedir="${output}" compression="deflate" compressionlevel="9" />
 	</target>
 
-	<target name="all" depends="windows" />
+	<target name="all" depends="macosx" />
 
 	<target name="clean" description="Aufräumen; Alle vom letzten Build erstellten files löschen">
 		<echo message="deleting output directory" />
