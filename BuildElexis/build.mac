@@ -1,7 +1,0 @@
-cd rsc/build
-export ANT_HOME=/Users/gerry/apache-ant-1.6.5
-
-$ANT_HOME/bin/ant mac -Dunplugged=1
-cd ../..
-
-

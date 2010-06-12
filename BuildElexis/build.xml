@@ -28,13 +28,15 @@
 		
 	Preparation:
 	- "hg clone" all repositories you want as subdirectories of ${base}/repositories
-	- call "ant windows", "ant linux" or "ant macosx" 
+	- call "ant -Dos=windows", "ant -Dos=linux" or "ant -Dos=macosx" 
+	- add -Dunplugged=true to the call if you are not connected to the internet
+	  (will only work if all libs are already present i.e. there had been at least one successful 
+	   build while conencted)
+	
 	
 	
 -->
 <project name="elexis" default="all">
-	<property name="os" value="macosx" />
-	<property name="unplugged" value="true" />
 	<property name="version" value="2.1.0" />
 	<property name="javatarget" value="1.6" />
 	<property file="local.properties" />
@@ -42,8 +44,6 @@
 	<property name="output" value="${base}/deploy" />
 	<property name="dox" value="${output}/dox" />
 	<property name="lib" value="${base}/lib" />
-	<property name="rcpbase" value="${base}/lib/rcpbase" />
-	<property name="dist" value="${output}/${os}/elexis-${version}" />
 	<property name="repositories" value="${base}/repositories" />
 	<property name="additions" value="${output}/additions" />
 
@@ -61,6 +61,7 @@
 	</target>
 
 	<target name="initialize" depends="downloads">
+		<property name="dist" value="${output}/${os}/elexis-${version}" />
 		<mkdir dir="${lib}" />
 		<mkdir dir="${base}" />
 		<mkdir dir="${dist}" />
@@ -273,7 +274,9 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<izpack input="rsc/installer.xml" output="${output}/${os}/medelexis-${os}-${version}-install.jar" installerType="standard" inheritAll="true" basedir="${output}" compression="deflate" compressionlevel="9" />
 	</target>
 
-	<target name="all" depends="macosx" />
+	<target name="all" >
+		<antcall target="${os}"/>
+	</target>
 
 	<target name="clean" description="Aufräumen; Alle vom letzten Build erstellten files löschen">
 		<echo message="deleting output directory" />

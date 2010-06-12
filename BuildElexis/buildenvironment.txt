@@ -1,4 +1,0 @@
-rcpbase
-jre 1.5
-jdk 1.5
-texlive-base
