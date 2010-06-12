@@ -75,8 +75,8 @@ secret elexis_test_labo.key
 Danach kann man lokal testen, mit Hilfe von sftp 100.87.0.53.101
 
 Client configuration file Pfad-Zu-Installation-Von-OpenVPN/etc/openvpn/elexis\_test\_arzt.ovpn
-(ovpn ist für Windows-Clients, für Linux-Clients wäre es ebenfalls
-{*}.conf)
+(ovpn ist für Windows-Clients, für {*}nux-Clients muss die {*}.ovpn-Datei
+nach {*}.conf umbenannt werden)
 
 
 \begin{lstlisting}
@@ -131,9 +131,10 @@ Folgendes Script muss jeweils pro neuen Clients ausgeführt werden.
 
 \begin{lstlisting}[basicstyle={\ttfamily},breaklines=true,showstringspaces=false]
 #! /bin/bash
-# 2010-04-10 Niklaus Giger
+# 2010-06-10 Niklaus Giger
 #
-# *.key-Dateien sollten geheim gehalten werden
+# *.key-Dateien sollten geheim gehalten werden. Müssen aber
+#       wegen der Windows-Clients world-readable sein.
 # *.crt und *.pem-Dateien sind öffentlich
 # Am besten keine Leerzeichen beim Kundenamen haben.
 #
@@ -174,7 +175,7 @@ dev tun
 
 proto udp
 
-remote 62.202.1.152 1194
+remote 172.23.45.1 1194
 
 # Keep trying indefinitely to resolve the
 # host name of the OpenVPN server.  Very useful
@@ -205,6 +206,7 @@ EndOfVar)
 
 echo "$confFile" > /etc/openvpn/keys/$KundenName.ovpn
 unix2dos /etc/openvpn/keys/$KundenName.ovpn
+chown $KundenName /etc/openvpn/keys/$KundenName.*
 cp /etc/openvpn/keys/ca.crt /home/$KundenName/Labor-ca.crt
 cp /etc/openvpn/keys/$KundenName.crt /home/$KundenName
 cp /etc/openvpn/keys/$KundenName.key /home/$KundenName
@@ -216,6 +218,9 @@ ls -l /home/$KundenName
 echo $clientConf
 \end{lstlisting}
 
+
+Für {*}nux-Clients muss die {*}.ovpn-Datei nach {*}.conf umbenannt
+werden.
 
 Zum Testen auf dem Client openvpn starten. Etwa folgendes sollte im
 Log zu sehen sein:

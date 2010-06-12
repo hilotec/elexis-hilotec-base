@@ -78,6 +78,7 @@ mute 20
 mute-replay-warnings
 EndOfVar) 
 echo "$confFile" > /etc/openvpn/keys/$KundenName.ovpn
+chown $KundenName /etc/openvpn/keys/$KundenName.*
 unix2dos /etc/openvpn/keys/$KundenName.ovpn
 cp /etc/openvpn/keys/ca.crt /home/$KundenName/analytica-ca.crt
 cp /etc/openvpn/keys/$KundenName.crt /home/$KundenName
