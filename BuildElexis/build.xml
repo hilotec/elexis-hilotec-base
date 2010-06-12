@@ -8,9 +8,17 @@
 	Prerequisites:
 	- Java 1.6
 	- A working eclipse instance
+	- ant 1.8.0
+	- an active internet connection
 	- a file named local.properties containing:
-		base=path/to/basedir			- the directroy where the buildenvironment is
+		base=path/to/basedir				- the directory where the buildenvironment is
 		hg=path/to/mercurial/binary
+		platform-runtime=path/to/eclipse	- A directory with the runtime to use
+		skip-plugins=name2,name2			- A comma separated list of plugins to SKIP ihn the Build
+		
+	Preparation:
+	- "hg clone" all repositories you want as subdirectories of ${base}/repositories
+	- call "ant windows", "ant linux" or "ant macosx" 
 	
 	
 -->
@@ -167,9 +175,9 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		</copy>
 		<copy todir="${dist}">
 			<fileset dir="rsc">
-				<include name="*.ico"/>
-				<include name="LICENSE*.*"/>
-				<include name="lizenz.*"/>
+				<include name="*.ico" />
+				<include name="LICENSE*.*" />
+				<include name="lizenz.*" />
 			</fileset>
 		</copy>
 		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins}" />
@@ -206,5 +214,42 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<antcall target="installer" inheritrefs="true" inheritall="true" />
 	</target>
 
+	<target name="installer" depends="create-all">
+		<echo message="preparing files for izpack installer" />
+		<wikitext-to-html markupLanguage="Textile" overwrite="true" multipleOutputFiles="false" formatOutput="true">
+			<fileset dir="rsc">
+				<include name="*.textile" />
+			</fileset>
+			<!-- stylesheet url="styles/main.css" / -->
+		</wikitext-to-html>
+
+		<copy todir="${dist}">
+			<fileset dir="rsc">
+				<include name="info.html" />
+				<include name="license.html" />
+			</fileset>
+			<filterset begintoken="&lt;?" endtoken="?&gt;">
+				<filter token="xml version=&apos;1.0&apos; encoding=&apos;utf-8&apos; " value="" />
+			</filterset>
+		</copy>
+		<copy todir="${output}">
+			<fileset dir=".">
+				<include name="rsc/*.*" />
+			</fileset>
+		</copy>
+		<copy todir="${dist}">
+			<fileset dir="rsc" includes="*.ico *.png *.icns *.xpm" />
+		</copy>
+		<delete file="rsc/info.html" />
+		<delete file="rsc/license.html" />
+		<echo message="Running IzPack to build the installer..." />
+		<izpack input="rsc/installer.xml" output="${output}/${os}/medelexis-${os}-${version}-install.jar" installerType="standard" inheritAll="true" basedir="${output}" compression="deflate" compressionlevel="9" />
+	</target>
+
 	<target name="all" depends="windows" />
+
+	<target name="clean" description="Aufräumen; Alle vom letzten Build erstellten files löschen">
+		<echo message="deleting output directory" />
+		<delete dir="${output}" />
+	</target>
 </project>
