@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
+	Copyright (c) 2010 By G. Weirich and Elexis
+	some parts borrowed from N. Giger's hudson build for Elexis
+	
 	This is a new Buildscript (as of 6/2010), based on the new mercurial repository structure. 
 	It will compile all projects found in all repositories in ${repositories} except those listed
 	in ${exclude}. 
 	Eclipse parts will be pulled from an existing eclipse directory as needed.
+
+    This file reflects my personal environment. It is not intended for
+    public use. You may, however, use it if you like to, but everyhting
+    can be changed without notice from one version to another, and there is absolutely
+    no guarantee that it works correctly nor that it works at all. If it turns your
+    500GB Harddisk into a 5.25" Floppy-Disk, that's your own silly fault. I warned you.
+	
 	
 	Prerequisites:
 	- Java 1.6
@@ -14,7 +24,7 @@
 		base=path/to/basedir				- the directory where the buildenvironment is
 		hg=path/to/mercurial/binary
 		platform-runtime=path/to/eclipse	- A directory with the runtime to use
-		skip-plugins=name2,name2			- A comma separated list of plugins to SKIP ihn the Build
+		skip-plugins=name2,name2			- A comma separated list of plugins to SKIP in the Build
 		
 	Preparation:
 	- "hg clone" all repositories you want as subdirectories of ${base}/repositories
@@ -36,6 +46,16 @@
 	<property name="repositories" value="${base}/repositories" />
 	<property name="additions" value="${output}/additions" />
 	<tstamp />
+	<!-- Set the classpath for wikitext common -->
+	<property name="wikitext.standalone" value="${base}/lib" />
+	<path id="wikitext.classpath">
+		<fileset dir="${wikitext.standalone}">
+			<include name="org.eclipse.mylyn.wikitext.*core*.jar" />
+		</fileset>
+	</path>
+	<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
+	<taskdef name="izpack" classpath="${lib}/izpack-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask" />
+
 
 	<target name="initialize">
 		<mkdir dir="${base}" />
@@ -53,20 +73,11 @@
 		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-library.jar" dest="${lib}/scala-library.jar" usetimestamp="true" />
 		<get src="http://www.medelexis.ch/fileadmin/downloads/izpack-compiler.jar" dest="${lib}/izpack-compiler.jar" usetimestamp="true" />
 
-		<!-- Set the classpath for wikitext common -->
-		<property name="wikitext.standalone" value="${base}/lib" />
-		<path id="wikitext.classpath">
-			<fileset dir="${wikitext.standalone}">
-				<include name="org.eclipse.mylyn.wikitext.*core*.jar" />
-			</fileset>
-		</path>
 		<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${lib}/ant-contrib.jar" />
 		<taskdef name="packager" classname="ch.medelexis.packager.Creator" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
 		<taskdef name="listDependencies" classname="ch.medelexis.packager.DependencyList" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
 		<taskdef name="pluginID" classname="ch.medelexis.packager.PluginID" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
 		<taskdef name="supporter" classname="ch.medelexis.packager.SupportCreator" classpath="${lib}/medelexis-packager.jar" />
-		<taskdef classpathref="wikitext.classpath" resource="org/eclipse/mylyn/wikitext/core/util/anttask/tasks.properties" />
-		<taskdef name="izpack" classpath="${lib}/izpack-compiler.jar" classname="com.izforge.izpack.ant.IzPackTask" />
 		<taskdef resource="scala/tools/ant/antlib.xml">
 			<classpath>
 				<pathelement location="${lib}/scala-compiler.jar" />
@@ -180,8 +191,10 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 				<include name="lizenz.*" />
 			</fileset>
 		</copy>
+		<!-- do some magic stuff to find all the files to include -->
 		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins}" />
 		<echo message="${buildlist}" />
+		<!-- compile all plugins listed from listDependencies -->
 		<for param="plugin" list="${buildlist}" delimiter=",">
 			<sequential>
 				<echo message="@{plugin}" />
@@ -208,13 +221,14 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<property name="os" value="windows" />
 		<move tofile="${dist}/elexis.exe" file="${platform-runtime}/eclipse.exe" />
 		<copy todir="${dist}/plugins">
-			<fileset dir="rsc/windows" />
+			<fileset dir="rsc/windows" excludes="elexis.exe" />
 		</copy>
+		<copy todir="${dist}" file="rsc/windows/elexis.exe" />
 		<antcall target="create-all" />
 		<antcall target="installer" inheritrefs="true" inheritall="true" />
 	</target>
 
-	<target name="installer" depends="create-all">
+	<target name="installer">
 		<echo message="preparing files for izpack installer" />
 		<wikitext-to-html markupLanguage="Textile" overwrite="true" multipleOutputFiles="false" formatOutput="true">
 			<fileset dir="rsc">

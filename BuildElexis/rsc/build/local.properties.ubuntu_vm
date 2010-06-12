@@ -1,5 +1,0 @@
-eclipse=/home/gerry/elexis/rcp-lx32
-source=/home/gerry/elexis
-makeself=/home/gerry/makeself-2.1.4/makeself.sh
-jre=/home/gerry/jdk1.6.0_01/jre
-dest=/home/gerry/deploy

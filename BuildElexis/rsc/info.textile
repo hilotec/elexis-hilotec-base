@@ -1,0 +1,10 @@
+p=. !medelexis-logo.png!
+ 
+h1. Willkommen bei Elexis
+
+Dieser Installer wird Elexis Version 2.1 auf Ihrem Computer installieren. 
+
+p. Bitte beachten Sie: Die Erstinstallation und Konfiguration einer Elexis-Arztpraxisverwaltung ist alles Andere als trivial, und wenn Sie dabei einen Fehler machen, kann dies sp�ter zu erheblicher Mehrarbeit f�hren. Wenn dies hier einfach ein zus�tzlicher Client an einer existierenden Elexis-Datenbank ist, machen Sie ruhig weiter; es kann nichts schiefgehen. Wenn dies aber eine Erstinstallation ist, empfehlen wir *dringend*, dies von einem zertifizierten Elexis-Supporter durchf�hren zu lassen.
+ 
+p. Dieser Installer arbeitet bewusst nicht mit Administratorrechten, sondern erlaubt Ihnen die Installation nur in einem Verzeichnis, in dem Sie auch Schreibrechte haben. Dies erm�glicht den automatischen Update des Programms. Wenn Sie Elexis in einen schreibgesch�tzten Ordner installieren, werden sp�ter auch Updates nur mit Administratorrechten m�glich sein.
+ 

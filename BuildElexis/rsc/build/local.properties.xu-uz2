@@ -1,6 +1,0 @@
-eclipse=/home/gerry/deploy/rcp33-lx
-source=/home/gerry/elexis_trunk
-makeself=/home/gerry/apps/makeself/makeself.sh
-jre=/home/gerry/jre1.5.0_11
-dest=/home/gerry/deploy
-ooo=/home/gerry/Desktop/openoffice

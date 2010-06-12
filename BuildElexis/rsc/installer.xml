@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+	<!--
+		* Copyright (c) 2010, Medelexis AG, Baden * This file is intellectual
+		property of Medelexis AG * All rights reserved. * Do not copy or use
+		outside Medelexis AG scope * Contributors: * G. Weirich - initial
+		implementation * * $Id: installer.xml 1048 2010-03-18 06:06:04Z gerry
+		$
+	-->
+
+	<!-- This creates the izPack installer package -->
+<installation version="1.0">
+	<info>
+		<appname>Elexis</appname>
+		<appversion>@{version}</appversion>
+		<authors>
+			<author name="www.elexis.ch" email="info@elexis.ch" />
+		</authors>
+		<url>http://www.elexis.ch</url>
+	</info>
+
+	<guiprefs width="700" height="520" resizable="yes" />
+
+	<locale>
+		<langpack iso3="deu" />
+		<langpack iso3="eng" />
+		<langpack iso3="fra" />
+	</locale>
+	<variables>
+		<variable name="appversion" value="@{version}"/>
+		<variable name="UserPathPanelVariable" value="$SYSTEM_user_home/medelexis"/>
+		
+	</variables>
+	<native type="izpack" name="ShellLink.dll" />
+
+	<resources>
+		<res id="HTMLLicencePanel.licence" src="@{dist}/license.html" />
+		<res id="HTMLInfoPanel.info" src="@{dist}/info.html" />
+		<res id="medelexis-logo.png" src="rsc/elexis-logo.png" />
+		<res id="Win_shortcutSpec.xml" src="rsc/Shortcuts_Windows.xml" />
+		<res id="Unix_shortcutSpec.xml" src="rsc/Shortcuts_Linux.xml" />
+	</resources>
+
+	<panels>
+		<!--   panel classname="HelloPanel"/ -->
+		<panel classname="HTMLInfoPanel" />
+		<panel classname="HTMLLicencePanel" />
+		<panel classname="TargetPanel" />
+		<panel classname="InstallPanel" />
+		<panel classname="ShortcutPanel" />
+		<panel classname="FinishPanel" />
+	</panels>
+
+	<packs>
+		<pack name="Base" required="yes">
+			<description>The base files</description>
+			<fileset dir="@{dist}" targetdir="$INSTALL_PATH"/>
+			<executable os="linux" targetfile="$INSTALL_PATH/elexis" keep="true"/>
+		</pack>
+	</packs>
+
+</installation>

@@ -1,7 +1,0 @@
-eclipse=e:/software/elexis/rcp
-source=e:/source/eclipse
-makeself=/home/gerry/tools/makeself-2.1.4/makeself.sh
-nsis=e:/dev/nsis/makensis.exe
-jre=e:/software/java150/jre
-ooo=e:/buero/ooo203
-dest=e:/software/elexis/deploy
