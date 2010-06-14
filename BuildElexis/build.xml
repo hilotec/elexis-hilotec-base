@@ -240,6 +240,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 			<arg line="+x elexis" />
 		</exec>
 		<antcall target="create-all" />
+		<zip basedir="${dist}" destfile="${output}/elexis-macosx-${version}${tstamp}.zip"/>
 	</target>
 
 	<target name="installer">
