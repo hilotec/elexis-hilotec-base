@@ -252,7 +252,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 			<arg line="+x elexis" />
 		</exec>
 		<antcall target="create-all" />
-		<zip basedir="${dist}" destfile="${output}/elexis-macosx-${version}${tstamp}.zip" />
+		<zip basedir="${dist}" destfile="${output}/elexis-macosx-${version}.${TSTAMP}.zip" />
 	</target>
 
 	<target name="linux" depends="initialize">
@@ -300,7 +300,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<delete file="rsc/info.html" />
 		<delete file="rsc/license.html" />
 		<echo message="Running IzPack to build the installer..." />
-		<izpack input="rsc/installer.xml" output="${output}/${os}/medelexis-${os}-${version}-install.jar" installerType="standard" inheritAll="true" basedir="${output}" compression="deflate" compressionlevel="9" />
+		<izpack input="rsc/installer.xml" output="${output}/medelexis-${os}-${version}.${TSTAMP}-install.jar" installerType="standard" inheritAll="true" basedir="${output}" compression="deflate" compressionlevel="9" />
 	</target>
 
 	<target name="all">
