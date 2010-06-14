@@ -41,9 +41,11 @@
 	  call "ant -Dos=windows", "ant -Dos=linux" or "ant -Dos=macosx" 	
  	
 	Caveat:
-	- If some Plugins in your repositories do have dependencies to resources, you don't have access to,
+	- If some Plugins in your repositories do have dependencies to resources you don't have access to,
 	  you must esclude those plugins from the build. See local.properties.sample for a list of plugins that
 	  must be excluded if you have only the repositories elexis-base and elexis-addons
+	  for a full build of all free elexis modules , you need the repositories elexis-base, elexis-addons, 
+	  and archie.
 	
 -->
 <project name="elexis" default="all">
