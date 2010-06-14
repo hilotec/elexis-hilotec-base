@@ -24,7 +24,7 @@
 		base=path/to/basedir				- the directory where the buildenvironment is
 		hg=path/to/mercurial/binary
 		platform-runtime=path/to/eclipse	- A directory with the runtime to use
-		skip-plugins=name2,name2			- A comma separated list of plugins to SKIP in the Build
+		skipPlugins=name2,name2			- A comma separated list of plugins to SKIP in the Build
 		
 	Preparation:
 	- "hg clone" all repositories you want as subdirectories of ${base}/repositories
@@ -32,8 +32,18 @@
 	- add -Dunplugged=true to the call if you are not connected to the internet
 	  (will only work if all libs are already present i.e. there had been at least one successful 
 	   build while conencted)
-	
-	
+ 	 
+	- A common usage is to create an eclipse workspace at $(base}/repositories.
+	  Then clone the needed repositories, e.g. elexis-base, like this
+ 	  cd ${base}/repositories && hg clone http://elexis.hg.sourceforge.net/hgweb/elexis/elexis-base
+	  "hg clone" more repositories if you want as subdirectories of ${base}/repositories
+	  cd ${base}/repositories/elexis-base/BuildElexis
+	  call "ant -Dos=windows", "ant -Dos=linux" or "ant -Dos=macosx" 	
+ 	
+	Caveat:
+	- If some Plugins in your repositories do have dependencies to resources, you don't have access to,
+	  you must esclude those plugins from the build. See local.properties.sample for a list of plugins that
+	  must be excluded if you have only the repositories elexis-base and elexis-addons
 	
 -->
 <project name="elexis" default="all">
@@ -46,10 +56,12 @@
 	<property name="lib" value="${base}/lib" />
 	<property name="repositories" value="${base}/repositories" />
 	<property name="additions" value="${output}/additions" />
+	<mkdir dir="${base}" />
 
 	<tstamp />
 
 	<target name="downloads" unless="unplugged">
+		<mkdir dir="${lib}" />
 		<get src="http://www.medelexis.ch/fileadmin/downloads/izpack-compiler.jar" dest="${lib}/izpack-compiler.jar" usetimestamp="true" />
 		<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.core.jar" usetimestamp="true" />
 		<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.textile.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.textile.core.jar" usetimestamp="true" />
@@ -62,8 +74,6 @@
 
 	<target name="initialize" depends="downloads">
 		<property name="dist" value="${output}/${os}/elexis-${version}" />
-		<mkdir dir="${lib}" />
-		<mkdir dir="${base}" />
 		<mkdir dir="${dist}" />
 		<mkdir dir="${additions}" />
 		<mkdir dir="${dist}/plugins" />
@@ -90,7 +100,7 @@
 
 	</target>
 
-	<target name="update" depends="initialize">
+	<target name="update" unless="unplugged">
 		<for param="repo">
 			<path>
 				<dirset dir="${repositories}" includes="*" />
@@ -161,7 +171,7 @@
 	<!--
 	create all projects in all repositories
 	-->
-	<target name="create-all" depends="initialize">
+	<target name="create-all" depends="initialize,update">
 		<concat destfile="${dist}/elexis.ini">-vmargs
 -Xms128m
 -Xmx768m
@@ -240,8 +250,24 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 			<arg line="+x elexis" />
 		</exec>
 		<antcall target="create-all" />
-		<zip basedir="${dist}" destfile="${output}/elexis-macosx-${version}${tstamp}.zip"/>
+		<zip basedir="${dist}" destfile="${output}/elexis-macosx-${version}${tstamp}.zip" />
 	</target>
+
+	<target name="linux" depends="initialize">
+		<property name="os" value="linux" />
+		<copy todir="${dist}" verbose="true">
+			<fileset dir="${platform-runtime}">
+				<include name="plugins/org.eclipse.equinox.launcher.gtk*/*" />
+				<include name="plugins/org.eclipse.swt.gtk.linux.x86_*.jar" />
+				<include name="*.so" />
+			</fileset>
+		</copy>
+		<copy tofile="${dist}/elexis" file="${platform-runtime}/eclipse" preservelastmodified="true" verbose="true" />
+		<chmod file="${dist}/elexis" perm="ugo+rx" />
+		<antcall target="create-all" />
+		<antcall target="installer" inheritrefs="true" inheritall="true" />
+	</target>
+
 
 	<target name="installer">
 		<echo message="preparing files for izpack installer" />
@@ -275,8 +301,8 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<izpack input="rsc/installer.xml" output="${output}/${os}/medelexis-${os}-${version}-install.jar" installerType="standard" inheritAll="true" basedir="${output}" compression="deflate" compressionlevel="9" />
 	</target>
 
-	<target name="all" >
-		<antcall target="${os}"/>
+	<target name="all">
+		<antcall target="${os}" />
 	</target>
 
 	<target name="clean" description="Aufräumen; Alle vom letzten Build erstellten files löschen">
