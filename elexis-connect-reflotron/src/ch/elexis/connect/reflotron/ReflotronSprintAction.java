@@ -182,9 +182,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 						.getString("ReflotronSprintAction.UnknownPatientHeaderString");
 				String patientDeviceStr = probe.getIdent();
 				Long patId = null;
-				String patientStr = Messages
-						.getString("ReflotronSprintAction.UnknownPatientMsg") + probe.getIdent() + ")\n"; //$NON-NLS-1$ //$NON-NLS-2$
-				if (probe.getIdent() != null) {
+				if (patientDeviceStr != null) {
 					String patName = probe.getIdent();
 					String text = MessageFormat
 							.format(
