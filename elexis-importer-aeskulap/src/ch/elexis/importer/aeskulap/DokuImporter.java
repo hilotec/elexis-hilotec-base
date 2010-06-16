@@ -7,7 +7,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Xid;
 import ch.elexis.importers.ExcelWrapper;
-import ch.elexis.text.IDocumentManager;
+import ch.elexis.services.GlobalServiceDescriptors;
+import ch.elexis.services.IDocumentManager;
 import ch.elexis.util.Extensions;
 import ch.rgw.tools.StringTool;
 
@@ -21,7 +22,7 @@ public class DokuImporter {
 
 	public DokuImporter(File importBaseDir, IProgressMonitor monitor) {
 		monitor.subTask("Importiere Dokumente");
-		Object os = Extensions.findBestService(IDocumentManager.NAME);
+		Object os = Extensions.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
 		dir = importBaseDir;
 		if (os != null) {
 			dm = (IDocumentManager) os;
