@@ -27,7 +27,7 @@
 	</locale>
 	<variables>
 		<variable name="appversion" value="@{version}"/>
-		<variable name="UserPathPanelVariable" value="$SYSTEM_user_home/medelexis"/>
+		<variable name="UserPathPanelVariable" value="$SYSTEM_user_home/elexis"/>
 		
 	</variables>
 	<native type="izpack" name="ShellLink.dll" />
@@ -35,9 +35,9 @@
 	<resources>
 		<res id="HTMLLicencePanel.licence" src="@{dist}/license.html" />
 		<res id="HTMLInfoPanel.info" src="@{dist}/info.html" />
-		<res id="medelexis-logo.png" src="rsc/elexis-logo.png" />
-		<res id="Win_shortcutSpec.xml" src="rsc/Shortcuts_Windows.xml" />
-		<res id="Unix_shortcutSpec.xml" src="rsc/Shortcuts_Linux.xml" />
+		<!--   -->res id="medelexis-logo.png" src="rsc/elexis-logo.png" / -->
+		<res id="Win_shortcutSpec.xml" src="../rsc/Shortcuts_Windows.xml" />
+		<res id="Unix_shortcutSpec.xml" src="../rsc/Shortcuts_Linux.xml" />
 	</resources>
 
 	<panels>
@@ -45,6 +45,7 @@
 		<panel classname="HTMLInfoPanel" />
 		<panel classname="HTMLLicencePanel" />
 		<panel classname="TargetPanel" />
+		<panel classname="PacksPanel" />
 		<panel classname="InstallPanel" />
 		<panel classname="ShortcutPanel" />
 		<panel classname="FinishPanel" />
@@ -53,8 +54,38 @@
 	<packs>
 		<pack name="Base" required="yes">
 			<description>The base files</description>
-			<fileset dir="@{dist}" targetdir="$INSTALL_PATH"/>
+			<fileset dir="@{dist}" targetdir="$INSTALL_PATH">
+				<include name="*"/>
+				<include name="configuration/**"/>
+				<include name="plugins/ch.elexis_*/**"/>
+				<include name="plugins/ch.rgw.utility_*/**"/>
+				<include name="plugins/ch.elexis.mysql.connector_*/**"/>
+				<include name="plugins/ch.elexis.h2.connector_*/**"/>
+				<include name="plugins/ch.elexis.postgresql.connector_*/**"/>
+				<include name="plugins/ch.elexis.importer.div_*/**"/>
+				<include name="plugins/org.eclipse*"/>
+				<include name="plugins/org.eclipse*/**"/>
+				<include name="plugins/org.apache*"/>
+				<include name="plugins/com.ibm*"/>
+				<include name="plugins/javax*"/>
+			</fileset>
 			<executable os="linux" targetfile="$INSTALL_PATH/elexis" keep="true"/>
+		</pack>
+		<pack name="Schweiz (deutsch)" required="no">
+			<description>Abrechnungs- und Diagnosesysteme Schweiz</description>
+			<fileset dir="@{dist}" targetdir="$INSTALL_PATH">
+				<include name="plugins/ch.elexis.arzttarife_ch_*/**"/>
+				<include name="plugins/ch.elexis.ebanking_ch_*/**"/>
+				<include name="plugins/ch.elexis.diagnosecodes_ch_*/**"/>
+				<include name="plugins/ch.elexis.labortarif.ch2009_*/**"/>
+				<include name="plugins/ch.elexis.artikel_ch_*/**"/>
+			</fileset>			
+		</pack>
+		<pack name="OpenOffice-2.0-Anbindung" required="no">
+		<description>Anbindung von OpenOffice.org 2.0 (nur Windows und KDE/XFCE)</description>
+			<fileset dir="@{dist}" targetdir="$INSTALL_PATH">
+				<include name="plugins/ch.elexis.noatext_*/**"/>
+			</fileset>
 		</pack>
 	</packs>
 

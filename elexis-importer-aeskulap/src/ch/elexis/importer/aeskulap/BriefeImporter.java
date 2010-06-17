@@ -7,7 +7,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Xid;
 import ch.elexis.importers.ExcelWrapper;
-import ch.elexis.text.IDocumentManager;
+import ch.elexis.services.GlobalServiceDescriptors;
+import ch.elexis.services.IDocumentManager;
 import ch.elexis.util.Extensions;
 import ch.rgw.tools.StringTool;
 
@@ -21,7 +22,8 @@ public class BriefeImporter {
 
 	public BriefeImporter(File importBaseDir, IProgressMonitor monitor) {
 		monitor.subTask("Importiere Briefe");
-		Object os = Extensions.findBestService(IDocumentManager.NAME);
+		Object os = Extensions
+				.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
 		dir = importBaseDir;
 		if (os != null) {
 			dm = (IDocumentManager) os;
@@ -51,10 +53,9 @@ public class BriefeImporter {
 			Patient pat = (Patient) Xid.findObject(AeskulapImporter.PATID,
 					patno);
 			if (pat != null) {
-				File file = AeskulapImporter.findFile(
-						new File(dir, "Briefe"), new StringBuilder("!")
-								.append(patno).append("_").append(briefno)
-								.toString());
+				File file = AeskulapImporter.findFile(new File(dir, "Briefe"),
+						new StringBuilder("!").append(patno).append("_")
+								.append(briefno).toString());
 				if (file != null) {
 					dm.addDocument(pat, title, CATEGORY_AESKULAP_BRIEFE, "",
 							file, date);

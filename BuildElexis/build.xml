@@ -49,6 +49,7 @@
 	
 -->
 <project name="elexis" default="all">
+	<property name="os" value="linux"/>
 	<property name="version" value="2.1.0" />
 	<property name="javatarget" value="1.6" />
 	<property file="local.properties" />
@@ -58,6 +59,7 @@
 	<property name="lib" value="${base}/lib" />
 	<property name="repositories" value="${base}/repositories" />
 	<property name="additions" value="${output}/additions" />
+	<property name="nucleus" value="mysql-adapter,postgresql-adapter,h2-adapter,elexis-utilities,elexis-importer,elexis"/>
 	<mkdir dir="${base}" />
 
 	<tstamp />
@@ -158,6 +160,7 @@
 			<fileset dir="${dox}/${dirname}">
 				<include name="*.textile" />
 			</fileset>
+
 			<!-- stylesheet url="styles/main.css" / -->
 		</wikitext-to-html>
 		<wikitext-to-xslfo markupLanguage="Textile" sourceEncoding="utf-8" author="Elexis">
@@ -289,18 +292,18 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 				<filter token="xml version=&apos;1.0&apos; encoding=&apos;utf-8&apos; " value="" />
 			</filterset>
 		</copy>
-		<copy todir="${output}">
+		<copy todir="${output}/${os}">
 			<fileset dir=".">
 				<include name="rsc/*.*" />
 			</fileset>
 		</copy>
-		<copy todir="${dist}">
+		<!-- copy todir="${dist}">
 			<fileset dir="rsc" includes="*.ico *.png *.icns *.xpm" />
-		</copy>
+		</copy -->
 		<delete file="rsc/info.html" />
 		<delete file="rsc/license.html" />
 		<echo message="Running IzPack to build the installer..." />
-		<izpack input="rsc/installer.xml" output="${output}/medelexis-${os}-${version}.${DSTAMP}-install.jar" installerType="standard" inheritAll="true" basedir="${output}" compression="deflate" compressionlevel="9" />
+		<izpack input="rsc/installer.xml" output="${output}/elexis-${os}-${version}.${DSTAMP}-install.jar" installerType="standard" inheritAll="true" basedir="${dist}" compression="deflate" compressionlevel="9" />
 	</target>
 
 	<target name="all">

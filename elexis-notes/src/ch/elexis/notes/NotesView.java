@@ -40,6 +40,7 @@ import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListener;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.services.GlobalServiceDescriptors;
 import ch.elexis.text.ExternalLink;
 import ch.elexis.text.Samdas;
 import ch.elexis.util.Extensions;
@@ -57,7 +58,6 @@ import ch.rgw.tools.Result;
  */
 public class NotesView extends ViewPart implements IActivationListener,
 ElexisEventListener {
-	private static final String PREFERRED_SCANSERVICE = "ScanToPDFService";
 	static final String ID="ch.elexis.notes.view";
 	ScrolledForm fMaster;
 	NotesList master;
@@ -181,7 +181,7 @@ ElexisEventListener {
 		};
 		// Check if there is a scanner service available and if so, create a
 		// "Scan" button
-		if (Extensions.isServiceAvailable(PREFERRED_SCANSERVICE)) {
+		if (Extensions.isServiceAvailable(GlobalServiceDescriptors.SCAN_TO_PDF)) {
 			hasScanner = true;
 			scanAction = new Action("Scannen...") {
 				{
@@ -195,7 +195,7 @@ ElexisEventListener {
 				public void run() {
 					try {
 						Object scanner = Extensions
-						.findBestService(PREFERRED_SCANSERVICE);
+						.findBestService(GlobalServiceDescriptors.SCAN_TO_PDF);
 						if (scanner != null) {
 							Result<byte[]> res = (Result<byte[]>) Extensions
 							.executeService(scanner, "acquire",

@@ -22,5 +22,14 @@
             Class="ch.elexis.omnivore.data.DocHandleFactory"
             name="Omnivore"/>
    </extension>
+   <extension
+         point="ch.elexis.ServiceRegistry">
+      <Service
+            actor="ch.elexis.omnivore.data.DocumentManagement"
+            description="Omnivore"
+            name="DocumentManagement"
+            value="1">
+      </Service>
+   </extension>
 
 </plugin>

@@ -10,7 +10,7 @@
  * 
  *  $Id: IDocumentManager.java 5954 2010-01-23 09:34:48Z rgw_ch $
  *******************************************************************************/
-package ch.elexis.text;
+package ch.elexis.services;
 
 import java.io.File;
 import java.io.InputStream;
@@ -25,7 +25,7 @@ import ch.elexis.data.Patient;
  * 
  */
 public interface IDocumentManager {
-	public static final String NAME = "DocumentManagement";
+
 	
 	/** List Categories for Documents */
 	public String[] getCategories();
