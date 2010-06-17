@@ -129,6 +129,10 @@ public class DocHandle extends PersistentObject {
 		return super.delete();
 	}
 	
+	public byte[] getContents() {
+		byte[] ret = getBinary("Doc");
+		return ret;
+	}
 	public void execute(){
 		try {
 			String ext = "";
