@@ -35,9 +35,9 @@
 	<resources>
 		<res id="HTMLLicencePanel.licence" src="@{dist}/license.html" />
 		<res id="HTMLInfoPanel.info" src="@{dist}/info.html" />
-		<!--   -->res id="medelexis-logo.png" src="rsc/elexis-logo.png" / -->
-		<res id="Win_shortcutSpec.xml" src="../rsc/Shortcuts_Windows.xml" />
-		<res id="Unix_shortcutSpec.xml" src="../rsc/Shortcuts_Linux.xml" />
+		<res id="medelexis-logo.png" src="@{rsc}/elexis-logo.png" />
+		<res id="Win_shortcutSpec.xml" src="@{rsc}/Shortcuts_Windows.xml" />
+		<res id="Unix_shortcutSpec.xml" src="@{rsc}/Shortcuts_Linux.xml" />
 	</resources>
 
 	<panels>
@@ -52,8 +52,8 @@
 	</panels>
 
 	<packs>
-		<pack name="Base" required="yes">
-			<description>The base files</description>
+		<pack name="Elexis-Kern" required="yes">
+			<description>Elexis-Hauptprogramm</description>
 			<fileset dir="@{dist}" targetdir="$INSTALL_PATH">
 				<include name="*"/>
 				<include name="configuration/**"/>

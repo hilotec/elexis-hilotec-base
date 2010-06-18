@@ -49,7 +49,7 @@
 	
 -->
 <project name="elexis" default="all">
-	<property name="os" value="linux"/>
+
 	<property name="version" value="2.1.0" />
 	<property name="javatarget" value="1.6" />
 	<property file="local.properties" />
@@ -59,7 +59,7 @@
 	<property name="lib" value="${base}/lib" />
 	<property name="repositories" value="${base}/repositories" />
 	<property name="additions" value="${output}/additions" />
-	<property name="nucleus" value="mysql-adapter,postgresql-adapter,h2-adapter,elexis-utilities,elexis-importer,elexis"/>
+	<property name="rsc" value="${repositories}/elexis-base/BuildElexis/rsc"/>
 	<mkdir dir="${base}" />
 
 	<tstamp />
@@ -204,7 +204,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 			</fileset>
 		</copy>
 		<copy todir="${dist}">
-			<fileset dir="rsc">
+			<fileset dir="${rsc}">
 				<include name="*.ico" />
 				<include name="LICENSE*.*" />
 				<include name="lizenz.*" />
@@ -239,9 +239,9 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 	<target name="windows" depends="initialize">
 		<property name="os" value="windows" />
 		<copy todir="${dist}/plugins">
-			<fileset dir="rsc/windows" excludes="elexis.exe" />
+			<fileset dir="${rsc}/windows" excludes="elexis.exe" />
 		</copy>
-		<copy todir="${dist}" file="rsc/windows/elexis.exe" />
+		<copy todir="${dist}" file="${rsc}/windows/elexis.exe" />
 		<antcall target="create-all" />
 		<antcall target="installer" inheritrefs="true" inheritall="true" />
 	</target>
@@ -249,7 +249,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 	<target name="macosx" depends="initialize">
 		<property name="os" value="macosx" />
 		<copy todir="${dist}">
-			<fileset dir="rsc/macosx" />
+			<fileset dir="${rsc}/macosx" />
 		</copy>
 		<exec executable="chmod" dir="${dist}/elexis.app/Contents/MacOS">
 			<arg line="+x elexis" />
@@ -277,14 +277,14 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 	<target name="installer">
 		<echo message="preparing files for izpack installer" />
 		<wikitext-to-html markupLanguage="Textile" overwrite="true" multipleOutputFiles="false" formatOutput="true">
-			<fileset dir="rsc">
+			<fileset dir="${rsc}">
 				<include name="*.textile" />
 			</fileset>
 			<!-- stylesheet url="styles/main.css" / -->
 		</wikitext-to-html>
 
 		<copy todir="${dist}">
-			<fileset dir="rsc">
+			<fileset dir="${rsc}">
 				<include name="info.html" />
 				<include name="license.html" />
 			</fileset>
@@ -294,16 +294,16 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		</copy>
 		<copy todir="${output}/${os}">
 			<fileset dir=".">
-				<include name="rsc/*.*" />
+				<include name="${rsc}/*.*" />
 			</fileset>
 		</copy>
 		<!-- copy todir="${dist}">
-			<fileset dir="rsc" includes="*.ico *.png *.icns *.xpm" />
+			<fileset dir="${rsc}" includes="*.ico *.png *.icns *.xpm" />
 		</copy -->
-		<delete file="rsc/info.html" />
-		<delete file="rsc/license.html" />
+		<delete file="${rsc}/info.html" />
+		<delete file="${rsc}/license.html" />
 		<echo message="Running IzPack to build the installer..." />
-		<izpack input="rsc/installer.xml" output="${output}/elexis-${os}-${version}.${DSTAMP}-install.jar" installerType="standard" inheritAll="true" basedir="${dist}" compression="deflate" compressionlevel="9" />
+		<izpack input="${rsc}/installer.xml" output="${output}/elexis-${os}-${version}.${DSTAMP}-install.jar" installerType="standard" inheritAll="true" basedir="${dist}" compression="deflate" compressionlevel="9" />
 	</target>
 
 	<target name="all">
