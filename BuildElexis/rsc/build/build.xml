@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- $Id: build.xml 6361 2010-05-15 09:02:04Z niklausgiger $
+<!-- 
+
+	********************** OBSOLETED ****************************
+	please use build.xml in the toplevel directory of this project
+	**************************************************************
+	
+	$Id: build.xml 6361 2010-05-15 09:02:04Z niklausgiger $
     (c) 2005-2009 by G. Weirich
 
     This file reflects my personal environment. It is not intended for
@@ -70,6 +76,7 @@
 	<property name="debug" value="yes" />
 	<property name="optimize" value="no" />
 	<property name="elexis_plugin" value="${dist}/plugins/ch.elexis_${version}" />
+	<echo message="OBSOLETED"/>
 
 	<!-- Pfade für -classpath des Java-compilers festlegen -->
 	<path id="eclipseclasses">
