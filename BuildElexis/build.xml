@@ -235,7 +235,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		</for>
 	</target>
 
-	<!-- create the Windows Distribution -->
+	<!-- create the Windows installer.  -->
 	<target name="windows" depends="initialize">
 		<property name="os" value="windows" />
 		<copy todir="${dist}/plugins">
@@ -256,6 +256,12 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		</exec>
 		<antcall target="create-all" />
 
+		<!-- For the Mac, we do not create a jar installer, because on MacOSX,
+		     zip installation packages are a well known and well supported 
+		     standard. So we just create a zip with the essential parts of elexis.
+		     we must make sure that there will be a correct elexis.app with an
+		     executable launcher within
+		 -->
 		<zip destfile="${output}/elexis-macosx-${version}.${DSTAMP}.zip">
 			<zipfileset dir="${dist}">
 				<include name="*" />
@@ -333,4 +339,63 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<echo message="deleting output directory" />
 		<delete dir="${output}" />
 	</target>
+	
+	<target name="javadoc">
+			<delete dir="${source}/dokumentation/javadoc" />
+			<echo message="Creating javadoc for ${source}" />
+			<javadoc failonerror="false" access="public" destdir="${source}/dokumentation/javadoc" windowtitle="Elexis API documentation" excludepackagenames="org,net,rb,au" charset="utf-8" author="true" version="true" use="true" maxmemory="128M">
+				<fileset dir="${source}" defaultexcludes="yes">
+					<include name="elexis/**/*.java" />
+					<include name="elexis-a*/**/*.java" />
+					<include name="elexis-c*/**/*.java" />
+					<include name="elexis-d*/**/*.java" />
+					<include name="elexis-e*/**/*.java" />
+					<include name="elexis-f*/**/*.java" />
+					<include name="elexis-i*/**/*.java" />
+					<include name="elexis-k*/**/*.java" />
+					<include name="elexis-l*/**/*.java" />
+					<include name="elexis-m*/**/*.java" />
+					<include name="elexis-n*/**/*.java" />
+					<include name="elexis-o*/**/*.java" />
+					<include name="elexis-p*/**/*.java" />
+					<include name="elexis-s*/**/*.java" />
+					<include name="elexis-tools/**/*.java" />
+					<include name="helpers/**/*.java" />
+					<include name="h2-adapter/**/*.java" />
+					<include name="hilotec-messwerte/**/*.java" />
+					<include name="hsql-adapter/**/*.java" />
+					<include name="elexis-u*/**/*.java" />
+					<include name="*adapter/**/*.java" />
+					<include name="m*/**/*.java" />
+					<include name="*wrapper*/**/*.java" />
+					<include name="iatrix*/**/*.java" />
+					<include name="p*/**/*.java" />
+					<include name="L*/*/*.java" />
+
+					<!-- Jedes der beiden Plugins führt zum Absturz von Javadoc -->
+					<exclude name="elexis-trustx-embed/**/*.java" />
+					<exclude name="hilotec-pluginstatistiken/**/*.java" />
+
+					<!-- noatext generiert fast 3000 warnungen -->
+					<exclude name="noatext/**/*.java" />
+					<exclude name="deploy/**" />
+					<exclude name="**/Test*.java" />
+					<exclude name="**/au/**/*.java" />
+					<exclude name="**/org/**/*.java" />
+				</fileset>
+				<doctitle>
+					<![CDATA[Elexis project API]]>
+				</doctitle>
+				<header>
+					<![CDATA[Elexis API documentation as of ${TODAY}]]>
+				</header>
+				<bottom>
+					<![CDATA[Copyright 2005-2010 by Gerry Weirich, Elexis]]>
+				</bottom>
+			</javadoc>
+			<available file="${source}/dokumentation/javadoc/index.html" property="javadoc.has.index.html" />
+			<echo message="Created javadoc in ${source}/dokumentation/javadoc index? ${javadoc.has.index.html}" />
+			<fail unless="javadoc.has.index.html" />
+		</target>
+
 </project>
