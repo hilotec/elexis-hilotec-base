@@ -249,7 +249,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 	<target name="macosx" depends="initialize">
 		<property name="os" value="macosx" />
 		<copy todir="${dist}">
-			<fileset dir="${rsc}/macosx" />
+			<fileset dir="${rsc}/macosx"/>
 		</copy>
 		<exec executable="chmod" dir="${dist}/elexis.app/Contents/MacOS">
 			<arg line="+x elexis" />
@@ -259,6 +259,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<zip destfile="${output}/elexis-macosx-${version}.${DSTAMP}.zip">
 			<zipfileset dir="${dist}">
 				<include name="*" />
+				<include name="elexis.app/**"/>
 				<include name="configuration/**" />
 				<include name="plugins/ch.elexis_*/**" />
 				<include name="plugins/ch.rgw.utility_*/**" />
