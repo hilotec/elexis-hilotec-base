@@ -4,3 +4,5 @@ base=d\:/software/elexis_hg
 hg=c\:/dev/mercurial/hg.exe
 platform-runtime=c\:/dev/eclipse
 skipPlugins=TestElexis,TestElexisUI,archie-patientstatistik,Statistics,StatisticsFragmentExample,hilotec-pluginstatistiken,elexis-buchhaltung-basis,hilotec-messwerte,marlovits-addressSearch,marlovits-vornamen,marlovits-plz
+texify=texi2pdf
+texifyArgs=--silent

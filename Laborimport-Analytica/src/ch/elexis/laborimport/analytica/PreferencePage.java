@@ -38,7 +38,7 @@ public class PreferencePage extends FieldEditorPreferencePage implements
 	public static final String DL_DIR = "analytica/downloaddir"; //$NON-NLS-1$
 	public static final String OVPN_DIR = "/etc/openvpn/openvpn.cfg"; //$NON-NLS-1$
 
-	public static final String DEFAULT_FTP_HOST = "195.144.61.180"; //$NON-NLS-1$
+	public static final String DEFAULT_FTP_HOST = "172.23.45.1"; //$NON-NLS-1$
 	public static final String DEFAULT_FTP_USER = ""; //$NON-NLS-1$
 	public static final String DEFAULT_FTP_PWD = ""; //$NON-NLS-1$
 	public static final String DEFAULT_DL_DIR = "C:\\LaborDownloads"; //$NON-NLS-1$
