@@ -81,6 +81,7 @@
 		<mkdir dir="${dist}" />
 		<mkdir dir="${additions}" />
 		<mkdir dir="${dist}/plugins" />
+		<mkdir dir="${dist}/doc" />
 		<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${lib}/ant-contrib.jar" />
 		<taskdef name="packager" classname="ch.medelexis.packager.Creator" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
 		<taskdef name="listDependencies" classname="ch.medelexis.packager.DependencyList" classpath="${lib}/medelexis-packager.jar;${lib}/jdom.jar" />
@@ -249,7 +250,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 	<target name="macosx" depends="initialize">
 		<property name="os" value="macosx" />
 		<copy todir="${dist}">
-			<fileset dir="${rsc}/macosx"/>
+			<fileset dir="${rsc}/macosx" />
 		</copy>
 		<exec executable="chmod" dir="${dist}/elexis.app/Contents/MacOS">
 			<arg line="+x elexis" />
@@ -265,7 +266,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<zip destfile="${output}/elexis-macosx-${version}.${DSTAMP}.zip">
 			<zipfileset dir="${dist}">
 				<include name="*" />
-				<include name="elexis.app/**"/>
+				<include name="elexis.app/**" />
 				<include name="configuration/**" />
 				<include name="plugins/ch.elexis_*/**" />
 				<include name="plugins/ch.rgw.utility_*/**" />
@@ -339,63 +340,101 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<echo message="deleting output directory" />
 		<delete dir="${output}" />
 	</target>
-	
+
 	<target name="javadoc">
-			<delete dir="${source}/dokumentation/javadoc" />
-			<echo message="Creating javadoc for ${source}" />
-			<javadoc failonerror="false" access="public" destdir="${source}/dokumentation/javadoc" windowtitle="Elexis API documentation" excludepackagenames="org,net,rb,au" charset="utf-8" author="true" version="true" use="true" maxmemory="128M">
-				<fileset dir="${source}" defaultexcludes="yes">
-					<include name="elexis/**/*.java" />
-					<include name="elexis-a*/**/*.java" />
-					<include name="elexis-c*/**/*.java" />
-					<include name="elexis-d*/**/*.java" />
-					<include name="elexis-e*/**/*.java" />
-					<include name="elexis-f*/**/*.java" />
-					<include name="elexis-i*/**/*.java" />
-					<include name="elexis-k*/**/*.java" />
-					<include name="elexis-l*/**/*.java" />
-					<include name="elexis-m*/**/*.java" />
-					<include name="elexis-n*/**/*.java" />
-					<include name="elexis-o*/**/*.java" />
-					<include name="elexis-p*/**/*.java" />
-					<include name="elexis-s*/**/*.java" />
-					<include name="elexis-tools/**/*.java" />
-					<include name="helpers/**/*.java" />
-					<include name="h2-adapter/**/*.java" />
-					<include name="hilotec-messwerte/**/*.java" />
-					<include name="hsql-adapter/**/*.java" />
-					<include name="elexis-u*/**/*.java" />
-					<include name="*adapter/**/*.java" />
-					<include name="m*/**/*.java" />
-					<include name="*wrapper*/**/*.java" />
-					<include name="iatrix*/**/*.java" />
-					<include name="p*/**/*.java" />
-					<include name="L*/*/*.java" />
+		<delete dir="${output}/dokumentation/javadoc" />
+		<echo message="Creating javadoc for ${repositories}" />
+		<javadoc failonerror="false" access="public" destdir="${output}/dokumentation/javadoc" windowtitle="Elexis API documentation" excludepackagenames="org,net,rb,au" charset="utf-8" author="true" version="true" use="true" maxmemory="128M">
+			<fileset dir="${repositories}/elexis-base" defaultexcludes="yes">
+				<include name="elexis/**/*.java" />
+				<include name="elexis-a*/**/*.java" />
+				<include name="elexis-c*/**/*.java" />
+				<include name="elexis-d*/**/*.java" />
+				<include name="elexis-e*/**/*.java" />
+				<include name="elexis-f*/**/*.java" />
+				<include name="elexis-i*/**/*.java" />
+				<include name="elexis-k*/**/*.java" />
+				<include name="elexis-l*/**/*.java" />
+				<include name="elexis-m*/**/*.java" />
+				<include name="elexis-n*/**/*.java" />
+				<include name="elexis-o*/**/*.java" />
+				<include name="elexis-p*/**/*.java" />
+				<include name="elexis-s*/**/*.java" />
+				<include name="elexis-tools/**/*.java" />
+				<include name="helpers/**/*.java" />
+				<include name="h2-adapter/**/*.java" />
+				<include name="hilotec-messwerte/**/*.java" />
+				<include name="hsql-adapter/**/*.java" />
+				<include name="elexis-u*/**/*.java" />
+				<include name="*adapter/**/*.java" />
+				<include name="m*/**/*.java" />
+				<include name="*wrapper*/**/*.java" />
+				<include name="iatrix*/**/*.java" />
+				<include name="p*/**/*.java" />
+				<include name="L*/*/*.java" />
 
-					<!-- Jedes der beiden Plugins führt zum Absturz von Javadoc -->
-					<exclude name="elexis-trustx-embed/**/*.java" />
-					<exclude name="hilotec-pluginstatistiken/**/*.java" />
+				<!-- Jedes der beiden Plugins führt zum Absturz von Javadoc -->
+				<exclude name="elexis-trustx-embed/**/*.java" />
+				<exclude name="hilotec-pluginstatistiken/**/*.java" />
 
-					<!-- noatext generiert fast 3000 warnungen -->
-					<exclude name="noatext/**/*.java" />
-					<exclude name="deploy/**" />
-					<exclude name="**/Test*.java" />
-					<exclude name="**/au/**/*.java" />
-					<exclude name="**/org/**/*.java" />
-				</fileset>
-				<doctitle>
-					<![CDATA[Elexis project API]]>
-				</doctitle>
-				<header>
-					<![CDATA[Elexis API documentation as of ${TODAY}]]>
-				</header>
-				<bottom>
-					<![CDATA[Copyright 2005-2010 by Gerry Weirich, Elexis]]>
-				</bottom>
-			</javadoc>
-			<available file="${source}/dokumentation/javadoc/index.html" property="javadoc.has.index.html" />
-			<echo message="Created javadoc in ${source}/dokumentation/javadoc index? ${javadoc.has.index.html}" />
-			<fail unless="javadoc.has.index.html" />
-		</target>
+				<!-- noatext generiert fast 3000 warnungen -->
+				<exclude name="noatext/**/*.java" />
+				<exclude name="deploy/**" />
+				<exclude name="**/Test*.java" />
+				<exclude name="**/au/**/*.java" />
+				<exclude name="**/org/**/*.java" />
+			</fileset>
+			<doctitle>
+				<![CDATA[Elexis project API]]>
+			</doctitle>
+			<header>
+				<![CDATA[Elexis API documentation as of ${TODAY}]]>
+			</header>
+			<bottom>
+				<![CDATA[Copyright 2005-2010 by Gerry Weirich, Elexis]]>
+			</bottom>
+		</javadoc>
+		<available file="${output}/dokumentation/javadoc/index.html" property="javadoc.has.index.html" />
+		<echo message="Created javadoc in ${output}/dokumentation/javadoc index? ${javadoc.has.index.html}" />
+		<fail unless="javadoc.has.index.html" />
+	</target>
+
+	<target name="doc" unless="skip_texify" depends="initialize">
+		<echo message="doc ${repositories}/elexis-base/dokumentation" />
+		<exec executable="${texify}" dir="${repositories}/elexis-base/dokumentation" failonerror="true">
+			<arg line="${texifyArgs}  elexis.tex" />
+		</exec>
+		<copy file="${repositories}/elexis-base/dokumentation/elexis.pdf" todir="${dist}/doc" />
+	</target>
+
+	<target name="doc_fr" unless="skip_texify" depends="initialize">
+		<exec executable="${texify}" dir="${repositories}/elexis-base/doc_fr" failonerror="true">
+			<arg line="${texifyArgs}  elexis.tex" />
+		</exec>
+		<copy file="${repositories}/elexis-base/doc_fr/elexis.pdf" tofile="${dist}/doc/elexis_fr.pdf" />
+	</target>
+
+	<target name="texify" unless="skip_texify">
+		<exec executable="${texify}" dir="${sourcedir}" failonerror="false">
+			<arg line="${texifyArgs} doc/${dirname}.tex" />
+		</exec>
+		<copy file="${sourcedir}/${dirname}.pdf" todir="${dist}/doc" failonerror="false" />
+	</target>
+
+	<target name="doc-plugins" unless="skip_texify" depends="initialize">
+		<!-- compile all plugins listed from listDependencies -->
+		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins}" />
+		<for param="plugin" list="${buildlist}" delimiter=",">
+			<sequential>
+				<pluginID dir="@{plugin}" />
+				<antcall target="texify">
+					<param name="dirname" value="${DirName}" />
+					<param name="sourcedir" value="@{plugin}" />
+					<param name="plugin" value="@{plugin}" />
+					<param name="cp" value="varcp" />
+				</antcall>
+			</sequential>
+		</for>
+	</target>
 
 </project>
