@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,11 @@ package ch.elexis.wizards;
 
 // 17.5.2009: added H2
 
+import java.util.Hashtable;
+
+import org.eclipse.core.runtime.preferences.ConfigurationScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.wizard.WizardPage;
@@ -32,9 +37,11 @@ import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.SettingsPreferenceStore;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.StringTool;
 
 public class DBConnectFirstPage extends WizardPage {
 	
@@ -44,7 +51,7 @@ public class DBConnectFirstPage extends WizardPage {
 	JdbcLink j = null;
 	
 	static final String[] supportedDB = new String[] {
-		"mySQl", "PostgreSQL", "hsqlDB (inProc)", "hsqlDB (Server)", "H2" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		"mySQl", "PostgreSQL", "H2" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ 
 	};
 	
 	public DBConnectFirstPage(String pageName){
@@ -69,18 +76,28 @@ public class DBConnectFirstPage extends WizardPage {
 		FormText alt = tk.createFormText(body, false);
 		StringBuilder old = new StringBuilder();
 		old.append("<form>Aktuelle Verbindung:<br/>"); //$NON-NLS-1$
-		IPreferenceStore localstore = new SettingsPreferenceStore(Hub.localCfg);
-		String driver = localstore.getString(PreferenceConstants.DB_CLASS);
-		String connectstring = localstore.getString(PreferenceConstants.DB_CONNECT);
-		String user = localstore.getString(PreferenceConstants.DB_USERNAME);
-		// String pwd=localstore.getString(PreferenceConstants.DB_PWD);
-		String typ = localstore.getString(PreferenceConstants.DB_TYP);
-		if (ch.rgw.tools.StringTool.isNothing(connectstring)) {
+		ConfigurationScope pref=new ConfigurationScope();
+		IEclipsePreferences node=pref.getNode("connection");
+		String cnt=node.get(Hub.getCfgVariant(), null);
+		String driver="";
+		String connectString="";
+		String user="";
+		String typ="";
+		if(cnt!=null){
+			Hashtable<Object, Object> hConn = PersistentObject.fold(StringTool.dePrintable(cnt));
+			if(hConn!=null){
+				driver=PersistentObject.checkNull(hConn.get(PersistentObject.CFG_DRIVER));
+				connectString=PersistentObject.checkNull(hConn.get(PersistentObject.CFG_CONNECTSTRING));
+				user=PersistentObject.checkNull(hConn.get(PersistentObject.CFG_USER));
+				typ=PersistentObject.checkNull(hConn.get(PersistentObject.CFG_TYPE));
+			}
+		}
+		if (ch.rgw.tools.StringTool.isNothing(connectString)) {
 			old.append("Keine.</form>"); //$NON-NLS-1$
 		} else {
 			old.append("<li><b>Typ:</b>       ").append(typ).append("</li>"); //$NON-NLS-1$ //$NON-NLS-2$
 			old.append("<li><b>Treiber</b>    ").append(driver).append("</li>"); //$NON-NLS-1$ //$NON-NLS-2$
-			old.append("<li><b>Verbinde</b>   ").append(connectstring).append("</li>"); //$NON-NLS-1$ //$NON-NLS-2$
+			old.append("<li><b>Verbinde</b>   ").append(connectString).append("</li>"); //$NON-NLS-1$ //$NON-NLS-2$
 			old.append("<li><b>Username</b>   ").append(user).append("</li>"); //$NON-NLS-1$ //$NON-NLS-2$
 			old.append("</form>"); //$NON-NLS-1$
 		}
@@ -111,17 +128,6 @@ public class DBConnectFirstPage extends WizardPage {
 					defaultUser = "sa"; //$NON-NLS-1$
 					defaultPassword = ""; //$NON-NLS-1$
 					break;
-				case 3:
-					server.setEnabled(true);
-					dbName.setEnabled(false);
-					defaultUser = "sa"; //$NON-NLS-1$
-					defaultPassword = ""; //$NON-NLS-1$
-					break;
-				case 4:
-					server.setEnabled(false);
-					dbName.setEnabled(true);
-					defaultUser = "sa"; //$NON-NLS-1$
-					defaultPassword = ""; //$NON-NLS-1$
 				default:
 					break;
 				}
