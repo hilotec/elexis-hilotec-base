@@ -71,7 +71,10 @@ public class JdbcLink {
 	public static JdbcLink createMySqlLink(String host, String database) {
 		log.log(Level.INFO, "Creating MySQL-Link");
 		String driver = "com.mysql.jdbc.Driver";
-		String connect = "jdbc:mysql://" + host + ":3306/" + database;
+		String[] hostdetail=host.split(":");
+		String hostname=hostdetail[0];
+		String hostport=hostdetail.length>1 ? hostdetail[1] : "3306";
+		String connect = "jdbc:mysql://" + hostname + ":"+hostport+"/" + database;
 		return new JdbcLink(driver, connect, "mysql");
 	}
 
@@ -142,7 +145,11 @@ public class JdbcLink {
 	public static JdbcLink createPostgreSQLLink(String host, String database) {
 		log.log(Level.INFO, "Creating PostgreSQL-Link");
 		String driver = "org.postgresql.Driver";
-		String connect = "jdbc:postgresql://" + host + ":5432/" + database;
+		String[] hostdetail=host.split(":");
+		String hostname=hostdetail[0];
+		String hostport=hostdetail.length>1 ? hostdetail[1] : "5432";
+
+		String connect = "jdbc:postgresql://" + hostname + ":"+hostport+"/" + database;
 		return new JdbcLink(driver, connect, "postgresql");
 	}
 
