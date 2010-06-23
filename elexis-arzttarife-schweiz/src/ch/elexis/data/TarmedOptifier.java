@@ -17,7 +17,9 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
+import ch.elexis.Hub;
 import ch.elexis.arzttarife_schweiz.Messages;
+import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.util.IOptifier;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
@@ -69,6 +71,9 @@ public class TarmedOptifier implements IOptifier {
 	 */
 	
 	public Result<IVerrechenbar> add(IVerrechenbar code, Konsultation kons){
+		if(Hub.localCfg.get(Leistungscodes.OPTIFY, true)==false){
+			return new Result<IVerrechenbar>(code);
+		}
 		if (code instanceof TarmedLeistung) {
 			TarmedLeistung tc = (TarmedLeistung) code;
 			List<Verrechnet> lst = kons.getLeistungen();

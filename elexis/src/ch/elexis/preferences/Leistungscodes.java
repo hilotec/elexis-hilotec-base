@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,7 @@ public class Leistungscodes extends PreferencePage implements
 		IWorkbenchPreferencePage {
 	public final static String CFG_KEY="billing/systems";
 	public final static String BILLING_STRICT="billing/strict";
+	public final static String OPTIFY="billing/optify";
 	List<IConfigurationElement> lo=Extensions.getExtensions("ch.elexis.RechnungsManager");
 	List<IConfigurationElement> ll=Extensions.getExtensions("ch.elexis.Verrechnungscode");
 	String[] systeme=Hub.globalCfg.nodes(CFG_KEY);
@@ -160,6 +161,17 @@ public class Leistungscodes extends PreferencePage implements
 			
 		});
 		bStrictCheck.setSelection(Hub.userCfg.get(BILLING_STRICT, true));
+		final Button bOptify=new Button(ret,SWT.CHECK);
+		bOptify.setText("Leistungspositionen bei der Eingabe auf Zulässigkeit prüfen");
+		bOptify.addSelectionListener(new SelectionAdapter(){
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				Hub.userCfg.set(OPTIFY, bOptify.getSelection());
+			}
+			
+		});
+		bOptify.setSelection(Hub.userCfg.get(OPTIFY, true));
+		
 		reload();
 		return ret;
 	}
