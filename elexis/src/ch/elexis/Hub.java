@@ -575,4 +575,13 @@ public class Hub extends AbstractUIPlugin {
 		return getWritableUserDir();
 	}
 	
+	/**
+	 * Return the name of a config instance, the user chose.
+	 * This is just the valuie of the -Dconfig=xx runtime value
+	 * or "default" if no -Dconfig was set
+	 */
+	public static String getCfgVariant(){
+		String config=System.getProperty("config");
+		return config==null ? "default" : config;
+	}
 }
