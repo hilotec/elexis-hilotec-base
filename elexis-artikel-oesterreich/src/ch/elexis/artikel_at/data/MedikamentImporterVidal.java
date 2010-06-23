@@ -10,7 +10,7 @@
  *    M. Descher - Adaption (Import works; tested on RpInfo_M08_FED.xml)
  *    			   Imports Substances and Medikamente
  *    
- *  $Id: MedikamentImporterVidal.java 6333 2010-05-04 15:02:59Z marcode79 $
+ *  $Id: MedikamentImporterVidal.java 6426 2010-06-23 13:39:57Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
@@ -31,6 +31,7 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
 import ch.elexis.Hub;
+import ch.elexis.artikel_at.PreferenceConstants;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -63,9 +64,12 @@ public class MedikamentImporterVidal extends ImporterPage {
 		//TODO: Test cancellation check / what to do in case of cancellation?
 		//TODO: Versioning of the Vidal files? Was tested on Full Set only!
 		//TODO: Validate file before import?
+		//TODO: Nur importieren, wenn filename neuer
+		//TODO: Zuerst ein Info-Feld anzeigen, dass bestätigt werden kann!
 		
 		String importFilename = results[0];
 		monitor.beginTask("Importiere Vidal", 4);
+		
 		SAXBuilder builder = new SAXBuilder();
 		monitor.subTask("Lese Datei ein");
 		Document doc = builder.build(new File(importFilename));
@@ -74,7 +78,19 @@ public class MedikamentImporterVidal extends ImporterPage {
 		Element eRoot = doc.getRootElement();
 		monitor.worked(1);
 		
+		// Import File header
+		Element RpHeader = eRoot.getChild("RpHeader");
+		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_FILENAME, RpHeader.getChildText("Filename"));
+		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_GENERATOR, RpHeader.getChildText("Generator"));
+		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBTITLE, RpHeader.getChildText("PubTitle"));
+		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBTITLE_COUNTRY, RpHeader.getChild("PubTitle").getAttributeValue("Country"));
+		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBAUTHOR, RpHeader.getChildText("PubAuthor"));
+		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBDATE, RpHeader.getChildText("PubDate"));
+		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBCOPYRIGHT, RpHeader.getChildText("PubCopyright"));
+		
+		
 		// Substanzen
+		// Search in DB, if exist leave, else append
 		Element eSubstances = eRoot.getChild("RpSubstRefs");
 		if (eSubstances != null) {
 			monitor.subTask("Lese Substanzen ein");
@@ -92,7 +108,8 @@ public class MedikamentImporterVidal extends ImporterPage {
 		monitor.worked(1);
 
 		// Medikamente
-		Element eMedis = eRoot.getChild("RpData"); 
+		Element eMedis = eRoot.getChild("RpData");
+		String RpDataType = eMedis.getAttributeValue("DataType"); // F(ull),U(pdate),S(ample)
 		if (eMedis != null) {
 			monitor.subTask("Lese Medikamente ein");
 			int noOfMedicaments = eMedis.getChildren("RpEntry").size();
@@ -102,7 +119,10 @@ public class MedikamentImporterVidal extends ImporterPage {
 			for(Element eMedi:(List<Element>) eMedis.getChildren("RpEntry")){
 				Medikament medi = null;
 				
-				String actType=eMedi.getAttribute("EntryType").getValue(); // D|I|U
+				String actType=eMedi.getAttributeValue("EntryType"); // D(elete)|I(nsert)|U(pdate)
+				String mediStatus=eMedi.getAttributeValue("Status"); // H(zugelassen, im Handel, lieferbar)
+																	 // L(zugelassen, im Handel, nicht lieferbar)
+																	 // Z(zugelassen, nicht im Handel)
 				String SName = eMedi.getChildText("SName");
 				String PhZNr = eMedi.getChildText("PhZNr");
 				log.log("Import of "+SName, Log.TRACE);
@@ -136,6 +156,7 @@ public class MedikamentImporterVidal extends ImporterPage {
 				act.put("PhZNr", PhZNr);												// Pharmazentralnummer
 				act.put("SName", SName);												// Kurzname
 				act.put("OName", eMedi.getChildText("OName"));							// offizieller Produktname
+				act.put("Status", mediStatus);
 				act.put("DoLC", eMedi.getChildText("DoLC"));							// Date of Last Change
 				String Storage = eMedi.getChildText("Storage");	
 					if(Storage != null) act.put("Storage", Storage);
@@ -200,7 +221,8 @@ public class MedikamentImporterVidal extends ImporterPage {
 					}								
 				}
 				StringBuilder sb = new StringBuilder();
-				sb.append(SName).append(" (").append(eMedi.getChildText("Quantity")).append(")").append("/").append(eMedi.getChild("SSigns").getAttributeValue("Remb"));
+				sb.append(SName).append(" (").append(eMedi.getChildText("Quantity")).append(")");
+				//sb.append(SName).append(" (").append(eMedi.getChildText("Quantity")).append(")").append("/").append(eMedi.getChild("SSigns").getAttributeValue("Remb"));
 				
 				medi.set(new String[] {Artikel.FLD_CODECLASS, Artikel.FLD_VK_PREIS, Artikel.FLD_EK_PREIS, Artikel.EIGENNAME}, 
 						codeClass, AVP.getCentsAsString(), KVP.getCentsAsString(), sb.toString());
@@ -212,7 +234,7 @@ public class MedikamentImporterVidal extends ImporterPage {
 				
 				if ((counter % 128) == 1) {
 					if(monitor.isCanceled()) return Status.CANCEL_STATUS;
-					System.gc();
+					//System.gc();
 					PersistentObject.clearCache();
 				}
 				counter++;
