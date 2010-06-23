@@ -161,6 +161,7 @@ public class Leistungscodes extends PreferencePage implements
 			
 		});
 		bStrictCheck.setSelection(Hub.userCfg.get(BILLING_STRICT, true));
+		bStrictCheck.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		final Button bOptify=new Button(ret,SWT.CHECK);
 		bOptify.setText("Leistungspositionen bei der Eingabe auf Zulässigkeit prüfen");
 		bOptify.addSelectionListener(new SelectionAdapter(){
@@ -171,7 +172,7 @@ public class Leistungscodes extends PreferencePage implements
 			
 		});
 		bOptify.setSelection(Hub.userCfg.get(OPTIFY, true));
-		
+		bOptify.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		reload();
 		return ret;
 	}

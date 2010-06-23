@@ -26,8 +26,8 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 /**
- * Dies ist eine Beispielimplementation des IOptifier Interfaces, welches einige einfache Checks von
- * Tarmed-Verrechnungen durchführt
+ * Dies ist eine Beispielimplementation des IOptifier Interfaces, welches einige
+ * einfache Checks von Tarmed-Verrechnungen durchführt
  * 
  * @author gerry
  * 
@@ -44,11 +44,12 @@ public class TarmedOptifier implements IOptifier {
 	public static final int LEISTUNGSTYP = 6;
 	public static final int NOTYETVALID = 7;
 	public static final int NOMOREVALID = 8;
-	
+	boolean bOptify = true;
+
 	/**
 	 * Hier kann eine Konsultation als Ganzes nochmal überprüft werden
 	 */
-	public Result<Object> optify(Konsultation kons){
+	public Result<Object> optify(Konsultation kons) {
 		LinkedList<TarmedLeistung> postponed = new LinkedList<TarmedLeistung>();
 		for (Verrechnet vv : kons.getLeistungen()) {
 			IVerrechenbar iv = vv.getVerrechenbar();
@@ -124,7 +125,7 @@ public class TarmedOptifier implements IOptifier {
 					}
 				}
 				// "Nur zusammen mit" - Bedingung erfüllt ?
-				if (checkBezug) {
+				if (checkBezug && bOptify) {
 					if (v.getCode().equals(bezug)) {
 						bezugOK = true;
 						if (check != null) {
@@ -138,23 +139,28 @@ public class TarmedOptifier implements IOptifier {
 				check = new Verrechnet(code, kons, 1);
 				// Exclusionen
 				String excl = (String) ext.get("exclusion"); //$NON-NLS-1$
-				if (!StringTool.isNothing(excl)) {
+				if ((!StringTool.isNothing(excl)) && bOptify) {
 					for (String e : excl.split(",")) { //$NON-NLS-1$
 						for (Verrechnet v : lst) {
 							if (v.getCode().equals(e)) {
 								check.delete();
-								return new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
-									EXKLUSION,
-									code.getCode() + " nicht kombinierbar mit " + e, null, false); //$NON-NLS-1$
+								return new Result<IVerrechenbar>(
+										Result.SEVERITY.WARNING,
+										EXKLUSION,
+										code.getCode()
+												+ " nicht kombinierbar mit " + e, null, false); //$NON-NLS-1$
 							}
 							if (v.getVerrechenbar() instanceof TarmedLeistung) {
-								String ex2 = ((TarmedLeistung) v.getVerrechenbar()).getExclusion();
+								String ex2 = ((TarmedLeistung) v
+										.getVerrechenbar()).getExclusion();
 								for (String e2 : ex2.split(",")) { //$NON-NLS-1$
 									if (e2.equals(code.getCode())) {
 										check.delete();
-										return new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
-											EXKLUSION, code.getCode()
-												+ " nicht kombinierbar mit " + e, null, false); //$NON-NLS-1$
+										return new Result<IVerrechenbar>(
+												Result.SEVERITY.WARNING,
+												EXKLUSION,
+												code.getCode()
+														+ " nicht kombinierbar mit " + e, null, false); //$NON-NLS-1$
 									}
 								}
 							}
@@ -166,9 +172,10 @@ public class TarmedOptifier implements IOptifier {
 				lst.add(check);
 			}
 			/*
-			 * Dies führt zu Fehlern bei Codes mit mehreren Master-Möglichkeiten -> vorerst raus //
-			 * "Zusammen mit" - Bedingung nicht erfüllt -> Hauptziffer einfügen. if(checkBezug){
-			 * if(bezugOK==false){ TarmedLeistung tl=TarmedLeistung.load(bezug);
+			 * Dies führt zu Fehlern bei Codes mit mehreren Master-Möglichkeiten
+			 * -> vorerst raus // "Zusammen mit" - Bedingung nicht erfüllt ->
+			 * Hauptziffer einfügen. if(checkBezug){ if(bezugOK==false){
+			 * TarmedLeistung tl=TarmedLeistung.load(bezug);
 			 * Result<IVerrechenbar> r1=add(tl,kons); if(!r1.isOK()){
 			 * r1.add(Log.WARNINGS,KOMBINATION,code.getCode()+" nur zusammen mit
 			 * "+bezug,null,false); //$NON-NLS-1$ return r1; } } }
@@ -274,7 +281,8 @@ public class TarmedOptifier implements IOptifier {
 				case 70: // 25% zu allen AL von 60 (tel.)
 					for (Verrechnet v : lst) {
 						if (v.getVerrechenbar() instanceof TarmedLeistung) {
-							TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
+							TarmedLeistung tl = (TarmedLeistung) v
+									.getVerrechenbar();
 							if (tl.getCode().startsWith("00.25")) { //$NON-NLS-1$
 								continue;
 							}
@@ -295,7 +303,8 @@ public class TarmedOptifier implements IOptifier {
 				case 90: // 50% zu allen AL von 70 (tel.)
 					for (Verrechnet v : lst) {
 						if (v.getVerrechenbar() instanceof TarmedLeistung) {
-							TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
+							TarmedLeistung tl = (TarmedLeistung) v
+									.getVerrechenbar();
 							if (tl.getCode().startsWith("00.25")) { //$NON-NLS-1$
 								continue;
 							}
@@ -309,32 +318,33 @@ public class TarmedOptifier implements IOptifier {
 					check.setDetail(AL, Double.toString(sum));
 					check.setPrimaryScaleFactor(0.5);
 					break;
-				
+
 				case 60: // Tel. Mo-Fr 19-22, Sa 12-22, So 7-22: 30 TP
 					break;
 				case 80: // Tel. von 22-7: 70 TP
 					break;
-				
+
 				}
-				return new Result<IVerrechenbar>(Result.SEVERITY.OK, PREISAENDERUNG,
-					"Preis", null, false); //$NON-NLS-1$
+				return new Result<IVerrechenbar>(Result.SEVERITY.OK,
+						PREISAENDERUNG, "Preis", null, false); //$NON-NLS-1$
 			}
 			return new Result<IVerrechenbar>(null);
 		}
 		return new Result<IVerrechenbar>(Result.SEVERITY.ERROR, LEISTUNGSTYP,
-			Messages.TarmedOptifier_BadType, null, true); //$NON-NLS-1$
+				Messages.TarmedOptifier_BadType, null, true); //$NON-NLS-1$
 	}
-	
+
 	/**
-	 * Eine Verrechnungsposition entfernen. Der Optifier sollte prüfen, ob die Konsultation nach
-	 * Entfernung dieses Codes noch konsistent verrechnet wäre und ggf. anpassen oder das Entfernen
-	 * verweigern. Diese Version macht keine Prüfungen, sondern erfüllt nur die Anfrage..
+	 * Eine Verrechnungsposition entfernen. Der Optifier sollte prüfen, ob die
+	 * Konsultation nach Entfernung dieses Codes noch konsistent verrechnet wäre
+	 * und ggf. anpassen oder das Entfernen verweigern. Diese Version macht
+	 * keine Prüfungen, sondern erfüllt nur die Anfrage..
 	 */
-	public Result<Verrechnet> remove(Verrechnet code, Konsultation kons){
+	public Result<Verrechnet> remove(Verrechnet code, Konsultation kons) {
 		List<Verrechnet> l = kons.getLeistungen();
 		l.remove(code);
 		code.delete();
 		return new Result<Verrechnet>(code);
 	}
-	
+
 }
