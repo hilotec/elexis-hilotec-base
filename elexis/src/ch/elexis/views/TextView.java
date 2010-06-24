@@ -77,8 +77,8 @@ public class TextView extends ViewPart implements IActivationListener {
 			// menus.createToolbar(briefNeuAction);
 			menus.createMenu(newDocAction, briefLadenAction,
 					loadTemplateAction, loadSysTemplateAction,
-					saveTemplateAction, null, showMenuAction, showToolbarAction, null, 
-					importAction, exportAction);
+					saveTemplateAction, null, showMenuAction,
+					showToolbarAction, null, importAction, exportAction);
 			GlobalEventDispatcher.addActivationListener(this, this);
 			setName();
 		}
@@ -238,17 +238,22 @@ public class TextView extends ViewPart implements IActivationListener {
 					} else {
 						FileDialog fdl = new FileDialog(getViewSite()
 								.getShell(), SWT.SAVE);
+						fdl.setFilterExtensions(new String[] { "*.odt" });
+						fdl
+								.setFilterNames(new String[] { "OpenOffice.org Text" });
 						String filename = fdl.open();
 						if (filename != null) {
-							File file = new File(filename);
-							if (file.exists()) {
-								byte[] contents = actBrief.loadBinary();
-								ByteArrayInputStream bais=new ByteArrayInputStream(contents);
-								FileOutputStream fos=new FileOutputStream(file);
-								FileTool.copyStreams(bais, fos);
-								fos.close();
-								bais.close();
+							if (FileTool.getExtension(filename).equals("")) {
+								filename += ".odt";
 							}
+							File file = new File(filename);
+							byte[] contents = actBrief.loadBinary();
+							ByteArrayInputStream bais = new ByteArrayInputStream(
+									contents);
+							FileOutputStream fos = new FileOutputStream(file);
+							FileTool.copyStreams(bais, fos);
+							fos.close();
+							bais.close();
 
 						}
 					}
