@@ -13,13 +13,16 @@
 
 package ch.elexis.views;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.part.ViewPart;
@@ -40,6 +43,7 @@ import ch.elexis.text.TextContainer;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
+import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 
 public class TextView extends ViewPart implements IActivationListener {
@@ -51,7 +55,7 @@ public class TextView extends ViewPart implements IActivationListener {
 	private Log log = Log.get("TextView"); //$NON-NLS-1$
 	private IAction briefLadenAction, loadTemplateAction,
 			loadSysTemplateAction, saveTemplateAction, showMenuAction,
-			showToolbarAction, importAction, newDocAction;
+			showToolbarAction, importAction, newDocAction, exportAction;
 	private ViewMenus menus;
 
 	public TextView() {
@@ -73,8 +77,8 @@ public class TextView extends ViewPart implements IActivationListener {
 			// menus.createToolbar(briefNeuAction);
 			menus.createMenu(newDocAction, briefLadenAction,
 					loadTemplateAction, loadSysTemplateAction,
-					saveTemplateAction, showMenuAction, showToolbarAction,
-					importAction);
+					saveTemplateAction, null, showMenuAction, showToolbarAction, null, 
+					importAction, exportAction);
 			GlobalEventDispatcher.addActivationListener(this, this);
 			setName();
 		}
@@ -194,7 +198,7 @@ public class TextView extends ViewPart implements IActivationListener {
 				txt.getPlugin().showMenu(isChecked());
 			}
 		};
-		
+
 		showToolbarAction = new Action(
 				Messages.getString("TextView.Toolbar"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
 			public void run() {
@@ -224,6 +228,36 @@ public class TextView extends ViewPart implements IActivationListener {
 			}
 		};
 
+		exportAction = new Action(Messages.getString("TextView.exportText")) { //$NON-NLS-1$
+			@Override
+			public void run() {
+				try {
+					if (actBrief == null) {
+						SWTHelper.alert("Fehler",
+								"Es ist kein Dokument zum exportieren geladen");
+					} else {
+						FileDialog fdl = new FileDialog(getViewSite()
+								.getShell(), SWT.SAVE);
+						String filename = fdl.open();
+						if (filename != null) {
+							File file = new File(filename);
+							if (file.exists()) {
+								byte[] contents = actBrief.loadBinary();
+								ByteArrayInputStream bais=new ByteArrayInputStream(contents);
+								FileOutputStream fos=new FileOutputStream(file);
+								FileTool.copyStreams(bais, fos);
+								fos.close();
+								bais.close();
+							}
+
+						}
+					}
+
+				} catch (Throwable ex) {
+					ExHandler.handle(ex);
+				}
+			}
+		};
 		newDocAction = new Action(Messages.getString("TextView.newDocument")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
