@@ -29,5 +29,13 @@
             name="Fachinformation Arzneimittel">
       </view>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="ch.elexis.artikel_at.preferences.Artikel_AT"
+            id="ch.elexis.artikel_at.preferences.Artikel_AT"
+            name="Medikamente (AT)">
+      </page>
+   </extension>
 
 </plugin>

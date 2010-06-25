@@ -5,12 +5,16 @@ import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.Hub;
+import ch.elexis.artikel_at.PreferenceConstants;
+
 public class FachinformationArzneimittel extends ViewPart {
 	public static final String URL_BASE="https://root.ami-info.at/company/ami-info/fachinformation.asp?";
 	public static final String ID="elexis-artikel-oesterreich.fachinformationarzneimittel";
-	private static final String uid = "";
-	public static String CURRENT_PhZnR = "";
-	public static String CURRENT_ZNr = "";
+	protected static String CURRENT_PhZnR = "";
+	protected static String CURRENT_ZNr = "";
+	protected static String currLoaded = "";
+	private static String loadUrl = "";
 	
 	public static boolean setActiveMedikament(String PhZNr, String ZNr) {
 		CURRENT_PhZnR=PhZNr;
@@ -23,7 +27,7 @@ public class FachinformationArzneimittel extends ViewPart {
 		final Browser browser=new Browser(parent,SWT.NONE);
 		StringBuilder sb = new StringBuilder();
 		sb.append(URL_BASE);
-		sb.append("uid="+uid);
+		sb.append("uid="+Hub.globalCfg.get(PreferenceConstants.ARTIKEL_AT_VIDAL_BENUTZERKENNUNG, ""));
 		sb.append("&pid="+CURRENT_PhZnR);
 		sb.append("&znr="+CURRENT_ZNr);
 		//System.out.println(sb.toString());
@@ -32,8 +36,7 @@ public class FachinformationArzneimittel extends ViewPart {
 
 	@Override
 	public void setFocus() {
-		// TODO Auto-generated method stub
-
+		// if currLoaded != CURRENT_PhZnR -> Reload
 	}
 
 }

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentDetailBlatt.java 6337 2010-05-05 11:07:19Z marcode79 $
+ *  $Id: MedikamentDetailBlatt.java 6427 2010-06-25 09:40:08Z marcode79 $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.views;
@@ -17,8 +17,6 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -43,6 +41,7 @@ import ch.elexis.util.LabeledInputField;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.LabeledInputField.InputData;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.TimeTool;
 
 public class MedikamentDetailBlatt extends Composite {
 	InputData[] fields=new InputData[]{
@@ -66,16 +65,14 @@ public class MedikamentDetailBlatt extends Composite {
 	Text fullName;
 	Text tLagerung;
 	Text tUnit;
-	Label tSubstances, tIndikation, tRule, tRemarks;
+	Label tSubstances, tIndikation, tRule, tRemarks, tLastUpdate;
 	Group gRsigns, gSsigns, gSubstances, gIndikation, gRule, gRemarks;
 	Button[] bRsigns, bSsigns;
-	Composite texte;
 	Composite parent;
 	final FormToolkit tk=Desk.getToolkit();
 	
 	public MedikamentDetailBlatt(Composite pr){
 		super(pr,SWT.NONE);
-		parent=pr;
 		setLayout(new GridLayout());
 		setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		form=tk.createScrolledForm(this);
@@ -201,11 +198,20 @@ public class MedikamentDetailBlatt extends Composite {
 				}
 			}
 		});
+		SWTHelper.addSeparator(ret);
+		tLastUpdate=tk.createLabel(ret, "tLastUpdate");
+
 
 	}
 	public void display(Medikament med) {
 		form.setText(med.getExt("SName"));
-		fullName.setText(med.getExt("OName"));
+		
+		String status = med.getExt("Status");
+		StringBuilder sbFullName = new StringBuilder();
+		if(!status.equalsIgnoreCase("")) sbFullName.append("(").append(status).append(")").append(" ");
+		sbFullName.append(med.getExt("OName"));
+		fullName.setText(sbFullName.toString());
+		
 		StringBuilder sb=new StringBuilder();
 		sb.append(med.getExt("Quantity")).append(" ").append(med.getExt("Unit")).append(" (")
 			.append(med.getExt("EnhUnitDesc")).append(")");
@@ -261,6 +267,8 @@ public class MedikamentDetailBlatt extends Composite {
 		tIndikation.setText(t==null ? ""  : t);
 		
 		FachinformationArzneimittel.setActiveMedikament(med.getExt("PhZNr"), med.getExt("ZNr"));
+		TimeTool ts=new TimeTool(med.getLastUpdate());
+		tLastUpdate.setText("Letztes Medikamentenupdate: "+ts.toString(TimeTool.FULL_GER));
 	}
 	
 }
