@@ -57,36 +57,34 @@ public class TarmedOptifier implements IOptifier {
 				TarmedLeistung tl = (TarmedLeistung) iv;
 				String tcid = tl.getCode();
 				if ((tcid.equals("35.0020")) || (tcid.equals("04.1930")) //$NON-NLS-1$ //$NON-NLS-2$
-					|| tcid.startsWith("00.25")) { //$NON-NLS-1$
+						|| tcid.startsWith("00.25")) { //$NON-NLS-1$
 					postponed.add(tl);
 				}
 			}
 		}
 		return null;
 	}
-	
+
 	/**
-	 * Eine Verrechnungsposition zufügen. Der Optifier muss prüfen, ob die Verrechnungsposition im
-	 * Kontext der übergebenen Konsultation verwendet werden kann und kann sie ggf. zurückweisen
-	 * oder modifizieren.
+	 * Eine Verrechnungsposition zufügen. Der Optifier muss prüfen, ob die
+	 * Verrechnungsposition im Kontext der übergebenen Konsultation verwendet
+	 * werden kann und kann sie ggf. zurückweisen oder modifizieren.
 	 */
-	
-	public Result<IVerrechenbar> add(IVerrechenbar code, Konsultation kons){
-		if(Hub.localCfg.get(Leistungscodes.OPTIFY, true)==false){
-			return new Result<IVerrechenbar>(code);
-		}
+
+	public Result<IVerrechenbar> add(IVerrechenbar code, Konsultation kons) {
+		bOptify = Hub.localCfg.get(Leistungscodes.OPTIFY, true);
 		if (code instanceof TarmedLeistung) {
 			TarmedLeistung tc = (TarmedLeistung) code;
 			List<Verrechnet> lst = kons.getLeistungen();
 			boolean checkBezug = false;
 			boolean bezugOK = true;
 			/*
-			 * TODO Hier checken, ob dieser code mit der Dignität und Fachspezialisierung des
-			 * aktuellen Mandanten usw. vereinbar ist
+			 * TODO Hier checken, ob dieser code mit der Dignität und
+			 * Fachspezialisierung des aktuellen Mandanten usw. vereinbar ist
 			 */
 
 			Hashtable ext = ((TarmedLeistung) code).loadExtension();
-			
+
 			// Bezug prüfen
 			String bezug = (String) ext.get("Bezug"); //$NON-NLS-1$
 			if (!StringTool.isNothing(bezug)) {
@@ -94,23 +92,29 @@ public class TarmedOptifier implements IOptifier {
 				bezugOK = false;
 			}
 			// Gültigkeit gemäss Datum prüfen
-			TimeTool date = new TimeTool(kons.getDatum());
-			String dVon = ((TarmedLeistung) code).get("GueltigVon"); //$NON-NLS-1$
-			if (!StringTool.isNothing(dVon)) {
-				TimeTool tVon = new TimeTool(dVon);
-				if (date.isBefore(tVon)) {
-					return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, NOTYETVALID, code
-						.getCode()
-						+ Messages.TarmedOptifier_NotYetValid, null, false);
+			if (bOptify) {
+				TimeTool date = new TimeTool(kons.getDatum());
+				String dVon = ((TarmedLeistung) code).get("GueltigVon"); //$NON-NLS-1$
+				if (!StringTool.isNothing(dVon)) {
+					TimeTool tVon = new TimeTool(dVon);
+					if (date.isBefore(tVon)) {
+						return new Result<IVerrechenbar>(
+								Result.SEVERITY.WARNING, NOTYETVALID, code
+										.getCode()
+										+ Messages.TarmedOptifier_NotYetValid,
+								null, false);
+					}
 				}
-			}
-			String dBis = ((TarmedLeistung) code).get("GueltigBis"); //$NON-NLS-1$
-			if (!StringTool.isNothing(dBis)) {
-				TimeTool tBis = new TimeTool(dBis);
-				if (date.isAfter(tBis)) {
-					return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, NOMOREVALID, code
-						.getCode()
-						+ Messages.TarmedOptifier_NoMoreValid, null, false);
+				String dBis = ((TarmedLeistung) code).get("GueltigBis"); //$NON-NLS-1$
+				if (!StringTool.isNothing(dBis)) {
+					TimeTool tBis = new TimeTool(dBis);
+					if (date.isAfter(tBis)) {
+						return new Result<IVerrechenbar>(
+								Result.SEVERITY.WARNING, NOMOREVALID, code
+										.getCode()
+										+ Messages.TarmedOptifier_NoMoreValid,
+								null, false);
+					}
 				}
 			}
 			Verrechnet check = null;
@@ -135,7 +139,7 @@ public class TarmedOptifier implements IOptifier {
 				}
 			}
 			// Ausschliessende Kriterien prüfen ("Nicht zusammen mit")
-			if (check == null) {
+			if (check == null && bOptify) {
 				check = new Verrechnet(code, kons, 1);
 				// Exclusionen
 				String excl = (String) ext.get("exclusion"); //$NON-NLS-1$
@@ -183,61 +187,73 @@ public class TarmedOptifier implements IOptifier {
 
 			// Prüfen, ob zu oft verrechnet - diese Version prüft nur "pro
 			// Sitzung".
-			String lim = (String) ext.get("limits"); //$NON-NLS-1$
-			if (lim != null) {
-				String[] lin = lim.split("#"); //$NON-NLS-1$
-				for (String line : lin) {
-					String[] f = line.split(","); //$NON-NLS-1$
-					if (f.length == 5) {
-						switch (Integer.parseInt(f[4].trim())) {
-						case 7: // Pro Sitzung
-							if (f[2].equals("1")) { // 1 Sitzung //$NON-NLS-1$
-								int menge = Math.round(Float.parseFloat(f[1]));
-								if (check.getZahl() > menge) {
-									check.setZahl(menge);
-									return new Result<IVerrechenbar>(Result.SEVERITY.WARNING,
-										KUMULATION, Messages.TarmedOptifier_codemax + menge
-											+ Messages.TarmedOptifier_perSession, null, false); //$NON-NLS-1$ //$NON-NLS-2$
+			if (bOptify) {
+				String lim = (String) ext.get("limits"); //$NON-NLS-1$
+				if (lim != null) {
+					String[] lin = lim.split("#"); //$NON-NLS-1$
+					for (String line : lin) {
+						String[] f = line.split(","); //$NON-NLS-1$
+						if (f.length == 5) {
+							switch (Integer.parseInt(f[4].trim())) {
+							case 7: // Pro Sitzung
+								if (f[2].equals("1")) { // 1 Sitzung //$NON-NLS-1$
+									int menge = Math.round(Float
+											.parseFloat(f[1]));
+									if (check.getZahl() > menge) {
+										check.setZahl(menge);
+										return new Result<IVerrechenbar>(
+												Result.SEVERITY.WARNING,
+												KUMULATION,
+												Messages.TarmedOptifier_codemax
+														+ menge
+														+ Messages.TarmedOptifier_perSession,
+												null, false); //$NON-NLS-1$ //$NON-NLS-2$
+									}
 								}
+								break;
+
+							default:
+								break;
 							}
-							break;
-						
-						default:
-							break;
 						}
 					}
 				}
 			}
-			
+
 			String tcid = code.getCode();
-			
-			// double factor = PersistentObject.checkZeroDouble(check.get("VK_Scale"));
+
+			// double factor =
+			// PersistentObject.checkZeroDouble(check.get("VK_Scale"));
 			// Abzug für Praxis-Op. (alle TL von OP I auf 40% reduzieren)
 			if (tcid.equals("35.0020")) { //$NON-NLS-1$
-				
+
 				double sum = 0.0;
 				for (Verrechnet v : lst) {
 					if (v.getVerrechenbar() instanceof TarmedLeistung) {
-						TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
+						TarmedLeistung tl = (TarmedLeistung) v
+								.getVerrechenbar();
 						if (tl.getSparteAsText().equals("OP I")) { //$NON-NLS-1$
 							/*
-							 * int tech = tl.getTL(); double abzug = tech 4.0 / 10.0; sum -= abzug;
+							 * int tech = tl.getTL(); double abzug = tech 4.0 /
+							 * 10.0; sum -= abzug;
 							 */
 							sum += tl.getTL();
 						}
 					}
 				}
-				
+
 				// check.setPreis(new Money(sum));
 				check.setTP(sum);
 				check.setDetail(TL, Double.toString(sum));
 				check.setPrimaryScaleFactor(-0.4);
 				/*
-				 * double sum=0.0; for(Verrechnet v:lst){ if(v.getVerrechenbar() instanceof
-				 * TarmedLeistung){ TarmedLeistung tl=(TarmedLeistung) v.getVerrechenbar();
-				 * if(tl.getSparteAsText().equals("OP I")){ int tech=tl.getTL(); sum+=tech; } } }
-				 * double scale=-0.4; check.setDetail("scale", Double.toString(scale));
-				 * sum=sumfactor/100.0; check.setPreis(new Money(sum));
+				 * double sum=0.0; for(Verrechnet v:lst){ if(v.getVerrechenbar()
+				 * instanceof TarmedLeistung){ TarmedLeistung
+				 * tl=(TarmedLeistung) v.getVerrechenbar();
+				 * if(tl.getSparteAsText().equals("OP I")){ int tech=tl.getTL();
+				 * sum+=tech; } } } double scale=-0.4; check.setDetail("scale",
+				 * Double.toString(scale)); sum=sumfactor/100.0;
+				 * check.setPreis(new Money(sum));
 				 */
 			}
 
@@ -247,11 +263,12 @@ public class TarmedOptifier implements IOptifier {
 				double sumTL = 0.0;
 				for (Verrechnet v : lst) {
 					if (v.getVerrechenbar() instanceof TarmedLeistung) {
-						TarmedLeistung tl = (TarmedLeistung) v.getVerrechenbar();
+						TarmedLeistung tl = (TarmedLeistung) v
+								.getVerrechenbar();
 						String tlc = tl.getCode();
 						int z = v.getZahl();
 						if (tlc.equals("04.1910") || tlc.equals("04.1920") || tlc.equals("04.1940") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-							|| tlc.equals("04.1950")) { //$NON-NLS-1$
+								|| tlc.equals("04.1950")) { //$NON-NLS-1$
 							sumAL += tl.getAL() * z;
 							sumTL += tl.getTL() * z;
 							// double al = (tl.getAL() * 15) / 10.0;
