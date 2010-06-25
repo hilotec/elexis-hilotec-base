@@ -48,7 +48,8 @@
 	  and archie.
 	
 -->
-<project name="elexis" default="all">
+<project name="elexis" default="javadoc">
+	<property name="os" value="windows" />
 
 	<property name="version" value="2.1.0" />
 	<property name="javatarget" value="1.6" />
@@ -402,7 +403,8 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 	<target name="doc" unless="skip_texify" depends="initialize">
 		<echo message="doc ${repositories}/elexis-base/dokumentation" />
 		<exec executable="${texify}" dir="${repositories}/elexis-base/dokumentation" failonerror="true">
-			<arg line="${texifyArgs}  elexis.tex" />
+			<arg value="${texifyArgs}" />
+			<arg value="elexis.tex" />
 		</exec>
 		<copy file="${repositories}/elexis-base/dokumentation/elexis.pdf" todir="${dist}/doc" />
 	</target>
