@@ -6,4 +6,14 @@ bin
 .DS_Store
 local.properties
 *.html
-
+*.bak
+*.log
+*.aux
+*.out
+*.ind
+*.ilg
+*.idx
+*.pdf
+*.toc
+*.bbl
+*.blg
