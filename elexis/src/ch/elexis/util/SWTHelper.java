@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: SWTHelper.java 5778 2009-10-15 15:20:49Z michael_imhof $
+ * $Id: SWTHelper.java 6425 2010-06-23 09:27:08Z marcode79 $
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -32,6 +32,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
@@ -526,5 +527,28 @@ public class SWTHelper {
 	public static Point getStringBounds(Composite c, String s){
 		GC gc = new GC(c);
 		return gc.textExtent(s);
+	}
+	
+	/**
+	 * Convenience method to add a separator bar to the composite.
+	 * <p>
+	 * The parent composite must have a <code>GridLayout</code>. The separator bar will span all
+	 * columns of the parent grid layout.
+	 * <br><br>
+	 * Code from: http://www.softwarerevolution.com/blueprints/ 
+	 * The Software Revolution Inc. by Thomas Holland under GPLv3
+	 * </p>
+	 * 
+	 * @param parent
+	 *            <code>Composite</code>
+	 */
+	public static void addSeparator(Composite parent) {
+		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+		Layout parentlayout = parent.getLayout();
+		if (parentlayout instanceof GridLayout) {
+			int columns = ((GridLayout) parentlayout).numColumns;
+			GridData gridData = new GridData(SWT.FILL, SWT.NONE, true, false, columns, 1);
+			separator.setLayoutData(gridData);
+		}
 	}
 }

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!--
 	Copyright (c) 2010 By G. Weirich and Elexis
 	some parts borrowed from N. Giger's hudson build for Elexis
@@ -48,7 +48,7 @@
 	  and archie.
 	
 -->
-<project name="elexis" default="javadoc">
+<project name="elexis" default="all">
 	<property name="os" value="windows" />
 
 	<property name="version" value="2.1.0" />

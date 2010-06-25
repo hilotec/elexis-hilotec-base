@@ -1,3 +1,5 @@
+Marco Descher / Herzpraxis Dr. Thomas Wolber
+
 Offene Punkte:
 - Geschwindigkeit Selector -> Caching?
 - Importer an inkrementelle Updates anpassen
@@ -5,5 +7,3 @@ Offene Punkte:
 - Browser Caches
 - Generate Activator to preset the Caches in VidalLabelProvider
 - Create script if Medikamente tables do not yet exist
-
--- VOR CHECKIN SVN STRING AMI-INFO RAUSNEHMEN!!!
