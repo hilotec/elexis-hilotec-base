@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    M. Descher - Some changes to adapt to new format
  *    
- *  $Id: Medikament.java 6333 2010-05-04 15:02:59Z marcode79 $
+ *  $Id: Medikament.java 6427 2010-06-25 09:40:08Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
@@ -106,19 +106,13 @@ public class Medikament extends Artikel {
 	
 	@Override
 	public String getLabel(){
-		// String ret=getInternalName();
-		// if(StringTool.isNothing(ret)){
-		//StringBuilder sb = new StringBuilder();
-		//sb.append(getInternalName()).append(" (").append(getExt("Quantity")).append(")");
-		//String ret = sb.toString();
-		// }
-		//return ret;
-		
-		// Marco D. @ Herzpraxis
-		// This function gets extremely slow, so lets remedy that by
-		// keeping it simple; is quantity necessary? / Avoid the getInternalName() Exception
-		// During Import Internal Name is set to SName (Quantity)
-		return getInternalName();
+		String ret=getInternalName();
+		if(StringTool.isNothing(ret)){
+			StringBuilder sb = new StringBuilder();
+			sb.append(getInternalName()).append(" (").append(getExt("Quantity")).append(")");
+			ret = sb.toString();
+		}
+		return ret;
 	}
 	
 	/**

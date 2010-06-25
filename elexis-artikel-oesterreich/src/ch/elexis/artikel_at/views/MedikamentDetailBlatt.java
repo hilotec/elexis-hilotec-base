@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentDetailBlatt.java 6426 2010-06-23 13:39:57Z marcode79 $
+ *  $Id: MedikamentDetailBlatt.java 6427 2010-06-25 09:40:08Z marcode79 $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.views;
@@ -17,8 +17,6 @@ import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -43,6 +41,7 @@ import ch.elexis.util.LabeledInputField;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.LabeledInputField.InputData;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.TimeTool;
 
 public class MedikamentDetailBlatt extends Composite {
 	InputData[] fields=new InputData[]{
@@ -66,7 +65,7 @@ public class MedikamentDetailBlatt extends Composite {
 	Text fullName;
 	Text tLagerung;
 	Text tUnit;
-	Label tSubstances, tIndikation, tRule, tRemarks;
+	Label tSubstances, tIndikation, tRule, tRemarks, tLastUpdate;
 	Group gRsigns, gSsigns, gSubstances, gIndikation, gRule, gRemarks;
 	Button[] bRsigns, bSsigns;
 	Composite parent;
@@ -199,6 +198,9 @@ public class MedikamentDetailBlatt extends Composite {
 				}
 			}
 		});
+		SWTHelper.addSeparator(ret);
+		tLastUpdate=tk.createLabel(ret, "tLastUpdate");
+
 
 	}
 	public void display(Medikament med) {
@@ -265,6 +267,8 @@ public class MedikamentDetailBlatt extends Composite {
 		tIndikation.setText(t==null ? ""  : t);
 		
 		FachinformationArzneimittel.setActiveMedikament(med.getExt("PhZNr"), med.getExt("ZNr"));
+		TimeTool ts=new TimeTool(med.getLastUpdate());
+		tLastUpdate.setText("Letztes Medikamentenupdate: "+ts.toString(TimeTool.FULL_GER));
 	}
 	
 }

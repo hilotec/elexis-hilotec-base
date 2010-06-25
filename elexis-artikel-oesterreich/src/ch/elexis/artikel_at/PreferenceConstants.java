@@ -7,6 +7,7 @@ package ch.elexis.artikel_at;
  */
 
 public class PreferenceConstants {
+	public static final String ARTIKEL_AT_VIDAL_BENUTZERKENNUNG = "artikelAT/Vidal/Benutzerkennung";
 	public static final String ARTIKEL_AT_RPHEADER_FILENAME = "artikelAT/RpHeader/Filename";
 	public static final String ARTIKEL_AT_RPHEADER_GENERATOR = "artikelAT/RpHeader/Generator";
 	public static final String ARTIKEL_AT_RPHEADER_PUBTITLE = "artikelAT/RpHeader/PubTitle";
