@@ -72,7 +72,7 @@ public class TarmedOptifier implements IOptifier {
 	 */
 
 	public Result<IVerrechenbar> add(IVerrechenbar code, Konsultation kons) {
-		bOptify = Hub.localCfg.get(Leistungscodes.OPTIFY, true);
+		bOptify = Hub.userCfg.get(Leistungscodes.OPTIFY, true);
 		if (code instanceof TarmedLeistung) {
 			TarmedLeistung tc = (TarmedLeistung) code;
 			List<Verrechnet> lst = kons.getLeistungen();
@@ -139,32 +139,34 @@ public class TarmedOptifier implements IOptifier {
 				}
 			}
 			// Ausschliessende Kriterien prüfen ("Nicht zusammen mit")
-			if (check == null && bOptify) {
+			if (check == null) {
 				check = new Verrechnet(code, kons, 1);
 				// Exclusionen
-				String excl = (String) ext.get("exclusion"); //$NON-NLS-1$
-				if ((!StringTool.isNothing(excl)) && bOptify) {
-					for (String e : excl.split(",")) { //$NON-NLS-1$
-						for (Verrechnet v : lst) {
-							if (v.getCode().equals(e)) {
-								check.delete();
-								return new Result<IVerrechenbar>(
-										Result.SEVERITY.WARNING,
-										EXKLUSION,
-										code.getCode()
-												+ " nicht kombinierbar mit " + e, null, false); //$NON-NLS-1$
-							}
-							if (v.getVerrechenbar() instanceof TarmedLeistung) {
-								String ex2 = ((TarmedLeistung) v
-										.getVerrechenbar()).getExclusion();
-								for (String e2 : ex2.split(",")) { //$NON-NLS-1$
-									if (e2.equals(code.getCode())) {
-										check.delete();
-										return new Result<IVerrechenbar>(
-												Result.SEVERITY.WARNING,
-												EXKLUSION,
-												code.getCode()
-														+ " nicht kombinierbar mit " + e, null, false); //$NON-NLS-1$
+				if (bOptify) {
+					String excl = (String) ext.get("exclusion"); //$NON-NLS-1$
+					if ((!StringTool.isNothing(excl))) {
+						for (String e : excl.split(",")) { //$NON-NLS-1$
+							for (Verrechnet v : lst) {
+								if (v.getCode().equals(e)) {
+									check.delete();
+									return new Result<IVerrechenbar>(
+											Result.SEVERITY.WARNING,
+											EXKLUSION,
+											code.getCode()
+													+ " nicht kombinierbar mit " + e, null, false); //$NON-NLS-1$
+								}
+								if (v.getVerrechenbar() instanceof TarmedLeistung) {
+									String ex2 = ((TarmedLeistung) v
+											.getVerrechenbar()).getExclusion();
+									for (String e2 : ex2.split(",")) { //$NON-NLS-1$
+										if (e2.equals(code.getCode())) {
+											check.delete();
+											return new Result<IVerrechenbar>(
+													Result.SEVERITY.WARNING,
+													EXKLUSION,
+													code.getCode()
+															+ " nicht kombinierbar mit " + e, null, false); //$NON-NLS-1$
+										}
 									}
 								}
 							}

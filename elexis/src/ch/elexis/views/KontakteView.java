@@ -20,12 +20,14 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.Desk;
 import ch.elexis.StringConstants;
 import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
@@ -37,6 +39,7 @@ import ch.elexis.data.Organisation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
+import ch.elexis.dialogs.GenericPrintDialog;
 import ch.elexis.dialogs.KontaktErfassenDialog;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.viewers.CommonViewer;
@@ -52,7 +55,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 	public static final String ID = "ch.elexis.Kontakte"; //$NON-NLS-1$
 	private CommonViewer cv;
 	private ViewerConfigurer vc;
-	IAction dupKontakt, delKontakt, createKontakt;
+	IAction dupKontakt, delKontakt, createKontakt, printList;
 	PersistentObjectLoader loader;
 	
 	private final String[] fields = {
@@ -75,14 +78,14 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 			new ViewerConfigurer(loader, new KontaktLabelProvider(),
 				new DefaultControlFieldProvider(cv, fields),
 				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
-					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
+					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.MULTI, null));
 		cv.create(vc, parent, SWT.NONE, getViewSite());
 		makeActions();
 		cv.setObjectCreateAction(getViewSite(), createKontakt);
 		menu = new ViewMenus(getViewSite());
 		menu.createViewerContextMenu(cv.getViewerWidget(), delKontakt, dupKontakt);
-		menu.createMenu(GlobalActions.printKontaktEtikette);
-		menu.createToolbar(GlobalActions.printKontaktEtikette);
+		menu.createMenu(printList);
+		menu.createToolbar(printList);
 		vc.getContentProvider().startListening();
 		vc.getControlFieldProvider().addChangeListener(this);
 		cv.addDoubleClickListener(new CommonViewer.DoubleClickListener() {
@@ -220,9 +223,42 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 				ked.open();
 			}
 		};
+		
+		printList=new Action("Markierte Adressen drucken"){
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
+				setToolTipText("Die in der Liste markierten Kontakte als Tabelle ausdrucken");
+			}
+			public void run(){
+				Object[] sel=cv.getSelection();
+				String[][] adrs=new String[sel.length][];
+				if(sel!=null && sel.length>0){
+					GenericPrintDialog gpl=new GenericPrintDialog(getViewSite().getShell(), "Adressliste", "Adressliste");
+					gpl.create();
+					for(int i=0;i<sel.length;i++){
+						Kontakt k=(Kontakt)sel[i];
+						String[] f=
+							new String[] {
+							Kontakt.FLD_NAME1, Kontakt.FLD_NAME2, Kontakt.FLD_NAME3, Kontakt.FLD_STREET, Kontakt.FLD_ZIP,
+							Kontakt.FLD_PLACE, Kontakt.FLD_PHONE1
+						};
+						String[] v=new String[f.length];
+						k.get(f, v);
+						adrs[i]=new String[4];
+						adrs[i][0]=new StringBuilder(v[0]).append(StringConstants.SPACE).append(v[1]).append(StringConstants.SPACE).append(v[2]).toString();
+						adrs[i][1]=v[3];
+						adrs[i][2]=new StringBuilder(v[4]).append(StringConstants.SPACE).append(v[5]).toString();
+						adrs[i][3]=v[6];
+					}
+					gpl.insertTable("[Liste]", adrs, null);
+					gpl.open();
+				}
+			}
+		};
 	}
 	
-	class KontaktLabelProvider extends DefaultLabelProvider {
+	class KontaktLabelProvider extends DefaultLabelProvider{
+		
 		
 		@Override
 		public String getText(Object element){
@@ -236,5 +272,27 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 			return StringTool.join(values, StringConstants.COMMA);
 		}
 		
+		@Override
+		public Image getColumnImage(Object element, int columnIndex) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		/*
+		@Override
+		public String getColumnText(Object element, int columnIndex) {
+			Kontakt k=(Kontakt)element;
+			switch(columnIndex){
+			case 0: return k.get(Kontakt.FLD_NAME1);
+			case 1: return k.get(Kontakt.FLD_NAME2);
+			case 2: return k.get(Kontakt.FLD_NAME3);
+			case 3: return k.get(Kontakt.FLD_STREET);
+			case 4: return k.get(Kontakt.FLD_ZIP);
+			case 5: return k.get(Kontakt.FLD_PLACE);
+			case 6: return k.get(Kontakt.FLD_PHONE1);
+			}
+			return "?";
+		}
+		*/
 	}
 }

@@ -21,6 +21,7 @@ import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.actions.GlobalActions;
+import ch.elexis.util.ViewMenus;
 
 public class KontaktDetailView extends ViewPart implements ISaveablePart2 {
 	public static final String ID="ch.elexis.KontaktDetailView"; //$NON-NLS-1$
@@ -34,6 +35,10 @@ public class KontaktDetailView extends ViewPart implements ISaveablePart2 {
 	public void createPartControl(Composite parent) {
 		parent.setLayout(new FillLayout());
 		kb=new KontaktBlatt(parent, SWT.NONE, getViewSite());
+		ViewMenus menu = new ViewMenus(getViewSite());
+		menu.createMenu(GlobalActions.printKontaktEtikette);
+		menu.createToolbar(GlobalActions.printKontaktEtikette);
+
 	}
 
 	@Override
