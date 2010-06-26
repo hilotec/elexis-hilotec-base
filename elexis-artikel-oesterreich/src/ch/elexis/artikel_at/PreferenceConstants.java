@@ -15,4 +15,5 @@ public class PreferenceConstants {
 	public static final String ARTIKEL_AT_RPHEADER_PUBDATE = "artikelAT/RpHeader/PubDate";
 	public static final String ARTIKEL_AT_RPHEADER_PUBAUTHOR = "artikelAT/RpHeader/PubAuthor";
 	public static final String ARTIKEL_AT_RPHEADER_PUBCOPYRIGHT = "artikelAT/RpHeader/PubCopyright";
+	public static final String ARTIKEL_AT_CACHEUPDATE_TIME = "artikelAT/Cache/UpdateTime";
 }

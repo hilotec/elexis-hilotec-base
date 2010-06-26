@@ -8,7 +8,6 @@ import org.osgi.framework.BundleContext;
 import ch.elexis.artikel_at.data.Medikament;
 import ch.elexis.artikel_at.views.VidalLabelProvider;
 import ch.elexis.data.Query;
-import ch.elexis.util.SWTHelper;
 
 public class Activator extends AbstractUIPlugin {
 
@@ -21,18 +20,18 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
-		VidalLabelProvider vlp = new VidalLabelProvider();
-		
-		Query<Medikament> qMedi = new Query<Medikament>(Medikament.class);
-		qMedi.clear();
-		qMedi.add("Name", "LIKE", "%");
-		qMedi.orderBy(false, "Name");
-		List<Medikament> list = qMedi.execute();
-		for (Medikament medikament : list) {
-			vlp.getColumnImage(medikament, 0);
-			vlp.getColumnText(medikament, 0);
-		}
-		super.start(context);
+//		VidalLabelProvider vlp = new VidalLabelProvider();
+//		
+//		Query<Medikament> qMedi = new Query<Medikament>(Medikament.class);
+//		qMedi.clear();
+//		qMedi.add("Name", "LIKE", "%");
+//		qMedi.orderBy(false, "Name");
+//		List<Medikament> list = qMedi.execute();
+//		for (Medikament medikament : list) {
+//			vlp.getColumnImage(medikament, 0);
+//			vlp.getColumnText(medikament, 0);
+//		}
+//		super.start(context);
 	}
 
 }
