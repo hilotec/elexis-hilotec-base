@@ -46,12 +46,13 @@ public class GenericPrintDialog extends Dialog implements ICallback {
 		ret.setLayout(new FillLayout());
 		text = new TextContainer(getShell());
 		text.getPlugin().createContainer(ret, this);
-		text.getPlugin().showMenu(false);
-		text.getPlugin().showToolbar(false);
+		text.getPlugin().showMenu(true);
+		text.getPlugin().showToolbar(true);
 		brief=text
 				.createFromTemplateName(
 						null,
 						"Liste", Brief.UNKNOWN, Hub.actUser, subject); //$NON-NLS-1$ 
+		text.getPlugin().insertText("[Titel]", subject, SWT.LEFT);
 		return ret;
 	}
 
