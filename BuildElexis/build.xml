@@ -17,7 +17,7 @@
 	
 	Prerequisites:
 	- Java 1.6
-	- A working eclipse instance
+	- A working eclipse Helios (3.6) instance. For Mac: 64 Bit Cocoa variant needed
 	- ant 1.8.0
 	- an active internet connection
 	- a file named local.properties containing:
@@ -49,8 +49,6 @@
 	
 -->
 <project name="elexis" default="all">
-	<property name="os" value="windows" />
-
 	<property name="version" value="2.1.0" />
 	<property name="javatarget" value="1.6" />
 	<property file="local.properties" />
