@@ -23,6 +23,7 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.artikel_at.PreferenceConstants;
+import ch.elexis.artikel_at.data.Artikel_AT_Cache;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Query;
@@ -66,7 +67,7 @@ public class Artikel_AT
 		benutzerkennung.setText(Hub.globalCfg.get(PreferenceConstants.ARTIKEL_AT_VIDAL_BENUTZERKENNUNG, "nicht gesetzt"));
 		SWTHelper.addSeparator(ret);
 		new Label(ret, SWT.NONE).setText("Datum und Uhrzeit der Ver\u00f6ffentlichung:");
-		new Label(ret, SWT.READ_ONLY).setText(Hub.globalCfg.get(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBDATE, "nicht gesetzt"));
+		new Label(ret, SWT.NONE).setText(Hub.globalCfg.get(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBDATE, "nicht gesetzt"));
 		new Label(ret, SWT.NONE).setText("Dateiname der Datenaustauschdatei:");
 		new Label(ret, SWT.READ_ONLY).setText(Hub.globalCfg.get(PreferenceConstants.ARTIKEL_AT_RPHEADER_FILENAME, "nicht gesetzt"));
 		new Label(ret, SWT.NONE).setText("Author der Informationen:");
@@ -74,6 +75,21 @@ public class Artikel_AT
 		new Label(ret, SWT.NONE).setText("Copyright-Notizen:");
 		new Label(ret, SWT.READ_ONLY).setText(Hub.globalCfg.get(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBCOPYRIGHT, "nicht gesetzt"));
 		SWTHelper.addSeparator(ret);
+		
+		new Label(ret, SWT.NONE).setText("Cache erstellt am "+Hub.globalCfg.get(PreferenceConstants.ARTIKEL_AT_CACHEUPDATE_TIME, "n/a"));
+		Button updateCache = new Button(ret, INFORMATION);
+		updateCache.setText("Cache updaten");
+		updateCache.addSelectionListener(new SelectionListener() {		
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				Artikel_AT_Cache.updateCache();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {				
+			}
+		});
+		
 		
 		//---
 		Button cleanArtikelTable = new Button(ret, INFORMATION);

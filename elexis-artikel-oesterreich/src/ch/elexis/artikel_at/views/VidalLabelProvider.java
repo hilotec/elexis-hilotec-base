@@ -7,13 +7,11 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    M. Descher - Modifications due to performance problems on selector (WiP)
+ *    M. Descher - implemented cache
  *    
- *  $Id: VidalLabelProvider.java 6380 2010-05-18 11:57:21Z marcode79 $
+ *  $Id: VidalLabelProvider.java 6428 2010-06-25 15:02:10Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.views;
-
-import java.util.HashMap;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ITableColorProvider;
@@ -23,19 +21,14 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.artikel_at.data.Artikel_AT_Cache;
 import ch.elexis.artikel_at.data.Medikament;
 import ch.elexis.util.Log;
 import ch.elexis.util.viewers.DefaultLabelProvider;
 
 public class VidalLabelProvider extends DefaultLabelProvider implements ITableColorProvider {
-	
-	public static HashMap<String, String> cachingImage;
-	public static HashMap<String, String> cachingLabel;
-	
+
 	public VidalLabelProvider(){
-		if(cachingImage == null) cachingImage = new HashMap<String, String>();
-		if(cachingLabel == null) cachingLabel = new HashMap<String, String>();
-		
 		if (Desk.getImage("VidalRed") == null) {
 			Desk.getImageRegistry().put("VidalRed", getImageDescriptor("rsc/redbox.ico"));
 		}
@@ -59,14 +52,7 @@ public class VidalLabelProvider extends DefaultLabelProvider implements ITableCo
 			return Desk.getImage(Desk.IMG_ACHTUNG);
 		}
 		Medikament art = (Medikament) element;
-		String art_id = art.getId();
-		
-		if(cachingImage.containsKey(art_id)) { box = cachingImage.get(art_id); }
-		else {
-			art = (Medikament) element;
-			box = art.get("Codeclass");
-			cachingImage.put(art_id, box);
-		}
+		box = Artikel_AT_Cache.get(art.getId(), Artikel_AT_Cache.MEDIKAMENT_AT_CACHE_ELEMENT_BOX);
 		
 		if (box != null) {
 			if (box.startsWith("N")) {
@@ -89,15 +75,7 @@ public class VidalLabelProvider extends DefaultLabelProvider implements ITableCo
 		
 		if (element instanceof Medikament) {
 			Medikament art = (Medikament) element;
-			String art_id = art.getId();
-			String label;
-			
-			if(cachingLabel.containsKey(art_id)) { label = cachingLabel.get(art_id); }
-			else {
-				label =  art.getLabel();
-				cachingLabel.put(art_id, label);
-			}
-			return label;
+			return Artikel_AT_Cache.get(art.getId(), Artikel_AT_Cache.MEDIKAMENT_AT_CACHE_ELEMENT_LABEL);
 		}
 		return super.getColumnText(element, columnIndex);
 	}

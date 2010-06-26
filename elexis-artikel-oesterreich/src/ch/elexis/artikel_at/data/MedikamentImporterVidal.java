@@ -10,7 +10,7 @@
  *    M. Descher - Adaption (Import works; tested on RpInfo_M08_FED.xml)
  *    			   Imports Substances and Medikamente
  *    
- *  $Id: MedikamentImporterVidal.java 6426 2010-06-23 13:39:57Z marcode79 $
+ *  $Id: MedikamentImporterVidal.java 6428 2010-06-25 15:02:10Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
@@ -39,6 +39,7 @@ import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.Money;
+import ch.rgw.tools.TimeTool;
 
 public class MedikamentImporterVidal extends ImporterPage {
 	
@@ -60,7 +61,6 @@ public class MedikamentImporterVidal extends ImporterPage {
 	
 	@Override
 	public IStatus doImport(IProgressMonitor monitor) throws Exception{
-		//TODO: Input File Versioning (What if same file is imported twice?)
 		//TODO: Test cancellation check / what to do in case of cancellation?
 		//TODO: Versioning of the Vidal files? Was tested on Full Set only!
 		//TODO: Validate file before import?
@@ -77,18 +77,23 @@ public class MedikamentImporterVidal extends ImporterPage {
 		monitor.subTask("Analysiere Datei");
 		Element eRoot = doc.getRootElement();
 		monitor.worked(1);
-		
-		// Import File header
+
 		Element RpHeader = eRoot.getChild("RpHeader");
-		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_FILENAME, RpHeader.getChildText("Filename"));
-		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_GENERATOR, RpHeader.getChildText("Generator"));
-		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBTITLE, RpHeader.getChildText("PubTitle"));
-		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBTITLE_COUNTRY, RpHeader.getChild("PubTitle").getAttributeValue("Country"));
-		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBAUTHOR, RpHeader.getChildText("PubAuthor"));
-		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBDATE, RpHeader.getChildText("PubDate"));
-		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBCOPYRIGHT, RpHeader.getChildText("PubCopyright"));
 		
-		
+		// Wenn Datensatz älter oder gleich gegenwärtig, abbrechen!
+		TimeTool currentts = new TimeTool();
+		TimeTool newtts = new TimeTool();
+		boolean currenttsok = currentts.set(Hub.globalCfg.get(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBDATE, ""));
+		boolean newttsok = newtts.set(RpHeader.getChildText("PubDate"));
+		if (!currenttsok || !newttsok) {
+			SWTHelper.showError("ERR", "Error parsing date information");
+			return Status.CANCEL_STATUS;
+		}
+		if (newtts.diff(currentts, 0) <= 0) {
+			SWTHelper.showError("Import file is older or equal current import", "Import file is older or equal current import");
+			return Status.CANCEL_STATUS;
+		}
+			
 		// Substanzen
 		// Search in DB, if exist leave, else append
 		Element eSubstances = eRoot.getChild("RpSubstRefs");
@@ -151,7 +156,6 @@ public class MedikamentImporterVidal extends ImporterPage {
 				String codeClass = eMedi.getChild("SSigns").getAttribute("Box").getValue().trim();
 				monitor.subTask("Lese Medikamente ein "+"["+counter+"/"+noOfMedicaments+"]: "+SName);
 				
-				//TODO: Sure this is <String, Object> and not <String, String> ?
 				Hashtable<String, Object> act = new Hashtable<String, Object>();
 				act.put("PhZNr", PhZNr);												// Pharmazentralnummer
 				act.put("SName", SName);												// Kurzname
@@ -240,6 +244,15 @@ public class MedikamentImporterVidal extends ImporterPage {
 				counter++;
 			}
 		}
+		
+		// Set Information on current imported set
+		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_FILENAME, RpHeader.getChildText("Filename"));
+		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_GENERATOR, RpHeader.getChildText("Generator"));
+		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBTITLE, RpHeader.getChildText("PubTitle"));
+		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBTITLE_COUNTRY, RpHeader.getChild("PubTitle").getAttributeValue("Country"));
+		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBAUTHOR, RpHeader.getChildText("PubAuthor"));
+		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBDATE, RpHeader.getChildText("PubDate"));
+		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBCOPYRIGHT, RpHeader.getChildText("PubCopyright"));
 		
 		monitor.done();
 		return Status.OK_STATUS;
