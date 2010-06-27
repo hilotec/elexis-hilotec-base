@@ -71,8 +71,17 @@ public interface IDocument {
 	public String getCreationDate();
 
 	/**
-	 * The Patient tgis document belongs to. 
+	 * The Patient this document belongs to. 
 	 * @return A Patient or null if the document does not belong to a patient.
 	 */
 	public Patient getPatient();
+	
+	/**
+	 * A globally unique identifier for this document. The implementation must ensure that
+	 * (1) No two documents ever exist with the same GUID, and
+	 * (2) A document will always have the same GUID assigned within this application, i.e. the call getGUID on
+	 * the same document will always return the same value.
+	 * @return
+	 */
+	public String getGUID();
 }

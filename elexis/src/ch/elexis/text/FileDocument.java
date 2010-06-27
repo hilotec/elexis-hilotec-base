@@ -23,11 +23,13 @@ import ch.elexis.ElexisException;
 import ch.elexis.data.Patient;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.StringTool;
 
 /**
  * An IDocument based on a file.
+ * 
  * @author gerry
- *
+ * 
  */
 public class FileDocument implements IDocument {
 	String title;
@@ -36,15 +38,25 @@ public class FileDocument implements IDocument {
 	String date;
 	Patient pat;
 	String keywords;
+	String guid = StringTool.unique("FileDocument");
 
 	/**
-	 * Create a new FileDocument. Note: The underlying file will NOT be copied but only referenced.
-	 * @param pat The patient thsi document belongs to. Can be null
-	 * @param title Title for the document. Never Null and Never empty
-	 * @param category Category for the document. Can be null or empty
-	 * @param file File to link to this document
-	 * @param date date of creation
-	 * @param keywords space- or comma- separated list of keywords. May be empty or null
+	 * Create a new FileDocument. Note: The underlying file will NOT be copied
+	 * but only referenced.
+	 * 
+	 * @param pat
+	 *            The patient thsi document belongs to. Can be null
+	 * @param title
+	 *            Title for the document. Never Null and Never empty
+	 * @param category
+	 *            Category for the document. Can be null or empty
+	 * @param file
+	 *            File to link to this document
+	 * @param date
+	 *            date of creation
+	 * @param keywords
+	 *            space- or comma- separated list of keywords. May be empty or
+	 *            null
 	 */
 	public FileDocument(Patient pat, String title, String category, File file,
 			String date, String keywords) {
@@ -55,11 +67,11 @@ public class FileDocument implements IDocument {
 		this.pat = pat;
 		this.keywords = keywords;
 	}
-	
+
 	/**
 	 * Delete the underlying file
 	 */
-	public void delete(){
+	public void delete() {
 		file.delete();
 	}
 
@@ -115,6 +127,11 @@ public class FileDocument implements IDocument {
 	@Override
 	public Patient getPatient() {
 		return pat;
+	}
+
+	@Override
+	public String getGUID() {
+		return guid;
 	}
 
 }
