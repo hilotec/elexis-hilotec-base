@@ -263,5 +263,10 @@ public class DocHandle extends PersistentObject implements IDocument{
 	public Patient getPatient(){
 		return Patient.load(get("PatID"));
 	}
+
+	@Override
+	public String getGUID() {
+		return getId();
+	}
 	
 }
