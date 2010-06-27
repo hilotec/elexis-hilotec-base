@@ -26,8 +26,8 @@ import org.junit.runner.RunWith; //import org.eclipse.core.runtime.Assert;
 import org.eclipse.swtbot.swt.finder.utils.SWTUtils;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.laborimport.analytica.Messages;
-import org.apache.log4j.*;
 import ch.elexis.uitests.core.SWTbotUtils;
+
 /*
  * Tests for the analytica labor importation
  * TODO: - Add test for setup
@@ -40,12 +40,15 @@ import ch.elexis.uitests.core.SWTbotUtils;
  * We assume that parsing HL7 files work perfectly.
  * 
  */
+
+// Create snapshots in case of failures
 @RunWith(SWTBotJunit4ClassRunner.class)
 public class TestAnalytica {
 	
 	private static SWTWorkbenchBot bot;
 	private static File testDir;
-	private static Logger logger;
+	private static org.apache.log4j.Logger logger;
+	
 	
 	/*
 	 * Tests for Analytica LaborImport TODO: Multilingual TODO: More testcases
@@ -77,24 +80,37 @@ public class TestAnalytica {
         SWTbotUtils.takeScreenshot("Preferences_2c.png", SWTbotUtils.SHELL);
 
 		SWTBotText cbHost = pBot.textWithLabel(Messages.getString("PreferencePage.label.host")); //$NON-NLS-1$
-		cbHost.setText(System.getProperty("ch.elexis.ovpn.host")); //$NON-NLS-1$
+		cbHost.setText(SWTbotUtils.getTestProperty("ch.elexis.ovpn.host")); //$NON-NLS-1$
 
 
 		SWTBotText cbDown = pBot.textWithLabel(Messages.getString("PreferencePage.label.download")); //$NON-NLS-1$
-		cbDown.setText(System.getProperty("ch.elexis.ovpn.download")); //$NON-NLS-1$
+		String downloadDir = SWTbotUtils.getTestProperty("ch.elexis.ovpn.download");//$NON-NLS-1$
+		if (downloadDir.equals("ch.elexis.ovpn.download")) { downloadDir = "/tmp"; }//$NON-NLS-1$
+		System.out.println("Down 1 "+downloadDir);
+		cbDown.setText(downloadDir); //$NON-NLS-1$
+		System.out.println("Down 2 "+downloadDir);
+		// cbDown.notifyAll();
 
 		SWTBotText cbUser = pBot.textWithLabel(Messages.getString("PreferencePage.label.user")); //$NON-NLS-1$
-		cbUser.setText(System.getProperty("ch.elexis.ovpn.user")); //$NON-NLS-1$
+		cbUser.setText(SWTbotUtils.getTestProperty("ch.elexis.ovpn.user")); //$NON-NLS-1$
 
 		SWTBotText cbPw = pBot.textWithLabel(Messages.getString("PreferencePage.label.password")); //$NON-NLS-1$
-		cbPw.setText(System.getProperty("ch.elexis.ovpn.password")); //$NON-NLS-1$
+		cbPw.setText(SWTbotUtils.getTestProperty("ch.elexis.ovpn.password")); //$NON-NLS-1$
 
 		SWTBotText  cbOvpn = pBot.textWithLabel(Messages.getString("PreferencePage.label.ovpn")); //$NON-NLS-1$
-		cbOvpn.setText(System.getProperty("ch.elexis.ovpn.conf")); //$NON-NLS-1$
-		
+		String ovpnConf = SWTbotUtils.getTestProperty("ch.elexis.ovpn.conf");//$NON-NLS-1$
+		if (ovpnConf.equals("ch.elexis.ovpn.conf")) { ovpnConf = "/etc/hosts"; }//$NON-NLS-1$
+		cbOvpn.setText(ovpnConf); 
+		// cbOvpn.notifyAll();
+
 		SWTbotUtils.takeScreenshot("Preferences_3s.png", SWTbotUtils.SHELL);		 //$NON-NLS-1$
+		System.out.println("Apply isEnabled? "+pBot.button("Apply").isEnabled());
+		assert(pBot.button("Apply").isEnabled() == true);
+		if (!pBot.button("Apply").isEnabled() ) return;
 		pBot.button("Apply").click();
 		logger.info("testAnalyticaSetup Applied"); //$NON-NLS-1$
+		assert(pBot.button("OK").isEnabled());
+		if (!pBot.button("OK").isEnabled() ) return;
 		pBot.button("OK").click();
 		SWTbotUtils.takeScreenshot("Preferences_4.png", SWTbotUtils.SHELL);		 //$NON-NLS-1$
 		logger.info("testAnalyticaSetup Okay"); //$NON-NLS-1$

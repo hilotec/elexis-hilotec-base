@@ -34,28 +34,30 @@ public class SWTbotUtils {
 	private static SWTWorkbenchBot bot;
 	private static String logName = "elexis-swtbot.log";
 	private static ConsoleAppender consoleAppender;
-	
+
 	/*
-	 * This setup should be called by each test, as setting up a SWTbot is quite time consuming
-	 * (e.g. on my machines a empty test takes almost 30 seconds
+	 * This setup should be called by each test, as setting up a SWTbot is quite
+	 * time consuming (e.g. on my machines a empty test takes almost 30 seconds
 	 */
-	public static SWTWorkbenchBot initSWTbot(){
+	public static SWTWorkbenchBot initSWTbot() {
 		if (bot == null)
 			bot = new SWTWorkbenchBot();
 		return bot;
 	}
-	
+
 	/*
-	 * Setup logging to the specified file in the current directory Uses log4j. Adds a logging
-	 * layout with ms precision to be able to easily detect time consuming operations
+	 * Setup logging to the specified file in the current directory Uses log4j.
+	 * Adds a logging layout with ms precision to be able to easily detect time
+	 * consuming operations
 	 * 
 	 * @filename Filename to use for the logging
 	 */
-	public static Logger initSWTbotLogging(String filename){
+	public static Logger initSWTbotLogging(String filename) {
 		if (logger != Logger.getRootLogger() && filename == logName)
 			return logger;
 		try {
-			PatternLayout layout = new PatternLayout("%d{ISO8601} %-5p %c: %m%n");
+			PatternLayout layout = new PatternLayout(
+					"%d{ISO8601} %-5p %c: %m%n");
 			if (consoleAppender == null)
 				consoleAppender = new ConsoleAppender(layout);
 			logger.addAppender(consoleAppender);
@@ -71,52 +73,55 @@ public class SWTbotUtils {
 		logName = filename;
 		return logger;
 	}
-	
+
 	/*
 	 * Setup logging to the file elexis-swtbot.log in the current directory
 	 */
-	public static Logger initSWTbotLogging(){
+	public static Logger initSWTbotLogging() {
 		return initSWTbotLogging(logName);
 	}
-	
+
 	/*
-	 * Easy method to take screenshots. As this is quite time consuming, we will only create them if
-	 * explicitly demanded by a none empty property ch.elexis.saveScreenshot
+	 * Easy method to take screenshots. As this is quite time consuming, we will
+	 * only create them if explicitly demanded by a none empty property
+	 * ch.elexis.saveScreenshot
 	 */
-	public static void takeScreenshot(String filename, int what){
+	public static void takeScreenshot(String filename, int what) {
 		boolean res = false;
 		String save = System.getProperty("ch.elexis.saveScreenshot");
-		if (save == null || save.matches("false") ) {
-			logger.info("Skip snapshot "+ save + ": " + filename + " type " + what);
+		if (save == null || save.matches("false")) {
+			logger.info("Skip snapshot " + save + ": " + filename + " type "
+					+ what);
 			return;
 		}
-		
-		logger.info("before " + save +" taking type " + what + " snapshot: " + filename);
+
+		logger.info("before " + save + " taking type " + what + " snapshot: "
+				+ filename);
 		if (what == FULL_SCREEN) {
 			res = SWTUtils.captureScreenshot(filename);
-			
+
 		} else if (what == VIEW) {
 			try {
 				bot.activeView().setFocus();
-				
+
 			} catch (Exception WidgetNotFound) {
 				logger.error("no view active at the moment");
 				return;
 			}
 			bot.activeView().setFocus();
 			res = SWTUtils.captureScreenshot(filename, bot.getFocusedWidget());
-			
+
 		} else if (what == EDITOR) {
 			try {
 				bot.activeEditor().setFocus();
-				
+
 			} catch (Exception WidgetNotFound) {
 				logger.error("no editor active at the moment");
 				return;
 			}
 			bot.activeEditor().setFocus();
 			res = SWTUtils.captureScreenshot(filename, bot.getFocusedWidget());
-			
+
 		} else if (what == SHELL) {
 			try {
 				bot.activeShell().activate();
@@ -125,38 +130,53 @@ public class SWTbotUtils {
 				logger.error("no shell active at the moment");
 				return;
 			}
-			
+
 		} else {
 			logger.error("invalid snapshot type " + what);
 			return;
 		}
 		logger.info(" snapshot: " + filename + " " + res);
 	}
-	
-	private static void displayNodes(SWTBotTreeItem item){
+
+	private static void displayNodes(SWTBotTreeItem item) {
 		int j = 0;
 		List<String> nodes = item.getNodes();
 		for (String node : nodes) {
 			j += 1;
 			logger.info("  Node " + j + ": " + node);
 		}
-		
+
 	}
-	
+
 	/* see also http://eclipse.dzone.com/articles/eclipse-gui-testing-is-viable- */
 	/*
-	 * This is a handy procedure if you want just see, how the current view is organized. At least
-	 * for newcomers like the writer of this procedure, this is not always is to figure out
+	 * This is a handy procedure if you want just see, how the current view is
+	 * organized. At least for newcomers like the writer of this procedure, this
+	 * is not always is to figure out
 	 */
-	public static void displayTreeView(SWTBot bot){
+	public static void displayTreeView(SWTBot bot) {
 		SWTBotTree tree = bot.tree();
 		SWTBotTreeItem[] items = tree.getAllItems();
-		logger.info("displayTreeView " + bot.toString() + " nr Items " + items.length);
+		logger.info("displayTreeView " + bot.toString() + " nr Items "
+				+ items.length);
 		int j = 0;
 		for (SWTBotTreeItem item : items) {
 			j += 1;
 			logger.info("item "
-				+ String.format("%3d: %20s: %s", j, item.getText(), item.getClass()));
+					+ String.format("%3d: %20s: %s", j, item.getText(),
+							item.getClass()));
 		}
+	}
+
+	/* return either the property given. If not 
+	 * returns simply the name of the property
+	 */
+	public static String getTestProperty(String name) {
+		if (System.getProperty(name) != null) {
+			return System.getProperty(name);
+		} else {
+			return name;
+		}
+
 	}
 }

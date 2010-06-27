@@ -24,7 +24,8 @@ import ch.elexis.uitests.laborImport.*;
 
 @RunWith(Suite.class)
 @SuiteClasses( {
-	TestElexisCore.class, TestAnalytica.class
+	TestElexisCore.class, 
+	// TestAnalytica.class
 })
 public class AllTests {
 
