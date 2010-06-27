@@ -5,13 +5,27 @@ h1. How to use Mercurial repositories with Elexis
 h2. I Prerequisites
 
 * Eclipse 3.5 or later
-* Mercurial 1.5.0 or later
-* the hgEclipse plugin, Version 1.6.0 or later
+* Mercurial 1.5.0 or later (from http://mercurial.selenic.com/)
+* the hgEclipse plugin, Version 1.6.0 or later (the update site is at http://cbes.javaforge.com/update)
 * a sourceforge.net account, if you need write access
 
 h2. II Steps
 
-h3. IIa cloning the repository 
+h3. Workspace organization 
+
+If you want to use the ant build prepare a workspace structure like this.
+/path/to/your/base
+/path/to/your/base/deploy -> generated output via ant will go there
+/path/to/your/base/repositories -> Select this directory as your eclipse workspace
+
+Unter repositories checkout/clone the following repositories (as shown below)
+ssh://elexis.hg.sourceforge.net/hgroot/elexis/elexis-base
+http://archie.googlecode.com/svn/archie/ch.unibe.iam.scg.archie/trunk
+ssh://elexis.hg.sourceforge.net/hgroot/elexis/elexis-addons
++ more proprietary checkouts
+
+h3. Clone the repository 
+
 
 * In an empty eclipse workspace, right-click in the package explorer and select _import_ -> _Clone existing Mercurial repository_. 
 
@@ -32,7 +46,7 @@ With this local clone, you can work as with any other SCM. If you know Subversio
 
 If you feel, however, that your changes should go to the master repository, you should first *pull* any changes that might have happened on the master in the meantime, *merge* if necessary, resolve all conflicts (if any) and then *push* your Repository to the master. If you do not have *push* rights, you can ask a master maintainer, to *pull* your changes, or you can send them a push request by e-mail, containing a diff of your repository to the master.  
  
-h3. IIb Checking out the sources
+h3. Check out the sources
 
 Now the clone operation from IIa is probably finished. You are presented a dialog "Select working directory revision". Most probably you'll want the bleeding edge, and thus, you might want to select the Revision that has the tag "tip". Then click Next, and you'll see all Elexis Projects that are part of this repository. Select those you want to import into your Eclipse workspace and click finish
 
