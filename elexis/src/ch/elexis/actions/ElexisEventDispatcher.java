@@ -393,7 +393,7 @@ public final class ElexisEventDispatcher extends Job {
 		for (ElexisEventListener el : listeners) {
 			ElexisEvent filter = el.getElexisEventFilter();
 			sb.append(el.getClass().getName()).append(": ");
-			if (filter != null) {
+			if (filter != null &&  filter.getObjectClass() != null && filter.getObjectClass().getName() != null) {
 				sb.append(filter.type).append(" / ").append(
 						filter.getObjectClass().getName());
 			}
