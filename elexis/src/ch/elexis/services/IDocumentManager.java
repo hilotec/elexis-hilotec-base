@@ -12,12 +12,13 @@
  *******************************************************************************/
 package ch.elexis.services;
 
-import java.io.File;
 import java.io.InputStream;
+import java.util.List;
 
 import ch.elexis.ElexisException;
 import ch.elexis.data.Patient;
 import ch.elexis.text.IDocument;
+import ch.rgw.tools.TimeSpan;
 
 /**
  * A Service acting as DocumentManagement must implement this Interfache
@@ -27,48 +28,57 @@ import ch.elexis.text.IDocument;
  */
 public interface IDocumentManager {
 
-	
 	/** List Categories for Documents */
 	public String[] getCategories();
-	
+
 	/** Add a Categorie */
 	public boolean addCategorie(String categorie);
-	
+
 	/**
-	 * Import a document from a stream
+	 * Ad a document
 	 * 
-	 * @param pat
-	 *            the patient this dosucment should be associated with. if this parameter is null,
-	 *            the implementation MUST let the user chose the patient.
-	 * @param is
-	 *            InputStream that contains the document
-	 * @param name
-	 *            name of the document. if the parameter is null, implementation SHOULD ask user
-	 * @param category
-	 *            category to store this document under. if the implementation does not support
-	 *            categories, it may ignore the parameter. If the parameter is null, and the
-	 *            implementation supports categories, it SHOULD ask the user.
-	 * @param keywords
-	 *            some comma-delimited keywords to assign to the document. May be null. If the
-	 *            implementation does not support keywords, it may ignore the parameter silently.
-	 * @param date
-	 *            the date that should be attributed this document. If the parameter is null, the
-	 *            implementation MUST use the current date.
-	 * @return the ID of the generated PersistentObject
+	 * @param doc
+	 *            The IDocument to add
+	 * @return ID of the newly created internal representation
 	 * @throws ElexisException
-	 *             if anything goes wrong
 	 */
-	//public String addDocument(Patient pat, InputStream is, String name, String category,
-	//	String keywords, String date) throws ElexisException;
-	
 	public String addDocument(IDocument doc) throws ElexisException;
-	//public boolean addDocument(Patient pat, String name, String catecory, String keywords,
-	//	File file, String date);
-	
+
 	/**
 	 * Render a Document to a Stream
-	 * @param id ID of the Object (as generated with importFromStream)
+	 * 
+	 * @param id
+	 *            ID of the Object (as generated with addDocument)
 	 * @return
 	 */
 	public InputStream getDocument(String id);
+
+	/**
+	 * Retrieve documents with matching criteria. If a parameter is null, it
+	 * will be considered as "any". If a String parameter is enclosed in
+	 * slashes, it will be considered as regex: "/m[ae]h/" will match mah and
+	 * meh, while "m[ae]h" will only match the literal string m[ae]h.
+	 * 
+	 * @param pat
+	 *            The patient the documents belong to
+	 * @param categoryMatch
+	 *            the category or categories to match
+	 * @param titleMatch
+	 *            title
+	 * @param keywordMatch
+	 *            keyword to find. Will match if at least one of the documents
+	 *            keywords match the parameter
+	 * @param dateMatch
+	 *            match only documents woth dates within the given timespan
+	 * @param contentsMatch
+	 *            find a match in the contents of the document. Note: This is
+	 *            not supported by all documentmanagers and it might be very
+	 *            inefficient! If the parameter is not null and the
+	 *            implementation does not support contentMatch, it throws an
+	 *            ElexisException EE_NOT_SUPPORTED.
+	 * @return lust of all IDocuments matching the goven criteria
+	 */
+	public List<IDocument> listDocuments(Patient pat, String categoryMatch,
+			String titleMatch, String keywordMatch, TimeSpan dateMatch,
+			String contentsMatch) throws ElexisException;
 }

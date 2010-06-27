@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2010, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *******************************************************************************/
+
 package ch.elexis.text;
 
 import java.io.ByteArrayOutputStream;
@@ -12,6 +24,11 @@ import ch.elexis.data.Patient;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 
+/**
+ * An IDocument based on a file.
+ * @author gerry
+ *
+ */
 public class FileDocument implements IDocument {
 	String title;
 	String category;
@@ -20,6 +37,15 @@ public class FileDocument implements IDocument {
 	Patient pat;
 	String keywords;
 
+	/**
+	 * Create a new FileDocument. Note: The underlying file will NOT be copied but only referenced.
+	 * @param pat The patient thsi document belongs to. Can be null
+	 * @param title Title for the document. Never Null and Never empty
+	 * @param category Category for the document. Can be null or empty
+	 * @param file File to link to this document
+	 * @param date date of creation
+	 * @param keywords space- or comma- separated list of keywords. May be empty or null
+	 */
 	public FileDocument(Patient pat, String title, String category, File file,
 			String date, String keywords) {
 		this.title = title;
@@ -30,6 +56,9 @@ public class FileDocument implements IDocument {
 		this.keywords = keywords;
 	}
 	
+	/**
+	 * Delete the underlying file
+	 */
 	public void delete(){
 		file.delete();
 	}
