@@ -17,6 +17,7 @@ import java.io.InputStream;
 
 import ch.elexis.ElexisException;
 import ch.elexis.data.Patient;
+import ch.elexis.text.IDocument;
 
 /**
  * A Service acting as DocumentManagement must implement this Interfache
@@ -57,11 +58,12 @@ public interface IDocumentManager {
 	 * @throws ElexisException
 	 *             if anything goes wrong
 	 */
-	public String addDocument(Patient pat, InputStream is, String name, String category,
-		String keywords, String date) throws ElexisException;
+	//public String addDocument(Patient pat, InputStream is, String name, String category,
+	//	String keywords, String date) throws ElexisException;
 	
-	public boolean addDocument(Patient pat, String name, String catecory, String keywords,
-		File file, String date);
+	public String addDocument(IDocument doc) throws ElexisException;
+	//public boolean addDocument(Patient pat, String name, String catecory, String keywords,
+	//	File file, String date);
 	
 	/**
 	 * Render a Document to a Stream

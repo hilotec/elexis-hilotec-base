@@ -71,7 +71,7 @@ import ch.rgw.tools.TimeTool;
 public class OmnivoreView extends ViewPart implements IActivationListener {
 	private TableViewer viewer;
 	private Table table;
-	private Action importAction, editAction, deleteAction;
+	private Action importAction, editAction, deleteAction, exportAllAction;
 	private Action doubleClickAction;
 	private final String[] colLabels = { "Datum", "Titel", "Stichwörter" };
 	private final int[] colWidth = { 80, 150, 500 };

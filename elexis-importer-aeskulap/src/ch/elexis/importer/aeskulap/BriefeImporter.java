@@ -4,12 +4,15 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import ch.elexis.ElexisException;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Xid;
 import ch.elexis.importers.ExcelWrapper;
 import ch.elexis.services.GlobalServiceDescriptors;
 import ch.elexis.services.IDocumentManager;
+import ch.elexis.text.FileDocument;
 import ch.elexis.util.Extensions;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
 /** Import Documents from Aeskulap into Omnivore */
@@ -57,8 +60,12 @@ public class BriefeImporter {
 						new StringBuilder("!").append(patno).append("_")
 								.append(briefno).toString());
 				if (file != null) {
-					dm.addDocument(pat, title, CATEGORY_AESKULAP_BRIEFE, "",
-							file, date);
+					try {
+						dm.addDocument(new FileDocument(pat,title,
+								CATEGORY_AESKULAP_BRIEFE, file, date,""));
+					} catch (ElexisException e) {
+						ExHandler.handle(e);
+					}
 				}
 			}
 

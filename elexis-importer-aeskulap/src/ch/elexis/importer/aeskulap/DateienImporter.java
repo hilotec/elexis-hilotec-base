@@ -4,12 +4,15 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import ch.elexis.ElexisException;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Xid;
 import ch.elexis.importers.ExcelWrapper;
 import ch.elexis.services.GlobalServiceDescriptors;
 import ch.elexis.services.IDocumentManager;
+import ch.elexis.text.FileDocument;
 import ch.elexis.util.Extensions;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
 /** Import Documents from Aeskulap into Omnivore */
@@ -22,7 +25,8 @@ public class DateienImporter {
 
 	public DateienImporter(File importBaseDir, IProgressMonitor monitor) {
 		monitor.subTask("Importiere Dateien");
-		Object os = Extensions.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
+		Object os = Extensions
+				.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
 		dir = importBaseDir;
 		if (os != null) {
 			dm = (IDocumentManager) os;
@@ -51,7 +55,7 @@ public class DateienImporter {
 			String fileno = StringTool.getSafe(actLine, 3);
 			String date = StringTool.getSafe(actLine, 4);
 			String title = StringTool.getSafe(actLine, 5);
-			
+
 			Patient pat = (Patient) Xid.findObject(AeskulapImporter.PATID,
 					patno);
 			if (pat != null) {
@@ -59,8 +63,12 @@ public class DateienImporter {
 						new StringBuilder("PF_").append(patno).append("_")
 								.append(fileno).toString());
 				if (file != null) {
-					dm.addDocument(pat, title, CATEGORY_AESKULAP_DATEIEN, "",
-							file, date);
+					try {
+						dm.addDocument(new FileDocument(pat, title,
+								CATEGORY_AESKULAP_DATEIEN, file, date, ""));
+					} catch (ElexisException e) {
+						ExHandler.handle(e);
+					}
 				}
 			}
 

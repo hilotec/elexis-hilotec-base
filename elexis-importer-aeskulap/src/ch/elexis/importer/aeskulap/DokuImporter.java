@@ -4,12 +4,15 @@ import java.io.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
+import ch.elexis.ElexisException;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Xid;
 import ch.elexis.importers.ExcelWrapper;
 import ch.elexis.services.GlobalServiceDescriptors;
 import ch.elexis.services.IDocumentManager;
+import ch.elexis.text.FileDocument;
 import ch.elexis.util.Extensions;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
 /** Import Documents from Aeskulap into Omnivore */
@@ -22,7 +25,8 @@ public class DokuImporter {
 
 	public DokuImporter(File importBaseDir, IProgressMonitor monitor) {
 		monitor.subTask("Importiere Dokumente");
-		Object os = Extensions.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
+		Object os = Extensions
+				.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
 		dir = importBaseDir;
 		if (os != null) {
 			dm = (IDocumentManager) os;
@@ -58,8 +62,12 @@ public class DokuImporter {
 								.append(patno).append("_").append(docno)
 								.toString());
 				if (file != null) {
-					dm.addDocument(pat, title, CATEGORY_AESKULAP_DOKUMENTE, "",
-							file, date);
+					try {
+						dm.addDocument(new FileDocument(pat, title,
+								CATEGORY_AESKULAP_DOKUMENTE, file, date, ""));
+					} catch (ElexisException e) {
+						ExHandler.handle(e);
+					}
 				}
 			}
 

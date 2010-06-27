@@ -14,10 +14,12 @@
 package ch.elexis.omnivore.data;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.program.Program;
@@ -26,13 +28,14 @@ import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.omnivore.views.FileImportDialog;
+import ch.elexis.text.IDocument;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
-public class DocHandle extends PersistentObject {
+public class DocHandle extends PersistentObject implements IDocument{
 	public static final String TABLENAME = "CH_ELEXIS_OMNIVORE_DATA";
 	public static final String DBVERSION = "1.2.1";
 	public static final String createDB=
@@ -129,9 +132,15 @@ public class DocHandle extends PersistentObject {
 		return super.delete();
 	}
 	
-	public byte[] getContents() {
+	public byte[] getContentsAsBytes() {
 		byte[] ret = getBinary("Doc");
 		return ret;
+	}
+	
+	public InputStream getContentsAsStream(){
+		byte[] bytes=getContentsAsBytes();
+		ByteArrayInputStream bais=new ByteArrayInputStream(bytes);
+		return bais;
 	}
 	public void execute(){
 		try {
@@ -223,6 +232,36 @@ public class DocHandle extends PersistentObject {
 			}
 		}
 		
+	}
+
+	@Override
+	public String getTitle() {
+		return checkNull(get("Titel"));
+	}
+
+	@Override
+	public String getMimeType() {
+		return checkNull(get("Mimetype"));
+	}
+
+	@Override
+	public String getKeywords() {
+		return checkNull(get("Keywords"));
+	}
+
+	@Override
+	public String getCategory() {
+		return "";
+	}
+
+	@Override
+	public String getCreationDate() {
+		return get("Datum");
+	}
+	
+	@Override
+	public Patient getPatient(){
+		return Patient.load(get("PatID"));
 	}
 	
 }

@@ -21,6 +21,7 @@ public class ElexisException extends Exception {
 	public static final int EE_DUPLICATE_DISPATCHER=1;
 	public static final int EE_BAD_DISPATCHER = 2;
 	public static final int EE_UNEXPECTED_RESPONSE=3;
+	public static final int EE_FILE_ERROR = 4;
 	
 	Class<?> clazz;
 	int errcode;

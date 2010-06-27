@@ -9,6 +9,7 @@ import java.io.InputStream;
 import ch.elexis.ElexisException;
 import ch.elexis.data.Patient;
 import ch.elexis.services.IDocumentManager;
+import ch.elexis.text.IDocument;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 
@@ -19,6 +20,11 @@ public class DocumentManagement implements IDocumentManager {
 		return false;
 	}
 
+	public String addDocument(IDocument doc) throws ElexisException{
+		DocHandle dh=new DocHandle(doc.getContentsAsBytes(),doc.getPatient(),doc.getTitle(),doc.getMimeType(),doc.getKeywords());
+		return dh.getId();
+	}
+	/*
 	@Override
 	public String addDocument(Patient pat, InputStream is, String name,
 			String category, String keywords, String date)
@@ -36,7 +42,8 @@ public class DocumentManagement implements IDocumentManager {
 			throw new ElexisException(this.getClass(), ex.getMessage(), 1);
 		}
 	}
-
+*/
+	/*
 	@Override
 	public boolean addDocument(Patient pat, String name, String catecory,
 			String keywords, File file, String date) {
@@ -49,7 +56,7 @@ public class DocumentManagement implements IDocumentManager {
 			return false;
 		}
 	}
-
+*/
 	@Override
 	public String[] getCategories() {
 		return null;
@@ -58,9 +65,7 @@ public class DocumentManagement implements IDocumentManager {
 	@Override
 	public InputStream getDocument(String id) {
 		DocHandle dh = DocHandle.load(id);
-		byte[] cnt = dh.getContents();
-		ByteArrayInputStream bais = new ByteArrayInputStream(cnt);
-		return bais;
+		return dh.getContentsAsStream();
 	}
 
 }
