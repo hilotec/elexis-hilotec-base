@@ -2,7 +2,7 @@
 <feature
       id="ch.medelexis.features.switzerland"
       label="Elexis Feature for Switzerland"
-      version="2.0.1"
+      version="2.0.2"
       provider-name="Medelexis AG">
 
    <description url="http://www.example.com/description">
@@ -43,21 +43,6 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="ch.elexis.icpc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="ch.elexis.icpc.fire"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         fragment="true"
          unpack="false"/>
 
    <plugin

@@ -10,5 +10,5 @@
   </service:conditions>
   <service:docURL>http://www.medelexis.ch/unsere-produkte/elexis-plugins/plugins-kern/plugin-medelexis-schweiz-de.html</service:docURL>
   <service:description>Abrechnungs-, eBanking und Diagnoscode-Plugins für Gebrauch in der Deutschschweiz</service:description>
-  <service:depends>ch.medelexis.nucleus ch.elexis.artikel_ch ch.elexis.arzttarife_ch ch.elexis.ebanking_ch ch.elexis.icpc ch.elexis.icpc.fire ch.elexis.diagnosecodes_ch ch.elexis.labortarif.ch2009</service:depends>
+  <service:depends>ch.medelexis.nucleus ch.elexis.artikel_ch ch.elexis.arzttarife_ch ch.elexis.ebanking_ch  ch.elexis.diagnosecodes_ch ch.elexis.labortarif.ch2009</service:depends>
 </service:service>
