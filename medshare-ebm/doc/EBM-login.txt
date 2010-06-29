@@ -1,0 +1,12 @@
+Abgelaufenes Login (verursacht Fehler):
+	User:		medshare
+	Passwort:	testEBM
+
+
+Gültiges Login (bis ca. Mitte Juni):
+	User:		ebmMedshare
+	Passwort:	plugin
+	
+Weiteres Testlogin
+	Username: pcred
+	Passwort: pcebm 
