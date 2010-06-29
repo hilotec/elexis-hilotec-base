@@ -146,6 +146,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	@Override
 	public void eventLoopException(final Throwable exception){
 		Hub.log.log(Messages.ApplicationWorkbenchAdvisor_10 + exception.getMessage(), Log.ERRORS);
+		exception.printStackTrace();
 		ExHandler.handle(exception);
 		super.eventLoopException(exception);
 	}

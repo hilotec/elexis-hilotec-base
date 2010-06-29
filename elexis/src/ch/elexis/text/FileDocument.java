@@ -71,8 +71,10 @@ public class FileDocument implements IDocument {
 	/**
 	 * Delete the underlying file
 	 */
-	public void delete() {
-		file.delete();
+	public boolean delete() {
+		boolean bRet=file.delete();
+		file=null;
+		return bRet;
 	}
 
 	@Override

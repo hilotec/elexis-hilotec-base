@@ -40,6 +40,7 @@ import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.PreferenceInitializer;
 import ch.elexis.preferences.SettingsPreferenceStore;
 import ch.rgw.io.FileTool;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
 public class Desk implements IApplication {
@@ -173,7 +174,11 @@ public class Desk implements IApplication {
 				return IApplication.EXIT_RESTART;
 			}
 			return IApplication.EXIT_OK;
-		} finally { // aufräumen
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			ex.printStackTrace();
+			return -1;
+		}finally { // aufräumen
 			if (theToolkit != null) {
 				theToolkit.dispose();
 			}
