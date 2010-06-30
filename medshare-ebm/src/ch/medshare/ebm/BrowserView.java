@@ -21,11 +21,15 @@ public class BrowserView extends ViewPart {
 		if(browser != null){
 			browser.setUrl(getURL());
 		}
+		//URL zurücksetzen
+		Hub.userCfg.set(Preferences.LOGGEDIN, "");
 	}
 	
 	private String getURL(){
 		String url = Hub.userCfg.get(Preferences.LOGGEDIN, Preferences.Defaults.LOGGEDIN);
-		if(url.length()==2) url="https://www.ebm-guidelines.ch/";
+		if(url.length()==2){
+			url = new EbmLogIn().doPostLogin("");
+		}
 		return url;
 	}
 
