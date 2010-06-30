@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MedikamentDetailBlatt.java 6427 2010-06-25 09:40:08Z marcode79 $
+ *  $Id: MedikamentDetailBlatt.java 6442 2010-06-30 09:49:08Z marcode79 $
  *******************************************************************************/
 
 package ch.elexis.artikel_at.views;
@@ -68,7 +68,7 @@ public class MedikamentDetailBlatt extends Composite {
 	Label tSubstances, tIndikation, tRule, tRemarks, tLastUpdate;
 	Group gRsigns, gSsigns, gSubstances, gIndikation, gRule, gRemarks;
 	Button[] bRsigns, bSsigns;
-	Composite parent;
+	//Composite parent;
 	final FormToolkit tk=Desk.getToolkit();
 	
 	public MedikamentDetailBlatt(Composite pr){
@@ -204,12 +204,19 @@ public class MedikamentDetailBlatt extends Composite {
 
 	}
 	public void display(Medikament med) {
-		form.setText(med.getExt("SName"));
+		if(med.getBox().startsWith("B")) {
+			form.setText(med.getExt("SName")+" [GELÖSCHT]");
+			form.setToolTipText("Medikament wurde gelöscht!");
+		} else {
+			form.setText(med.getExt("SName"));
+		}
 		
 		String status = med.getExt("Status");
 		StringBuilder sbFullName = new StringBuilder();
 		if(!status.equalsIgnoreCase("")) sbFullName.append("(").append(status).append(")").append(" ");
 		sbFullName.append(med.getExt("OName"));
+		
+		if(med.getBox().startsWith("B")) sbFullName.append(" [GELÖSCHT]");
 		fullName.setText(sbFullName.toString());
 		
 		StringBuilder sb=new StringBuilder();

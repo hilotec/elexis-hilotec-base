@@ -5,9 +5,12 @@ import java.util.List;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
+import ch.elexis.Hub;
+import ch.elexis.artikel_at.data.Artikel_AT_Cache;
 import ch.elexis.artikel_at.data.Medikament;
 import ch.elexis.artikel_at.views.VidalLabelProvider;
 import ch.elexis.data.Query;
+import ch.rgw.tools.TimeTool;
 
 public class Activator extends AbstractUIPlugin {
 
@@ -20,18 +23,10 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception {
-//		VidalLabelProvider vlp = new VidalLabelProvider();
-//		
-//		Query<Medikament> qMedi = new Query<Medikament>(Medikament.class);
-//		qMedi.clear();
-//		qMedi.add("Name", "LIKE", "%");
-//		qMedi.orderBy(false, "Name");
-//		List<Medikament> list = qMedi.execute();
-//		for (Medikament medikament : list) {
-//			vlp.getColumnImage(medikament, 0);
-//			vlp.getColumnText(medikament, 0);
-//		}
-//		super.start(context);
+		if(Hub.globalCfg.get(PreferenceConstants.ARTIKEL_AT_CACHEUPDATE_TIME, "invalid").equalsIgnoreCase("invalid")) {
+			Artikel_AT_Cache.updateCache();
+		}
+		
 	}
 
 }

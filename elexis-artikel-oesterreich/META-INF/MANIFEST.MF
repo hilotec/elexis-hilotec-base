@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Artikel Österreich
 Bundle-SymbolicName: ch.elexis.artikel_at;singleton:=true
-Bundle-Version: 0.3.6
+Bundle-Version: 0.3.9
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Require-Bundle: ch.rgw.utility,

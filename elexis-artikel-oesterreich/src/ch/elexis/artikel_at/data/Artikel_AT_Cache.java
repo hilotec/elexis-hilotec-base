@@ -20,6 +20,7 @@ import ch.elexis.Hub;
 import ch.elexis.artikel_at.PreferenceConstants;
 import ch.elexis.data.NamedBlob2;
 import ch.elexis.data.Query;
+import ch.rgw.tools.Log;
 import ch.rgw.tools.TimeTool;
 
 public class Artikel_AT_Cache {
@@ -51,23 +52,25 @@ public class Artikel_AT_Cache {
 			//System.out.println("CACHE::ID: "+id+" / BOX "+resultSet.get(0)+" / Label "+resultSet.get(1));
 		} else {
 			Medikament medi = Medikament.load(id);
-			resultSet.put(MEDIKAMENT_AT_CACHE_ELEMENT_BOX, medi.get(Medikament.FLD_CODECLASS));
-			resultSet.put(MEDIKAMENT_AT_CACHE_ELEMENT_LABEL, medi.getLabel());	
+			resultSet.put(MEDIKAMENT_AT_CACHE_ELEMENT_BOX, medi.getBox());
+			StringBuffer sb = new StringBuffer();
+			sb.append(medi.getLabel()).append("/").append(medi.getRemb());		
+			resultSet.put(MEDIKAMENT_AT_CACHE_ELEMENT_LABEL, sb.toString());	
 		}
 		return resultSet.get(element);
 	}
 	
 	private static void loadCache() {
-		ByteArrayInputStream ba = new ByteArrayInputStream(cacheStorage.getBytes());
-		ObjectInputStream oba;
 		try {
+			ByteArrayInputStream ba = new ByteArrayInputStream(cacheStorage.getBytes());
+			ObjectInputStream oba;
 			oba = new ObjectInputStream(ba);
 			artikelATcache = (HashMap<String, HashMap<Integer, String>>) oba.readObject();
 			System.out.println("Loaded HashMap with "+artikelATcache.size()+" mappings");
 		} catch (IOException e) {
-			e.printStackTrace();
+			Hub.log.log(e, "Artikel AT", Log.WARNINGS);
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			Hub.log.log(e);
 		}
 	}
 	
@@ -84,8 +87,10 @@ public class Artikel_AT_Cache {
 		List<Medikament> list = qMedi.execute();
 		for (Medikament medikament : list) {
 			resultSet = new HashMap<Integer, String>();
-			resultSet.put(MEDIKAMENT_AT_CACHE_ELEMENT_BOX, medikament.get(Medikament.FLD_CODECLASS));
-			resultSet.put(MEDIKAMENT_AT_CACHE_ELEMENT_LABEL, medikament.getLabel());
+			resultSet.put(MEDIKAMENT_AT_CACHE_ELEMENT_BOX, medikament.getBox());
+			StringBuffer sb = new StringBuffer();
+			sb.append(medikament.getLabel()).append("/").append(medikament.getRemb());
+			resultSet.put(MEDIKAMENT_AT_CACHE_ELEMENT_LABEL, sb.toString());
 			artikelATcache.put(medikament.getId(), resultSet);
 		}
 
