@@ -9,20 +9,19 @@ import ch.elexis.Hub;
 
 public class BrowserView extends ViewPart {
 	public static final String ID="ebm-guidelines";
+	
 	private Browser browser;
 	
 	@Override
 	public void createPartControl(Composite parent) {
 		browser = new Browser(parent, SWT.NONE);
 	}
-
+		
 	@Override
-	public void setFocus() {
-		if(browser != null){
-			browser.setUrl(getURL());
-		}
+	public void dispose() {
 		//URL zurücksetzen
 		Hub.userCfg.set(Preferences.LOGGEDIN, "");
+		super.dispose();
 	}
 	
 	private String getURL(){
@@ -30,7 +29,17 @@ public class BrowserView extends ViewPart {
 		if(url.length()==2){
 			url = new EbmLogIn().doPostLogin("");
 		}
+		if(!url.startsWith("http")){
+	    	url = "https://www.ebm-guidelines.ch/";
+		}
 		return url;
+	}
+
+	@Override
+	public void setFocus(){
+		if(browser != null){
+			browser.setUrl(getURL());
+		}
 	}
 
 }
