@@ -5,4 +5,5 @@ cd base/repositories
 ln -s ../../workspace/ elexis-base
 pwd
 cd ../../workspace/BuildElexis
+cp -p local.properties.hudson.linux local.properties
 ant -Dos=linux -Dunplugged=true linux 2>&1 | tee hudson_linux.log
