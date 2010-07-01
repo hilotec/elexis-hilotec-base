@@ -92,6 +92,7 @@ public class Artikel_AT
 		
 		
 		//---
+		new Label(ret, SWT.NONE).setText("Experimentell!");
 		Button cleanArtikelTable = new Button(ret, INFORMATION);
 		if(!Hub.acl.request(AccessControlDefaults.DELETE_MEDICATION)) {
 			cleanArtikelTable.setEnabled(false);
@@ -115,6 +116,7 @@ public class Artikel_AT
 		});
 
 		//---
+		new Label(ret, SWT.NONE).setText("Experimentell!");
 		Button updateRefDB = new Button(ret, INFORMATION);
 		updateRefDB.setText("PhZNr Referenzen updaten");
 		updateRefDB.addSelectionListener(new SelectionListener() {
@@ -130,7 +132,27 @@ public class Artikel_AT
 				
 			}
 		});
-	
+		//--
+		new Label(ret, SWT.NONE).setText("Experimentell!");
+		Button cleanMedikamente = new Button(ret, INFORMATION);
+		if(!Hub.acl.request(AccessControlDefaults.DELETE_MEDICATION)) {
+			cleanArtikelTable.setEnabled(false);
+		}
+		cleanMedikamente.setText("Medikamente löschen");
+		cleanMedikamente.addSelectionListener(new SelectionListener() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent arg0) {
+				Utilities.cleanMedikamente();
+			}
+			
+			@Override
+			public void widgetDefaultSelected(SelectionEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
+		
 		return ret;
 	}
 	

@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    M. Descher - Some changes to adapt to new format
  *    
- *  $Id: Medikament.java 6427 2010-06-25 09:40:08Z marcode79 $
+ *  $Id: Medikament.java 6442 2010-06-30 09:49:08Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
@@ -170,6 +170,10 @@ public class Medikament extends Artikel {
 	@Override
 	public boolean isDragOK(){
 		return true;
+	}
+	
+	public String getBox(){
+		return this.get(Medikament.FLD_CODECLASS);
 	}
 	
 }

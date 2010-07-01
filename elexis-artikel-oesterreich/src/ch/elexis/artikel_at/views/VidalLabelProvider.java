@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    M. Descher - implemented cache
  *    
- *  $Id: VidalLabelProvider.java 6428 2010-06-25 15:02:10Z marcode79 $
+ *  $Id: VidalLabelProvider.java 6442 2010-06-30 09:49:08Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.views;
 
@@ -38,6 +38,9 @@ public class VidalLabelProvider extends DefaultLabelProvider implements ITableCo
 		if (Desk.getImage("VidalYellow") == null) {
 			Desk.getImageRegistry().put("VidalYellow", getImageDescriptor("rsc/yellowbox.ico"));
 		}
+		if (Desk.getImage("VidalBlack") == null) {
+			Desk.getImageRegistry().put("VidalBlack", getImageDescriptor("rsc/blackbox.ico"));
+		}
 	}
 	
 	public static ImageDescriptor getImageDescriptor(String path){
@@ -63,6 +66,8 @@ public class VidalLabelProvider extends DefaultLabelProvider implements ITableCo
 				return Desk.getImage("VidalGreen");
 			} else if (box.startsWith("Y")) {
 				return Desk.getImage("VidalYellow");
+			} else if (box.startsWith("B")) {
+				return Desk.getImage("VidalBlack");
 			}
 		} else {
 			Hub.log.log("Box is Null!", Log.ERRORS);

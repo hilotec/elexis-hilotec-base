@@ -10,7 +10,7 @@
  *    M. Descher - Adaption (Import works; tested on RpInfo_M08_FED.xml)
  *    			   Imports Substances and Medikamente
  *    
- *  $Id: MedikamentImporterVidal.java 6428 2010-06-25 15:02:10Z marcode79 $
+ *  $Id: MedikamentImporterVidal.java 6442 2010-06-30 09:49:08Z marcode79 $
  *******************************************************************************/
 package ch.elexis.artikel_at.data;
 
@@ -31,7 +31,10 @@ import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
 
 import ch.elexis.Hub;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.artikel_at.PreferenceConstants;
+import ch.elexis.artikel_at.preferences.Utilities;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -64,11 +67,13 @@ public class MedikamentImporterVidal extends ImporterPage {
 		//TODO: Test cancellation check / what to do in case of cancellation?
 		//TODO: Versioning of the Vidal files? Was tested on Full Set only!
 		//TODO: Validate file before import?
-		//TODO: Nur importieren, wenn filename neuer
 		//TODO: Zuerst ein Info-Feld anzeigen, dass bestätigt werden kann!
-		
+		if(!Hub.acl.request(AccessControlDefaults.DELETE_MEDICATION)) {
+			SWTHelper.showError("Zugriffsfehler", "Sie verfügen nicht über genügend Rechte, benötigt Recht Fixmedikation löschen.");
+			return Status.CANCEL_STATUS;
+		}
 		String importFilename = results[0];
-		monitor.beginTask("Importiere Vidal", 4);
+		monitor.beginTask("Importiere Vidal", 6);
 		
 		SAXBuilder builder = new SAXBuilder();
 		monitor.subTask("Lese Datei ein");
@@ -83,7 +88,7 @@ public class MedikamentImporterVidal extends ImporterPage {
 		// Wenn Datensatz älter oder gleich gegenwärtig, abbrechen!
 		TimeTool currentts = new TimeTool();
 		TimeTool newtts = new TimeTool();
-		boolean currenttsok = currentts.set(Hub.globalCfg.get(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBDATE, ""));
+		boolean currenttsok = currentts.set(Hub.globalCfg.get(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBDATE, "20010101"));
 		boolean newttsok = newtts.set(RpHeader.getChildText("PubDate"));
 		if (!currenttsok || !newttsok) {
 			SWTHelper.showError("ERR", "Error parsing date information");
@@ -96,6 +101,11 @@ public class MedikamentImporterVidal extends ImporterPage {
 			
 		// Substanzen
 		// Search in DB, if exist leave, else append
+		//--------------Exception--------------
+		//java.sql.SQLException
+		//ERROR: duplicate key value violates unique constraint "ch_elexis_austriamedi_substance_pkey"
+		//23505
+		// Kann ignoriert werden
 		Element eSubstances = eRoot.getChild("RpSubstRefs");
 		if (eSubstances != null) {
 			monitor.subTask("Lese Substanzen ein");
@@ -115,6 +125,10 @@ public class MedikamentImporterVidal extends ImporterPage {
 		// Medikamente
 		Element eMedis = eRoot.getChild("RpData");
 		String RpDataType = eMedis.getAttributeValue("DataType"); // F(ull),U(pdate),S(ample)
+		if(RpDataType.equalsIgnoreCase("S")) {
+			SWTHelper.showError("Sample Data", "Dieses Dokument beinhaltet Beispieldaten, Import wird abgebrochen.");
+			return Status.CANCEL_STATUS;
+		}
 		if (eMedis != null) {
 			monitor.subTask("Lese Medikamente ein");
 			int noOfMedicaments = eMedis.getChildren("RpEntry").size();
@@ -217,7 +231,8 @@ public class MedikamentImporterVidal extends ImporterPage {
 						//TODO: Check selection.. is this right?
 						medi = list.get(0);
 						if (actType.equals(ENTRYTYPE_DELETE)) {
-							medi.delete();
+							// Set blackbox, will be cleaned by cleanMedikamente script, if no more references to it!
+							medi.set(Medikament.FLD_CODECLASS, "B");
 							continue;
 						}
 					} else {
@@ -244,8 +259,20 @@ public class MedikamentImporterVidal extends ImporterPage {
 				counter++;
 			}
 		}
+		monitor.subTask("Referenzen auf Pharmazentral-Nr. aktualisieren");
+		Utilities.updateMediReferences();
+		monitor.worked(1);
+		
+		monitor.subTask("Nicht mehr benötigte Medikamente löschen");
+		Utilities.cleanMedikamente();
+		monitor.worked(1);
+		
+		monitor.subTask("Cache updaten");
+		Artikel_AT_Cache.updateCache();
+		monitor.worked(1);
 		
 		// Set Information on current imported set
+		monitor.subTask("Konfiguration abschliessen");
 		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_FILENAME, RpHeader.getChildText("Filename"));
 		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_GENERATOR, RpHeader.getChildText("Generator"));
 		Hub.globalCfg.set(PreferenceConstants.ARTIKEL_AT_RPHEADER_PUBTITLE, RpHeader.getChildText("PubTitle"));
