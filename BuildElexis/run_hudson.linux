@@ -1,0 +1,8 @@
+#!/bin/bash -v
+cd ../..
+mkdir -p base/repositories
+cd base/repositories
+ln -s ../../workspace/ elexis-base
+pwd
+cd ../../workspace/BuildElexis
+ant -Dos=linux -Dunplugged=true linux 2>&1 | tee hudson_linux.log
