@@ -61,7 +61,7 @@
       </view>
       <view
             allowMultiple="false"
-            category="ch.elexis.abrechnungKategorie"
+            category="ch.elexis.konsultationKategorie"
             class="ch.elexis.views.RFEView"
             id="ch.elexis.arzttarife_ch.rfeView"
             name="medkey-RFE"
