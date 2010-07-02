@@ -1,58 +1,144 @@
 package ch.elexis.views;
 
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.jface.viewers.TableViewer;
+import java.util.HashMap;
+import java.util.List;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.actions.ElexisEvent;
-import ch.elexis.actions.ElexisEventListener;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.Query;
 import ch.elexis.data.RFE;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.viewers.ContentProviderAdapter;
-import ch.elexis.util.viewers.TableLabelProvider;
 
 public class RFEView extends ViewPart {
+	Table longTable, shortTable, mediumTable;
+	CTabFolder tabs;
+	Composite cCalc;
+	HashMap<String,Integer> mapCodeToIndex=new HashMap<String, Integer>();
+	HashMap<Integer,String> mapIndexToCode=new HashMap<Integer, String>();
 	
-	TableViewer tv;
-
 	ElexisEventListenerImpl eeli_kons = new ElexisEventListenerImpl(
 			Konsultation.class) {
 
 		@Override
 		public void runInUi(ElexisEvent ev) {
 			Konsultation k = (Konsultation) ev.getObject();
-			RFE[] rfes=RFE.getRfeForKons(k.getId());
-			
+			List<RFE> rfeForKOns=RFE.getRfeForKons(k.getId());
+			CTabItem top=tabs.getSelection();
+			if(top!=null){
+				Control c=top.getControl();
+				if(c instanceof Table){
+					Table table=(Table)c;
+					table.deselectAll();
+					for(RFE rfe:rfeForKOns){
+						table.select(mapCodeToIndex.get(rfe.getCode()));
+					}
+				}
+			}
+		
 		}
 
 	};
 
 	@Override
 	public void createPartControl(Composite parent) {
+		tabs=new CTabFolder(parent, SWT.BOTTOM);
+		tabs.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		CTabItem ctLong=new CTabItem(tabs,SWT.NONE);
+		ctLong.setText("lang");
+		longTable = new Table(tabs, SWT.MULTI | SWT.FULL_SELECTION);
+		ctLong.setControl(longTable);
+		CTabItem ctMedium=new CTabItem(tabs,SWT.NONE);
+		ctMedium.setText("kurz");
+		mediumTable= new Table(tabs, SWT.MULTI | SWT.FULL_SELECTION);
+		ctMedium.setControl(mediumTable);
 
-		tv = new TableViewer(parent, SWT.MULTI | SWT.FULL_SELECTION);
-		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		tv.setContentProvider(new ContentProviderAdapter(){
+		/*
+		CTabItem ctShort=new CTabItem(tabs,SWT.NONE);
+		ctShort.setText("kurz");
+		shortTable= new Table(tabs, SWT.MULTI | SWT.FULL_SELECTION);
+		ctShort.setControl(shortTable);
+		*/
+		
+		CTabItem ctStat=new CTabItem(tabs,SWT.NONE);
+		ctStat.setText("Statistik");
+		Composite cStat=new Composite(tabs,SWT.NONE);
+		cStat.setLayout(new GridLayout());
+		ctStat.setControl(cStat);
+		Button bRecalc=new Button(cStat,SWT.PUSH);
+		bRecalc.setText("Berechnen");
+		bRecalc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		cCalc=new Composite(cStat,SWT.NONE);
+		cCalc.setLayout(new GridLayout());
+		cCalc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		bRecalc.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public Object[] getElements(Object inputElement) {
-				return RFE.getRFETexts();
+			public void widgetSelected(SelectionEvent e) {
+				for(Control c:cCalc.getChildren()){
+					c.dispose();
+				}
+				Query<RFE> qbe=new Query<RFE>(RFE.class);
+				int[] result=new int[RFE.getRFETexts().length];
+				int all=0;
+				for(RFE rfe:qbe.execute()){
+					String code=rfe.getCode();
+					if(code.length()!=2){
+						continue;
+					}
+					int idx=mapCodeToIndex.get(code);
+					result[idx]++;
+					all++;
+				}
+				for(int rline=0; rline<result.length;rline++){
+					String code=mapIndexToCode.get(rline);
+					int num=result[rline];
+					float percent=num*100f/all;
+					int pc=Math.round(percent);
+					Label lbl=new Label(cCalc,SWT.NONE);
+					lbl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+					lbl.setText(code+": "+num+" (="+pc+"%)");
+				}
+				cCalc.layout(true);
 			}
 			
 		});
-
-		tv.setLabelProvider(new TableLabelProvider(){
-			
-		});
-		tv.setInput(this);
+		//table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		int i=0;
+		for (String[] t : RFE.getRFEDescriptions()) {
+			new TableItem(longTable, SWT.NONE).setText(t[1]);
+			//new TableItem(shortTable, SWT.NONE).setText(t[0]);
+			new TableItem(mediumTable, SWT.NONE).setText(t[2]);
+			mapCodeToIndex.put(t[0], i);
+			mapIndexToCode.put(i, t[0]);
+			i++;
+		}
+		longTable.addSelectionListener(new ClickListener(longTable));
+		//shortTable.addSelectionListener(new ClickListener(shortTable));
+		mediumTable.addSelectionListener(new ClickListener(mediumTable));
+		ElexisEventDispatcher.getInstance().addListeners(eeli_kons);
 	}
+
+	
+	@Override
+	public void dispose() {
+		ElexisEventDispatcher.getInstance().removeListeners(eeli_kons);
+	}
+
 
 	@Override
 	public void setFocus() {
@@ -60,4 +146,23 @@ public class RFEView extends ViewPart {
 
 	}
 
+	class ClickListener extends SelectionAdapter{
+		Table table;
+		ClickListener(Table table){
+			this.table=table;
+		}
+		@Override
+		public void widgetSelected(SelectionEvent e) {
+			Konsultation k=(Konsultation)ElexisEventDispatcher.getSelected(Konsultation.class);
+			if(k!=null){
+				RFE.clear(k);
+				int[] sel=table.getSelectionIndices();
+				for(int s:sel){
+					String code=mapIndexToCode.get(s);
+					new RFE(k.getId(),code);
+				}
+			}
+		}
+	
+	}
 }

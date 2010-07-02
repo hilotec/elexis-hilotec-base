@@ -1,5 +1,8 @@
 package ch.elexis.data;
 
+import java.util.HashMap;
+import java.util.List;
+
 
 public class RFE extends PersistentObject {
 	public static final String Version="0.1.0";
@@ -7,6 +10,8 @@ public class RFE extends PersistentObject {
 	private static final String createDB=
 		"CREATE TABLE "+TABLENAME+" ("+
 		"ID VARCHAR(25) primary key,"+
+		"deleted CHAR(1) default '0',"+
+		"lastupdate bigint,"+
 		"type CHAR(2),"+
 		"konsID VARCHAR(25)"+
 		");"+
@@ -14,27 +19,38 @@ public class RFE extends PersistentObject {
 		"INSERT INTO "+TABLENAME+" (ID, konsID) VALUES ('VERSION','"+Version+"');";
 	
 	static final String[][] rfe = {
-			{ "01", "Kontakt auf wunsch des Patienten" },
-			{ "02", "Notfallkonsultation" },
-			{ "03", "Kontakt auf Zuweisung" },
-			{ "04", "Folgekontakt auf Verordnung/Empfehlung" },
-			{ "05", "Folgekontakt wegen auswärtiger Hämatologie und Chemie" },
-			{ "06", "Kontakt in Zusammenhang mit Langzeitpflege" },
-			{ "07",
-					"Kontakt in kausalem Zusammenhang mit Eingriff / Hospitalisation" },
-			{ "99", "Kein Arztkontakt" }
+			{ "01", "Kontakt auf Wunsch des Patienten", "01-Wunsch" },
+			{ "02", "Notfallkonsultation", "02-NF" },
+			{ "03", "Kontakt auf Zuweisung","03-Zuw." },
+			{ "04", "Folgekontakt auf Verordnung/Empfehlung","04-Verord." },
+			{ "05", "Folgekontakt wegen auswärtiger Hämatologie und Chemie","05-Labor" },
+			{ "06", "Kontakt in Zusammenhang mit Langzeitpflege", "06-Langz."},
+			{ "07",	"Kontakt in kausalem Zusammenhang mit Eingriff / Hospitalisation", "07-Spital" },
+			{ "99", "Kein Arztkontakt","99-" }
 
 	};
-
+	
+	static HashMap<String,String> rfeHash;
+	
 	static{
 		addMapping(TABLENAME,"type","konsID");
 		RFE version=load("VERSION");
 		if(!version.exists()){
 			createOrModifyTable(createDB);
 		}
-		
+		rfeHash=new HashMap<String, String>();
+		for(String[] line:rfe){
+			rfeHash.put(line[0], line[1]);
+		}
 	}
 	
+	public RFE(String KonsId, String code){
+		create(null);
+		set(new String[]{"konsID","type"},KonsId,code);
+	}
+	public static HashMap<String, String> getRFEDef(){
+		return rfeHash;
+	}
 	public static String[] getRFETexts(){
 		String[] ret=new String[rfe.length];
 		for(int i=0;i<rfe.length;i++){
@@ -46,20 +62,19 @@ public class RFE extends PersistentObject {
 		return rfe;
 	}
 
-	public String getText(){
-		String code=getCode();
-		for(String[] line:rfe){
-			if(line[0].equals(code)){
-				return line[1];
-			}
-		}
-		return "?";
+	public static void clear(Konsultation k){
+		getConnection().exec("DELETE FROM "+TABLENAME+" WHERE KonsID="+k.getWrappedId());
 	}
 	
-	public static RFE[] getRfeForKons(String konsID){
+	public String getText(){
+		String code=getCode();
+		return rfeHash.get(code);
+	}
+	
+	public static List<RFE> getRfeForKons(String konsID){
 		Query<RFE> qbe=new Query<RFE>(RFE.class);
 		qbe.add("konsID", Query.EQUALS, konsID);
-		return qbe.execute().toArray(new RFE[0]);
+		return qbe.execute();
 	}
 	public String getCode(){
 		return checkNull(get("type"));

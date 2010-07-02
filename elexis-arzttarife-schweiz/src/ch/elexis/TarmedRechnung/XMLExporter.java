@@ -73,6 +73,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.data.PhysioLeistung;
+import ch.elexis.data.RFE;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
 import ch.elexis.data.TarmedLeistung;
@@ -111,6 +112,7 @@ import ch.rgw.tools.XMLTool;
  * 
  */
 public class XMLExporter implements IRnOutputter {
+	public static final String ATTR_REMARK = "remark";
 	public static final String ELEMENT_TIERS_PAYANT = "tiers_payant";
 	public static final String ELEMENT_TIERS_GARANT = "tiers_garant";
 	private static final String ELEMENT_EMAIL = "email"; //$NON-NLS-1$
@@ -159,7 +161,7 @@ public class XMLExporter implements IRnOutputter {
 	private static final String VK_SCALE = "VK_Scale"; //$NON-NLS-1$
 	private static final String TL = "TL"; //$NON-NLS-1$
 	private static final String AL = "AL"; //$NON-NLS-1$
-	public static final String ELEMENT_REMARK = "remark"; //$NON-NLS-1$
+	public static final String ELEMENT_REMARK = ATTR_REMARK; //$NON-NLS-1$
 	private static final String ATTR_CASE_ID = "case_id"; //$NON-NLS-1$
 	private static final String ATTR_INVOICE_DATE = "invoice_date"; //$NON-NLS-1$
 	private static final String ATTR_INVOICE_ID = "invoice_id"; //$NON-NLS-1$
@@ -647,6 +649,7 @@ public class XMLExporter implements IRnOutputter {
 			// unit.tt x unit_factor.tt x scale_factor.tt x external_factor.tt x quantity =
 			// amount.tt
 			// amount
+			boolean bRFE=false;		// RFE already encoded
 			for (Verrechnet vv : lv) {
 				Element el;
 				int zahl = vv.getZahl();
@@ -665,7 +668,7 @@ public class XMLExporter implements IRnOutputter {
 					double secondaryScale = vv.getSecondaryScaleFactor();
 					
 					double tlTl, tlAL, mult;
-					if (arzl != null) { // earlier system no more supported
+					if (arzl != null) {
 						tlTl = Double.parseDouble(tecl);
 						mult = PersistentObject.checkZeroDouble(vv.get(VK_SCALE)); // Taxpunkt
 						tlAL = Double.parseDouble(arzl);
@@ -748,7 +751,14 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
 					mAnalysen.addMoney(mAmountLocal);
-					
+					if(!bRFE){
+						List<RFE> rfes=RFE.getRfeForKons(b.getId());
+						StringBuilder sb=new StringBuilder();
+						for(RFE rfe:rfes){
+							sb.append("551_").append(rfe.getCode()).append(" ");
+						}
+						el.setAttribute(ATTR_REMARK,sb.toString());
+					}
 				}else if (v instanceof LaborLeistung) {
 					el = new Element(ELEMENT_RECORD_LAB, ns); // 28000
 					el.setAttribute(ATTR_TARIFF_TYPE, "316"); // 28060 //$NON-NLS-1$

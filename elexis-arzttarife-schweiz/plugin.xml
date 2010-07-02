@@ -59,6 +59,14 @@
             id="ch.elexis.arzttarife_ch.printview2"
             name="Rechnung Drucken">
       </view>
+      <view
+            allowMultiple="false"
+            category="ch.elexis.abrechnungKategorie"
+            class="ch.elexis.views.RFEView"
+            id="ch.elexis.arzttarife_ch.rfeView"
+            name="medkey-RFE"
+            restorable="true">
+      </view>
    </extension>
    <extension
          point="ch.elexis.RechnungsManager">

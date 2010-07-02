@@ -1,5 +1,5 @@
 %/*******************************************************************************
-% * Copyright (c) 2007-2009, G. Weirich
+% * Copyright (c) 2007-2010, G. Weirich
 % * All rights reserved. This program may not be distributed
 % * or modified without prior written consent
 % *
@@ -654,6 +654,44 @@ In der Schweiz müssen Rechnungen gemäss Krankenversicherungsgesetz (KVG), Unfa
 \end{description}
 
 \end{itemize}
+
+\subsubsection{medkey-RFE}
+Im Jahr 2009 haben medkey und die Ärztekasse eine zusätzliche Codierung pro Konsultationsgrund entwickelt; den Konsultationsgrund oder neudeutsch RFE (Reason for Encounter). Die Kollision mit dem identischen Akronym aus dem ICPC-System war wohl unbeabsichtigt, sorgt aber gleichwohl für Verwirrung. Wir verwenden hier deshalb ausschliesslich den Begriff \textit{medkey-RFE}. Wenn Sie nicht an einem TrustCenter angeschlosen sind, brauchen Sie diesen Abschnitt nicht zu lesen, da ausser manchem TrustCentern niemand die medkey-RFE auswertet.
+
+\medskip
+
+Man erhofft sich von diesem Code eine bessere statistische Erfassung der Konsultationsgründe, was möglicherweise helfen könnte, Forderungen nach Taxpunktsenkungen im Rahmen der DRG-Einführung abzuwehren. Wenn Sie medkey-RFE verwenden wollen, brauchen Sie nur die View \textit{medkey-RFE} zu öffnen. Wenn Sie eine Konsultation ausgewählt haben oder bearbeiten, können Sie mit der linken Maustaste den Konsultationsgrund auswählen \footnote{Sie können auch, durch Klicken mit gedrückter STRG-Taste, mehrere Konsultationsgründe auswählen, aber medkey wird nur den am weitesten oben stehenden auswerten.}.
+
+\medskip
+
+Sie können in der medkey-RFE-View je nach persönlichen Vorlieben eine längere oder eine kürzere Anzeige der einzelnen medkey-RFEs einstellen. Ausserdem können Sie sich eine einfache Statistik über die von Ihnen  verwendeten medeky-RFEs anzeigen lassen (Vgl. Abb. \ref{fig:rfe1} - \ref{fig:rfe3}).
+
+\begin{figure}[htbp]
+     \begin{minipage}{0.45\textwidth}
+      \centering
+       \includegraphics[width=0.95\textwidth]{rfe1}
+       \caption{Lang}
+       	\label{fig:rfe1}
+     \end{minipage}\hfill
+     \begin{minipage}{0.25\textwidth}
+      \centering
+       \includegraphics[width=0.95\textwidth]{rfe2}
+       \caption{Kurz}
+       \label{fig:rfe2}
+     \end{minipage}
+     \begin{minipage}{0.25\textwidth}
+      \centering
+       \includegraphics[width=0.95\textwidth]{rfe3}
+       \caption{Statistik}
+       \label{fig:rfe3}
+     \end{minipage}
+   \end{figure}
+   
+Beim Erstellen der Rechnung werden die medkey-RFE-Codes dann mit dem ersten Tarmed-Code der betreffenden Konsultation als 'remark' mitgeschickt. Das heisst auch: Sie können keine medkey-RFE übermitteln für eine Konsultation, die keine Tarmed-Positionen verrechnet hat.
+
+\medskip
+
+Auf der gedruckten Rechnung erscheint der medkey-RFE-Code nicht.
 
 \subsection{Eidgenössische Analysenliste (EAL)}
 Hier muss der Taxpunktwert unter \textsc{Datei-Einstellungen-Abrechnungssysteme-Labortarif} korrekt eingestellt werden.
