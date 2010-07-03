@@ -60,7 +60,7 @@ public class KonsExtension implements IKonsExtension {
 						BildImportDialog bid=new BildImportDialog(Desk.getTopShell(),iml);
 						if(bid.open()==Dialog.OK){
 							Bild bild=bid.result;
-							mine.insertXRef(-1, Messages.KonsExtension_Image+bild.get("Titel"), "bildanzeige", bild.getId()); //$NON-NLS-2$ //$NON-NLS-3$
+							mine.insertXRef(-1, Messages.KonsExtension_Image+bild.get("Titel"), "bildanzeige", bild.getId());  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						}
 						
 					}catch(Throwable t){
