@@ -6,7 +6,8 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *    G. Weirich - initial implementation
+ *    G. Weirich   - initial implementation
+ *    H. Marlovits - added support for placeholders inside controls
  *    
  *  $Id: NOAText.java 5548 2009-07-11 21:29:11Z tschaller $
  *******************************************************************************/
@@ -377,7 +378,7 @@ public class NOAText implements ITextPlugin {
 					if (StringTool.isNothing(replacement5)) replacement5 = null;
 					
 					// getting all the property names
-					
+					/*
 					if ((controlName.equalsIgnoreCase("FormattedField"))
 					||  (controlName.equalsIgnoreCase("FormattedField")))	{
 						XPropertySet sett = formComponent.getXPropertySet();
@@ -394,7 +395,7 @@ public class NOAText implements ITextPlugin {
 							System.out.println(propName + xPSet.getPropertyValue(prop.Name));
 						}
 					}
-					
+					*/
 					/**
 					 *  test if number of params ok,
 					 *  if error break, show error info in tag field for debugging purposes
