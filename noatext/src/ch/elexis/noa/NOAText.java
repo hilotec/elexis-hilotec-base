@@ -19,6 +19,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.LinkedList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
@@ -36,11 +38,14 @@ import ag.ion.bion.officelayer.document.DocumentException;
 import ag.ion.bion.officelayer.event.ICloseEvent;
 import ag.ion.bion.officelayer.event.ICloseListener;
 import ag.ion.bion.officelayer.event.IEvent;
+import ag.ion.bion.officelayer.form.IFormComponent;
+import ag.ion.bion.officelayer.form.IFormService;
 import ag.ion.bion.officelayer.text.ITextDocument;
 import ag.ion.bion.officelayer.text.ITextRange;
 import ag.ion.bion.officelayer.text.ITextTable;
 import ag.ion.bion.officelayer.text.table.ITextTablePropertyStore;
 import ag.ion.bion.workbench.office.editor.core.EditorCorePlugin;
+import ag.ion.noa.NOAException;
 import ag.ion.noa.search.ISearchResult;
 import ag.ion.noa.search.SearchDescriptor;
 import ag.ion.noa4e.ui.widgets.OfficePanel;
@@ -54,16 +59,22 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
+import ch.rgw.tools.TimeTool;
 
 import com.sun.star.awt.FontWeight;
 import com.sun.star.awt.Size;
+import com.sun.star.awt.XTextComponent;
+import com.sun.star.beans.Property;
 import com.sun.star.beans.PropertyValue;
 import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
+import com.sun.star.beans.XPropertySetInfo;
 import com.sun.star.drawing.XShape;
+import com.sun.star.form.FormComponentType;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.lang.XServiceInfo;
 import com.sun.star.style.ParagraphAdjust;
 import com.sun.star.text.HoriOrientation;
 import com.sun.star.text.RelOrientation;
@@ -297,6 +308,271 @@ public class NOAText implements ITextPlugin {
 				"Es ist keine Rechnungsvorlage definiert");
 			return false;
 		}
+		
+		
+		// *** START support for replacement of placeholders inside Forms/Controls
+		String cWrongNumOfArgs       = "*** Wrong number of arguments: Allowed number of arguments for this type of control: ";
+		String cWrongNumOfArgs_2     = " ***";
+		IFormService formService = doc.getFormService();
+		IFormComponent[] formComponents;
+		try {
+			formComponents = formService.getFormComponents();
+			for (int i = 0; i < formComponents.length; i++){	
+				try	{
+					IFormComponent formComponent = formComponents[i];
+					// *** read control name - this may contain a replacement instruction
+					XPropertySet xPSet = formComponent.getXPropertySet();
+					int componentType = getFormComponentType(xPSet);
+					String controlName = "";
+					try {
+						controlName = (String) xPSet.getPropertyValue("Name");
+					} catch (UnknownPropertyException e) {
+						break; // don't process if this can't be found
+					} catch (WrappedTargetException e) {
+						break; // don't process if this can't be found
+					}
+					
+					// *** get the replacement specification
+					String replacement = (String) xPSet.getPropertyValue("Tag");
+					
+					// *** do the replacement
+					if (cb != null) {
+						Pattern p = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE);
+						Matcher m = p.matcher(replacement);
+						StringBuffer sb = new StringBuffer(replacement.length() * 4);
+						while (m.find()) {
+							int start = m.start();
+							int end   = m.end();
+							String orig = replacement.substring(start, end);
+							Object replace = cb.replace(orig);
+							if (replace == null) {
+								m.appendReplacement(sb, "??Auswahl??");
+							} else if (replace instanceof String) {
+								String repl = ((String) replace).replaceAll("\\r", "\n");
+								repl = repl.replaceAll("\\n\\n+", "\n");
+								m.appendReplacement(sb, repl);
+							} else {
+								m.appendReplacement(sb, "Not a String");
+							}
+						}
+						m.appendTail(sb);
+						replacement = sb.toString();
+					}
+					
+					// *** must save into Tag field because called repeatedly with different replacements
+					xPSet.setPropertyValue("Tag", replacement);
+					
+					// *** split into parts
+					String[] replacementParts = replacement.split("@@@");
+					String replacement1 = replacementParts[0];
+					String replacement2 = replacementParts.length >=2 ? replacementParts[1] : null;
+					String replacement3 = replacementParts.length >=3 ? replacementParts[2] : null;
+					String replacement4 = replacementParts.length >=4 ? replacementParts[3] : null;
+					String replacement5 = replacementParts.length >=5 ? replacementParts[4] : null;
+					
+					if (StringTool.isNothing(replacement1)) replacement1 = null;
+					if (StringTool.isNothing(replacement2)) replacement2 = null;
+					if (StringTool.isNothing(replacement3)) replacement3 = null;
+					if (StringTool.isNothing(replacement4)) replacement4 = null;
+					if (StringTool.isNothing(replacement5)) replacement5 = null;
+					
+					// getting all the property names
+					
+					if ((controlName.equalsIgnoreCase("FormattedField"))
+					||  (controlName.equalsIgnoreCase("FormattedField")))	{
+						XPropertySet sett = formComponent.getXPropertySet();
+						XPropertySetInfo setinfo = sett.getPropertySetInfo();
+						Property[] props = setinfo.getProperties();
+						System.out.println(controlName);
+						for (int ii = 0; ii < props.length; ii++){
+							Property prop = props[ii];
+							String propName = prop.Name;
+							if (propName.equalsIgnoreCase("WritingMode"))	{
+								System.out.println();
+							}
+							propName = StringTool.pad(StringTool.RIGHTS, ' ', propName, 27);
+							System.out.println(propName + xPSet.getPropertyValue(prop.Name));
+						}
+					}
+					
+					/**
+					 *  test if number of params ok,
+					 *  if error break, show error info in tag field for debugging purposes
+					 */
+					String[] argumentsMapping = {
+							FormComponentType.PATTERNFIELD  + ":" + 1,
+							FormComponentType.FILECONTROL   + ":" + 1,
+							FormComponentType.RADIOBUTTON   + ":" + 1,
+							FormComponentType.CHECKBOX      + ":" + 1,
+							FormComponentType.COMMANDBUTTON + ":" + 1,
+							FormComponentType.FIXEDTEXT     + ":" + 1,
+							FormComponentType.GROUPBOX      + ":" + 1,
+							FormComponentType.IMAGEBUTTON   + ":" + 1,
+							FormComponentType.IMAGECONTROL  + ":" + 1,
+							FormComponentType.COMBOBOX      + ":" + 2,
+							FormComponentType.LISTBOX       + ":" + 2,
+							FormComponentType.DATEFIELD     + ":" + 3,
+							FormComponentType.TIMEFIELD     + ":" + 3,
+							FormComponentType.NUMERICFIELD  + ":" + 4,
+							FormComponentType.SPINBUTTON    + ":" + 4,
+							FormComponentType.CURRENCYFIELD + ":" + 4,
+							FormComponentType.SCROLLBAR     + ":" + 5
+					};
+					for (int argi = 0; argi < argumentsMapping.length; argi++)	{
+						String argMap = argumentsMapping[argi];
+						int argType      = Integer.parseInt(argMap.split(":")[0]);
+						int argNumOfArgs = Integer.parseInt(argMap.split(":")[1]);
+						if (componentType == argType)	{
+							String controlDefaultControl = (String) xPSet.getPropertyValue("DefaultControl");
+							if (controlDefaultControl.equalsIgnoreCase("com.sun.star.form.control.FormattedField"))	{
+								// *** special case FormattedField which is a text field
+								if (replacementParts.length > argNumOfArgs) xPSet.setPropertyValue("Tag", cWrongNumOfArgs + 3 + cWrongNumOfArgs_2);
+							} else	{
+								// *** "normal" fields
+								if (replacementParts.length > argNumOfArgs) xPSet.setPropertyValue("Tag", cWrongNumOfArgs + argNumOfArgs + cWrongNumOfArgs_2);
+							}
+							break;
+						}
+					}
+					
+					// if ComboBox or ListBox, then set list items if specified
+					if ((componentType == FormComponentType.COMBOBOX) || (componentType == FormComponentType.LISTBOX))	{
+						// *** if delimited by returns (coming from SQL-Select)
+						replacement2 = replacement2.replaceAll("\\n", ";");
+						if (replacement2 != null) xPSet.setPropertyValue("StringItemList",  replacement2.split(";"));
+					}
+					
+					switch (componentType)	{
+						case (FormComponentType.TEXTFIELD):
+						case (FormComponentType.COMBOBOX):
+						case (FormComponentType.PATTERNFIELD):
+						case (FormComponentType.FILECONTROL):
+							String controlDefaultControl = (String) xPSet.getPropertyValue("DefaultControl");
+							if (controlDefaultControl.equalsIgnoreCase("com.sun.star.form.control.FormattedField"))	{
+								// *** FormattedField
+								if (isInteger(replacement1)) xPSet.setPropertyValue("EffectiveValue", new Short((short) Integer.parseInt(replacement1)));
+								if (isInteger(replacement2)) xPSet.setPropertyValue("EffectiveMin",   new Short((short) Integer.parseInt(replacement2)));
+								if (isInteger(replacement3)) xPSet.setPropertyValue("EffectiveMax",   new Short((short) Integer.parseInt(replacement3)));
+							} else	{
+								// *** simple text field
+								XTextComponent xTextComponent = formComponent.getXTextComponent();
+								if (replacement1 != null) xTextComponent.setText(replacement1);
+							}
+							break;
+						case (FormComponentType.DATEFIELD):
+							TimeTool timeTool = new TimeTool();
+							// *** set date
+							if (timeTool.set(replacement1))	{
+								String yyyymmddDate = timeTool.toString(TimeTool.DATE_COMPACT);
+								if (!StringTool.isNothing(yyyymmddDate)) xPSet.setPropertyValue("Date", Integer.parseInt(yyyymmddDate));
+							}
+							// *** set DateMin
+							if (timeTool.set(replacement2))	{
+								String yyyymmddDate = timeTool.toString(TimeTool.DATE_COMPACT);
+								if (!StringTool.isNothing(yyyymmddDate)) xPSet.setPropertyValue("DateMin", Integer.parseInt(yyyymmddDate));
+							}
+							// *** set DateMax
+							if (timeTool.set(replacement3))	{
+								String yyyymmddDate = timeTool.toString(TimeTool.DATE_COMPACT);
+								if (!StringTool.isNothing(yyyymmddDate)) xPSet.setPropertyValue("DateMax", Integer.parseInt(yyyymmddDate));
+							}
+							break;
+						case (FormComponentType.TIMEFIELD):
+							TimeTool timeTool2 = new TimeTool();
+							// *** set time
+							if (timeTool2.set(replacement1))	{
+								String hhmmssTime = timeTool2.toString(TimeTool.TIME_FULL);
+								hhmmssTime = hhmmssTime.replaceAll(":", "") + "00";
+								if (!StringTool.isNothing(hhmmssTime)) xPSet.setPropertyValue("Time", Integer.parseInt(hhmmssTime));
+							}
+							// *** set TimeMin
+							if (timeTool2.set(replacement2))	{
+								String hhmmssTime = timeTool2.toString(TimeTool.TIME_FULL);
+								hhmmssTime = hhmmssTime.replaceAll(":", "") + "00";
+								if (!StringTool.isNothing(hhmmssTime))xPSet.setPropertyValue("TimeMin", Integer.parseInt(hhmmssTime));
+							}
+							// *** set TimeMax
+							if (timeTool2.set(replacement3))	{
+								String hhmmssTime = timeTool2.toString(TimeTool.TIME_FULL);
+								hhmmssTime = hhmmssTime.replaceAll(":", "") + "00";
+								if (!StringTool.isNothing(hhmmssTime)) xPSet.setPropertyValue("TimeMax", Integer.parseInt(hhmmssTime));
+							}
+							break;
+						case (FormComponentType.NUMERICFIELD):
+						case (FormComponentType.CURRENCYFIELD):
+							if (isInteger(replacement1)) xPSet.setPropertyValue("Value",     new Short((short) Integer.parseInt(replacement1)));
+							if (isInteger(replacement2)) xPSet.setPropertyValue("ValueMin",  new Short((short) Integer.parseInt(replacement2)));
+							if (isInteger(replacement3)) xPSet.setPropertyValue("ValueMax",  new Short((short) Integer.parseInt(replacement3)));
+							if (isInteger(replacement4)) xPSet.setPropertyValue("ValueStep", new Short((short) Integer.parseInt(replacement4)));
+							break;
+						case (FormComponentType.RADIOBUTTON):
+						case (FormComponentType.CHECKBOX):
+							if (isInteger(replacement1))  xPSet.setPropertyValue("State", new Short((short) Integer.parseInt(replacement1)));
+							break;
+						case (FormComponentType.COMMANDBUTTON):
+						case (FormComponentType.FIXEDTEXT):
+						case (FormComponentType.GROUPBOX):
+							if (replacement1 != null) xPSet.setPropertyValue("Label", replacement1);
+							break;
+						case (FormComponentType.LISTBOX):
+							// *** if delimited by returns (coming from SQL-Select)
+							replacement1 = replacement1.replaceAll("\\n", ";");
+							// *** create short[] from replacement1
+							String[] splittedArgs = replacement1.split(";");
+							short[] shortList = new short[splittedArgs.length];
+							for (int argsi = 0; argsi < splittedArgs.length; argsi++)	{
+								String argStr = splittedArgs[argsi];
+								if (isInteger(argStr))	{
+									short arg = (short) Integer.parseInt(argStr);
+									shortList[argsi] = arg;
+								}
+							}
+							if (replacement1 != null) xPSet.setPropertyValue("SelectedItems", shortList);
+							break;
+						case (FormComponentType.SPINBUTTON):
+							if (isInteger(replacement1)) xPSet.setPropertyValue("SpinValue",     new Short((short) Integer.parseInt(replacement1)));
+							if (isInteger(replacement2)) xPSet.setPropertyValue("SpinValueMin",  new Short((short) Integer.parseInt(replacement2)));
+							if (isInteger(replacement3)) xPSet.setPropertyValue("SpinValueMax",  new Short((short) Integer.parseInt(replacement3)));
+							if (isInteger(replacement4)) xPSet.setPropertyValue("SpinIncrement", new Short((short) Integer.parseInt(replacement4)));
+							break;
+						case (FormComponentType.SCROLLBAR):
+							if (isInteger(replacement1)) xPSet.setPropertyValue("ScrollValue",    new Short((short) Integer.parseInt(replacement1)));
+							if (isInteger(replacement2)) xPSet.setPropertyValue("ScrollValueMin", new Short((short) Integer.parseInt(replacement2)));
+							if (isInteger(replacement3)) xPSet.setPropertyValue("ScrollValueMax", new Short((short) Integer.parseInt(replacement3)));
+							if (isInteger(replacement4)) xPSet.setPropertyValue("LineIncrement",  new Short((short) Integer.parseInt(replacement4)));
+							if (isInteger(replacement5)) xPSet.setPropertyValue("BlockIncrement", new Short((short) Integer.parseInt(replacement5)));
+							break;
+						case (FormComponentType.IMAGEBUTTON):
+						case (FormComponentType.IMAGECONTROL):
+							//++++ doesn't work correctly... hmmmm... can anyone tell me how to get this to work???
+							if (replacement1 != null) xPSet.setPropertyValue("ImageURL", replacement1);
+							xPSet.setPropertyValue("ScaleImage", Boolean.FALSE);
+							//xPSet.setPropertyValue("ScaleImage", Boolean.TRUE);
+							//xPSet.setPropertyValue("Width", new Integer(200));
+							break;
+					}
+				} catch (NOAException e) {
+					e.printStackTrace();
+				} catch (UnknownPropertyException e) {
+					e.printStackTrace();
+				} catch (PropertyVetoException e) {
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					e.printStackTrace();
+				} catch (WrappedTargetException e) {
+					e.printStackTrace();
+				} catch (Exception e)	{
+					
+				}
+			}
+		} catch (NOAException e1) {
+			e1.printStackTrace();
+		} catch (Exception e1) {
+			// *** catch just everything so that the proc is going on...
+			e1.printStackTrace();
+		}
+		// *** END support for replacement of placeholders inside Forms/Controls
+		
 		ISearchResult searchResult = doc.getSearchService().findAll(search);
 		if (!searchResult.isEmpty()) {
 			ITextRange[] textRanges = searchResult.getTextRanges();
@@ -347,6 +623,37 @@ public class NOAText implements ITextPlugin {
 		}
 		return false;
 	}
+	
+	
+	public boolean isInteger(String input)	{  
+		try	{  
+			Integer.parseInt(input);
+			return true;  
+		} catch(Exception e) {
+			return false;
+			}
+		}  
+	
+	/** retrieves the type of a form component.
+	*/
+	static public int getFormComponentType(XPropertySet xComponent)	{
+	    XPropertySetInfo xPSI = null;
+	    if (null != xComponent)
+	        xPSI = xComponent.getPropertySetInfo();
+	    
+	    if ((null != xPSI) && xPSI.hasPropertyByName("ClassId")) {
+	        // get the ClassId property
+	        XPropertySet xCompProps = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, xComponent);
+			try {
+				return (Short)xCompProps.getPropertyValue("ClassId");
+			} catch (UnknownPropertyException e) {
+				e.printStackTrace();
+			} catch (WrappedTargetException e) {
+				e.printStackTrace();
+			}
+	     }
+	    return 0;
+		}	
 	
 	public PageFormat getFormat(){
 		return ITextPlugin.PageFormat.USER;
