@@ -130,7 +130,7 @@ public class Person extends Kontakt {
 			}
 			dat = gebDat.toString(TimeTool.DATE_COMPACT);
 		}
-		if (!s.matches("[mw]")) { //$NON-NLS-1$
+		if(!s.equalsIgnoreCase(Person.MALE) && !s.equalsIgnoreCase(Person.FEMALE)){
 			throw new PersonDataException(PersonDataException.CAUSE.SEX);
 		}
 		create(null);

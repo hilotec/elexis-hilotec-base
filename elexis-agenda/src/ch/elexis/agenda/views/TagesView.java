@@ -151,7 +151,7 @@ public class TagesView extends BaseAgendaView {
 				.setFont(Desk
 						.getFont(ch.elexis.preferences.PreferenceConstants.USR_SMALLFONT));
 		lCreator.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		lCreator.setText(" - ");
+		lCreator.setText(" - "); //$NON-NLS-1$
 
 		sash.setWeights(new int[] { 80, 20 });
 		makePrivateActions();
@@ -207,9 +207,9 @@ public class TagesView extends BaseAgendaView {
 					if (p instanceof Termin) {
 						String grund = ((Termin) p).getGrund();
 						if (!StringTool.isNothing(grund)) {
-							String[] tokens = grund.split("[\n\r]+");
+							String[] tokens = grund.split("[\n\r]+"); //$NON-NLS-1$
 							if (tokens.length > 0) {
-								sb.append(", " + tokens[0]);
+								sb.append(", " + tokens[0]); //$NON-NLS-1$
 							}
 						}
 					}
@@ -245,7 +245,7 @@ public class TagesView extends BaseAgendaView {
 				.append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
 		tDetail.setText(sb.toString());
 		sb.setLength(0);
-		sb.append(StringTool.unNull(t.get("ErstelltVon"))).append("/").append(
+		sb.append(StringTool.unNull(t.get("ErstelltVon"))).append("/").append( //$NON-NLS-2$
 				t.getCreateTime().toString(TimeTool.FULL_GER));
 		lCreator.setText(sb.toString());
 		agenda.dispatchTermin(t);
@@ -253,12 +253,12 @@ public class TagesView extends BaseAgendaView {
 	}
 
 	private void makePrivateActions() {
-		newViewAction = new Action("Neues Fenster") {
+		newViewAction = new Action(Messages.TagesView_newWindow) {
 			@Override
 			public void run() {
 				try {
 					getViewSite().getPage().showView(ID,
-							StringTool.unique("Agenda"),
+							StringTool.unique("Agenda"), //$NON-NLS-1$
 							IWorkbenchPage.VIEW_VISIBLE);
 				} catch (PartInitException e) {
 					ExHandler.handle(e);

@@ -39,7 +39,7 @@ import ch.rgw.tools.TimeTool;
 public final class Plannables {
 	private Plannables(){}
 	
-	private static DecimalFormat df = new DecimalFormat("00");
+	private static DecimalFormat df = new DecimalFormat("00"); //$NON-NLS-1$
 	
 	/** Feststellen, ob zwei Plannables sich überlappen */
 	public static boolean isOverlapped(IPlannable p1, IPlannable p2){
@@ -118,7 +118,7 @@ public final class Plannables {
 			tt.add(TimeTool.MINUTE, p.getStartMinute());
 			
 			TimeSpan o = new TimeSpan(tt, p.getDurationInMinutes());
-			System.out.println(ts.dump() + " / " + o.dump());
+			System.out.println(ts.dump() + " / " + o.dump()); //$NON-NLS-1$
 			if (ts.overlap(o) != null) {
 				return true;
 			}
@@ -129,7 +129,7 @@ public final class Plannables {
 	/** Die einem Plannable-Typ zugeordnete Farbe holen */
 	public static Color getTypColor(IPlannable p){
 		String coldesc =
-			Hub.userCfg.get(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(), "FFFFFF");
+			Hub.userCfg.get(PreferenceConstants.AG_TYPCOLOR_PREFIX + p.getType(), "FFFFFF"); //$NON-NLS-1$
 		return Desk.getColorFromRGB(coldesc);
 		/*
 		 * if(p.getType().equals(Termin.typReserviert())){ return
@@ -162,7 +162,7 @@ public final class Plannables {
 			return Desk.getColor(Desk.COL_BLACK);
 		}
 		String coldesc =
-			Hub.userCfg.get(PreferenceConstants.AG_STATCOLOR_PREFIX + p.getStatus(), "000000");
+			Hub.userCfg.get(PreferenceConstants.AG_STATCOLOR_PREFIX + p.getStatus(), "000000"); //$NON-NLS-1$
 		return Desk.getColorFromRGB(coldesc);
 	}
 	
@@ -172,7 +172,7 @@ public final class Plannables {
 		int h = s / 60;
 		int m = s % 60;
 		StringBuilder sb = new StringBuilder();
-		sb.append(df.format(h)).append(":").append(df.format(m));
+		sb.append(df.format(h)).append(":").append(df.format(m)); //$NON-NLS-1$
 		return sb.toString();
 	}
 	
@@ -182,7 +182,7 @@ public final class Plannables {
 		int h = s / 60;
 		int m = s % 60;
 		StringBuilder sb = new StringBuilder();
-		sb.append(df.format(h)).append(":").append(df.format(m));
+		sb.append(df.format(h)).append(":").append(df.format(m)); //$NON-NLS-1$
 		return sb.toString();
 	}
 	
@@ -225,7 +225,7 @@ public final class Plannables {
 		}
 		List list = qbe.execute();
 		if (list == null) {
-			Activator.log.log("Datenbankstrukturfehler, kann nicht laden (211)", Log.ERRORS);
+			Activator.log.log(Messages.Plannables_databaseError, Log.ERRORS);
 			return new ArrayList<IPlannable>();
 		}
 		if (list.isEmpty()) {
@@ -233,12 +233,12 @@ public final class Plannables {
 			int d = date.get(Calendar.DAY_OF_WEEK);
 			String ds = map.get(TimeTool.wdays[d - 1]);
 			if (StringTool.isNothing(ds)) {
-				ds = "0000-0800\n1800-2359";
+				ds = "0000-0800\n1800-2359"; //$NON-NLS-1$
 			}
-			String[] flds = ds.split("\r*\n\r*");
+			String[] flds = ds.split("\r*\n\r*"); //$NON-NLS-1$
 			for (String fld : flds) {
 				String from = fld.substring(0, 4);
-				String until = fld.replaceAll("-", "").substring(4);
+				String until = fld.replaceAll("-", "").substring(4); //$NON-NLS-1$ //$NON-NLS-2$
 				list.add(new Termin(bereich, date.toString(TimeTool.DATE_COMPACT), TimeTool
 					.getMinutesFromTimeString(from), TimeTool.getMinutesFromTimeString(until),
 					Termin.typReserviert(), Termin.statusLeer()));
@@ -333,20 +333,20 @@ public final class Plannables {
 	public static Hashtable<String, String> getTimePrefFor(String mandantLabel){
 		Hashtable<String, String> map = new Hashtable<String, String>();
 		String mTimes =
-			Hub.globalCfg.get(PreferenceConstants.AG_TIMEPREFERENCES + "/" + mandantLabel, "");
+			Hub.globalCfg.get(PreferenceConstants.AG_TIMEPREFERENCES + "/" + mandantLabel, ""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (!StringTool.isNothing(mTimes)) {
-			String[] types = mTimes.split("::");
+			String[] types = mTimes.split("::"); //$NON-NLS-1$
 			for (String t : types) {
-				String[] line = t.split("=");
+				String[] line = t.split("="); //$NON-NLS-1$
 				if (line.length != 2) {
-					Hub.log.log("Fehler in der Terminangabe " + mTimes, Log.WARNINGS);
+					Hub.log.log(Messages.Plannables_errorInAppointmentText + mTimes, Log.WARNINGS);
 					continue;
 				}
 				map.put(line[0], line[1]);
 			}
 		}
-		if (map.get("std") == null) {
-			map.put("std", "30");
+		if (map.get("std") == null) { //$NON-NLS-1$
+			map.put("std", "30"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return map;
 	}
@@ -356,25 +356,25 @@ public final class Plannables {
 		Enumeration<String> keys = map.keys();
 		while (keys.hasMoreElements()) {
 			String k = keys.nextElement();
-			e.append(k).append("=").append(map.get(k));
+			e.append(k).append("=").append(map.get(k)); //$NON-NLS-1$
 			if (keys.hasMoreElements()) {
-				e.append("::");
+				e.append("::"); //$NON-NLS-1$
 			}
 		}
 		Hub.globalCfg
-			.set(PreferenceConstants.AG_TIMEPREFERENCES + "/" + mandantLabel, e.toString());
+			.set(PreferenceConstants.AG_TIMEPREFERENCES + "/" + mandantLabel, e.toString()); //$NON-NLS-1$
 	}
 	
 	@SuppressWarnings("unchecked")
 	public static Hashtable<String, String> getDayPrefFor(String mandantLabel){
 		Hashtable<String, String> map =
-			StringTool.foldStrings(Hub.globalCfg.get(PreferenceConstants.AG_DAYPREFERENCES + "/"
+			StringTool.foldStrings(Hub.globalCfg.get(PreferenceConstants.AG_DAYPREFERENCES + "/" //$NON-NLS-1$
 				+ mandantLabel, null));
 		return map == null ? new Hashtable<String, String>() : map;
 	}
 	
 	public static void setDayPrefFor(String mandantLabel, Hashtable<String, String> map){
 		String flat = StringTool.flattenStrings(map);
-		Hub.globalCfg.set(PreferenceConstants.AG_DAYPREFERENCES + "/" + mandantLabel, flat);
+		Hub.globalCfg.set(PreferenceConstants.AG_DAYPREFERENCES + "/" + mandantLabel, flat); //$NON-NLS-1$
 	}
 }

@@ -104,11 +104,11 @@ public class AgendaParallel extends BaseView {
 	public String[] getDisplayedResources(){
 		String resources =
 			Hub.localCfg.get(PreferenceConstants.AG_RESOURCESTOSHOW, StringTool.join(agenda
-				.getResources(), ","));
+				.getResources(), ",")); //$NON-NLS-1$
 		if (resources == null) {
 			return new String[0];
 		} else {
-			return resources.split(",");
+			return resources.split(","); //$NON-NLS-1$
 		}
 	}
 	
@@ -119,7 +119,7 @@ public class AgendaParallel extends BaseView {
 	protected void refresh(){
 		showCalendarAction.setText(agenda.getActDate().toString(
 				TimeTool.WEEKDAY)
-				+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER));
+				+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER)); //$NON-NLS-1$
 		sheet.refresh();
 		wrapper.layout();
 		getViewSite().getActionBars().getToolBarManager().update(true);
@@ -128,9 +128,9 @@ public class AgendaParallel extends BaseView {
 
 	
 	private void makePrivateActions(){
-		dayFwdAction = new Action("Tag vorwärts") {
+		dayFwdAction = new Action(Messages.AgendaParallel_dayForward) {
 			{
-				setToolTipText("Nächsten Tag anzeigen");
+				setToolTipText(Messages.AgendaParallel_showNextDay);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEXT));
 			}
 
@@ -144,9 +144,9 @@ public class AgendaParallel extends BaseView {
 			}
 		};
 
-		dayBackAction = new Action("Tag zurück") {
+		dayBackAction = new Action(Messages.AgendaParallel_dayBack) {
 			{
-				setToolTipText("Vorherigen Tag anzeigen");
+				setToolTipText(Messages.AgendaParallel_showPreviousDay);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PREVIOUS));
 			}
 
@@ -160,9 +160,9 @@ public class AgendaParallel extends BaseView {
 				refresh();
 			}
 		};
-		showCalendarAction = new Action("Tag auswählen") {
+		showCalendarAction = new Action(Messages.AgendaParallel_selectDay) {
 			{
-				setToolTipText("Einen Kalender zur Auswahl des Tages anzeigen");
+				setToolTipText(Messages.AgendaParallel_showCalendarForSelcetion);
 				// setImageDescriptor(Activator.getImageDescriptor("icons/calendar.png"));
 			}
 
@@ -181,11 +181,11 @@ public class AgendaParallel extends BaseView {
 			}
 		};
 
-		final IAction zoomAction=new Action("Zoom",Action.AS_DROP_DOWN_MENU){
+		final IAction zoomAction=new Action(Messages.AgendaParallel_zoom,Action.AS_DROP_DOWN_MENU){
 			Menu mine;
 			{
-				setToolTipText("Massstab einstellen");
-				setImageDescriptor(Activator.getImageDescriptor("icons/zoom.png"));
+				setToolTipText(Messages.AgendaParallel_setZoomFactor);
+				setImageDescriptor(Activator.getImageDescriptor("icons/zoom.png")); //$NON-NLS-1$
 				setMenuCreator(new IMenuCreator(){
 
 					public void dispose() {
@@ -205,15 +205,15 @@ public class AgendaParallel extends BaseView {
 					}});
 			}
 			private void fillMenu(){
-				for(String s:new String[]{"40","60","80","100","120","140","160","200","300"}){
+				for(String s:new String[]{"40","60","80","100","120","140","160","200","300"}){ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 					MenuItem it=new MenuItem(mine,SWT.RADIO);
-					it.setText(s+"%");
+					it.setText(s+"%"); //$NON-NLS-1$
 					it.addSelectionListener(new SelectionAdapter(){
 
 						@Override
 						public void widgetSelected(SelectionEvent e) {
 							MenuItem mi=(MenuItem)e.getSource();
-							int scale=Integer.parseInt(mi.getText().split("%")[0]);
+							int scale=Integer.parseInt(mi.getText().split("%")[0]); //$NON-NLS-1$
 							double factor=scale/100.0;
 							Hub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE, Double.toString(factor));
 							sheet.recalc();
@@ -231,6 +231,6 @@ public class AgendaParallel extends BaseView {
 		tmr.add(dayFwdAction);
 		tmr.add(new Separator());
 		tmr.add(zoomAction);
-		tmr.add(new Separator("agenda_right"));
+		tmr.add(new Separator("agenda_right")); //$NON-NLS-1$
 	}
 }

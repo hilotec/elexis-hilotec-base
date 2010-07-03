@@ -37,7 +37,7 @@ public class Tageseinteilung extends PreferencePage implements
 	
 	public Tageseinteilung() {
 		super(Messages.Tageseinteilung_dayPlanning); 
-		bereiche=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.Tageseinteilung_praxis).split(","); 
+		bereiche=Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.Tageseinteilung_praxis).split(",");  //$NON-NLS-1$
 		actBereich=0;
 	}
 

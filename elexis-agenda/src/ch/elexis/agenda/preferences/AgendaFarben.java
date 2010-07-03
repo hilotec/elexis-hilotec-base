@@ -64,8 +64,8 @@ public class AgendaFarben extends PreferencePage implements
         Group top=new Group(par,SWT.BORDER);
         Group bottom=new Group(par,SWT.BORDER);
         String[] typ=Termin.TerminTypes;
-        top.setText("Termin-Typen");
-        bottom.setText("Terminstatus-Arten");
+        top.setText(Messages.AgendaFarben_appTypes);
+        bottom.setText(Messages.AgendaFarben_appstateTypes);
         int num=typ.length;
         typRows=((int)Math.sqrt(num));
         typCols=(num-(typRows*typRows));

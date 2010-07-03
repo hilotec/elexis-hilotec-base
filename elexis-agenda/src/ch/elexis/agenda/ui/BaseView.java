@@ -64,7 +64,7 @@ import ch.rgw.tools.TimeTool;
  */
 public abstract class BaseView extends ViewPart implements HeartListener,
 		IActivationListener {
-	private static final String DEFAULT_PIXEL_PER_MINUTE = "1.0";
+	private static final String DEFAULT_PIXEL_PER_MINUTE = "1.0"; //$NON-NLS-1$
 
 	public IAction newTerminAction, blockAction;
 	public IAction dayLimitsAction, newViewAction, printAction, exportAction,
@@ -132,12 +132,12 @@ public abstract class BaseView extends ViewPart implements HeartListener,
 			int d = date.get(Calendar.DAY_OF_WEEK);
 			String ds = map.get(TimeTool.wdays[d - 1]);
 			if (StringTool.isNothing(ds)) {
-				ds = "0000-0800\n1800-2359";
+				ds = "0000-0800\n1800-2359"; //$NON-NLS-1$
 			}
-			String[] flds = ds.split("\r*\n\r*");
+			String[] flds = ds.split("\r*\n\r*"); //$NON-NLS-1$
 			for (String fld : flds) {
 				String from = fld.substring(0, 4);
-				String until = fld.replaceAll("-", "").substring(4);
+				String until = fld.replaceAll("-", "").substring(4); //$NON-NLS-1$ //$NON-NLS-2$
 				new Termin(resource, day, TimeTool
 						.getMinutesFromTimeString(from), TimeTool
 						.getMinutesFromTimeString(until), Termin
@@ -199,7 +199,7 @@ public abstract class BaseView extends ViewPart implements HeartListener,
 	}
 
 	protected void makeActions() {
-		dayLimitsAction = new Action("Tagesgrenzen") {
+		dayLimitsAction = new Action(Messages.BaseView_dayLimits) {
 			@Override
 			public void run() {
 				new TagesgrenzenDialog(PlatformUI.getWorkbench()
@@ -239,10 +239,10 @@ public abstract class BaseView extends ViewPart implements HeartListener,
 				internalRefresh();
 			}
 		};
-		printAction = new Action("Tagesliste drucken") {
+		printAction = new Action(Messages.BaseView_printDayPaapintments) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
-				setToolTipText("Termine des gewählten Tages ausdrucken");
+				setToolTipText(Messages.BaseView_printAPpointmentsOfSelectedDay);
 			}
 
 			@Override
@@ -254,10 +254,10 @@ public abstract class BaseView extends ViewPart implements HeartListener,
 				internalRefresh();
 			}
 		};
-		printPatientAction = new Action("Patienten-Termine drucken") {
+		printPatientAction = new Action(Messages.BaseView_printAppointments) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
-				setToolTipText("Zukünftige Termine des ausgewählten Patienten drucken");
+				setToolTipText(Messages.BaseView_printFutureAppointmentsOfSelectedPatient);
 			}
 
 			@Override
@@ -288,8 +288,8 @@ public abstract class BaseView extends ViewPart implements HeartListener,
 							} else {
 								SWTHelper
 										.alert(
-												"Fehler beim Drucken",
-												"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+												Messages.BaseView_errorWhilePrinting,
+												Messages.BaseView_errorHappendPrinting);
 							}
 						} else {
 							dlg.setBlockOnOpen(true);
@@ -299,9 +299,9 @@ public abstract class BaseView extends ViewPart implements HeartListener,
 				}
 			}
 		};
-		exportAction = new Action("Agenda exportieren") {
+		exportAction = new Action(Messages.BaseView_exportAgenda) {
 			{
-				setToolTipText("Termine eines Bereichs exportieren");
+				setToolTipText(Messages.BaseView_exportAppojntmentsOfMandator);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_GOFURTHER));
 			}
 
@@ -313,9 +313,9 @@ public abstract class BaseView extends ViewPart implements HeartListener,
 			}
 		};
 
-		importAction = new Action("Termine importieren") {
+		importAction = new Action(Messages.BaseView_importAgenda) {
 			{
-				setToolTipText("Termine aus einer iCal-Datei importieren");
+				setToolTipText(Messages.BaseView_importFromICal);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
 			}
 
@@ -326,11 +326,11 @@ public abstract class BaseView extends ViewPart implements HeartListener,
 			}
 		};
 
-		todayAction = new Action("heute") {
+		todayAction = new Action(Messages.BaseView_today) {
 			{
-				setToolTipText("heutigen Tag anzeigen");
+				setToolTipText(Messages.BaseView_showToday);
 				setImageDescriptor(Activator
-						.getImageDescriptor("icons/calendar_view_day.png"));
+						.getImageDescriptor("icons/calendar_view_day.png")); //$NON-NLS-1$
 			}
 
 			@Override

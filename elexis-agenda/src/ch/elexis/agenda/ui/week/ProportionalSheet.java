@@ -77,7 +77,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 
 			@Override
 			public void mouseDoubleClick(MouseEvent e) {
-				String resource = "";
+				String resource = ""; //$NON-NLS-1$
 				for (int i = 0; i < resources.length; i++) {
 					double lower = left_offset + i * (widthPerColumn + padding);
 					double upper = lower + widthPerColumn;
@@ -110,7 +110,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 
 			@Override
 			public void mouseDown(MouseEvent e) {
-				System.out.println("mousdown");
+				System.out.println("mousdown"); //$NON-NLS-1$
 				super.mouseDown(e);
 			}
 
@@ -196,7 +196,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 				}
 				resources = view.getDisplayedDays();
 				int count = resources.length;
-				Point textSize = SWTHelper.getStringBounds(this, "88:88");
+				Point textSize = SWTHelper.getStringBounds(this, "88:88"); //$NON-NLS-1$
 				textWidth = textSize.x;
 				left_offset = textWidth + 2;
 				sheetWidth = mySize.x - 2 * left_offset - barWidth;
@@ -235,9 +235,9 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 			gc.fillRectangle(e.x, e.y, e.width, e.height);
 			int y = 0;
 			TimeTool runner = new TimeTool();
-			runner.set("00:00");
-			TimeTool limit = new TimeTool("23:59");
-			Point textSize = gc.textExtent("88:88");
+			runner.set("00:00"); //$NON-NLS-1$
+			TimeTool limit = new TimeTool("23:59"); //$NON-NLS-1$
+			Point textSize = gc.textExtent("88:88"); //$NON-NLS-1$
 			int textwidth = textSize.x;
 
 			int quarter = (int) Math.round(15.0 * BaseView

@@ -41,7 +41,7 @@ public class Activator extends AbstractUIPlugin {
 	private static Activator plugin;
 	
 	public static Log log = Log.get("Agenda"); //$NON-NLS-1$
-	public static final String IMG_HOME = "ch.elexis.agenda.home";
+	public static final String IMG_HOME = "ch.elexis.agenda.home"; //$NON-NLS-1$
 	private String actResource;
 	private TimeTool actDate;
 	
@@ -61,7 +61,7 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		AgendaActions.makeActions();
 		// log.log("activated", Log.DEBUGMSG);
-		Desk.getImageRegistry().put(IMG_HOME, getImageDescriptor("icons/calendar_view_day.png"));
+		Desk.getImageRegistry().put(IMG_HOME, getImageDescriptor("icons/calendar_view_day.png")); //$NON-NLS-1$
 	}
 	
 	
@@ -87,7 +87,7 @@ public class Activator extends AbstractUIPlugin {
 	}
 	
 	public String[] getResources(){
-		return Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(",");
+		return Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
 	}
 	
 	public String getActResource(){

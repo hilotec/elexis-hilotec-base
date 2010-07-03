@@ -53,7 +53,7 @@ public class AgendaDruck extends PreferencePage implements
 	PrinterSelector psel;
 	 
     public AgendaDruck() {
-        setDescription("Einstellungen für Agenda-Ausdruck");
+        setDescription(Messages.AgendaDruck_settingsForPrint);
     }
 
     @Override
@@ -61,13 +61,13 @@ public class AgendaDruck extends PreferencePage implements
 		psel=new PrinterSelector();
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new GridLayout(3,false));
-		new Label(ret, SWT.NONE).setText("Systemvorlage für Terminkarten");
+		new Label(ret, SWT.NONE).setText(Messages.AgendaDruck_templateForCards);
 		cTerminTemplate = new Combo(ret, SWT.READ_ONLY);
 		cTerminTemplate.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
 		bDirectPrint = new Button(ret, SWT.CHECK);
 		bDirectPrint.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
-		bDirectPrint.setText("Direkt drucken, ohne Bestätigung");
+		bDirectPrint.setText(Messages.AgendaDruck_printDirectly);
 		bDirectPrint.addSelectionListener(new SelectionListener() {
 			public void widgetSelected(SelectionEvent e) {
 				refreshDirectPrint();
@@ -82,16 +82,16 @@ public class AgendaDruck extends PreferencePage implements
 		cPrinterArea.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		cPrinterArea.setLayout(new GridLayout(3, false));
 		
-		new Label(cPrinterArea,SWT.NONE).setText("Drucker für Terminkarten");
+		new Label(cPrinterArea,SWT.NONE).setText(Messages.AgendaDruck_printerForCards);
 		tTerminPrinter=new Text(cPrinterArea,SWT.BORDER|SWT.READ_ONLY);
 		tTerminPrinter.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		tTerminPrinter.setData("TerminPrinter");
+		tTerminPrinter.setData("TerminPrinter"); //$NON-NLS-1$
 		bTerminPrinterButton=new Button(cPrinterArea,SWT.PUSH);
-		bTerminPrinterButton.setText(" ->");
+		bTerminPrinterButton.setText(" ->"); //$NON-NLS-1$
 		bTerminPrinterButton.setData(tTerminPrinter);
 		bTerminPrinterButton.addSelectionListener(psel);
 		
-		new Label(cPrinterArea,SWT.NONE).setText("Schacht für Terminkarten");
+		new Label(cPrinterArea,SWT.NONE).setText(Messages.AgendaDruck_TrayForCards);
 		tTerminTray=new Text(cPrinterArea,SWT.BORDER);
 		tTerminTray.setLayoutData(SWTHelper.getFillGridData(2,true,1,false));
 		
@@ -130,8 +130,8 @@ public class AgendaDruck extends PreferencePage implements
     private void setInitialValues() {
         setTemplates();
         
-        tTerminPrinter.setText(Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_NAME, ""));
-        tTerminTray.setText(Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY, ""));
+        tTerminPrinter.setText(Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_NAME, "")); //$NON-NLS-1$
+        tTerminTray.setText(Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY, "")); //$NON-NLS-1$
         
         boolean directPrint = Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT,
         		PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT);

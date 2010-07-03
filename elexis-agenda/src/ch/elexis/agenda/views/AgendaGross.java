@@ -68,7 +68,7 @@ import com.tiff.common.ui.datepicker.DatePicker;
  * 
  */
 public class AgendaGross extends BaseAgendaView {
-	public static final String ID = "ch.elexis.agenda.largeview";
+	public static final String ID = "ch.elexis.agenda.largeview"; //$NON-NLS-1$
 	DatePicker cal;
 	Composite cButtons;
 	Composite right;
@@ -101,7 +101,7 @@ public class AgendaGross extends BaseAgendaView {
 		fdRight.bottom = new FormAttachment(100, -5);
 		right.setLayoutData(fdRight);
 		String[] bereiche = Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE,
-				Messages.TagesView_14).split(",");
+				Messages.TagesView_14).split(","); //$NON-NLS-1$
 		ChangeBereichAdapter chb = new ChangeBereichAdapter();
 		for (String bereich : bereiche) {
 			Button bChange = new Button(cButtons, SWT.RADIO);
@@ -128,7 +128,7 @@ public class AgendaGross extends BaseAgendaView {
 		cal.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cal.setDate(agenda.getActDate().getTime());
 		Button bToday = new Button(right, SWT.PUSH);
-		bToday.setText("Heute");
+		bToday.setText(Messages.AgendaGross_today);
 		bToday.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		bToday.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -155,7 +155,7 @@ public class AgendaGross extends BaseAgendaView {
 				if (tn.exists()) {
 					tn.setLangtext(tx);
 				} else {
-					tn = new TagesNachricht(agenda.getActDate(), " - ", tx);
+					tn = new TagesNachricht(agenda.getActDate(), " - ", tx); //$NON-NLS-1$
 				}
 			}
 
@@ -163,7 +163,7 @@ public class AgendaGross extends BaseAgendaView {
 		terminDetail = SWTHelper.createText(right, 5, SWT.NONE);
 		terminDetail.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		lbDetails = new Label(right, SWT.WRAP);
-		lbDetails.setText("-");
+		lbDetails.setText("-"); //$NON-NLS-1$
 		lbDetails.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		lbDayString = new Label(ret, SWT.NONE);
 		FormData fdBottom = new FormData();
@@ -225,8 +225,8 @@ public class AgendaGross extends BaseAgendaView {
 
 	protected void setDayMessage() {
 		TagesNachricht tn = TagesNachricht.load(agenda.getActDate());
-		lbDayString.setText("");
-		dayMessage.setText("");
+		lbDayString.setText(""); //$NON-NLS-1$
+		dayMessage.setText(""); //$NON-NLS-1$
 		if (tn.exists()) {
 			lbDayString.setText(tn.getZeile());
 			dayMessage.setText(tn.getLangtext());
@@ -300,14 +300,14 @@ public class AgendaGross extends BaseAgendaView {
 						Termin termin = (Termin) ip;
 						String grund = termin.getGrund();
 						if (grund != null) {
-							String[] tokens = grund.split("[\r\n]+");
+							String[] tokens = grund.split("[\r\n]+"); //$NON-NLS-1$
 							if (tokens.length > 0) {
 								grund = tokens[0];
 							}
 						}
-						return grund == null ? "" : grund;
+						return grund == null ? "" : grund; //$NON-NLS-1$
 					} else {
-						return "";
+						return ""; //$NON-NLS-1$
 					}
 				}
 			}
@@ -344,7 +344,7 @@ public class AgendaGross extends BaseAgendaView {
 				.append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
 		terminDetail.setText(sb.toString());
 		sb.setLength(0);
-		sb.append(StringTool.unNull(t.get("ErstelltVon"))).append("/").append(
+		sb.append(StringTool.unNull(t.get("ErstelltVon"))).append("/").append( //$NON-NLS-2$
 				t.getCreateTime().toString(TimeTool.FULL_GER));
 		lbDetails.setText(sb.toString());
 		ElexisEventDispatcher.fireSelectionEvent(t);
@@ -380,12 +380,12 @@ public class AgendaGross extends BaseAgendaView {
 	}
 
 	private void makePrivateActions() {
-		newViewAction = new Action("Neues Fenster") {
+		newViewAction = new Action(Messages.AgendaGross_newWindow) {
 			@Override
 			public void run() {
 				try {
 					getViewSite().getPage().showView(ID,
-							StringTool.unique("Agenda"),
+							StringTool.unique("Agenda"), //$NON-NLS-1$
 							IWorkbenchPage.VIEW_VISIBLE);
 				} catch (PartInitException e) {
 					ExHandler.handle(e);

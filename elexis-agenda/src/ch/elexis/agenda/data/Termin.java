@@ -41,17 +41,17 @@ import ch.rgw.tools.VersionInfo;
 
 public class Termin extends PersistentObject implements Cloneable, Comparable<Termin>, IPlannable {
 	
-	public static final String FLD_BEREICH = "BeiWem";
-	public static final String FLD_TERMINTYP = "Typ";
-	public static final String FLD_PATIENT = "Wer";
-	public static final String FLD_TERMINSTATUS = "Status";
-	public static final String FLD_CREATOR = "ErstelltVon";
-	public static final String FLD_GRUND = "Grund";
-	public static final String FLD_DAUER = "Dauer";
-	public static final String FLD_BEGINN = "Beginn";
-	public static final String FLD_TAG = "Tag";
-	public static final String FLD_LASTEDIT = "lastedit";
-	public static final String VERSION = "1.2.4";
+	public static final String FLD_BEREICH = "BeiWem"; //$NON-NLS-1$
+	public static final String FLD_TERMINTYP = "Typ"; //$NON-NLS-1$
+	public static final String FLD_PATIENT = "Wer"; //$NON-NLS-1$
+	public static final String FLD_TERMINSTATUS = "Status"; //$NON-NLS-1$
+	public static final String FLD_CREATOR = "ErstelltVon"; //$NON-NLS-1$
+	public static final String FLD_GRUND = "Grund"; //$NON-NLS-1$
+	public static final String FLD_DAUER = "Dauer"; //$NON-NLS-1$
+	public static final String FLD_BEGINN = "Beginn"; //$NON-NLS-1$
+	public static final String FLD_TAG = "Tag"; //$NON-NLS-1$
+	public static final String FLD_LASTEDIT = "lastedit"; //$NON-NLS-1$
+	public static final String VERSION = "1.2.4"; //$NON-NLS-1$
 	public static String[] TerminTypes;
 	public static String[] TerminStatus;
 	public static String[] TerminBereiche;
@@ -61,73 +61,73 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	// static final String
 	// DEFSTATUS="-   ,geplant,eingetroffen,fertig,verpasst,abgesagt";
 	public static final String createDB =
-		"CREATE TABLE AGNTERMINE("
-			+ "ID              VARCHAR(127) primary key,"
-			+ "lastupdate BIGINT,"
+		"CREATE TABLE AGNTERMINE(" //$NON-NLS-1$
+			+ "ID              VARCHAR(127) primary key," //$NON-NLS-1$
+			+ "lastupdate BIGINT," //$NON-NLS-1$
 			+ // we need that size to be able to import ics files
-			"PatID			VARCHAR(80)," + "Bereich		VARCHAR(25)," + "Tag             CHAR(8),"
-			+ "Beginn          CHAR(4)," + "Dauer           CHAR(4)," + "Grund           TEXT,"
-			+ "TerminTyp       VARCHAR(50)," + "TerminStatus    VARCHAR(50),"
-			+ "ErstelltVon     VARCHAR(25)," + "Angelegt        VARCHAR(10),"
-			+ "lastedit	     VARCHAR(10)," + "PalmID          INTEGER default 0,"
-			+ "flags           VARCHAR(10)," + "deleted         CHAR(2) default '0',"
-			+ "Extension       TEXT," + "linkgroup	    VARCHAR(20)" + ");"
-			+ "CREATE INDEX it on AGNTERMINE (Tag,Beginn,Bereich);"
-			+ "CREATE INDEX pattern on AGNTERMINE (PatID);"
-			+ "CREATE INDEX agnbereich on AGNTERMINE (Bereich);"
-			+ "INSERT INTO AGNTERMINE (ID) VALUES ('1');";
+			"PatID			VARCHAR(80)," + "Bereich		VARCHAR(25)," + "Tag             CHAR(8)," //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ "Beginn          CHAR(4)," + "Dauer           CHAR(4)," + "Grund           TEXT," //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ "TerminTyp       VARCHAR(50)," + "TerminStatus    VARCHAR(50)," //$NON-NLS-1$ //$NON-NLS-2$
+			+ "ErstelltVon     VARCHAR(25)," + "Angelegt        VARCHAR(10)," //$NON-NLS-1$ //$NON-NLS-2$
+			+ "lastedit	     VARCHAR(10)," + "PalmID          INTEGER default 0," //$NON-NLS-1$ //$NON-NLS-2$
+			+ "flags           VARCHAR(10)," + "deleted         CHAR(2) default '0'," //$NON-NLS-1$ //$NON-NLS-2$
+			+ "Extension       TEXT," + "linkgroup	    VARCHAR(20)" + ");" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ "CREATE INDEX it on AGNTERMINE (Tag,Beginn,Bereich);" //$NON-NLS-1$
+			+ "CREATE INDEX pattern on AGNTERMINE (PatID);" //$NON-NLS-1$
+			+ "CREATE INDEX agnbereich on AGNTERMINE (Bereich);" //$NON-NLS-1$
+			+ "INSERT INTO AGNTERMINE (ID) VALUES ('1');"; //$NON-NLS-1$
 	
 	private static final String upd122 =
-		"ALTER TABLE AGNTERMINE MODIFY TerminTyp VARCHAR(50);"
-			+ "ALTER TABLE AGNTERMINE MODIFY TerminStatus VARCHAR(50);";
+		"ALTER TABLE AGNTERMINE MODIFY TerminTyp VARCHAR(50);" //$NON-NLS-1$
+			+ "ALTER TABLE AGNTERMINE MODIFY TerminStatus VARCHAR(50);"; //$NON-NLS-1$
 	
-	private static final String upd124 = "ALTER TABLE AGNTERMINE ADD lastupdate BIGINT;";
+	private static final String upd124 = "ALTER TABLE AGNTERMINE ADD lastupdate BIGINT;"; //$NON-NLS-1$
 	static {
-		addMapping("AGNTERMINE", "BeiWem=Bereich", FLD_PATIENT + "=PatID", FLD_TAG, FLD_BEGINN,
-			FLD_DAUER, FLD_GRUND, "Typ=TerminTyp", FLD_TERMINSTATUS + "=TerminStatus", FLD_CREATOR,
-			"ErstelltWann=Angelegt", FLD_LASTEDIT, "PalmID", "flags", FLD_DELETED, "Extension",
-			"linkgroup");
+		addMapping("AGNTERMINE", "BeiWem=Bereich", FLD_PATIENT + "=PatID", FLD_TAG, FLD_BEGINN, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			FLD_DAUER, FLD_GRUND, "Typ=TerminTyp", FLD_TERMINSTATUS + "=TerminStatus", FLD_CREATOR, //$NON-NLS-1$ //$NON-NLS-2$
+			"ErstelltWann=Angelegt", FLD_LASTEDIT, "PalmID", "flags", FLD_DELETED, "Extension", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"linkgroup"); //$NON-NLS-1$
 		TimeTool.setDefaultResolution(60000);
 		TerminTypes = Hub.globalCfg.getStringArray(PreferenceConstants.AG_TERMINTYPEN);
 		TerminStatus = Hub.globalCfg.getStringArray(PreferenceConstants.AG_TERMINSTATUS);
 		TerminBereiche =
-			Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(",");
+			Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
 		if ((TerminTypes == null) || (TerminTypes.length < 3)) {
 			TerminTypes = new String[] {
-				"frei", "gesperrt", "normal"
+				Messages.Termin_range_free, Messages.Termin_range_locked, Messages.Termin_normalAppointment
 			};
 		}
 		if ((TerminStatus == null) || (TerminStatus.length < 2)) {
 			TerminStatus = new String[] {
-				"-", "geplant"
+				"-", Messages.Termin_plannedAppointment //$NON-NLS-1$
 			};
 		}
-		Termin Version = load("1");
+		Termin Version = load("1"); //$NON-NLS-1$
 		if (Version == null) {
 			init();
 		} else {
 			VersionInfo vi = new VersionInfo(Version.get(FLD_PATIENT));
 			if (vi.isOlder(VERSION)) {
-				if (vi.isOlder("1.1.0")) {
-					if (j.DBFlavor.equalsIgnoreCase("postgresql")) {
-						j.exec("ALTER TABLE AGNTERMINE ALTER angelegt TYPE VARCHAR(10);");
-						j.exec("ALTER TABLE AGNTERMINE ALTER lastedit TYPE VARCHAR(10);");
-						j.exec("ALTER TABLE AGNTERMINE ALTER flags TYPE VARCHAR(10);");
-					} else if (j.DBFlavor.equalsIgnoreCase("mysql")) {
-						j.exec("ALTER TABLE AGNTERMINE MODIFY angelegt VARCHAR(10);");
-						j.exec("ALTER TABLE AGNTERMINE MODIFY lastedit VARCHAR(10);");
-						j.exec("ALTER TABLE AGNTERMINE MODIFY flags VARCHAR(10);");
+				if (vi.isOlder("1.1.0")) { //$NON-NLS-1$
+					if (j.DBFlavor.equalsIgnoreCase("postgresql")) { //$NON-NLS-1$
+						j.exec("ALTER TABLE AGNTERMINE ALTER angelegt TYPE VARCHAR(10);"); //$NON-NLS-1$
+						j.exec("ALTER TABLE AGNTERMINE ALTER lastedit TYPE VARCHAR(10);"); //$NON-NLS-1$
+						j.exec("ALTER TABLE AGNTERMINE ALTER flags TYPE VARCHAR(10);"); //$NON-NLS-1$
+					} else if (j.DBFlavor.equalsIgnoreCase("mysql")) { //$NON-NLS-1$
+						j.exec("ALTER TABLE AGNTERMINE MODIFY angelegt VARCHAR(10);"); //$NON-NLS-1$
+						j.exec("ALTER TABLE AGNTERMINE MODIFY lastedit VARCHAR(10);"); //$NON-NLS-1$
+						j.exec("ALTER TABLE AGNTERMINE MODIFY flags VARCHAR(10);"); //$NON-NLS-1$
 					}
-				} else if (vi.isOlder("1.2.1")) {
-					if (j.DBFlavor.equalsIgnoreCase("postgresql")) {
-						j.exec("ALTER TABLE AGNTERMINE ALTER ID TYPE VARCHAR(127);");
-					} else if (j.DBFlavor.equalsIgnoreCase("mysql")) {
-						j.exec("ALTER TABLE AGNTERMINE MODIFY ID VARCHAR(127);");
+				} else if (vi.isOlder("1.2.1")) { //$NON-NLS-1$
+					if (j.DBFlavor.equalsIgnoreCase("postgresql")) { //$NON-NLS-1$
+						j.exec("ALTER TABLE AGNTERMINE ALTER ID TYPE VARCHAR(127);"); //$NON-NLS-1$
+					} else if (j.DBFlavor.equalsIgnoreCase("mysql")) { //$NON-NLS-1$
+						j.exec("ALTER TABLE AGNTERMINE MODIFY ID VARCHAR(127);"); //$NON-NLS-1$
 					}
-				} else if (vi.isOlder("1.2.3")) {
+				} else if (vi.isOlder("1.2.3")) { //$NON-NLS-1$
 					createOrModifyTable(upd122);
 				}
-				if (vi.isOlder("1.2.4")) {
+				if (vi.isOlder("1.2.4")) { //$NON-NLS-1$
 					createOrModifyTable(upd124);
 				}
 				Version.set(FLD_PATIENT, VERSION);
@@ -158,22 +158,22 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	 */
 	public static void init(){
 		try {
-			ByteArrayInputStream bais = new ByteArrayInputStream(createDB.getBytes("UTF-8"));
+			ByteArrayInputStream bais = new ByteArrayInputStream(createDB.getBytes("UTF-8")); //$NON-NLS-1$
 			j.execScript(bais, true, false);
-			Hub.userCfg.set(PreferenceConstants.AG_SHOWDELETED + "_default", "0");
-			Hub.globalCfg.set(PreferenceConstants.AG_TERMINTYPEN + "_default",
-				"Frei,Reserviert,Normal,Extra,Besuch");
-			Hub.globalCfg.set(PreferenceConstants.AG_TERMINSTATUS + "_default",
-				"-,geplant,eingetroffen,fertig,verpasst,abgesagt");
+			Hub.userCfg.set(PreferenceConstants.AG_SHOWDELETED + "_default", "0"); //$NON-NLS-1$ //$NON-NLS-2$
+			Hub.globalCfg.set(PreferenceConstants.AG_TERMINTYPEN + "_default", //$NON-NLS-1$
+				Messages.Termin_freeLockedNormalExtraVisit);
+			Hub.globalCfg.set(PreferenceConstants.AG_TERMINSTATUS + "_default", //$NON-NLS-1$
+				Messages.Termin_plannedHereFinishedMissed);
 			Hub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + Termin.typFrei(),
-				"icons/gruen.png");
+				"icons/gruen.png"); //$NON-NLS-1$
 			Hub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + Termin.typReserviert(),
-				"icons/einbahn.png");
-			Hub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + "Normal", "icons/kons.ico");
+				"icons/einbahn.png"); //$NON-NLS-1$
+			Hub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + Messages.Termin_normal, "icons/kons.ico"); //$NON-NLS-2$
 			Hub.userCfg
-				.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + "Extra", "icons/blaulicht.ico");
+				.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + Messages.Termin_extra, "icons/blaulicht.ico"); //$NON-NLS-2$
 			Hub.userCfg
-				.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + "Besuch", "icons/ambulanz.ico");
+				.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + Messages.Termin_visit, "icons/ambulanz.ico"); //$NON-NLS-2$
 			ACLContributor.initialize();
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
@@ -183,15 +183,15 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	
 	public static void addBereich(String bereich){
 		String nber = Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14);
-		nber += "," + bereich;
+		nber += "," + bereich; //$NON-NLS-1$
 		Hub.globalCfg.set(PreferenceConstants.AG_BEREICHE, nber);
-		TerminBereiche = nber.split(",");
+		TerminBereiche = nber.split(","); //$NON-NLS-1$
 	}
 	
 	public static void addType(String typ){
-		String tt = StringTool.join(TerminTypes, ",") + "," + typ;
+		String tt = StringTool.join(TerminTypes, ",") + "," + typ; //$NON-NLS-1$ //$NON-NLS-2$
 		Hub.globalCfg.set(PreferenceConstants.AG_TERMINTYPEN, tt);
-		TerminTypes = tt.split(",");
+		TerminTypes = tt.split(","); //$NON-NLS-1$
 	}
 	
 	public Termin(){/* leer */
@@ -379,8 +379,8 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	
 	public boolean checkLock(){
 		if (isLocked()) {
-			SWTHelper.alert("Termin gesperrt",
-				"Dieser Termin kann nicht geändert oder gelöscht werden.");
+			SWTHelper.alert(Messages.Termin_appointment_locked,
+				Messages.Termin_appCantBeChanged);
 			return true;
 		}
 		return false;
@@ -392,16 +392,16 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 			return false;
 		}
 		List<Termin> linked = null;
-		String linkgroup = get("linkgroup");
+		String linkgroup = get("linkgroup"); //$NON-NLS-1$
 		if (getFlag(SW_LINKED) && (!StringTool.isNothing(linkgroup))) {
 			MessageDialog msd =
 				new MessageDialog(
 					Desk.getTopShell(),
-					"Terminserie löschen",
+					Messages.Termin_deleteSeries,
 					null,
-					"Dieser Termin gehört zu mehreren verknüpften Terminen. Soll die ganze Serie gelöscht werden?\n",
+					Messages.Termin_thisAppIsPartOfSerie,
 					MessageDialog.QUESTION, new String[] {
-						"Ja", "Nein"
+						Messages.Termin_yes, Messages.Termin_no
 					}, 1);
 			if (msd.open() == 0) {
 				linked = getLinked(this);
@@ -502,14 +502,14 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	public String getPersonalia(){
 		String patid = get(FLD_PATIENT);
 		Patient pat = Patient.load(patid);
-		String Personalien = "";
+		String Personalien = ""; //$NON-NLS-1$
 		if (pat.exists()) {
 			Personalien = pat.getPersonalia();
 		} else {
 			Personalien = patid;
 		}
 		if (get(FLD_DELETED).equals(StringConstants.ONE)) {
-			return Personalien + " (gelöscht)";
+			return Personalien + Messages.Termin_deleted;
 		}
 		return Personalien;
 	}
@@ -575,19 +575,19 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		if (StringTool.isNothing(pers)) {
 			return ret;
 		}
-		String[] p1 = pers.split("[\\s,][\\s,]*[\\s,]*");
+		String[] p1 = pers.split("[\\s,][\\s,]*[\\s,]*"); //$NON-NLS-1$
 		if (p1.length == 1) {
 			ret[0] = p1[0];
 			return ret;
 		}
 		
 		String nam, vn, gd;
-		nam = "";
+		nam = ""; //$NON-NLS-1$
 		vn = null;
 		gd = null;
 		for (int i = p1.length - 1; i >= 0; i--) {
 			p1[i] = p1[i].trim();
-			if (p1[i].matches("\\d{1,2}\\.\\d{1,2}\\.\\d{2,4}")) {
+			if (p1[i].matches("\\d{1,2}\\.\\d{1,2}\\.\\d{2,4}")) { //$NON-NLS-1$
 				if (gd == null) {
 					gd = p1[i];
 				}
@@ -595,7 +595,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 				if (vn == null) {
 					vn = p1[i];
 				} else {
-					nam = p1[i] + " " + nam;
+					nam = p1[i] + " " + nam; //$NON-NLS-1$
 				}
 			}
 		}
@@ -616,7 +616,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	}
 	
 	public boolean isDeleted(){
-		return get("deleted").equals(StringConstants.ONE);
+		return get("deleted").equals(StringConstants.ONE); //$NON-NLS-1$
 	}
 	
 	/** standard equals: Gleiche Zeit, gleiche Dauer, gleicher Bereich */
@@ -701,7 +701,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		}, vals);
 		TimeTool d = new TimeTool(vals[0]);
 		d.addMinutes(checkZero(vals[2]));
-		String f = d.toString(TimeTool.WEEKDAY) + ", " + d.toString(TimeTool.LARGE_GER);
+		String f = d.toString(TimeTool.WEEKDAY) + ", " + d.toString(TimeTool.LARGE_GER); //$NON-NLS-1$
 		if (level > 0) {
 			d.addMinutes(checkZero(vals[1]));
 			f += "-" + d.toString(TimeTool.TIME_SMALL);
@@ -739,7 +739,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		
 		public String bemerkung;
 		static {
-			addMapping("agnRemarks", "remark");
+			addMapping("agnRemarks", "remark"); //$NON-NLS-1$
 		}
 		
 		public remark(final String id){
@@ -748,13 +748,13 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 				bemerkung = get("remark");
 			} else {
 				create(id);
-				bemerkung = "";
+				bemerkung = ""; //$NON-NLS-1$
 			}
 		}
 		
 		public void set(final String newval){
 			if (StringTool.isNothing(newval)) {
-				j.exec("DELETE from agnRemarks WHERE ID=" + getWrappedId());
+				j.exec("DELETE from agnRemarks WHERE ID=" + getWrappedId()); //$NON-NLS-1$
 			} else {
 				set("remark", newval);
 			}
@@ -763,7 +763,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		
 		@Override
 		protected String getTableName(){
-			return "agnRemarks";
+			return "agnRemarks"; //$NON-NLS-1$
 		}
 		
 		@Override
@@ -791,7 +791,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	
 	@Override
 	protected String getTableName(){
-		return "AGNTERMINE";
+		return "AGNTERMINE"; //$NON-NLS-1$
 	}
 	
 	public String dump(){

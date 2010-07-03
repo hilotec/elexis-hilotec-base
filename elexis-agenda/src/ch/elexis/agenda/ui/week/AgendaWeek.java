@@ -96,7 +96,7 @@ public class AgendaWeek extends BaseView {
 		ttMonday.set(TimeTool.DAY_OF_WEEK, TimeTool.MONDAY);
 		StringBuilder sb=new StringBuilder(ttMonday.toString(TimeTool.DATE_GER));
 		ttMonday.addDays(6);
-		sb.append("-").append(ttMonday.toString(TimeTool.DATE_GER));
+		sb.append("-").append(ttMonday.toString(TimeTool.DATE_GER)); //$NON-NLS-1$
 		
 		showCalendarAction.setText(sb.toString());
 		sheet.refresh();
@@ -114,7 +114,7 @@ public class AgendaWeek extends BaseView {
 		ttMonday.set(TimeTool.DAY_OF_WEEK, TimeTool.MONDAY);
 		ttMonday.chop(3);
 		String resources = Hub.localCfg.get(PreferenceConstants.AG_DAYSTOSHOW,
-				StringTool.join(TimeTool.Wochentage, ","));
+				StringTool.join(TimeTool.Wochentage, ",")); //$NON-NLS-1$
 		if (resources == null) {
 			return new String[0];
 		} else {
@@ -130,9 +130,9 @@ public class AgendaWeek extends BaseView {
 	}
 
 	private void makePrivateActions() {
-		weekFwdAction = new Action("Woche vorwärts") {
+		weekFwdAction = new Action(Messages.AgendaWeek_weekForward) {
 			{
-				setToolTipText("Nächste Woche anzeigen");
+				setToolTipText(Messages.AgendaWeek_showNextWeek);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEXT));
 			}
 
@@ -148,9 +148,9 @@ public class AgendaWeek extends BaseView {
 			}
 		};
 
-		weekBackAction = new Action("Woche zurück") {
+		weekBackAction = new Action(Messages.AgendaWeek_weekBackward) {
 			{
-				setToolTipText("Vorherige Woche anzeigen");
+				setToolTipText(Messages.AgendaWeek_showPreviousWeek);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PREVIOUS));
 			}
 
@@ -165,9 +165,9 @@ public class AgendaWeek extends BaseView {
 				refresh();
 			}
 		};
-		showCalendarAction = new Action("Woche auswählen") {
+		showCalendarAction = new Action(Messages.AgendaWeek_selectWeek) {
 			{
-				setToolTipText("Einen Kalender zur Auswahl des Datums anzeigen");
+				setToolTipText(Messages.AgendaWeek_showCalendarToSelect);
 				// setImageDescriptor(Activator.getImageDescriptor("icons/calendar.png"));
 			}
 
@@ -188,12 +188,12 @@ public class AgendaWeek extends BaseView {
 			}
 		};
 
-		final IAction zoomAction = new Action("Zoom", Action.AS_DROP_DOWN_MENU) {
+		final IAction zoomAction = new Action(Messages.AgendaWeek_zoom, Action.AS_DROP_DOWN_MENU) {
 			Menu mine;
 			{
-				setToolTipText("Massstab einstellen");
+				setToolTipText(Messages.AgendaWeek_setZoomFactor);
 				setImageDescriptor(Activator
-						.getImageDescriptor("icons/zoom.png"));
+						.getImageDescriptor("icons/zoom.png")); //$NON-NLS-1$
 				setMenuCreator(new IMenuCreator() {
 
 					public void dispose() {
@@ -215,17 +215,17 @@ public class AgendaWeek extends BaseView {
 			}
 
 			private void fillMenu() {
-				for (String s : new String[] { "40", "60", "80", "100", "120",
-						"140", "160", "200", "300" }) {
+				for (String s : new String[] { "40", "60", "80", "100", "120", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+						"140", "160", "200", "300" }) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					MenuItem it = new MenuItem(mine, SWT.RADIO);
-					it.setText(s + "%");
+					it.setText(s + "%"); //$NON-NLS-1$
 					it.addSelectionListener(new SelectionAdapter() {
 
 						@Override
 						public void widgetSelected(SelectionEvent e) {
 							MenuItem mi = (MenuItem) e.getSource();
 							int scale = Integer.parseInt(mi.getText()
-									.split("%")[0]);
+									.split("%")[0]); //$NON-NLS-1$
 							double factor = scale / 100.0;
 							Hub.localCfg.set(
 									PreferenceConstants.AG_PIXEL_PER_MINUTE,

@@ -38,8 +38,8 @@ import ch.rgw.tools.TimeTool;
 
 public class ColumnHeader extends Composite {
 	AgendaWeek view;
-	static final String IMG_PERSONS_NAME=Activator.PLUGIN_ID+"/personen";
-	static final String IMG_PERSONS_PATH="icons/personen.png";
+	static final String IMG_PERSONS_NAME=Activator.PLUGIN_ID+"/personen"; //$NON-NLS-1$
+	static final String IMG_PERSONS_PATH="icons/personen.png"; //$NON-NLS-1$
 	ImageHyperlink ihRes;
 	
 	public ColumnHeader(Composite parent, AgendaWeek aw){
@@ -50,7 +50,7 @@ public class ColumnHeader extends Composite {
 		}
 		ihRes=new ImageHyperlink(this,SWT.NONE);
 		ihRes.setImage(Desk.getImage(IMG_PERSONS_NAME));
-		ihRes.setToolTipText("Tage für Anzeige auswählen");
+		ihRes.setToolTipText(Messages.ColumnHeader_selectDaysToDisplay);
 		ihRes.addHyperlinkListener(new HyperlinkAdapter(){
 
 			@Override
@@ -78,7 +78,7 @@ public class ColumnHeader extends Composite {
 			Label l=new Label(this, SWT.NONE);
 			TimeTool tt=new TimeTool(labels[i]);
 			StringBuilder sb=new StringBuilder(tt.toString(TimeTool.WEEKDAY));
-			sb.append(", ").append(tt.toString(TimeTool.DATE_GER));
+			sb.append(", ").append(tt.toString(TimeTool.DATE_GER)); //$NON-NLS-1$
 			String coltext=sb.toString();
 			Point extend=SWTHelper.getStringBounds(this, coltext);
 			if(extend.x>widthPerColumn){
@@ -122,9 +122,9 @@ public class ColumnHeader extends Composite {
 		@Override
 		public void create() {
 			super.create();
-			getShell().setText("Anzeige konfigurieren");
-			setTitle("Anzuzeigende Wochentage");
-			setMessage("Bitte geben Sie ein,welche Wochentage angezeigt werden sollen");
+			getShell().setText(Messages.ColumnHeader_configureDisplay);
+			setTitle(Messages.ColumnHeader_displayWeekdays);
+			setMessage(Messages.ColumnHeader_pleaseSelectWeekdays);
 		}
 
 		@Override
@@ -140,7 +140,7 @@ public class ColumnHeader extends Composite {
 				}
 			}
 			view.clear();
-			Hub.localCfg.set(PreferenceConstants.AG_DAYSTOSHOW, StringTool.join(sel, ","));
+			Hub.localCfg.set(PreferenceConstants.AG_DAYSTOSHOW, StringTool.join(sel, ",")); //$NON-NLS-1$
 			view.refresh();
 			
 			super.okPressed();
