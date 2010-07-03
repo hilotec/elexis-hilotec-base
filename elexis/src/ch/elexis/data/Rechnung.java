@@ -359,15 +359,15 @@ public class Rechnung extends PersistentObject {
 				}
 			}
 			Query<AccountTransaction> qa = new Query<AccountTransaction>(AccountTransaction.class);
-			qa.add(AccountTransaction.BILL_ID, Query.EQUALS, getId());
-			qa.add(AccountTransaction.PAYMENT_ID, StringTool.leer, null);
+			qa.add(AccountTransaction.FLD_BILL_ID, Query.EQUALS, getId());
+			qa.add(AccountTransaction.FLD_PAYMENT_ID, StringTool.leer, null);
 			List<AccountTransaction> as = qa.execute();
 			if ((as != null) && (as.size() == 1)) {
 				AccountTransaction at = as.get(0);
 				if (at.exists()) {
 					Money negBetrag = new Money(betrag);
 					negBetrag.negate();
-					at.set(AccountTransaction.AMOUNT, negBetrag.getCentsAsString());
+					at.set(AccountTransaction.FLD_AMOUNT, negBetrag.getCentsAsString());
 				}
 			}
 		}
