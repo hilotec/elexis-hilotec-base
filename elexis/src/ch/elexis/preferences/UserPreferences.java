@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ package ch.elexis.preferences;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.core.runtime.Platform;
@@ -106,9 +107,7 @@ public class UserPreferences extends PreferencePage implements
 							.getHashtable());
 					Hub.userCfg.overlay(ims, Settings.OVL_REPLACE);
 				} else {
-					SWTHelper.showError(Messages.UserPreferences_KonfigNotFound,
-							"Die Konfiguration mit Name " + name
-									+ " wurde nicht gefunden");
+					SWTHelper.showError(Messages.UserPreferences_KonfigNotFound, MessageFormat.format(Messages.UserPreferences_ConfigWasNotFound,name));
 				}
 			}
 
@@ -132,10 +131,8 @@ public class UserPreferences extends PreferencePage implements
 					InMemorySettings ims = new InMemorySettings();
 					ims.overlay(Hub.userCfg, Settings.OVL_REPLACE);
 					blob.put(ims.getNode());
-					SWTHelper.showInfo(Messages.UserPreferences_ConfigSaved,
-							"Die aktuelle Konfiguration wurde unter dem Namen "
-									+ name + " gespeichert");
-					cbUserSave.setText("");
+					SWTHelper.showInfo(Messages.UserPreferences_ConfigSaved, MessageFormat.format(Messages.UserPreferences_ConfigWasSaved,name));
+					cbUserSave.setText(""); //$NON-NLS-1$
 				}
 			}
 		});
@@ -184,8 +181,8 @@ public class UserPreferences extends PreferencePage implements
 					}
 				} else {
 					SWTHelper.showError(Messages.UserPreferences_ConfigNotFound,
-							"Die Konfiguration mit Name " + name
-									+ " wurde nicht gefunden");
+							Messages.UserPreferences_3 + name
+									+ Messages.UserPreferences_4);
 				}
 			}
 

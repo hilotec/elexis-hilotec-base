@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,25 +51,25 @@ public class Ablauf extends FieldEditorPreferencePage implements IWorkbenchPrefe
 				{
 					Messages.Ablauf_4, "1"}, //$NON-NLS-1$
 				{
-					Messages.Ablauf_6, "2"}, //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-1$
+					Messages.Ablauf_6, "2"}, //$NON-NLS-1$
 				{
-					Messages.Ablauf_8, "3"}, //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-1$
+					Messages.Ablauf_8, "3"}, //$NON-NLS-1$
 				{
-					Messages.Ablauf_10, "4"}, //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-1$
+					Messages.Ablauf_10, "4"}, //$NON-NLS-1$
 				{
-					Messages.Ablauf_12, "5"} //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-1$
+					Messages.Ablauf_12, "5"}  //$NON-NLS-1$
 			}, getFieldEditorParent()));
 		
 		addField(new RadioGroupFieldEditor(PreferenceConstants.ABL_LOGALERT, Messages.Ablauf_14, 2,
 			new String[][] {
 				{
-					Messages.Ablauf_15, "0"}, //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-1$
+					Messages.Ablauf_15, "0"}, //$NON-NLS-1$
 				{
-					Messages.Ablauf_17, "1"}, //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-1$
+					Messages.Ablauf_17, "1"},  //$NON-NLS-1$
 				{
-					Messages.Ablauf_19, "2"}, //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-1$
+					Messages.Ablauf_19, "2"}, //$NON-NLS-1$
 				{
-					Messages.Ablauf_21, "3"} //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-1$
+					Messages.Ablauf_21, "3"}  //$NON-NLS-1$
 			}, getFieldEditorParent()));
 		
 		addField(new StringFieldEditor(PreferenceConstants.ABL_TRACE, Messages.Ablauf_23,

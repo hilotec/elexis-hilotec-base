@@ -161,11 +161,11 @@ public class Stickers extends PreferencePage implements IWorkbenchPreferencePage
 		Group bottomRight = new Group(bottom, SWT.NONE);
 		bottomRight.setLayoutData(SWTHelper.getFillGridData(1, true, 5, true));
 		bottomRight.setLayout(new RowLayout(SWT.VERTICAL));
-		bottomRight.setText("Anwendbar für");
-		addAssociateButton("Patient", Patient.class, bottomRight);
-		addAssociateButton("Konsultation", Konsultation.class, bottomRight);
-		addAssociateButton("Fall", Fall.class, bottomRight);
-		addAssociateButton("Dokument", Brief.class, bottomRight);
+		bottomRight.setText(Messages.Stickers_useFor);
+		addAssociateButton(Messages.Stickers_patient, Patient.class, bottomRight);
+		addAssociateButton(Messages.Stickers_consultation, Konsultation.class, bottomRight);
+		addAssociateButton(Messages.Stickers_case, Fall.class, bottomRight);
+		addAssociateButton(Messages.Stickers_document, Brief.class, bottomRight);
 		/*
 		 * new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(2,
 		 * false, 1, false));

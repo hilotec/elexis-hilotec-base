@@ -34,10 +34,10 @@ public class ImporterHost extends PreferencePage implements
 		ret.setLayout(new FillLayout());
 		StyledText text=new StyledText(ret,SWT.NONE);
 		text.setWordWrap(true);
-		text.setText("Unter dieser Rubrik können Einstellungen für verschiedene\n"+
-				"Import- und Export-Plugins verwaltet werden.\n"
-				+"Die jeweiligen Einstellungsseiten erscheinen nur, falls entsprechende Plugins\n"+
-				"installiert sind, deswegen kann diese Rubrik auch leer sein.");
+		text.setText(Messages.ImporterHost_ExplanationLine1+
+				Messages.ImporterHost_ExplanationLine2
+				+Messages.ImporterHost_ExplanationLine3+
+				Messages.ImporterHost_ExplanationLine4);
 		return ret;
 	}
 

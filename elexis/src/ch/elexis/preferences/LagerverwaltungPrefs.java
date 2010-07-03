@@ -31,22 +31,22 @@ public class LagerverwaltungPrefs  extends FieldEditorPreferencePage
 	public LagerverwaltungPrefs(){
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(Hub.globalCfg));
-		setDescription("Lagerverwaltung");
+		setDescription(Messages.LagerverwaltungPrefs_storageManagement);
 		getPreferenceStore().setDefault(PreferenceConstants.INVENTORY_CHECK_ILLEGAL_VALUES, PreferenceConstants.INVENTORY_CHECK_ILLEGAL_VALUES_DEFAULT);
 	}
 	
 	@Override
 	protected void createFieldEditors() {
-		addField(new BooleanFieldEditor(PreferenceConstants.INVENTORY_CHECK_ILLEGAL_VALUES,"Lagerbestand auf ungültige Werte prüfen",
+		addField(new BooleanFieldEditor(PreferenceConstants.INVENTORY_CHECK_ILLEGAL_VALUES,Messages.LagerverwaltungPrefs_checkForInvalid,
 				getFieldEditorParent()));
 		addField(new RadioGroupFieldEditor(
-				PreferenceConstants.INVENTORY_ORDER_TRIGGER, "Bestellkriterium",
+				PreferenceConstants.INVENTORY_ORDER_TRIGGER, Messages.LagerverwaltungPrefs_orderCriteria,
 				1, new String[][] {
 						{
-							"Bestellen, wenn Minbestand unterschritten",
+							Messages.LagerverwaltungPrefs_orderWhenBelowMi,
 							PreferenceConstants.INVENTORY_ORDER_TRIGGER_BELOW_VALUE
 						}, {
-							"Bestellen, wenn Minbestand erreicht",
+							Messages.LagerverwaltungPrefs_orderWhenAtMin,
 							PreferenceConstants.INVENTORY_ORDER_TRIGGER_EQUAL_VALUE
 						},
 		}, getFieldEditorParent()));

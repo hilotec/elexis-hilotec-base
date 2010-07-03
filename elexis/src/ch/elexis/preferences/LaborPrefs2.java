@@ -18,7 +18,7 @@ public class LaborPrefs2 extends PreferencePage implements IWorkbenchPreferenceP
 	
 	
 	public LaborPrefs2(){
-		super("Laboritems und  -Gruppen");
+		super(Messages.LaborPrefs2_LabItemsAndGroups);
 	}
 	
 	

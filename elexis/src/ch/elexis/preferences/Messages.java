@@ -61,6 +61,40 @@ public class Messages extends NLS {
 
 	public static String AnwenderPref_passwort;
 
+	public static String CDSSGroup_ExplanationCDSSLine1;
+
+	public static String CDSSGroup_ExplanationCDSSLine2;
+
+	public static String CDSSGroup_ExplanationCDSSLine3;
+
+	public static String Datenbank_checkBills;
+
+	public static String Datenbank_checkKonsultations;
+
+	public static String Datenbank_connectString;
+
+	public static String Datenbank_couldntCreateLog;
+
+	public static String Datenbank_databaseConnection;
+
+	public static String Datenbank_databaseConnectionHeading;
+
+	public static String Datenbank_doCheck;
+
+	public static String Datenbank_errorWritingLog;
+
+	public static String Datenbank_passwordForDatabase;
+
+	public static String Datenbank_reorganization;
+
+	public static String Datenbank_repairImmediately;
+
+	public static String Datenbank_typeOfDatabase;
+
+	public static String Datenbank_usernameForDatabase;
+
+	public static String Datenbank_writeLogTo;
+
 	public static String DokumentKategorie_dokumentKategorien;
 
 	public static String FontPreference_schriftarten;
@@ -72,6 +106,280 @@ public class Messages extends NLS {
 	public static String Gruppen_Gruppen;
 
 	public static String Gruppen_GruppenUndRechte;
+
+	public static String ImporterHost_ExplanationLine1;
+
+	public static String ImporterHost_ExplanationLine2;
+
+	public static String ImporterHost_ExplanationLine3;
+
+	public static String ImporterHost_ExplanationLine4;
+
+	public static String LabGroupPrefs_add;
+
+	public static String LabGroupPrefs_containingLabItems;
+
+	public static String LabGroupPrefs_delete;
+
+	public static String LabGroupPrefs_deleteGroup;
+
+	public static String LabGroupPrefs_ExplanationsLine1;
+
+	public static String LabGroupPrefs_ExplanationsLine2;
+
+	public static String LabGroupPrefs_ExplanationsLine3;
+
+	public static String LabGroupPrefs_group;
+
+	public static String LabGroupPrefs_group1;
+
+	public static String LabGroupPrefs_groups;
+
+	public static String LabGroupPrefs_new;
+
+	public static String LabGroupPrefs_newLabGroup;
+
+	public static String LabGroupPrefs_pleaseSelectLabItems;
+
+	public static String LabGroupPrefs_reallyDeleteGroup;
+
+	public static String LabGroupPrefs_remove;
+
+	public static String LabGroupPrefs_selectLabItems;
+
+	public static String LabGroupPrefs_selectNameForLabGroup;
+
+	public static String LaborPrefs_34;
+
+	public static String LaborPrefs_35;
+
+	public static String LaborPrefs_36;
+
+	public static String LaborPrefs_37;
+
+	public static String LaborPrefs_38;
+
+	public static String LaborPrefs_39;
+
+	public static String LaborPrefs_40;
+
+	public static String LaborPrefs_41;
+
+	public static String LaborPrefs_42;
+
+	public static String LaborPrefs_43;
+
+	public static String LaborPrefs_44;
+
+	public static String LaborPrefs_45;
+
+	public static String LaborPrefs_46;
+
+	public static String LaborPrefs_47;
+
+	public static String LaborPrefs_48;
+
+	public static String LaborPrefs_49;
+
+	public static String LaborPrefs_50;
+
+	public static String LaborPrefs_51;
+
+	public static String LaborPrefs_52;
+
+	public static String LaborPrefs_53;
+
+	public static String LaborPrefs_54;
+
+	public static String LaborPrefs_55;
+
+	public static String LaborPrefs_56;
+
+	public static String LaborPrefs_57;
+
+	public static String LaborPrefs_58;
+
+	public static String LaborPrefs_59;
+
+	public static String LaborPrefs_60;
+
+	public static String LaborPrefs_61;
+
+	public static String LaborPrefs_62;
+
+	public static String LaborPrefs_63;
+
+	public static String LaborPrefs_64;
+
+	public static String LaborPrefs_65;
+
+	public static String LaborPrefs_66;
+
+	public static String LaborPrefs_absolute;
+
+	public static String LaborPrefs_alpha;
+
+	public static String LaborPrefs_deleteAllExplain;
+
+	public static String LaborPrefs_deleteAllItems;
+
+	public static String LaborPrefs_deleteItem;
+
+	public static String LaborPrefs_deleteReallyAllItems;
+
+	public static String LaborPrefs_enterNewLabParam;
+
+	public static String LaborPrefs_lab;
+
+	public static String LaborPrefs_labParam;
+
+	public static String LaborPrefs_labParams;
+
+	public static String LaborPrefs_labTitle;
+
+	public static String LaborPrefs_labValue;
+
+	public static String LaborPrefs_name;
+
+	public static String LaborPrefs_numeric;
+
+	public static String LaborPrefs_pleaseEditParam;
+
+	public static String LaborPrefs_pleaseEnterLabParam;
+
+	public static String LaborPrefs_refF;
+
+	public static String LaborPrefs_refM;
+
+	public static String LaborPrefs_short;
+
+	public static String LaborPrefs_sortmode;
+
+	public static String LaborPrefs_type;
+
+	public static String LaborPrefs_unit;
+
+	public static String LaborPrefs_unkown;
+
+	public static String LaborPrefs2_LabItemsAndGroups;
+
+	public static String LabSettings_frequencyNewLabvalues;
+
+	public static String LabSettings_medium;
+
+	public static String LabSettings_normal;
+
+	public static String LabSettings_showNewLabvaluesDays;
+
+	public static String LabSettings_slow;
+
+	public static String LagerverwaltungPrefs_checkForInvalid;
+
+	public static String LagerverwaltungPrefs_orderCriteria;
+
+	public static String LagerverwaltungPrefs_orderWhenAtMin;
+
+	public static String LagerverwaltungPrefs_orderWhenBelowMi;
+
+	public static String LagerverwaltungPrefs_storageManagement;
+
+	public static String Leistungscodes_0;
+
+	public static String Leistungscodes_add;
+
+	public static String Leistungscodes_badEntry;
+
+	public static String Leistungscodes_badEntryCaptiob;
+
+	public static String Leistungscodes_badEntryText;
+
+	public static String Leistungscodes_billingSystem;
+
+	public static String Leistungscodes_billingSystemCaption;
+
+	public static String Leistungscodes_billingSystemLabel;
+
+	public static String Leistungscodes_billingSystems;
+
+	public static String Leistungscodes_caseConstants;
+
+	public static String Leistungscodes_checkPositions;
+
+	public static String Leistungscodes_constantHL;
+
+	public static String Leistungscodes_contact;
+
+	public static String Leistungscodes_contactHL;
+
+	public static String Leistungscodes_date;
+
+	public static String Leistungscodes_dateHL;
+
+	public static String Leistungscodes_defaultOutput;
+
+	public static String Leistungscodes_defaultOutputLabel;
+
+	public static String Leistungscodes_defineBillingSystem;
+
+	public static String Leistungscodes_delete;
+
+	public static String Leistungscodes_deleteAction;
+
+	public static String Leistungscodes_delText;
+
+	public static String Leistungscodes_didNotFindMulitplier;
+
+	public static String Leistungscodes_explainEntry;
+
+	public static String Leistungscodes_multiplier;
+
+	public static String Leistungscodes_multiplierLabel;
+
+	public static String Leistungscodes_nameLabel;
+
+	public static String Leistungscodes_nameOfBillingSystem;
+
+	public static String Leistungscodes_necessaryData;
+
+	public static String Leistungscodes_new;
+
+	public static String Leistungscodes_notUndoable;
+
+	public static String Leistungscodes_pleaseEnterDataForBillingSystem;
+
+	public static String Leistungscodes_pleaseEnterName;
+
+	public static String Leistungscodes_pleaseEnterNameAndValue;
+
+	public static String Leistungscodes_query;
+
+	public static String Leistungscodes_reallyDelete;
+
+	public static String Leistungscodes_removeConstraintTT;
+
+	public static String Leistungscodes_strictValidityCheck;
+
+	public static String Leistungscodes_text;
+
+	public static String Leistungscodes_textHL;
+
+	public static String Mandanten_0;
+
+	public static String Mandanten_biller;
+
+	public static String Mandanten_groups;
+
+	public static String Mandanten_kuerzel;
+
+	public static String Mandanten_password;
+
+	public static String Mandanten_pleaseSelectBiller;
+
+	public static String Mandanten_selectBiller;
+
+	public static String PreferenceConstants_general;
+
+	public static String PreferenceConstants_illness;
 
 	public static String PrinterPreferencePage_ChosePrinterAlways;
 
@@ -117,6 +425,12 @@ public class Messages extends NLS {
 
 	public static String ScannerPref_test;
 
+	public static String Services_ExplanationLine1;
+
+	public static String Services_ExplanationLine2;
+
+	public static String Services_ExplanationLine3;
+
 	public static String SidebarPreferences_AvailablePerspectives;
 
 	public static String SidebarPreferences_DefinitisonStarterBar;
@@ -131,19 +445,37 @@ public class Messages extends NLS {
 
 	public static String Stickers_BackgroundColor;
 
+	public static String Stickers_case;
+
+	public static String Stickers_consultation;
+
 	public static String Stickers_DeleteSticker;
+
+	public static String Stickers_document;
 
 	public static String Stickers_Image;
 
 	public static String Stickers_NewSticker;
 
+	public static String Stickers_patient;
+
 	public static String Stickers_TextColor;
+
+	public static String Stickers_useFor;
 
 	public static String Stickers_ValueOfSticker;
 
 	public static String Texterstellung_ExternalProgram;
 
 	public static String Texterstellung_TextProcessor;
+
+	public static String TextTemplatePreferences_ExplanationLine1;
+
+	public static String TextTemplatePreferences_ExplanationLine2;
+
+	public static String TextTemplatePreferences_ExplanationLine3;
+
+	public static String TextTemplatePreferences_suffixForStation;
 
 	public static String UserCasePreferences_Cases;
 
@@ -155,6 +487,10 @@ public class Messages extends NLS {
 
 	public static String UserPreferences_14;
 
+	public static String UserPreferences_3;
+
+	public static String UserPreferences_4;
+
 	public static String UserPreferences_ConfigActiveNextTime;
 
 	public static String UserPreferences_ConfigLoaded;
@@ -162,6 +498,10 @@ public class Messages extends NLS {
 	public static String UserPreferences_ConfigNotFound;
 
 	public static String UserPreferences_ConfigSaved;
+
+	public static String UserPreferences_ConfigWasNotFound;
+
+	public static String UserPreferences_ConfigWasSaved;
 
 	public static String UserPreferences_Explanation1;
 

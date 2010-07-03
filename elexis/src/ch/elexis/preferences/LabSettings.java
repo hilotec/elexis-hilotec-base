@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,8 +27,8 @@ import ch.elexis.preferences.inputs.PrefAccessDenied;
 
 public class LabSettings extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
-	public static final String KEEP_UNSEEN_LAB_RESULTS="lab/keepUnseen";
-	public static final String LABNEW_HEARTRATE="lab/heartrate_unseen";
+	public static final String KEEP_UNSEEN_LAB_RESULTS="lab/keepUnseen"; //$NON-NLS-1$
+	public static final String LABNEW_HEARTRATE="lab/heartrate_unseen"; //$NON-NLS-1$
 	
 	public LabSettings() {
 		super(GRID);
@@ -46,10 +46,10 @@ public class LabSettings extends FieldEditorPreferencePage implements
 
 		@Override
 	protected void createFieldEditors() {
-		addField(new StringFieldEditor(KEEP_UNSEEN_LAB_RESULTS,"Neue Laborwerte anzeigen (Tage)"
+		addField(new StringFieldEditor(KEEP_UNSEEN_LAB_RESULTS,Messages.LabSettings_showNewLabvaluesDays
 					,getFieldEditorParent()));
-		addField(new RadioGroupFieldEditor(LABNEW_HEARTRATE,"Refresh-Frequenz neue Laborwerte",3,
-				new String[][]{{"Normal","1"},{"Mittel","2"},{"Langsam","3"}},
+		addField(new RadioGroupFieldEditor(LABNEW_HEARTRATE,Messages.LabSettings_frequencyNewLabvalues,3,
+				new String[][]{{Messages.LabSettings_normal,"1"},{Messages.LabSettings_medium,"2"},{Messages.LabSettings_slow,"3"}}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				getFieldEditorParent()
 		));
 		

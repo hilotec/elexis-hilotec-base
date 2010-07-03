@@ -33,7 +33,7 @@ public class FontPreference extends FieldEditorPreferencePage implements IWorkbe
 	@Override
 	protected void createFieldEditors(){
 		addField(new FontFieldEditor(PreferenceConstants.USR_DEFAULTFONT,
-			Messages.FontPreference_standardschriftart, "Elexis", getFieldEditorParent()));
+			Messages.FontPreference_standardschriftart, "Elexis", getFieldEditorParent())); //$NON-NLS-1$
 	}
 	
 	public void init(IWorkbench workbench){

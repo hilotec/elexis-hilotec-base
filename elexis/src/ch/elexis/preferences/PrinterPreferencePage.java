@@ -128,7 +128,7 @@ public class PrinterPreferencePage extends PreferencePage implements
 		
 		tEtiketten.setText(Hub.localCfg.get("Drucker/Etiketten/Name",StringTool.leer)); //$NON-NLS-1$
 		tEtikettenschacht.setText(Hub.localCfg.get("Drucker/Etiketten/Schacht",StringTool.leer)); //$NON-NLS-1$
-		boolean selection = Hub.localCfg.get("Drucker/Etiketten/Choose", false);
+		boolean selection = Hub.localCfg.get("Drucker/Etiketten/Choose", false); //$NON-NLS-1$
 		cEtiketten.setSelection(selection); //$NON-NLS-1$
 		setEtikettenSelection(selection);
 		tA4ESR.setText(Hub.localCfg.get("Drucker/A4ESR/Name",StringTool.leer)); //$NON-NLS-1$

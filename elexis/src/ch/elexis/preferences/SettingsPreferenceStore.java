@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,6 +30,7 @@ import ch.rgw.io.Settings;
  */
 public class SettingsPreferenceStore implements IPreferenceStore {
 
+	private static final String _DEFAULT = "_default"; //$NON-NLS-1$
 	Settings base;
 	private LinkedList<IPropertyChangeListener> listeners = new LinkedList<IPropertyChangeListener>();
 
@@ -56,9 +57,9 @@ public class SettingsPreferenceStore implements IPreferenceStore {
 	private String get(String field) {
 		String z = base.get(field, null);
 		if (z == null) {
-			z = base.get(field + "_default", null);
+			z = base.get(field + _DEFAULT, null);
 			if (z == null) {
-				z = "";
+				z = ""; //$NON-NLS-1$
 			}
 		}
 		return z;
@@ -85,37 +86,37 @@ public class SettingsPreferenceStore implements IPreferenceStore {
 
 	public boolean getBoolean(String name) {
 		String z = get(name);
-		if (z.equals("0")) {
+		if (z.equals("0")) { //$NON-NLS-1$
 			return false;
 		}
-		if (z.equalsIgnoreCase("FALSE")) {
+		if (z.equalsIgnoreCase("FALSE")) { //$NON-NLS-1$
 			return false;
 		}
 		return true;
 	}
 
 	public boolean getDefaultBoolean(String name) {
-		return getBoolean(name + "_default");
+		return getBoolean(name + _DEFAULT);
 	}
 
 	public double getDefaultDouble(String name) {
-		return getDouble(name + "_default");
+		return getDouble(name + _DEFAULT);
 	}
 
 	public float getDefaultFloat(String name) {
-		return getFloat(name + "_default");
+		return getFloat(name + _DEFAULT);
 	}
 
 	public int getDefaultInt(String name) {
-		return getInt(name + "_default");
+		return getInt(name + _DEFAULT);
 	}
 
 	public long getDefaultLong(String name) {
-		return getLong(name + "_default");
+		return getLong(name + _DEFAULT);
 	}
 
 	public String getDefaultString(String name) {
-		return getString(name + "_default");
+		return getString(name + _DEFAULT);
 	}
 
 	public double getDouble(String name) {
@@ -147,7 +148,7 @@ public class SettingsPreferenceStore implements IPreferenceStore {
 	}
 
 	public boolean isDefault(String name) {
-		String def = get(name + "_default");
+		String def = get(name + _DEFAULT);
 		String act = get(name);
 		return def.equals(act);
 	}
@@ -169,36 +170,36 @@ public class SettingsPreferenceStore implements IPreferenceStore {
 	}
 
 	public void setDefault(String name, double value) {
-		set(name + "_default", Double.toString(value));
+		set(name + _DEFAULT, Double.toString(value));
 
 	}
 
 	public void setDefault(String name, float value) {
-		set(name + "_default", Float.toString(value));
+		set(name + _DEFAULT, Float.toString(value));
 
 	}
 
 	public void setDefault(String name, int value) {
-		set(name + "_default", Integer.toString(value));
+		set(name + _DEFAULT, Integer.toString(value));
 	}
 
 	public void setDefault(String name, long value) {
-		set(name + "_default", Long.toString(value));
+		set(name + _DEFAULT, Long.toString(value));
 
 	}
 
 	public void setDefault(String name, String defaultObject) {
-		set(name + "_default", defaultObject);
+		set(name + _DEFAULT, defaultObject);
 
 	}
 
 	public void setDefault(String name, boolean value) {
-		set(name + "_default", Boolean.toString(value));
+		set(name + _DEFAULT, Boolean.toString(value));
 
 	}
 
 	public void setToDefault(String name) {
-		set(name, get(name + "_default"));
+		set(name, get(name + _DEFAULT));
 
 	}
 

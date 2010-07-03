@@ -13,8 +13,9 @@ import ch.elexis.util.SWTHelper;
 public class TextTemplatePreferences extends FieldEditorPreferencePage
 		implements IWorkbenchPreferencePage {
 
-	public static final String BRANCH="document_templates/";
-	public static final String SUFFIX_STATION=BRANCH+"suffix_station";
+	public static final String SUFFIX_FÜR_DIESE_STATION = Messages.TextTemplatePreferences_suffixForStation;
+	public static final String BRANCH="document_templates/"; //$NON-NLS-1$
+	public static final String SUFFIX_STATION=BRANCH+"suffix_station"; //$NON-NLS-1$
 	
 	public TextTemplatePreferences() {
 		super(GRID);
@@ -25,11 +26,11 @@ public class TextTemplatePreferences extends FieldEditorPreferencePage
 	@Override
 	protected void createFieldEditors() {
 		Label expl=new Label(getFieldEditorParent(),SWT.WRAP);
-		expl.setText("Geben Sie hier an, welche Suffix an Dokumentvorlagen von dieser Station angehängt\n"+
-				"werden soll. Wenn Sie  '_pc1' angeben, dann würde zum Beispiel anstelle der Vorlage\n"+
-				"'Rezept' von diesem PC aus die Vorlage 'Rezept_pc1' angewendet.\n");
+		expl.setText(Messages.TextTemplatePreferences_ExplanationLine1+
+				Messages.TextTemplatePreferences_ExplanationLine2+
+				Messages.TextTemplatePreferences_ExplanationLine3);
 		expl.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		addField(new StringFieldEditor(SUFFIX_STATION,"Suffix für diese Station", getFieldEditorParent()));
+		addField(new StringFieldEditor(SUFFIX_STATION,SUFFIX_FÜR_DIESE_STATION, getFieldEditorParent()));
 		/*
 		IExtensionRegistry exr = Platform.getExtensionRegistry();
 		IExtensionPoint exp = exr.getExtensionPoint("ch.elexis.documentTemplates");

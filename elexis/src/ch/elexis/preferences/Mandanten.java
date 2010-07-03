@@ -41,10 +41,10 @@ import ch.elexis.data.Query;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.preferences.inputs.PrefAccessDenied;
 import ch.elexis.util.LabeledInputField;
-import ch.elexis.util.SWTHelper;
 import ch.elexis.util.LabeledInputField.IContentProvider;
 import ch.elexis.util.LabeledInputField.InputData;
 import ch.elexis.util.LabeledInputField.InputData.Typ;
+import ch.elexis.util.SWTHelper;
 
 public class Mandanten extends PreferencePage implements IWorkbenchPreferencePage {
 	private LabeledInputField.AutoForm lfa;
@@ -52,7 +52,6 @@ public class Mandanten extends PreferencePage implements IWorkbenchPreferencePag
 	
 	private Hashtable<String, Mandant> hMandanten = new Hashtable<String, Mandant>();
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	protected Control createContents(Composite parent){
 		if (Hub.acl.request(AccessControlDefaults.ACL_USERS)) {
@@ -61,8 +60,8 @@ public class Mandanten extends PreferencePage implements IWorkbenchPreferencePag
 			Composite body = form.getBody();
 			body.setLayout(new GridLayout(1, false));
 			Combo mandanten = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
-			Query qbe = new Query(Mandant.class);
-			List list = qbe.execute();
+			Query<Mandant> qbe = new Query<Mandant>(Mandant.class);
+			List<Mandant> list = qbe.execute();
 			for (Mandant m : (List<Mandant>) list) {
 				mandanten.add(m.getLabel());
 				hMandanten.put(m.getLabel(), m);
@@ -92,18 +91,18 @@ public class Mandanten extends PreferencePage implements IWorkbenchPreferencePag
 	}
 	
 	public void init(IWorkbench workbench){
-		String grp = Hub.globalCfg.get(PreferenceConstants.ACC_GROUPS, "Admin");
+		String grp = Hub.globalCfg.get(PreferenceConstants.ACC_GROUPS, Messages.Mandanten_0);
 		
 		def =
 			new InputData[] {
-				new InputData("Kürzel", "Label", Typ.STRING, null),
-				new InputData("Passwort", "ExtInfo", Typ.STRING, "UsrPwd"),
+				new InputData(Messages.Mandanten_kuerzel, "Label", Typ.STRING, null), //$NON-NLS-1$
+				new InputData(Messages.Mandanten_password, PersistentObject.FLD_EXTINFO, Typ.STRING, "UsrPwd"),  //$NON-NLS-1$
 				// -> KSK, NIF und EAN gehören zu Tarmed.
 				// new InputData("KSK-Nr","ExtInfo",Typ.STRING,"KSK"),
 				// new InputData("NIF","ExtInfo",Typ.STRING,"NIF"),
 				// new InputData("EANr","ExtInfo",Typ.STRING,"EAN"),
-				new InputData("Gruppen", "ExtInfo", "Groups", grp.split(",")),
-				new InputData("Rechnungssteller", "ExtInfo", new IContentProvider() {
+				new InputData(Messages.Mandanten_groups, PersistentObject.FLD_EXTINFO, "Groups", grp.split(",")), //$NON-NLS-1$ //$NON-NLS-2$ 
+				new InputData(Messages.Mandanten_biller, PersistentObject.FLD_EXTINFO, new IContentProvider() { 
 					
 					public void displayContent(PersistentObject po, InputData ltf){
 						Mandant m = (Mandant) po;
@@ -115,8 +114,8 @@ public class Mandanten extends PreferencePage implements IWorkbenchPreferencePag
 						Kontakt rsi = (Kontakt) po;
 						KontaktSelektor ksl =
 							new KontaktSelektor(getShell(), Kontakt.class,
-								"Rechnungssteller auswählen",
-								"Wählen Sie bitte den Rechnungssteller aus (Standard: Mandant selber)");
+								Messages.Mandanten_selectBiller,
+								Messages.Mandanten_pleaseSelectBiller);
 						if (ksl.open() == Dialog.OK) {
 							rsi = (Kontakt) ksl.getSelection();
 						}
