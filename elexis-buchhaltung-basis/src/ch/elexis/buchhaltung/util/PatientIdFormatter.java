@@ -11,7 +11,7 @@ public class PatientIdFormatter {
 	}
 	public String format(String id){
 		if(id==null){
-			id="";
+			id=""; //$NON-NLS-1$
 		}
 		return StringTool.pad(StringTool.LEFT, '0', id, stellen);
 	}
