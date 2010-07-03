@@ -297,7 +297,7 @@ public class TerminDialog extends TitleAreaDialog {
 
 		});
 		bPrint = new Button(topRight, SWT.PUSH);
-		bPrint.setText("Drucken");
+		bPrint.setText(Messages.TerminDialog_print);
 		bPrint.setLayoutData(new GridData(s.x, s.y));
 		bPrint.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -308,7 +308,7 @@ public class TerminDialog extends TitleAreaDialog {
 
 		});
 		bFuture = new Button(topRight, SWT.CHECK);
-		bFuture.setText("vergangene");
+		bFuture.setText(Messages.TerminDialog_past);
 		// Balken
 		Composite cBar = new Composite(ret, SWT.BORDER);
 		cBar.setLayout(new GridLayout());
@@ -331,7 +331,7 @@ public class TerminDialog extends TitleAreaDialog {
 			public void linkActivated(final HyperlinkEvent e) {
 				InputDialog inp = new InputDialog(getShell(),
 						Messages.TerminDialog_enterText,
-						Messages.TerminDialog_enterFreeText, "", null);
+						Messages.TerminDialog_enterFreeText, "", null); //$NON-NLS-1$
 				if (inp.open() == Dialog.OK) {
 					tName.setText(inp.getValue());
 					tNr.setText(""); //$NON-NLS-1$
@@ -345,7 +345,7 @@ public class TerminDialog extends TitleAreaDialog {
 			}
 
 		});
-		new Label(cBottom, SWT.NONE).setText("Bereich");
+		new Label(cBottom, SWT.NONE).setText(Messages.TerminDialog_Mandator);
 		// Zeile 2
 		tNr = new Text(cBottom, SWT.BORDER | SWT.READ_ONLY);
 		tName = new Text(cBottom, SWT.BORDER | SWT.READ_ONLY);
@@ -436,9 +436,9 @@ public class TerminDialog extends TitleAreaDialog {
 							.getTimePrefFor(agenda.getActResource());
 					String nt = map.get(type);
 					if (nt == null) {
-						nt = map.get("std");
+						nt = map.get("std"); //$NON-NLS-1$
 						if (nt == null) {
-							nt = "10";
+							nt = "10"; //$NON-NLS-1$
 						}
 					}
 					int en = Integer.parseInt(nt);

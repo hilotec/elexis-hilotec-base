@@ -44,8 +44,8 @@ import ch.rgw.tools.StringTool;
  */
 public class ColumnHeader extends Composite {
 	AgendaParallel view;
-	static final String IMG_PERSONS_NAME=Activator.PLUGIN_ID+"/personen";
-	static final String IMG_PERSONS_PATH="icons/personen.png";
+	static final String IMG_PERSONS_NAME=Activator.PLUGIN_ID+"/personen"; //$NON-NLS-1$
+	static final String IMG_PERSONS_PATH="icons/personen.png"; //$NON-NLS-1$
 	ImageHyperlink ihRes;
 	
 	ColumnHeader(Composite parent, AgendaParallel v){
@@ -57,7 +57,7 @@ public class ColumnHeader extends Composite {
 		}
 		ihRes=new ImageHyperlink(this,SWT.NONE);
 		ihRes.setImage(Desk.getImage(IMG_PERSONS_NAME));
-		ihRes.setToolTipText("Bereiche für Anzeige auswählen");
+		ihRes.setToolTipText(Messages.ColumnHeader_selectMandatorToShow);
 		ihRes.addHyperlinkListener(new HyperlinkAdapter(){
 
 			@Override
@@ -117,9 +117,9 @@ public class ColumnHeader extends Composite {
 		@Override
 		public void create() {
 			super.create();
-			getShell().setText("Bereiche");
-			setTitle("Bereiche für die Parralelanzeige");
-			setMessage("Markieren Sie die Bereiche, die angezeigt werden sollen");
+			getShell().setText(Messages.ColumnHeader_Mandantors);
+			setTitle(Messages.ColumnHeader_mandatorsForParallelView);
+			setMessage(Messages.ColumnHeader_selectMandators);
 		}
 
 		@Override
@@ -135,7 +135,7 @@ public class ColumnHeader extends Composite {
 				}
 			}
 			view.clear();
-			Hub.localCfg.set(PreferenceConstants.AG_RESOURCESTOSHOW, StringTool.join(sel, ","));
+			Hub.localCfg.set(PreferenceConstants.AG_RESOURCESTOSHOW, StringTool.join(sel, ",")); //$NON-NLS-1$
 			view.refresh();
 			
 			super.okPressed();

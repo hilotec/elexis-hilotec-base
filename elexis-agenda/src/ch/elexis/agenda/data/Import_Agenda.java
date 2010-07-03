@@ -47,10 +47,10 @@ import ch.rgw.tools.JdbcLink.Stm;
 @Deprecated
 public class Import_Agenda extends ImporterPage{
 	public static final String drop=
-	"DROP INDEX it ON AGNTERMINE;"+
-	"DROP INDEX pattern ON AGNTERMINE;"+
-	"DROP INDEX mandterm ON AGNTERMINE;"+
-	"DROP TABLE AGNTERMINE;";
+	"DROP INDEX it ON AGNTERMINE;"+ //$NON-NLS-1$
+	"DROP INDEX pattern ON AGNTERMINE;"+ //$NON-NLS-1$
+	"DROP INDEX mandterm ON AGNTERMINE;"+ //$NON-NLS-1$
+	"DROP TABLE AGNTERMINE;"; //$NON-NLS-1$
 	ImporterPage.DBBasedImporter importer=null;
 	Combo cbBereich;
 	Button bSyncEnable,bDoDelete;
@@ -65,7 +65,7 @@ public class Import_Agenda extends ImporterPage{
 	
 	@Override
 	public String getTitle() {
-		return "JavaAgenda";
+		return "JavaAgenda"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -75,21 +75,21 @@ public class Import_Agenda extends ImporterPage{
 			return ResultAdapter.getResultAsStatus(res);
 		}
 		JdbcLink j=res.get();
-		int size=j.queryInt("SELECT COUNT(0) FROM agnTermine WHERE BEIWEM='"+orig_mandant+"' AND deleted<>'1'");
-		monitor.beginTask("Importiere Agenda", size+100);
+		int size=j.queryInt("SELECT COUNT(0) FROM agnTermine WHERE BEIWEM='"+orig_mandant+"' AND deleted<>'1'"); //$NON-NLS-1$ //$NON-NLS-2$
+		monitor.beginTask(Messages.Import_Agenda_importingAgenda, size+100);
 		Stm stm=j.getStatement();
 		//Activator.getDefault().pinger.pause(true);
 		Synchronizer.pause(true);
 		if(bDelete){
-			monitor.subTask("Lege Tabellen an");
-			Termin.getConnection().execScript(new ByteArrayInputStream(drop.getBytes("UTF-8")), true, false);
+			monitor.subTask(Messages.Import_Agenda_creatingTables);
+			Termin.getConnection().execScript(new ByteArrayInputStream(drop.getBytes("UTF-8")), true, false); //$NON-NLS-1$
 			Termin.init();
 		}
 		monitor.worked(10);
 		
 		try{
-			monitor.subTask("Importiere Datensätze");
-			ResultSet rs=stm.query("SELECT * FROM agnTermine WHERE BEIWEM='"+orig_mandant+"' AND deleted<>'1'");
+			monitor.subTask(Messages.Import_Agenda_importingApps);
+			ResultSet rs=stm.query("SELECT * FROM agnTermine WHERE BEIWEM='"+orig_mandant+"' AND deleted<>'1'"); //$NON-NLS-1$ //$NON-NLS-2$
 			Query<Patient> qPat=new Query<Patient>(Patient.class);
 			int loop=0;
 			while(rs.next()){
@@ -98,33 +98,33 @@ public class Import_Agenda extends ImporterPage{
 					PersistentObject.clearCache();
 					Thread.sleep(10);
 				}
-				int von=rs.getInt("Beginn");
-				int dauer=rs.getInt("Dauer");
+				int von=rs.getInt("Beginn"); //$NON-NLS-1$
+				int dauer=rs.getInt("Dauer"); //$NON-NLS-1$
 				int bis=von+dauer;
-				Termin t=new Termin(rs.getString("ID"),dest_bereich,rs.getString("Tag"),von,bis,rs.getString("TerminTyp"),rs.getString("TerminStatus"));
-				t.set(new String[]{"Grund","ErstelltWann","ErstelltVon"},
-						rs.getString("Grund"), rs.getString("Angelegt"), 
-						rs.getString("ErstelltVon"));
+				Termin t=new Termin(rs.getString("ID"),dest_bereich,rs.getString("Tag"),von,bis,rs.getString("TerminTyp"),rs.getString("TerminStatus")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				t.set(new String[]{"Grund","ErstelltWann","ErstelltVon"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						rs.getString("Grund"), rs.getString("Angelegt"),  //$NON-NLS-1$ //$NON-NLS-2$
+						rs.getString("ErstelltVon")); //$NON-NLS-1$
 				
-				String pers=rs.getString("Personalien");
+				String pers=rs.getString("Personalien"); //$NON-NLS-1$
 				String[] px=Termin.findID(pers);
-				List<Patient> list=qPat.queryFields(new String[]{"Name","Vorname","Geburtsdatum"}, px, true);
+				List<Patient> list=qPat.queryFields(new String[]{"Name","Vorname","Geburtsdatum"}, px, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				if((list==null) || (list.size()!=1)){
-					t.set("Wer", pers);
+					t.set("Wer", pers); //$NON-NLS-1$
 				}else{
-					t.set("Wer", ((PersistentObject)list.get(0)).getId());
+					t.set("Wer", ((PersistentObject)list.get(0)).getId()); //$NON-NLS-1$
 				}
 				if(monitor.isCanceled()){
 					monitor.done();
-					Termin.getConnection().execScript(new ByteArrayInputStream(drop.getBytes("UTF-8")), true, false);
-					SWTHelper.showError("Import abgebrochen", "Der Import wurde nicht durchgeführt");
+					Termin.getConnection().execScript(new ByteArrayInputStream(drop.getBytes("UTF-8")), true, false); //$NON-NLS-1$
+					SWTHelper.showError(Messages.Import_Agenda_cancelled, Messages.Import_Agenda_importWasCancelled);
 					return Status.CANCEL_STATUS;
 				}
 				monitor.worked(1);
 			}
 			return Status.OK_STATUS;
 		}catch(Exception ex){
-			SWTHelper.showError("Fehler beim Import", ex.getMessage());
+			SWTHelper.showError(Messages.Import_Agenda_errorsDuringImport, ex.getMessage());
 			ExHandler.handle(ex);
 		}finally{
 			j.releaseStatement(stm);
@@ -137,7 +137,7 @@ public class Import_Agenda extends ImporterPage{
 
 	@Override
 	public String getDescription() {
-		return "Daten aus Java-Agenda importieren.";
+		return Messages.Import_Agenda_importFromJavaAgenda;
 	}
 	
 
@@ -168,9 +168,9 @@ public class Import_Agenda extends ImporterPage{
 		cMandant.setLayout(new GridLayout(3,false));
 		Composite cl=new Composite(cMandant,SWT.NONE);
 		cl.setLayout(new GridLayout());
-		new Label(cl,SWT.NONE).setText("Bereich in Elexis");
+		new Label(cl,SWT.NONE).setText("Bereich in Elexis"); //$NON-NLS-1$
 		cbBereich=new Combo(cl,SWT.SINGLE|SWT.READ_ONLY);
-		cbBereich.setItems(Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, "Praxis").split(","));
+		cbBereich.setItems(Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, "Praxis").split(",")); //$NON-NLS-1$ //$NON-NLS-2$
 		dest_bereich=cbBereich.getItem(0);
 		cbBereich.addSelectionListener(new SelectionAdapter(){
 			@Override
@@ -178,26 +178,26 @@ public class Import_Agenda extends ImporterPage{
 				map.put(dest_bereich, tMandant.getText());
 				dest_bereich=cbBereich.getText();
 				orig_mandant=map.get(dest_bereich);
-				tMandant.setText(orig_mandant==null ? "" : orig_mandant);
+				tMandant.setText(orig_mandant==null ? "" : orig_mandant); //$NON-NLS-1$
 			}
 			
 		});
 		cbBereich.select(0);
 		orig_mandant=map.get(dest_bereich);
 		if(orig_mandant==null){
-			orig_mandant="";
+			orig_mandant=""; //$NON-NLS-1$
 		}
-		new Label(cMandant,SWT.NONE).setText("Entspricht");
+		new Label(cMandant,SWT.NONE).setText("Entspricht"); //$NON-NLS-1$
 		Composite cr=new Composite(cMandant,SWT.NONE);
 		cr.setLayout(new GridLayout());
-		new Label(cr,SWT.NONE).setText("Name in Agenda");
+		new Label(cr,SWT.NONE).setText("Name in Agenda"); //$NON-NLS-1$
 		tMandant=new Text(cr,SWT.BORDER);
 		tMandant.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tMandant.setText(orig_mandant);
 		bDoDelete=new Button(ret,SWT.CHECK);
-		bDoDelete.setText("Agenda-Daten löschen und neu anlegen");
+		bDoDelete.setText("Agenda-Daten löschen und neu anlegen"); //$NON-NLS-1$
 		bSyncEnable=new Button(ret,SWT.CHECK);
-		bSyncEnable.setText("Kontinuierlich synchronisieren");
+		bSyncEnable.setText("Kontinuierlich synchronisieren"); //$NON-NLS-1$
 		bSyncEnable.setSelection(Hub.globalCfg.get(PreferenceConstants.AG_SYNC_ENABLED, false));
 		return ret;
 	}

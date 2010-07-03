@@ -92,7 +92,7 @@ public class TimeInput extends Composite {
 	public void setTimeInMinutes(int min){
 		String h=Integer.toString(min/60);
 		String m=Integer.toString(min%60);
-		text.setText(h+":"+StringTool.pad(StringTool.LEFT, '0', m, 2));
+		text.setText(h+":"+StringTool.pad(StringTool.LEFT, '0', m, 2)); //$NON-NLS-1$
 		
 	}
 	private boolean isAcceptable(String input){

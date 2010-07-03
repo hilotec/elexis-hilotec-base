@@ -78,7 +78,7 @@ IActivationListener {
 	exportAction, importAction;
 	protected IAction printPatientAction;
 	MenuManager menu = new MenuManager();
-	protected Log log = Log.get("Agenda");
+	protected Log log = Log.get("Agenda"); //$NON-NLS-1$
 	Activator agenda = Activator.getDefault();
 	
 	private final ElexisEventListenerImpl eeli_termin = new ElexisEventListenerImpl(
@@ -181,7 +181,7 @@ IActivationListener {
 	}
 	
 	public void heartbeat() {
-		log.log("Heartbeat", Log.DEBUGMSG);
+		log.log("Heartbeat", Log.DEBUGMSG); //$NON-NLS-1$
 		eeli_termin.catchElexisEvent(new ElexisEvent(null, Termin.class,
 			ElexisEvent.EVENT_RELOAD));
 		// GlobalEvents.getInstance().fireUpdateEvent(Termin.class);
@@ -272,7 +272,7 @@ IActivationListener {
 	}
 	
 	protected void makeActions() {
-		dayLimitsAction = new Action("Tagesgrenzen") {
+		dayLimitsAction = new Action(Messages.BaseAgendaView_dayLimits) {
 			@Override
 			public void run() {
 				new TagesgrenzenDialog(PlatformUI.getWorkbench()
@@ -362,10 +362,10 @@ IActivationListener {
 				}
 			}
 		};
-		printAction = new Action("Tagesliste drucken") {
+		printAction = new Action(Messages.BaseAgendaView_printDayList) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
-				setToolTipText("Termine des gewählten Tages ausdrucken");
+				setToolTipText(Messages.BaseAgendaView_printListOfDay);
 			}
 			
 			@Override
@@ -380,10 +380,10 @@ IActivationListener {
 				}
 			}
 		};
-		printPatientAction = new Action("Patienten-Termine drucken") {
+		printPatientAction = new Action(Messages.BaseAgendaView_printPatAppointments) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
-				setToolTipText("Zukünftige Termine des ausgewählten Patienten drucken");
+				setToolTipText(Messages.BaseAgendaView_printFutureAppsOfSelectedPatient);
 			}
 			
 			@Override
@@ -414,8 +414,8 @@ IActivationListener {
 							} else {
 								SWTHelper
 								.alert(
-									"Fehler beim Drucken",
-								"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+									Messages.BaseAgendaView_errorWhileprinting,
+								Messages.BaseAgendaView_errorHappendPrinting);
 							}
 						} else {
 							dlg.setBlockOnOpen(true);
@@ -425,9 +425,9 @@ IActivationListener {
 				}
 			}
 		};
-		exportAction = new Action("Agenda exportieren") {
+		exportAction = new Action(Messages.BaseAgendaView_exportAgenda) {
 			{
-				setToolTipText("Termine eines Bereichs exportieren");
+				setToolTipText(Messages.BaseAgendaView_exportAppointsments);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_GOFURTHER));
 			}
 			
@@ -439,9 +439,9 @@ IActivationListener {
 			}
 		};
 		
-		importAction = new Action("Termine importieren") {
+		importAction = new Action(Messages.BaseAgendaView_importAgenda) {
 			{
-				setToolTipText("Termine aus einer iCal-Datei importieren");
+				setToolTipText(Messages.BaseAgendaView_importFromIcal);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
 			}
 			
@@ -479,7 +479,7 @@ IActivationListener {
 			private void fillMenu() {
 				String[] sMandanten = Hub.globalCfg.get(
 					PreferenceConstants.AG_BEREICHE,
-					Messages.TagesView_praxis).split(",");
+					Messages.TagesView_praxis).split(","); //$NON-NLS-1$
 				for (String m : sMandanten) {
 					MenuItem it = new MenuItem(mine, SWT.NONE);
 					it.setText(m);

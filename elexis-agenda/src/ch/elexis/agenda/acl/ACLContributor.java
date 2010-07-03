@@ -26,29 +26,29 @@ import ch.elexis.admin.IACLContributor;
  */
 public class ACLContributor implements IACLContributor {
 	/** The right to use the agenda at all */
-	public static final ACE ACE_AGENDA = new ACE(ACE.ACE_ROOT, Activator.PLUGIN_ID, "Agenda");
-	public static final ACE USE_AGENDA = new ACE(ACE_AGENDA, "user", "benutzen");
+	public static final ACE ACE_AGENDA = new ACE(ACE.ACE_ROOT, Activator.PLUGIN_ID, "Agenda"); //$NON-NLS-1$
+	public static final ACE USE_AGENDA = new ACE(ACE_AGENDA, "user", Messages.ACLContributor_acl_use); //$NON-NLS-1$
 	
 	/** administrative rights to the agenda */
-	public static final ACE ADMIN_AGENDA = new ACE(ACE_AGENDA, "admin", "Administration");
+	public static final ACE ADMIN_AGENDA = new ACE(ACE_AGENDA, "admin", Messages.ACLContributor_acl_administer); //$NON-NLS-1$
 	
 	/** The right to see appointments */
 	public static final ACE DISPLAY_APPOINTMENTS =
-		new ACE(USE_AGENDA, "zeigeTermine", "Termine zeigen");
+		new ACE(USE_AGENDA, "zeigeTermine", Messages.ACLContributor_acl_showAppointments); //$NON-NLS-1$
 	/** The right to modify appointments */
 	public static final ACE CHANGE_APPOINTMENTS =
-		new ACE(USE_AGENDA, "ändereTermine", "Termine ändern");
+		new ACE(USE_AGENDA, "ändereTermine", Messages.ACLContributor_acl_changeAppointments); //$NON-NLS-1$
 	/** The right to delete appointments */
 	public static final ACE DELETE_APPOINTMENTS =
-		new ACE(USE_AGENDA, "löscheTermine", "Termine löschen");
+		new ACE(USE_AGENDA, "löscheTermine", Messages.ACLContributor_acl_deleteAppointments); //$NON-NLS-1$
 	
 	/** The right to modify the day limits */
 	public static final ACE CHANGE_DAYSETTINGS =
-		new ACE(ADMIN_AGENDA, "Tagesgrenzen", "Tagesgrenzen");
+		new ACE(ADMIN_AGENDA, "Tagesgrenzen", Messages.ACLContributor_acl_daylimits); //$NON-NLS-1$
 	
 	/** The right to lock or unlock appointments */
 	public static final ACE CHANGE_APPLOCK =
-		new ACE(ADMIN_AGENDA, "TerminSperren", "Termin sperren");
+		new ACE(ADMIN_AGENDA, "TerminSperren", Messages.ACLContributor_acl_lockappointments); //$NON-NLS-1$
 	
 	/**
 	 * get the ACE's that should be managed.

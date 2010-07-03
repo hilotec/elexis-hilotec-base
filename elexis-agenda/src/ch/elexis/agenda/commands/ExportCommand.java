@@ -11,7 +11,7 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 
 public class ExportCommand extends AbstractHandler {
-	public static final String ID="ch.elexis.agenda.commands.export";
+	public static final String ID="ch.elexis.agenda.commands.export"; //$NON-NLS-1$
 	
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		// TODO Auto-generated method stub
@@ -24,10 +24,10 @@ public class ExportCommand extends AbstractHandler {
 		try {
 			Command command = cmdService.getCommand(ID);
 			Parameterization px1 =
-				new Parameterization(command.getParameter("ch.elexis.agenda.param.resource"), bereich);
+				new Parameterization(command.getParameter("ch.elexis.agenda.param.resource"), bereich); //$NON-NLS-1$
 			
-			Parameterization px2= new Parameterization(command.getParameter("ch.elexis.agenda.param.from"),from);
-			Parameterization px3= new Parameterization(command.getParameter("ch.elexis.agenda.param.until"),until);
+			Parameterization px2= new Parameterization(command.getParameter("ch.elexis.agenda.param.from"),from); //$NON-NLS-1$
+			Parameterization px3= new Parameterization(command.getParameter("ch.elexis.agenda.param.until"),until); //$NON-NLS-1$
 			ParameterizedCommand parmCommand =
 				new ParameterizedCommand(command, new Parameterization[] {
 					px1,px2,px3
@@ -36,7 +36,7 @@ public class ExportCommand extends AbstractHandler {
 			return handlerService.executeCommand(parmCommand, null);
 			
 		} catch (Exception ex) {
-			throw new RuntimeException(" export command not found");
+			throw new RuntimeException(" export command not found"); //$NON-NLS-1$
 		}
 	}
 }

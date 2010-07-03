@@ -97,7 +97,7 @@ public class AgendaImages extends PreferencePage implements
 									.getData();
 							Hub.userCfg.set(
 									PreferenceConstants.AG_TYPIMAGE_PREFIX + t,
-									Messages.AgendaImages_8 + dest.getName());
+									"icons/" + dest.getName()); //$NON-NLS-1$
 						}
 					} catch (Exception ex) {
 						ExHandler.handle(ex);

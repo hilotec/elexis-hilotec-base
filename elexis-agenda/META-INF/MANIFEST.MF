@@ -14,7 +14,7 @@ Require-Bundle: ch.elexis,
  org.eclipse.core.runtime,
  org.eclipse.ui.forms,
  ch.rgw.utility,
- org.apache.commons.logging;bundle-version="1.0.4"
+ ch.medshare.base.external;bundle-version="1.0.0"
 Eclipse-LazyStart: true
 Bundle-ClassPath: lib/ical4j-1.0-beta4.jar,
  .,

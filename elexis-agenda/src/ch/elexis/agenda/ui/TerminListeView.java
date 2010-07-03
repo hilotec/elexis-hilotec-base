@@ -64,7 +64,7 @@ public class TerminListeView extends ViewPart implements IActivationListener,
 			public void apply(Query<? extends PersistentObject> qbe) {
 				Patient p = ElexisEventDispatcher.getSelectedPatient();
 				if (p == null) {
-					qbe.add(Termin.FLD_PATIENT, Query.EQUALS, "--");
+					qbe.add(Termin.FLD_PATIENT, Query.EQUALS, "--"); //$NON-NLS-1$
 				} else {
 					qbe.add(Termin.FLD_PATIENT, Query.EQUALS, p.getId());
 				}
@@ -75,7 +75,7 @@ public class TerminListeView extends ViewPart implements IActivationListener,
 				new DefaultLabelProvider(), new SimpleWidgetProvider(
 						SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		cv.create(vc, body, SWT.NONE, this);
-		new Label(body, SWT.NONE).setText("bottom");
+		new Label(body, SWT.NONE).setText("bottom"); //$NON-NLS-1$
 		GlobalEventDispatcher.addActivationListener(this, this);
 	}
 
@@ -112,7 +112,7 @@ public class TerminListeView extends ViewPart implements IActivationListener,
 					form.setText(((Patient) ev.getObject()).getLabel());
 					fdl.inputChanged(cv.getViewerWidget(), this, this);
 				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
-					form.setText("No Patient selected");
+					form.setText("No Patient selected"); //$NON-NLS-1$
 				}
 
 			}
