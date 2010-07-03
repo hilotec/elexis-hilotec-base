@@ -513,7 +513,7 @@ public class Patient extends Person {
 				getId()).execute()) {
 			rp.delete();
 		}
-		for (Brief br : new Query<Brief>(Brief.class, Brief.PATIENT_ID, getId())
+		for (Brief br : new Query<Brief>(Brief.class, Brief.FLD_PATIENT_ID, getId())
 				.execute()) {
 			br.delete();
 		}

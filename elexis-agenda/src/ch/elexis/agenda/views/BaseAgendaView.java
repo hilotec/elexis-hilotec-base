@@ -39,6 +39,7 @@ import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.Activator;
 import ch.elexis.actions.AgendaActions;
 import ch.elexis.actions.ElexisEvent;
@@ -56,6 +57,7 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminDialog;
@@ -391,11 +393,11 @@ IActivationListener {
 				Patient patient = ElexisEventDispatcher.getSelectedPatient();
 				if (patient != null) {
 					Query<Termin> qbe = new Query<Termin>(Termin.class);
-					qbe.add("Wer", "=", patient.getId());
-					qbe.add("deleted", "<>", "1");
-					qbe.add("Tag", ">=", new TimeTool()
+					qbe.add(Termin.FLD_PATIENT, Query.EQUALS, patient.getId());
+					qbe.add(PersistentObject.FLD_DELETED, Query.NOT_EQUAL, StringConstants.ONE);
+					qbe.add(Termin.FLD_TAG, Query.GREATER_OR_EQUAL, new TimeTool()
 					.toString(TimeTool.DATE_COMPACT));
-					qbe.orderBy(false, "Tag", "Beginn");
+					qbe.orderBy(false, Termin.FLD_TAG, Termin.FLD_BEGINN);
 					java.util.List<Termin> list = qbe.execute();
 					if (list != null) {
 						boolean directPrint = Hub.localCfg

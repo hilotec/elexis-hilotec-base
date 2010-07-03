@@ -181,13 +181,13 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 							Patient actPat = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 							if (actPat != null) {
 								Query<Brief> qbe = new Query<Brief>(Brief.class);
-								qbe.add(Brief.PATIENT_ID, Query.EQUALS, actPat
+								qbe.add(Brief.FLD_PATIENT_ID, Query.EQUALS, actPat
 										.getId());
 								if (cat.equals(Messages.getString("BriefAuswahlAllLetters2"))) { //$NON-NLS-1$
-									qbe.add(Brief.TYPE, Query.NOT_EQUAL,
+									qbe.add(Brief.FLD_TYPE, Query.NOT_EQUAL,
 											Brief.TEMPLATE);
 								} else {
-									qbe.add(Brief.TYPE, Query.EQUALS, cat);
+									qbe.add(Brief.FLD_TYPE, Query.EQUALS, cat);
 								}
 								cv.getConfigurer().getControlFieldProvider()
 										.setQuery(qbe);

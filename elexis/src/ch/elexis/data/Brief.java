@@ -31,15 +31,15 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class Brief extends PersistentObject {
-	public static final String MIME_TYPE = "MimeType";
-	public static final String DATE_MODIFIED = "modifiziert";
-	public static final String DATE = "Datum";
-	public static final String TYPE = "Typ";
-	public static final String KONSULTATION_ID = "BehandlungsID";
-	public static final String DESTINATION_ID = "DestID";
-	public static final String SENDER_ID = "AbsenderID";
-	public static final String PATIENT_ID = "PatientID";
-	public static final String SUBJECT = "Betreff";
+	public static final String FLD_MIME_TYPE = "MimeType";
+	public static final String FLD_DATE_MODIFIED = "modifiziert";
+	public static final String FLD_DATE = "Datum";
+	public static final String FLD_TYPE = "Typ";
+	public static final String FLD_KONSULTATION_ID = "BehandlungsID";
+	public static final String FLD_DESTINATION_ID = "DestID";
+	public static final String FLD_SENDER_ID = "AbsenderID";
+	public static final String FLD_PATIENT_ID = "PatientID";
+	public static final String FLD_SUBJECT = "Betreff";
 	public static final String TABLENAME = "BRIEFE";
 	public static final String TEMPLATE = "Vorlagen";
 	public static final String AUZ = "AUF-Zeugnis";
@@ -58,8 +58,8 @@ public class Brief extends PersistentObject {
 	}
 	
 	static {
-		addMapping(TABLENAME, SUBJECT, PATIENT_ID, DATE_COMPOUND, SENDER_ID, DESTINATION_ID,
-			KONSULTATION_ID, TYPE, "modifiziert=S:D:modifiziert", "geloescht", MIME_TYPE,
+		addMapping(TABLENAME, FLD_SUBJECT, FLD_PATIENT_ID, DATE_COMPOUND, FLD_SENDER_ID, FLD_DESTINATION_ID,
+			FLD_KONSULTATION_ID, FLD_TYPE, "modifiziert=S:D:modifiziert", "geloescht", FLD_MIME_TYPE,
 			"gedruckt=S:D:gedruckt", "Path");
 	}
 	
@@ -95,8 +95,8 @@ public class Brief extends PersistentObject {
 			}
 			String dat = Datum.toString(TimeTool.DATE_GER);
 			set(new String[] {
-				SUBJECT, PATIENT_ID, DATE, SENDER_ID, DATE_MODIFIED, DESTINATION_ID,
-				KONSULTATION_ID, TYPE, "geloescht"
+				FLD_SUBJECT, FLD_PATIENT_ID, FLD_DATE, FLD_SENDER_ID, FLD_DATE_MODIFIED, FLD_DESTINATION_ID,
+				FLD_KONSULTATION_ID, FLD_TYPE, "geloescht"
 			}, new String[] {
 				Betreff, pat, dat, Absender == null ? StringTool.leer : Absender.getId(), dat, dst, bhdl, typ,
 						StringConstants.ZERO
@@ -112,15 +112,15 @@ public class Brief extends PersistentObject {
 	}
 	
 	public void setPatient(Person k){
-		set(PATIENT_ID, k.getId());
+		set(FLD_PATIENT_ID, k.getId());
 	}
 	
 	public void setTyp(String typ){
-		set(TYPE, typ);
+		set(FLD_TYPE, typ);
 	}
 	
 	public String getTyp(){
-		String t = get(TYPE);
+		String t = get(FLD_TYPE);
 		if (t == null) {
 			return "Brief";
 		}
@@ -131,7 +131,7 @@ public class Brief extends PersistentObject {
 	public boolean save(String cnt){
 		contents c = contents.load(getId());
 		c.save(cnt);
-		set(DATE_MODIFIED, new TimeTool().toString(TimeTool.DATE_COMPACT));
+		set(FLD_DATE_MODIFIED, new TimeTool().toString(TimeTool.DATE_COMPACT));
 		return true;
 	}
 	
@@ -141,8 +141,8 @@ public class Brief extends PersistentObject {
 			// if(mimetype.equalsIgnoreCase(MIMETYPE_OO2)){
 			contents c = contents.load(getId());
 			c.save(in);
-			set(DATE_MODIFIED, new TimeTool().toString(TimeTool.DATE_COMPACT));
-			set(MIME_TYPE, mimetype);
+			set(FLD_DATE_MODIFIED, new TimeTool().toString(TimeTool.DATE_COMPACT));
+			set(FLD_MIME_TYPE, mimetype);
 			return true;
 			// }
 			// return false;
@@ -164,7 +164,7 @@ public class Brief extends PersistentObject {
 	
 	/** Mime-Typ des Inhalts holen */
 	public String getMimeType(){
-		String gm = get(MIME_TYPE);
+		String gm = get(FLD_MIME_TYPE);
 		if (StringTool.isNothing(gm)) {
 			return MIMETYPE_OO2;
 		}
@@ -180,7 +180,7 @@ public class Brief extends PersistentObject {
 	
 	public boolean delete(){
 		getConnection().exec("UPDATE HEAP SET deleted='1' WHERE ID=" + getWrappedId());
-		String konsID = get(KONSULTATION_ID);
+		String konsID = get(FLD_KONSULTATION_ID);
 		if (!StringTool.isNothing(konsID) && (!konsID.equals("SYS"))) {
 			Konsultation kons = Konsultation.load(konsID);
 			if ((kons != null) && (kons.isEditable(false))) {
@@ -211,24 +211,24 @@ public class Brief extends PersistentObject {
 	}
 	
 	public String getBetreff(){
-		return checkNull(get(SUBJECT));
+		return checkNull(get(FLD_SUBJECT));
 	}
 	
 	public void setBetreff(String nBetreff){
-		set(SUBJECT, nBetreff);
+		set(FLD_SUBJECT, nBetreff);
 	}
 	
 	public String getDatum(){
-		return get(DATE);
+		return get(FLD_DATE);
 	}
 	
 	public Kontakt getAdressat(){
-		String dest = get(DESTINATION_ID);
+		String dest = get(FLD_DESTINATION_ID);
 		return dest == null ? null : Kontakt.load(dest);
 	}
 	
 	public Person getPatient(){
-		Person pat = Person.load(get(PATIENT_ID));
+		Person pat = Person.load(get(FLD_PATIENT_ID));
 		if ((pat != null) && (pat.state() > INVALID_ID)) {
 			return pat;
 		}
@@ -236,7 +236,7 @@ public class Brief extends PersistentObject {
 	}
 	
 	public String getLabel(){
-		return checkNull(get(DATE)) + StringTool.space + checkNull(get(SUBJECT));
+		return checkNull(get(FLD_DATE)) + StringTool.space + checkNull(get(FLD_SUBJECT));
 	}
 	
 	private static class contents extends PersistentObject {
