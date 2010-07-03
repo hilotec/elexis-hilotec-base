@@ -783,10 +783,12 @@ public class StringTool {
 			t4 ^= t0;
 		}
 		t4 += sequence++;
+		if(sequence>99999){
+			sequence=0;
+		}
 		long idx=sequence%salties.length;
 		char start=salties[(int)idx];
-		return start+Long.toHexString(t4)
-		+ Long.toHexString((long) (Math.random() * 1000)) + sequence;
+		return new StringBuilder().append(start).append(Long.toHexString(t4)).append(Long.toHexString((long)Math.random()*1000)).append(sequence).toString();
 	}
 	
 	/**
