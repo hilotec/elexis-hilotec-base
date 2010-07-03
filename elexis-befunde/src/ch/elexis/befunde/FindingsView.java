@@ -59,7 +59,7 @@ import ch.rgw.tools.TimeTool;
 public class FindingsView extends ViewPart implements IActivationListener,
 ElexisEventListener {
 	
-	public static final String ID = "elexis-befunde.findingsView";
+	public static final String ID = "elexis-befunde.findingsView"; //$NON-NLS-1$
 	private CTabFolder ctabs;
 	private ScrolledForm form;
 	private Hashtable hash;
@@ -80,8 +80,8 @@ ElexisEventListener {
 		ctabs = new CTabFolder(body, SWT.NONE);
 		ctabs.setLayout(new FillLayout());
 		Messwert setup = Messwert.getSetup();
-		hash = setup.getHashtable("Befunde");
-		String names = (String) hash.get("names");
+		hash = setup.getHashtable(Messwert.FLD_BEFUNDE);
+		String names = (String) hash.get(Messwert.HASH_NAMES);
 		if (!StringTool.isNothing(names)) {
 			for (String n : names.split(Messwert.SETUP_SEPARATOR)) {
 				CTabItem ci = new CTabItem(ctabs, SWT.NONE);
@@ -144,7 +144,7 @@ ElexisEventListener {
 	
 	private void setPatient(final Patient p) {
 		if (p == null) {
-			form.setText("Kein Patient ausgewählt");
+			form.setText(Messages.getString("FindingsView.noPatientSelected")); //$NON-NLS-1$
 			
 		} else {
 			form.setText(p.getLabel());
@@ -174,7 +174,7 @@ ElexisEventListener {
 			table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			table.setHeaderVisible(true);
 			table.setLinesVisible(true);
-			String vals = (String) hash.get(param + "_FIELDS");
+			String vals = (String) hash.get(param + Messwert._FIELDS);
 			if (vals != null) {
 				flds = vals.split(Messwert.SETUP_SEPARATOR);
 				tc = new TableColumn[flds.length + 1];
@@ -185,10 +185,10 @@ ElexisEventListener {
 					tc[i] = new TableColumn(table, SWT.NONE);
 					flds[i - 1] = flds[i - 1]
 					                   .split(Messwert.SETUP_CHECKSEPARATOR)[0];
-					String[] header = flds[i - 1].split("=", 2);
+					String[] header = flds[i - 1].split("=", 2); //$NON-NLS-1$
 					tc[i].setText(header[0]);
 					if (header.length > 1) {
-						tc[i].setData("script", header[1]);
+						tc[i].setData("script", header[1]); //$NON-NLS-1$
 					}
 					tc[i].setWidth(80);
 				}
@@ -233,23 +233,23 @@ ElexisEventListener {
 		void setPatient(final Patient pat) {
 			if (pat != null) {
 				Query<Messwert> qbe = new Query<Messwert>(Messwert.class);
-				qbe.add("PatientID", "=", pat.getId()); //$NON-NLS-1$ //$NON-NLS-2$
-				qbe.add("Name", "=", myparm); //$NON-NLS-1$ //$NON-NLS-2$
+				qbe.add(Messwert.FLD_PATIENT_ID, Query.EQUALS, pat.getId()); 
+				qbe.add(Messwert.FLD_NAME, Query.EQUALS, myparm); 
 				List<Messwert> list = qbe.execute();
 				table.removeAll();
 				Collections.sort(list, new Comparator<Messwert>() {
 					
 					public int compare(final Messwert o1, final Messwert o2) {
-						TimeTool t1 = new TimeTool(o1.get("Datum"));
-						TimeTool t2 = new TimeTool(o2.get("Datum"));
+						TimeTool t1 = new TimeTool(o1.get(Messwert.FLD_DATE));
+						TimeTool t2 = new TimeTool(o2.get(Messwert.FLD_DATE));
 						return t1.compareTo(t2);
 					}
 				});
 				for (Messwert m : list) {
 					TableItem item = new TableItem(table, SWT.NONE);
-					item.setText(0, m.get("Datum")); //$NON-NLS-1$
+					item.setText(0, m.get(Messwert.FLD_DATE)); //$NON-NLS-1$
 					item.setData(m);
-					Hashtable hash = m.getHashtable("Befunde"); //$NON-NLS-1$
+					Hashtable hash = m.getHashtable(Messwert.FLD_BEFUNDE); //$NON-NLS-1$
 					for (int i = 0; i < flds.length; i++) {
 						item.setText(i + 1, PersistentObject
 							.checkNull((String) hash.get(flds[i])));
@@ -276,7 +276,7 @@ ElexisEventListener {
 			.getString("MesswerteView.enterNewValue")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
-				setToolTipText("Eine neue Messung hinzufügen");
+				setToolTipText(Messages.getString("FindingsView.addNewMeasure")); //$NON-NLS-1$
 			}
 			
 			@Override
@@ -293,10 +293,10 @@ ElexisEventListener {
 				}
 			}
 		};
-		editValueAction = new Action("Edit...") {
+		editValueAction = new Action(Messages.getString("FindingsView.editActionCaption")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-				setToolTipText("Text ansehen oder ändern");
+				setToolTipText(Messages.getString("FindingsView.editActionToolTip")); //$NON-NLS-1$
 			}
 			
 			@Override
@@ -317,17 +317,17 @@ ElexisEventListener {
 				}
 			}
 		};
-		deleteValueAction = new Action("Löschen") {
+		deleteValueAction = new Action(Messages.getString("FindingsView.deleteActionCaption")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
-				setToolTipText("Die gewählte Messung löschen");
+				setToolTipText(Messages.getString("FindingsView.deleteActionToolTip")); //$NON-NLS-1$
 			}
 			
 			@Override
 			public void run() {
 				if (SWTHelper
-						.askYesNo("Messwert löschen",
-						"Wollen Sie wirklich diese Messung unwiderruflich löschen?")) {
+						.askYesNo(Messages.getString("FindingsView.deleteConfirmCaption"), //$NON-NLS-1$
+						Messages.getString("FindingsView.deleteConfirmMessage"))) { //$NON-NLS-1$
 					CTabItem ci = ctabs.getSelection();
 					if (ci != null) {
 						FindingsPage page = (FindingsPage) ci.getControl();
@@ -342,10 +342,10 @@ ElexisEventListener {
 				}
 			}
 		};
-		printValuesAction = new Action("Drucken") {
+		printValuesAction = new Action(Messages.getString("FindingsView.printActionCaptiob")) { //$NON-NLS-1$
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
-				setToolTipText("Diese Messwerte drucken");
+				setToolTipText(Messages.getString("FindingsView.printActionMessage")); //$NON-NLS-1$
 			}
 			
 			@Override

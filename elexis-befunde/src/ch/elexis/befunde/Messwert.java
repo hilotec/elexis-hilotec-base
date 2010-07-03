@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,10 +41,15 @@ import ch.rgw.tools.JdbcLink;
  * 
  */
 public class Messwert extends PersistentObject {
+	public static final String HASH_NAMES = "names"; //$NON-NLS-1$
+	public static final String _FIELDS = "_FIELDS"; //$NON-NLS-1$
+	public static final String FLD_BEFUNDE = "Befunde"; //$NON-NLS-1$
+	public static final String FLD_NAME = "Name"; //$NON-NLS-1$
+	public static final String FLD_PATIENT_ID = "PatientID"; //$NON-NLS-1$
 	public static final int VERSION = 4;
-	public static final String PLUGIN_ID = "ch.elexis.befunde";
-	public static final String SETUP_SEPARATOR = ";;";
-	public static final String SETUP_CHECKSEPARATOR = ":/:";
+	public static final String PLUGIN_ID = "ch.elexis.befunde"; //$NON-NLS-1$
+	public static final String SETUP_SEPARATOR = ";;"; //$NON-NLS-1$
+	public static final String SETUP_CHECKSEPARATOR = ":/:"; //$NON-NLS-1$
 	/**
 	 * Name of the table. By convention, every tablename has to have its plugin ID as prefix, to
 	 * avoid naming conflicts. Unfortunaltely, this plugin was created before that convention was
@@ -86,7 +91,7 @@ public class Messwert extends PersistentObject {
 	 * Näheres dazu in der Dokumenation von PersistentObject.
 	 */
 	static {
-		addMapping(TABLENAME, "PatientID", "Name", "Datum=S:D:Datum", "Befunde"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		addMapping(TABLENAME, FLD_PATIENT_ID, FLD_NAME, DATE_COMPOUND, FLD_BEFUNDE); 
 	}
 	
 	/**
@@ -110,12 +115,12 @@ public class Messwert extends PersistentObject {
 	public Messwert(Patient pat, String name, String date, Hashtable bf){
 		create(null);
 		set(new String[] {
-			"PatientID", "Name", "Datum"}, pat.getId(), name, date); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		setHashtable("Befunde", bf); //$NON-NLS-1$
+			FLD_PATIENT_ID, FLD_NAME, PersistentObject.FLD_DATE}, pat.getId(), name, date); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		setHashtable(FLD_BEFUNDE, bf); //$NON-NLS-1$
 	}
 	
 	public String getDate(){
-		return get("Datum");
+		return get(FLD_DATE);
 	}
 	
 	/**
@@ -129,12 +134,12 @@ public class Messwert extends PersistentObject {
 	 */
 	@Override
 	public String getLabel(){
-		return get("Name"); //$NON-NLS-1$
+		return get(FLD_NAME); //$NON-NLS-1$
 	}
 	
 	@SuppressWarnings("unchecked")
 	public String getResult(String field){
-		Hashtable<String, String> hash = getHashtable("Befunde");
+		Hashtable<String, String> hash = getHashtable(FLD_BEFUNDE);
 		return hash.get(field);
 	}
 	
@@ -174,57 +179,57 @@ public class Messwert extends PersistentObject {
 							Messages.getString("Messwert.valuesError"), Messages.getString("Messwert.couldNotCreateTable")); //$NON-NLS-1$ //$NON-NLS-2$
 					return null;
 				}
-				Hashtable names = setup.getHashtable("Befunde");
-				names.put("VERSION", Integer.toString(VERSION));
-				setup.setHashtable("Befunde", names);
+				Hashtable names = setup.getHashtable(FLD_BEFUNDE);
+				names.put("VERSION", Integer.toString(VERSION)); //$NON-NLS-1$
+				setup.setHashtable(FLD_BEFUNDE, names);
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 			}
 		} else {
 			// Update from earlier format if necessary
-			Hashtable names = setup.getHashtable("Befunde");
-			String v = (String) names.get("VERSION");
+			Hashtable names = setup.getHashtable(FLD_BEFUNDE);
+			String v = (String) names.get("VERSION"); //$NON-NLS-1$
 			if (v == null || Integer.parseInt(v) < VERSION) {
 				if (Integer.parseInt(v) < 4) {
-					createOrModifyTable("ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
+					createOrModifyTable("ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 				if (Integer.parseInt(v) < 3) {
-					if (j.DBFlavor.equalsIgnoreCase("postgresql")) {
-						j.exec("ALTER TABLE " + TABLENAME + " ALTER Name TYPE VARCHAR(80);");
-					} else if (j.DBFlavor.equalsIgnoreCase("mysql")) {
-						j.exec("ALTER TABLE " + TABLENAME + " MODIFY Name VARCHAR(80);");
+					if (j.DBFlavor.equalsIgnoreCase("postgresql")) { //$NON-NLS-1$
+						j.exec("ALTER TABLE " + TABLENAME + " ALTER Name TYPE VARCHAR(80);"); //$NON-NLS-1$ //$NON-NLS-2$
+					} else if (j.DBFlavor.equalsIgnoreCase("mysql")) { //$NON-NLS-1$
+						j.exec("ALTER TABLE " + TABLENAME + " MODIFY Name VARCHAR(80);"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 				}
 				if (Integer.parseInt(v) < 2) { // version 1 auf 2
-					j.exec("ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';");
+					j.exec("ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';"); //$NON-NLS-1$ //$NON-NLS-2$
 				} else { // version 0 auf 1
 					StringBuilder titles = new StringBuilder();
 					Map.Entry[] entryset = (Map.Entry[]) names.entrySet().toArray(new Map.Entry[0]);
 					for (Map.Entry entry : entryset) {
 						String param = (String) entry.getKey();
-						if (param.equals("names") || param.equals("VERSION")
-							|| param.matches(".+_FIELDS")) {
+						if (param.equals(HASH_NAMES) || param.equals("VERSION") //$NON-NLS-1$
+							|| param.matches(".+_FIELDS")) { //$NON-NLS-1$
 							continue;
 						}
 						titles.append(param).append(SETUP_SEPARATOR);
 						String vals = (String) entry.getValue();
 						StringBuilder flds = new StringBuilder();
-						for (String s : vals.split(",")) {
-							flds.append(s).append(SETUP_CHECKSEPARATOR).append("s").append(
+						for (String s : vals.split(",")) { //$NON-NLS-1$
+							flds.append(s).append(SETUP_CHECKSEPARATOR).append("s").append( //$NON-NLS-1$
 								SETUP_SEPARATOR);
 						}
 						if (flds.length() > SETUP_CHECKSEPARATOR.length()) {
 							flds.setLength(flds.length() - SETUP_CHECKSEPARATOR.length());
-							names.put(param + "_FIELDS", flds.toString());
+							names.put(param + _FIELDS, flds.toString());
 						}
 					}
 					if (titles.length() > SETUP_SEPARATOR.length()) {
 						titles.setLength(titles.length() - SETUP_SEPARATOR.length());
-						names.put("names", titles.toString());
+						names.put(HASH_NAMES, titles.toString());
 					}
 				}
-				names.put("VERSION", Integer.toString(VERSION));
-				setup.setHashtable("Befunde", names);
+				names.put("VERSION", Integer.toString(VERSION)); //$NON-NLS-1$
+				setup.setHashtable(FLD_BEFUNDE, names);
 			}
 		}
 		return setup;
@@ -291,7 +296,7 @@ public class Messwert extends PersistentObject {
 	 */
 	private static final String create = "CREATE TABLE " + TABLENAME + " (" + //$NON-NLS-1$ //$NON-NLS-2$
 		"ID			VARCHAR(25) primary key," + //$NON-NLS-1$
-		"lastupdate BIGINT," + "deleted	CHAR(1) default '0'," + //$NON-NLS-1$
+		"lastupdate BIGINT," + "deleted	CHAR(1) default '0'," + //$NON-NLS-1$ //$NON-NLS-2$
 		"PatientID	VARCHAR(25)," + //$NON-NLS-1$
 		"Name		VARCHAR(80)," + //$NON-NLS-1$
 		"Datum		CHAR(8)," + //$NON-NLS-1$

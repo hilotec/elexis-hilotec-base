@@ -55,7 +55,7 @@ public class Messages {
 			return java.text.MessageFormat.format(getString(key), params);
 		}catch(Exception e){
 			ExHandler.handle(e);
-			return "!"+key+"!";
+			return "!"+key+"!"; //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 }

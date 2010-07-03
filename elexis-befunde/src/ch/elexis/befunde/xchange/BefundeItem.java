@@ -24,8 +24,8 @@ public class BefundeItem extends FindingElement {
 	
 	BefundeItem asExporter(XChangeExporter home, Messwert mw, String field){
 		super.asExporter(home);
-		setAttribute(ATTR_NAME, mw.getLabel() + ":" + field);
-		setAttribute(ATTR_GROUP, "Messwert");
+		setAttribute(ATTR_NAME, mw.getLabel() + ":" + field); //$NON-NLS-1$
+		setAttribute(ATTR_GROUP, "Messwert"); //$NON-NLS-1$
 		XidElement eXid = new XidElement();
 		eXid.addIdentity(Xid.DOMAIN_ELEXIS, mw.getId() + field, Xid.ASSIGNMENT_LOCAL, true);
 		eXid.setMainID(null);

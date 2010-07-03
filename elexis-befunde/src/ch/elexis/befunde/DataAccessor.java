@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2008, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class DataAccessor implements IDataAccess {
+	private static final String ALL = "all"; //$NON-NLS-1$
 	Hashtable<String, String> hash;
 	Hashtable<String, String[]> columns;
 	ArrayList<String> parameters;
@@ -43,13 +44,13 @@ public class DataAccessor implements IDataAccess {
 		Messwert setup = Messwert.getSetup();
 		columns = new Hashtable<String, String[]>();
 		parameters = new ArrayList<String>();
-		hash = setup.getHashtable("Befunde");
-		String names = hash.get("names");
+		hash = setup.getHashtable(Messwert.FLD_BEFUNDE);
+		String names = hash.get(Messwert.HASH_NAMES);
 		if (!StringTool.isNothing(names)) {
 			for (String n : names.split(Messwert.SETUP_SEPARATOR)) {
-				String vals = hash.get(n + "_FIELDS");
+				String vals = hash.get(n + Messwert._FIELDS);
 				if (vals != null) {
-					vals = "Datum" + Messwert.SETUP_SEPARATOR + vals;
+					vals = Messwert.FLD_DATE + Messwert.SETUP_SEPARATOR + vals;
 					String[] flds = vals.split(Messwert.SETUP_SEPARATOR);
 					parameters.add(n);
 					columns.put(n, flds);
@@ -60,11 +61,11 @@ public class DataAccessor implements IDataAccess {
 	}
 	
 	public String getDescription() {
-		return "Daten im Befunde Plugin";
+		return Messages.getString("DataAccessor.dataInBefundePlugin"); //$NON-NLS-1$
 	}
 
 	public String getName() {
-		return "Befunde-Data";
+		return Messages.getString("DataAccessor.data"); //$NON-NLS-1$
 	}
 
 	/**
@@ -72,7 +73,7 @@ public class DataAccessor implements IDataAccess {
 	 * @return
 	 */
 	private String getPlatzhalter(final String befund) {
-		return "[Befunde-Data:Patient:" + befund + "]";
+		return "[Befunde-Data:Patient:" + befund + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 
@@ -97,47 +98,47 @@ public class DataAccessor implements IDataAccess {
 	 * @param params
 	 *            not used
 	 */
-	@SuppressWarnings("unchecked")
+
 	public Result<Object> getObject(final String descriptor,
 			final PersistentObject dependentObject, final String dates,
 			final String[] params) {
 		Result<Object> ret = null;
 		if (!(dependentObject instanceof Patient)) {
 			ret = new Result<Object>(Result.SEVERITY.ERROR,
-					IDataAccess.INVALID_PARAMETERS, "Ungültiger Parameter",
+					IDataAccess.INVALID_PARAMETERS, Messages.getString("DataAccessor.invalidParameter"), //$NON-NLS-1$
 					dependentObject, true);
 		} else {
 			Patient pat = (Patient) dependentObject;
-			String[] data = descriptor.split("\\.");
+			String[] data = descriptor.split("\\."); //$NON-NLS-1$
 			Query<Messwert> qbe = new Query<Messwert>(Messwert.class);
-			qbe.add("PatientID", "=", pat.getId()); //$NON-NLS-1$ //$NON-NLS-2$
-			qbe.add("Name", "=", data[0]); //$NON-NLS-1$ //$NON-NLS-2$
+			qbe.add(Messwert.FLD_PATIENT_ID, Query.EQUALS, pat.getId()); 
+			qbe.add(Messwert.FLD_NAME, Query.EQUALS, data[0]); //$NON-NLS-1$ //$NON-NLS-2$
 			List<Messwert> list = qbe.execute();
 			String[][] values;
 			String[] cols = columns.get(data[0]);
 			String[] keys = new String[cols.length];
-			if (dates.equals("all")) {
+			if (dates.equals(ALL)) {
 				values = new String[list.size() + 1][cols.length];
 			} else {
 				values = new String[2][cols.length];
 			}
 			for (int i = 0; i < cols.length; i++) { // Spaltenüberschriften
 				keys[i] = cols[i].split(Messwert.SETUP_CHECKSEPARATOR)[0];
-				values[0][i] = keys[i].split("=")[0];
+				values[0][i] = keys[i].split("=")[0]; //$NON-NLS-1$
 			}
 			int i = 1;
 			Messwert mwrt = null;
-			if (dates.equals("all")) {
+			if (dates.equals(ALL)) {
 				for (Messwert m : list) {
-					String date = m.get("Datum");
+					String date = m.get(Messwert.FLD_DATE);
 					values[i][0] = new TimeTool(date)
 							.toString(TimeTool.DATE_GER);
-					Hashtable befs = m.getHashtable("Befunde");
+					Hashtable befs = m.getHashtable(Messages.getString("DataAccessor.0")); //$NON-NLS-1$
 					for (int j = 1; j < cols.length; j++) {
 						String vv = (String) befs.get(keys[j]);
 						values[i][j] = vv;
 						if (values[i][j] == null) {
-							values[i][j] = "";
+							values[i][j] = ""; //$NON-NLS-1$
 						}
 					}
 					i++;
@@ -146,10 +147,10 @@ public class DataAccessor implements IDataAccess {
 					}
 				}
 				ret = new Result<Object>(values);
-			} else if (dates.equals("last")) {
+			} else if (dates.equals("last")) { //$NON-NLS-1$
 				TimeTool today = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
 				for (Messwert m : list) {
-					TimeTool vgl = new TimeTool(m.get("Datum"));
+					TimeTool vgl = new TimeTool(m.get(Messwert.FLD_DATE));
 					if (vgl.isAfter(today)) {
 						today = vgl;
 						mwrt = m;
@@ -157,18 +158,18 @@ public class DataAccessor implements IDataAccess {
 				}
 				if (mwrt == null) {
 					ret = new Result<Object>(Result.SEVERITY.ERROR,
-							IDataAccess.OBJECT_NOT_FOUND, "Nicht gefunden",
+							IDataAccess.OBJECT_NOT_FOUND, Messages.getString("DataAccessor.notFound"), //$NON-NLS-1$
 							params, true);
 				}
 
-			} else if (dates.equals("first")) {
+			} else if (dates.equals("first")) { //$NON-NLS-1$
 				TimeTool firstdate = null;
 
 				if (list.size() > 0) {
 					mwrt = list.get(0);
-					firstdate = new TimeTool(mwrt.get("Datum"));
+					firstdate = new TimeTool(mwrt.get(Messwert.FLD_DATE));
 					for (Messwert m : list) {
-						TimeTool vgl = new TimeTool(m.get("Datum"));
+						TimeTool vgl = new TimeTool(m.get(Messwert.FLD_DATE));
 						if (vgl.isBefore(firstdate)) {
 							mwrt = m;
 							firstdate = vgl;
@@ -179,18 +180,18 @@ public class DataAccessor implements IDataAccess {
 
 				if (mwrt == null) {
 					ret = new Result<Object>(Result.SEVERITY.ERROR,
-							IDataAccess.OBJECT_NOT_FOUND, "Nicht gefunden",
+							IDataAccess.OBJECT_NOT_FOUND, Messages.getString("DataAccessor.notFound"), //$NON-NLS-1$
 							params, true);
 				}
 			} else { // bestimmtes Datum
 				TimeTool find = new TimeTool();
 				if (find.set(params[0]) == false) {
 					ret = new Result<Object>(Result.SEVERITY.ERROR,
-							IDataAccess.INVALID_PARAMETERS, "Datum erwartet",
+							IDataAccess.INVALID_PARAMETERS, Messages.getString("DataAccessor.dateExpected"), //$NON-NLS-1$
 							params, true);
 				} else {
 					for (Messwert m : list) {
-						TimeTool vgl = new TimeTool(m.get("Datum"));
+						TimeTool vgl = new TimeTool(m.get(Messwert.FLD_DATE));
 						if (vgl.isEqual(find)) {
 							mwrt = m;
 							break;
@@ -199,8 +200,8 @@ public class DataAccessor implements IDataAccess {
 				}
 			}
 			if (mwrt != null) {
-				values[1][0] = mwrt.get("Datum");
-				Hashtable befs = mwrt.getHashtable("Befunde");
+				values[1][0] = mwrt.get(Messwert.FLD_DATE);
+				Hashtable befs = mwrt.getHashtable(Messwert.FLD_BEFUNDE);
 				for (int j = 1; j < keys.length; j++) {
 					values[1][j] = (String) befs.get(keys[j]);
 				}
@@ -213,14 +214,14 @@ public class DataAccessor implements IDataAccess {
 					// sonst wird einfach die Spaltenueberschrift benutzt.
 					// F0 entspricht dabei dem Datum
 
-					if (fname.matches("F[0-9]*")) {
+					if (fname.matches("F[0-9]*")) { //$NON-NLS-1$
 						int index = Integer.parseInt(num);
 						if (index < values[1].length) {
 							ret = new Result<Object>(values[1][index]);
 						} else {
 							ret = new Result<Object>(Result.SEVERITY.ERROR,
 									IDataAccess.INVALID_PARAMETERS,
-									"Ungueltiger Feldindex", fname, true);
+									Messages.getString("DataAccessor.invalidFieldIndex"), fname, true); //$NON-NLS-1$
 						}
 					} else {
 						for (int j = 0; (j < keys.length) && (ret == null); j++) {
@@ -231,7 +232,7 @@ public class DataAccessor implements IDataAccess {
 						if (ret == null) {
 							ret = new Result<Object>(Result.SEVERITY.ERROR,
 									IDataAccess.INVALID_PARAMETERS,
-									"Ungueltiger Feldname", fname, true);
+									Messages.getString("DataAccessor.invalidFieldName"), fname, true); //$NON-NLS-1$
 						}
 					}
 				} else {

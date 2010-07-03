@@ -75,8 +75,8 @@ public class BefundePrefs extends PreferencePage implements
 		ctabs.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ctabs.setLayout(new FillLayout());
 		setup=Messwert.getSetup();
-		fields=setup.getHashtable("Befunde");
-		names=fields.get("names");
+		fields=setup.getHashtable("Befunde"); //$NON-NLS-1$
+		names=fields.get("names"); //$NON-NLS-1$
 		if(!StringTool.isNothing(names)){
 			for(String f:names.split(Messwert.SETUP_SEPARATOR)){
 				CTabItem ci=new CTabItem(ctabs,SWT.NONE);
@@ -103,7 +103,7 @@ public class BefundePrefs extends PreferencePage implements
 		bAdd.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(final SelectionEvent e){
-				InputDialog id=new InputDialog(getShell(),"Name eingeben","Geben Sie bitte einen Namen für den neuen Befund ein","",null);
+				InputDialog id=new InputDialog(getShell(),Messages.getString("BefundePrefs.enterNameCaption"),Messages.getString("BefundePrefs.enterNameMessage"),"",null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				if(id.open()==Dialog.OK){
 					String name=id.getValue();
 					if(StringTool.isNothing(names)){
@@ -111,7 +111,7 @@ public class BefundePrefs extends PreferencePage implements
 					}else{
 						names+=Messwert.SETUP_SEPARATOR+name;
 					}
-					fields.put("names", names);
+					fields.put("names", names); //$NON-NLS-1$
 					CTabItem ci=new CTabItem(ctabs,SWT.NONE);
 					ci.setText(name);
 					PrefsPage fp=new PrefsPage(ctabs,fields,name);
@@ -132,18 +132,18 @@ public class BefundePrefs extends PreferencePage implements
 				if(ci!=null){
 					PrefsPage pp=(PrefsPage)ci.getControl();
 					if(pp.remove()){
-						names=names.replaceFirst(ci.getText(), "");
+						names=names.replaceFirst(ci.getText(), ""); //$NON-NLS-1$
 						names=names.replaceAll(Messwert.SETUP_SEPARATOR+Messwert.SETUP_SEPARATOR, Messwert.SETUP_SEPARATOR);
-						names.replaceFirst(Messwert.SETUP_SEPARATOR+"$", "");
-						names=names.replaceFirst("^"+Messwert.SETUP_SEPARATOR, "");
-						fields.put("names", names);
+						names.replaceFirst(Messwert.SETUP_SEPARATOR+"$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+						names=names.replaceFirst("^"+Messwert.SETUP_SEPARATOR, ""); //$NON-NLS-1$ //$NON-NLS-2$
+						fields.put("names", names); //$NON-NLS-1$
 						lastIDX=-1;
 						ci.dispose();
 						ctabs.setSelection(0);
 					}
 				}
 			}});
-		bRemove.setText("Löschen");
+		bRemove.setText(Messages.getString("BefundePrefs.deleteText")); //$NON-NLS-1$
 		if(!Hub.acl.request(ACLContributor.DELETE_PARAM)){
 			bRemove.setEnabled(false);
 		}
