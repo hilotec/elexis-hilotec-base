@@ -54,37 +54,37 @@ public class Datenbank extends PreferencePage implements
 		noDefaultAndApplyButton();
 		setPreferenceStore(new SettingsPreferenceStore(Hub.localCfg));
 		cfg = Hub.localCfg;
-		setDescription("Angaben zur Datenbankverbindung");
+		setDescription(Messages.Datenbank_databaseConnectionHeading);
 	}
 
 	@Override
 	protected Control createContents(Composite parent) {
 		final Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout(2, false));
-		new Label(ret, SWT.NONE).setText("Datenbankverbindung:");
+		new Label(ret, SWT.NONE).setText(Messages.Datenbank_databaseConnection);
 		new Text(ret, SWT.READ_ONLY).setText(cfg.get(
-				PreferenceConstants.DB_CLASS, ""));
-		new Label(ret, SWT.NONE).setText("Verbindungsstring:");
+				PreferenceConstants.DB_CLASS, "")); //$NON-NLS-1$
+		new Label(ret, SWT.NONE).setText(Messages.Datenbank_connectString);
 		new Text(ret, SWT.READ_ONLY).setText(cfg.get(
-				PreferenceConstants.DB_CONNECT, ""));
-		new Label(ret, SWT.NONE).setText("Username für Datenbank:");
+				PreferenceConstants.DB_CONNECT, "")); //$NON-NLS-1$
+		new Label(ret, SWT.NONE).setText(Messages.Datenbank_usernameForDatabase);
 		new Text(ret, SWT.READ_ONLY).setText(cfg.get(
-				PreferenceConstants.DB_USERNAME, ""));
-		new Label(ret, SWT.NONE).setText("Passwort für Datenbank:");
+				PreferenceConstants.DB_USERNAME, "")); //$NON-NLS-1$
+		new Label(ret, SWT.NONE).setText(Messages.Datenbank_passwordForDatabase);
 		new Text(ret, SWT.READ_ONLY).setText(cfg.get(
-				PreferenceConstants.DB_PWD, ""));
-		new Label(ret, SWT.NONE).setText("Datenbanktyp");
+				PreferenceConstants.DB_PWD, "")); //$NON-NLS-1$
+		new Label(ret, SWT.NONE).setText(Messages.Datenbank_typeOfDatabase);
 		new Text(ret, SWT.READ_ONLY).setText(cfg.get(
-				PreferenceConstants.DB_TYP, ""));
+				PreferenceConstants.DB_TYP, "")); //$NON-NLS-1$
 
 		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper
 				.getFillGridData(2, true, 1, false));
 		if (false) { // TODO
-			new Label(ret, SWT.NONE).setText("Datenbankreorganisation");
+			new Label(ret, SWT.NONE).setText(Messages.Datenbank_reorganization);
 			bRepair = new Button(ret, SWT.CHECK);
-			bRepair.setText("Fehler gleich reparieren");
+			bRepair.setText(Messages.Datenbank_repairImmediately);
 			bOutputFile = new Button(ret, SWT.PUSH);
-			bOutputFile.setText("Analyselog nach...");
+			bOutputFile.setText(Messages.Datenbank_writeLogTo);
 			bOutputFile.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -99,11 +99,11 @@ public class Datenbank extends PreferencePage implements
 			lOutputFile.setLayoutData(SWTHelper.getFillGridData(1, true, 1,
 					false));
 			bKons = new Button(ret, SWT.CHECK);
-			bKons.setText("Konsultationen prüfen");
+			bKons.setText(Messages.Datenbank_checkKonsultations);
 			bRn = new Button(ret, SWT.CHECK);
-			bRn.setText("Rechnungen prüfen");
+			bRn.setText(Messages.Datenbank_checkBills);
 			bCheck = new Button(ret, SWT.PUSH);
-			bCheck.setText("Prüfen!");
+			bCheck.setText(Messages.Datenbank_doCheck);
 			bCheck.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
@@ -123,8 +123,8 @@ public class Datenbank extends PreferencePage implements
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
 						MessageDialog.openError(getShell(),
-								"Fehler beim Log erstellen",
-								"Konnter Logdatei nicht erstellen");
+								Messages.Datenbank_errorWritingLog,
+								Messages.Datenbank_couldntCreateLog);
 					}
 				}
 			});

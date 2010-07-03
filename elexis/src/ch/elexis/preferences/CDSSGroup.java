@@ -35,9 +35,9 @@ public class CDSSGroup extends PreferencePage implements
 		ret.setLayout(new FillLayout());
 		StyledText text=new StyledText(ret,SWT.NONE);
 		text.setWordWrap(true);
-		text.setText("Unter dieser Rubrik werden klinische Hilfsmittel (Clinical Decicion Support Systems gruppiert.\n"+
-				"Die jeweiligen Einstellungsseiten erscheinen nur, falls entsprechende Plugins\n"+
-				"installiert sind, deswegen kann diese Rubrik auch leer sein.");
+		text.setText(Messages.CDSSGroup_ExplanationCDSSLine1+
+				Messages.CDSSGroup_ExplanationCDSSLine2+
+				Messages.CDSSGroup_ExplanationCDSSLine3);
 		return ret;
 	}
 

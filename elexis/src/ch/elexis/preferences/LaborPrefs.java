@@ -70,11 +70,11 @@ public class LaborPrefs extends PreferencePage implements
 	private Table table;
 	ArrayList<String> groups;
 	int sortC=1;
-	private String[] headers={"Labor","Name","Kürzel","Typ", "Einheit", "Referenz M", "Referenz F", "Sortierung"};
+	private String[] headers={Messages.LaborPrefs_lab,Messages.LaborPrefs_name,Messages.LaborPrefs_short,Messages.LaborPrefs_type, Messages.LaborPrefs_unit, Messages.LaborPrefs_refM, Messages.LaborPrefs_refF, Messages.LaborPrefs_sortmode};
 	private int[] colwidth={100,100,50,50,50,100,100,100};
 	
 	public LaborPrefs() {
-		super("Laborvorgaben");
+		super(Messages.LaborPrefs_labTitle);
 		groups=new ArrayList<String>();
 	}
 
@@ -138,9 +138,9 @@ public class LaborPrefs extends PreferencePage implements
 					LabItem li=(LabItem)o;
 					editLabItem eli=new editLabItem(getShell(),li);
 					eli.create();
-					eli.getShell().setText("Laborparameter");
-					eli.setTitle("Neuen Laborarameter eingeben");
-					eli.setMessage("Bitte editieren Sie den Parameter und klicken Sie OK.");
+					eli.getShell().setText(Messages.LaborPrefs_labParams);
+					eli.setTitle(Messages.LaborPrefs_enterNewLabParam);
+					eli.setMessage(Messages.LaborPrefs_pleaseEditParam);
 					if(eli.open()==Dialog.OK){
 						tv.refresh();
 					}
@@ -154,7 +154,7 @@ public class LaborPrefs extends PreferencePage implements
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				LabItem li1=(LabItem)e1;
 				LabItem li2=(LabItem)e2;
-				String s1="",s2="";
+				String s1="",s2=""; //$NON-NLS-1$ //$NON-NLS-2$
 				switch (sortC) {
 				case 0:
 					s1=li1.getLabor().getLabel();
@@ -190,15 +190,15 @@ public class LaborPrefs extends PreferencePage implements
 		rl.justify=true;
 		buttons.setLayout(rl);
 		Button bNewItem=new Button(buttons,SWT.PUSH);
-		bNewItem.setText("Neuer Laborparameter");
+		bNewItem.setText(Messages.LaborPrefs_labValue);
 		bNewItem.addSelectionListener(new SelectionAdapter(){
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				editLabItem eli=new editLabItem(getShell(),null);
 				eli.create();
-				eli.getShell().setText("Laborparameter");
-				eli.setTitle("Neuen Laborarameter eingeben");
-				eli.setMessage("Bitte wählen sie ein Labor und geben Sie die Parameter ein.");
+				eli.getShell().setText(Messages.LaborPrefs_labParam);
+				eli.setTitle(Messages.LaborPrefs_enterNewLabParam);
+				eli.setMessage(Messages.LaborPrefs_pleaseEnterLabParam);
 				if(eli.open()==Dialog.OK){
 						tv.refresh();
 				}
@@ -206,7 +206,7 @@ public class LaborPrefs extends PreferencePage implements
 			
 		});
 		Button bDelItem=new Button(buttons,SWT.PUSH);
-		bDelItem.setText("Laboritem löschen");
+		bDelItem.setText(Messages.LaborPrefs_deleteItem);
 		bDelItem.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
 				IStructuredSelection sel=(IStructuredSelection)tv.getSelection();
@@ -214,7 +214,7 @@ public class LaborPrefs extends PreferencePage implements
 				if(o instanceof LabItem){
 					LabItem li=(LabItem)o;
 					Query<LabResult> qbe=new Query<LabResult>(LabResult.class);
-					qbe.add("ItemID","=",li.getId());
+					qbe.add("ItemID","=",li.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 					List<LabResult> list=qbe.execute();
 					for(LabResult po:list){
 						po.delete();
@@ -225,15 +225,15 @@ public class LaborPrefs extends PreferencePage implements
 			}
 		});
 		Button bDelAllItems=new Button(buttons,SWT.PUSH);
-		bDelAllItems.setText("Alle Items löschen");
+		bDelAllItems.setText(Messages.LaborPrefs_deleteAllItems);
 		bDelAllItems.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e){
-				if(SWTHelper.askYesNo("Wirklich alle Items löschen", "Dies löscht alle Items und davon abhängigen Werte aller Patienten!")){
+				if(SWTHelper.askYesNo(Messages.LaborPrefs_deleteReallyAllItems, Messages.LaborPrefs_deleteAllExplain)){
 					Query<LabItem> qbli=new Query<LabItem>(LabItem.class);
 					List<LabItem> items=qbli.execute();
 					for(LabItem li:items){
 						Query<LabResult> qbe=new Query<LabResult>(LabResult.class);
-						qbe.add("ItemID","=",li.getId());
+						qbe.add("ItemID","=",li.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 						List<LabResult> list=qbe.execute();
 						for(LabResult po:list){
 							po.delete();
@@ -259,22 +259,22 @@ public class LaborPrefs extends PreferencePage implements
 		public String getColumnText(Object element, int columnIndex) {
 			LabItem li=(LabItem)element;
 			switch (columnIndex) {
-			case 0:	return li.getLabor()==null ? "unbekannt" : li.getLabor().getLabel();
+			case 0:	return li.getLabor()==null ? Messages.LaborPrefs_unkown : li.getLabor().getLabel();
 			case 1: return li.getName();
 			case 2: return li.getKuerzel();
 			case 3: LabItem.typ typ=li.getTyp(); 
 				if(typ==LabItem.typ.NUMERIC){
-						return "Zahl";
+						return Messages.LaborPrefs_numeric;
 					}else if(typ==LabItem.typ.TEXT){
-						return "Text";
+						return Messages.LaborPrefs_alpha;
 					}
-					return "Absolut";
+					return Messages.LaborPrefs_absolute;
 			case 4: return li.getEinheit();
-			case 5: return li.get("RefMann");
+			case 5: return li.get("RefMann"); //$NON-NLS-1$
 			case 6: return li.getRefW();
-			case 7: return li.getGroup()+" - "+li.getPrio();
+			case 7: return li.getGroup()+" - "+li.getPrio(); //$NON-NLS-1$
 			default:
-				return "?col?";
+				return "?col?"; //$NON-NLS-1$
 			}
 		}
 		
@@ -311,9 +311,9 @@ public class LaborPrefs extends PreferencePage implements
 			super(parentShell);
 			result=act;
 			if(act==null){
-				String al=new Query<Labor>(Labor.class).findSingle("istLabor","=","1");
+				String al=new Query<Labor>(Labor.class).findSingle("istLabor",Messages.LaborPrefs_34,Messages.LaborPrefs_35); //$NON-NLS-1$
 				if(al==null){
-					actLabor=new Labor("Intern","Praxislabor");
+					actLabor=new Labor(Messages.LaborPrefs_36,Messages.LaborPrefs_37);
 				}else{
 					actLabor=Labor.load(al);
 				}
@@ -354,32 +354,32 @@ public class LaborPrefs extends PreferencePage implements
 				i++;
 			}
 			labors.setSelection(idx);
-			WidgetFactory.createLabel(ret,"Kürzel");
+			WidgetFactory.createLabel(ret,Messages.LaborPrefs_38);
 			iKuerzel=new Text(ret,SWT.BORDER);
 			iKuerzel.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-			WidgetFactory.createLabel(ret,"Titel");
+			WidgetFactory.createLabel(ret,Messages.LaborPrefs_39);
 			iTitel=new Text(ret,SWT.BORDER);
 			iTitel.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
 			
-			WidgetFactory.createLabel(ret,"Typ");
+			WidgetFactory.createLabel(ret,Messages.LaborPrefs_40);
 			Group grp=new Group(ret,SWT.NONE);
 			grp.setLayout(new FillLayout(SWT.HORIZONTAL));
 			grp.setLayoutData(SWTHelper.getFillGridData(3,true,1,false));
 			numeric=new Button(grp,SWT.RADIO);
-			numeric.setText("Zahl");
+			numeric.setText(Messages.LaborPrefs_41);
 			alph=new Button(grp,SWT.RADIO);
-			alph.setText("Text");
+			alph.setText(Messages.LaborPrefs_42);
 			abs=new Button(grp,SWT.RADIO);
-			abs.setText("Absolut");
+			abs.setText(Messages.LaborPrefs_43);
 			formula=new Button(grp,SWT.RADIO);
-			formula.setText("Formel");
+			formula.setText(Messages.LaborPrefs_44);
 			formula.addSelectionListener(new SelectionAdapter(){
 
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if(formula.getSelection()){
 						
-						ScriptEditor se=new ScriptEditor(getShell(),formel,"Geben Sie bitte an, wie dieser Parameter errechnet werden soll");
+						ScriptEditor se=new ScriptEditor(getShell(),formel,Messages.LaborPrefs_45);
 						if(se.open()==Dialog.OK){
 							formel=se.getScript();
 						}
@@ -387,25 +387,25 @@ public class LaborPrefs extends PreferencePage implements
 				}
 				
 			});
-			WidgetFactory.createLabel(ret,"Referenz M");
+			WidgetFactory.createLabel(ret,Messages.LaborPrefs_46);
 	
 			iRef=new Text(ret,SWT.BORDER);
 			iRef.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-			WidgetFactory.createLabel(ret,"Referenz F");
+			WidgetFactory.createLabel(ret,Messages.LaborPrefs_47);
 			iRfF=new Text(ret,SWT.BORDER);
 			iRfF.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-			WidgetFactory.createLabel(ret,"Einheit");
+			WidgetFactory.createLabel(ret,Messages.LaborPrefs_48);
 			iUnit=new Text(ret,SWT.BORDER);
 			iUnit.setLayoutData(SWTHelper.getFillGridData(3,true,1,false));
-			WidgetFactory.createLabel(ret,"Gruppe");
+			WidgetFactory.createLabel(ret,Messages.LaborPrefs_49);
 			cGroup=new Combo(ret,SWT.SINGLE|SWT.DROP_DOWN);
 			cGroup.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-			cGroup.setToolTipText("Gruppe für Laborblatt (beliebiger Text oder Zahl)");
+			cGroup.setToolTipText(Messages.LaborPrefs_50);
 			cGroup.setItems(groups.toArray(new String[0]));
-			WidgetFactory.createLabel(ret,"Sequenz-Nr.");
+			WidgetFactory.createLabel(ret,Messages.LaborPrefs_51);
 			iPrio=new Text(ret,SWT.BORDER);
 			iPrio.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-			iPrio.setToolTipText("Sequenz innerhalb der Gruppe für Laborblatt (beliebiger Text oder Zahl");
+			iPrio.setToolTipText(Messages.LaborPrefs_52);
 			if(result!=null){
 				iKuerzel.setText(result.getKuerzel());
 				iTitel.setText(result.getName());
@@ -419,7 +419,7 @@ public class LaborPrefs extends PreferencePage implements
 					formula.setSelection(true);
 				}
 				iUnit.setText(result.getEinheit());
-				iRef.setText(result.get("RefMann"));
+				iRef.setText(result.get(Messages.LaborPrefs_53));
 				iRfF.setText(result.getRefW());
 				cGroup.setText(result.getGroup());
 				iPrio.setText(result.getPrio());
@@ -452,16 +452,16 @@ public class LaborPrefs extends PreferencePage implements
 				result=new LabItem(iKuerzel.getText(),iTitel.getText(),
 					actLabor,iRef.getText(),iRfF.getText(),iUnit.getText(),typ,cGroup.getText(),iPrio.getText());
 			}else{
-				String t="0";
+				String t=Messages.LaborPrefs_54;
 				if(typ==LabItem.typ.TEXT){
-					t="1";
+					t=Messages.LaborPrefs_55;
 				}else if(typ==LabItem.typ.ABSOLUTE){
-					t="2";
+					t=Messages.LaborPrefs_56;
 				}else if(typ==LabItem.typ.FORMULA){
-					t="3";
+					t=Messages.LaborPrefs_57;
 				}
-				result.set(new String[]{"kuerzel","titel","LaborID",
-				"RefMann","RefFrauOrTx","Einheit","Typ","Gruppe","prio"},
+				result.set(new String[]{Messages.LaborPrefs_58,Messages.LaborPrefs_59,Messages.LaborPrefs_60,
+				Messages.LaborPrefs_61,Messages.LaborPrefs_62,Messages.LaborPrefs_63,Messages.LaborPrefs_64,Messages.LaborPrefs_65,Messages.LaborPrefs_66},
 				iKuerzel.getText(),iTitel.getText(),actLabor.getId(),iRef.getText(),iRfF.getText(),
 				iUnit.getText(),t,cGroup.getText(),iPrio.getText()
 				);

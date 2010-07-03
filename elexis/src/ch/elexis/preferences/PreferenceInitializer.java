@@ -175,7 +175,7 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 	 * Hier alle Zugriffsrechte voreinstellen
 	 */
 	public void initializeGrants(){
-		Hub.globalCfg.set("groups", StringConstants.ROLES_DEFAULT);
+		Hub.globalCfg.set("groups", StringConstants.ROLES_DEFAULT); //$NON-NLS-1$
 		Hub.acl.grant(StringConstants.ROLE_ALL,AccessControlDefaults.getAlle());
        	Hub.acl.grant(StringConstants.ROLE_USERS,AccessControlDefaults.getAnwender());
         Hub.acl.flush();
