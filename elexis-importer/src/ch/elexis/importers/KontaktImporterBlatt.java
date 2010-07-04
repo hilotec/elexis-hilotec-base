@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    Niklaus Giger - moved doc -> doc/import.textile
  * 
  * $Id: KontaktImporterBlatt.java 6137 2010-02-14 09:45:36Z rgw_ch $
  *******************************************************************************/
@@ -41,20 +42,7 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VCard;
 
 /**
- * A class to import data from different sources into the contacts To simplify
- * things we request specific formats
- * <ul>
- * <li>A Microsoft(tm) Excel(tm) 97(tm) Spreadsheet(tm) containing a page 0 with
- * the following fields:<br/>
- * "ID","IstPerson", "Titel", "Bezeichnung1", "Bezeichnung2","Zusatz",
- * "Geburtsdatum","Geschlecht","E-Mail","Website","Telefon 1","Telefon 2",
- * "Mobil","Strasse","Plz","Ort","Postadresse","EAN". All fields are strings.
- * The field istPerson one is interpreted boolean where empty or "0" maps to
- * false, all other values map to true. Each field must be present but may be
- * empty.</li>
- * <li>A File in CSV format containing the above fields</li>
- * <li>some preset files</li>
- * </ul>
+ * See also doc/import.textile
  * 
  * @author Gerry
  * 
@@ -66,12 +54,13 @@ public class KontaktImporterBlatt extends Composite {
 	boolean bKeepID;
 	int method;
 	private final Log log = Log.get("KontaktImporter"); //$NON-NLS-1$
-	static final String[] methods = new String[] { "XLS", "CSV", Messages.KontaktImporterBlatt_kklistHeading }; //$NON-NLS-1$ //$NON-NLS-2$
+	static final String[] methods = new String[] {
+		"XLS", "CSV", Messages.KontaktImporterBlatt_kklistHeading}; //$NON-NLS-1$ //$NON-NLS-2$
 	private static final String PRESET_RUSSI = "e3ad14dc49e27dbcc4771b41b34cdd902f9cfcc6"; //$NON-NLS-1$
-	private static final String PRESET_UNIVERSAL = "be99f1d4a3feae5e5eb84fae8ccddeee9582df8d"; //$NON-NLS-1$
+	private static final String PRESET_UNIVERSAL = "275789de20bc918890cc753c49931e72166a4bc0"; //$NON-NLS-1$
 	private static final String PRESET_HERTEL = "a4a9f3bd410443399ee05d5e033d94513a64239b"; //$NON-NLS-1$
-
-	public KontaktImporterBlatt(final Composite parent) {
+	
+	public KontaktImporterBlatt(final Composite parent){
 		super(parent, SWT.NONE);
 		setLayout(new GridLayout(2, false));
 		new Label(this, SWT.NONE).setText(Messages.KontaktImporterBlatt_DateiTyp);
@@ -80,16 +69,16 @@ public class KontaktImporterBlatt extends Composite {
 		cbMethods.setItems(methods);
 		cbMethods.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(final SelectionEvent arg0) {
+			public void widgetSelected(final SelectionEvent arg0){
 				method = cbMethods.getSelectionIndex();
 			}
 		});
 		cbMethods.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		Button bLoad = new Button(this, SWT.PUSH);
-
+		
 		bLoad.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e){
 				FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
 				String file = fd.open();
 				lbFileName.setText(file == null ? "" : file); //$NON-NLS-1$
@@ -105,16 +94,16 @@ public class KontaktImporterBlatt extends Composite {
 		bKeep.setText(Messages.KontaktImporterBlatt_KeepID);
 		bKeep.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
 		bKeep.addSelectionListener(new SelectionAdapter() {
-
+			
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				bKeepID = bKeep.getSelection();
 			}
-
+			
 		});
 	}
-
-	public boolean doImport(final IProgressMonitor moni) {
+	
+	public boolean doImport(final IProgressMonitor moni){
 		if (filename != null && filename.length() > 0) {
 			switch (method) {
 			case 0:
@@ -127,14 +116,15 @@ public class KontaktImporterBlatt extends Composite {
 		}
 		return false;
 	}
-
-	public boolean importKK(final String file) {
+	
+	public boolean importKK(final String file){
 		ExcelWrapper exw = new ExcelWrapper();
-		exw.setFieldTypes(new Class[] { Integer.class, String.class,
-				String.class, String.class, String.class, Integer.class,
-				Integer.class });
+		exw.setFieldTypes(new Class[] {
+			Integer.class, String.class, String.class, String.class, String.class, Integer.class,
+			Integer.class
+		});
 		exw.load(file, 0);
-
+		
 		String[] row;
 		for (int i = exw.getFirstRow() + 1; i <= exw.getLastRow(); i++) {
 			row = exw.getRow(i).toArray(new String[0]);
@@ -145,6 +135,7 @@ public class KontaktImporterBlatt extends Composite {
 				continue;
 			}
 			log.log(Messages.KontaktImporterBlatt_Importing + StringTool.join(row, " "), Log.INFOS); //$NON-NLS-2$
+			// Please keep in sync with doc/import.textile !!
 			String bagnr = StringTool.getSafe(row, 0);
 			String name = StringTool.getSafe(row, 1);
 			String zweig = StringTool.getSafe(row, 2);
@@ -153,8 +144,8 @@ public class KontaktImporterBlatt extends Composite {
 			String EANInsurance = StringTool.getSafe(row, 5);
 			String EANReceiver = StringTool.getSafe(row, 6);
 			String[] adr = splitAdress(adresse);
-			Organisation kk = KontaktMatcher.findOrganisation(name, adr[0],
-					adr[1], adr[2], CreateMode.CREATE);
+			Organisation kk =
+				KontaktMatcher.findOrganisation(name, adr[0], adr[1], adr[2], CreateMode.CREATE);
 			if (kk == null) {
 				return false;
 			}
@@ -162,18 +153,18 @@ public class KontaktImporterBlatt extends Composite {
 			kk.setInfoElement("BAGNr", bagnr); //$NON-NLS-1$
 			kk.set("Bezeichnung2", zweig); //$NON-NLS-1$
 			kk.set("Kuerzel", StringTool.limitLength(Messages.KontaktImporterBlatt_KKKuerzel //$NON-NLS-1$
-					+ StringTool.getFirstWord(name), 39));
+				+ StringTool.getFirstWord(name), 39));
 		}
 		return true;
 	}
-
-	String[] splitAdress(final String adr) {
+	
+	String[] splitAdress(final String adr){
 		String[] ret = new String[3];
 		String[] m1 = adr.split("\\s*,\\s*"); //$NON-NLS-1$
 		String[] plzOrt = m1[m1.length - 1].split(" ", 2); //$NON-NLS-1$
 		if (m1.length == 1) {
 			ret[0] = ""; //$NON-NLS-1$
-
+			
 		} else {
 			ret[0] = m1[0];
 		}
@@ -181,10 +172,11 @@ public class KontaktImporterBlatt extends Composite {
 		ret[2] = plzOrt.length > 1 ? plzOrt[1] : ""; //$NON-NLS-1$
 		return ret;
 	}
-
-	public boolean importExcel(final String file, final IProgressMonitor moni) {
+	
+	public boolean importExcel(final String file, final IProgressMonitor moni){
 		ExcelWrapper exw = new ExcelWrapper();
 		exw.load(file, 0);
+		// Please keep in sync with doc/import.textile !!
 		List<String> row = exw.getRow(exw.getFirstRow()); // we load the first
 															// row to figure out
 															// whether we know
@@ -196,7 +188,9 @@ public class KontaktImporterBlatt extends Composite {
 			}
 			byte[] dg = digest.digest();
 			String vgl = BinConverter.bytesToHexStr(dg);
-
+			log.log(Messages.KontaktImporterBlatt_Importing +" SHA1 war " + vgl +
+					"\nFirst row was: " + row, Log.INFOS);
+			
 			if (vgl.equals(PRESET_RUSSI)) {
 				return Presets.importRussi(exw, bKeepID, moni);
 			} else if (vgl.equals(PRESET_UNIVERSAL)) {
@@ -204,27 +198,37 @@ public class KontaktImporterBlatt extends Composite {
 			} else if (vgl.equals(PRESET_HERTEL)) {
 				return Presets.importHertel(exw, bKeepID, moni);
 			} else {
-				SWTHelper.showError(Messages.KontaktImporterBlatt_DatatypeErrorHeading, Messages.KontaktImporterBlatt_DatatypeErrorText,
-						Messages.KontaktImporterBlatt_DatatypeErrorExplanation);
+				SWTHelper.showError(Messages.KontaktImporterBlatt_DatatypeErrorHeading,
+					Messages.KontaktImporterBlatt_DatatypeErrorText,
+					Messages.KontaktImporterBlatt_DatatypeErrorExplanation + " SHA1 was " + vgl);
 			}
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 		}
-
+		
 		return false;
-
+		
 	}
-
-	public boolean importXML(final String file) {
+	
+	public boolean importXML(final String file){
+		// Please keep in sync with doc/import.textile !!
+		SWTHelper.showError(Messages.KontaktImporterBlatt_DatatypeErrorHeading,
+			Messages.KontaktImporterBlatt_DatatypeErrorText,
+			"Import von XML-Dateien wird (noch) nicht unterstützt");
 		return false;
 	}
-
-	public boolean importCSV(final String file) {
+	
+	public boolean importCSV(final String file){
+		// Please keep in sync with doc/import.textile !!
+		SWTHelper.showError(Messages.KontaktImporterBlatt_DatatypeErrorHeading,
+			Messages.KontaktImporterBlatt_DatatypeErrorText,
+			"Import von CSV-Dateien wird (noch) nicht unterstützt");
 		return false;
 	}
-
-	public boolean importVCard(final String file) {
+	
+	public boolean importVCard(final String file){
 		try {
+			// Please keep in sync with doc/import.textile !!
 			VCard vcard = new VCard(new FileInputStream(file));
 			String name, vorname, tel, email, title;
 			String gebdat = ""; //$NON-NLS-1$
@@ -248,8 +252,7 @@ public class KontaktImporterBlatt extends Composite {
 			}
 			name = names[0];
 			vorname = names[1];
-			Kontakt k = KontaktImporter.queryKontakt(name, vorname, strasse,
-					plz, ort, false);
+			Kontakt k = KontaktImporter.queryKontakt(name, vorname, strasse, plz, ort, false);
 			if (k == null) {
 				k = new Person(name, vorname, gebdat, Person.MALE);
 				k.set("Title", title); //$NON-NLS-1$
