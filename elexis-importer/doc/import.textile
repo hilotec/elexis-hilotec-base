@@ -18,7 +18,7 @@ Folgende Möglichkeiten bestehen:
 
 h2. Importieren
 
-Wählen Sie Datei..Datenimport. Im Dialog !../rsc/import_1.png! wählen Sie unten Kontakt, dann den gewünschten Dateityp. Wählen Sie mit Hilfe von "Datei wählen" die gewünschte Datei aus. Nach dem Drücken auf "Okay" startet der Import, der je nach Grösse auch länger dauern kann. Bei Konflikten kann folgender Dialog kommen !../rsc/conflict.png!
+Wählen Sie Datei..Datenimport. Im Dialog !import_1.png! wählen Sie unten Kontakt, dann den gewünschten Dateityp. Wählen Sie mit Hilfe von "Datei wählen" die gewünschte Datei aus. Nach dem Drücken auf "Okay" startet der Import, der je nach Grösse auch länger dauern kann.
 
 
 h2. Import von Krankenkassen
