@@ -154,6 +154,7 @@ IActivationListener {
 					manager.add(terminAendernAction);
 					manager.add(AgendaActions.delTerminAction);
 				}
+				updateActions();
 			}
 			
 		});
@@ -270,7 +271,6 @@ IActivationListener {
 		terminVerlaengernAction.setEnabled(canChangeAppointments);
 		terminAendernAction.setEnabled(canChangeAppointments);
 		AgendaActions.updateActions();
-		tv.refresh();
 	}
 	
 	protected void makeActions() {

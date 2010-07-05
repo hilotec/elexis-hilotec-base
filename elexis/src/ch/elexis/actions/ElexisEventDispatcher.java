@@ -27,6 +27,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import ch.elexis.ElexisException;
+import ch.elexis.Hub;
+import ch.elexis.data.Fall;
+import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
@@ -197,12 +200,14 @@ public final class ElexisEventDispatcher extends Job {
 	public void fire(final ElexisEvent... ees) {
 		for (ElexisEvent ee : ees) {
 			if (ee.getType() == ElexisEvent.EVENT_SELECTED) {
+
 				PersistentObject po = lastSelection.get(ee.getObjectClass());
 				if (po != null) {
 					if (po.equals(ee.getObject())) {
 						continue;
 					}
 				}
+
 				lastSelection.put(ee.getObjectClass(), ee.getObject());
 			} else if (ee.getType() == ElexisEvent.EVENT_DESELECTED) {
 				lastSelection.remove(ee.getObjectClass());
@@ -220,7 +225,6 @@ public final class ElexisEventDispatcher extends Job {
 				eventQueue.offer(ee);
 			} finally {
 				eventQueueLock.unlock();
-				// eventQueue.notify();
 			}
 		}
 	}
@@ -335,23 +339,33 @@ public final class ElexisEventDispatcher extends Job {
 	}
 
 	private void doDispatch(ElexisEvent ee) {
-		/*
-		 * if (Hub.plugin.DEBUGMODE) { StringBuilder sb = new StringBuilder();
-		 * synchronized (sb) { sb.append(ee.getObjectClass().getName()); if
-		 * (ee.getObject() != null) {
-		 * sb.append(": ").append(ee.getObject().getLabel()); } if
-		 * (getSelectedPatient() != null) { sb.append("\nPat: ").append(
-		 * getSelected(Patient.class).getLabel()); } if (getSelected(Fall.class)
-		 * != null) { sb.append("\nFall: ").append(
-		 * getSelected(Fall.class).getLabel()); } if
-		 * (getSelected(Konsultation.class) != null) {
-		 * sb.append("\nKons: ").append(
-		 * getSelected(Konsultation.class).getLabel()); }
-		 * sb.append("\nto ").append(listenerCount).append("listeners.");
-		 * sb.append("\n--------------\n"); } log.log(sb.toString(), Log.INFOS);
-		 * 
-		 * }
-		 */
+
+		if (Hub.plugin.DEBUGMODE) {
+			StringBuilder sb = new StringBuilder();
+			synchronized (sb) {
+				sb.append(ee.getObjectClass().getName());
+				if (ee.getObject() != null) {
+					sb.append(": ").append(ee.getObject().getLabel());
+				}
+				if (getSelectedPatient() != null) {
+					sb.append("\nPat: ").append(
+							getSelected(Patient.class).getLabel());
+				}
+				if (getSelected(Fall.class) != null) {
+					sb.append("\nFall: ").append(
+							getSelected(Fall.class).getLabel());
+				}
+				if (getSelected(Konsultation.class) != null) {
+					sb.append("\nKons: ").append(
+							getSelected(Konsultation.class).getLabel());
+				}
+				sb.append("\nto ").append(listenerCount).append("listeners.");
+				sb.append("\n--------------\n");
+			}
+			log.log(sb.toString(), Log.INFOS);
+
+		}
+
 		if (ee != null) {
 			synchronized (listeners) {
 				for (ElexisEventListener l : listeners) {
@@ -393,7 +407,8 @@ public final class ElexisEventDispatcher extends Job {
 		for (ElexisEventListener el : listeners) {
 			ElexisEvent filter = el.getElexisEventFilter();
 			sb.append(el.getClass().getName()).append(": ");
-			if (filter != null &&  filter.getObjectClass() != null && filter.getObjectClass().getName() != null) {
+			if (filter != null && filter.getObjectClass() != null
+					&& filter.getObjectClass().getName() != null) {
 				sb.append(filter.type).append(" / ").append(
 						filter.getObjectClass().getName());
 			}

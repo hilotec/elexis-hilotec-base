@@ -222,12 +222,12 @@ public class Hub extends AbstractUIPlugin {
 		plugin = this;
 		startUpBundle();
 		ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
-		ElexisEventCascade.getInstance().start();
+		//ElexisEventCascade.getInstance().start();
 	}
 	
 	@Override
 	public void stop(final BundleContext context) throws Exception {
-		ElexisEventCascade.getInstance().stop();
+		//ElexisEventCascade.getInstance().stop();
 		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
 		ElexisEventDispatcher.getInstance().dump();
 		heart.stop();
