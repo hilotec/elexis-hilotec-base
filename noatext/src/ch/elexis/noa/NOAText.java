@@ -354,9 +354,8 @@ public class NOAText implements ITextPlugin {
 					// *** read control name - this may contain a replacement instruction
 					XPropertySet xPSet = formComponent.getXPropertySet();
 					int componentType = getFormComponentType(xPSet);
-					String controlName = "";
 					try {
-						controlName = (String) xPSet.getPropertyValue("Name");
+						String controlName = (String) xPSet.getPropertyValue("Name");
 					} catch (UnknownPropertyException e) {
 						break; // don't process if this can't be found
 					} catch (WrappedTargetException e) {
@@ -452,7 +451,6 @@ public class NOAText implements ITextPlugin {
 						if (replacement2 != null) xPSet.setPropertyValue("StringItemList",  replacement2.split(";"));
 					}
 					
-					LocalOfficeConnectionGhost openOfficeConnection;
 					switch (componentType)	{
 						case (FormComponentType.TEXTFIELD):
 						case (FormComponentType.COMBOBOX):
