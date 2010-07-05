@@ -632,59 +632,6 @@ public class NOAText implements ITextPlugin {
 		return false;
 	}
 	
-	private final PropertyValue[] MakePropertyValue(String cName, Object uValue)	{
-		PropertyValue[] tempMakePropertyValue = new PropertyValue[1];
-		tempMakePropertyValue[0] = new PropertyValue();
-		tempMakePropertyValue[0].Name  = cName;
-		tempMakePropertyValue[0].Value = uValue;
-		return tempMakePropertyValue;
-	}	
-	//getXComponentContext
-	//getXComponent
-	/*
-	protected XTextDocument xTextDocument() {
-		return (XTextDocument) UnoRuntime.queryInterface(XTextDocument.class, xComponent);
-	}
-	protected void refreshFields() {
-		// Get the fields in this context
-		XTextFieldsSupplier xTextFieldsSupplier = (XTextFieldsSupplier) UnoRuntime.queryInterface(
-				XTextFieldsSupplier.class, xTextDocument());
-
-		XEnumerationAccess xEnumeratedFields = xTextFieldsSupplier.getTextFields();
-		
-		// Afterwards we must refresh the text fields collection
-		XRefreshable xRefreshable = (XRefreshable) UnoRuntime.queryInterface(XRefreshable.class, xEnumeratedFields);
-		xRefreshable.refresh();
-	}
-	*/
-	private final void embedImagesInWriter(XComponent oDoc)
-	   {   /*
-	      XTextGraphicObjectsSupplier XTxtGraphObjSupplier = (XTextGraphicObjectsSupplier) UnoRuntime.queryInterface(XTextGraphicObjectsSupplier.class, oDoc);
-	      XNameAccess XNameAcc;
-	      XMultiServiceFactory xMSFDoc = (XMultiServiceFactory) UnoRuntime.queryInterface(XMultiServiceFactory.class, oDoc);
-	      Object oGraphic=null;
-	      XComponentContext xComponentContext = openOfficeConnection.getComponentContext();
-	        XMultiComponentFactory xMCF = xComponentContext.getServiceManager();
-	        Object graphicProviderObject = null;
-	      
-	      graphicProviderObject = xMCF.createInstanceWithContext("com.sun.star.graphic.GraphicProvider", xComponentContext);
-	        XGraphicProvider XGraphProv = (XGraphicProvider) UnoRuntime.queryInterface(XGraphicProvider.class, graphicProviderObject); 
-	      oGraphic = xMSFDoc.createInstance("com.sun.star.text.TextGraphicObject");
-	      
-	      String[] allImages = null;
-	      int x = 0;
-	      PropertyValue[] aMediaProperties = new PropertyValue[1];
-
-	      XNameAcc = XTxtGraphObjSupplier.getGraphicObjects();
-	      allImages = XNameAcc.getElementNames();
-	      for (x = 0; x < allImages.length; x++)
-	      {   
-	         oGraphic = XNameAcc.getByName(allImages[x]);
-	         XPropertySet xPropSet = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, oGraphic);
-	         aMediaProperties = MakePropertyValue("URL", xPropSet.getPropertyValue("GraphicURL").toString());
-	         xPropSet.setPropertyValue("Graphic", XGraphProv.queryGraphic(aMediaProperties));
-	      }*/
-	   }	
 	public boolean isInteger(String input)	{  
 		try	{  
 			Integer.parseInt(input);
