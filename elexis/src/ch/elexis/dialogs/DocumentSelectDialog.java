@@ -133,24 +133,24 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 			public Object[] getElements(Object inputElement){
 				Query<Brief> qbe = new Query<Brief>(Brief.class);
 				if (type == TYPE_LOAD_DOCUMENT) {
-					qbe.add(Brief.TYPE, Query.NOT_EQUAL, Brief.TEMPLATE);
+					qbe.add(Brief.FLD_TYPE, Query.NOT_EQUAL, Brief.TEMPLATE);
 				} else {
 					String sys = type == TYPE_LOAD_SYSTEMPLATE ? Query.EQUALS : Query.NOT_EQUAL;
-					qbe.add(Brief.TYPE, Query.EQUALS, Brief.TEMPLATE);
-					qbe.add(Brief.KONSULTATION_ID, sys, "SYS"); //$NON-NLS-1$
+					qbe.add(Brief.FLD_TYPE, Query.EQUALS, Brief.TEMPLATE);
+					qbe.add(Brief.FLD_KONSULTATION_ID, sys, "SYS"); //$NON-NLS-1$
 					qbe.startGroup();
-					qbe.add(Brief.DESTINATION_ID, Query.EQUALS, Hub.actMandant.getId());
+					qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, Hub.actMandant.getId());
 					qbe.or();
-					qbe.add(Brief.DESTINATION_ID, Query.EQUALS, StringTool.leer);
+					qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, StringTool.leer);
 					qbe.endGroup();
 				}
 				qbe.and();
 				qbe.add(Messages.getString("DocumentSelectDialog.deleted"), Query.NOT_EQUAL, StringConstants.ONE); //$NON-NLS-1$
 
 				if (type != TYPE_LOAD_DOCUMENT) {
-					qbe.orderBy(false, Brief.SUBJECT);
+					qbe.orderBy(false, Brief.FLD_SUBJECT);
 				} else {
-					qbe.orderBy(false, Brief.DATE);
+					qbe.orderBy(false, Brief.FLD_DATE);
 				}
 				List<Brief> l = qbe.execute();
 				return l.toArray();

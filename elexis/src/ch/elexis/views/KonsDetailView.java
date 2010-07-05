@@ -97,7 +97,7 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 	private Konsultation actKons;
 	FormToolkit tk;
 	Form form;
-	// Patient actPat;
+	Patient actPat;
 
 	private DiagnosenDisplay dd;
 	private VerrechnungsDisplay vd;
@@ -109,6 +109,7 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 	Composite cEtiketten;
 	private int[] sashWeights = null;
 	private SashForm sash;
+
 	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(
 			Patient.class) {
 
@@ -116,8 +117,10 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 		public void runInUi(ElexisEvent ev) {
 			Patient pat = (Patient) ev.getObject();
 			if (pat != null) {
-				setKons(pat.getLetzteKons(false));
-				// actPat=pat;
+				if (!pat.equals(actPat)) {
+					setKons(pat.getLetzteKons(false));
+					
+				}
 			}
 
 		}
@@ -326,6 +329,7 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 		if (pat == null) {
 			pat = ElexisEventDispatcher.getSelectedPatient();
 		}
+		actPat=pat;
 		if (pat != null) {
 			form.setText(pat.getPersonalia());
 			List<Sticker> etis = pat.getStickers();

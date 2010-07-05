@@ -62,8 +62,8 @@ public class FakturaJournal extends AbstractTimeSeries {
 		Query<AccountTransaction> qbe = new Query<AccountTransaction>(AccountTransaction.class);
 		TimeTool ttStart = new TimeTool(this.getStartDate().getTimeInMillis());
 		TimeTool ttEnd = new TimeTool(this.getEndDate().getTimeInMillis());
-		qbe.add("Datum", ">=", ttStart.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
-		qbe.add("Datum", "<=", ttEnd.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
+		qbe.add(AccountTransaction.FLD_DATE, Query.GREATER_OR_EQUAL, ttStart.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
+		qbe.add(AccountTransaction.FLD_DATE, Query.LESS_OR_EQUAL, ttEnd.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
 		monitor.beginTask(NAME, total);
 		monitor.subTask(Messages.FakturaJournal_DatabaseQuery);
 		List<AccountTransaction> transactions = qbe.execute();
@@ -94,7 +94,7 @@ public class FakturaJournal extends AbstractTimeSeries {
 					}
 				}
 				Comparable<?>[] row = new Comparable<?>[this.dataSet.getHeadings().size()];
-				row[0] = pif.format(pat.get("PatientNr")); //$NON-NLS-1$
+				row[0] = pif.format(pat.get(Patient.FLD_PATID)); 
 				row[1] = new DateTool(at.getDate());
 				row[2] = at.getAmount();
 				row[4] = at.getRemark();

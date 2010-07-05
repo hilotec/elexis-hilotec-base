@@ -44,18 +44,18 @@ public class PrintFindingsDialog extends TitleAreaDialog implements ICallback {
 		text.getPlugin().createContainer(ret, this);
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
-		text.createFromTemplateName(null, "Messwerte", Brief.UNKNOWN, Hub.actUser, "Messwerte");
-		text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9);
-		text.getPlugin().insertTable("[Tabelle]", ITextPlugin.FIRST_ROW_IS_HEADER, fields, null);
+		text.createFromTemplateName(null, "Messwerte", Brief.UNKNOWN, Hub.actUser, "Messwerte"); //$NON-NLS-1$ //$NON-NLS-2$
+		text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9); //$NON-NLS-1$
+		text.getPlugin().insertTable("[Tabelle]", ITextPlugin.FIRST_ROW_IS_HEADER, fields, null); //$NON-NLS-1$
 		return ret;
 	}
 
 	@Override
 	public void create() {
 		super.create();
-		getShell().setText("Messwerte");
-		setTitle("Messwerte drucken");
-		setMessage("Dies druckt die aktuell angezeigte Seite der Messwerte");
+		getShell().setText(Messages.getString("PrintFindingsDialog.messwerteCaption")); //$NON-NLS-1$
+		setTitle(Messages.getString("PrintFindingsDialog.printMesswerteTitle")); //$NON-NLS-1$
+		setMessage(Messages.getString("PrintFindingsDialog.printMesswerteMessage")); //$NON-NLS-1$
 		getShell().setSize(900,700);
 	}
 

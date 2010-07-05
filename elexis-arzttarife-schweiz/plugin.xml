@@ -63,6 +63,7 @@
             allowMultiple="false"
             category="ch.elexis.konsultationKategorie"
             class="ch.elexis.views.RFEView"
+            icon="rsc/RFE.ico"
             id="ch.elexis.arzttarife_ch.rfeView"
             name="medkey-RFE"
             restorable="true">

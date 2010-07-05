@@ -62,14 +62,14 @@ public class BefundElement extends ResultElement {
 		TimeTool tt = new TimeTool(mw.getDate());
 		String date = tt.toString(TimeTool.DATE_COMPACT);
 		String raw_id = mw.getId() + field + date;
-		setAttribute("id", XMLTool.idToXMLID(raw_id));
+		setAttribute("id", XMLTool.idToXMLID(raw_id)); //$NON-NLS-1$
 		setAttribute(ATTR_DATE, tt.toString(TimeTool.DATETIME_XML));
 		setAttribute(ATTR_LABITEM, XMLTool.idToXMLID(mw.getId() + field));
 		add(new MetaElement().asExporter(home, ATTRIB_CREATOR, Messwert.PLUGIN_ID));
 		ResultElement eResult = new ResultElement();
 		eResult.setText(mw.getResult(field));
 		add(eResult);
-		home.getContainer().addChoice(this, mw.getLabel() + ":" + field, mw);
+		home.getContainer().addChoice(this, mw.getLabel() + ":" + field, mw); //$NON-NLS-1$
 		return this;
 	}
 }

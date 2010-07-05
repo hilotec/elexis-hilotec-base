@@ -35,9 +35,9 @@ public class BriefExport {
 				CSVWriter writer = new CSVWriter(new FileWriter(csv));
 				String[] header = new String[] { "Betreff", "Datum",
 						"Adressat", "Mimetype", "Typ", "Patient", "Pfad" };
-				String[] fields = new String[] { Brief.SUBJECT, Brief.DATE,
-						Brief.DESTINATION_ID, Brief.MIME_TYPE, Brief.TYPE,
-						Brief.PATIENT_ID, Brief.PATIENT_ID };
+				String[] fields = new String[] { Brief.FLD_SUBJECT, Brief.FLD_DATE,
+						Brief.FLD_DESTINATION_ID, Brief.FLD_MIME_TYPE, Brief.FLD_TYPE,
+						Brief.FLD_PATIENT_ID, Brief.FLD_PATIENT_ID };
 				writer.writeNext(header);
 				for (Brief brief : briefe) {
 					Person pat = brief.getPatient();

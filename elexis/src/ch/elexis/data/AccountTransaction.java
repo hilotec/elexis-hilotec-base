@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,18 +18,16 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class AccountTransaction extends PersistentObject {
-	public static final String DATE = "Datum"; //$NON-NLS-1$
-	public static final String REMARK = "Bemerkung"; //$NON-NLS-1$
-	private static final String DATE_FIELD = "Datum=S:D:Datum"; //$NON-NLS-1$
-	public static final String AMOUNT = "Betrag"; //$NON-NLS-1$
-	public static final String BILL_ID = "RechnungsID"; //$NON-NLS-1$
-	public static final String PAYMENT_ID = "ZahlungsID"; //$NON-NLS-1$
-	public static final String PATIENT_ID = "PatientID"; //$NON-NLS-1$
+	public static final String FLD_REMARK = "Bemerkung"; //$NON-NLS-1$
+	public static final String FLD_AMOUNT = "Betrag"; //$NON-NLS-1$
+	public static final String FLD_BILL_ID = "RechnungsID"; //$NON-NLS-1$
+	public static final String FLD_PAYMENT_ID = "ZahlungsID"; //$NON-NLS-1$
+	public static final String FLD_PATIENT_ID = "PatientID"; //$NON-NLS-1$
 	private static final String TABLENAME = "KONTO"; //$NON-NLS-1$
 
 	static {
-		addMapping(TABLENAME, PATIENT_ID, PAYMENT_ID, BILL_ID, AMOUNT,
-				DATE_FIELD, REMARK);
+		addMapping(TABLENAME, FLD_PATIENT_ID, FLD_PAYMENT_ID, FLD_BILL_ID, FLD_AMOUNT,
+				DATE_COMPOUND, FLD_REMARK);
 	}
 
 	public AccountTransaction(Patient pat, Rechnung r, Money betrag,
@@ -38,10 +36,10 @@ public class AccountTransaction extends PersistentObject {
 		if (date == null) {
 			date = new TimeTool().toString(TimeTool.DATE_GER);
 		}
-		set(new String[] { PATIENT_ID, AMOUNT, DATE, REMARK }, pat.getId(),
+		set(new String[] { FLD_PATIENT_ID, FLD_AMOUNT, FLD_DATE, FLD_REMARK }, pat.getId(),
 				betrag.getCentsAsString(), date, bemerkung);
 		if (r != null) {
-			set(BILL_ID, r.getId());
+			set(FLD_BILL_ID, r.getId());
 		}
 	}
 
@@ -49,18 +47,18 @@ public class AccountTransaction extends PersistentObject {
 		create(null);
 		Rechnung r = z.getRechnung();
 		Patient p = r.getFall().getPatient();
-		set(new String[] { PATIENT_ID, AMOUNT, DATE, REMARK, BILL_ID,
-				PAYMENT_ID }, p.getId(), z.getBetrag().getCentsAsString(), z
+		set(new String[] { FLD_PATIENT_ID, FLD_AMOUNT, FLD_DATE, FLD_REMARK, FLD_BILL_ID,
+				FLD_PAYMENT_ID }, p.getId(), z.getBetrag().getCentsAsString(), z
 				.getDatum(), z.getBemerkung(), r.getId(), z.getId());
 	}
 
 	public String getDate() {
-		return get(DATE);
+		return get(FLD_DATE);
 	}
 
 	public Money getAmount() {
 		try {
-			return new Money(checkZero(get(AMOUNT)));
+			return new Money(checkZero(get(FLD_AMOUNT)));
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			return new Money();
@@ -68,19 +66,19 @@ public class AccountTransaction extends PersistentObject {
 	}
 
 	public String getRemark() {
-		return checkNull(get(REMARK));
+		return checkNull(get(FLD_REMARK));
 	}
 
 	public Patient getPatient() {
-		return Patient.load(get(PATIENT_ID));
+		return Patient.load(get(FLD_PATIENT_ID));
 	}
 
 	public Rechnung getRechnung() {
-		return Rechnung.load(get(BILL_ID));
+		return Rechnung.load(get(FLD_BILL_ID));
 	}
 
 	public Zahlung getZahlung() {
-		String zi = get(PAYMENT_ID);
+		String zi = get(FLD_PAYMENT_ID);
 		if (StringTool.isNothing(zi)) {
 			return null;
 		}
@@ -99,8 +97,8 @@ public class AccountTransaction extends PersistentObject {
 	@Override
 	public String getLabel() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(get(DATE)).append(StringTool.space).append(get(AMOUNT))
-				.append(StringTool.space).append(get(REMARK));
+		sb.append(get(FLD_DATE)).append(StringTool.space).append(get(FLD_AMOUNT))
+				.append(StringTool.space).append(get(FLD_REMARK));
 		return sb.toString();
 	}
 

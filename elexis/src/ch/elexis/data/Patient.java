@@ -394,9 +394,9 @@ public class Patient extends Person {
 				if (fall != null) { // of course this should never happen
 					Query<AccountTransaction> atQuery = new Query<AccountTransaction>(
 							AccountTransaction.class);
-					atQuery.add(AccountTransaction.PATIENT_ID, Query.EQUALS,
+					atQuery.add(AccountTransaction.FLD_PATIENT_ID, Query.EQUALS,
 							getId());
-					atQuery.add(AccountTransaction.BILL_ID, Query.EQUALS,
+					atQuery.add(AccountTransaction.FLD_BILL_ID, Query.EQUALS,
 							rechnung.getId());
 
 					List<AccountTransaction> transactions = atQuery.execute();
@@ -416,7 +416,7 @@ public class Patient extends Person {
 		// account (sum over all account transactions not assigned to a bill)
 		Query<AccountTransaction> atQuery = new Query<AccountTransaction>(
 				AccountTransaction.class);
-		atQuery.add(AccountTransaction.PATIENT_ID, Query.EQUALS, getId());
+		atQuery.add(AccountTransaction.FLD_PATIENT_ID, Query.EQUALS, getId());
 		List<AccountTransaction> transactions = atQuery.execute();
 		if (transactions != null) {
 			Money sum = new Money();
@@ -513,12 +513,12 @@ public class Patient extends Person {
 				getId()).execute()) {
 			rp.delete();
 		}
-		for (Brief br : new Query<Brief>(Brief.class, Brief.PATIENT_ID, getId())
+		for (Brief br : new Query<Brief>(Brief.class, Brief.FLD_PATIENT_ID, getId())
 				.execute()) {
 			br.delete();
 		}
 		for (AccountTransaction at : new Query<AccountTransaction>(
-				AccountTransaction.class, AccountTransaction.PATIENT_ID,
+				AccountTransaction.class, AccountTransaction.FLD_PATIENT_ID,
 				getId()).execute()) {
 			at.delete();
 		}

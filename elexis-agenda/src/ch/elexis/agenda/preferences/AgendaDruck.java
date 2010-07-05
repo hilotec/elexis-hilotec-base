@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, D. Lutz and Elexis
+ * Copyright (c) 2005-2010, D. Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,6 +33,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Query;
 import ch.elexis.agenda.preferences.PreferenceConstants;
@@ -157,17 +158,17 @@ public class AgendaDruck extends PreferencePage implements
 	
 	private Brief[] getSystemTemplates() {
 		Query<Brief> qbe = new Query<Brief>(Brief.class);
-		qbe.add("Typ","=", Brief.TEMPLATE);
-		qbe.add("BehandlungsID", "=", "SYS");
+		qbe.add(Brief.FLD_TYPE,Query.EQUALS, Brief.TEMPLATE);
+		qbe.add(Brief.FLD_KONSULTATION_ID, Query.EQUALS, "SYS");
 		qbe.startGroup();
-		qbe.add("DestID", "=", Hub.actMandant.getId());
+		qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, Hub.actMandant.getId());
 		qbe.or();
-		qbe.add("DestID", "=", "");
+		qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, StringConstants.EMPTY);
 		qbe.endGroup();
 		qbe.and();
-		qbe.add("geloescht", "<>", "1");
+		qbe.add("geloescht", Query.NOT_EQUAL, StringConstants.ONE);
 
-		qbe.orderBy(false, "Datum");
+		qbe.orderBy(false, Brief.FLD_DATE);
 		List<Brief> l = qbe.execute();
 		if (l != null) {
 			return l.toArray(new Brief[0]);

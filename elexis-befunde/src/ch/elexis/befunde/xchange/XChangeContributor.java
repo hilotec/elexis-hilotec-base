@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,17 +64,17 @@ public class XChangeContributor implements IExchangeContributor {
 			messwerte.clear();
 		}
 		Messwert setup = Messwert.getSetup();
-		hash = setup.getHashtable("Befunde");
-		String names = (String) hash.get("names");
+		hash = setup.getHashtable(Messwert.FLD_BEFUNDE);
+		String names = (String) hash.get(Messwert.HASH_NAMES);
 		if (!StringTool.isNothing(names)) {
 			paramNames = names.split(Messwert.SETUP_SEPARATOR);
 			for (String n : paramNames) {
-				String vals = (String) hash.get(n + "_FIELDS");
+				String vals = (String) hash.get(n + Messwert._FIELDS);
 				if (vals != null) {
 					String[] flds = vals.split(Messwert.SETUP_SEPARATOR);
 					for (int i = 0; i < flds.length; i++) {
 						flds[i] = flds[i].split(Messwert.SETUP_CHECKSEPARATOR)[0];
-						String[] header = flds[i].split("=", 2);
+						String[] header = flds[i].split(Query.EQUALS, 2);
 						flds[i] = header[0];
 					}
 					params.put(n, flds);
@@ -91,8 +91,8 @@ public class XChangeContributor implements IExchangeContributor {
 			return ret;
 		}
 		Query<Messwert> qbe = new Query<Messwert>(Messwert.class);
-		qbe.add("PatientID", "=", actPatient.getId());
-		qbe.add("Name", "=", name);
+		qbe.add(Messwert.FLD_PATIENT_ID, Query.EQUALS, actPatient.getId());
+		qbe.add(Messwert.FLD_NAME, Query.EQUALS, name);
 		ret = qbe.execute();
 		messwerte.put(name, ret);
 		
@@ -126,17 +126,17 @@ public class XChangeContributor implements IExchangeContributor {
 		Patient pat = (Patient) me.getContainer().getMapping(me);
 		if (pat != null) {
 			Messwert setup = Messwert.getSetup();
-			hash = setup.getHashtable("Befunde");
-			String names = (String) hash.get("names");
+			hash = setup.getHashtable(Messwert.FLD_BEFUNDE);
+			String names = (String) hash.get(Messwert.HASH_NAMES);
 			if (!StringTool.isNothing(names)) {
 				paramNames = names.split(Messwert.SETUP_SEPARATOR);
 				for (String n : paramNames) {
-					String vals = (String) hash.get(n + "_FIELDS");
+					String vals = (String) hash.get(n + Messwert._FIELDS);
 					if (vals != null) {
 						String[] flds = vals.split(Messwert.SETUP_SEPARATOR);
 						for (int i = 0; i < flds.length; i++) {
 							flds[i] = flds[i].split(Messwert.SETUP_CHECKSEPARATOR)[0];
-							String[] header = flds[i].split("=", 2);
+							String[] header = flds[i].split("=", 2); //$NON-NLS-1$
 							flds[i] = header[0];
 						}
 						params.put(n, flds);
@@ -145,10 +145,10 @@ public class XChangeContributor implements IExchangeContributor {
 				
 			}
 			Query<Messwert> qbe = new Query<Messwert>(Messwert.class);
-			qbe.add("PatientID", "=", pat.getId());
+			qbe.add(Messwert.FLD_PATIENT_ID, Query.EQUALS, pat.getId());
 			List<Messwert> mw = qbe.execute();
 			for (Messwert m : mw) {
-				String name = m.get("Name");
+				String name = m.get(Messwert.FLD_NAME);
 				String[] fl = params.get(name);
 				if (fl != null) {
 					for (String field : fl) {

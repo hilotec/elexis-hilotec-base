@@ -155,13 +155,13 @@ public class TextContainer {
 
 	private Brief loadTemplate(String name) {
 		Query<Brief> qbe = new Query<Brief>(Brief.class);
-		qbe.add(Brief.TYPE, Query.EQUALS, Brief.TEMPLATE);
+		qbe.add(Brief.FLD_TYPE, Query.EQUALS, Brief.TEMPLATE);
 		qbe.and();
-		qbe.add(Brief.SUBJECT, Query.EQUALS, name);
+		qbe.add(Brief.FLD_SUBJECT, Query.EQUALS, name);
 		qbe.startGroup();
-		qbe.add(Brief.DESTINATION_ID, Query.EQUALS, Hub.actMandant.getId());
+		qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, Hub.actMandant.getId());
 		qbe.or();
-		qbe.add(Brief.DESTINATION_ID, Query.EQUALS, StringTool.leer);
+		qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, StringTool.leer);
 		qbe.endGroup();
 		List<Brief> list = qbe.execute();
 		if ((list == null) || (list.size() == 0)) {
@@ -754,7 +754,7 @@ public class TextContainer {
 			Brief brief = new Brief(title, null, Hub.actUser, std.selectedMand,
 					null, Brief.TEMPLATE);
 			if (std.bSysTemplate) {
-				brief.set(Brief.KONSULTATION_ID, "SYS"); //$NON-NLS-1$
+				brief.set(Brief.FLD_KONSULTATION_ID, "SYS"); //$NON-NLS-1$
 			}
 			byte[] tmpl = plugin.storeToByteArray();
 			if (tmpl == null) {
@@ -853,18 +853,18 @@ public class TextContainer {
 				}
 			}
 			Query<Brief> qbe = new Query<Brief>(Brief.class);
-			qbe.add(Brief.TYPE, Query.EQUALS, Brief.TEMPLATE);
+			qbe.add(Brief.FLD_TYPE, Query.EQUALS, Brief.TEMPLATE);
 			if (selectedMand != null) {
 				qbe.startGroup();
-				qbe.add(Brief.DESTINATION_ID, Query.EQUALS, selectedMand
+				qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, selectedMand
 						.getId());
 				qbe.or();
-				qbe.add(Brief.DESTINATION_ID, Query.EQUALS, StringTool.leer);
+				qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, StringTool.leer);
 				qbe.endGroup();
 				qbe.and();
 			}
 			qbe.add("geloescht", Query.NOT_EQUAL, StringConstants.ONE); //$NON-NLS-1$
-			qbe.add(Brief.SUBJECT, Query.EQUALS, title);
+			qbe.add(Brief.FLD_SUBJECT, Query.EQUALS, title);
 			List<Brief> l = qbe.execute();
 			if (l.size() > 0) {
 				if (MessageDialog.openQuestion(getShell(),

@@ -172,9 +172,9 @@ public class AccountView extends ViewPart implements IActivationListener,
 				}
 				Query<AccountTransaction> qa = new Query<AccountTransaction>(
 						AccountTransaction.class);
-				qa.add(AccountTransaction.PATIENT_ID, Query.EQUALS, actPatient
+				qa.add(AccountTransaction.FLD_PATIENT_ID, Query.EQUALS, actPatient
 						.getId());
-				qa.orderBy(false, new String[] { AccountTransaction.DATE });
+				qa.orderBy(false, new String[] { AccountTransaction.FLD_DATE });
 				return qa.execute().toArray();
 
 			}
