@@ -13,6 +13,14 @@
  *******************************************************************************/
 package ch.elexis.noa;
 
+import com.sun.star.uno.XComponentContext;
+import com.sun.star.comp.helper.Bootstrap;
+import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.bridge.UnoUrlResolver;
+import com.sun.star.bridge.XUnoUrlResolver;
+import com.sun.star.beans.XPropertySet;
+import com.sun.star.uno.UnoRuntime;
+
 import java.awt.Frame;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -30,10 +38,12 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.jdom.Document;
 import org.osgi.framework.Bundle;
 
 import ag.ion.bion.officelayer.application.IOfficeApplication;
 import ag.ion.bion.officelayer.application.OfficeApplicationException;
+import ag.ion.bion.officelayer.desktop.IDesktopService;
 import ag.ion.bion.officelayer.document.DocumentDescriptor;
 import ag.ion.bion.officelayer.document.DocumentException;
 import ag.ion.bion.officelayer.event.ICloseEvent;
@@ -41,6 +51,7 @@ import ag.ion.bion.officelayer.event.ICloseListener;
 import ag.ion.bion.officelayer.event.IEvent;
 import ag.ion.bion.officelayer.form.IFormComponent;
 import ag.ion.bion.officelayer.form.IFormService;
+import ag.ion.bion.officelayer.internal.application.connection.LocalOfficeConnectionGhost;
 import ag.ion.bion.officelayer.text.ITextDocument;
 import ag.ion.bion.officelayer.text.ITextRange;
 import ag.ion.bion.officelayer.text.ITextTable;
@@ -49,6 +60,7 @@ import ag.ion.bion.workbench.office.editor.core.EditorCorePlugin;
 import ag.ion.noa.NOAException;
 import ag.ion.noa.search.ISearchResult;
 import ag.ion.noa.search.SearchDescriptor;
+import ag.ion.noa.service.IServiceProvider;
 import ag.ion.noa4e.ui.widgets.OfficePanel;
 import ch.elexis.Hub;
 import ch.elexis.noa.OOPrinter.MyXPrintJobListener;
@@ -64,6 +76,7 @@ import ch.rgw.tools.TimeTool;
 
 import com.sun.star.awt.FontWeight;
 import com.sun.star.awt.Size;
+import com.sun.star.awt.XGraphics;
 import com.sun.star.awt.XTextComponent;
 import com.sun.star.beans.Property;
 import com.sun.star.beans.PropertyValue;
@@ -71,10 +84,21 @@ import com.sun.star.beans.PropertyVetoException;
 import com.sun.star.beans.UnknownPropertyException;
 import com.sun.star.beans.XPropertySet;
 import com.sun.star.beans.XPropertySetInfo;
+import com.sun.star.bridge.UnoUrlResolver;
+import com.sun.star.bridge.XUnoUrlResolver;
+import com.sun.star.comp.helper.Bootstrap;
+import com.sun.star.container.XEnumerationAccess;
+import com.sun.star.container.XNameAccess;
 import com.sun.star.drawing.XShape;
 import com.sun.star.form.FormComponentType;
+import com.sun.star.frame.XComponentLoader;
+import com.sun.star.graphic.XGraphic;
+import com.sun.star.graphic.XGraphicProvider;
 import com.sun.star.lang.IllegalArgumentException;
 import com.sun.star.lang.WrappedTargetException;
+import com.sun.star.lang.XComponent;
+import com.sun.star.lang.XMultiComponentFactory;
+import com.sun.star.lang.XMultiServiceFactory;
 import com.sun.star.lang.XServiceInfo;
 import com.sun.star.style.ParagraphAdjust;
 import com.sun.star.text.HoriOrientation;
@@ -82,10 +106,16 @@ import com.sun.star.text.RelOrientation;
 import com.sun.star.text.TextContentAnchorType;
 import com.sun.star.text.VertOrientation;
 import com.sun.star.text.XText;
+import com.sun.star.text.XTextContent;
 import com.sun.star.text.XTextCursor;
 import com.sun.star.text.XTextDocument;
+import com.sun.star.text.XTextFieldsSupplier;
 import com.sun.star.text.XTextFrame;
+import com.sun.star.text.XTextGraphicObjectsSupplier;
+import com.sun.star.ucb.XFileIdentifierConverter;
 import com.sun.star.uno.UnoRuntime;
+import com.sun.star.uno.XComponentContext;
+import com.sun.star.util.XRefreshable;
 import com.sun.star.view.PrintableState;
 import com.sun.star.view.XPrintable;
 
@@ -377,29 +407,8 @@ public class NOAText implements ITextPlugin {
 					if (StringTool.isNothing(replacement4)) replacement4 = null;
 					if (StringTool.isNothing(replacement5)) replacement5 = null;
 					
-					// getting all the property names
-					/*
-					if ((controlName.equalsIgnoreCase("FormattedField"))
-					||  (controlName.equalsIgnoreCase("FormattedField")))	{
-						XPropertySet sett = formComponent.getXPropertySet();
-						XPropertySetInfo setinfo = sett.getPropertySetInfo();
-						Property[] props = setinfo.getProperties();
-						System.out.println(controlName);
-						for (int ii = 0; ii < props.length; ii++){
-							Property prop = props[ii];
-							String propName = prop.Name;
-							if (propName.equalsIgnoreCase("WritingMode"))	{
-								System.out.println();
-							}
-							propName = StringTool.pad(StringTool.RIGHTS, ' ', propName, 27);
-							System.out.println(propName + xPSet.getPropertyValue(prop.Name));
-						}
-					}
-					*/
-					/**
-					 *  test if number of params ok,
-					 *  if error break, show error info in tag field for debugging purposes
-					 */
+					//test if number of params ok,
+					//if error break, show error info in tag field for debugging purposes
 					String[] argumentsMapping = {
 							FormComponentType.PATTERNFIELD  + ":" + 1,
 							FormComponentType.FILECONTROL   + ":" + 1,
@@ -443,6 +452,7 @@ public class NOAText implements ITextPlugin {
 						if (replacement2 != null) xPSet.setPropertyValue("StringItemList",  replacement2.split(";"));
 					}
 					
+					LocalOfficeConnectionGhost openOfficeConnection;
 					switch (componentType)	{
 						case (FormComponentType.TEXTFIELD):
 						case (FormComponentType.COMBOBOX):
@@ -531,10 +541,10 @@ public class NOAText implements ITextPlugin {
 							if (replacement1 != null) xPSet.setPropertyValue("SelectedItems", shortList);
 							break;
 						case (FormComponentType.SPINBUTTON):
-							if (isInteger(replacement1)) xPSet.setPropertyValue("SpinValue",     new Short((short) Integer.parseInt(replacement1)));
-							if (isInteger(replacement2)) xPSet.setPropertyValue("SpinValueMin",  new Short((short) Integer.parseInt(replacement2)));
 							if (isInteger(replacement3)) xPSet.setPropertyValue("SpinValueMax",  new Short((short) Integer.parseInt(replacement3)));
+							if (isInteger(replacement2)) xPSet.setPropertyValue("SpinValueMin",  new Short((short) Integer.parseInt(replacement2)));
 							if (isInteger(replacement4)) xPSet.setPropertyValue("SpinIncrement", new Short((short) Integer.parseInt(replacement4)));
+							if (isInteger(replacement1)) xPSet.setPropertyValue("SpinValue",     new Short((short) Integer.parseInt(replacement1)));
 							break;
 						case (FormComponentType.SCROLLBAR):
 							if (isInteger(replacement1)) xPSet.setPropertyValue("ScrollValue",    new Short((short) Integer.parseInt(replacement1)));
@@ -545,11 +555,10 @@ public class NOAText implements ITextPlugin {
 							break;
 						case (FormComponentType.IMAGEBUTTON):
 						case (FormComponentType.IMAGECONTROL):
-							//++++ doesn't work correctly... hmmmm... can anyone tell me how to get this to work???
-							if (replacement1 != null) xPSet.setPropertyValue("ImageURL", replacement1);
-							xPSet.setPropertyValue("ScaleImage", Boolean.FALSE);
-							//xPSet.setPropertyValue("ScaleImage", Boolean.TRUE);
-							//xPSet.setPropertyValue("Width", new Integer(200));
+							// *** doesn't work correctly... hmmmm... can anyone tell me how to get this to work???
+							//     anyway: embedding into doc doesn't work in OO < 3.1
+							//     so: more or less useless this way - and waiting for new OO in Elexis
+ 							if (replacement1 != null) xPSet.setPropertyValue("ImageURL", replacement1);
 							break;
 					}
 				} catch (NOAException e) {
@@ -563,7 +572,7 @@ public class NOAText implements ITextPlugin {
 				} catch (WrappedTargetException e) {
 					e.printStackTrace();
 				} catch (Exception e)	{
-					
+					// *** catch just everything so that the proc is going on...
 				}
 			}
 		} catch (NOAException e1) {
@@ -625,7 +634,59 @@ public class NOAText implements ITextPlugin {
 		return false;
 	}
 	
-	
+	private final PropertyValue[] MakePropertyValue(String cName, Object uValue)	{
+		PropertyValue[] tempMakePropertyValue = new PropertyValue[1];
+		tempMakePropertyValue[0] = new PropertyValue();
+		tempMakePropertyValue[0].Name  = cName;
+		tempMakePropertyValue[0].Value = uValue;
+		return tempMakePropertyValue;
+	}	
+	//getXComponentContext
+	//getXComponent
+	/*
+	protected XTextDocument xTextDocument() {
+		return (XTextDocument) UnoRuntime.queryInterface(XTextDocument.class, xComponent);
+	}
+	protected void refreshFields() {
+		// Get the fields in this context
+		XTextFieldsSupplier xTextFieldsSupplier = (XTextFieldsSupplier) UnoRuntime.queryInterface(
+				XTextFieldsSupplier.class, xTextDocument());
+
+		XEnumerationAccess xEnumeratedFields = xTextFieldsSupplier.getTextFields();
+		
+		// Afterwards we must refresh the text fields collection
+		XRefreshable xRefreshable = (XRefreshable) UnoRuntime.queryInterface(XRefreshable.class, xEnumeratedFields);
+		xRefreshable.refresh();
+	}
+	*/
+	private final void embedImagesInWriter(XComponent oDoc)
+	   {   /*
+	      XTextGraphicObjectsSupplier XTxtGraphObjSupplier = (XTextGraphicObjectsSupplier) UnoRuntime.queryInterface(XTextGraphicObjectsSupplier.class, oDoc);
+	      XNameAccess XNameAcc;
+	      XMultiServiceFactory xMSFDoc = (XMultiServiceFactory) UnoRuntime.queryInterface(XMultiServiceFactory.class, oDoc);
+	      Object oGraphic=null;
+	      XComponentContext xComponentContext = openOfficeConnection.getComponentContext();
+	        XMultiComponentFactory xMCF = xComponentContext.getServiceManager();
+	        Object graphicProviderObject = null;
+	      
+	      graphicProviderObject = xMCF.createInstanceWithContext("com.sun.star.graphic.GraphicProvider", xComponentContext);
+	        XGraphicProvider XGraphProv = (XGraphicProvider) UnoRuntime.queryInterface(XGraphicProvider.class, graphicProviderObject); 
+	      oGraphic = xMSFDoc.createInstance("com.sun.star.text.TextGraphicObject");
+	      
+	      String[] allImages = null;
+	      int x = 0;
+	      PropertyValue[] aMediaProperties = new PropertyValue[1];
+
+	      XNameAcc = XTxtGraphObjSupplier.getGraphicObjects();
+	      allImages = XNameAcc.getElementNames();
+	      for (x = 0; x < allImages.length; x++)
+	      {   
+	         oGraphic = XNameAcc.getByName(allImages[x]);
+	         XPropertySet xPropSet = (XPropertySet)UnoRuntime.queryInterface(XPropertySet.class, oGraphic);
+	         aMediaProperties = MakePropertyValue("URL", xPropSet.getPropertyValue("GraphicURL").toString());
+	         xPropSet.setPropertyValue("Graphic", XGraphProv.queryGraphic(aMediaProperties));
+	      }*/
+	   }	
 	public boolean isInteger(String input)	{  
 		try	{  
 			Integer.parseInt(input);
