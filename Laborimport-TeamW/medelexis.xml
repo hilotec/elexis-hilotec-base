@@ -10,5 +10,5 @@
   </service:conditions>
   <service:docURL>http://www.medelexis.ch/index.php?id=64</service:docURL>
   <service:description>Import von Laborresultaten vom Labor Team W</service:description>
-  <service:depends>ch.medelexis.nucleus ch.elexis.importer.div ch.ngiger.utilites.comm</service:depends>
+  <service:depends>ch.medelexis.nucleus ch.elexis.importer.div ch.ngiger.utilities.comm</service:depends>
 </service:service>
