@@ -29,7 +29,7 @@ public class ElexisEventCascade {
 	private static ElexisEventCascade theInstance;
 	private final static Lock cascadeLock = new ReentrantLock(true);
 	
-	public static ElexisEventCascade getInstance(){
+	private static ElexisEventCascade getInstance(){
 		if (theInstance == null) {
 			theInstance = new ElexisEventCascade();
 		}

@@ -140,18 +140,20 @@ public class Activator extends AbstractUIPlugin {
 		final Patient pat = termin.getPatient();
 		ElexisEventDispatcher.fireSelectionEvent(termin);
 		if (pat != null) {
-			ElexisEventCascade.getInstance().stop();
+			//ElexisEventCascade.getInstance().stop();
 			try {
 				ElexisEventDispatcher.fireSelectionEvent(pat);
 				final Konsultation kons =
 					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 				
 				final String sVgl = getActDate().toString(TimeTool.DATE_COMPACT);
+				/*
 				if ((kons == null)
 						|| // Falls nicht die richtige Kons selektiert ist, passende
 						// Kons für heute suchen
 						!(kons.getFall().getPatient().getId().equals(pat.getId()))
 						|| !(new TimeTool(kons.getDatum()).toString(TimeTool.DATE_COMPACT).equals(sVgl))) {
+						*/
 					final Fall[] faelle = pat.getFaelle();
 					final TimeTool ttVgl = new TimeTool();
 					for (Fall f : faelle) {
@@ -169,9 +171,9 @@ public class Activator extends AbstractUIPlugin {
 						ElexisEventDispatcher.fireSelectionEvents(k,k.getFall());
 					}
 					//ElexisEventDispatcher.getInstance().waitUntilEventQueueIsEmpty(100);
-				}
+				//}
 			}finally {
-				ElexisEventCascade.getInstance().start();
+				//ElexisEventCascade.getInstance().start();
 			}
 		}
 	}

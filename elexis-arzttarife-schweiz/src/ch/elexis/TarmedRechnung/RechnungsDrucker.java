@@ -65,7 +65,7 @@ public class RechnungsDrucker implements IRnOutputter {
 		rnPage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		final Result<Rechnung> res = new Result<Rechnung>();
-		ElexisEventCascade.getInstance().stop();
+		//ElexisEventCascade.getInstance().stop();
 		try {
 			rnp = (RnPrintView2) rnPage.showView(RnPrintView2.ID);
 			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
@@ -127,7 +127,7 @@ public class RechnungsDrucker implements IRnOutputter {
 				.getResultAsStatus(res));
 			return res;
 		}finally {
-			ElexisEventCascade.getInstance().start();
+			//ElexisEventCascade.getInstance().start();
 		}
 		return res;
 	}
