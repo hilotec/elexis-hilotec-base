@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.elexis.StringConstants;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.rgw.tools.ExHandler;
@@ -32,56 +33,62 @@ import ch.rgw.tools.VersionInfo;
  * 
  */
 public class Note extends PersistentObject {
-	private static final String TABLENAME = "CH_ELEXIS_NOTES";
-	private static final String DBVERSION = "0.3.2";
+	public static final String FLD_MIMETYPE = "mimetype"; //$NON-NLS-1$
+	public static final String FLD_KEYWORDS = "keywords"; //$NON-NLS-1$
+	public static final String FLD_REFS = "refs"; //$NON-NLS-1$
+	public static final String FLD_CONTENTS = "Contents"; //$NON-NLS-1$
+	public static final String FLD_TITLE = "Title"; //$NON-NLS-1$
+	private static final String FLD_PARENT = "Parent"; //$NON-NLS-1$
+	private static final String TABLENAME = "CH_ELEXIS_NOTES"; //$NON-NLS-1$
+	private static final String DBVERSION = "0.3.2"; //$NON-NLS-1$
 	
 	/**
 	 * The String that defines the database. Will be used only once at first start of this plugin
 	 */
 	private static final String create =
-		"CREATE TABLE " + TABLENAME + " (" + "ID				VARCHAR(25)," + "lastupdate BIGINT,"
-			+ "deleted 		CHAR(1) default '0'," + "Parent 		VARCHAR(25)," + "Title			VARCHAR(80),"
-			+ "Date			CHAR(8)," + "Contents		BLOB," + "keywords       VARCHAR(255),"
-			+ "mimetype		VARCHAR(80)," + "refs			TEXT);" + "INSERT INTO " + TABLENAME
-			+ " (ID,Title,Parent) VALUES('1','" + DBVERSION + "','xxx');";
+		"CREATE TABLE " + TABLENAME + " (" + "ID				VARCHAR(25)," + "lastupdate BIGINT," //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			+ "deleted 		CHAR(1) default '0'," + "Parent 		VARCHAR(25)," + "Title			VARCHAR(80)," //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ "Date			CHAR(8)," + "Contents		BLOB," + "keywords       VARCHAR(255)," //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ "mimetype		VARCHAR(80)," + "refs			TEXT);" + "INSERT INTO " + TABLENAME //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ " (ID,Title,Parent) VALUES('1','" + DBVERSION + "','xxx');"; //$NON-NLS-1$ //$NON-NLS-2$
 	
 	/**
 	 * Update to Version 0.31
 	 */
 	private static final String upd031 =
-		"ALTER TABLE " + TABLENAME + " ADD keywords VARCHAR(255);" + "ALTER TABLE " + TABLENAME
-			+ " ADD mimetype VARCHAR(80);";
+		"ALTER TABLE " + TABLENAME + " ADD keywords VARCHAR(255);" + "ALTER TABLE " + TABLENAME //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ " ADD mimetype VARCHAR(80);"; //$NON-NLS-1$
 	
 	/**
 	 * Update to Version 0.32
 	 */
-	private static final String upd032 = "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;";
+	private static final String upd032 = "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;"; //$NON-NLS-1$ //$NON-NLS-2$
 	
 	/**
 	 * Initaialization: Create the table mappings (@see PersistentObject), check the version and
 	 * create or update the table if necessary
 	 */
 	static {
-		addMapping(TABLENAME, "Parent", "Title", "Contents", "Datum=S:D:Date", "refs", "keywords",
-			"mimetype");
-		Note start = load("1");
+		addMapping(TABLENAME, FLD_PARENT, FLD_TITLE, FLD_CONTENTS, DATE_COMPOUND, FLD_REFS, FLD_KEYWORDS,
+			FLD_MIMETYPE);
+		Note start = load("1"); //$NON-NLS-1$
 		if (!start.exists()) {
 			createOrModifyTable(create);
 		} else {
-			VersionInfo vi = new VersionInfo(start.get("Title"));
+			VersionInfo vi = new VersionInfo(start.get(FLD_TITLE));
 			if (vi.isOlder(DBVERSION)) {
-				if (vi.isOlder("0.2.0")) {
+				if (vi.isOlder("0.2.0")) { //$NON-NLS-1$
 					getConnection().exec(
-						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';");
+						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';"); //$NON-NLS-1$ //$NON-NLS-2$
 				}
-				if (vi.isOlder("0.3.1")) {
+				if (vi.isOlder("0.3.1")) { //$NON-NLS-1$
 					createOrModifyTable(upd031);
 				}
-				if (vi.isOlder("0.3.2")) {
+				if (vi.isOlder("0.3.2")) { //$NON-NLS-1$
 					createOrModifyTable(upd032);
 				}
 				
-				start.set("Title", DBVERSION);
+				start.set(FLD_TITLE, DBVERSION);
 			}
 		}
 	}
@@ -99,16 +106,16 @@ public class Note extends PersistentObject {
 	public Note(Note parent, String title, String text){
 		create(null);
 		set(new String[] {
-			"Title", "Datum", "mimetype"
-		}, title, new TimeTool().toString(TimeTool.DATE_GER), "text/plain");
+			FLD_TITLE, FLD_DATE, FLD_MIMETYPE
+		}, title, new TimeTool().toString(TimeTool.DATE_GER), "text/plain"); //$NON-NLS-1$
 		try {
-			setContent(text.getBytes("utf-8"));
+			setContent(text.getBytes("utf-8")); //$NON-NLS-1$
 		} catch (UnsupportedEncodingException e) {
 			ExHandler.handle(e);
 			// should never happen
 		}
 		if (parent != null) {
-			set("Parent", parent.getId());
+			set(FLD_PARENT, parent.getId());
 		}
 	}
 	
@@ -128,11 +135,11 @@ public class Note extends PersistentObject {
 	public Note(Note parent, String title, byte[] contents, String mimetype){
 		create(null);
 		set(new String[] {
-			"Title", "Datum", "mimetype"
+			FLD_TITLE, FLD_DATE, FLD_MIMETYPE
 		}, title, new TimeTool().toString(TimeTool.DATE_GER), mimetype);
 		setContent(contents);
 		if (parent != null) {
-			set("Parent", parent.getId());
+			set(FLD_PARENT, parent.getId());
 		}
 	}
 	
@@ -142,7 +149,7 @@ public class Note extends PersistentObject {
 	 * @return the parent note or null if this is a top level note.
 	 */
 	public Note getParent(){
-		String pid = get("Parent");
+		String pid = get(FLD_PARENT);
 		if (pid == null) {
 			return null;
 		}
@@ -158,7 +165,7 @@ public class Note extends PersistentObject {
 	 */
 	public List<Note> getChildren(){
 		Query<Note> qbe = new Query<Note>(Note.class);
-		qbe.add("Parent", "=", getId());
+		qbe.add(FLD_PARENT, Query.EQUALS, getId());
 		return qbe.execute();
 	}
 	
@@ -169,8 +176,8 @@ public class Note extends PersistentObject {
 	 *            the new content
 	 */
 	public void setContent(byte[] cnt){
-		setBinary("Contents", cnt);
-		set("Datum", new TimeTool().toString(TimeTool.DATE_GER));
+		setBinary(FLD_CONTENTS, cnt);
+		set(FLD_DATE, new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	
 	/**
@@ -179,7 +186,7 @@ public class Note extends PersistentObject {
 	 * @return a byte[] containing the data for this note's content
 	 */
 	public byte[] getContent(){
-		return getBinary("Contents");
+		return getBinary(FLD_CONTENTS);
 	}
 	
 	/**
@@ -188,7 +195,7 @@ public class Note extends PersistentObject {
 	 * @return a String with a comma separated list of keywords that may be empty but is never null
 	 */
 	public String getKeywords(){
-		return checkNull(get("keywords"));
+		return checkNull(get(FLD_KEYWORDS));
 	}
 	
 	/**
@@ -198,7 +205,7 @@ public class Note extends PersistentObject {
 	 *            a string with a comma separated list of keywords (at most 250 chars)
 	 */
 	public void setKeywords(String kw){
-		set("keywords", StringTool.limitLength(kw.toLowerCase(), 250));
+		set(FLD_KEYWORDS, StringTool.limitLength(kw.toLowerCase(), 250));
 	}
 	
 	/**
@@ -207,11 +214,11 @@ public class Note extends PersistentObject {
 	 * @return a List with urls of external refs
 	 */
 	public List<String> getRefs(){
-		String all = get("refs");
+		String all = get(FLD_REFS);
 		if (StringTool.isNothing(all)) {
 			return new ArrayList<String>();
 		}
-		return StringTool.splitAL(all, ",");
+		return StringTool.splitAL(all, StringConstants.COMMA);
 	}
 	
 	/**
@@ -223,7 +230,7 @@ public class Note extends PersistentObject {
 	public void addRef(String ref){
 		List<String> refs = getRefs();
 		refs.add(ref);
-		set("refs", StringTool.join(refs, ","));
+		set(FLD_REFS, StringTool.join(refs, StringConstants.COMMA));
 	}
 	
 	/**
@@ -235,18 +242,18 @@ public class Note extends PersistentObject {
 	public void removeRef(String ref){
 		List<String> refs = getRefs();
 		refs.remove(ref);
-		set("refs", StringTool.join(refs, ","));
+		set(FLD_REFS, StringTool.join(refs, StringConstants.COMMA));
 	}
 	
 	@Override
 	public String getLabel(){
-		return get("Title");
+		return get(FLD_TITLE);
 	}
 	
 	@Override
 	public boolean delete(){
 		Query<Note> qbe = new Query<Note>(Note.class);
-		qbe.add("Parent", "=", getId());
+		qbe.add(FLD_PARENT, Query.EQUALS, getId());
 		List<Note> list = qbe.execute();
 		for (Note note : list) {
 			note.delete();

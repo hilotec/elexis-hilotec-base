@@ -44,7 +44,7 @@ public class AddLinkDialog extends TitleAreaDialog {
 		tXref = new Text(ret, SWT.BORDER);
 		tXref.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		Button bChoose = new Button(ret, SWT.PUSH);
-		bChoose.setText("Suchen...");
+		bChoose.setText(Messages.AddLinkDialog_searchCaption);
 		bChoose.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e){
 				FileDialog fd = new FileDialog(getShell(), SWT.OPEN);
@@ -60,8 +60,8 @@ public class AddLinkDialog extends TitleAreaDialog {
 	@Override
 	public void create(){
 		super.create();
-		setTitle("Querverweis eingeben");
-		setMessage("Geben Sie bitte eine URL ein oder klicken Sie auf den Button, um eine Datei auszuwählen");
+		setTitle(Messages.AddLinkDialog_addLinkDialogTitle);
+		setMessage(Messages.AddLinkDialog_addLinkDialogMessage);
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
 	

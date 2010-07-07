@@ -58,7 +58,7 @@ import ch.rgw.tools.Result;
  */
 public class NotesView extends ViewPart implements IActivationListener,
 ElexisEventListener {
-	static final String ID="ch.elexis.notes.view";
+	static final String ID="ch.elexis.notes.view"; //$NON-NLS-1$
 	ScrolledForm fMaster;
 	NotesList master;
 	NotesDetail detail;
@@ -78,7 +78,7 @@ ElexisEventListener {
 		detail = new NotesDetail(sash);
 		// detail.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		makeActions();
-		fMaster.setText("Kategorien");
+		fMaster.setText(Messages.NotesView_categories);
 		if (hasScanner) {
 			fMaster.getToolBarManager().add(scanAction);
 			fMaster.getToolBarManager().add(new Separator());
@@ -120,27 +120,27 @@ ElexisEventListener {
 	}
 	
 	private void makeActions() {
-		newCategoryAction = new Action("Neue Kategorie") {
+		newCategoryAction = new Action(Messages.NotesView_newCategory) {
 			{
-				setToolTipText("Eine neue Haupt-Kategorie erstellen");
+				setToolTipText(Messages.NotesView_createMainCategoryTootltip);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 			}
 			
 			public void run() {
 				InputDialog id = new InputDialog(
 					getViewSite().getShell(),
-					"Neue Hauptkategorie erstellen",
-					"Bitte geben Sie einen namen für die neue Kategorie ein",
-					"", null);
+					Messages.NotesView_createMainCategoryDlgTitle,
+					Messages.NotesView_createMainCategoryDlgMessage,
+					"", null); //$NON-NLS-1$
 				if (id.open() == Dialog.OK) {
-					/* Note note= */new Note(null, id.getValue(), "");
+					/* Note note= */new Note(null, id.getValue(), ""); //$NON-NLS-1$
 					master.tv.refresh();
 				}
 			}
 		};
-		newNoteAction = new Action("Neue Notiz") {
+		newNoteAction = new Action(Messages.NotesView_newNoteCaption) {
 			{
-				setToolTipText("Neue Notiz oder Unterkategorie erstellen");
+				setToolTipText(Messages.NotesView_newNoteTooltip);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
 			}
 			
@@ -149,20 +149,20 @@ ElexisEventListener {
 				if (act != null) {
 					InputDialog id = new InputDialog(
 						getViewSite().getShell(),
-						"Neue Notiz erstellen",
-						"Bitte geben Sie einen namen für die neue Notiz oder Unterkategorie ein",
-						"", null);
+						Messages.NotesView_newNoteDlgTitle,
+						Messages.NotesView_newNoteDlgMessage,
+						"", null); //$NON-NLS-1$
 					if (id.open() == Dialog.OK) {
-						/* Note note= */new Note(act, id.getValue(), "");
+						/* Note note= */new Note(act, id.getValue(), ""); //$NON-NLS-1$
 						master.tv.refresh();
 					}
 				}
 			}
 			
 		};
-		delNoteAction = new Action("Löschen...") {
+		delNoteAction = new Action(Messages.NotesView_deleteActionCaption) {
 			{
-				setToolTipText("Notiz und alle Unterkategorien löschen");
+				setToolTipText(Messages.NotesView_deleteActionTooltip);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 			}
 			
@@ -170,8 +170,8 @@ ElexisEventListener {
 				Note act = (Note) ElexisEventDispatcher.getSelected(Note.class);
 				if (act != null) {
 					if (SWTHelper
-							.askYesNo("Notiz(en) löschen",
-							"Wirklich diesen Eintrag und alle Untereinträge löschen?")) {
+							.askYesNo(Messages.NotesView_deleteConfirmDlgTitle,
+							Messages.NotesView_deleteConfirmDlgMessage)) {
 						act.delete();
 						master.tv.refresh();
 					}
@@ -183,12 +183,12 @@ ElexisEventListener {
 		// "Scan" button
 		if (Extensions.isServiceAvailable(GlobalServiceDescriptors.SCAN_TO_PDF)) {
 			hasScanner = true;
-			scanAction = new Action("Scannen...") {
+			scanAction = new Action(Messages.NotesView_scabCaption) {
 				{
-					setToolTipText("Document mit dem Scanner einlesen");
+					setToolTipText(Messages.NotesView_scanTooltip);
 					ImageDescriptor imgScanner = AbstractUIPlugin
-					.imageDescriptorFromPlugin("ch.elexis.notes",
-						"icons" + File.separator + "scanner.ico");
+					.imageDescriptorFromPlugin("ch.elexis.notes", //$NON-NLS-1$
+						"icons" + File.separator + "scanner.ico"); //$NON-NLS-1$ //$NON-NLS-2$
 					setImageDescriptor(imgScanner);
 				}
 				
@@ -198,7 +198,7 @@ ElexisEventListener {
 						.findBestService(GlobalServiceDescriptors.SCAN_TO_PDF);
 						if (scanner != null) {
 							Result<byte[]> res = (Result<byte[]>) Extensions
-							.executeService(scanner, "acquire",
+							.executeService(scanner, "acquire", //$NON-NLS-1$
 								new Class[0], new Object[0]);
 							if (res.isOK()) {
 								Note act = (Note) ElexisEventDispatcher
@@ -206,9 +206,9 @@ ElexisEventListener {
 								byte[] pdf = res.get();
 								InputDialog id = new InputDialog(
 									getViewSite().getShell(),
-									"Neues Dokument importieren",
-									"Bitte geben Sie einen Namen für das eben gescannte Document ein",
-									"", null);
+									Messages.NotesView_importDocuDlgTitle,
+									Messages.NotesView_importDocDlgMessage,
+									"", null); //$NON-NLS-1$
 								if (id.open() == Dialog.OK) {
 									String name = id.getValue();
 									String basedir = Hub.localCfg.get(
@@ -216,17 +216,17 @@ ElexisEventListener {
 									if (basedir == null) {
 										SWTHelper
 										.alert(
-											"Basisverzeichnis falsch",
-										"Es ist kein Basisverzeichnis definiert");
+											Messages.NotesView_badBaseDirectoryTitle,
+										Messages.NotesView_badBaseDirectoryMessage);
 										return;
 									}
 									File file = new File(basedir, name
-										.replaceAll("\\s", "_")
-										+ ".pdf");
+										.replaceAll("\\s", "_") //$NON-NLS-1$ //$NON-NLS-2$
+										+ ".pdf"); //$NON-NLS-1$
 									if (!file.createNewFile()) {
 										SWTHelper
 										.alert(
-											"Importfehler",
+											Messages.NotesView_importErrorTitle,
 											"Kann Datei "
 											+ file
 											.getAbsolutePath()
@@ -251,9 +251,9 @@ ElexisEventListener {
 									String cnt = xo.outputString(samdas
 										.getDocument());
 									byte[] nb = CompEx.Compress(cnt
-										.getBytes("utf-8"), CompEx.ZIP);
+										.getBytes("utf-8"), CompEx.ZIP); //$NON-NLS-1$
 									/* Note note= */new Note(act, name, nb,
-									"text/xml");
+									"text/xml"); //$NON-NLS-1$
 									master.tv.refresh();
 								}
 								
@@ -262,7 +262,7 @@ ElexisEventListener {
 						
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
-						SWTHelper.showError("Fehler beim Import", ex
+						SWTHelper.showError(Messages.NotesView_importErrorDlgTitle, ex
 							.getMessage());
 					}
 				}

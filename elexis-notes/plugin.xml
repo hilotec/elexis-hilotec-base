@@ -16,7 +16,7 @@
             class="ch.elexis.notes.NotesView"
             icon="icons/notebook.gif"
             id="ch.elexis.notes.view"
-            name="Notizen"/>
+            name="%notes"/>
    </extension>
    <extension
          point="ch.elexis.PersistentReference">
@@ -29,7 +29,7 @@
       <page
             class="ch.elexis.notes.Preferences"
             id="Preferences"
-            name="Notizen">
+            name="%notes">
       </page>
    </extension>
 

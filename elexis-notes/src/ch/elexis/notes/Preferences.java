@@ -27,7 +27,7 @@ import ch.elexis.preferences.SettingsPreferenceStore;
  * 
  */
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-	public static final String CFGTREE = "notes/basedir";
+	public static final String CFGTREE = "notes/basedir"; //$NON-NLS-1$
 	
 	public Preferences(){
 		super(GRID);
@@ -36,7 +36,7 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	
 	@Override
 	protected void createFieldEditors(){
-		addField(new DirectoryFieldEditor(CFGTREE, "Basisverzeichnis", getFieldEditorParent()));
+		addField(new DirectoryFieldEditor(CFGTREE, Messages.Preferences_basedir, getFieldEditorParent()));
 	}
 	
 	public void init(IWorkbench workbench){

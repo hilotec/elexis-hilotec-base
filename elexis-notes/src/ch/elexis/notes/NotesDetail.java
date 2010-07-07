@@ -62,7 +62,7 @@ public class NotesDetail extends Composite {
 		etf.createContainer(fNote.getBody(), new SaveCallback()).setLayoutData(
 			SWTHelper.getFillGridData(1, true, 1, true));
 		etf.setSaveOnFocusLost(true);
-		tKeywords = tk.createText(fNote.getBody(), "");
+		tKeywords = tk.createText(fNote.getBody(), ""); //$NON-NLS-1$
 		tKeywords.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tKeywords.addFocusListener(new FocusAdapter() {
 			
@@ -89,7 +89,7 @@ public class NotesDetail extends Composite {
 			
 		});
 		lRefs.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		fRefs.setText("Querverweise");
+		fRefs.setText(Messages.NotesDetail_xrefs);
 		makeActions();
 		fRefs.getToolBarManager().add(newRefAction);
 		fRefs.getToolBarManager().add(delRefAction);
@@ -102,7 +102,7 @@ public class NotesDetail extends Composite {
 	
 	public void setNote(Note note){
 		actNote = note;
-		fNote.setText(note.get("Title"));
+		fNote.setText(note.get("Title")); //$NON-NLS-1$
 		etf.loadFromByteArray(note.getContent(), false);
 		// etf.insertText("",note.get("Contents"),SWT.LEFT);
 		tKeywords.setText(note.getKeywords());
@@ -120,7 +120,7 @@ public class NotesDetail extends Composite {
 	public void execute(String filename){
 		try {
 			int r = filename.lastIndexOf('.');
-			String ext = "";
+			String ext = ""; //$NON-NLS-1$
 			if (r != -1) {
 				ext = filename.substring(r + 1);
 			}
@@ -136,14 +136,14 @@ public class NotesDetail extends Composite {
 			
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			SWTHelper.showError("Konnte Datei nicht starten", ex.getMessage());
+			SWTHelper.showError(Messages.NotesDetail_couldNotLaunch, ex.getMessage());
 		}
 	}
 	
 	private void makeActions(){
-		newRefAction = new Action("Neu...") {
+		newRefAction = new Action(Messages.NotesDetail_newActionCaption) {
 			{
-				setToolTipText("Einen neuen Querverweis erstellen");
+				setToolTipText(Messages.NotesDetail_newActionToolTip);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 			}
 			
@@ -153,16 +153,16 @@ public class NotesDetail extends Composite {
 				}
 			}
 		};
-		delRefAction = new Action("Löschen...") {
+		delRefAction = new Action(Messages.NotesDetail_deleteActionCaption) {
 			{
-				setToolTipText("Querverweis löschen");
+				setToolTipText(Messages.NotesDetail_deleteActionToolTip);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 			}
 			
 			public void run(){
 				String actRef = lRefs.getSelection()[0];
-				if (SWTHelper.askYesNo("Querverweis löschen",
-					"Wirklich diesen Querverweis löschen?")) {
+				if (SWTHelper.askYesNo(Messages.NotesDetail_deleteConfirmCaption,
+					Messages.NotesDetail_deleteConfirmMessage)) {
 					actNote.removeRef(actRef);
 					setNote(actNote);
 				}

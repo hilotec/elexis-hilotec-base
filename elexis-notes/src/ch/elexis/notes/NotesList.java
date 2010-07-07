@@ -62,14 +62,14 @@ public class NotesList extends Composite {
 		clearSearchFieldHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(HyperlinkEvent e) {
-				tFilter.setText("");
-				filterExpr = "";
+				tFilter.setText(""); //$NON-NLS-1$
+				filterExpr = ""; //$NON-NLS-1$
 				matches.clear();
 				tv.collapseAll();
 				tv.removeFilter(notesFilter);
 			}
 		});
-		new Label(cFilter, SWT.NONE).setText("Suchen: ");
+		new Label(cFilter, SWT.NONE).setText(Messages.NotesList_searchLabel);
 		tFilter = new Text(cFilter, SWT.SINGLE);
 		tFilter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tFilter.addSelectionListener(new SelectionAdapter() {

@@ -32,7 +32,7 @@ public class NotesContentProvider implements ITreeContentProvider {
 	
 	public Object[] getChildren(Object element){
 		qbe.clear();
-		qbe.add("Parent", "=", ((Note) element).getId());
+		qbe.add("Parent", "=", ((Note) element).getId()); //$NON-NLS-1$ //$NON-NLS-2$
 		List<Note> res = qbe.execute();
 		Collections.sort(res, nc);
 		return res.toArray();
@@ -40,19 +40,19 @@ public class NotesContentProvider implements ITreeContentProvider {
 	
 	public Object getParent(Object element){
 		Note note = (Note) element;
-		return Note.load(note.get("Parent"));
+		return Note.load(note.get("Parent")); //$NON-NLS-1$
 	}
 	
 	public boolean hasChildren(Object element){
 		qbe.clear();
-		qbe.add("Parent", "=", ((Note) element).getId());
+		qbe.add("Parent", "=", ((Note) element).getId()); //$NON-NLS-1$ //$NON-NLS-2$
 		List<Note> res = qbe.execute();
 		return res.size() > 0;
 	}
 	
 	public Object[] getElements(Object inputElement){
 		qbe.clear();
-		qbe.add("Parent", "", null);
+		qbe.add("Parent", "", null); //$NON-NLS-1$ //$NON-NLS-2$
 		List<Note> res = qbe.execute();
 		Collections.sort(res, nc);
 		
