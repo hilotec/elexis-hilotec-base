@@ -321,9 +321,14 @@ public class PatHeuteView extends ViewPart implements IActivationListener,
 			tMoney2.setText(df.format(m / 100.0));
 			final Patient pat = (Patient) ElexisEventDispatcher
 					.getSelected(Patient.class);
-			final Patient bPat = k.getFall().getPatient();
-			if ((pat == null) || (!pat.getId().equals(bPat.getId()))) {
-				// ElexisEventDispatcher.fireSelectionEvent(bPat);
+			Fall fall = k.getFall();
+			if (fall != null) {
+				final Patient bPat = fall.getPatient();
+				if (bPat != null) {
+					if ((pat == null) || (!pat.getId().equals(bPat.getId()))) {
+						 ElexisEventDispatcher.fireSelectionEvent(bPat);
+					}
+				}
 			}
 		}
 	}
