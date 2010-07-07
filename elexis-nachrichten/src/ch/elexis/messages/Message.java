@@ -20,28 +20,28 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
 public class Message extends PersistentObject {
-	private static final String TABLENAME = "CH_ELEXIS_MESSAGES";
-	private static final String VERSION = "0.2.0";
+	private static final String TABLENAME = "CH_ELEXIS_MESSAGES"; //$NON-NLS-1$
+	private static final String VERSION = "0.2.0"; //$NON-NLS-1$
 	private static final String createDB =
-		"CREATE TABLE " + TABLENAME + " (" + "ID			VARCHAR(25) primary key," + "lastupdate BIGINT,"
-			+ "deleted		CHAR(1) default '0'," + "origin		VARCHAR(25),"
-			+ "destination	VARCHAR(25),"
-			+ "dateTime		CHAR(14)," // yyyymmddhhmmss
-			+ "msg			TEXT);" + "INSERT INTO " + TABLENAME + " (ID,origin) VALUES ('VERSION','"
-			+ VERSION + "');";
+		"CREATE TABLE " + TABLENAME + " (" + "ID			VARCHAR(25) primary key," + "lastupdate BIGINT," //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			+ "deleted		CHAR(1) default '0'," + "origin		VARCHAR(25)," //$NON-NLS-1$ //$NON-NLS-2$
+			+ "destination	VARCHAR(25)," //$NON-NLS-1$
+			+ "dateTime		CHAR(14)," // yyyymmddhhmmss //$NON-NLS-1$
+			+ "msg			TEXT);" + "INSERT INTO " + TABLENAME + " (ID,origin) VALUES ('VERSION','" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			+ VERSION + "');"; //$NON-NLS-1$
 	
 	static {
-		addMapping(TABLENAME, "from=origin", "to=destination", "time=dateTime", "Text=msg");
+		addMapping(TABLENAME, "from=origin", "to=destination", "time=dateTime", "Text=msg"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		
-		Message ver = load("VERSION");
+		Message ver = load("VERSION"); //$NON-NLS-1$
 		if (ver.state() < PersistentObject.DELETED) {
 			initialize();
 		} else {
-			VersionInfo vi = new VersionInfo(ver.get("from"));
+			VersionInfo vi = new VersionInfo(ver.get("from")); //$NON-NLS-1$
 			if (vi.isOlder(VERSION)) {
-				if (vi.isOlder("0.2.0")) {
-					createOrModifyTable("ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
-					ver.set("from", VERSION);
+				if (vi.isOlder("0.2.0")) { //$NON-NLS-1$
+					createOrModifyTable("ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;"); //$NON-NLS-1$ //$NON-NLS-2$
+					ver.set("from", VERSION); //$NON-NLS-1$
 				}
 			}
 		}
@@ -57,7 +57,7 @@ public class Message extends PersistentObject {
 		TimeTool tt = new TimeTool();
 		String dt = tt.toString(TimeTool.TIMESTAMP);
 		set(new String[] {
-			"from", "to", "time", "Text"
+			"from", "to", "time", "Text" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		}, new String[] {
 			Hub.actUser.getId(), an.getId(), dt, text
 		});
@@ -65,12 +65,12 @@ public class Message extends PersistentObject {
 	}
 	
 	public Anwender getSender(){
-		Anwender an = Anwender.load(get("from"));
+		Anwender an = Anwender.load(get("from")); //$NON-NLS-1$
 		return an;
 	}
 	
 	public Anwender getDest(){
-		Anwender an = Anwender.load(get("to"));
+		Anwender an = Anwender.load(get("to")); //$NON-NLS-1$
 		return an;
 	}
 	
@@ -81,7 +81,7 @@ public class Message extends PersistentObject {
 	}
 	
 	public String getText(){
-		return checkNull(get("Text"));
+		return checkNull(get("Text")); //$NON-NLS-1$
 	}
 	
 	@Override

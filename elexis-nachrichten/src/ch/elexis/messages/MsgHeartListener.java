@@ -27,7 +27,7 @@ public class MsgHeartListener implements HeartListener {
 		if (!bSkip) {
 			if (Hub.actUser != null) {
 				Query<Message> qbe = new Query<Message>(Message.class);
-				qbe.add("to", "=", Hub.actUser.getId());
+				qbe.add("to", "=", Hub.actUser.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 				final List<Message> res = qbe.execute();
 				if (res.size() > 0) {
 					Desk.getDisplay().asyncExec(new Runnable() {
