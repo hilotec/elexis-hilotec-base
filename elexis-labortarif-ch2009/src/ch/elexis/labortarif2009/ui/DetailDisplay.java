@@ -26,12 +26,12 @@ public class DetailDisplay implements IDetailDisplay {
 	DisplayPanel panel;
 	FieldDescriptor<?>[] fields=
 	{
-		new FieldDescriptor<Labor2009Tarif>("Kapitel",Labor2009Tarif.FLD_CHAPTER,Typ.STRING,null),
-		new FieldDescriptor<Labor2009Tarif>("Code",Labor2009Tarif.FLD_CODE,Typ.STRING,null),
-		new FieldDescriptor<Labor2009Tarif>("Fachbereich",Labor2009Tarif.FLD_FACHBEREICH,Typ.STRING,null),
-		new FieldDescriptor<Labor2009Tarif>("Name",Labor2009Tarif.FLD_NAME,Typ.STRING,null),
-		new FieldDescriptor<Labor2009Tarif>("Limitatio",Labor2009Tarif.FLD_LIMITATIO,Typ.STRING,null),
-		new FieldDescriptor<Labor2009Tarif>("Taxpunkte",Labor2009Tarif.FLD_TP,Typ.STRING,null)
+		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_chapter,Labor2009Tarif.FLD_CHAPTER,Typ.STRING,null),
+		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_code,Labor2009Tarif.FLD_CODE,Typ.STRING,null),
+		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_fachbereich,Labor2009Tarif.FLD_FACHBEREICH,Typ.STRING,null),
+		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_name,Labor2009Tarif.FLD_NAME,Typ.STRING,null),
+		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_limitation,Labor2009Tarif.FLD_LIMITATIO,Typ.STRING,null),
+		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_taxpoints,Labor2009Tarif.FLD_TP,Typ.STRING,null)
 	};
 	
 	public void display(Object obj) {
@@ -46,7 +46,7 @@ public class DetailDisplay implements IDetailDisplay {
 	}
 
 	public String getTitle() {
-		return "EAL 2009";
+		return "EAL 2009"; //$NON-NLS-1$
 	}
 
 	public Composite createDisplay(Composite parent, IViewSite site) {
