@@ -158,7 +158,7 @@ public class DBUpdate {
 		+ "INSERT INTO TARMED (ID,Nickname) VALUES ('Version','1.0.1');"
 		+ "CREATE TABLE LOGS(ID			VARCHAR(25) primary key," + "OID		VARCHAR(80),"
 		+ "datum		CHAR(8)," + "typ		VARCHAR(20)," + "userID		VARCHAR(25),"
-		+ "station	VARCHAR(25)," + "ExtInfo		BLOB);",
+		+ "station	VARCHAR(40)," + "ExtInfo		BLOB);",
 		
 		// 1.6.1
 		"CREATE TABLE XID(" + "ID			VARCHAR(25) primary key," + "deleted	CHAR(1) default '0',"
@@ -275,8 +275,10 @@ public class DBUpdate {
 		"CREATE TABLE ETIKETTEN_OBJCLASS_LINK("+
 		"objclass VARCHAR(80),"+
 		"sticker VARCHAR(25));"+
-		"CREATE INDEX eol1 on ETIKETTEN_OBJCLASS_LINK(objclass);"
+		"CREATE INDEX eol1 on ETIKETTEN_OBJCLASS_LINK(objclass);",
 		
+		// 1.8.7
+		"ALTER TABLE LOGS MODIFY station VARCHAR(40);"
 		
 	};
 	static Log log = Log.get("DBUpdate");
