@@ -59,13 +59,13 @@ public class KonsExtension implements IKonsExtension {
 	 */
 	public IAction[] getActions(){
 		IAction[] ret = new IAction[1];
-		ret[0] = new Action("Notiz...") {
+		ret[0] = new Action(Messages.KonsExtension_noteActionLabel) {
 			
 			@Override
 			public void run(){
 				Privatnotiz np = new Privatnotiz(Hub.actMandant);
 				if (new NotizInputDialog(Desk.getTopShell(), np).open() == Dialog.OK) {
-					mine.insertXRef(-1, "notiz", "privatnotizen", np.getId());
+					mine.insertXRef(-1, Messages.KonsExtension_noteActionXREFText, "privatnotizen", np.getId()); //$NON-NLS-2$
 				} else {
 					np.delete();
 				}
@@ -83,7 +83,7 @@ public class KonsExtension implements IKonsExtension {
 	
 	public String connect(IRichTextDisplay tf){
 		mine = tf;
-		return "privatnotizen";
+		return "privatnotizen"; //$NON-NLS-1$
 	}
 	
 	/**

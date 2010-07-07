@@ -40,10 +40,10 @@ public class NotizInputDialog extends TitleAreaDialog {
 	@Override
 	public void create(){
 		super.create();
-		setTitle("Notiz zum KG Eintrag");
-		getShell().setText("Privatnotiz");
+		setTitle(Messages.NotizInputDialog_noteDlgTitle);
+		getShell().setText(Messages.NotizInputDialog_noteDlgText);
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
-		setMessage("Geben Sie hier private Notizen zu diesem KG-Eintrag ein");
+		setMessage(Messages.NotizInputDialog_noteDlgMessage);
 	}
 	
 	@Override

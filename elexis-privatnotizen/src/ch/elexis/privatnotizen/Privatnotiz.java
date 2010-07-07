@@ -27,13 +27,13 @@ import ch.rgw.tools.StringTool;
 public class Privatnotiz extends PersistentObject {
 	
 	static{
-		addMapping("HEAP2", "text=S:C:Contents");
+		addMapping("HEAP2", "text=S:C:Contents"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	public void setText(String tx){
-		set("text",tx);
+		set("text",tx); //$NON-NLS-1$
 	}
 	public String getText(){
-		return get("text");
+		return get("text"); //$NON-NLS-1$
 	}
 	@Override
 	public String getLabel() {
@@ -41,10 +41,10 @@ public class Privatnotiz extends PersistentObject {
 	}
 
 	String getMandantID(){
-		return getId().split(":")[0];
+		return getId().split(":")[0]; //$NON-NLS-1$
 	}
 	public Privatnotiz(Mandant mandant){
-		String id=mandant.getId()+":"+StringTool.unique("pnotes");
+		String id=mandant.getId()+":"+StringTool.unique("pnotes"); //$NON-NLS-1$ //$NON-NLS-2$
 		create(id);
 	}
 	public static Privatnotiz load(String id){
@@ -52,7 +52,7 @@ public class Privatnotiz extends PersistentObject {
 	}
 	@Override
 	protected String getTableName() {
-		return "HEAP2";
+		return "HEAP2"; //$NON-NLS-1$
 	}
 	protected Privatnotiz(String id){
 		super(id);
