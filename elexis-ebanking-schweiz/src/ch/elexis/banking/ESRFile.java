@@ -65,7 +65,7 @@ public class ESRFile {
 			hash = name;
 		}
 		Query<ESRRecord> qesr = new Query<ESRRecord>(ESRRecord.class);
-		qesr.add("File", "=", hash);
+		qesr.add("File", "=", hash); //$NON-NLS-1$ //$NON-NLS-2$
 		List<ESRRecord> list = qesr.execute();
 		if (list.size() > 0) {
 			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 4,
@@ -91,11 +91,11 @@ public class ESRFile {
 				list.add(esr);
 				monitor.worked(1);
 			}
-			return new Result<List<ESRRecord>>(Result.SEVERITY.OK, 0, "OK", list, false);
+			return new Result<List<ESRRecord>>(Result.SEVERITY.OK, 0, "OK", list, false); //$NON-NLS-1$
 			
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 3, "Exception while parsing",
+			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 3, Messages.ESRFile_ExceptionParsing,
 					list, true);
 		}
 		

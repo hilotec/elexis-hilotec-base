@@ -59,9 +59,9 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class ESRView2 extends ViewPart implements IActivationListener {
-	public static final String ID = "ch.elexis.banking.ESRView2";
+	public static final String ID = "ch.elexis.banking.ESRView2"; //$NON-NLS-1$
 	
-	private static final String JOB_NAME = "ESR-Loader2";
+	private static final String JOB_NAME = "ESR-Loader2"; //$NON-NLS-1$
 	
 	private static final int DATUM_INDEX = 0;
 	private static final int RN_NUMMER_INDEX = 1;
@@ -74,15 +74,15 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 	private static final int DATEI_INDEX = 8;
 	
 	private static final String[] COLUMN_TEXTS = {
-		"Datum", // DATUM_INDEX
-		"Rn-Nummer", // RN_NUMMER_INDEX
-		"Betrag", // BETRAG
-		"Eingelesen", // EINGELESEN_INDEX
-		"Verrechnet", // VERRECHNET_INDEX
-		"Gutgeschrieben", // GUTGESCHRIEBEN_INDEX
-		"Patient", // PATIENT_INDEX
-		"Buchung", // BUCHUNG_INDEX
-		"Datei", // DATEI_INDEX
+		Messages.ESRView2_date, // DATUM_INDEX
+		Messages.ESRView2_billNumber, // RN_NUMMER_INDEX
+		Messages.ESRView2_amount, // BETRAG
+		Messages.ESRView2_readDate, // EINGELESEN_INDEX
+		Messages.ESRView2_accountedDate, // VERRECHNET_INDEX
+		Messages.ESRView2_addedDate, // GUTGESCHRIEBEN_INDEX
+		Messages.ESRView2_patient, // PATIENT_INDEX
+		Messages.ESRView2_booking, // BUCHUNG_INDEX
+		Messages.ESRView2_file, // DATEI_INDEX
 	};
 	private static final int[] COLUMN_WIDTHS = {
 		60, // DATUM_INDEX
@@ -100,7 +100,7 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 	ViewerConfigurer vc;
 	//ESRLoader esrloader;
 	FlatDataLoader fdl;
-	public final static ACE DISPLAY_ESR = new ACE(ACE.ACE_IMPLICIT,"DisplayESR");
+	public final static ACE DISPLAY_ESR = new ACE(ACE.ACE_IMPLICIT,"DisplayESR"); //$NON-NLS-1$
 	Query<ESRRecord> qbe;
 	// private Action loadESRFile;
 	private ViewMenus menus;
@@ -153,7 +153,7 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 		vc =
 			new ViewerConfigurer(fdl,
 				new ESRLabelProvider(), new DefaultControlFieldProvider(cv, new String[] {
-					"Datum"
+					"Datum" //$NON-NLS-1$
 				}), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
 					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		cv.create(vc, parent, SWT.None, getViewSite());
@@ -207,7 +207,7 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 	
 	class ESRLabelProvider extends LabelProvider implements ITableLabelProvider,
 			ITableColorProvider {
-		DecimalFormat df = new DecimalFormat("###0.00");
+		DecimalFormat df = new DecimalFormat("###0.00"); //$NON-NLS-1$
 		
 		public Image getColumnImage(Object element, int columnIndex){
 			// TODO Auto-generated method stub
@@ -215,7 +215,7 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 		}
 		
 		public String getColumnText(Object element, int columnIndex){
-			String text = "";
+			String text = ""; //$NON-NLS-1$
 			
 			if (element instanceof ESRRecord) {
 				ESRRecord rec = (ESRRecord) element;
@@ -223,10 +223,10 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 				if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
 					switch (columnIndex) {
 					case DATUM_INDEX:
-						text = rec.get("Datum");
+						text = rec.get("Datum"); //$NON-NLS-1$
 						break;
 					case RN_NUMMER_INDEX:
-						text = "Summe";
+						text = "Summe"; //$NON-NLS-1$
 						break;
 					case BETRAG_INDEX:
 						text = rec.getBetrag().getAmountAsString();
@@ -238,7 +238,7 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 				} else {
 					switch (columnIndex) {
 					case DATUM_INDEX:
-						text = rec.get("Datum");
+						text = rec.get("Datum"); //$NON-NLS-1$
 						break;
 					case RN_NUMMER_INDEX:
 						Rechnung rn = rec.getRechnung();
@@ -264,7 +264,7 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 					case BUCHUNG_INDEX:
 						String dat = rec.getGebucht();
 						if (StringTool.isNothing(dat)) {
-							text = "Nicht verbucht!";
+							text = Messages.ESRView2_notbooked;
 						} else {
 							text = new TimeTool(dat).toString(TimeTool.DATE_GER);
 						}
@@ -311,19 +311,19 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 		
 		ESRLoader(Query<ESRRecord> qbe){
 			super(JOB_NAME, qbe, new String[] {
-				"Datum"
+				"Datum" //$NON-NLS-1$
 			});
 			this.qbe = qbe;
 		}
 		
 		@Override
 		public IStatus execute(IProgressMonitor monitor){
-			monitor.beginTask("Lade ESR", SWT.INDETERMINATE);
+			monitor.beginTask(Messages.ESRView2_loadingESR, SWT.INDETERMINATE);
 			
 			qbe.clear();
 			vc.getControlFieldProvider().setQuery(qbe);
 			qbe.orderBy(true, new String[] {
-				"Datum", "Gebucht"
+				"Datum", "Gebucht" //$NON-NLS-1$ //$NON-NLS-2$
 			});
 			List<ESRRecord> list = qbe.execute();
 			result = list.toArray();
@@ -333,7 +333,7 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 		
 		@Override
 		public int getSize(){
-			return PersistentObject.getConnection().queryInt("SELECT COUNT(0) FROM ESRRECORDS");
+			return PersistentObject.getConnection().queryInt("SELECT COUNT(0) FROM ESRRECORDS"); //$NON-NLS-1$
 			
 		}
 		

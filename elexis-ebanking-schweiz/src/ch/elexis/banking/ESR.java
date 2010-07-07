@@ -31,22 +31,22 @@ import ch.rgw.tools.StringTool;
  * 
  */
 public class ESR {
-	public static final String ESR_NORMAL_FONT_NAME = "esr/normalfontname";
-	public static final String ESR_NORMAL_FONT_SIZE = "esr/normalfontsize";
-	public static final String ESR_OCR_FONT_NAME = "esr/ocrfontname";
-	public static final String ESR_OCR_FONT_SIZE = "esr/ocrfontsize";
-	public static final String ESR_OCR_FONT_WEIGHT = "esr/ocrfontweight";
+	public static final String ESR_NORMAL_FONT_NAME = "esr/normalfontname"; //$NON-NLS-1$
+	public static final String ESR_NORMAL_FONT_SIZE = "esr/normalfontsize"; //$NON-NLS-1$
+	public static final String ESR_OCR_FONT_NAME = "esr/ocrfontname"; //$NON-NLS-1$
+	public static final String ESR_OCR_FONT_SIZE = "esr/ocrfontsize"; //$NON-NLS-1$
+	public static final String ESR_OCR_FONT_WEIGHT = "esr/ocrfontweight"; //$NON-NLS-1$
 
-	public static final String ESR_NORMAL_FONT_NAME_DEFAULT = "OCR-B";
+	public static final String ESR_NORMAL_FONT_NAME_DEFAULT = "OCR-B"; //$NON-NLS-1$
 	public static final int ESR_NORMAL_FONT_SIZE_DEFAULT = 9;
-	public static final String ESR_OCR_FONT_NAME_DEFAULT = "OCR-B-10 BT";
+	public static final String ESR_OCR_FONT_NAME_DEFAULT = "OCR-B-10 BT"; //$NON-NLS-1$
 	public static final int ESR_OCR_FONT_SIZE_DEFAULT = 12;
 	public static final int ESR_OCR_FONT_WEIGHT_DEFAULT = SWT.MIN;
 
-	public static final String ESR_PRINTER_CORRECTION_X = "esr/printer_correction_x";
-	public static final String ESR_PRINTER_CORRECTION_Y = "esr/printer_correction_y";
-	public static final String ESR_PRINTER_BASE_OFFSET_X = "esr/printer_base_x";
-	public static final String ESR_PRINTER_BASE_OFFSET_Y = "esr/printer_base_y";
+	public static final String ESR_PRINTER_CORRECTION_X = "esr/printer_correction_x"; //$NON-NLS-1$
+	public static final String ESR_PRINTER_CORRECTION_Y = "esr/printer_correction_y"; //$NON-NLS-1$
+	public static final String ESR_PRINTER_BASE_OFFSET_X = "esr/printer_base_x"; //$NON-NLS-1$
+	public static final String ESR_PRINTER_BASE_OFFSET_Y = "esr/printer_base_y"; //$NON-NLS-1$
 	public static final int ESR_PRINTER_CORRECTION_X_DEFAULT = 0;
 	public static final int ESR_PRINTER_CORRECTION_Y_DEFAULT = 0;
 	// base offset depends on the printable left/top margin of a specific
@@ -76,7 +76,7 @@ public class ESR {
 	 */
 	public ESR(String ESR_tn, String ESR_subid, String usr, int l) {
 		tn = ESR_tn;
-		id = ESR_subid == null ? "" : ESR_subid;
+		id = ESR_subid == null ? "" : ESR_subid; //$NON-NLS-1$
 		reflen = l - 1;
 		userdata = usr;
 	}
@@ -92,20 +92,20 @@ public class ESR {
 	 */
 	public String createCodeline(String amount, String tcCode) {
 		if (Integer.parseInt(amount) < 0) {
-			amount = "0";
+			amount = "0"; //$NON-NLS-1$
 		}
 		StringBuilder cl = new StringBuilder();
 		if (tcCode == null) {
-			tcCode = "01"; // ESR in CHF
+			tcCode = "01"; // ESR in CHF //$NON-NLS-1$
 		}
 		// Betrag auf 10 Stellen erweitert
 		String betrag = wrap(tcCode
 				+ StringTool.pad(StringTool.LEFT, '0', amount, 10));
 		cl.append(betrag);
-		cl.append(">"); // Trennzeichen
+		cl.append(">"); // Trennzeichen //$NON-NLS-1$
 		cl.append(makeRefNr(false)); // Referenznummer
-		cl.append("+ "); // Trennzeichen
-		cl.append(makeParticipantNumber(false)).append(">"); // Teilnehmernummer
+		cl.append("+ "); // Trennzeichen //$NON-NLS-1$
+		cl.append(makeParticipantNumber(false)).append(">"); // Teilnehmernummer //$NON-NLS-1$
 		return cl.toString();
 	}
 
@@ -127,7 +127,7 @@ public class ESR {
 					Messages.ESR_warning_esr_not_correct);
 			ret.append(id).append(userdata);
 		} else {
-			ret.append(id).append(StringTool.filler("0", space)).append(
+			ret.append(id).append(StringTool.filler("0", space)).append( //$NON-NLS-1$
 					userdata);
 		}
 
@@ -136,7 +136,7 @@ public class ESR {
 			return refnr;
 		}
 		if (refnr.length() == 16) {
-			return refnr.substring(0, 2) + " " + refnr.substring(3, 6) + " "
+			return refnr.substring(0, 2) + " " + refnr.substring(3, 6) + " " //$NON-NLS-1$ //$NON-NLS-2$
 					+ refnr.substring(7);
 		} else if (refnr.length() == 27) {
 			String g1 = refnr.substring(0, 2);
@@ -145,9 +145,9 @@ public class ESR {
 			String g4 = refnr.substring(12, 17);
 			String g5 = refnr.substring(17, 22);
 			String g6 = refnr.substring(22);
-			return g1 + " " + g2 + " " + g3 + " " + g4 + " " + g5 + " " + g6;
+			return g1 + " " + g2 + " " + g3 + " " + g4 + " " + g5 + " " + g6; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 		} else {
-			return "** ERROR **";
+			return "** ERROR **"; //$NON-NLS-1$
 		}
 	}
 
@@ -163,10 +163,10 @@ public class ESR {
 		if (withSeparators == true) {
 			return tn;
 		}
-		String[] ptn = tn.split("\\s*-\\s*");
+		String[] ptn = tn.split("\\s*-\\s*"); //$NON-NLS-1$
 		if (ptn.length != 3) {
 			Hub.log.log(Messages.ESR_bad_user_defin + tn, Log.ERRORS);
-			return "**FEHLER**";
+			return Messages.ESR_errorMark;
 		}
 		return ptn[0] + StringTool.pad(StringTool.LEFT, '0', ptn[1], 6)
 				+ ptn[2];
@@ -181,7 +181,7 @@ public class ESR {
 	 */
 	public String wrap(String number) {
 		int row = 0;
-		String nr = number.replaceAll("[^0-9]", "");
+		String nr = number.replaceAll("[^0-9]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		for (int i = 0; i < nr.length(); i++) {
 			int col = Integer.parseInt(nr.substring(i, i + 1));
 			row = checksum[row][col];
@@ -269,9 +269,9 @@ public class ESR {
 
 			// Bank
 			StringBuilder badr = new StringBuilder();
-			badr.append(bank.get("Bezeichnung1")).append(" ").append(
-					bank.get("Bezeichnung2")).append("\n").append(
-					bank.get("Plz")).append(" ").append(bank.get("Ort"));
+			badr.append(bank.get("Bezeichnung1")).append(" ").append( //$NON-NLS-1$ //$NON-NLS-2$
+					bank.get("Bezeichnung2")).append("\n").append( //$NON-NLS-1$ //$NON-NLS-2$
+					bank.get("Plz")).append(" ").append(bank.get("Ort")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			// auf Abschnitt
 			p.insertTextAt(xBase, yBase + 8, wAdresse, hAdr - 2, badr
 					.toString(), SWT.LEFT);
@@ -321,10 +321,10 @@ public class ESR {
 				SWT.LEFT);
 
 		// remove leading zeros from reference number
-		String refNr = makeRefNr(false).replaceFirst("^0+", "");
+		String refNr = makeRefNr(false).replaceFirst("^0+", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		// Schzuldneradresse. Links mit refNr grad darüber, auf Giro-Abshcnitt ohne refNr
-		String abs1 = refNr + "\n" + schuldner.getPostAnschrift(true);
+		String abs1 = refNr + "\n" + schuldner.getPostAnschrift(true); //$NON-NLS-1$
 		p.insertTextAt(xBase, yBase + yGarant1, wAdresse, 25, abs1, SWT.LEFT);
 		p.insertTextAt(xGiro+xRef, yBase + yGarant2, wAdresse, 25, schuldner
 				.getPostAnschrift(true), SWT.LEFT);

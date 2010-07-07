@@ -29,11 +29,11 @@ import ch.rgw.tools.VersionInfo;
  * 
  */
 public class ESRRecord extends PersistentObject {
-	public static final String FLD_REJECT_CODE = "RejectCode";
-	public static final String MANDANT_ID = "MandantID";
-	public static final String PATIENT_ID = "PatientID";
-	public static final String RECHNUNGS_ID = "RechnungsID";
-	public static final String CODE = "Code";
+	public static final String FLD_REJECT_CODE = "RejectCode"; //$NON-NLS-1$
+	public static final String MANDANT_ID = "MandantID"; //$NON-NLS-1$
+	public static final String PATIENT_ID = "PatientID"; //$NON-NLS-1$
+	public static final String RECHNUNGS_ID = "RechnungsID"; //$NON-NLS-1$
+	public static final String CODE = "Code"; //$NON-NLS-1$
 	private static final String VERSION = "2"; //$NON-NLS-1$
 	private static final String TABLENAME = "ESRRECORDS"; //$NON-NLS-1$
 	private static final int POSITION_PAT_NR = 11;
@@ -55,7 +55,7 @@ public class ESRRecord extends PersistentObject {
 	"DROP INDEX ESR3;"+ //$NON-NLS-1$
 	"CREATE TABLE "+TABLENAME+"(" + //$NON-NLS-1$ //$NON-NLS-2$
 	"ID			VARCHAR(25) PRIMARY KEY," + //$NON-NLS-1$
-	"lastupdate BIGINT,"+
+	"lastupdate BIGINT,"+ //$NON-NLS-1$
 	"deleted	CHAR(1) default '0',"+ //$NON-NLS-1$
 	"DATUM			CHAR(8)," + //$NON-NLS-1$
 	"EINGELESEN		CHAR(8)," + //$NON-NLS-1$
@@ -75,7 +75,7 @@ public class ESRRecord extends PersistentObject {
 	"CREATE INDEX ESR3 ON "+TABLENAME+" (REJECTCODE);" + //$NON-NLS-1$ //$NON-NLS-2$
 	"INSERT INTO "+TABLENAME+" (ID,FILE) VALUES ('1','"+VERSION+"');"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	
-	private static final String upd2="ALTER TABLE "+TABLENAME+" ADD lastupdate BIGINT;";
+	private static final String upd2="ALTER TABLE "+TABLENAME+" ADD lastupdate BIGINT;"; //$NON-NLS-1$ //$NON-NLS-2$
 	static {
 		addMapping(
 			TABLENAME,
@@ -97,7 +97,7 @@ public class ESRRecord extends PersistentObject {
 				init.set("File", VERSION); //$NON-NLS-1$
 			}else{
 				VersionInfo vi=new VersionInfo(v);
-				if(vi.isOlder("2.0.0")){
+				if(vi.isOlder("2.0.0")){ //$NON-NLS-1$
 					createOrModifyTable(upd2);
 					
 				}
@@ -214,8 +214,8 @@ public class ESRRecord extends PersistentObject {
 					m = rn.getMandant();
 					if(m==null){
 						rejectCode=REJECT.MANDANT;
-						vals[6]="";
-						mandantID="";
+						vals[6]=""; //$NON-NLS-1$
+						mandantID=""; //$NON-NLS-1$
 					}else{
 						mandantID = m.getId();
 					}

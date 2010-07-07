@@ -72,7 +72,7 @@ public class ESRView extends ViewPart implements IActivationListener {
 	ViewerConfigurer vc;
 	ESRLoader esrloader;
 	public final static ACE DISPLAY_ESR = new ACE(AccessControlDefaults.DATA,
-		"ch.elexis.ebanking_ch:DisplayESR", "ESR Daten anzeigen"); //$NON-NLS-1$
+		"ch.elexis.ebanking_ch:DisplayESR", Messages.ESRView_showESRData); //$NON-NLS-1$
 	Query<ESRRecord> qbe;
 	private Action loadESRFile;
 	private ViewMenus menus;
@@ -152,7 +152,7 @@ public class ESRView extends ViewPart implements IActivationListener {
 			if (element instanceof ESRRecord) {
 				ESRRecord rec = (ESRRecord) element;
 				if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
-					return "-- Datei eingelesen am: " + rec.get("Datum") + ", " + rec.getBetrag() + " --"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					return "-- Datei eingelesen am: " + rec.get("Datum") + ", " + rec.getBetrag() + " --"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				} else if (rec.getId().equals("1")) { //$NON-NLS-1$
 					return Messages.ESRView_headline;
 				}
@@ -209,7 +209,7 @@ public class ESRView extends ViewPart implements IActivationListener {
 		
 		ESRLoader(Query<ESRRecord> qbe) {
 			super("ESR-Loader", qbe, new String[] { //$NON-NLS-1$
-			"Datum" });
+			"Datum" }); //$NON-NLS-1$
 			this.qbe = qbe;
 		}
 		
