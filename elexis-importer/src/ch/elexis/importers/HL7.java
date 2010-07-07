@@ -95,7 +95,7 @@ public class HL7 {
 		}
 		try {
 			FileInputStream fis=new FileInputStream(file);
-			InputStreamReader isr=new InputStreamReader(fis, "iso-8859-1");
+			InputStreamReader isr=new InputStreamReader(fis, "iso-8859-1"); //$NON-NLS-1$
 			//FileReader fr = new FileReader(file);
 
 			char[] in = new char[(int) file.length()];
@@ -261,8 +261,8 @@ public class HL7 {
 					} else {
 						pat =
 							(Patient) KontaktSelektor.showInSync(Patient.class,
-								Messages.HL7_SelectPatient, Messages.HL7_WhoIs + nachname + " "
-								+ vorname + " ," + gebdat + "?"); //$NON-NLS-1$
+								Messages.HL7_SelectPatient, Messages.HL7_WhoIs + nachname + " " //$NON-NLS-1$
+								+ vorname + " ," + gebdat + "?"); //$NON-NLS-1$ //$NON-NLS-2$
 						if (pat == null) {
 							return new Result<Object>(SEVERITY.WARNING, 1,
 									Messages.HL7_PatientNotInDatabase, null, true);
@@ -275,7 +275,7 @@ public class HL7 {
 				if (nachname.length() != 0 && vorname.length() != 0) {
 					if (!KontaktMatcher.isSame(pat, nachname, vorname, gebdat)) {
 						StringBuilder sb = new StringBuilder();
-						sb.append(Messages.HL7_NameConflictWithID).append(pid).append(":\n")
+						sb.append(Messages.HL7_NameConflictWithID).append(pid).append(":\n") //$NON-NLS-1$
 						.append(Messages.HL7_Lab).append(nachname).append(StringTool.space)
 						.append(vorname)
 						.append("(").append(sex).append("),").append(gebdat).append("\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

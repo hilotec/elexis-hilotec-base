@@ -70,11 +70,11 @@ public class CSVWriter {
 
     private static final SimpleDateFormat
     	TIMESTAMP_FORMATTER = 
-    		new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
+    		new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss"); //$NON-NLS-1$
 
     private static final SimpleDateFormat
     	DATE_FORMATTER = 
-    		new SimpleDateFormat("dd-MMM-yyyy");
+    		new SimpleDateFormat("dd-MMM-yyyy"); //$NON-NLS-1$
     
     /**
      * Constructs CSVWriter using a comma for the separator.
@@ -109,7 +109,7 @@ public class CSVWriter {
      *            the character to use for quoted elements
      */
     public CSVWriter(Writer writer, char separator, char quotechar) {
-    	this(writer, separator, quotechar, "\n");
+    	this(writer, separator, quotechar, "\n"); //$NON-NLS-1$
     }
 
     /**

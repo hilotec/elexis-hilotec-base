@@ -53,6 +53,7 @@ public class Messages extends NLS {
 	public static String KontaktImporter_ExplanationImport;
 	public static String KontaktImporter_Title;
 	public static String KontaktImporterBlatt_ChoseFile;
+	public static String KontaktImporterBlatt_csvImportNotSupported;
 	public static String KontaktImporterBlatt_DatatypeErrorExplanation;
 	public static String KontaktImporterBlatt_DatatypeErrorHeading;
 	public static String KontaktImporterBlatt_DatatypeErrorText;
@@ -63,6 +64,7 @@ public class Messages extends NLS {
 	public static String KontaktImporterBlatt_KKKuerzel;
 	public static String KontaktImporterBlatt_kklistHeading;
 	public static String KontaktImporterBlatt_PleaseChooseTypeAndFile;
+	public static String KontaktImporterBlatt_xmlImportNotSupported;
 	public static String KontaktImporterDialog_ImporterCaption;
 	public static String KontaktImporterDialog_ImportingContact;
 	public static String KontaktImporterDialog_PleaseEnterFileTypeAndFile;

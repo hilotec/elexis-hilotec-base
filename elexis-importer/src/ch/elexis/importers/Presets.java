@@ -103,7 +103,7 @@ public class Presets {
 			} else {
 				String sex = StringTool.getSafe(row, 8);
 				String gebdat = StringTool.getSafe(row, 7);
-				if (ispat.equalsIgnoreCase("1")) {
+				if (ispat.equalsIgnoreCase("1")) { //$NON-NLS-1$
 					Patient pat = (Patient) Xid.findObject(KONTAKTID, ID);
 					// avoid duplicate import
 					if (pat == null) {
@@ -232,7 +232,7 @@ public class Presets {
 			pat.set(new String[] {
 				"Strasse", "Plz", "Ort", "Land", "Telefon1", "Telefon2", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 				"Natel", "E-Mail", "Titel", "Gruppe", "Zusatz"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-				strasse, plz, ort, land.equalsIgnoreCase(Messages.Presets_Switzerland) ? "CH" : "", //$NON-NLS-2$ //$NON-NLS-3$
+				strasse, plz, ort, land.equalsIgnoreCase(Messages.Presets_Switzerland) ? "CH" : "",  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 				telp1, telp2, tel3, email, titel, arztn, zusatz);
 			if (!StringTool.isNothing(ahvnr)) {
 				pat.addXid(Xid.DOMAIN_AHV, ahvnr, true);

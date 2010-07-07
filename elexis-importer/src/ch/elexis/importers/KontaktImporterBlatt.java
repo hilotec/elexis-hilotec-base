@@ -134,7 +134,7 @@ public class KontaktImporterBlatt extends Composite {
 			if (row.length != 7) {
 				continue;
 			}
-			log.log(Messages.KontaktImporterBlatt_Importing + StringTool.join(row, " "), Log.INFOS); //$NON-NLS-2$
+			log.log(Messages.KontaktImporterBlatt_Importing + StringTool.join(row, " "), Log.INFOS); //$NON-NLS-2$ //$NON-NLS-1$
 			// Please keep in sync with doc/import.textile !!
 			String bagnr = StringTool.getSafe(row, 0);
 			String name = StringTool.getSafe(row, 1);
@@ -188,8 +188,8 @@ public class KontaktImporterBlatt extends Composite {
 			}
 			byte[] dg = digest.digest();
 			String vgl = BinConverter.bytesToHexStr(dg);
-			log.log(Messages.KontaktImporterBlatt_Importing +" SHA1 war " + vgl +
-					"\nFirst row was: " + row, Log.INFOS);
+			log.log(Messages.KontaktImporterBlatt_Importing +" SHA1 war " + vgl + //$NON-NLS-1$
+					"\nFirst row was: " + row, Log.INFOS); //$NON-NLS-1$
 			
 			if (vgl.equals(PRESET_RUSSI)) {
 				return Presets.importRussi(exw, bKeepID, moni);
@@ -200,7 +200,7 @@ public class KontaktImporterBlatt extends Composite {
 			} else {
 				SWTHelper.showError(Messages.KontaktImporterBlatt_DatatypeErrorHeading,
 					Messages.KontaktImporterBlatt_DatatypeErrorText,
-					Messages.KontaktImporterBlatt_DatatypeErrorExplanation + " SHA1 was " + vgl);
+					Messages.KontaktImporterBlatt_DatatypeErrorExplanation + " SHA1 was " + vgl); //$NON-NLS-1$
 			}
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
@@ -214,7 +214,7 @@ public class KontaktImporterBlatt extends Composite {
 		// Please keep in sync with doc/import.textile !!
 		SWTHelper.showError(Messages.KontaktImporterBlatt_DatatypeErrorHeading,
 			Messages.KontaktImporterBlatt_DatatypeErrorText,
-			"Import von XML-Dateien wird (noch) nicht unterstützt");
+			Messages.KontaktImporterBlatt_xmlImportNotSupported);
 		return false;
 	}
 	
@@ -222,7 +222,7 @@ public class KontaktImporterBlatt extends Composite {
 		// Please keep in sync with doc/import.textile !!
 		SWTHelper.showError(Messages.KontaktImporterBlatt_DatatypeErrorHeading,
 			Messages.KontaktImporterBlatt_DatatypeErrorText,
-			"Import von CSV-Dateien wird (noch) nicht unterstützt");
+			Messages.KontaktImporterBlatt_csvImportNotSupported);
 		return false;
 	}
 	
