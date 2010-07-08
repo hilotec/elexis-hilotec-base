@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich and Elexis
+ * Copyright (c) 2009-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@
 
 package ch.elexis.selectors;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,9 +35,17 @@ import ch.elexis.Desk;
 import ch.rgw.tools.LimitSizeStack;
 import ch.rgw.tools.StringTool;
 
+/**
+ * A Panel that can be used as a ControlField for a CommonViewer. Can take
+ * actions that are inserted on top right of the Panel
+ * 
+ * @author gerry
+ * 
+ */
 public class SelectorPanel extends Composite implements ActiveControlListener {
 	boolean bCeaseFire, bExclusive;
 	private LinkedList<ActiveControlListener> listeners = new LinkedList<ActiveControlListener>();
+	private ArrayList<ActiveControl> activeControls = new ArrayList<ActiveControl>();
 	private LimitSizeStack<TraceElement> undoList = new LimitSizeStack<TraceElement>(
 			50);
 	private Composite cFields;
@@ -125,6 +134,7 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	 * @param ac
 	 */
 	public void addField(ActiveControl ac) {
+		activeControls.add(ac);
 		ac.addListener(this);
 	}
 
@@ -133,9 +143,10 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	 * 
 	 * @param activeControls
 	 */
-	public void addFields(ActiveControl... activeControls) {
+	public void addFields(ActiveControl... newControls) {
 		ActiveControl last = null;
-		for (ActiveControl ac : activeControls) {
+		for (ActiveControl ac : newControls) {
+			activeControls.add(ac);
 			ac.addListener(this);
 			last = ac;
 		}
@@ -156,8 +167,9 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	public void removeField(String field) {
 		for (Control c : cFields.getChildren()) {
 			if (c instanceof ActiveControl) {
-				if (((ActiveControl) c).getLabel().equalsIgnoreCase(field)) {
+				if (((ActiveControl) c).getLabelText().equalsIgnoreCase(field)) {
 					((ActiveControl) c).removeSelectorListener(this);
+					activeControls.remove(c);
 					c.dispose();
 				}
 			}
@@ -168,19 +180,12 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	 * Clear all fields to their default "empty" value
 	 */
 	public void clearValues() {
-
-		Desk.asyncExec(new Runnable() {
-			public void run() {
-				bCeaseFire = true;
-				for (Control c : cFields.getChildren()) {
-					if (c instanceof ActiveControl) {
-						((ActiveControl) c).clear();
-					}
-				}
-				bCeaseFire = false;
-				contentsChanged(null);
-			}
-		});
+		bCeaseFire = true;
+		for (ActiveControl ac : activeControls) {
+			ac.clear();
+		}
+		bCeaseFire = false;
+		contentsChanged(null);
 	}
 
 	/**
@@ -191,14 +196,11 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	 */
 	public HashMap<String, String> getValues() {
 		HashMap<String, String> ret = new HashMap<String, String>();
-		for (Control c : cFields.getChildren()) {
-			if (c instanceof ActiveControl) {
-				ActiveControl ac = (ActiveControl) c;
-				ret.put(ac.getLabel(), ac.getText());
-				String fld = ac.getProperty(ActiveControl.PROP_FIELDNAME);
-				if (!StringTool.isNothing(fld)) {
-					ret.put(fld, ac.getText());
-				}
+		for (ActiveControl ac : activeControls) {
+			ret.put(ac.getLabelText(), ac.getText());
+			String fld = ac.getProperty(ActiveControl.PROP_FIELDNAME);
+			if (!StringTool.isNothing(fld)) {
+				ret.put(fld, ac.getText());
 			}
 		}
 		return ret;
@@ -210,14 +212,8 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	 * @return al List that might be empty but is never null
 	 */
 	public List<ActiveControl> getControls() {
-		LinkedList<ActiveControl> ret = new LinkedList<ActiveControl>();
-		for (Control c : cFields.getChildren()) {
-			if (c instanceof ActiveControl) {
-				ActiveControl ac = (ActiveControl) c;
-				ret.add(ac);
-			}
-		}
-		return ret;
+		return activeControls;
+
 	}
 
 	/**
@@ -227,15 +223,12 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	 */
 	public void contentsChanged(ActiveControl field) {
 		if (bExclusive && (field != null)) {
-			for (Control c : cFields.getChildren()) {
-				if (c instanceof ActiveControl) {
-					ActiveControl ac = (ActiveControl) c;
-					if (!ac.getLabel().equals(field.getLabel())) {
-						String t = ac.getText();
-						if (t.length() > 0) {
-							new TraceElement(ac);
-							ac.clear();
-						}
+			for (ActiveControl ac : activeControls) {
+				if (!ac.getLabelText().equals(field.getLabelText())) {
+					String t = ac.getText();
+					if (t.length() > 0) {
+						new TraceElement(ac);
+						ac.clear();
 					}
 				}
 			}
@@ -309,11 +302,8 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	}
 
 	public void setLock(boolean bLocked) {
-		for (Control c : cFields.getChildren()) {
-			if (c instanceof ActiveControl) {
-				ActiveControl ac = (ActiveControl) c;
-				ac.setEnabled(bLocked);
-			}
+		for (ActiveControl ac : activeControls) {
+			ac.setEnabled(bLocked);
 		}
 
 	}
