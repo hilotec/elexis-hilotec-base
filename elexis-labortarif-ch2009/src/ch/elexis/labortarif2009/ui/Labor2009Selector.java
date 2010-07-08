@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich and medelexis AG
+ * Copyright (c) 2009-2010, G. Weirich and medelexis AG
  * All rights reserved.
  * $Id: Labor2009Selector.java 135 2009-06-15 20:16:21Z  $
  *******************************************************************************/
