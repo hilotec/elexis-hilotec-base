@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ import ch.rgw.tools.LazyTree.LazyTreeListener;
  * 
  * @param <T>
  */
+@Deprecated
 public class LazyTreeLoader<T> extends AbstractDataLoaderJob implements LazyTreeListener {
 	String parentColumn;
 	String parentField;
@@ -88,7 +89,7 @@ public class LazyTreeLoader<T> extends AbstractDataLoaderJob implements LazyTree
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void fetchChildren(final LazyTree l){
+	public boolean fetchChildren(final LazyTree l){
 		qbe.clear();
 		PersistentObject obj = (PersistentObject) l.contents;
 		if (obj != null) {
@@ -97,7 +98,9 @@ public class LazyTreeLoader<T> extends AbstractDataLoaderJob implements LazyTree
 			for (PersistentObject o : (List<PersistentObject>) ret) {
 				l.add(o, this);
 			}
+			return ret.size()>0;
 		}
+		return false;
 	}
 	
 	public boolean hasChildren(final LazyTree l){

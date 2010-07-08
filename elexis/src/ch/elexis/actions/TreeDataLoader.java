@@ -14,6 +14,7 @@
 package ch.elexis.actions;
 
 import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -26,7 +27,8 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
-import ch.elexis.views.codesystems.CodeSelectorFactory;
+import ch.rgw.tools.LazyTree;
+import ch.rgw.tools.LazyTree.LazyTreeListener;
 import ch.rgw.tools.Tree;
 
 /**
@@ -39,9 +41,8 @@ import ch.rgw.tools.Tree;
 public class TreeDataLoader extends PersistentObjectLoader implements
 		ILazyTreeContentProvider {
 	protected String parentColumn;
-	protected Tree<PersistentObject> root;
-	protected CodeSelectorFactory home;
-
+	protected LazyTree<PersistentObject> root;
+	
 	/**
 	 * Create a TreeDataLoader from a @see CommonViewer
 	 * 
@@ -53,32 +54,30 @@ public class TreeDataLoader extends PersistentObjectLoader implements
 	 *            the name of the field that contains ancestry information
 	 */
 	public TreeDataLoader(CommonViewer cv,
-			Query<? extends PersistentObject> qbe, String parentField) {
-		super(cv, qbe);
+			Query<? extends PersistentObject> query, String parentField) {
+		super(cv, query);
 		parentColumn = parentField;
-		root = new Tree<PersistentObject>(null, null);
+		root = (LazyTree<PersistentObject>) new LazyTree<PersistentObject>(null, null, new LazyTreeListener() {
+			@Override
+			public boolean fetchChildren(LazyTree<?> l) {
+				PersistentObject p=(PersistentObject)l.contents;
+				setQuery(p.getId());
+				List<?> children=qbe.execute();
+				for(PersistentObject po:qbe.execute()){
+					new LazyTree(l,po,this);
+				
+				}
+				return children.size()>0;
+			}
+			@Override
+			public boolean hasChildren(LazyTree<?> l) {
+				return fetchChildren(l);
+			}
+			
+		});
 	}
 
-	/**
-	 * Create a TreeDataLoader from a @see CodeSelectorFactory
-	 * 
-	 * @param csf
-	 *            the CodeSelectorFactory
-	 * @param cv
-	 *            the CommonViewer
-	 * @param qbe
-	 *            the query to load data
-	 * @param parentField
-	 *            the name of the field that contains ancestry information
-	 */
-	public TreeDataLoader(CodeSelectorFactory csf, CommonViewer cv,
-			Query<? extends PersistentObject> qbe, String parentField) {
-		super(cv, qbe);
-		parentColumn = parentField;
-		root = new Tree<PersistentObject>(null, null);
-		home = csf;
-	}
-
+	
 	/*
 	 * @Override protected void reload(){ qbe.clear(); qbe.add(parentColumn,
 	 * "=", "NIL"); applyQueryFilters(); for (PersistentObject po :
