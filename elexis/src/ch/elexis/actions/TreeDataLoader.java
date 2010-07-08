@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich and Elexis
+ * Copyright (c) 2009-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,11 +25,12 @@ import ch.elexis.Desk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 import ch.rgw.tools.Tree;
 
 /**
- * A PerssistentObjectLoader for Tree-like structures.
+ * A PersistentObjectLoader for Tree-like structures.
  * This reads its contents from a table that has a "parent"-field to denote ancestry
  * @author gerry
  *
@@ -75,7 +76,8 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 		monitor.beginTask(Messages.getString("TreeDataLoader.0"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		root.clear();
 		qbe.clear();
-		qbe.add(parentColumn, "=", "NIL"); //$NON-NLS-1$ //$NON-NLS-2$
+		qbe.add(parentColumn, Query.EQUALS, "NIL"); //$NON-NLS-1$
+		setQuery();
 		applyQueryFilters();
 		for (PersistentObject po : qbe.execute()) {
 			new Tree<PersistentObject>(root, po);
@@ -134,4 +136,11 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 		updateChildCount(elem, 0);
 	}
 	
+	protected void setQuery(){
+		qbe.clear();
+		ControlFieldProvider cfp = cv.getConfigurer().getControlFieldProvider();
+		if (cfp != null) {
+			cfp.setQuery(qbe);
+		}
+	}
 }
