@@ -202,6 +202,7 @@ public class ViewerConfigurer {
 	 */
 	public static class TreeLabelProvider extends LabelProvider {
 		
+		@SuppressWarnings("unchecked")
 		@Override
 		public String getText(Object element){
 			if (element instanceof Tree) {
