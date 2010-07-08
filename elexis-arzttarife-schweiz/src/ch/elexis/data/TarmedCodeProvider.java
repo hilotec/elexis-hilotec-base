@@ -127,7 +127,7 @@ public class TarmedCodeProvider implements ITreeContentProvider,
 
 	class TreeListener implements LazyTreeListener{
 
-		public void fetchChildren(LazyTree l) {
+		public boolean fetchChildren(LazyTree l) {
 			 qbe.clear();
 			 TarmedLeistung tl=(TarmedLeistung) l.contents;
 			 if(tl!=null){
@@ -136,7 +136,9 @@ public class TarmedCodeProvider implements ITreeContentProvider,
 				 for(TarmedLeistung tlc:qbe.execute()){
 					 new LazyTree<TarmedLeistung>(l,tlc,ltl);
 				 }
+				 return true;
 			 }
+			 return false;
 		}
 
 		public boolean hasChildren(LazyTree l) {
