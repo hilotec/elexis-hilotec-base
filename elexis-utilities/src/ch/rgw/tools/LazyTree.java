@@ -71,8 +71,18 @@ public class LazyTree<T> extends Tree<T> {
 	}
 	
 	public interface LazyTreeListener {
-		public void fetchChildren(LazyTree<?> l);
+		/**
+		 * fetch children of this node. 
+		 * @param l
+		 * @return true if children were added
+		 */
+		public boolean fetchChildren(LazyTree<?> l);
 		
+		/**
+		 * return true if this node has children
+		 * @param l
+		 * @return
+		 */
 		public boolean hasChildren(LazyTree<?> l);
 	}
 	
