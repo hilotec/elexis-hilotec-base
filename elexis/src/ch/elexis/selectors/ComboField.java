@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,12 @@ package ch.elexis.selectors;
 import java.util.Properties;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+
+import ch.elexis.Desk;
 
 public class ComboField extends ActiveControl {
 	Combo combo;
@@ -25,17 +29,15 @@ public class ComboField extends ActiveControl {
 		super(parent, displayBits, displayName);
 		combo=new Combo(parent,SWT.READ_ONLY|SWT.SINGLE);
 		combo.setItems(values);
+		combo.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				textContents=combo.getText();
+			}
+			
+		});
 		setControl(combo);
-	}
-
-	@Override
-	public void clear(){
-		combo.select(0);
-	}
-
-	@Override
-	public String getText(){
-		return combo.getText();
 	}
 
 	@Override
@@ -45,8 +47,12 @@ public class ComboField extends ActiveControl {
 	}
 
 	@Override
-	public void setText(String text){
-		combo.setText(text);		
+	public void push(){
+		Desk.syncExec(new Runnable(){
+			public void run(){
+				combo.setText(textContents);
+			}
+		});
 	}
 
 }

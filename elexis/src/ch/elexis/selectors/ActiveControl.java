@@ -12,6 +12,7 @@
  *******************************************************************************/
 package ch.elexis.selectors;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 import org.eclipse.swt.SWT;
@@ -25,20 +26,26 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
+import ch.elexis.Desk;
 import ch.elexis.util.SWTHelper;
 
 /**
  * An Element consisting of a label and a control that is able to link itself to
- * the database and act on user input.
- * Properties are defined in the data-member of the underlying Control
+ * the database and act on user input. An activeControl can store arbitrary
+ * field=value pairs and get and set methods for the display can be called
+ * independently of the display Thread.
+ * 
  * @author Gerry
  * 
  */
 public abstract class ActiveControl extends Composite {
-	protected Label lbl;
+	private Label lbl;
 	protected Control ctl;
 	protected Composite controllers;
+	protected String textContents = "";
+	private String labelContents="";
 	private LinkedList<ActiveControlListener> listeners;
+	private HashMap<String,Object> properties=new HashMap<String,Object>();
 
 	/** Constant to hide the label (Default: Label is visible) */
 	public static final int HIDE_LABEL = 0x0001;
@@ -47,9 +54,9 @@ public abstract class ActiveControl extends Composite {
 	/** Label reacts on mouse clicks (and informs listeners) */
 	public static final int LABEL_IS_HYPERLINK = 0x0004;
 	/** Contents can not be edited by user */
-	public static final int READONLY=0x0008;
+	public static final int READONLY = 0x0008;
 	/** Field links itself to the database */
-	public static final int LINK_TO_DB=0x0010;
+	public static final int LINK_TO_DB = 0x0010;
 
 	/** Displayed label of the field */
 	public static final String PROP_DISPLAYNAME = "displayName"; //$NON-NLS-1$
@@ -59,7 +66,6 @@ public abstract class ActiveControl extends Composite {
 	public static final String PROP_HASHNAME = "hashName"; //$NON-NLS-1$
 	/** Message to display if the field contents is invalid */
 	public static final String PROP_ERRMSG = "invalidContents"; //$NON-NLS-1$
-	
 
 	/**
 	 * create a new field
@@ -76,10 +82,12 @@ public abstract class ActiveControl extends Composite {
 		} else {
 			setLayout(new GridLayout(2, false));
 		}
+		labelContents=displayName==null ? "" : displayName;
 		if ((displayBits & HIDE_LABEL) == 0) {
 			lbl = new Label(this, SWT.NONE);
 			lbl.setText(displayName);
-			setData(PROP_DISPLAYNAME,displayName);
+			
+			setData(PROP_DISPLAYNAME, displayName);
 			controllers = new Composite(this, SWT.NONE);
 			// controllers.setBackground(Desk.getColor(Desk.COL_GREEN));
 			GridData gd = new GridData(SWT.RIGHT, SWT.BOTTOM, false, false);
@@ -113,17 +121,37 @@ public abstract class ActiveControl extends Composite {
 		}
 	}
 
-	public abstract void setText(String text);
+	protected abstract void push();
 
-	public abstract String getText();
+	public void setText(String text) {
+		textContents = text;
+		push();
+	}
+
+	public String getText() {
+		return textContents;
+	}
 
 	public abstract boolean isValid();
 
-	public abstract void clear();
+	public void clear() {
+		textContents = "";
+		push();
+	}
 
-	public String getLabel() {
-		return getLbl().getText();
+	public String getLabelText() {
+		return labelContents;
 
+	}
+
+	public void setLabelText(final String text) {
+		Desk.asyncExec(new Runnable() {
+			@Override
+			public void run() {
+				lbl.setText(text);
+			}
+
+		});
 	}
 
 	protected void setControl(Control control) {
@@ -139,21 +167,16 @@ public abstract class ActiveControl extends Composite {
 		});
 	}
 
-	public Label getLbl() {
-		return lbl;
-	}
-
-	public void setLabel(Label lbl) {
-		this.lbl = lbl;
-	}
-
+	/*
+	 * public Label getLbl() { return lbl; }
+	 * 
+	 * public void setLabel(Label lbl) { this.lbl = lbl; }
+	 */
 	public Control getCtl() {
 		return ctl;
 	}
 
-	public void setCtl(Control ctl) {
-		this.ctl = ctl;
-	}
+	
 
 	public String getDisplayName() {
 		return (String) getData(PROP_DISPLAYNAME);
@@ -174,7 +197,15 @@ public abstract class ActiveControl extends Composite {
 		return controllers;
 	}
 	
-	public String getProperty(String name){
-		return (String)getData(name);
+	@Override
+	public void setData(String name, Object value){
+		properties.put(name, value);
+	}
+	@Override
+	public Object getData(String name){
+		return properties.get(name);
+	}
+	public String getProperty(String name) {
+		return (String) getData(name);
 	}
 }
