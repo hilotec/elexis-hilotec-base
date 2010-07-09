@@ -45,11 +45,9 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 		this.cv = cv;
 		slp = new SelectorPanelProvider(fields, true);
 		tdl = new TreeDataLoader(cv, new Query<TarmedLeistung>(
-				TarmedLeistung.class), "Parent");
-		ViewerConfigurer vc = new ViewerConfigurer(
-				// new TarmedCodeProvider(cv),
-				tdl, new ViewerConfigurer.TreeLabelProvider(), slp,
-				//new DefaultControlFieldProvider(cv, new String[]{"Code","Text"}), //$NON-NLS-1$
+				TarmedLeistung.class), "Parent", "ID");
+		ViewerConfigurer vc = new ViewerConfigurer(tdl,
+				new ViewerConfigurer.TreeLabelProvider(), slp,
 				new ViewerConfigurer.DefaultButtonProvider(),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE,
 						SWT.VIRTUAL, null));
