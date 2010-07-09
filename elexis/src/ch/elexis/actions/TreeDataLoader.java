@@ -41,8 +41,9 @@ import ch.rgw.tools.Tree;
 public class TreeDataLoader extends PersistentObjectLoader implements
 		ILazyTreeContentProvider {
 	protected String parentColumn;
+	protected String orderBy;
 	protected LazyTree<PersistentObject> root;
-	
+
 	/**
 	 * Create a TreeDataLoader from a @see CommonViewer
 	 * 
@@ -54,30 +55,40 @@ public class TreeDataLoader extends PersistentObjectLoader implements
 	 *            the name of the field that contains ancestry information
 	 */
 	public TreeDataLoader(CommonViewer cv,
-			Query<? extends PersistentObject> query, String parentField) {
+			Query<? extends PersistentObject> query, String parentField,
+			String orderBy) {
 		super(cv, query);
 		parentColumn = parentField;
-		root = (LazyTree<PersistentObject>) new LazyTree<PersistentObject>(null, null, new LazyTreeListener() {
-			@Override
-			public boolean fetchChildren(LazyTree<?> l) {
-				PersistentObject p=(PersistentObject)l.contents;
-				setQuery(p.getId());
-				List<?> children=qbe.execute();
-				for(PersistentObject po:qbe.execute()){
-					new LazyTree(l,po,this);
-				
-				}
-				return children.size()>0;
-			}
-			@Override
-			public boolean hasChildren(LazyTree<?> l) {
-				return fetchChildren(l);
-			}
-			
-		});
+		this.orderBy = orderBy;
+		root = (LazyTree<PersistentObject>) new LazyTree<PersistentObject>(
+				null, null, new LazyTreeListener() {
+					@Override
+					public boolean fetchChildren(LazyTree<?> l) {
+						PersistentObject p = (PersistentObject) l.contents;
+						if (l.getParent() == null) {
+							setQuery("NIL");
+						} else {
+							if (p == null) {
+								return false;
+							}
+							setQuery(p.getId());
+						}
+						List<PersistentObject> children = (List<PersistentObject>) qbe
+								.execute();
+						for (PersistentObject po : children) {
+							new LazyTree(l, po, this);
+						}
+						return children.size() > 0;
+					}
+
+					@Override
+					public boolean hasChildren(LazyTree<?> l) {
+						return fetchChildren(l);
+					}
+
+				});
 	}
 
-	
 	/*
 	 * @Override protected void reload(){ qbe.clear(); qbe.add(parentColumn,
 	 * "=", "NIL"); applyQueryFilters(); for (PersistentObject po :
@@ -88,7 +99,7 @@ public class TreeDataLoader extends PersistentObjectLoader implements
 				Messages.getString("TreeDataLoader.0"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		root.clear();
 		setQuery("NIL");
-	
+
 		for (PersistentObject po : qbe.execute()) {
 			new Tree<PersistentObject>(root, po);
 			if (monitor.isCanceled()) {
@@ -149,12 +160,15 @@ public class TreeDataLoader extends PersistentObjectLoader implements
 		qbe.clear();
 		ControlFieldProvider cfp = cv.getConfigurer().getControlFieldProvider();
 		if (cfp != null) {
-			//if (cfp.isEmpty()) {
-				qbe.add(parentColumn, Query.EQUALS, parent); 
-			//} else {
+			if (cfp.isEmpty()) {
+				qbe.add(parentColumn, Query.EQUALS, parent);
+			} else {
 				cfp.setQuery(qbe);
-			//}
+			}
 		}
 		applyQueryFilters();
+		if (orderBy != null) {
+			qbe.orderBy(true, orderBy);
+		}
 	}
 }

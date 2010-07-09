@@ -156,7 +156,7 @@ IWorker {
 	}
 	
 	/**
-	 * a FilterProvider can modify the Query of this Loader. It will be called
+	 * a QueryFilter can modify the Query of this Loader. It will be called
 	 * before each reload.
 	 * 
 	 * @author Gerry
