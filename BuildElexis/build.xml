@@ -211,7 +211,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 			</fileset>
 		</copy>
 		<!-- do some magic stuff to find all the files to include -->
-		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins}" />
+		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins},TestElexis,TestElexisUI" />
 		<echo message="${buildlist}" />
 		<!-- compile all plugins listed from listDependencies -->
 		<for param="plugin" list="${buildlist}" delimiter=",">
@@ -298,7 +298,6 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<antcall target="installer" inheritrefs="true" inheritall="true" />
 	</target>
 
-
 	<target name="installer">
 		<echo message="preparing files for izpack installer" />
 		<wikitext-to-html markupLanguage="Textile" overwrite="true" multipleOutputFiles="false" formatOutput="true">
@@ -331,6 +330,97 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<izpack input="${rsc}/installer.xml" output="${output}/elexis-${os}-${version}.${DSTAMP}-install.jar" installerType="standard" inheritAll="true" basedir="${dist}" compression="deflate" compressionlevel="9" />
 	</target>
 
+	<!-- SWTbot. Needs special config.ini to start
+	   - Not yet functional 
+		 -->
+
+	<target name="create-swtbot" depends="initialize,update">
+		<concat destfile="${dist}/elexis.ini">-vmargs
+-Xms128m
+-Xmx768m
+</concat>
+
+		<concat destfile="${dist}/.eclipseproduct">#Product Runtime Configuration File
+osgi.splashPath=platform:/base/plugins/ch.elexis
+eclipse.product=ch.elexis.ElexisProduct
+osgi.bundles.defaultStartLevel=4
+osgi.bundles=org.eclipse.equinox.transforms.hook,org.eclipse.equinox.common:start,org.eclipse.update.configurator@3:start,org.eclipse.core.runtime@start
+</concat>
+
+		<concat destfile="${dist}/configuration/config.ini">#Product Runtime Configuration File
+eclipse.application=ch.elexis.ElexisApp
+osgi.bundles.defaultStartLevel=4
+eclipse.product=ch.elexis.ElexisProduct
+osgi.splashPath=platform:/base/plugins/ch.elexis
+osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@3:start,org.eclipse.core.runtime@start
+</concat>
+		<copy todir="${dist}/plugins">
+			<fileset dir="${platform-runtime}/plugins">
+				<include name="com.ibm.icu_*" />
+				<include name="org.eclipse.equinox.launcher_*" />
+				<include name="org.eclipse.update.configurator_*" />
+			</fileset>
+		</copy>
+		<copy todir="${dist}">
+			<fileset dir="${rsc}">
+				<include name="*.ico" />
+				<include name="LICENSE*.*" />
+				<include name="lizenz.*" />
+			</fileset>
+		</copy>
+		<!-- do some magic stuff to find all the files to include -->
+		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins}" />
+		<echo message="buildlist ist ${buildlist}" />
+		<!-- compile all plugins listed from listDependencies -->
+		<for param="plugin" list="${buildlist}" delimiter=",">
+			<sequential>
+				<echo message="dist ist ${dist}: compiling plugin @{plugin}" />
+				<pluginID dir="@{plugin}" />
+				<var name="plugindir" value="${dist}/plugins/${BundleId}_${version}.${DSTAMP}" />
+				<path id="varcp">
+					<dirset dir="${dist}/plugins" />
+					<fileset dir="${dist}/plugins">
+						<include name="**/*.jar" />
+					</fileset>
+				</path>
+
+				<antcall target="compile" inheritrefs="true">
+					<param name="dirname" value="${DirName}" />
+					<param name="sourcedir" value="@{plugin}" />
+					<param name="cp" value="varcp" />
+				</antcall>
+			</sequential>
+		</for>
+	</target>
+
+	<target name="linux-swtbot" depends="initialize">
+		<property name="os" value="linux" />
+		<property name="swtbot" value="/data/elexis/linux/eclipse" />
+		<copy todir="${dist}" verbose="true">
+			<fileset dir="${swtbot}">
+				<include name="plugins/**/*" />
+				<include name="features/**/*" />
+			</fileset>
+			<fileset dir="${platform-runtime}">
+				<include name="plugins/org.eclipse.equinox.launcher.gtk*/*" />
+				<include name="plugins/org.eclipse.swt.gtk.linux.x86_*.jar" />
+				<include name="plugins/org.apache.log4j*.jar" />
+				<include name="plugins/org.hamcrest*.jar" />
+				<include name="plugins/org.eclipse.swtbot.ant.optional.junit4*.jar" />
+				<include name="plugins/org.eclipse.swtbot*.jar" />
+				<include name="plugins/org.eclipse.swtbot*/*" />
+				<include name="*.so" />
+			</fileset>
+		</copy>
+		<copy tofile="${dist}/elexis" file="${platform-runtime}/eclipse" preservelastmodified="true" verbose="true" />
+		<chmod file="${dist}/elexis" perm="ugo+rx" />
+		<antcall target="create-swtbot" />
+		<antcall target="installer" inheritrefs="true" inheritall="true" />
+	</target>
+
+	<!--
+	create all projects in all repositories
+	-->
 	<target name="all">
 		<antcall target="${os}" />
 	</target>
@@ -423,7 +513,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 
 	<target name="doc-plugins" unless="skip_texify" depends="initialize">
 		<!-- compile all plugins listed from listDependencies -->
-		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins}" />
+		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins},TestElexis,TestElexisUI" />
 		<for param="plugin" list="${buildlist}" delimiter=",">
 			<sequential>
 				<pluginID dir="@{plugin}" />
