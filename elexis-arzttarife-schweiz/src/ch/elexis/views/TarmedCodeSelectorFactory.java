@@ -15,6 +15,7 @@ package ch.elexis.views;
 
 import org.eclipse.swt.SWT;
 
+import ch.elexis.actions.ReadOnceTreeLoader;
 import ch.elexis.actions.TreeDataLoader;
 import ch.elexis.data.Query;
 import ch.elexis.data.TarmedLeistung;
@@ -28,7 +29,7 @@ import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	SelectorPanelProvider slp;
-	TreeDataLoader tdl;
+	ReadOnceTreeLoader tdl;
 	CommonViewer cv;
 	FieldDescriptor<?>[] fields = {
 			new FieldDescriptor<TarmedLeistung>("Ziffer", "Code", Typ.STRING,
@@ -44,7 +45,7 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
 		this.cv = cv;
 		slp = new SelectorPanelProvider(fields, true);
-		tdl = new TreeDataLoader(cv, new Query<TarmedLeistung>(
+		tdl = new ReadOnceTreeLoader(cv, new Query<TarmedLeistung>(
 				TarmedLeistung.class), "Parent", "ID");
 		ViewerConfigurer vc = new ViewerConfigurer(tdl,
 				new ViewerConfigurer.TreeLabelProvider(), slp,
