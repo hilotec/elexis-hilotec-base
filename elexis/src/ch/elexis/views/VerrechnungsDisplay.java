@@ -121,6 +121,7 @@ public class VerrechnungsDisplay extends Composite {
 		Konsultation actKons = (Konsultation) ElexisEventDispatcher
 		.getSelected(Konsultation.class);
 		if (actKons != null) {
+			//System.out.println(actKons.getLabel());
 			if (o instanceof Prescription) {
 				o = ((Prescription) o).getArtikel();
 			}
