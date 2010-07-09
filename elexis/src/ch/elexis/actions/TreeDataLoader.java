@@ -60,6 +60,7 @@ public class TreeDataLoader extends PersistentObjectLoader implements
 		super(cv, query);
 		parentColumn = parentField;
 		this.orderBy = orderBy;
+		
 		root = (LazyTree<PersistentObject>) new LazyTree<PersistentObject>(
 				null, null, new LazyTreeListener() {
 					@Override
@@ -89,11 +90,7 @@ public class TreeDataLoader extends PersistentObjectLoader implements
 				});
 	}
 
-	/*
-	 * @Override protected void reload(){ qbe.clear(); qbe.add(parentColumn,
-	 * "=", "NIL"); applyQueryFilters(); for (PersistentObject po :
-	 * qbe.execute()) { new Tree<PersistentObject>(root, po); } }
-	 */
+
 	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params) {
 		monitor.beginTask(
 				Messages.getString("TreeDataLoader.0"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
