@@ -167,6 +167,7 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 		if (mgr != null) {
 			viewer.getControl().setMenu(mgr.createContextMenu(viewer.getControl()));
 		}
+		vc.getContentProvider().init();
 		viewer.setInput(input);
 		viewer.getControl().pack();
 		composite = ret;

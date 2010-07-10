@@ -12,6 +12,7 @@
 
 package ch.elexis.text;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,51 +32,47 @@ import ch.rgw.tools.StringTool;
  * @author gerry
  * 
  */
-public class FileDocument implements IDocument {
+public class GenericDocument implements IDocument {
 	String title;
 	String category;
-	File file;
+	byte[] contents;
 	String date;
 	Patient pat;
 	String keywords;
 	String guid = StringTool.unique("FileDocument");
 
 	/**
-	 * Create a new FileDocument. Note: The underlying file will NOT be copied
-	 * but only referenced.
+	 * Create a new GenericDocument from a File. 
 	 * 
 	 * @param pat
-	 *            The patient thsi document belongs to. Can be null
+	 *            The patient this document belongs to. Can be null
 	 * @param title
 	 *            Title for the document. Never Null and Never empty
 	 * @param category
 	 *            Category for the document. Can be null or empty
 	 * @param file
-	 *            File to link to this document
+	 *            File to import in this document
 	 * @param date
 	 *            date of creation
 	 * @param keywords
 	 *            space- or comma- separated list of keywords. May be empty or
 	 *            null
 	 */
-	public FileDocument(Patient pat, String title, String category, File file,
-			String date, String keywords) {
+	public GenericDocument(Patient pat, String title, String category, File file,
+			String date, String keywords) throws IOException{
 		this.title = title;
 		this.category = category;
-		this.file = file;
 		this.date = date;
 		this.pat = pat;
 		this.keywords = keywords;
+		FileInputStream fis=new FileInputStream(file);
+		ByteArrayOutputStream baos=new ByteArrayOutputStream();
+		FileTool.copyStreams(fis, baos);
+		fis.close();
+		contents=baos.toByteArray();
+		baos.close();
 	}
 
-	/**
-	 * Delete the underlying file
-	 */
-	public boolean delete() {
-		boolean bRet=file.delete();
-		file=null;
-		return bRet;
-	}
 
 	@Override
 	public String getTitle() {
@@ -87,28 +84,19 @@ public class FileDocument implements IDocument {
 		return "binary/octet-stream";
 	}
 
+	/**
+	 * Return the contents of this document as Stream
+	 * Note: The caller must ensure that the stream is closed after
+	 * using it.
+	 */
 	@Override
 	public InputStream getContentsAsStream() throws ElexisException {
-		try {
-			FileInputStream fis = new FileInputStream(file);
-			return fis;
-		} catch (FileNotFoundException e) {
-			ExHandler.handle(e);
-			throw new ElexisException(getClass(), e.getMessage(),
-					ElexisException.EE_FILE_ERROR);
-		}
+		ByteArrayInputStream bais=new ByteArrayInputStream(contents);
+		return bais;
 	}
 
 	public byte[] getContentsAsBytes() throws ElexisException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		try {
-			FileTool.copyStreams(getContentsAsStream(), baos);
-			return baos.toByteArray();
-		} catch (IOException e) {
-			throw new ElexisException(getClass(), e.getMessage(),
-					ElexisException.EE_FILE_ERROR);
-		}
-
+		return contents;
 	}
 
 	@Override

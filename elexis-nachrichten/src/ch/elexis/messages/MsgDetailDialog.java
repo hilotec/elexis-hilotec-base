@@ -56,20 +56,20 @@ public class MsgDetailDialog extends Dialog {
 		Label l1 = new Label(ret, SWT.NONE);
 		String l =
 			(msg == null) ? new TimeTool().toString(TimeTool.FULL_GER) : new TimeTool(msg
-				.get("time")).toString(TimeTool.FULL_GER);
+				.get("time")).toString(TimeTool.FULL_GER); //$NON-NLS-1$
 		
-		l1.setText("Nachricht vom " + l);
+		l1.setText(Messages.MsgDetailDialog_messageDated + l);
 		
 		l1.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
 		
-		new Label(ret, SWT.NONE).setText("Von:");
+		new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_from);
 		lbFrom = new Label(ret, SWT.NONE);
 		
-		new Label(ret, SWT.NONE).setText("  -   An: ");
+		new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_to);
 		cbTo = new Combo(ret, SWT.SINGLE | SWT.READ_ONLY);
 		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(4,
 			true, 1, false));
-		new Label(ret, SWT.NONE).setText("Nachricht:");
+		new Label(ret, SWT.NONE).setText(Messages.MsgDetailDialog_message);
 		text = SWTHelper.createText(ret, 1, SWT.BORDER);
 		text.setLayoutData(SWTHelper.getFillGridData(3, true, 1, true));
 		users = Hub.getUserList().toArray(new Anwender[0]);
@@ -82,7 +82,7 @@ public class MsgDetailDialog extends Dialog {
 			lbFrom.setText(msg.getSender().getLabel());
 			cbTo.setText(msg.getDest().getLabel());
 			cbTo.setEnabled(false);
-			text.setText(msg.get("Text"));
+			text.setText(msg.get("Text")); //$NON-NLS-1$
 		}
 		
 		return ret;
@@ -92,9 +92,9 @@ public class MsgDetailDialog extends Dialog {
 	public void create(){
 		super.create();
 		if (msg == null) {
-			getShell().setText("Nachricht erstellen");
+			getShell().setText(Messages.MsgDetailDialog_createMessage);
 		} else {
-			getShell().setText("Nachricht lesen");
+			getShell().setText(Messages.MsgDetailDialog_readMessage);
 		}
 	}
 	
@@ -102,17 +102,17 @@ public class MsgDetailDialog extends Dialog {
 	protected void createButtonsForButtonBar(final Composite parent){
 		String sOK;
 		if (msg == null) {
-			sOK = "Senden";
+			sOK = Messages.MsgDetailDialog_send;
 		} else {
-			sOK = "Löschen";
+			sOK = Messages.MsgDetailDialog_delete;
 		}
 		bOK = createButton(parent, IDialogConstants.OK_ID, sOK, false);
 		parent.getShell().setDefaultButton(bOK);
-		bAnswer = createButton(parent, IDialogConstants.CLIENT_ID + 1, "Anworten", false);
+		bAnswer = createButton(parent, IDialogConstants.CLIENT_ID + 1, Messages.MsgDetailDialog_reply, false);
 		bAnswer.addSelectionListener(clickListener);
-		bAsReminder = createButton(parent, IDialogConstants.CLIENT_ID + 2, "Als Reminder", false);
+		bAsReminder = createButton(parent, IDialogConstants.CLIENT_ID + 2, Messages.MsgDetailDialog_asReminder, false);
 		bAsReminder.addSelectionListener(clickListener);
-		bCancel = createButton(parent, IDialogConstants.CANCEL_ID, "Abbruch", false);
+		bCancel = createButton(parent, IDialogConstants.CANCEL_ID, Messages.MsgDetailDialog_cancel, false);
 		if (msg == null) {
 			bAnswer.setEnabled(false);
 		}
@@ -147,13 +147,13 @@ public class MsgDetailDialog extends Dialog {
 						msg.delete();
 						msg = null;
 					}
-					bOK.setText("Senden");
+					bOK.setText(Messages.MsgDetailDialog_send);
 				} else {
 					int idx = cbTo.getSelectionIndex();
 					if (idx != -1) {
 						Reminder rem =
 							new Reminder(users[idx], new TimeTool().toString(TimeTool.DATE_GER),
-								Reminder.Typ.anzeigeTodoAll, "", text.getText());
+								Reminder.Typ.anzeigeTodoAll, "", text.getText()); //$NON-NLS-1$
 						rem.addResponsible(users[idx]);
 					}
 					okPressed();

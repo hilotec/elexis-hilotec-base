@@ -24,7 +24,7 @@ import ch.elexis.actions.BackgroundJob;
 import ch.elexis.actions.JobPool;
 import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.util.Messages;
-import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 
 /**
  * ContentProvider, der einen Tree füllen kann. Datenquelle muss ein TreeLoader sein.
@@ -33,7 +33,7 @@ import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
  * 
  */
 public class TreeContentProvider implements ITreeContentProvider, BackgroundJobListener,
-		CommonContentProvider {
+		ICommonViewerContentProvider {
 	BackgroundJob job;
 	CommonViewer viewer;
 	
@@ -134,5 +134,11 @@ public class TreeContentProvider implements ITreeContentProvider, BackgroundJobL
 	
 	public void selected(){
 	// nothing to do
+	}
+
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
 	}
 }

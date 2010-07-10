@@ -41,9 +41,9 @@ public class Importer extends ImporterPage {
 	public IStatus doImport(IProgressMonitor monitor) throws Exception {
 		String lang = JdbcLink.wrap(Hub.localCfg.get( // d,f,i
 				PreferenceConstants.ABL_LANGUAGE, "d").toUpperCase()); //$NON-NLS-1$
-		if (lang.startsWith("F")) {
+		if (lang.startsWith("F")) { //$NON-NLS-1$
 			langdef = 1;
-		} else if (lang.startsWith("I")) {
+		} else if (lang.startsWith("I")) { //$NON-NLS-1$
 			langdef = 2;
 		}
 		Fachspec[] specs = loadFachspecs(langdef);
@@ -56,7 +56,7 @@ public class Importer extends ImporterPage {
 				int first = exw.getFirstRow();
 				int last = exw.getLastRow();
 				int count = last - first;
-				monitor.beginTask("Import EAL 2009", count);
+				monitor.beginTask(Messages.Importer_importEAL, count);
 				for (int i = first + 1; i <= last; i++) {
 					String[] line = exw.getRow(i).toArray(new String[0]);
 					String chapter = StringTool.getSafe(line, 0);
@@ -94,23 +94,23 @@ public class Importer extends ImporterPage {
 				return Status.OK_STATUS;
 			}
 		}
-		return new Status(Status.ERROR, "ch.elexis.labotarif.ch2009",
-				"could not load file");
+		return new Status(Status.ERROR, "ch.elexis.labotarif.ch2009", //$NON-NLS-1$
+				"could not load file"); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getDescription() {
-		return "Wählen Sie eine Excel-Datei mit dem Analysetarif 2009 aus";
+		return Messages.Importer_selectFile;
 	}
 
 	@Override
 	public String getTitle() {
-		return "EAL 2009";
+		return "EAL 2009"; //$NON-NLS-1$
 	}
 
 	public static Fachspec[] loadFachspecs(int langdef) {
 		String specs = PlatformHelper.getBasePath(Constants.pluginID)
-				+ File.separator + "rsc" + File.separator + "arztpraxen.xls";
+				+ File.separator + "rsc" + File.separator + "arztpraxen.xls"; //$NON-NLS-1$ //$NON-NLS-2$
 		ExcelWrapper x = new ExcelWrapper();
 		x.setFieldTypes(new Class[] { Integer.class, String.class,
 				Integer.class, Integer.class });

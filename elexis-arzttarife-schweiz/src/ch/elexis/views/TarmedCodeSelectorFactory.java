@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,29 +15,44 @@ package ch.elexis.views;
 
 import org.eclipse.swt.SWT;
 
-import ch.elexis.data.TarmedCodeProvider;
+import ch.elexis.actions.ReadOnceTreeLoader;
+import ch.elexis.actions.TreeDataLoader;
+import ch.elexis.data.Query;
 import ch.elexis.data.TarmedLeistung;
+import ch.elexis.selectors.FieldDescriptor;
+import ch.elexis.selectors.FieldDescriptor.Typ;
 import ch.elexis.util.viewers.CommonViewer;
-import ch.elexis.util.viewers.DefaultControlFieldProvider;
+import ch.elexis.util.viewers.DefaultLabelProvider;
+import ch.elexis.util.viewers.SelectorPanelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
-	
+	SelectorPanelProvider slp;
+	ReadOnceTreeLoader tdl;
+	CommonViewer cv;
+	FieldDescriptor<?>[] fields = {
+			new FieldDescriptor<TarmedLeistung>("Ziffer", "Code", Typ.STRING,
+					null),
+			new FieldDescriptor<TarmedLeistung>("Text",
+					TarmedLeistung.FLD_TEXT, null) };
+
 	public TarmedCodeSelectorFactory() {
-		
+
 	}
 
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
-		ViewerConfigurer vc=new ViewerConfigurer(
-				new TarmedCodeProvider(cv),
-				new ViewerConfigurer.TreeLabelProvider(),
-				new DefaultControlFieldProvider(cv, new String[]{"Code","Text"}), //$NON-NLS-1$
+		this.cv = cv;
+		slp = new SelectorPanelProvider(fields, true);
+		tdl = new ReadOnceTreeLoader(cv, new Query<TarmedLeistung>(
+				TarmedLeistung.class), "Parent", "ID");
+		ViewerConfigurer vc = new ViewerConfigurer(tdl,
+				new DefaultLabelProvider(), slp,
 				new ViewerConfigurer.DefaultButtonProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE, SWT.NONE,null)
-				);
+				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE,
+						SWT.VIRTUAL, null));
 		return vc;
 	}
 
@@ -48,8 +63,9 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 
 	@Override
 	public void dispose() {
-		// TODO Automatisch erstellter Methoden-Stub
-		
+		cv.dispose();
+		tdl.dispose();
+
 	}
 
 	@Override

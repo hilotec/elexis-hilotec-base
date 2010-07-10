@@ -34,9 +34,9 @@ import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 
 public class Preferences extends PreferencePage implements IWorkbenchPreferencePage {
-	private static final String SPECNUM = "specnum";
-	public static final String FACHDEF = "abrechnung/labor2009/fachdef";
-	public static final String OPTIMIZE = "abrechnung/labor2009/optify";
+	private static final String SPECNUM = "specnum"; //$NON-NLS-1$
+	public static final String FACHDEF = "abrechnung/labor2009/fachdef"; //$NON-NLS-1$
+	public static final String OPTIMIZE = "abrechnung/labor2009/optify"; //$NON-NLS-1$
 	int langdef = 0;
 	Settings cfg = Hub.mandantCfg;
 	LinkedList<Button> buttons = new LinkedList<Button>();
@@ -44,9 +44,9 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	public Preferences(){
 		String lang = JdbcLink.wrap(Hub.localCfg.get( // d,f,i
 			PreferenceConstants.ABL_LANGUAGE, "d").toUpperCase()); //$NON-NLS-1$
-		if (lang.startsWith("F")) {
+		if (lang.startsWith("F")) { //$NON-NLS-1$
 			langdef = 1;
-		} else if (lang.startsWith("I")) {
+		} else if (lang.startsWith("I")) { //$NON-NLS-1$
 			langdef = 2;
 		}
 		
@@ -56,12 +56,12 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	protected Control createContents(Composite parent){
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
-		new Label(ret, SWT.NONE).setText("Bitte Taxpunktwert eintragen");
+		new Label(ret, SWT.NONE).setText(Messages.Preferences_pleaseEnterMultiplier);
 		MultiplikatorEditor me = new MultiplikatorEditor(ret, Labor2009Tarif.MULTIPLICATOR_NAME);
 		me.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		Fachspec[] specs = Importer.loadFachspecs(langdef);
 		Group group = new Group(ret, SWT.BORDER);
-		group.setText("Fachspezialitäten");
+		group.setText(Messages.Preferences_specialities);
 		group.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		group.setLayout(new GridLayout());
 		String[] olddef = cfg.getStringArray(FACHDEF);
@@ -77,7 +77,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		}
 		final Button bOptify = new Button(ret, SWT.CHECK);
 		bOptify.setSelection(Hub.localCfg.get(OPTIMIZE, true));
-		bOptify.setText("Automatische Verrechnung von Zuschlägen");
+		bOptify.setText(Messages.Preferences_automaticallyCalculatioAdditions);
 		bOptify.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e){

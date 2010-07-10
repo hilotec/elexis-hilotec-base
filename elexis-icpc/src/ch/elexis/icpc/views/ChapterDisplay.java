@@ -37,11 +37,11 @@ import ch.elexis.data.Query;
 import ch.elexis.icpc.IcpcCode;
 import ch.elexis.preferences.UserSettings2;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.viewers.CommonContentProviderAdapter;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
-import ch.elexis.util.viewers.ViewerConfigurer.ContentProviderAdapter;
 import ch.rgw.tools.StringTool;
 
 public class ChapterDisplay extends Composite {
@@ -149,7 +149,7 @@ public class ChapterDisplay extends Composite {
 
 	}
 
-	class ComponentContentProvider extends ContentProviderAdapter {
+	class ComponentContentProvider extends CommonContentProviderAdapter {
 		private String component;
 
 		public ComponentContentProvider(String component) {

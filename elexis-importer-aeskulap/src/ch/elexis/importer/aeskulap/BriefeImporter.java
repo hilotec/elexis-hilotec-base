@@ -1,6 +1,7 @@
 package ch.elexis.importer.aeskulap;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 
@@ -10,7 +11,7 @@ import ch.elexis.data.Xid;
 import ch.elexis.importers.ExcelWrapper;
 import ch.elexis.services.GlobalServiceDescriptors;
 import ch.elexis.services.IDocumentManager;
-import ch.elexis.text.FileDocument;
+import ch.elexis.text.GenericDocument;
 import ch.elexis.util.Extensions;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -61,9 +62,9 @@ public class BriefeImporter {
 								.append(briefno).toString());
 				if (file != null) {
 					try {
-						dm.addDocument(new FileDocument(pat,title,
+						dm.addDocument(new GenericDocument(pat,title,
 								CATEGORY_AESKULAP_BRIEFE, file, date,""));
-					} catch (ElexisException e) {
+					} catch (Exception e) {
 						ExHandler.handle(e);
 					}
 				}

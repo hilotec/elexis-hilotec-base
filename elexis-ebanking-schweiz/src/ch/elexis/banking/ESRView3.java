@@ -25,7 +25,7 @@ import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
-import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;

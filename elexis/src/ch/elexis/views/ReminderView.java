@@ -44,6 +44,7 @@ import ch.elexis.dialogs.EditReminderDialog;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
+import ch.elexis.util.viewers.CommonContentProviderAdapter;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
@@ -145,7 +146,7 @@ public class ReminderView extends ViewPart implements IActivationListener,
 		cv = new CommonViewer();
 		filter = new ReminderFilter();
 		vc = new ViewerConfigurer(
-				new ViewerConfigurer.ContentProviderAdapter() {
+				new CommonContentProviderAdapter() {
 					@Override
 					public Object[] getElements(final Object inputElement) {
 						// Display reminders only if one is logged in

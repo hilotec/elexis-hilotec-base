@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,14 +18,16 @@ import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.Desk;
+
 public class TextField extends ActiveControl {
 	
 	public TextField(Composite parent, int displayBits, String displayName){
 		super(parent, displayBits, displayName);
 		setControl(new Text(this,SWT.BORDER));
 		getTextControl().addModifyListener(new ModifyListener(){
-
 			public void modifyText(ModifyEvent e){
+				textContents=getTextControl().getText();
 				fireChangedEvent();
 			}});
 	}
@@ -34,24 +36,19 @@ public class TextField extends ActiveControl {
 		return (Text)ctl;
 	}
 
+	
 	@Override
-	public String getText(){
-		return getTextControl().getText();
-	}
-
-	@Override
-	public void setText(String text){
-		getTextControl().setText(text);
+	public void push(){
+		Desk.syncExec(new Runnable(){
+			public void run(){
+				getTextControl().setText(textContents);
+			}
+		});
 	}
 
 	@Override
 	public boolean isValid(){
-
-		return false;
+		return true;
 	}
-
-	@Override
-	public void clear(){
-		getTextControl().setText("");
-	}
+	
 }

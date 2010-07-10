@@ -167,13 +167,13 @@ public class BlockSelector extends CodeSelectorFactory {
 		
 		public BlockContentProvider2(CommonViewer cv,
 			Query<? extends PersistentObject> qbe, String parentField) {
-			super(cv, qbe, parentField);
+			super(cv, qbe, parentField,"Name");
 		}
 		
 	}
 	
 	public static class BlockContentProvider implements
-	ViewerConfigurer.CommonContentProvider, ITreeContentProvider {
+	ViewerConfigurer.ICommonViewerContentProvider, ITreeContentProvider {
 		CommonViewer cv;
 		ViewerFilter filter;
 		private final ElexisEventListenerImpl eeli_lb = new ElexisEventListenerImpl(
@@ -263,6 +263,12 @@ public class BlockSelector extends CodeSelectorFactory {
 				return !(((Leistungsblock) element).isEmpty());
 			}
 			return false;
+		}
+
+		@Override
+		public void init() {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	};

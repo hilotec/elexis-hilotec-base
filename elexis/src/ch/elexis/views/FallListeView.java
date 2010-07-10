@@ -60,6 +60,7 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.viewers.CommonContentProviderAdapter;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.DefaultContentProvider;
 import ch.elexis.util.viewers.DefaultControlFieldProvider;
@@ -228,7 +229,7 @@ public class FallListeView extends ViewPart implements IActivationListener,
 
 		};
 		behandlCf = new ViewerConfigurer(
-				new ViewerConfigurer.ContentProviderAdapter() {
+				new CommonContentProviderAdapter() {
 					@Override
 					public Object[] getElements(Object inputElement) {
 						if (actFall != null) {

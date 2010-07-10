@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich and Elexis
+ * Copyright (c) 2009-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,9 +23,9 @@ import ch.elexis.artikel_at.views.MedikamentSelector2;
 import ch.elexis.data.Query;
 import ch.elexis.selectors.SelectorPanel;
 import ch.elexis.util.viewers.SelectorPanelProvider;
-import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 
-public class ContentProvider implements CommonContentProvider {
+public class ContentProvider implements ICommonViewerContentProvider {
 	MedikamentSelector2 msl;
 	Query<Medikament> qMedi = new Query<Medikament>(Medikament.class);
 	
@@ -82,5 +82,11 @@ public class ContentProvider implements CommonContentProvider {
 	public void selected(){
 	// TODO Auto-generated method stub
 	
+	}
+
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
 	}
 }

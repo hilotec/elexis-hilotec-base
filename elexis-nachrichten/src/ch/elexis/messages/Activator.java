@@ -12,7 +12,7 @@ public class Activator extends AbstractUIPlugin implements org.eclipse.ui.IStart
 	MsgHeartListener heartListener;
 	
 	// The plug-in ID
-	public static final String PLUGIN_ID = "ch.elexis.messages";
+	public static final String PLUGIN_ID = "ch.elexis.messages"; //$NON-NLS-1$
 
 	// The shared instance
 	private static Activator plugin;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -43,7 +42,7 @@ import ch.rgw.tools.Tree;
  */
 public class ViewerConfigurer {
 	
-	private CommonContentProvider contentProvider;
+	private ICommonViewerContentProvider contentProvider;
 	private LabelProvider labelProvider;
 	ControlFieldProvider controlFieldProvider;
 	private ButtonProvider buttonProvider;
@@ -52,7 +51,7 @@ public class ViewerConfigurer {
 	/**
 	 * Standard Konstruktor. Erstellt einen Viewer mit Kontrollfeld und Button
 	 */
-	public ViewerConfigurer(CommonContentProvider cnp, LabelProvider lp, ControlFieldProvider cfp,
+	public ViewerConfigurer(ICommonViewerContentProvider cnp, LabelProvider lp, ControlFieldProvider cfp,
 		ButtonProvider bp, WidgetProvider wp){
 		
 		contentProvider = cnp;
@@ -69,16 +68,27 @@ public class ViewerConfigurer {
 	 * @param lp
 	 * @param wp
 	 */
-	public ViewerConfigurer(CommonContentProvider cnp, LabelProvider lp, WidgetProvider wp){
+	public ViewerConfigurer(ICommonViewerContentProvider cnp, LabelProvider lp, WidgetProvider wp){
 		contentProvider = cnp;
 		labelProvider = lp;
 		buttonProvider = new DefaultButtonProvider();
 		widgetProvider = wp;
 	}
 	
-	public interface CommonContentProvider extends IStructuredContentProvider, ControlFieldListener {
+	/**
+	 * A ContentProvider vor a CommonViewer. Has Methods to connect to a ControlField
+	 * @author gerry
+	 *
+	 */
+	public interface ICommonViewerContentProvider extends IStructuredContentProvider, ControlFieldListener {
+		/**
+		 * Called after all elements of the CommonViewer are created but before setting input
+		 */
+		public void init();
+		/**
+		 * Called when the ContentProvider is supposed to start listening fpr the Control fields.
+		 */
 		public void startListening();
-		
 		public void stopListening();
 	}
 	
@@ -170,11 +180,11 @@ public class ViewerConfigurer {
 		this.widgetProvider = widgetProvider;
 	}
 	
-	public CommonContentProvider getContentProvider(){
+	public ICommonViewerContentProvider getContentProvider(){
 		return contentProvider;
 	}
 	
-	public void setContentProvider(CommonContentProvider contentProvider){
+	public void setContentProvider(ICommonViewerContentProvider contentProvider){
 		this.contentProvider = contentProvider;
 	}
 	
@@ -202,6 +212,7 @@ public class ViewerConfigurer {
 	 */
 	public static class TreeLabelProvider extends LabelProvider {
 		
+		@SuppressWarnings("unchecked")
 		@Override
 		public String getText(Object element){
 			if (element instanceof Tree) {
@@ -295,85 +306,6 @@ public class ViewerConfigurer {
 		public boolean isAlwaysEnabled(){
 			return false;
 		}
-		
-	}
-	
-	public static class ContentProviderAdapter implements CommonContentProvider {
-		
-		public Object[] getElements(Object inputElement){
-			return null;
-		}
-		
-		public void dispose(){
-
-		}
-		
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
-
-		}
-		
-		public void startListening(){
-		// TODO Automatisch erstellter Methoden-Stub
-		
-		}
-		
-		public void stopListening(){
-		// TODO Automatisch erstellter Methoden-Stub
-		
-		}
-		
-		public void changed(HashMap<String,String> values){
-		// TODO Automatisch erstellter Methoden-Stub
-		
-		}
-		
-		public void reorder(String field){
-		// TODO Automatisch erstellter Methoden-Stub
-		
-		}
-		
-		public void selected(){
-		// TODO Automatisch erstellter Methoden-Stub
-		}
-	}
-	
-	/**
-	 * Sometimes we'd like to use a CommonViewer without controlfield
-	 * 
-	 * @author Gerry
-	 * 
-	 */
-	public static class EmptyControlfieldProvider implements ControlFieldProvider {
-		
-		public void addChangeListener(ControlFieldListener cl){}
-		
-		public void clearValues(){}
-		
-		public Composite createControl(Composite parent){
-			return new Composite(parent, SWT.NONE);
-		}
-		
-		public IFilter createFilter(){
-			return null;
-		}
-		
-		public void fireChangedEvent(){}
-		
-		public void fireSortEvent(String text){}
-		
-		public String[] getValues(){
-			return new String[0];
-		}
-		
-		public boolean isEmpty(){
-			return true;
-		}
-		
-		public void removeChangeListener(ControlFieldListener cl){}
-		
-		public void setFocus(){}
-		
-		public void setQuery(Query q){}
 		
 	}
 	

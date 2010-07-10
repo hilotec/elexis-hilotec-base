@@ -31,6 +31,7 @@ import ch.rgw.tools.Tree;
  * 
  * @see ch.rgw.tools.Tree
  */
+@Deprecated
 public class TreeLoader<T> extends AbstractDataLoaderJob {
 	private String parentColumn;
 	// private int worked;

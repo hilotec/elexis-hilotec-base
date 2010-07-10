@@ -263,7 +263,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 		final LazyTreeListener self = this;
 
 		@SuppressWarnings("unchecked")
-		public void fetchChildren(final LazyTree l) {
+		public boolean fetchChildren(final LazyTree l) {
 			PersistentObject cont = (PersistentObject) l.contents;
 			final Stm stm = PersistentObject.getConnection().getStatement();
 			if (cont == null) {
@@ -357,6 +357,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 					PersistentObject.getConnection().releaseStatement(stm);
 				}
 			}
+			return false;
 		}
 
 		@SuppressWarnings("unchecked")

@@ -119,7 +119,7 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 			if (pat != null) {
 				if (!pat.equals(actPat)) {
 					setKons(pat.getLetzteKons(false));
-					
+
 				}
 			}
 
@@ -173,8 +173,7 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 				KontaktSelektor ksl = new KontaktSelektor(
 						getSite().getShell(),
 						Mandant.class,
-						Messages
-								.getString("KonsDetailView.SelectMandatorCaption"), //$NON-NLS-1$
+						Messages.getString("KonsDetailView.SelectMandatorCaption"), //$NON-NLS-1$
 						Messages.getString("KonsDetailView.SelectMandatorBody")); //$NON-NLS-1$
 				if (ksl.open() == Dialog.OK) {
 					actKons.setMandant((Mandant) ksl.getSelection());
@@ -197,31 +196,22 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 					Fall actFall = actKons.getFall();
 					if (!nFall.getId().equals(actFall.getId())) {
 						if (!nFall.isOpen()) {
-							SWTHelper
-									.alert(
-											Messages
-													.getString("KonsDetailView.CaseClosedCaption"), //$NON-NLS-1$
-											Messages
-													.getString("KonsDetailView.CaseClosedBody")); //$NON-NLS-1$
+							SWTHelper.alert(
+									Messages.getString("KonsDetailView.CaseClosedCaption"), //$NON-NLS-1$
+									Messages.getString("KonsDetailView.CaseClosedBody")); //$NON-NLS-1$
 						} else {
 							MessageDialog msd = new MessageDialog(
 									getViewSite().getShell(),
-									Messages
-											.getString("KonsDetailView.ChangeCaseCaption"), //$NON-NLS-1$
+									Messages.getString("KonsDetailView.ChangeCaseCaption"), //$NON-NLS-1$
 									Desk.getImage(Desk.IMG_LOGO48),
-									MessageFormat
-											.format(
-													Messages
-															.getString("KonsDetailView.ConfirmChangeConsToCase"),
-													new Object[] {
-															actFall.getLabel(),
-															nFall.getLabel() }),
+									MessageFormat.format(
+											Messages.getString("KonsDetailView.ConfirmChangeConsToCase"),
+											new Object[] { actFall.getLabel(),
+													nFall.getLabel() }),
 									MessageDialog.QUESTION,
 									new String[] {
-											Messages
-													.getString("KonsDetailView.Yes"), //$NON-NLS-1$
-											Messages
-													.getString("KonsDetailView.No") }, 0); //$NON-NLS-1$
+											Messages.getString("KonsDetailView.Yes"), //$NON-NLS-1$
+											Messages.getString("KonsDetailView.No") }, 0); //$NON-NLS-1$
 							if (msd.open() == 0) {
 								actKons.setFall(nFall);
 								setKons(actKons);
@@ -236,8 +226,8 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 				| GridData.GRAB_HORIZONTAL);
 		cbFall.setLayoutData(gdFall);
 
-		lVersion = tk.createLabel(form.getBody(), Messages
-				.getString("KonsDetailView.actual")); //$NON-NLS-1$
+		lVersion = tk.createLabel(form.getBody(),
+				Messages.getString("KonsDetailView.actual")); //$NON-NLS-1$
 		GridData gdVer = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.GRAB_HORIZONTAL);
 		lVersion.setLayoutData(gdVer);
@@ -329,7 +319,7 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 		if (pat == null) {
 			pat = ElexisEventDispatcher.getSelectedPatient();
 		}
-		actPat=pat;
+		actPat = pat;
 		if (pat != null) {
 			form.setText(pat.getPersonalia());
 			List<Sticker> etis = pat.getStickers();
@@ -374,8 +364,7 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 			}
 			cbFall.setEnabled(act.isOpen());
 			Mandant m = b.getMandant();
-			lBeh
-					.setText(Messages.getString("KonsDetailView.ConsOfDate") + " " + b.getDatum()); //$NON-NLS-1$
+			lBeh.setText(Messages.getString("KonsDetailView.ConsOfDate") + " " + b.getDatum()); //$NON-NLS-1$
 			StringBuilder sb = new StringBuilder();
 			if (m == null) {
 				sb.append(Messages.getString("KonsDetailView.NotYours")); //$NON-NLS-1$
@@ -395,13 +384,13 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 			vd.setLeistungen(b);
 			text.setEnabled(true);
 			// ElexisEventDispatcher.fireSelectionEvent(b);
-			/*
-			 * if ((ElexisEventDispatcher.getSelected(Konsultation.class) ==
-			 * null) ||
-			 * (!ElexisEventDispatcher.getSelected(Konsultation.class).getId
-			 * ().equals( b.getId()))) { inChange = true;
-			 * ElexisEventDispatcher.fireSelectionEvent(b); }
-			 */
+
+			if ((ElexisEventDispatcher.getSelected(Konsultation.class) == null)
+					|| (!ElexisEventDispatcher.getSelected(Konsultation.class)
+							.getId().equals(b.getId()))) {
+				ElexisEventDispatcher.fireSelectionEvent(b);
+			}
+
 		} else {
 			form.setText(NO_CONS_SELECTED);
 			lBeh.setText("-"); //$NON-NLS-1$
@@ -425,8 +414,7 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 			ResourceItem entry = vr.getVersion(version);
 			ntext = entry.data;
 			StringBuilder sb = new StringBuilder();
-			sb
-					.append("rev. ").append(version).append(Messages.getString("KonsDetailView.of")).append( //$NON-NLS-1$ //$NON-NLS-2$
+			sb.append("rev. ").append(version).append(Messages.getString("KonsDetailView.of")).append( //$NON-NLS-1$ //$NON-NLS-2$
 							new TimeTool(entry.timestamp)
 									.toString(TimeTool.FULL_GER))
 					.append(" (").append(entry.remark).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -443,8 +431,8 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 
 	private void makeActions() {
 
-		purgeAction = new Action(Messages
-				.getString("KonsDetailView.PurgeOldEntries")) { //$NON-NLS-1$
+		purgeAction = new Action(
+				Messages.getString("KonsDetailView.PurgeOldEntries")) { //$NON-NLS-1$
 
 			@Override
 			public void run() {
@@ -453,8 +441,8 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 			}
 
 		};
-		versionBackAction = new Action(Messages
-				.getString("KonsDetailView.PreviousEntry")) { //$NON-NLS-1$
+		versionBackAction = new Action(
+				Messages.getString("KonsDetailView.PreviousEntry")) { //$NON-NLS-1$
 
 			@Override
 			public void run() {
@@ -464,18 +452,16 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 				if (MessageDialog
 						.openConfirm(
 								getViewSite().getShell(),
-								Messages
-										.getString("KonsDetailView.ReplaceKonsTextCaption"), //$NON-NLS-1$
-								Messages
-										.getString("KonsDetailView.ReplaceKonsTextBody"))) { //$NON-NLS-1$
+								Messages.getString("KonsDetailView.ReplaceKonsTextCaption"), //$NON-NLS-1$
+								Messages.getString("KonsDetailView.ReplaceKonsTextBody"))) { //$NON-NLS-1$
 					setKonsText(actKons, displayedVersion - 1);
 					text.setDirty(true);
 				}
 			}
 
 		};
-		versionFwdAction = new Action(Messages
-				.getString("KonsDetailView.nextEntry")) { //$NON-NLS-1$
+		versionFwdAction = new Action(
+				Messages.getString("KonsDetailView.nextEntry")) { //$NON-NLS-1$
 			@Override
 			public void run() {
 				if (actKons == null) {
@@ -484,10 +470,8 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 				if (MessageDialog
 						.openConfirm(
 								getViewSite().getShell(),
-								Messages
-										.getString("KonsDetailView.ReplaceKonsTextCaption"), //$NON-NLS-1$
-								Messages
-										.getString("KonsDetailView.ReplaceKonsTextBody2"))) { //$NON-NLS-1$
+								Messages.getString("KonsDetailView.ReplaceKonsTextCaption"), //$NON-NLS-1$
+								Messages.getString("KonsDetailView.ReplaceKonsTextBody2"))) { //$NON-NLS-1$
 					setKonsText(actKons, displayedVersion + 1);
 					text.setDirty(true);
 				}
