@@ -434,7 +434,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<delete dir="${output}/dokumentation/javadoc" />
 		<echo message="Creating javadoc for ${repositories}" />
 		<javadoc failonerror="false" access="public" destdir="${output}/dokumentation/javadoc" windowtitle="Elexis API documentation" excludepackagenames="org,net,rb,au" charset="utf-8" author="true" version="true" use="true" maxmemory="128M">
-			<fileset dir="${repositories}/elexis-base" defaultexcludes="yes">
+			<fileset dir="${rsc}/../.." defaultexcludes="yes">
 				<include name="elexis/**/*.java" />
 				<include name="elexis-a*/**/*.java" />
 				<include name="elexis-c*/**/*.java" />
@@ -498,10 +498,10 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 	</target>
 
 	<target name="doc_fr" unless="skip_texify" depends="initialize">
-		<exec executable="${texify}" dir="${repositories}/elexis-base/doc_fr" failonerror="true">
+		<exec executable="${texify}" dir="${rsc}/../../doc_fr" failonerror="true">
 			<arg line="${texifyArgs}  elexis.tex" />
 		</exec>
-		<copy file="${repositories}/elexis-base/doc_fr/elexis.pdf" tofile="${dist}/doc/elexis_fr.pdf" />
+		<copy file="${rsc}/../../doc_fr/elexis.pdf" tofile="${dist}/doc/elexis_fr.pdf" />
 	</target>
 
 	<target name="texify" unless="skip_texify">

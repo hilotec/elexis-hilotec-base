@@ -85,7 +85,7 @@ neu.puts("base=#{origin}")
 neu.puts("repositories=#{origin}")
 neu.puts("rsc=#{savedDir}/rsc")
 neu.puts("platform-runtime=#{platformRuntime}/eclipse")
-
+neu.puts("output=#{File.expand_path(File.dirname(savedDir))}/deploy")
 Dir.chdir("#{savedDir}/..")
 if !File.directory?("archie")
 	system("svn checkout http://archie.googlecode.com/svn/archie/ch.unibe.iam.scg.archie/trunk archie");
