@@ -59,14 +59,15 @@ public class ReadOnceTreeLoader extends PersistentObjectLoader implements
 
 	@Override
 	public void updateElement(Object parent, int index) {
-
+		PersistentObject elem;
+		
 		if (parent instanceof PersistentObject) {
-			tv.replace(parent, index,
-					getChildren((PersistentObject) parent)[index]);
+			elem=getChildren((PersistentObject) parent)[index];
 		} else {
-			tv.replace(parent, index, root[index]);
+			elem=root[index];
 		}
-
+		tv.replace(parent, index, elem);
+		updateChildCount(elem,0);
 	}
 
 	@Override
@@ -99,7 +100,7 @@ public class ReadOnceTreeLoader extends PersistentObjectLoader implements
 		qbe.add(parentColumn, Query.EQUALS, parent);
 		applyQueryFilters();
 		if (orderBy != null) {
-			qbe.orderBy(true, orderBy);
+			qbe.orderBy(false, orderBy);
 		}
 	}
 
