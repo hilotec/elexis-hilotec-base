@@ -28,7 +28,7 @@ import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.admin.ACE;
 import ch.elexis.data.Query;
 import ch.elexis.util.Messages;
-import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 
 /**
@@ -38,7 +38,7 @@ import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
  * 
  * @author Gerry
  */
-public class LazyContentProvider implements CommonContentProvider, ILazyContentProvider,
+public class LazyContentProvider implements ICommonViewerContentProvider, ILazyContentProvider,
 		BackgroundJobListener, AbstractDataLoaderJob.FilterProvider {
 	AbstractDataLoaderJob dataloader;
 	CommonViewer tableviewer;
@@ -133,6 +133,12 @@ public class LazyContentProvider implements CommonContentProvider, ILazyContentP
 	
 	public Object[] getElements(Object inputElement){
 		return (Object[]) dataloader.getData();
+	}
+
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

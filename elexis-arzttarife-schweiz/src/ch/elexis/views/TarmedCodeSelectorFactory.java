@@ -22,6 +22,7 @@ import ch.elexis.data.TarmedLeistung;
 import ch.elexis.selectors.FieldDescriptor;
 import ch.elexis.selectors.FieldDescriptor.Typ;
 import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.elexis.util.viewers.SelectorPanelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
@@ -48,7 +49,7 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 		tdl = new ReadOnceTreeLoader(cv, new Query<TarmedLeistung>(
 				TarmedLeistung.class), "Parent", "ID");
 		ViewerConfigurer vc = new ViewerConfigurer(tdl,
-				new ViewerConfigurer.TreeLabelProvider(), slp,
+				new DefaultLabelProvider(), slp,
 				new ViewerConfigurer.DefaultButtonProvider(),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE,
 						SWT.VIRTUAL, null));

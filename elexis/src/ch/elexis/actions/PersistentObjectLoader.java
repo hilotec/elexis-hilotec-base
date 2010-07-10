@@ -22,7 +22,7 @@ import ch.elexis.actions.DelayableJob.IWorker;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.viewers.CommonViewer;
-import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 
 /**
@@ -37,7 +37,7 @@ import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
  * @author Gerry
  * 
  */
-public abstract class PersistentObjectLoader implements CommonContentProvider,
+public abstract class PersistentObjectLoader implements ICommonViewerContentProvider,
 IWorker {
 	public final static String PARAM_FIELDNAMES = "fieldnames"; //$NON-NLS-1$
 	public final static String PARAM_VALUES = "fieldvalues"; //$NON-NLS-1$
@@ -173,5 +173,5 @@ IWorker {
 	public boolean isSuspended(){
 		return bSuspended;
 	}
-	// protected abstract void applyViewerFilter();
+	public void init(){}
 }

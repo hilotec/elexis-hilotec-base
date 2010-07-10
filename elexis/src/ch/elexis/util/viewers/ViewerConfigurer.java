@@ -42,7 +42,7 @@ import ch.rgw.tools.Tree;
  */
 public class ViewerConfigurer {
 	
-	private CommonContentProvider contentProvider;
+	private ICommonViewerContentProvider contentProvider;
 	private LabelProvider labelProvider;
 	ControlFieldProvider controlFieldProvider;
 	private ButtonProvider buttonProvider;
@@ -51,7 +51,7 @@ public class ViewerConfigurer {
 	/**
 	 * Standard Konstruktor. Erstellt einen Viewer mit Kontrollfeld und Button
 	 */
-	public ViewerConfigurer(CommonContentProvider cnp, LabelProvider lp, ControlFieldProvider cfp,
+	public ViewerConfigurer(ICommonViewerContentProvider cnp, LabelProvider lp, ControlFieldProvider cfp,
 		ButtonProvider bp, WidgetProvider wp){
 		
 		contentProvider = cnp;
@@ -68,16 +68,27 @@ public class ViewerConfigurer {
 	 * @param lp
 	 * @param wp
 	 */
-	public ViewerConfigurer(CommonContentProvider cnp, LabelProvider lp, WidgetProvider wp){
+	public ViewerConfigurer(ICommonViewerContentProvider cnp, LabelProvider lp, WidgetProvider wp){
 		contentProvider = cnp;
 		labelProvider = lp;
 		buttonProvider = new DefaultButtonProvider();
 		widgetProvider = wp;
 	}
 	
-	public interface CommonContentProvider extends IStructuredContentProvider, ControlFieldListener {
+	/**
+	 * A ContentProvider vor a CommonViewer. Has Methods to connect to a ControlField
+	 * @author gerry
+	 *
+	 */
+	public interface ICommonViewerContentProvider extends IStructuredContentProvider, ControlFieldListener {
+		/**
+		 * Called after all elements of the CommonViewer are created but before setting input
+		 */
+		public void init();
+		/**
+		 * Called when the ContentProvider is supposed to start listening fpr the Control fields.
+		 */
 		public void startListening();
-		
 		public void stopListening();
 	}
 	
@@ -169,11 +180,11 @@ public class ViewerConfigurer {
 		this.widgetProvider = widgetProvider;
 	}
 	
-	public CommonContentProvider getContentProvider(){
+	public ICommonViewerContentProvider getContentProvider(){
 		return contentProvider;
 	}
 	
-	public void setContentProvider(CommonContentProvider contentProvider){
+	public void setContentProvider(ICommonViewerContentProvider contentProvider){
 		this.contentProvider = contentProvider;
 	}
 	

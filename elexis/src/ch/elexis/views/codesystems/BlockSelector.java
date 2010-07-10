@@ -173,7 +173,7 @@ public class BlockSelector extends CodeSelectorFactory {
 	}
 	
 	public static class BlockContentProvider implements
-	ViewerConfigurer.CommonContentProvider, ITreeContentProvider {
+	ViewerConfigurer.ICommonViewerContentProvider, ITreeContentProvider {
 		CommonViewer cv;
 		ViewerFilter filter;
 		private final ElexisEventListenerImpl eeli_lb = new ElexisEventListenerImpl(
@@ -263,6 +263,12 @@ public class BlockSelector extends CodeSelectorFactory {
 				return !(((Leistungsblock) element).isEmpty());
 			}
 			return false;
+		}
+
+		@Override
+		public void init() {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	};

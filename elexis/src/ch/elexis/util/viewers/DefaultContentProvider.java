@@ -21,7 +21,7 @@ import org.eclipse.jface.viewers.Viewer;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.Messages;
-import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 
 /**
@@ -31,7 +31,7 @@ import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
  * @author Gerry
  * 
  */
-public class DefaultContentProvider implements CommonContentProvider {
+public class DefaultContentProvider implements ICommonViewerContentProvider {
 	protected Class source;
 	protected CommonViewer cv;
 	protected String[] order = null;
@@ -108,5 +108,11 @@ public class DefaultContentProvider implements CommonContentProvider {
 	
 	public void selected(){
 	// nothing to do
+	}
+
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,7 @@ import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
-import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 import ch.rgw.tools.Tree;
 
 public class CodeSelectorFactory extends ch.elexis.views.codesystems.CodeSelectorFactory {
@@ -58,7 +58,7 @@ public class CodeSelectorFactory extends ch.elexis.views.codesystems.CodeSelecto
 		return IcpcCode.class;
 	}
 	
-	public class IcpcCodeContentProvider implements CommonContentProvider, ITreeContentProvider {
+	public class IcpcCodeContentProvider implements ICommonViewerContentProvider, ITreeContentProvider {
 		
 		public void startListening(){}
 		
@@ -102,6 +102,12 @@ public class CodeSelectorFactory extends ch.elexis.views.codesystems.CodeSelecto
 				return t.hasChildren();
 			}
 			return false;
+		}
+
+		@Override
+		public void init() {
+			// TODO Auto-generated method stub
+			
 		}
 		
 	}

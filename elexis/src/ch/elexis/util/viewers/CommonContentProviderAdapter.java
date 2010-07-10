@@ -4,9 +4,9 @@ import java.util.HashMap;
 
 import org.eclipse.jface.viewers.Viewer;
 
-import ch.elexis.util.viewers.ViewerConfigurer.CommonContentProvider;
+import ch.elexis.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 
-public class CommonContentProviderAdapter implements CommonContentProvider {
+public class CommonContentProviderAdapter implements ICommonViewerContentProvider {
 	
 	public Object[] getElements(Object inputElement){
 		return null;
@@ -42,5 +42,11 @@ public class CommonContentProviderAdapter implements CommonContentProvider {
 	
 	public void selected(){
 	// TODO Automatisch erstellter Methoden-Stub
+	}
+
+	@Override
+	public void init() {
+		// TODO Auto-generated method stub
+		
 	}
 }

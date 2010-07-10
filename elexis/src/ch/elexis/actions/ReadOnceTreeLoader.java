@@ -9,6 +9,7 @@ import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
+import ch.elexis.Desk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.viewers.CommonViewer;
@@ -44,16 +45,15 @@ public class ReadOnceTreeLoader extends PersistentObjectLoader implements
 
 	@Override
 	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params) {
-		if (slp == null) {
-			slp = (SelectorPanelProvider) cv.getConfigurer()
-					.getControlFieldProvider();
-		}
-		if (filter == null) {
-			filter = (ViewerFilter) slp.createFilter();
-		}
-		tv = (TreeViewer) cv.getViewerWidget();
-		tv.setChildCount("", root.length);
-		tv.setFilters(new ViewerFilter[] {filter});
+		Desk.asyncExec(new Runnable() {
+
+			@Override
+			public void run() {
+				tv.setChildCount("", root.length);
+				//tv.setFilters(new ViewerFilter[] { filter });
+				tv.refresh(true);
+			}
+		});
 		return Status.OK_STATUS;
 	}
 
@@ -64,7 +64,7 @@ public class ReadOnceTreeLoader extends PersistentObjectLoader implements
 			tv.replace(parent, index,
 					getChildren((PersistentObject) parent)[index]);
 		} else {
-			tv.replace("", index, root[index]);
+			tv.replace(parent, index, root[index]);
 		}
 
 	}
@@ -75,14 +75,14 @@ public class ReadOnceTreeLoader extends PersistentObjectLoader implements
 			tv.setChildCount(element,
 					getChildren((PersistentObject) element).length);
 		} else {
-			tv.setChildCount("", root.length);
+			tv.setChildCount(element, root.length);
 		}
 	}
 
 	@Override
 	public Object getParent(Object element) {
-		// TODO Auto-generated method stub
-		return null;
+		PersistentObject po = (PersistentObject) element;
+		return po.get(parentColumn);
 	}
 
 	private PersistentObject[] getChildren(PersistentObject parent) {
@@ -101,6 +101,18 @@ public class ReadOnceTreeLoader extends PersistentObjectLoader implements
 		if (orderBy != null) {
 			qbe.orderBy(true, orderBy);
 		}
+	}
+
+	@Override
+	public void init() {
+		if (slp == null) {
+			slp = (SelectorPanelProvider) cv.getConfigurer()
+					.getControlFieldProvider();
+		}
+		if (filter == null) {
+			filter = (ViewerFilter) slp.createFilter();
+		}
+		tv = (TreeViewer) cv.getViewerWidget();
 	}
 
 }
