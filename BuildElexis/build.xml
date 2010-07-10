@@ -107,7 +107,7 @@
 	<target name="update" unless="unplugged">
 		<for param="repo">
 			<path>
-				<dirset dir="${repositories}" includes="*" />
+				<dirset dir="${repositories}" includes="*/.hg" />
 			</path>
 			<sequential>
 				<exec executable="${hg}" dir="@{repo}">
