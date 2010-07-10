@@ -40,13 +40,16 @@ import com.tiff.common.ui.datepicker.DatePicker;
  */
 public class EditAUFDialog extends TitleAreaDialog {
 	private AUF auf;
+	private Fall fall;
 	private DatePicker dpVon, dpBis;
 	private Text tProzent, tGrund, tZusatz;
 	TimeTool tt = new TimeTool();
 	
-	public EditAUFDialog(Shell shell, AUF a) {
+	
+	public EditAUFDialog(Shell shell, AUF a, Fall fall) {
 		super(shell);
 		auf = a;
+		this.fall=fall;
 	}
 	
 	@Override
@@ -82,9 +85,13 @@ public class EditAUFDialog extends TitleAreaDialog {
 			tProzent.setText(auf.getProzent());
 			tZusatz.setText(auf.getZusatz());
 		} else {
-			Fall fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+			if(fall==null){
+				fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+			}
 			if (fall != null) {
 				tGrund.setText(fall.getGrund());
+			}else{
+				setMessage("Bitte wählen Sie zuerst einen Fall für diese AUF aus");
 			}
 			tProzent.setText("100"); //$NON-NLS-1$
 			dpVon.setDate(tt.getTime());
@@ -114,7 +121,7 @@ public class EditAUFDialog extends TitleAreaDialog {
 		tt.setTimeInMillis(dpBis.getDate().getTime());
 		String bis = tt.toString(TimeTool.DATE_GER);
 		String zus = tZusatz.getText();
-		Fall fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+		//Fall fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
 		if (auf == null) {
 			auf = new AUF(fall, von, bis, tProzent.getText(), tGrund.getText());
 			if (!StringTool.isNothing(zus)) {

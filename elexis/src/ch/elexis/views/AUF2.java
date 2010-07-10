@@ -79,7 +79,6 @@ public class AUF2 extends ViewPart implements IActivationListener {
 		}
 	};
 
-
 	public AUF2() {
 		setTitleImage(Desk.getImage(ICON));
 	}
@@ -130,27 +129,39 @@ public class AUF2 extends ViewPart implements IActivationListener {
 				Patient pat = (Patient) ElexisEventDispatcher
 						.getSelected(Patient.class);
 				if (pat == null) {
-					SWTHelper.showError(Messages
-							.getString("AUF2.NoPatientSelected"), //$NON-NLS-1$
+					SWTHelper.showError(
+							Messages.getString("AUF2.NoPatientSelected"), //$NON-NLS-1$
 							Messages.getString("AUF2.PleaseDoSelectPatient")); //$NON-NLS-1$
 					return;
 				}
-				if (ElexisEventDispatcher.getSelected(Fall.class) == null) {
-					Konsultation kons = (Konsultation) ElexisEventDispatcher
-							.getSelected(Konsultation.class);
-					if (kons == null) {
-						kons = pat.getLetzteKons(false);
-						if (kons == null) {
-							SWTHelper
-									.showError(
-											Messages
-													.getString("AUF2.noCaseSelected"), Messages.getString("AUF2.selectCase")); //$NON-NLS-1$ //$NON-NLS-2$
-							return;
-						}
+				Konsultation kons = (Konsultation) ElexisEventDispatcher
+						.getSelected(Konsultation.class);
+				Fall fall = null;
+				if(kons!=null){
+					fall = kons.getFall();
+					if (fall == null) {
+						SWTHelper
+								.showError(
+										Messages.getString("AUF2.noCaseSelected"), Messages.getString("AUF2.selectCase")); //$NON-NLS-1$ //$NON-NLS-2$
+						return;
+
 					}
-					ElexisEventDispatcher.fireSelectionEvent(kons.getFall());
+					if(!fall.getPatient().equals(pat)){
+						kons=null;
+					}
 				}
-				new EditAUFDialog(getViewSite().getShell(), null).open();
+				if (kons == null) {
+					kons = pat.getLetzteKons(false);
+					if (kons == null) {
+						SWTHelper
+								.showError(
+										Messages.getString("AUF2.noCaseSelected"), Messages.getString("AUF2.selectCase")); //$NON-NLS-1$ //$NON-NLS-2$
+						return;
+					}
+					fall = kons.getFall();
+				} 
+				new EditAUFDialog(getViewSite().getShell(), null,
+						fall).open();
 				tv.refresh(false);
 			}
 		};
@@ -184,7 +195,8 @@ public class AUF2 extends ViewPart implements IActivationListener {
 			public void run() {
 				AUF sel = getSelectedAUF();
 				if (sel != null) {
-					new EditAUFDialog(getViewSite().getShell(), sel).open();
+					new EditAUFDialog(getViewSite().getShell(), sel,
+							sel.getFall()).open();
 					tv.refresh(true);
 				}
 			}
@@ -248,12 +260,13 @@ public class AUF2 extends ViewPart implements IActivationListener {
 
 	public void visible(boolean mode) {
 		if (mode) {
-			ElexisEventDispatcher.getInstance().addListeners(eli_auf,eli_pat);
+			ElexisEventDispatcher.getInstance().addListeners(eli_auf, eli_pat);
 			eli_pat.catchElexisEvent(new ElexisEvent(ElexisEventDispatcher
 					.getSelected(Patient.class), null,
 					ElexisEvent.EVENT_SELECTED));
 		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eli_auf,eli_pat);
+			ElexisEventDispatcher.getInstance().removeListeners(eli_auf,
+					eli_pat);
 		}
 	}
 
