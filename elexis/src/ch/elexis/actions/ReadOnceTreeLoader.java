@@ -153,7 +153,7 @@ public class ReadOnceTreeLoader extends PersistentObjectLoader implements
 				Object element) {
 			PersistentObject po = (PersistentObject) element;
 			HashMap<String, String> vals = panel.getValues();
-			if (po.isMatching(vals, PersistentObject.MATCH_LIKE)) {
+			if (po.isMatching(vals, PersistentObject.MATCH_LIKE,true)) {
 				return true;
 			} else {
 				for (Object poc : getChildren(po)) {

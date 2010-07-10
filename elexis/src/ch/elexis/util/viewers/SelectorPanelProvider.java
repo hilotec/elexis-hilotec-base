@@ -21,7 +21,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.widgets.Composite;
 
-import ch.elexis.Desk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.selectors.ActiveControl;
@@ -221,7 +220,7 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 				return false;
 			}
 			HashMap<String, String> vals = slp.getValues();
-			if (po.isMatching(vals, PersistentObject.MATCH_LIKE)) {
+			if (po.isMatching(vals, PersistentObject.MATCH_LIKE,true)) {
 				return true;
 			} else {
 				if (element instanceof Tree) {
