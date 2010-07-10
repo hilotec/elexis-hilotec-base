@@ -52,7 +52,7 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 				new DefaultLabelProvider(), slp,
 				new ViewerConfigurer.DefaultButtonProvider(),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE,
-						SWT.VIRTUAL, null));
+						SWT.NONE, null));
 		return vc;
 	}
 
