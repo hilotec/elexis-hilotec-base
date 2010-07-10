@@ -54,7 +54,7 @@ if /linux/i.match RUBY_PLATFORM
   if !File.exists?(eclipse)
     cmd = "tar -zxf #{platformRuntimeTar}"
   end
-elsif /mingw|msys/i.match RUBY_PLATFORM
+elsif /mingw|msys|mswin/i.match RUBY_PLATFORM
   platformRuntimeTar = "#{HudsonRoot}/downloads/eclipse-rcp-#{EclipseVers}-win32.zip"
   if !File.exists?(eclipse+".exe")
     cmd = "unzip #{platformRuntimeTar}".gsub('/','\\\\')
