@@ -30,6 +30,7 @@ public class TarmedRequirements {
 	public static final String EAN_PSEUDO="2000000000000"; //$NON-NLS-1$
 	public static final String EAN_PROVIDER="ean_provider"; //$NON-NLS-1$
 	public static final String EAN_RESPONSIBLE="ean_responsible"; //$NON-NLS-1$
+	public static final String EAN_PATTERN="[0-9]{13}"; 
 	
 	public static final String ACCIDENT_DATE=Messages.getString("TarmedRequirements.AccidentDate"); //$NON-NLS-1$
 	public static final String CASE_LAW=Messages.getString("TarmedRequirements.Law"); //$NON-NLS-1$

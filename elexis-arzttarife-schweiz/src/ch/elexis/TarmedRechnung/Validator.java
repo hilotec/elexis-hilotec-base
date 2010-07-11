@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,7 @@ public class Validator {
 		Rechnung rn=xp.rn;
 		Kontakt m=rn.getMandant();
 		if(rn.getStatus()>RnStatus.OFFEN){
-			return res;	// Wenn sie eh schon gedrcukt war machen wir kein Büro mehr auf
+			return res;	// Wenn sie eh schon gedruckt war machen wir kein Büro mehr auf
 		}
 		
 		if((m==null) || (!m.isValid()) ){
@@ -60,11 +60,11 @@ public class Validator {
 		}
 		ean=TarmedRequirements.getEAN(kostentraeger);
 		
-		if(StringTool.isNothing(ean) || (!ean.matches("[0-9]{13}"))){ //$NON-NLS-1$
+		if(StringTool.isNothing(ean) || (!ean.matches(TarmedRequirements.EAN_PATTERN))){ 
 			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoEAN2);
 			res.add(Result.SEVERITY.ERROR,6,Messages.Validator_NoEAN2,rn,true);
 		}
-		String bez=kostentraeger.get("Bezeichnung1"); //$NON-NLS-1$
+		String bez=kostentraeger.get(Kontakt.FLD_NAME1); 
 		if(StringTool.isNothing(bez)){
 			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoName);
 			res.add(Result.SEVERITY.ERROR,7,Messages.Validator_NoName,rn,true);
