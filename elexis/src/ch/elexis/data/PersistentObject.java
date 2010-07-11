@@ -111,6 +111,7 @@ import ch.rgw.tools.net.NetTool;
  * @author gerry
  */
 public abstract class PersistentObject implements ISelectable {
+	private static final String MAPPING_ERROR_MARKER = "**ERROR:";
 	public static final String CFG_CONNECTSTRING = "connectionstring";
 	public static final String CFG_TYPE = "typ";
 	public static final String CFG_PWD = "pwd";
@@ -204,10 +205,8 @@ public abstract class PersistentObject implements ISelectable {
 			String template = System.getProperty("SWTBot-DBTemplate");
 			File dbDir = new File(Hub.getTempDir(), "Elexis-SWTBot");
 			if (template == null || (!new File(template).isDirectory())) {
-				log
-						.log(
-								"No template directory for Test database set (Property SWTBot-DBTemplate)",
-								Log.FATALS);
+				log.log("No template directory for Test database set (Property SWTBot-DBTemplate)",
+						Log.FATALS);
 				System.exit(-4);
 			}
 			try {
@@ -245,18 +244,18 @@ public abstract class PersistentObject implements ISelectable {
 		String typ = "";
 		String connectstring = "";
 		Hashtable<Object, Object> hConn = null;
-		String connection=Hub.getCfgVariant();
-		ConfigurationScope pref=new ConfigurationScope();
-		IEclipsePreferences node=pref.getNode("connection");
-		String cnt=node.get(connection, null);
+		String connection = Hub.getCfgVariant();
+		ConfigurationScope pref = new ConfigurationScope();
+		IEclipsePreferences node = pref.getNode("connection");
+		String cnt = node.get(connection, null);
 		if (cnt != null) {
 			hConn = fold(StringTool.dePrintable(cnt));
 			if (hConn != null) {
-				driver = checkNull((String)hConn.get(CFG_DRIVER));
-				user = checkNull((String)hConn.get(CFG_USER));
-				pwd = checkNull((String)hConn.get(CFG_PWD));
-				typ = checkNull((String)hConn.get(CFG_TYPE));
-				connectstring = checkNull((String)hConn.get(CFG_CONNECTSTRING));
+				driver = checkNull((String) hConn.get(CFG_DRIVER));
+				user = checkNull((String) hConn.get(CFG_USER));
+				pwd = checkNull((String) hConn.get(CFG_PWD));
+				typ = checkNull((String) hConn.get(CFG_TYPE));
+				connectstring = checkNull((String) hConn.get(CFG_CONNECTSTRING));
 			}
 
 		}
@@ -315,8 +314,8 @@ public abstract class PersistentObject implements ISelectable {
 				if (stm.execScript(is, true, true) == true) {
 					Log.setAlertLevel(Log.FATALS);
 					Hub.globalCfg.undo();
-					Hub.globalCfg.set("created", new TimeTool()
-							.toString(TimeTool.FULL_GER));
+					Hub.globalCfg.set("created",
+							new TimeTool().toString(TimeTool.FULL_GER));
 					Hub.acl.load();
 					Anwender.init();
 					Mandant.init();
@@ -352,8 +351,8 @@ public abstract class PersistentObject implements ISelectable {
 		}
 		// Zugriffskontrolle initialisieren
 		Hub.acl.load();
-		VersionInfo vi = new VersionInfo(Hub.globalCfg
-				.get("dbversion", "0.0.0"));
+		VersionInfo vi = new VersionInfo(
+				Hub.globalCfg.get("dbversion", "0.0.0"));
 		log.log("Verlangte Datenbankversion: " + Hub.DBVersion, Log.INFOS);
 		log.log("Gefundene Datenbankversion: " + vi.version(), Log.INFOS);
 		if (vi.isOlder(Hub.DBVersion)) {
@@ -494,9 +493,9 @@ public abstract class PersistentObject implements ISelectable {
 			String lockstring = lockid + "#"
 					+ Long.toString(System.currentTimeMillis());
 			StringBuilder sb = new StringBuilder();
-			sb.append("INSERT INTO CONFIG (param,wert) VALUES (").append(
-					JdbcLink.wrap(lockname)).append(",").append("'").append(
-					lockstring).append("')");
+			sb.append("INSERT INTO CONFIG (param,wert) VALUES (")
+					.append(JdbcLink.wrap(lockname)).append(",").append("'")
+					.append(lockstring).append("')");
 			stm.exec(sb.toString());
 			// Prüfen, ob wir es wirklich haben, oder ob doch jemand anders
 			// schneller war.
@@ -531,9 +530,8 @@ public abstract class PersistentObject implements ISelectable {
 		String[] res = lock.split("#");
 		if (res[0].equals(id)) {
 			getConnection()
-					.exec(
-							"DELETE FROM CONFIG WHERE param="
-									+ JdbcLink.wrap(lockname));
+					.exec("DELETE FROM CONFIG WHERE param="
+							+ JdbcLink.wrap(lockname));
 			return true;
 		}
 		return false;
@@ -861,9 +859,9 @@ public abstract class PersistentObject implements ISelectable {
 			ret.remove(et);
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append("DELETE FROM ").append(Sticker.LINKTABLE).append(
-				" WHERE obj=").append(getWrappedId()).append(" AND etikette=")
-				.append(et.getWrappedId());
+		sb.append("DELETE FROM ").append(Sticker.LINKTABLE)
+				.append(" WHERE obj=").append(getWrappedId())
+				.append(" AND etikette=").append(et.getWrappedId());
 		getConnection().exec(sb.toString());
 	}
 
@@ -885,9 +883,9 @@ public abstract class PersistentObject implements ISelectable {
 			ret.add(et);
 			Collections.sort(ret);
 			StringBuilder sb = new StringBuilder();
-			sb.append("INSERT INTO ").append(Sticker.LINKTABLE).append(
-					"(obj,etikette) VALUES (").append(getWrappedId()).append(
-					",").append(et.getWrappedId()).append(");");
+			sb.append("INSERT INTO ").append(Sticker.LINKTABLE)
+					.append("(obj,etikette) VALUES (").append(getWrappedId())
+					.append(",").append(et.getWrappedId()).append(");");
 			getConnection().exec(sb.toString());
 		}
 	}
@@ -926,7 +924,7 @@ public abstract class PersistentObject implements ISelectable {
 		String res = mapping.get(prefix + f);
 		if (res == null) {
 			log.log("field is not mapped " + f, Log.INFOS);
-			return "**ERROR:" + f + "**";
+			return MAPPING_ERROR_MARKER + f + "**";
 		}
 		return res;
 	}
@@ -972,7 +970,7 @@ public abstract class PersistentObject implements ISelectable {
 			int ix = mapped.indexOf(':', 5);
 			if (ix == -1) {
 				log.log("Fehlerhaftes Mapping bei " + field, Log.ERRORS);
-				return "**ERROR: " + field + "**";
+				return MAPPING_ERROR_MARKER + " " + field + "**";
 			}
 			table = mapped.substring(4, ix);
 			mapped = mapped.substring(ix + 1);
@@ -1006,10 +1004,11 @@ public abstract class PersistentObject implements ISelectable {
 				}
 				return sb.toString();
 			}
-		} else if (mapped.startsWith("**")) { // If the field could not be
+		} else if (mapped.startsWith(MAPPING_ERROR_MARKER)) { // If the field
+																// could not be
 			// mapped
 			String exi = map(FLD_EXTINFO); // Try to find it in ExtInfo
-			if (!exi.startsWith("**")) {
+			if (!exi.startsWith(MAPPING_ERROR_MARKER)) {
 				Hashtable ht = getHashtable(FLD_EXTINFO);
 				Object res = ht.get(field);
 				if (res instanceof String) {
@@ -1173,8 +1172,8 @@ public abstract class PersistentObject implements ISelectable {
 
 				sql.append("SELECT ID FROM ").append(m[2]).append(" WHERE ");
 				if (showDeleted == false) {
-					sql.append("deleted=").append(JdbcLink.wrap("0")).append(
-							" AND ");
+					sql.append("deleted=").append(JdbcLink.wrap("0"))
+							.append(" AND ");
 				}
 				sql.append(m[1]).append("=").append(getWrappedId());
 				if (m.length > 3) {
@@ -1219,8 +1218,8 @@ public abstract class PersistentObject implements ISelectable {
 			for (String ex : extra) {
 				sql.append(",").append(ex);
 			}
-			sql.append(" FROM ").append(abfr[3]).append(" WHERE ").append(
-					abfr[2]).append("=").append(getWrappedId());
+			sql.append(" FROM ").append(abfr[3]).append(" WHERE ")
+					.append(abfr[2]).append("=").append(getWrappedId());
 
 			Stm stm = getConnection().getStatement();
 			ResultSet rs = stm.query(sql.toString());
@@ -1271,10 +1270,12 @@ public abstract class PersistentObject implements ISelectable {
 
 		if (value == null) {
 			cache.remove(key);
-			sql.append("UPDATE ").append(table).append(" SET ").append(mapped)
-					.append(
-							"=NULL, lastupdate=" + Long.toString(ts)
-									+ " WHERE ID=").append(getWrappedId());
+			sql.append("UPDATE ")
+					.append(table)
+					.append(" SET ")
+					.append(mapped)
+					.append("=NULL, lastupdate=" + Long.toString(ts)
+							+ " WHERE ID=").append(getWrappedId());
 			getConnection().exec(sql.toString());
 			return true;
 		}
@@ -1346,9 +1347,8 @@ public abstract class PersistentObject implements ISelectable {
 			cache.put(getKey(field), hash, getCacheTime());
 			return setBinary(field, bin);
 		} catch (Throwable ex) {
-			log
-					.log("Fehler beim Speichern von " + field + " von "
-							+ getLabel(), Log.ERRORS);
+			log.log("Fehler beim Speichern von " + field + " von " + getLabel(),
+					Log.ERRORS);
 			MessageDialog.openError(Hub.getActiveShell(), "Interner Fehler",
 					"Konnte " + field + " von " + getLabel()
 							+ " nicht speichern!");
@@ -1460,12 +1460,12 @@ public abstract class PersistentObject implements ISelectable {
 			if (m.length > 3) {
 				StringBuffer head = new StringBuffer(100);
 				StringBuffer tail = new StringBuffer(100);
-				head.append("INSERT INTO ").append(m[3]).append("(ID,").append(
-						m[2]).append(",").append(m[1]);
-				tail.append(") VALUES (").append(
-						JdbcLink.wrap(StringTool.unique("aij"))).append(",")
-						.append(getWrappedId()).append(",").append(
-								JdbcLink.wrap(oID));
+				head.append("INSERT INTO ").append(m[3]).append("(ID,")
+						.append(m[2]).append(",").append(m[1]);
+				tail.append(") VALUES (")
+						.append(JdbcLink.wrap(StringTool.unique("aij")))
+						.append(",").append(getWrappedId()).append(",")
+						.append(JdbcLink.wrap(oID));
 				if (extra != null) {
 					for (String s : extra) {
 						String[] def = s.split("=");
@@ -1500,8 +1500,8 @@ public abstract class PersistentObject implements ISelectable {
 				StringBuilder sql = new StringBuilder(200);
 				sql.append("DELETE FROM ").append(m[3]).append(" WHERE ")
 						.append(m[2]).append("=").append(getWrappedId())
-						.append(" AND ").append(m[1]).append("=").append(
-								JdbcLink.wrap(oID));
+						.append(" AND ").append(m[1]).append("=")
+						.append(JdbcLink.wrap(oID));
 				if (tracetable != null) {
 					String sq = sql.toString();
 					doTrace(sq);
@@ -1527,14 +1527,13 @@ public abstract class PersistentObject implements ISelectable {
 			id = customID;
 		}
 		StringBuffer sql = new StringBuffer(300);
-		sql.append("INSERT INTO ").append(getTableName()).append(
-				"(ID) VALUES (").append(getWrappedId()).append(")");
+		sql.append("INSERT INTO ").append(getTableName())
+				.append("(ID) VALUES (").append(getWrappedId()).append(")");
 		if (getConnection().exec(sql.toString()) != 0) {
 			setConstraint();
 			ElexisEventDispatcher.getInstance()
-					.fire(
-							new ElexisEvent(this, getClass(),
-									ElexisEvent.EVENT_CREATE));
+					.fire(new ElexisEvent(this, getClass(),
+							ElexisEvent.EVENT_CREATE));
 			return true;
 		}
 		return false;
@@ -1561,9 +1560,8 @@ public abstract class PersistentObject implements ISelectable {
 				ElexisEventDispatcher.clearSelection(this.getClass());
 			}
 			ElexisEventDispatcher.getInstance()
-					.fire(
-							new ElexisEvent(this, getClass(),
-									ElexisEvent.EVENT_DELETE));
+					.fire(new ElexisEvent(this, getClass(),
+							ElexisEvent.EVENT_DELETE));
 			return true;
 		}
 		return false;
@@ -1586,9 +1584,8 @@ public abstract class PersistentObject implements ISelectable {
 		String[] m = mapped.split(":");// m[1] FremdID, m[2] eigene ID, m[3]
 		// Name Joint
 		getConnection()
-				.exec(
-						"DELETE FROM " + m[3] + " WHERE " + m[2] + "="
-								+ getWrappedId());
+				.exec("DELETE FROM " + m[3] + " WHERE " + m[2] + "="
+						+ getWrappedId());
 		return true;
 	}
 
@@ -1610,9 +1607,8 @@ public abstract class PersistentObject implements ISelectable {
 			showDeleted = oldShowDeleted;
 			new DBLog(this, DBLog.TYP.UNDELETE);
 			ElexisEventDispatcher.getInstance()
-					.fire(
-							new ElexisEvent(this, getClass(),
-									ElexisEvent.EVENT_CREATE));
+					.fire(new ElexisEvent(this, getClass(),
+							ElexisEvent.EVENT_CREATE));
 			return true;
 		}
 		return false;
@@ -1838,9 +1834,23 @@ public abstract class PersistentObject implements ISelectable {
 		return ret;
 	}
 
+	/** Strings must match exactly (but ignore case) */
 	public static final int MATCH_EXACT = 0;
-	public static final int MATCH_LIKE = 1;
+	/** String must start with test (ignoring case) */
+	public static final int MATCH_START = 1;
+	/** String must match as regular expression */
 	public static final int MATCH_REGEXP = 2;
+	/** String must contain test (ignoring case) */
+	public static final int MATCH_CONTAINS = 3;
+	/**
+	 * Try to find match method.
+	 * <ul>
+	 * <li>If test starts with % or * use MATCH_CONTAINS</li>
+	 * <li>If test is enclosed in / use MATCH_REGEXP</li>
+	 * </ul>
+	 * 
+	 */
+	public static final int MATCH_AUTO = 4;
 
 	/**
 	 * Testet ob zwei Objekte bezüglich definierbarer Felder übereinstimmend
@@ -1897,13 +1907,17 @@ public abstract class PersistentObject implements ISelectable {
 					return false;
 				}
 				break;
-			case MATCH_LIKE:
+			case MATCH_START:
 				if (!mine[i].toLowerCase().startsWith(others[i].toLowerCase())) {
 					return false;
 				}
 				break;
 			case MATCH_REGEXP:
 				if (!mine[i].matches(others[i])) {
+					return false;
+				}
+			case MATCH_CONTAINS:
+				if (!mine[i].toLowerCase().contains(others[i].toLowerCase())) {
 					return false;
 				}
 			}
@@ -1918,21 +1932,31 @@ public abstract class PersistentObject implements ISelectable {
 	 * @param fields
 	 *            HashMap mit name,wert paaren für die Felder
 	 * @param mode
-	 *            Testmodus (MATCH_EXACT, MATCH_LIKE oder MATCH_REGEXP)
+	 *            Testmodus (MATCH_EXACT, MATCH_BEGIN, MATCH_REGEXP,
+	 *            MATCH_CONTAIN oder MATCH_AUTO)
+	 * @param bSkipInexisting
+	 *            don't return false if a fieldname is not found but skip this
+	 *            field instead
 	 * @return true wenn dieses Objekt die entsprechenden Felder hat
 	 */
 	public boolean isMatching(final HashMap<String, String> fields,
-			final int mode) {
+			final int mode, final boolean bSkipInexisting) {
 		for (Entry<String, String> entry : fields.entrySet()) {
 			String mine = get(entry.getKey());
 			String others = entry.getValue();
+			if (bSkipInexisting) {
+				if (mine.startsWith(MAPPING_ERROR_MARKER)
+						|| others.startsWith(MAPPING_ERROR_MARKER)) {
+					continue;
+				}
+			}
 			switch (mode) {
 			case MATCH_EXACT:
 				if (!mine.toLowerCase().equals(others.toLowerCase())) {
 					return false;
 				}
 				break;
-			case MATCH_LIKE:
+			case MATCH_START:
 				if (!mine.toLowerCase().startsWith(others.toLowerCase())) {
 					return false;
 				}
@@ -1940,6 +1964,21 @@ public abstract class PersistentObject implements ISelectable {
 			case MATCH_REGEXP:
 				if (!mine.matches(others)) {
 					return false;
+				}
+			case MATCH_CONTAINS:
+				if (!mine.toLowerCase().contains(others.toLowerCase())) {
+					return false;
+				}
+			case MATCH_AUTO:
+				String my=mine.toLowerCase();
+				if(others.startsWith("%") || others.startsWith("*")){
+					if(!my.contains(others.substring(1).toLowerCase())){
+						return false;
+					}
+				}else{
+					if(!my.startsWith(others.toLowerCase())){
+						return false;
+					}
 				}
 			}
 		}
@@ -2012,13 +2051,13 @@ public abstract class PersistentObject implements ISelectable {
 	 * @return the field contents or "" if it was null
 	 */
 	public static String checkNull(final Object in) {
-		if(in==null){
+		if (in == null) {
 			return "";
 		}
-		if(!(in instanceof String)){
+		if (!(in instanceof String)) {
 			return "";
 		}
-		return (String)in;
+		return (String) in;
 	}
 
 	/**
@@ -2130,8 +2169,8 @@ public abstract class PersistentObject implements ISelectable {
 	 */
 	protected static void createOrModifyTable(final String sqlScript) {
 		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
-					new IRunnableWithProgress() {
+			PlatformUI.getWorkbench().getProgressService()
+					.busyCursorWhile(new IRunnableWithProgress() {
 						public void run(IProgressMonitor moni) {
 							moni.beginTask("Führe Datenbankmodifikation aus",
 									IProgressMonitor.UNKNOWN);
@@ -2227,7 +2266,7 @@ public abstract class PersistentObject implements ISelectable {
 	 *         from the array
 	 */
 	@SuppressWarnings("unchecked")
-	public static Hashtable<Object,Object> fold(final byte[] flat) {
+	public static Hashtable<Object, Object> fold(final byte[] flat) {
 		try {
 			ByteArrayInputStream bais = new ByteArrayInputStream(flat);
 			ZipInputStream zis = new ZipInputStream(bais);

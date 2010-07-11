@@ -112,9 +112,9 @@ import ch.rgw.tools.XMLTool;
  * 
  */
 public class XMLExporter implements IRnOutputter {
-	public static final String ATTR_REMARK = "remark";
-	public static final String ELEMENT_TIERS_PAYANT = "tiers_payant";
-	public static final String ELEMENT_TIERS_GARANT = "tiers_garant";
+	public static final String ATTR_REMARK = "remark"; //$NON-NLS-1$
+	public static final String ELEMENT_TIERS_PAYANT = "tiers_payant"; //$NON-NLS-1$
+	public static final String ELEMENT_TIERS_GARANT = "tiers_garant"; //$NON-NLS-1$
 	private static final String ELEMENT_EMAIL = "email"; //$NON-NLS-1$
 	private static final String ELEMENT_ONLINE = "online"; //$NON-NLS-1$
 	public static final String ATTR_CODE = "code"; //$NON-NLS-1$
@@ -656,7 +656,7 @@ public class XMLExporter implements IRnOutputter {
 				IVerrechenbar v = vv.getVerrechenbar();
 				
 				if (v == null) {
-					log.log(Messages.XMLExporter_ErroneusBill + rn.getNr() + " Null-Verrechenbar bei Kons " //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-1$
+					log.log(Messages.XMLExporter_ErroneusBill + rn.getNr() + " Null-Verrechenbar bei Kons " //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-1$
 						+ b.getLabel(), Log.ERRORS);
 					continue;
 				}
@@ -755,7 +755,7 @@ public class XMLExporter implements IRnOutputter {
 						List<RFE> rfes=RFE.getRfeForKons(b.getId());
 						StringBuilder sb=new StringBuilder();
 						for(RFE rfe:rfes){
-							sb.append("551_").append(rfe.getCode()).append(" ");
+							sb.append("551_").append(rfe.getCode()).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
 						}
 						el.setAttribute(ATTR_REMARK,sb.toString());
 					}

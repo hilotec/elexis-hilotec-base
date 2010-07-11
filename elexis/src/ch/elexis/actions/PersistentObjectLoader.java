@@ -86,6 +86,9 @@ IWorker {
 	
 	public void dispose() {
 		stopListening();
+		if(dj!=null){
+			dj.cancel();
+		}
 	}
 	
 	/**

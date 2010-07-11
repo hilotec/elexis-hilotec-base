@@ -1,17 +1,24 @@
 package ch.elexis.actions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.viewers.ILazyTreeContentProvider;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.ViewerSorter;
 
 import ch.elexis.Desk;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.selectors.SelectorPanel;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.SelectorPanelProvider;
 
@@ -22,15 +29,18 @@ import ch.elexis.util.viewers.SelectorPanelProvider;
  * 
  */
 public class ReadOnceTreeLoader extends PersistentObjectLoader implements
-		ILazyTreeContentProvider {
+		ITreeContentProvider {
 
 	protected String parentColumn;
 	protected String orderBy;
+	private HashMap<PersistentObject, HashMap<PersistentObject, ?>> allNodes = new HashMap<PersistentObject, HashMap<PersistentObject, ?>>();
 	private PersistentObject[] root;
+
 	TreeViewer tv;
 	int size = 0;
 	SelectorPanelProvider slp;
 	ViewerFilter filter;
+	Object[] expanded = null;
 
 	public ReadOnceTreeLoader(CommonViewer cv,
 			Query<? extends PersistentObject> qbe, String parentField,
@@ -40,68 +50,81 @@ public class ReadOnceTreeLoader extends PersistentObjectLoader implements
 		this.orderBy = orderBy;
 		setQuery("NIL");
 		root = qbe.execute().toArray(new PersistentObject[0]);
-
-	}
+		}
 
 	@Override
 	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params) {
-		Desk.asyncExec(new Runnable() {
+		Desk.asyncExec(new Runnable(){
 
 			@Override
 			public void run() {
-				tv.setChildCount("", root.length);
-				//tv.setFilters(new ViewerFilter[] { filter });
-				tv.refresh(true);
-			}
-		});
-		return Status.OK_STATUS;
-	}
-
-	@Override
-	public void updateElement(Object parent, int index) {
-		PersistentObject elem;
+				ProgressMonitorDialog dialog=new ProgressMonitorDialog(cv.getViewerWidget().getControl().getShell());
+				try {
+					dialog.run(false, false, new IRunnableWithProgress() {
+						
+						@Override
+						public void run(IProgressMonitor monitor) throws InvocationTargetException,
+								InterruptedException {
+							monitor.beginTask("Durchsuche Tarmed....", -1);
+							tv.refresh(false);
+							if (slp.isEmpty()) {
+								if(expanded!=null){
+									tv.setExpandedElements(expanded);
+									expanded=null;
+								}
+							}else{
+								if (expanded == null) {
+									expanded = tv.getExpandedElements();
+								}
+								tv.expandAll();
+							}
+							monitor.done();
+						}
+					});
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 		
-		if (parent instanceof PersistentObject) {
-			elem=getChildren((PersistentObject) parent)[index];
-		} else {
-			elem=root[index];
-		}
-		tv.replace(parent, index, elem);
-		updateChildCount(elem,0);
-	}
+			}});
+				return Status.OK_STATUS;
+			}
 
 	@Override
-	public void updateChildCount(Object element, int currentChildCount) {
-		if (element instanceof PersistentObject) {
-			tv.setChildCount(element,
-					getChildren((PersistentObject) element).length);
-		} else {
-			tv.setChildCount(element, root.length);
-		}
+	public Object[] getElements(Object inputElement) {
+		return root;
 	}
 
 	@Override
 	public Object getParent(Object element) {
-		PersistentObject po = (PersistentObject) element;
-		return po.get(parentColumn);
+		return null;
 	}
 
-	private PersistentObject[] getChildren(PersistentObject parent) {
-		if (parent == null) {
-			setQuery("NIL");
-		} else {
-			setQuery(parent.getId());
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@Override
+	public Object[] getChildren(Object parent) {
+		PersistentObject par = (PersistentObject) parent;
+
+		HashMap children = allNodes.get(par);
+		if (children == null) {
+			children = new HashMap<PersistentObject, HashMap>();
+			setQuery(par.getId());
+			List<PersistentObject> ch = (List<PersistentObject>) qbe.execute();
+			for (PersistentObject po : ch) {
+				children.put(po, new HashMap<PersistentObject, HashMap>());
+			}
+			allNodes.put(par, children);
 		}
-		return qbe.execute().toArray(new PersistentObject[0]);
+		return children.keySet().toArray();
 	}
 
 	protected void setQuery(String parent) {
 		qbe.clear();
 		qbe.add(parentColumn, Query.EQUALS, parent);
 		applyQueryFilters();
-		if (orderBy != null) {
-			qbe.orderBy(false, orderBy);
-		}
 	}
 
 	@Override
@@ -111,9 +134,60 @@ public class ReadOnceTreeLoader extends PersistentObjectLoader implements
 					.getControlFieldProvider();
 		}
 		if (filter == null) {
-			filter = (ViewerFilter) slp.createFilter();
+			filter = new TreeFilter(slp.getPanel());
 		}
 		tv = (TreeViewer) cv.getViewerWidget();
+		if(orderBy!=null){
+			tv.setSorter(new ViewerSorter(){
+
+				@Override
+				public int compare(Viewer viewer, Object e1, Object e2) {
+					String c1=((PersistentObject)e1).get(orderBy);
+					String c2=((PersistentObject)e2).get(orderBy);
+					return c1.compareTo(c2);
+				}
+				
+			});
+		}
+		tv.setFilters(new ViewerFilter[] { filter });
+
+	}
+
+	@Override
+	public boolean hasChildren(Object element) {
+		HashMap children = allNodes.get(element);
+		if (children == null) {
+			return getChildren(element).length > 0;
+		}
+		return children.size() > 0;
+	}
+
+	class TreeFilter extends ViewerFilter {
+		SelectorPanel panel;
+
+		TreeFilter(SelectorPanel sp) {
+			panel = sp;
+		}
+
+		@Override
+		public boolean select(Viewer viewer, Object parentElement,
+				Object element) {
+			PersistentObject po = (PersistentObject) element;
+			HashMap<String, String> vals = panel.getValues();
+			if (po.isMatching(vals, PersistentObject.MATCH_AUTO,true)) {
+				return true;
+			} else {
+				for (Object poc : getChildren(po)) {
+					if (select(viewer, po, poc)) {
+						return true;
+					}
+				}
+				return false;
+
+			}
+		}
+		
+
 	}
 
 }

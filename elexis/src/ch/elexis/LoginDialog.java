@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    
  *    
  *    $Id: LoginDialog.java 5870 2009-12-16 20:55:33Z rgw_ch $
  *******************************************************************************/
@@ -19,8 +20,13 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.internal.actions.ModifyWorkingSetDelegate;
 
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Query;
@@ -29,6 +35,7 @@ import ch.elexis.util.SWTHelper;
 public class LoginDialog extends TitleAreaDialog {
 	Text usr, pwd;
 	boolean hasUsers;
+	ButtonEnabler be=new ButtonEnabler();
 	public LoginDialog(Shell parentShell) {
 		super(parentShell);
 		
@@ -53,7 +60,8 @@ public class LoginDialog extends TitleAreaDialog {
 			usr.setText("Administrator"); //$NON-NLS-1$
 			pwd.setText("admin"); //$NON-NLS-1$
 		}
-		
+		usr.addModifyListener(be);
+		pwd.addModifyListener(be);
 		return ret;
 	}
 	
@@ -66,6 +74,7 @@ public class LoginDialog extends TitleAreaDialog {
 		}
 		else{
 			setMessage(Messages.LoginDialog_4,IMessageProvider.ERROR);
+			getButton(IDialogConstants.OK_ID).setEnabled(false);
 		}
 	}
 	@Override
@@ -80,6 +89,21 @@ public class LoginDialog extends TitleAreaDialog {
 		super.create();
 		getButton(IDialogConstants.OK_ID).setText(Messages.LoginDialog_login);
 		getButton(IDialogConstants.CANCEL_ID).setText(Messages.LoginDialog_terminate);
+		getButton(IDialogConstants.OK_ID).setEnabled(false);
+
+	}
+	class ButtonEnabler implements ModifyListener{
+		
+		@Override
+		public void modifyText(ModifyEvent e) {
+			if(usr.getText().length()==0 || pwd.getText().length()==0){
+				getButton(IDialogConstants.OK_ID).setEnabled(false);
+			}else{
+				getButton(IDialogConstants.OK_ID).setEnabled(true);
+			}
+			
+		}
+		
 	}
 
 }

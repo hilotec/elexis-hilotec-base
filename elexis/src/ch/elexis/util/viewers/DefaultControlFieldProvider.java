@@ -292,7 +292,7 @@ public class DefaultControlFieldProvider implements ControlFieldProvider {
 			} else {
 				return false;
 			}
-			if (po.isMatching(dbFields, PersistentObject.MATCH_LIKE,
+			if (po.isMatching(dbFields, PersistentObject.MATCH_START,
 					lastFiltered)) {
 				return true;
 			} else {
