@@ -59,6 +59,11 @@ elsif /mingw|msys|mswin/i.match RUBY_PLATFORM
   if !File.exists?(eclipse+".exe")
     cmd = "unzip #{platformRuntimeTar}".gsub('/','\\\\')
   end
+elsif /universal-darwin10.0/i.match RUBY_PLATFORM
+	platformRuntimeTar="#{HudsonRoot}/downloads/eclipse-rcp-helios-macosx-cocoa-x86_64.tar"
+	if !File.exists?(eclipse)
+		cmd="tar -zxf #{platformRuntimeTar}"
+	end
 else
   puts "Unsupported "+RUBY_PLATFORM
   exit 2
