@@ -80,26 +80,26 @@ public class DocumentManagement implements IDocumentManager {
 			final String contentsMatch) throws ElexisException {
 		Query<DocHandle> qbe=new Query<DocHandle>(DocHandle.class);
 		if(pat!=null){
-			qbe.add("PatID", Query.EQUALS, pat.getId());
+			qbe.add("PatID", Query.EQUALS, pat.getId()); //$NON-NLS-1$
 		}
 		if(dateMatch!=null){
 			String from=dateMatch.from.toString(TimeTool.DATE_COMPACT);
 			String until=dateMatch.until.toString(TimeTool.DATE_COMPACT);
-			qbe.add("Datum", Query.GREATER_OR_EQUAL, from);
-			qbe.add("Datum", Query.LESS_OR_EQUAL, until);
+			qbe.add("Datum", Query.GREATER_OR_EQUAL, from); //$NON-NLS-1$
+			qbe.add("Datum", Query.LESS_OR_EQUAL, until); //$NON-NLS-1$
 		}
 		if(titleMatch!=null){
-			if(titleMatch.matches("/.+/")){
+			if(titleMatch.matches("/.+/")){ //$NON-NLS-1$
 				qbe.addPostQueryFilter(new RegexpFilter(titleMatch.substring(1, titleMatch.length()-1)));
 			}else{
-				qbe.add("Titel", Query.EQUALS, titleMatch);
+				qbe.add("Titel", Query.EQUALS, titleMatch); //$NON-NLS-1$
 			}
 		}
 		if(keywordMatch!=null){
-			if(keywordMatch.matches("/.+/")){
+			if(keywordMatch.matches("/.+/")){ //$NON-NLS-1$
 				qbe.addPostQueryFilter(new RegexpFilter(keywordMatch.substring(1, keywordMatch.length()-1)));
 			}else{
-				qbe.add("Keywords", Query.LIKE, "%"+keywordMatch+"%");
+				qbe.add("Keywords", Query.LIKE, "%"+keywordMatch+"%"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 		}
 		/*
@@ -112,7 +112,7 @@ public class DocumentManagement implements IDocumentManager {
 		}
 		*/
 		if(contentsMatch!=null){
-			throw new ElexisException(getClass(), "ContentsMatch not supported", ElexisException.EE_NOT_SUPPORTED);
+			throw new ElexisException(getClass(), "ContentsMatch not supported", ElexisException.EE_NOT_SUPPORTED); //$NON-NLS-1$
 		}
 		List<DocHandle> dox=qbe.execute();
 		ArrayList<IDocument> ret=new ArrayList<IDocument>(dox.size());

@@ -33,7 +33,7 @@ public class FileImportDialog extends TitleAreaDialog {
 	public FileImportDialog(DocHandle dh){
 		super(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
 		this.dh=dh;
-		file=dh.get("Titel");
+		file=dh.get("Titel"); //$NON-NLS-1$
 	}
 	public FileImportDialog(String name){
 		super(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell());
@@ -45,13 +45,13 @@ public class FileImportDialog extends TitleAreaDialog {
 		Composite ret=new Composite(parent,SWT.NONE);
 		ret.setLayout(new GridLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		new Label(ret,SWT.NONE).setText("Titel");
+		new Label(ret,SWT.NONE).setText(Messages.FileImportDialog_titleLabel);
 		tTitle=SWTHelper.createText(ret, 1, SWT.NONE);
-		new Label(ret,SWT.NONE).setText("Stichwörter");
+		new Label(ret,SWT.NONE).setText(Messages.FileImportDialog_keywordsLabel);
 		tKeywords=SWTHelper.createText(ret,4, SWT.NONE);
 		tTitle.setText(file);
 		if(dh!=null){
-			tKeywords.setText(dh.get("Keywords"));
+			tKeywords.setText(dh.get("Keywords")); //$NON-NLS-1$
 		}
 		return ret;
 	}
@@ -60,8 +60,8 @@ public class FileImportDialog extends TitleAreaDialog {
 	public void create() {
 		super.create();
 		setTitle(file);
-		getShell().setText("Datei importieren");
-		setMessage("Geben Sie bitte einen Titel und ggf. einige Stichwörter für dieses Dokument ein");
+		getShell().setText(Messages.FileImportDialog_importFileCaption);
+		setMessage(Messages.FileImportDialog_importFileText);
 	}
 
 	@Override
@@ -69,8 +69,8 @@ public class FileImportDialog extends TitleAreaDialog {
 		keywords=tKeywords.getText();
 		title=tTitle.getText();
 		if(dh!=null){
-			dh.set("Titel", title);
-			dh.set("Keywords", keywords);
+			dh.set("Titel", title); //$NON-NLS-1$
+			dh.set("Keywords", keywords); //$NON-NLS-1$
 		}
 		super.okPressed();
 	}

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.text.MessageFormat;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.program.Program;
@@ -36,53 +37,53 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
 public class DocHandle extends PersistentObject implements IDocument{
-	public static final String TABLENAME = "CH_ELEXIS_OMNIVORE_DATA";
-	public static final String DBVERSION = "1.2.1";
+	public static final String TABLENAME = "CH_ELEXIS_OMNIVORE_DATA"; //$NON-NLS-1$
+	public static final String DBVERSION = "1.2.1"; //$NON-NLS-1$
 	public static final String createDB=
-		"CREATE TABLE "+TABLENAME+" ("+
-		"ID				VARCHAR(25) primary key,"+
-		"lastupdate     BIGINT,"+
-		"deleted        CHAR(1) default '0',"+
-		"PatID			VARCHAR(25),"+
-		"Datum			CHAR(8),"+
-		"Title 			VARCHAR(80),"+	
-		"Mimetype		VARCHAR(255),"+
-		"Keywords		VARCHAR(255),"+
-		"Path			VARCHAR(255),"+
-		"Doc			BLOB);"+
-		"CREATE INDEX OMN1 ON "+TABLENAME+" (PatID);"+
-		"CREATE INDEX OMN2 ON "+TABLENAME+" (Keywords);" +
-		"INSERT INTO "+TABLENAME+" (ID, TITLE) VALUES ('1','"+DBVERSION+"');";
+		"CREATE TABLE "+TABLENAME+" ("+ //$NON-NLS-1$ //$NON-NLS-2$
+		"ID				VARCHAR(25) primary key,"+ //$NON-NLS-1$
+		"lastupdate     BIGINT,"+ //$NON-NLS-1$
+		"deleted        CHAR(1) default '0',"+ //$NON-NLS-1$
+		"PatID			VARCHAR(25),"+ //$NON-NLS-1$
+		"Datum			CHAR(8),"+ //$NON-NLS-1$
+		"Title 			VARCHAR(80),"+	 //$NON-NLS-1$
+		"Mimetype		VARCHAR(255),"+ //$NON-NLS-1$
+		"Keywords		VARCHAR(255),"+ //$NON-NLS-1$
+		"Path			VARCHAR(255),"+ //$NON-NLS-1$
+		"Doc			BLOB);"+ //$NON-NLS-1$
+		"CREATE INDEX OMN1 ON "+TABLENAME+" (PatID);"+ //$NON-NLS-1$ //$NON-NLS-2$
+		"CREATE INDEX OMN2 ON "+TABLENAME+" (Keywords);" + //$NON-NLS-1$ //$NON-NLS-2$
+		"INSERT INTO "+TABLENAME+" (ID, TITLE) VALUES ('1','"+DBVERSION+"');"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		
 	public static final String upd120=
-		"ALTER TABLE "+TABLENAME+" MODIFY Mimetype VARCHAR(255);"+
-		"ALTER TABLE "+TABLENAME+" MODIFY Keywords VARCHAR(255);"+
-		"ALTER TABLE "+TABLENAME+" Modify Path VARCHAR(255);";
+		"ALTER TABLE "+TABLENAME+" MODIFY Mimetype VARCHAR(255);"+ //$NON-NLS-1$ //$NON-NLS-2$
+		"ALTER TABLE "+TABLENAME+" MODIFY Keywords VARCHAR(255);"+ //$NON-NLS-1$ //$NON-NLS-2$
+		"ALTER TABLE "+TABLENAME+" Modify Path VARCHAR(255);"; //$NON-NLS-1$ //$NON-NLS-2$
 	
 	private static final String upd121=
-		"ALTER TABLE "+TABLENAME+" ADD lastupdate BIGINT;";
+		"ALTER TABLE "+TABLENAME+" ADD lastupdate BIGINT;"; //$NON-NLS-1$ //$NON-NLS-2$
 	
 	static {
-		addMapping(TABLENAME, "PatID", "Datum=S:D:Datum", "Titel=Title", "Keywords", "Path", "Doc",
-			"Mimetype");
-		DocHandle start = load("1");
+		addMapping(TABLENAME, "PatID", "Datum=S:D:Datum", "Titel=Title", "Keywords", "Path", "Doc", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			"Mimetype"); //$NON-NLS-1$
+		DocHandle start = load("1"); //$NON-NLS-1$
 		if (start == null) {
 			init();
 		} else {
-			VersionInfo vi = new VersionInfo(start.get("Titel"));
+			VersionInfo vi = new VersionInfo(start.get("Titel")); //$NON-NLS-1$
 			if (vi.isOlder(DBVERSION)) {
-				if (vi.isOlder("1.1.0")) {
+				if (vi.isOlder("1.1.0")) { //$NON-NLS-1$
 					getConnection().exec(
-						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';");
-					start.set("Titel", DBVERSION);
+						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';"); //$NON-NLS-1$ //$NON-NLS-2$
+					start.set("Titel", DBVERSION); //$NON-NLS-1$
 				} 
-				if (vi.isOlder("1.2.0")) {
+				if (vi.isOlder("1.2.0")) { //$NON-NLS-1$
 					createOrModifyTable(upd120);
-					start.set("Titel", DBVERSION);
+					start.set("Titel", DBVERSION); //$NON-NLS-1$
 				} 
-				if(vi.isOlder("1.2.1")){
+				if(vi.isOlder("1.2.1")){ //$NON-NLS-1$
 					createOrModifyTable(upd121);
-					start.set("Titel", DBVERSION);
+					start.set("Titel", DBVERSION); //$NON-NLS-1$
 				}
 				
 			}
@@ -91,17 +92,17 @@ public class DocHandle extends PersistentObject implements IDocument{
 	
 	public DocHandle(byte[] doc, Patient pat, String title, String mime, String keyw){
 		if ((doc == null) || (doc.length == 0)) {
-			SWTHelper.showError("Fehler mit Dokument",
-				"Das Dokument konnte nicht korrekt gelesen werden");
+			SWTHelper.showError(Messages.DocHandle_docErrorCaption,
+				Messages.DocHandle_docErrorMessage);
 			return;
 		}
 		create(null);
-		if (setBinary("Doc", doc) == 1) {
+		if (setBinary("Doc", doc) == 1) { //$NON-NLS-1$
 			set(new String[] {
-				"PatID", "Datum", "Titel", "Keywords", "Mimetype"
+				"PatID", "Datum", "Titel", "Keywords", "Mimetype" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 			}, pat.getId(), new TimeTool().toString(TimeTool.DATE_GER), title, keyw, mime);
 		} else {
-			log.log("Der Datensatz wurde nicht geschrieben", Log.ERRORS);
+			log.log(Messages.DocHandle_dataNotWritten, Log.ERRORS);
 		}
 	}
 	
@@ -123,7 +124,7 @@ public class DocHandle extends PersistentObject implements IDocument{
 	@Override
 	public String getLabel(){
 		StringBuilder sb = new StringBuilder();
-		sb.append(get("Datum")).append(" ").append(get("Titel"));
+		sb.append(get("Datum")).append(" ").append(get("Titel")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		return sb.toString();
 	}
 	
@@ -133,7 +134,7 @@ public class DocHandle extends PersistentObject implements IDocument{
 	}
 	
 	public byte[] getContentsAsBytes() {
-		byte[] ret = getBinary("Doc");
+		byte[] ret = getBinary("Doc"); //$NON-NLS-1$
 		return ret;
 	}
 	
@@ -144,23 +145,23 @@ public class DocHandle extends PersistentObject implements IDocument{
 	}
 	public void execute(){
 		try {
-			String ext = "";
-			String typname = get("Mimetype");
+			String ext = ""; //$NON-NLS-1$
+			String typname = get("Mimetype"); //$NON-NLS-1$
 			int r = typname.lastIndexOf('.');
 			if (r == -1) {
-				typname = get("Titel");
+				typname = get("Titel"); //$NON-NLS-1$
 				r = typname.lastIndexOf('.');
 			}
 			
 			if (r != -1) {
 				ext = typname.substring(r + 1);
 			}
-			File temp = File.createTempFile("omni_", "_vore." + ext);
+			File temp = File.createTempFile("omni_", "_vore." + ext); //$NON-NLS-1$ //$NON-NLS-2$
 			temp.deleteOnExit();
-			byte[] b = getBinary("Doc");
+			byte[] b = getBinary("Doc"); //$NON-NLS-1$
 			if (b == null) {
-				SWTHelper.showError("Fehler beim lesen",
-					"Konnte das Dokument nicht aus der Datenbank laden");
+				SWTHelper.showError(Messages.DocHandle_readErrorCaption,
+					Messages.DocHandle_readErrorMessage);
 				return;
 			}
 			FileOutputStream fos = new FileOutputStream(temp);
@@ -178,7 +179,7 @@ public class DocHandle extends PersistentObject implements IDocument{
 			
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			SWTHelper.showError("Konnte Datei nicht starten", ex.getMessage());
+			SWTHelper.showError(Messages.DocHandle_execError, ex.getMessage());
 		}
 	}
 	
@@ -197,14 +198,13 @@ public class DocHandle extends PersistentObject implements IDocument{
 		Patient act = ElexisEventDispatcher.getSelectedPatient();
 		if (act == null) {
 			SWTHelper
-				.showError("Kein Patient ausgewählt",
-					"Bitte wählen Sie zuerst einen Patienten, dem dieses Doukentn zugeordnet werden soll");
+				.showError(Messages.DocHandle_noPatientSelected,
+					Messages.DocHandle_pleaseSelectPatien);
 			return;
 		}
 		File file = new File(f);
 		if (!file.canRead()) {
-			SWTHelper.showError("Kann Datei nicht lesen", "Die Datei " + f
-				+ " kann nicht gelesen werden");
+			SWTHelper.showError(Messages.DocHandle_cantReadCaption, MessageFormat.format(Messages.DocHandle_cantReadMessage,f));
 			return;
 		}
 		FileImportDialog fid = new FileImportDialog(file.getName());
@@ -220,15 +220,15 @@ public class DocHandle extends PersistentObject implements IDocument{
 				baos.close();
 				String nam = file.getName();
 				if (nam.length() > 255) {
-					SWTHelper.showError("Fehler beim Einlesen",
-						"Der Dateiname ist zu lang (max. 255 Zeichen");
+					SWTHelper.showError(Messages.DocHandle_importErrorCaption,
+						Messages.DocHandle_importErrorMessage);
 					return;
 				}
 				new DocHandle(baos.toByteArray(), act, fid.title, file.getName(), fid.keywords);
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
-				SWTHelper.showError("Fehler beim Einlesen",
-					"Es ist ein Fehler beim Einlesen passiert. Bitte log prüfen");
+				SWTHelper.showError(Messages.DocHandle_importErrorCaption,
+					Messages.DocHandle_importErrorMessage2);
 			}
 		}
 		
@@ -236,32 +236,32 @@ public class DocHandle extends PersistentObject implements IDocument{
 
 	@Override
 	public String getTitle() {
-		return checkNull(get("Titel"));
+		return checkNull(get("Titel")); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getMimeType() {
-		return checkNull(get("Mimetype"));
+		return checkNull(get("Mimetype")); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getKeywords() {
-		return checkNull(get("Keywords"));
+		return checkNull(get("Keywords")); //$NON-NLS-1$
 	}
 
 	@Override
 	public String getCategory() {
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 
 	@Override
 	public String getCreationDate() {
-		return get("Datum");
+		return get("Datum"); //$NON-NLS-1$
 	}
 	
 	@Override
 	public Patient getPatient(){
-		return Patient.load(get("PatID"));
+		return Patient.load(get("PatID")); //$NON-NLS-1$
 	}
 
 	@Override
