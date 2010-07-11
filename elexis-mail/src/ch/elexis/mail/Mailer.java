@@ -42,9 +42,9 @@ public class Mailer {
 		props
 				.put(
 						"mail.smtp.host", Hub.localCfg.get(PreferenceConstants.MAIL_SMTP, Messages.Mailer_1)); //$NON-NLS-1$
-		props.put("mail.smtp.auth", Hub.localCfg.get(
+		props.put("mail.smtp.auth", Hub.localCfg.get( //$NON-NLS-1$
 				PreferenceConstants.MAIL_AUTH, Messages.Mailer_1));
-		props.put("mail.smtp.port", Hub.localCfg.get(
+		props.put("mail.smtp.port", Hub.localCfg.get( //$NON-NLS-1$
 				PreferenceConstants.MAIL_SMTPPORT, Messages.Mailer_1));
 	}
 
@@ -66,7 +66,7 @@ public class Mailer {
 		try {
 			Session session = null;
 			Authenticator auth = new SMTPAuthenticator();
-			if (props.getProperty("mail.smtp.auth").equals("true")) {
+			if (props.getProperty("mail.smtp.auth").equals("true")) { //$NON-NLS-1$ //$NON-NLS-2$
 				session = Session.getDefaultInstance(props, auth);
 			} else {
 				session = Session.getDefaultInstance(props);
@@ -102,7 +102,7 @@ public class Mailer {
 		try {
 			Session session = null;
 			Authenticator auth = new SMTPAuthenticator();
-			if (props.getProperty("mail.smtp.auth").equals("true")) {
+			if (props.getProperty("mail.smtp.auth").equals("true")) { //$NON-NLS-1$ //$NON-NLS-2$
 				session = Session.getDefaultInstance(props, auth);
 			} else {
 				session = Session.getDefaultInstance(props);
@@ -219,7 +219,7 @@ public class Mailer {
 			return new Result<String>("Ok"); //$NON-NLS-1$
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return new Result<String>(Result.SEVERITY.ERROR, 1, ex.getClass().getName()+" "+ex.getMessage(),
+			return new Result<String>(Result.SEVERITY.ERROR, 1, ex.getClass().getName()+" "+ex.getMessage(), //$NON-NLS-1$
 					Messages.Mailer_Error, true);
 
 		}

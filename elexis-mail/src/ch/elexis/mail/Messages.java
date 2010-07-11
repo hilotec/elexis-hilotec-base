@@ -19,6 +19,10 @@ public class Messages extends NLS {
 
 	public static String Preferences_MailSendSettings;
 
+	public static String Preferences_mailServer;
+
+	public static String Preferences_method;
+
 	public static String Preferences_SenderEMail;
 
 	public static String Preferences_SendErrorMsg;

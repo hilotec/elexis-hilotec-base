@@ -39,7 +39,7 @@ public class Mailbox {
 	public boolean open() {
 		try {
 			store = session.getStore(Hub.localCfg.get(
-					PreferenceConstants.MAIL_MODE, "pop"));
+					PreferenceConstants.MAIL_MODE, "pop")); //$NON-NLS-1$
 			inbox = store.getDefaultFolder();
 			messages = inbox.getMessages();
 			return true;
@@ -58,7 +58,7 @@ public class Mailbox {
 		for(Message m:messages){
 			
 		}
-		return "";
+		return ""; //$NON-NLS-1$
 	}
 	public void close() {
 		try {
