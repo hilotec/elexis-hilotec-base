@@ -1,11 +1,14 @@
 package ch.elexis.actions;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -51,26 +54,44 @@ public class ReadOnceTreeLoader extends PersistentObjectLoader implements
 
 	@Override
 	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params) {
-		Desk.asyncExec(new Runnable() {
+		Desk.asyncExec(new Runnable(){
 
 			@Override
 			public void run() {
-				tv.refresh(false);
-				if (slp.isEmpty()) {
-					if(expanded!=null){
-						tv.setExpandedElements(expanded);
-						expanded=null;
-					}
-				}else{
-					if (expanded == null) {
-						expanded = tv.getExpandedElements();
-					}
-					tv.expandAll();
+				ProgressMonitorDialog dialog=new ProgressMonitorDialog(cv.getViewerWidget().getControl().getShell());
+				try {
+					dialog.run(false, false, new IRunnableWithProgress() {
+						
+						@Override
+						public void run(IProgressMonitor monitor) throws InvocationTargetException,
+								InterruptedException {
+							monitor.beginTask("Durchsuche Tarmed....", -1);
+							tv.refresh(false);
+							if (slp.isEmpty()) {
+								if(expanded!=null){
+									tv.setExpandedElements(expanded);
+									expanded=null;
+								}
+							}else{
+								if (expanded == null) {
+									expanded = tv.getExpandedElements();
+								}
+								tv.expandAll();
+							}
+							monitor.done();
+						}
+					});
+				} catch (InvocationTargetException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
+		
+			}});
+				return Status.OK_STATUS;
 			}
-		});
-		return Status.OK_STATUS;
-	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
@@ -153,7 +174,7 @@ public class ReadOnceTreeLoader extends PersistentObjectLoader implements
 				Object element) {
 			PersistentObject po = (PersistentObject) element;
 			HashMap<String, String> vals = panel.getValues();
-			if (po.isMatching(vals, PersistentObject.MATCH_LIKE,true)) {
+			if (po.isMatching(vals, PersistentObject.MATCH_AUTO,true)) {
 				return true;
 			} else {
 				for (Object poc : getChildren(po)) {
@@ -165,6 +186,7 @@ public class ReadOnceTreeLoader extends PersistentObjectLoader implements
 
 			}
 		}
+		
 
 	}
 

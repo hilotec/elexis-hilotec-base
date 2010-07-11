@@ -1834,9 +1834,23 @@ public abstract class PersistentObject implements ISelectable {
 		return ret;
 	}
 
+	/** Strings must match exactly (but ignore case) */
 	public static final int MATCH_EXACT = 0;
-	public static final int MATCH_LIKE = 1;
+	/** String must start with test (ignoring case) */
+	public static final int MATCH_START = 1;
+	/** String must match as regular expression */
 	public static final int MATCH_REGEXP = 2;
+	/** String must contain test (ignoring case) */
+	public static final int MATCH_CONTAINS = 3;
+	/**
+	 * Try to find match method.
+	 * <ul>
+	 * <li>If test starts with % or * use MATCH_CONTAINS</li>
+	 * <li>If test is enclosed in / use MATCH_REGEXP</li>
+	 * </ul>
+	 * 
+	 */
+	public static final int MATCH_AUTO = 4;
 
 	/**
 	 * Testet ob zwei Objekte bezüglich definierbarer Felder übereinstimmend
@@ -1893,13 +1907,17 @@ public abstract class PersistentObject implements ISelectable {
 					return false;
 				}
 				break;
-			case MATCH_LIKE:
+			case MATCH_START:
 				if (!mine[i].toLowerCase().startsWith(others[i].toLowerCase())) {
 					return false;
 				}
 				break;
 			case MATCH_REGEXP:
 				if (!mine[i].matches(others[i])) {
+					return false;
+				}
+			case MATCH_CONTAINS:
+				if (!mine[i].toLowerCase().contains(others[i].toLowerCase())) {
 					return false;
 				}
 			}
@@ -1914,7 +1932,11 @@ public abstract class PersistentObject implements ISelectable {
 	 * @param fields
 	 *            HashMap mit name,wert paaren für die Felder
 	 * @param mode
-	 *            Testmodus (MATCH_EXACT, MATCH_LIKE oder MATCH_REGEXP)
+	 *            Testmodus (MATCH_EXACT, MATCH_BEGIN, MATCH_REGEXP,
+	 *            MATCH_CONTAIN oder MATCH_AUTO)
+	 * @param bSkipInexisting
+	 *            don't return false if a fieldname is not found but skip this
+	 *            field instead
 	 * @return true wenn dieses Objekt die entsprechenden Felder hat
 	 */
 	public boolean isMatching(final HashMap<String, String> fields,
@@ -1922,8 +1944,9 @@ public abstract class PersistentObject implements ISelectable {
 		for (Entry<String, String> entry : fields.entrySet()) {
 			String mine = get(entry.getKey());
 			String others = entry.getValue();
-			if(bSkipInexisting){
-				if(mine.startsWith(MAPPING_ERROR_MARKER) || others.startsWith(MAPPING_ERROR_MARKER)){
+			if (bSkipInexisting) {
+				if (mine.startsWith(MAPPING_ERROR_MARKER)
+						|| others.startsWith(MAPPING_ERROR_MARKER)) {
 					continue;
 				}
 			}
@@ -1933,7 +1956,7 @@ public abstract class PersistentObject implements ISelectable {
 					return false;
 				}
 				break;
-			case MATCH_LIKE:
+			case MATCH_START:
 				if (!mine.toLowerCase().startsWith(others.toLowerCase())) {
 					return false;
 				}
@@ -1941,6 +1964,21 @@ public abstract class PersistentObject implements ISelectable {
 			case MATCH_REGEXP:
 				if (!mine.matches(others)) {
 					return false;
+				}
+			case MATCH_CONTAINS:
+				if (!mine.toLowerCase().contains(others.toLowerCase())) {
+					return false;
+				}
+			case MATCH_AUTO:
+				String my=mine.toLowerCase();
+				if(others.startsWith("%") || others.startsWith("*")){
+					if(!my.contains(others.substring(1).toLowerCase())){
+						return false;
+					}
+				}else{
+					if(!my.startsWith(others.toLowerCase())){
+						return false;
+					}
 				}
 			}
 		}

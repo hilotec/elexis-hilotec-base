@@ -220,7 +220,7 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 				return false;
 			}
 			HashMap<String, String> vals = slp.getValues();
-			if (po.isMatching(vals, PersistentObject.MATCH_LIKE,true)) {
+			if (po.isMatching(vals, PersistentObject.MATCH_START,true)) {
 				return true;
 			} else {
 				if (element instanceof Tree) {

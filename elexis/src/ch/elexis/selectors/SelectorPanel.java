@@ -222,27 +222,35 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	 * panel
 	 */
 	public void contentsChanged(ActiveControl field) {
-		if (bExclusive && (field != null)) {
-			for (ActiveControl ac : activeControls) {
-				if (!ac.getLabelText().equals(field.getLabelText())) {
-					String t = ac.getText();
-					if (t.length() > 0) {
-						new TraceElement(ac);
-						ac.clear();
+		if (!bCeaseFire) {
+			bCeaseFire = true;
+
+			if (bExclusive && (field != null)) {
+				String fieldLabel = field.getLabelText();
+				for (ActiveControl ac : activeControls) {
+					if (!ac.getLabelText().equals(fieldLabel)) {
+						String t = ac.getText();
+						if (t.length() > 0) {
+							new TraceElement(ac);
+							ac.clear();
+						}
 					}
 				}
 			}
-		}
-		if (field != null) {
-			new TraceElement(field);
-		}
-		if (!bCeaseFire) {
-			bCeaseFire = true;
-			for (ActiveControlListener lis : listeners) {
-				lis.contentsChanged(field);
+			int l=0;
+			if (field != null) {
+				new TraceElement(field);
+				l = field.getText().length();
 			}
+			if (l != 1) {
+				for (ActiveControlListener lis : listeners) {
+					lis.contentsChanged(field);
+				}
+			}
+
 			bCeaseFire = false;
 		}
+
 	}
 
 	/**
