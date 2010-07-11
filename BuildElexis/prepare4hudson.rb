@@ -20,7 +20,7 @@ while true
     break
   else
     if searchDir.length <=1 or (searchDir == File.dirname(searchDir)) then
-      puts "downloads nirgends gefunden"
+      puts "did not find a directory downloads in a directory form here to the top"
       exit 2
     end
   end

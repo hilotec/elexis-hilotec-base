@@ -46,13 +46,31 @@
 	  must be excluded if you have only the repositories elexis-base and elexis-addons
 	  for a full build of all free elexis modules , you need the repositories elexis-base, elexis-addons, 
 	  and archie.
-	
+
+	Hudson (Continuos Integration):
+	- The Ruby script prepare4hudson.rb is used by http://ngiger.dyndns.org/hudson to build Elexis
+	  in a single starting from a default downloaded Eclipse tar/zip file. It will unzip the eclipse
+  	  runtime, do a checkout of archie (needed by some plugins). Then it will create a local.properties
+  	  with the following structure;
+	  	base=/path/to/clean/build
+		repositories=/path/to/clean/build
+		platform-runtime=/path/to/clean/build/elexis-base/helios/eclipse
+		rsc=/path/to/clean/build/elexis-base/BuildElexis/rsc
+		output=/path/to/clean/build/elexis-base/deploy
+  	- This setup may be useful if you want to from scratch to working elexis. 
+		
 -->
 <project name="elexis" default="all">
 	<property name="version" value="2.1.0" />
 	<property name="javatarget" value="1.6" />
 	<property file="local.properties" />
 
+	<record name="ant.info.log" action="start" loglevel="info" />
+	<!-- if you want more ant log files comment out linese below
+	<record name="ant.warn.log" action="start" loglevel="warn" />
+	<record name="ant.verbose.log" action="start" loglevel="verbose" />
+	<record name="ant.debug.log" action="start" loglevel="debug" />
+	-->
 	<property name="output" value="${base}/deploy" />
 	<property name="dox" value="${output}/dox" />
 	<property name="lib" value="${base}/lib" />
@@ -173,10 +191,33 @@
 				</exec -->
 	</target>
 
+	<target name="compile-plugins">
+		<echo message="compile all plugins listed from listDependencie ${buildlist}" />
+		<for param="plugin" list="${buildlist}" delimiter=",">
+			<sequential>
+				<echo message="dist ist ${dist}: compiling plugin @{plugin}" />
+				<pluginID dir="@{plugin}" />
+				<var name="plugindir" value="${dist}/plugins/${BundleId}_${version}.${DSTAMP}" />
+				<path id="varcp">
+					<dirset dir="${dist}/plugins" />
+					<fileset dir="${dist}/plugins">
+						<include name="**/*.jar" />
+					</fileset>
+				</path>
+
+				<antcall target="compile" inheritrefs="true">
+					<param name="dirname" value="${DirName}" />
+					<param name="sourcedir" value="@{plugin}" />
+					<param name="cp" value="varcp" />
+				</antcall>
+			</sequential>
+		</for>
+	</target>
+
 	<!--
 	create all projects in all repositories
 	-->
-	<target name="create-all" depends="initialize,update">
+	<target name="create-default" depends="initialize,update">
 		<concat destfile="${dist}/elexis.ini">-vmargs
 -Xms128m
 -Xmx768m
@@ -212,27 +253,9 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		</copy>
 		<!-- do some magic stuff to find all the files to include -->
 		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins},TestElexis,TestElexisUI" />
-		<echo message="${buildlist}" />
-		<!-- compile all plugins listed from listDependencies -->
-		<for param="plugin" list="${buildlist}" delimiter=",">
-			<sequential>
-				<echo message="@{plugin}" />
-				<pluginID dir="@{plugin}" />
-				<var name="plugindir" value="${dist}/plugins/${BundleId}_${version}.${DSTAMP}" />
-				<path id="varcp">
-					<dirset dir="${dist}/plugins" />
-					<fileset dir="${dist}/plugins">
-						<include name="**/*.jar" />
-					</fileset>
-				</path>
-
-				<antcall target="compile" inheritrefs="true">
-					<param name="dirname" value="${DirName}" />
-					<param name="sourcedir" value="@{plugin}" />
-					<param name="cp" value="varcp" />
-				</antcall>
-			</sequential>
-		</for>
+		<antcall target="compile-plugins" inheritrefs="true">
+			<param name="buildlist" value="${buildlist}" />
+		</antcall>
 	</target>
 
 	<!-- create the Windows installer.  -->
@@ -242,7 +265,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 			<fileset dir="${rsc}/windows" excludes="elexis.exe" />
 		</copy>
 		<copy todir="${dist}" file="${rsc}/windows/elexis.exe" />
-		<antcall target="create-all" />
+		<antcall target="create-default" />
 		<antcall target="installer" inheritrefs="true" inheritall="true" />
 	</target>
 
@@ -254,7 +277,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<exec executable="chmod" dir="${dist}/elexis.app/Contents/MacOS">
 			<arg line="+x elexis" />
 		</exec>
-		<antcall target="create-all" />
+		<antcall target="create-default" />
 
 		<!-- For the Mac, we do not create a jar installer, because on MacOSX,
 		     zip installation packages are a well known and well supported 
@@ -294,7 +317,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		</copy>
 		<copy tofile="${dist}/elexis" file="${platform-runtime}/eclipse" preservelastmodified="true" verbose="true" />
 		<chmod file="${dist}/elexis" perm="ugo+rx" />
-		<antcall target="create-all" />
+		<antcall target="create-default" />
 		<antcall target="installer" inheritrefs="true" inheritall="true" />
 	</target>
 
@@ -370,27 +393,9 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		</copy>
 		<!-- do some magic stuff to find all the files to include -->
 		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins}" />
-		<echo message="buildlist ist ${buildlist}" />
-		<!-- compile all plugins listed from listDependencies -->
-		<for param="plugin" list="${buildlist}" delimiter=",">
-			<sequential>
-				<echo message="dist ist ${dist}: compiling plugin @{plugin}" />
-				<pluginID dir="@{plugin}" />
-				<var name="plugindir" value="${dist}/plugins/${BundleId}_${version}.${DSTAMP}" />
-				<path id="varcp">
-					<dirset dir="${dist}/plugins" />
-					<fileset dir="${dist}/plugins">
-						<include name="**/*.jar" />
-					</fileset>
-				</path>
-
-				<antcall target="compile" inheritrefs="true">
-					<param name="dirname" value="${DirName}" />
-					<param name="sourcedir" value="@{plugin}" />
-					<param name="cp" value="varcp" />
-				</antcall>
-			</sequential>
-		</for>
+		<antcall target="compile-plugins" inheritrefs="true">
+			<param name="buildlist" value="${buildlist}" />
+		</antcall>
 	</target>
 
 	<target name="linux-swtbot" depends="initialize">
@@ -512,7 +517,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 	</target>
 
 	<target name="doc-plugins" unless="skip_texify" depends="initialize">
-		<!-- compile all plugins listed from listDependencies -->
+		<!-- create docs for all plugins listed from listDependencies -->
 		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins},TestElexis,TestElexisUI" />
 		<for param="plugin" list="${buildlist}" delimiter=",">
 			<sequential>
