@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Importer für Keycab
+Bundle-Name: Importations des données Keycab
 Bundle-SymbolicName: ch.elexis.importer.keycab;singleton:=true
 Bundle-Version: 0.1.0
 Bundle-Vendor: elexis.ch

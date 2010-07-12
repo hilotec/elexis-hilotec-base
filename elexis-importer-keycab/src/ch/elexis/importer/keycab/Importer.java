@@ -13,14 +13,6 @@
 
 package ch.elexis.importer.keycab;
 
-import static ch.elexis.dialogs.KontaktSelektor.HINT_BIRTHDATE;
-import static ch.elexis.dialogs.KontaktSelektor.HINT_FIRSTNAME;
-import static ch.elexis.dialogs.KontaktSelektor.HINT_NAME;
-import static ch.elexis.dialogs.KontaktSelektor.HINT_PLACE;
-import static ch.elexis.dialogs.KontaktSelektor.HINT_SEX;
-import static ch.elexis.dialogs.KontaktSelektor.HINT_STREET;
-import static ch.elexis.dialogs.KontaktSelektor.HINT_ZIP;
-
 import java.io.File;
 import java.util.*;
 import java.text.*;
@@ -34,11 +26,8 @@ import com.healthmarketscience.jackcess.*;
 
 import ch.elexis.data.Fall;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.Organisation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Person;
-import ch.elexis.data.Prescription;
 import ch.elexis.data.Xid;
 import ch.elexis.exchange.KontaktMatcher;
 import ch.elexis.tarmedprefs.TarmedRequirements;
@@ -47,12 +36,9 @@ import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
-import ch.rgw.tools.TimeTool;
 
 import com.healthmarketscience.jackcess.Database;
 
-import java.sql.ResultSet;
-import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -245,9 +231,12 @@ public class Importer extends ImporterPage {
 				// Sat Jun 16 00:00:00 CET 1956
 				return date;
 			} catch (ParseException e) {
-				System.out.println("Exception :" + e);
+				System.out.println("Failed parsing :" + eingabe);
+				return null;
+				
 			}
 		}
+		System.out.println("Parsing :" + eingabe +" gives null");		
 		return null;
 	}
 	
@@ -283,8 +272,8 @@ public class Importer extends ImporterPage {
 				while (it.hasNext()) {
 					monitor.worked(1);
 					Map<String, Object> row = it.next();
-					System.out.println("import " + tableName + " " + nr + "/" + num + " " + counter
-						+ "/" + nrDone + " " + row);
+//					System.out.println("import " + tableName + " " + nr + "/" + num + " " + counter
+//						+ "/" + nrDone + " " + row);
 					String ID = getCol(row, ("Patient_NrDossier"));
 					if (ID.equals(""))
 						continue; // wir können keine Schrott importieren
@@ -321,16 +310,15 @@ public class Importer extends ImporterPage {
 					if (getCol(row, "Patient_DateNaiss").equals(""))
 						continue; // wir können keine Schrott importieren
 					Date birthDate = string2Date(getCol(row, "Patient_DateNaiss"));
-					DateFormat format = DateFormat.getDateInstance();
-					String gebdat2 = format.format(birthDate);
+					if (birthDate == null) continue;			
+					SimpleDateFormat xx = new SimpleDateFormat("dd.MM.yyyy"); 
+					String german = xx.format(birthDate);
 					String zusatz = getCol(row, "Patient_Adres_CO");
 					nr++;
 					plz = plz.replaceAll("\\D", ""); // we only want the digits
-					Patient pat = new Patient(name, vorname, gebdat2, sexe);
+					Patient pat = new Patient(name, vorname, german, sexe);
 					pat.set("PatientNr", ID);
 					monitor.subTask("Patient: " + ID + " " + pat.getLabel());
-// monitor.subTask(new StringBuilder().append("Patient: ").append(pat.getLabel())
-// .append(" ").append(pat.getPatCode()).toString());
 					pat.set(new String[] {
 						"Strasse", "Plz", "Ort", "Telefon1", "Telefon2", "Natel"
 					}, getCol(row, "Patient_Adresse"), plz, ort, getCol(row, "Patient_TelPriv"),
@@ -353,7 +341,7 @@ public class Importer extends ImporterPage {
 							System.out.println("alarme: " + getAlarme(alarm).toString());
 						}
 					}
-					appendIfNotEmpty(sb, "employeur", getCol(row, "Patient_Employeur"));
+					appendIfNotEmpty(sb, "employeur: ", getCol(row, "Patient_Employeur"));
 					appendIfNotEmpty(sb, "medecin traitant: ",
 						getCol(row, "Patient_Medecin_Traitant"));
 					if (sb.length() > 0) {
@@ -397,10 +385,9 @@ public class Importer extends ImporterPage {
 	}
 	
 	private boolean importDoctors(IProgressMonitor monitor, String tableName){
-		monitor.subTask("importiere Ärzte");
+		monitor.subTask("Importations des médecins");
 		int counter = 0;
 		try {
-			System.out.println("importDoctors ");
 			Table t = db.getTable(tableName);
 			if (t != null) {
 				int num = t.getRowCount();
@@ -412,7 +399,7 @@ public class Importer extends ImporterPage {
 					monitor.worked(1);
 					Map<String, Object> row = it.next();
 					counter++;
-					System.out.println("importDoctors " + counter + " " + row);
+					// System.out.println("importDoctors " + counter + " " + row);
 					String ID = getCol(row, ("AdresMed_ID"));
 					if (ID.equals(""))
 						continue; // wir können keine Schrott importieren
@@ -435,7 +422,7 @@ public class Importer extends ImporterPage {
 					k =
 						KontaktMatcher.findPerson(name, vorname, "", "m", strasse, plz, ort, natel,
 							KontaktMatcher.CreateMode.CREATE);
-					if (k != null) {
+					if (k == null) {
 						continue; // Error creating contact
 					}
 					k.set("Titel", titel); //$NON-NLS-1$
@@ -555,7 +542,7 @@ public class Importer extends ImporterPage {
 	
 	@Override
 	public String getDescription(){
-		return "Import Keycab Stammdaten";
+		return "Importation des données Keycab";
 	}
 	
 	@Override
