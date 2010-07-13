@@ -191,6 +191,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 								}
 								cv.getConfigurer().getControlFieldProvider()
 										.setQuery(qbe);
+
 								List<Brief> list = qbe.execute();
 								return list.toArray();
 							} else {
