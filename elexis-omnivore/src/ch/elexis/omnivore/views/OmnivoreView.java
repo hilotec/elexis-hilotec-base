@@ -13,6 +13,8 @@
 
 package ch.elexis.omnivore.views;
 
+import java.text.MessageFormat;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -73,14 +75,14 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 	private Table table;
 	private Action importAction, editAction, deleteAction, exportAllAction;
 	private Action doubleClickAction;
-	private final String[] colLabels = { "Datum", "Titel", "Stichwörter" };
+	private final String[] colLabels = { Messages.OmnivoreView_dateColumn, Messages.OmnivoreView_titleColumn, Messages.OmnivoreView_keywordsColumn };
 	private final int[] colWidth = { 80, 150, 500 };
 	private int sortMode = SORTMODE_DATE;
 	private boolean bReverse = false;
 	static final int SORTMODE_DATE = 0;
 	static final int SORTMODE_TITLE = 1;
 	
-	private static final String SORTMODE_DEF = "omnivore/sortmode";
+	private static final String SORTMODE_DEF = "omnivore/sortmode"; //$NON-NLS-1$
 	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(
 		Patient.class, ElexisEvent.EVENT_SELECTED) {
 		
@@ -95,13 +97,13 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
 		@Override
 		public void runInUi(ElexisEvent ev) {
-			String[] defsort = Hub.userCfg.get(SORTMODE_DEF, "0,1").split(",");
+			String[] defsort = Hub.userCfg.get(SORTMODE_DEF, "0,1").split(","); //$NON-NLS-1$ //$NON-NLS-2$
 			try {
 				sortMode = Integer.parseInt(defsort[0]);
 			} catch (NumberFormatException e) {
 				e.printStackTrace();
 			}
-			bReverse = defsort.length > 1 ? defsort[1].equals("1") : false;
+			bReverse = defsort.length > 1 ? defsort[1].equals("1") : false; //$NON-NLS-1$
 			viewer.refresh();
 		}
 	};
@@ -117,7 +119,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			Query<DocHandle> qbe = new Query<DocHandle>(DocHandle.class);
 			Patient pat = ElexisEventDispatcher.getSelectedPatient();
 			if (pat != null) {
-				qbe.add("PatID", "=", pat.getId());
+				qbe.add("PatID", "=", pat.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 				return qbe.execute().toArray();
 			} else {
 				return new Object[0];
@@ -130,13 +132,13 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 		public String getColumnText(Object obj, int index) {
 			switch (index) {
 			case 0:
-				return ((DocHandle) obj).get("Datum");
+				return ((DocHandle) obj).get("Datum"); //$NON-NLS-1$
 			case 1:
-				return ((DocHandle) obj).get("Titel");
+				return ((DocHandle) obj).get("Titel"); //$NON-NLS-1$
 			case 2:
-				return ((DocHandle) obj).get("Keywords");
+				return ((DocHandle) obj).get("Keywords"); //$NON-NLS-1$
 			default:
-				return "?";
+				return "?"; //$NON-NLS-1$
 			}
 		}
 		
@@ -159,16 +161,16 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 				DocHandle d2 = (DocHandle) e2;
 				String c1, c2;
 				if (sortMode == SORTMODE_DATE) {
-					c1 = new TimeTool(d1.get("Datum"))
+					c1 = new TimeTool(d1.get("Datum")) //$NON-NLS-1$
 					.toString(TimeTool.DATE_COMPACT);
-					c2 = new TimeTool(d2.get("Datum"))
+					c2 = new TimeTool(d2.get("Datum")) //$NON-NLS-1$
 					.toString(TimeTool.DATE_COMPACT);
 				} else if (sortMode == SORTMODE_TITLE) {
-					c1 = d1.get("Titel").toLowerCase();
-					c2 = d2.get("Titel").toLowerCase();
+					c1 = d1.get("Titel").toLowerCase(); //$NON-NLS-1$
+					c2 = d2.get("Titel").toLowerCase(); //$NON-NLS-1$
 				} else {
-					c1 = "";
-					c2 = "";
+					c1 = ""; //$NON-NLS-1$
+					c2 = ""; //$NON-NLS-1$
 				}
 				if (bReverse) {
 					return c1.compareTo(c2);
@@ -197,8 +199,8 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 				}
 				sortMode = SORTMODE_TITLE;
 			}
-			Hub.userCfg.set(SORTMODE_DEF, Integer.toString(sortMode) + ","
-				+ (bReverse ? "1" : "0"));
+			Hub.userCfg.set(SORTMODE_DEF, Integer.toString(sortMode) + "," //$NON-NLS-1$
+				+ (bReverse ? "1" : "0")); //$NON-NLS-1$ //$NON-NLS-2$
 			viewer.refresh();
 		}
 		
@@ -208,7 +210,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 	 * The constructor.
 	 */
 	public OmnivoreView() {
-		DocHandle.load("1"); // make sure the table is created
+		DocHandle.load("1"); // make sure the table is created //$NON-NLS-1$
 	}
 	
 	/**
@@ -273,7 +275,7 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 	}
 	
 	private void hookContextMenu() {
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
+		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager) {
@@ -311,9 +313,9 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 	}
 	
 	private void makeActions() {
-		importAction = new Action("Importiere") {
+		importAction = new Action(Messages.OmnivoreView_importActionCaption) {
 			{
-				setToolTipText("Externes Dokument importieren");
+				setToolTipText(Messages.OmnivoreView_importActionToolTip);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
 			}
 			
@@ -328,9 +330,9 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 			}
 		};
 		
-		deleteAction = new Action("Löschen") {
+		deleteAction = new Action(Messages.OmnivoreView_deleteActionCaption) {
 			{
-				setToolTipText("Dokument löschen");
+				setToolTipText(Messages.OmnivoreView_deleteActionToolTip);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 			}
 			
@@ -339,16 +341,16 @@ public class OmnivoreView extends ViewPart implements IActivationListener {
 				Object obj = ((IStructuredSelection) selection)
 				.getFirstElement();
 				DocHandle dh = (DocHandle) obj;
-				if (SWTHelper.askYesNo("Wirklich löschen?", "Möchten Sie "
-					+ dh.get("Titel") + " wirklich löschen?")) {
+				if (SWTHelper.askYesNo(Messages.OmnivoreView_reallyDeleteCaption, MessageFormat.
+						format(Messages.OmnivoreView_reallyDeleteContents,dh.get("Titel")))) {  //$NON-NLS-2$
 					dh.delete();
 					viewer.refresh();
 				}
 			}
 		};
-		editAction = new Action("Bearbeiten") {
+		editAction = new Action(Messages.OmnivoreView_editActionCaption) {
 			{
-				setToolTipText("Dokumentbeschreibung bearbeiten");
+				setToolTipText(Messages.OmnivoreView_editActionTooltip);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
 			}
 			

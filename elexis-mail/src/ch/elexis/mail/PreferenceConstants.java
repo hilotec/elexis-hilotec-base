@@ -15,16 +15,16 @@
 package ch.elexis.mail;
 
 public class PreferenceConstants {
-	public static final String MAIL_MODE="ch_elexis_mail/pop_or_imap";
-	public static final String MAIL_SERVER="ch_elexis_mail/pop-imap-server";
-	public static final String MAIL_SMTP="ch_elexis_mail/smtp-server";
-	public static final String MAIL_SMTPPORT="ch_elexis_mail/smtp-serverport";
-	public static final String MAIL_SENDER="ch_elexis_mail/sender";
-	public static final String MAIL_USER="ch_elexis_mail/user";
-	public static final String MAIL_PASS="ch_elexis_mail/pass";
-	public static final String MAIL_AUTH="ch_elexis_mail/auth";
-	public static final String MAIL_QFA_ADDRESS="ch_elexis_mail/qfa-recipient";
-	public final static String MAIL_SEND_QFA="ch_elexis_mail/send_qfa";
-	public static final String MAIL_ELEXIS_LOG="ch_elexis_mail/elexislogfile";
-	public static final String MAIL_ECLIPSE_LOG="ch_elexis_mail/eclipselogfile";
+	public static final String MAIL_MODE="ch_elexis_mail/pop_or_imap"; //$NON-NLS-1$
+	public static final String MAIL_SERVER="ch_elexis_mail/pop-imap-server"; //$NON-NLS-1$
+	public static final String MAIL_SMTP="ch_elexis_mail/smtp-server"; //$NON-NLS-1$
+	public static final String MAIL_SMTPPORT="ch_elexis_mail/smtp-serverport"; //$NON-NLS-1$
+	public static final String MAIL_SENDER="ch_elexis_mail/sender"; //$NON-NLS-1$
+	public static final String MAIL_USER="ch_elexis_mail/user"; //$NON-NLS-1$
+	public static final String MAIL_PASS="ch_elexis_mail/pass"; //$NON-NLS-1$
+	public static final String MAIL_AUTH="ch_elexis_mail/auth"; //$NON-NLS-1$
+	public static final String MAIL_QFA_ADDRESS="ch_elexis_mail/qfa-recipient"; //$NON-NLS-1$
+	public final static String MAIL_SEND_QFA="ch_elexis_mail/send_qfa"; //$NON-NLS-1$
+	public static final String MAIL_ELEXIS_LOG="ch_elexis_mail/elexislogfile"; //$NON-NLS-1$
+	public static final String MAIL_ECLIPSE_LOG="ch_elexis_mail/eclipselogfile"; //$NON-NLS-1$
 }
