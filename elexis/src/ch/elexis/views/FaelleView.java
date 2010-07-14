@@ -233,7 +233,7 @@ public class FaelleView extends ViewPart implements IActivationListener {
 		}
 		
 	}
-	
+	/*
 	private final ElexisEvent template =
 		new ElexisEvent(null, null, ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED
 			| ElexisEvent.EVENT_RELOAD);
@@ -241,4 +241,5 @@ public class FaelleView extends ViewPart implements IActivationListener {
 	public ElexisEvent getElexisEventFilter(){
 		return template;
 	}
+	*/
 }

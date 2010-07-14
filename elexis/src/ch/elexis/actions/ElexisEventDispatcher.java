@@ -340,6 +340,7 @@ public final class ElexisEventDispatcher extends Job {
 
 	private void doDispatch(ElexisEvent ee) {
 
+		
 		if (Hub.plugin.DEBUGMODE) {
 			StringBuilder sb = new StringBuilder();
 			synchronized (sb) {
@@ -365,7 +366,8 @@ public final class ElexisEventDispatcher extends Job {
 			log.log(sb.toString(), Log.INFOS);
 
 		}
-
+		 
+		
 		if (ee != null) {
 			synchronized (listeners) {
 				for (ElexisEventListener l : listeners) {

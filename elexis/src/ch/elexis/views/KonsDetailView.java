@@ -118,7 +118,22 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 			Patient pat = (Patient) ev.getObject();
 			if (pat != null) {
 				if (!pat.equals(actPat)) {
-					setKons(pat.getLetzteKons(false));
+					Konsultation b = pat.getLetzteKons(false);
+					//setKons(b);
+					Konsultation act = (Konsultation) ElexisEventDispatcher
+							.getSelected(Konsultation.class);
+					if (b == null && act!=null ) {
+						ElexisEventDispatcher.getInstance().fire(
+								new ElexisEvent(null, Konsultation.class,
+										ElexisEvent.EVENT_DESELECTED));
+					} else {
+						if ((act == null)
+								|| (!ElexisEventDispatcher
+										.getSelected(Konsultation.class)
+										.getId().equals(b.getId()))) {
+							ElexisEventDispatcher.fireSelectionEvent(b);
+						}
+					}
 
 				}
 			}
@@ -351,6 +366,12 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 	 */
 	private void setKons(final Konsultation b) {
 		if (b != null) {
+			System.out.println("setKons: " + b.getLabel());
+			Fall fall = b.getFall();
+			System.out.println(fall.getLabel());
+			Patient oat = fall.getPatient();
+			System.out.println(oat.getLabel());
+
 			Fall act = b.getFall();
 			setPatient(act.getPatient());
 			setKonsText(b, b.getHeadVersion());
@@ -384,12 +405,6 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 			vd.setLeistungen(b);
 			text.setEnabled(true);
 			// ElexisEventDispatcher.fireSelectionEvent(b);
-
-			if ((ElexisEventDispatcher.getSelected(Konsultation.class) == null)
-					|| (!ElexisEventDispatcher.getSelected(Konsultation.class)
-							.getId().equals(b.getId()))) {
-				ElexisEventDispatcher.fireSelectionEvent(b);
-			}
 
 		} else {
 			form.setText(NO_CONS_SELECTED);
@@ -566,19 +581,13 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 		return true;
 	}
 
-	/*
-	 * public void objectCreated(final PersistentObject o) { if (o instanceof
-	 * Fall) { if (actKons != null) { Fall fall = (Fall) o; if
-	 * (fall.getPatient().getId().equals(
-	 * actKons.getFall().getPatient().getId())) { setPatient(fall.getPatient());
-	 * } } }
-	 * 
-	 * }
-	 */
 	public void addToVerechnung(Artikel artikel) {
 		vd.addPersistentObject(artikel);
 	}
 
+	/**
+	 * Konsultation event
+	 */
 	public void catchElexisEvent(final ElexisEvent ev) {
 		Desk.asyncExec(new Runnable() {
 			public void run() {

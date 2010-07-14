@@ -114,11 +114,11 @@ public class ElexisEventCascade {
 		}
 	};
 	
-	public void start(){
+	private void start(){
 		ElexisEventDispatcher.getInstance().addListeners(eeli_fall, eeli_kons, eeli_pat);
 	}
 	
-	public void stop(){
+	private void stop(){
 		ElexisEventDispatcher.getInstance().removeListeners(eeli_fall, eeli_kons, eeli_pat);
 	}
 	
