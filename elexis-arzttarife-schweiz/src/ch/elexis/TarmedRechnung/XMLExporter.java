@@ -98,14 +98,15 @@ import ch.rgw.tools.VersionInfo;
 import ch.rgw.tools.XMLTool;
 
 /**
- * Exportiert eine Elexis-Rechnung im XML 4.0 Format von xmldata.ch Bitte KEINE Änderungen an dieser
- * Klasse durchführen. Senden Sie Verbesserungsvorschläge oder Wünsche als Mail oder direkt als
- * Patch an weirich@elexis.ch.
+ * Exportiert eine Elexis-Rechnung im XML 4.0 Format von xmldata.ch Bitte KEINE
+ * Änderungen an dieser Klasse durchführen. Senden Sie Verbesserungsvorschläge
+ * oder Wünsche als Mail oder direkt als Patch an weirich@elexis.ch.
  * 
- * zur Weiterverarbeitung verwendet werden. DoExport(..) liefert ein JDOM-Dokument, das die
- * gewünschte Rechnung enthält. Diese kann vom Aufrufer dann an einen Intermediär oder auf einen
- * Drucker ausgegeben werden. Der Output dieses Exporters ist TrustX zertifiziert. Änderungen
- * sollten in den seltensten Fällen nötig sein. Falls doch: Fehlermeldungen bitte an
+ * zur Weiterverarbeitung verwendet werden. DoExport(..) liefert ein
+ * JDOM-Dokument, das die gewünschte Rechnung enthält. Diese kann vom Aufrufer
+ * dann an einen Intermediär oder auf einen Drucker ausgegeben werden. Der
+ * Output dieses Exporters ist TrustX zertifiziert. Änderungen sollten in den
+ * seltensten Fällen nötig sein. Falls doch: Fehlermeldungen bitte an
  * weirich@elexis.ch
  * 
  * @author gerry
@@ -206,8 +207,8 @@ public class XMLExporter implements IRnOutputter {
 	public static final String ATTR_AMOUNT_PREPAID = "amount_prepaid"; //$NON-NLS-1$
 	public static final String ELEMENT_BALANCE = "balance"; //$NON-NLS-1$
 	public static final String ELEMENT_INVOICE = "invoice"; //$NON-NLS-1$
-	public static final Namespace ns =
-		Namespace.getNamespace(ELEMENT_INVOICE, "http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
+	public static final Namespace ns = Namespace.getNamespace(ELEMENT_INVOICE,
+			"http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
 	public static final String FIELDNAME_TIMESTAMPXML = "TimeStampXML"; //$NON-NLS-1$
 	Fall actFall;
 	Patient actPatient;
@@ -216,7 +217,7 @@ public class XMLExporter implements IRnOutputter {
 	double tpTarmedAL = 0;
 	String diagnosen, dgsys;
 	Rechnung rn;
-	
+
 	private Money mTarmed;
 	private Money mTarmedTL;
 	private Money mTarmedAL;
@@ -233,11 +234,11 @@ public class XMLExporter implements IRnOutputter {
 	private String outputDir;
 	private static final String PREFIX = "TarmedRn:"; //$NON-NLS-1$
 	private static final Log log = Log.get("XMLExporter"); //$NON-NLS-1$
-	
+
 	/**
 	 * Reset exporter
 	 */
-	public void clear(){
+	public void clear() {
 		actFall = null;
 		actPatient = null;
 		actMandant = null;
@@ -246,7 +247,7 @@ public class XMLExporter implements IRnOutputter {
 		diagnosen = StringConstants.EMPTY;
 		dgsys = StringConstants.EMPTY;
 		rn = null;
-		
+
 		mTarmed = new Money();
 		mTarmedTL = new Money();
 		mTarmedAL = new Money();
@@ -260,58 +261,61 @@ public class XMLExporter implements IRnOutputter {
 		mPaid = new Money();
 		mDue = new Money();
 	}
-	
-	public XMLExporter(){
+
+	public XMLExporter() {
 		ta = TarmedACL.getInstance();
 		clear();
 	}
-	
+
 	/**
-	 * Output a Collection of bills. This essentially lets the user modify the output settings (if
-	 * any) and then calls doExport() für each bill in rnn
+	 * Output a Collection of bills. This essentially lets the user modify the
+	 * output settings (if any) and then calls doExport() für each bill in rnn
 	 * 
 	 * @param type
 	 *            desired mode (original, copy, storno)
 	 * @param rnn
 	 *            a Collection of Rechnung - Objects to output
 	 */
-	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn,
-		Properties props){
+	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type,
+			final Collection<Rechnung> rnn, Properties props) {
 		Result<Rechnung> ret = new Result<Rechnung>();
 		if (outputDir == null) {
-			SWTHelper.SimpleDialog dlg =
-				new SWTHelper.SimpleDialog(new SWTHelper.IControlProvider() {
-					public Control getControl(Composite parent){
-						return createSettingsControl(parent);
-					}
-					
-					public void beforeClosing(){
-					// Nothing
-					}
-				});
+			SWTHelper.SimpleDialog dlg = new SWTHelper.SimpleDialog(
+					new SWTHelper.IControlProvider() {
+						public Control getControl(Composite parent) {
+							return createSettingsControl(parent);
+						}
+
+						public void beforeClosing() {
+							// Nothing
+						}
+					});
 			if (dlg.open() != Dialog.OK) {
 				return ret;
 			}
 		}
 		for (Rechnung rn : rnn) {
-			if (doExport(rn, outputDir + File.separator + rn.getNr() + ".xml", type, false) == null) { //$NON-NLS-1$
-				ret.add(Result.SEVERITY.ERROR, 1, Messages.XMLExporter_ErrorInBill + rn.getNr(), rn, true);
+			if (doExport(
+					rn,
+					outputDir + File.separator + rn.getNr() + ".xml", type, false) == null) { //$NON-NLS-1$
+				ret.add(Result.SEVERITY.ERROR, 1,
+						Messages.XMLExporter_ErrorInBill + rn.getNr(), rn, true);
 			}
 		}
 		return ret;
 	}
-	
+
 	/**
 	 * Wa want to be informed on cancellings of any bills
 	 * 
 	 * @param rn
 	 *            we don't mind, we always return true
 	 */
-	public boolean canStorno(final Rechnung rn){
+	public boolean canStorno(final Rechnung rn) {
 		return true;
 	}
-	
-	private void negate(Element el, String attr){
+
+	private void negate(Element el, String attr) {
 		String v = el.getAttributeValue(attr);
 		if (!StringTool.isNothing(v)) {
 			if (!v.equals(StringConstants.DOUBLE_ZERO)) {
@@ -324,58 +328,68 @@ public class XMLExporter implements IRnOutputter {
 			}
 		}
 	}
-	
+
 	/**
-	 * Export a bill as XML. We do, in fact first check whether this bill was exported already. And
-	 * if so we do not create it again but load the old one. There is deliberately no possibility to
-	 * avoid this behaviour. (One can only delete or storno a bill and recreate it (even then the
-	 * stored xml remains stored. Additionally, the caller can chose to store the bill as XML in the
-	 * file system. This is done if the parameter dest ist given. On success the caller will receive
-	 * a JDOM Document containing the bill.
+	 * Export a bill as XML. We do, in fact first check whether this bill was
+	 * exported already. And if so we do not create it again but load the old
+	 * one. There is deliberately no possibility to avoid this behaviour. (One
+	 * can only delete or storno a bill and recreate it (even then the stored
+	 * xml remains stored. Additionally, the caller can chose to store the bill
+	 * as XML in the file system. This is done if the parameter dest ist given.
+	 * On success the caller will receive a JDOM Document containing the bill.
 	 * 
 	 * @param rechnung
 	 *            the bill to export
 	 * @param dest
-	 *            a full filepath to save the final document (or null to not save it)
+	 *            a full filepath to save the final document (or null to not
+	 *            save it)
 	 * @param type
 	 *            Type of output (original, copy, storno)
 	 * @param doVerify
-	 *            true if the bill should be sent trough a verifyer after creation.
-	 * @return the jdom XML-Document that contains the bill. Might be null on failure.
+	 *            true if the bill should be sent trough a verifyer after
+	 *            creation.
+	 * @return the jdom XML-Document that contains the bill. Might be null on
+	 *         failure.
 	 */
 	@SuppressWarnings("unchecked")
 	public Document doExport(final Rechnung rechnung, final String dest,
-		final IRnOutputter.TYPE type, final boolean doVerify){
+			final IRnOutputter.TYPE type, final boolean doVerify) {
 		clear();
-		Namespace nsxsi =
-			Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance"); //$NON-NLS-1$ //$NON-NLS-2$
+		Namespace nsxsi = Namespace.getNamespace(
+				"xsi", "http://www.w3.org/2001/XMLSchema-instance"); //$NON-NLS-1$ //$NON-NLS-2$
 		// Namespace
 		// nsschema=Namespace.getNamespace("schemaLocation","http://www.xmlData.ch/xmlInvoice/XSD
 		// MDInvoiceRequest_400.xsd");
-		Namespace nsdef = Namespace.getNamespace("http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
+		Namespace nsdef = Namespace
+				.getNamespace("http://www.xmlData.ch/xmlInvoice/XSD"); //$NON-NLS-1$
 		rn = rechnung;
 		mPaid = rn.getAnzahlung();
-		
+
 		if (NamedBlob.exists(PREFIX + rechnung.getNr())) {
-			// If the bill exists already in the database, it has been output earlier, so we don't
-			// recreate it. We must, however, reflect changes that happened since it was output:
+			// If the bill exists already in the database, it has been output
+			// earlier, so we don't
+			// recreate it. We must, however, reflect changes that happened
+			// since it was output:
 			// Payments, state changes, obligations
 			NamedBlob blob = NamedBlob.load(PREFIX + rechnung.getNr());
 			SAXBuilder builder = new SAXBuilder();
 			try {
-				Document ret = builder.build(new StringReader(blob.getString()));
+				Document ret = builder
+						.build(new StringReader(blob.getString()));
 				Element root = ret.getRootElement();
 				Element invoice = root.getChild(ELEMENT_INVOICE, ns);
 				Element balance = invoice.getChild(ELEMENT_BALANCE, ns);
-				Money anzInBill =
-					XMLTool.xmlDoubleToMoney(balance.getAttributeValue(ATTR_AMOUNT_PREPAID));
+				Money anzInBill = XMLTool.xmlDoubleToMoney(balance
+						.getAttributeValue(ATTR_AMOUNT_PREPAID));
 				if (!mPaid.equals(anzInBill)) {
-					balance.setAttribute(ATTR_AMOUNT_PREPAID, XMLTool.moneyToXmlDouble(mPaid)); // 10335
-					mDue =
-						XMLTool.xmlDoubleToMoney(balance.getAttributeValue(ATTR_AMOUNT_OBLIGATIONS));
+					balance.setAttribute(ATTR_AMOUNT_PREPAID,
+							XMLTool.moneyToXmlDouble(mPaid)); // 10335
+					mDue = XMLTool.xmlDoubleToMoney(balance
+							.getAttributeValue(ATTR_AMOUNT_OBLIGATIONS));
 					mDue.subtractMoney(mPaid);
 					mDue.roundTo5();
-					balance.setAttribute(ATTR_AMOUNT_DUE, XMLTool.moneyToXmlDouble(mDue)); // 10340
+					balance.setAttribute(ATTR_AMOUNT_DUE,
+							XMLTool.moneyToXmlDouble(mDue)); // 10340
 				}
 				if (type.equals(IRnOutputter.TYPE.COPY)) {
 					invoice.setAttribute(ATTR_RESEND, Boolean.toString(true));
@@ -394,15 +408,17 @@ public class XMLExporter implements IRnOutputter {
 							negate(el, ATTR_AMOUNT);
 							/*
 							 * Money
-							 * betrag=XMLTool.xmlDoubleToMoney(el.getAttributeValue("amount"));
-							 * el.setAttribute("amount", XMLTool.moneyToXmlDouble(betrag.negate()));
+							 * betrag=XMLTool.xmlDoubleToMoney(el.getAttributeValue
+							 * ("amount")); el.setAttribute("amount",
+							 * XMLTool.moneyToXmlDouble(betrag.negate()));
 							 */
 
 						} catch (Exception ex) {
 							ExHandler.handle(ex);
 						}
 					}
-					// Money betrag=XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount"));
+					// Money
+					// betrag=XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount"));
 					// balance.setAttribute("amount",XMLTool.moneyToXmlDouble(betrag.negate()));
 					negate(balance, ATTR_AMOUNT);
 					negate(balance, ATTR_AMOUNT_TARMED);
@@ -415,15 +431,20 @@ public class XMLExporter implements IRnOutputter {
 					negate(balance, ATTR_AMOUNT_MIGEL);
 					negate(balance, ATTR_AMOUNT_PHYSIO);
 					negate(balance, ATTR_AMOUNT_OBLIGATIONS);
-					balance.setAttribute(ATTR_AMOUNT_DUE, StringConstants.DOUBLE_ZERO);
-					balance.setAttribute(ATTR_AMOUNT_PREPAID, StringConstants.DOUBLE_ZERO);
+					balance.setAttribute(ATTR_AMOUNT_DUE,
+							StringConstants.DOUBLE_ZERO);
+					balance.setAttribute(ATTR_AMOUNT_PREPAID,
+							StringConstants.DOUBLE_ZERO);
 				}
-				
+
 				checkXML(ret, dest, rn, doVerify);
-				
+
 				if (dest != null) {
 					if (type.equals(TYPE.STORNO)) {
-						writeFile(ret, dest.toLowerCase().replaceFirst("\\.xml$", "_storno.xml")); //$NON-NLS-1$ //$NON-NLS-2$
+						writeFile(
+								ret,
+								dest.toLowerCase().replaceFirst(
+										"\\.xml$", "_storno.xml")); //$NON-NLS-1$ //$NON-NLS-2$
 					} else {
 						writeFile(ret, dest);
 					}
@@ -436,26 +457,28 @@ public class XMLExporter implements IRnOutputter {
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 				SWTHelper.showError(Messages.XMLExporter_ReadErrorCaption,
-					Messages.XMLExporter_ReadErrorText);
+						Messages.XMLExporter_ReadErrorText);
 				// What should we do -> We create it from scratch
 			}
 		}
 		if (type.equals(TYPE.STORNO)) {
 			SWTHelper.showError(Messages.XMLExporter_StornoImpossibleCaption,
-				Messages.XMLExporter_StornoImpossibleText);
+					Messages.XMLExporter_StornoImpossibleText);
 			return null;
 		}
-		
+
 		actFall = rn.getFall();
 		actPatient = actFall.getPatient();
 		actMandant = rn.getMandant();
-		Kontakt kostentraeger = actFall.getRequiredContact(TarmedRequirements.INSURANCE);
-		// We try to figure out whether we should use Tiers Payant or Tiers Garant.
+		Kontakt kostentraeger = actFall
+				.getRequiredContact(TarmedRequirements.INSURANCE);
+		// We try to figure out whether we should use Tiers Payant or Tiers
+		// Garant.
 		// if unsure, we make it TG
 		String tiers = TIERS_GARANT;
 		Patient pat = actFall.getPatient();
 		Kontakt rnAdressat = actFall.getGarant();
-		
+
 		if ((kostentraeger != null) && (kostentraeger.isValid())) {
 			if (rnAdressat.equals(kostentraeger)) {
 				tiers = TIERS_PAYANT;
@@ -467,7 +490,7 @@ public class XMLExporter implements IRnOutputter {
 			tiers = TIERS_GARANT;
 		}
 		String tcCode = TarmedRequirements.getTCCode(actMandant);
-		
+
 		if (kostentraeger == null) {
 			kostentraeger = actPatient;
 		}
@@ -475,20 +498,21 @@ public class XMLExporter implements IRnOutputter {
 		Element root = new Element(ELEMENT_REQUEST, ns); // 10020/21
 		// root.addNamespaceDeclaration(nsdef);
 		root.addNamespaceDeclaration(nsxsi); // 10022
-		root.setAttribute("schemaLocation", //$NON-NLS-1$
-			"http://www.xmlData.ch/xmlInvoice/XSD MDInvoiceRequest_400.xsd", nsxsi); //$NON-NLS-1$
-		
+		root.setAttribute(
+				"schemaLocation", //$NON-NLS-1$
+				"http://www.xmlData.ch/xmlInvoice/XSD MDInvoiceRequest_400.xsd", nsxsi); //$NON-NLS-1$
+
 		// Rolle
 		root.setAttribute(ATTR_ROLE, getRole(actFall)); // 10030/32
 		xmlRn = new Document(root);
-		
+
 		// header
 		Element header = new Element(ELEMENT_HEADER, ns); // 10050
 		root.addContent(header);
 		Element sender = new Element(ELEMENT_SENDER, ns); // 10051
 		String mEAN = TarmedRequirements.getEAN(actMandant); // (String)actMandant.getInfoElement(
 		// "EAN");
-		
+
 		sender.setAttribute(ATTR_EAN_PARTY, getSenderEAN(actMandant));
 		String kEAN = TarmedRequirements.getEAN(kostentraeger); // (String)kostentraeger.
 		// getInfoElement("EAN");
@@ -496,7 +520,7 @@ public class XMLExporter implements IRnOutputter {
 		if (rEAN.equals("unknown")) { //$NON-NLS-1$
 			rEAN = kEAN;
 		}
-		
+
 		String iEAN = getIntermediateEAN(actFall);
 		if (StringTool.isNothing(iEAN)) {
 			// make validator happy
@@ -512,14 +536,14 @@ public class XMLExporter implements IRnOutputter {
 		}
 		Element intermediate = new Element(ELEMENT_INTERMEDIATE, ns); // 10052
 		intermediate.setAttribute(ATTR_EAN_PARTY, iEAN);
-		
+
 		Element recipient = new Element(ELEMENT_RECIPIENT, ns); // 10053
 		recipient.setAttribute(ATTR_EAN_PARTY, rEAN);
-		
+
 		header.addContent(sender);
 		header.addContent(intermediate);
 		header.addContent(recipient);
-		
+
 		// prolog
 		Element prolog = new Element(ELEMENT_PROLOG, ns); // 10060
 		root.addContent(prolog);
@@ -530,10 +554,11 @@ public class XMLExporter implements IRnOutputter {
 		// rev());
 		Element spackage = new Element(ELEMENT_PACKAGE, ns); // 10070
 		spackage.setText("Elexis"); //$NON-NLS-1$
-		spackage.setAttribute(ATTR_VERSION, vi.getMaior() + vi.getMinor() + vi.getRevision()); // 10071
+		spackage.setAttribute(ATTR_VERSION,
+				vi.getMaior() + vi.getMinor() + vi.getRevision()); // 10071
 		spackage.setAttribute(ATTR_ID, "0"); // 10072 //$NON-NLS-1$
 		prolog.addContent(spackage);
-		
+
 		Element generator = new Element(ELEMENT_GENERATOR, ns); // 10080
 		Element gsoft = new Element(ELEMENT_SOFTWARE, ns); // 10081
 		generator.addContent(gsoft);
@@ -543,15 +568,16 @@ public class XMLExporter implements IRnOutputter {
 		// wieder mindestens 100 sein
 		gsoft.setAttribute(ATTR_ID, StringConstants.ZERO); // 10083
 		prolog.addContent(generator);
-		
+
 		Element validator = new Element(ELEMENT_VALIDATOR, ns); // 10100
 		validator.setAttribute(ATTR_FOCUS, "tarmed"); // 10111 //$NON-NLS-1$
-		validator.setAttribute(ATTR_VERSION_SOFTWARE, vi.getMaior() + vi.getMinor() + vi.getRevision()); // 10130
+		validator.setAttribute(ATTR_VERSION_SOFTWARE,
+				vi.getMaior() + vi.getMinor() + vi.getRevision()); // 10130
 		validator.setAttribute(ATTR_VERSION_DB, "401"); // 10131 //$NON-NLS-1$
 		validator.setAttribute(ATTR_ID, StringConstants.ZERO); // 10132
 		validator.setText("Elexis TarmedVerifier"); //$NON-NLS-1$
 		prolog.addContent(validator);
-		
+
 		// invoice
 		Element invoice = new Element(ELEMENT_INVOICE, ns); // 10150
 		root.addContent(invoice);
@@ -566,13 +592,14 @@ public class XMLExporter implements IRnOutputter {
 			ts = Long.toString(new Date().getTime() / 1000);
 			rn.setExtInfo(FIELDNAME_TIMESTAMPXML, ts);
 		}
-		
+
 		invoice.setAttribute(ATTR_INVOICE_TIMESTAMP, ts); // 10152
 		invoice.setAttribute(ATTR_INVOICE_ID, rn.getRnId()); // 10153
-		invoice.setAttribute(ATTR_INVOICE_DATE, new TimeTool(rn.getDatumRn())
-			.toString(TimeTool.DATE_MYSQL)
-			+ "T00:00:00"); // 10154 //$NON-NLS-1$
-		invoice.setAttribute(ATTR_RESEND, Boolean.toString(type.equals(IRnOutputter.TYPE.COPY))); // 10170
+		invoice.setAttribute(ATTR_INVOICE_DATE,
+				new TimeTool(rn.getDatumRn()).toString(TimeTool.DATE_MYSQL)
+						+ "T00:00:00"); // 10154 //$NON-NLS-1$
+		invoice.setAttribute(ATTR_RESEND,
+				Boolean.toString(type.equals(IRnOutputter.TYPE.COPY))); // 10170
 		invoice.setAttribute(ATTR_CASE_ID, rn.getFall().getId()); // 10180
 		String bem = rn.getBemerkung();
 		if (!StringTool.isNothing(bem)) { // 10200
@@ -580,32 +607,38 @@ public class XMLExporter implements IRnOutputter {
 			remark.setText(rn.getBemerkung());
 			invoice.addContent(remark);
 		}
-		
+
 		// 10250 weggelassen
-		
+
 		// Balance aufbauen // 10300
-		String curr = (String) Hub.actMandant.getInfoElement(Messages.XMLExporter_Currency); // 10310
+		String curr = (String) Hub.actMandant
+				.getInfoElement(Messages.XMLExporter_Currency); // 10310
 		if (StringTool.isNothing(curr)) {
 			curr = "CHF"; //$NON-NLS-1$
 		}
 		List<Konsultation> lb = rn.getKonsultationen();
-		
+
 		Element services = new Element(ELEMENT_SERVICES, ns);
-		
+
 		// DecimalFormat df = new DecimalFormat("#0.00");
-		
+
 		// Alle Informationen je Konsultation sammeln
 		// alle Preise (in Rappen) auflisten
 		StringBuilder sbDiagnosen = new StringBuilder();
 		dgsys = FREETEXT;
 		String lastDate = StringConstants.EMPTY;
 		int sessionNumber = 1;
-		
-		// To make the validator happy, the attribute date_begin must duplicate exactly
-		// the date of the first billing position end date_end must duplicate exactly
-		// the date of the last billed consultation. If we have non-billed entries in
-		// the patient's record we must forget these for the sake of xml-confirmity
-		// so we use ttFirst and ttLast to check he the dates (instead of the begin end end
+
+		// To make the validator happy, the attribute date_begin must duplicate
+		// exactly
+		// the date of the first billing position end date_end must duplicate
+		// exactly
+		// the date of the last billed consultation. If we have non-billed
+		// entries in
+		// the patient's record we must forget these for the sake of
+		// xml-confirmity
+		// so we use ttFirst and ttLast to check he the dates (instead of the
+		// begin end end
 		// dates that are stored in the bill
 		TimeTool ttFirst = new TimeTool(TimeTool.END_OF_UNIX_EPOCH);
 		TimeTool ttLast = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
@@ -617,7 +650,8 @@ public class XMLExporter implements IRnOutputter {
 				if (dgc != null) {
 					dgsys = dg.getCodeSystemName();
 					if (sbDiagnosen.indexOf(dgc) == -1) {
-						sbDiagnosen.append(dg.getCode()).append(StringConstants.SPACE);
+						sbDiagnosen.append(dg.getCode()).append(
+								StringConstants.SPACE);
 					}
 				}
 			}
@@ -642,22 +676,25 @@ public class XMLExporter implements IRnOutputter {
 			} else {
 				sessionNumber = 1;
 			}
-			
+
 			lastDate = dateShort;
-			// unit.mt x unit_factor.mt x scale_factor.mt x external_factor.mt x quantity =
+			// unit.mt x unit_factor.mt x scale_factor.mt x external_factor.mt x
+			// quantity =
 			// amount.mt
-			// unit.tt x unit_factor.tt x scale_factor.tt x external_factor.tt x quantity =
+			// unit.tt x unit_factor.tt x scale_factor.tt x external_factor.tt x
+			// quantity =
 			// amount.tt
 			// amount
-			boolean bRFE=false;		// RFE already encoded
+			boolean bRFE = false; // RFE already encoded
 			for (Verrechnet vv : lv) {
 				Element el;
 				int zahl = vv.getZahl();
 				IVerrechenbar v = vv.getVerrechenbar();
-				
+
 				if (v == null) {
-					log.log(Messages.XMLExporter_ErroneusBill + rn.getNr() + " Null-Verrechenbar bei Kons " //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-1$
-						+ b.getLabel(), Log.ERRORS);
+					log.log(Messages.XMLExporter_ErroneusBill + rn.getNr()
+							+ " Null-Verrechenbar bei Kons " //$NON-NLS-2$ //$NON-NLS-1$ //$NON-NLS-1$ //$NON-NLS-1$
+							+ b.getLabel(), Log.ERRORS);
 					continue;
 				}
 				if (v instanceof TarmedLeistung) {
@@ -666,13 +703,14 @@ public class XMLExporter implements IRnOutputter {
 					String tecl = vv.getDetail(TL);
 					double primaryScale = vv.getPrimaryScaleFactor();
 					double secondaryScale = vv.getSecondaryScaleFactor();
-					
+
 					double tlTl, tlAL, mult;
 					if (arzl != null) {
 						tlTl = Double.parseDouble(tecl);
-						mult = PersistentObject.checkZeroDouble(vv.get(VK_SCALE)); // Taxpunkt
+						mult = PersistentObject.checkZeroDouble(vv
+								.get(VK_SCALE)); // Taxpunkt
 						tlAL = Double.parseDouble(arzl);
-						
+
 					} else {
 						tlTl = tl.getTL();
 						tlAL = tl.getAL();
@@ -680,16 +718,14 @@ public class XMLExporter implements IRnOutputter {
 					}
 					tpTarmedTL += tlTl * zahl;
 					tpTarmedAL += tlAL * zahl;
-					Money mAL =
-						new Money((int) Math.round(tlAL * mult * zahl * primaryScale
-							* secondaryScale));
-					Money mTL =
-						new Money((int) Math.round(tlTl * mult * zahl * primaryScale
-							* secondaryScale));
-					
+					Money mAL = new Money((int) Math.round(tlAL * mult * zahl
+							* primaryScale * secondaryScale));
+					Money mTL = new Money((int) Math.round(tlTl * mult * zahl
+							* primaryScale * secondaryScale));
+
 					mTarmedAL.addCent(mAL.getCents());
 					mTarmedTL.addCent(mTL.getCents());
-					
+
 					el = new Element(ELEMENT_RECORD_TARMED, ns); // 22000
 					el.setAttribute(ATTR_TREATMENT, "ambulatory"); // 22050 //$NON-NLS-1$
 					el.setAttribute(ATTR_TARIFF_TYPE, "001"); // 22060 //$NON-NLS-1$
@@ -698,68 +734,82 @@ public class XMLExporter implements IRnOutputter {
 					if (!StringTool.isNothing(bezug)) {
 						el.setAttribute("ref_code", bezug); //$NON-NLS-1$
 					}
-					el.setAttribute(ATTR_EAN_PROVIDER, TarmedRequirements.getEAN(actMandant
-						.getRechnungssteller())); // 22390
-					el.setAttribute(ATTR_EAN_RESPONSIBLE, TarmedRequirements.getEAN(actMandant)); // 22400
+					el.setAttribute(ATTR_EAN_PROVIDER, TarmedRequirements
+							.getEAN(actMandant.getRechnungssteller())); // 22390
+					el.setAttribute(ATTR_EAN_RESPONSIBLE,
+							TarmedRequirements.getEAN(actMandant)); // 22400
 					el.setAttribute(ATTR_BILLING_ROLE, "both"); // 22410 //$NON-NLS-1$
 					el.setAttribute(ATTR_MEDICAL_ROLE, "self_employed"); // 22430 //$NON-NLS-1$
-					
-					el.setAttribute(ATTR_BODY_LOCATION, TarmedLeistung.getSide(vv)); // 22450
-					
-					el.setAttribute(ATTR_UNIT_MT, XMLTool.doubleToXmlDouble(tlAL / 100.0, 2)); // 22470
-					el.setAttribute(ATTR_UNIT_FACTOR_MT, XMLTool.doubleToXmlDouble(mult, 2)); // 22480
+
+					el.setAttribute(ATTR_BODY_LOCATION,
+							TarmedLeistung.getSide(vv)); // 22450
+
+					el.setAttribute(ATTR_UNIT_MT,
+							XMLTool.doubleToXmlDouble(tlAL / 100.0, 2)); // 22470
+					el.setAttribute(ATTR_UNIT_FACTOR_MT,
+							XMLTool.doubleToXmlDouble(mult, 2)); // 22480
 					// (strebt
 					// gegen
 					// 0)
-					el.setAttribute(ATTR_SCALE_FACTOR_MT, XMLTool.doubleToXmlDouble(primaryScale, 1)); // 22490
-					el.setAttribute(ATTR_EXTERNAL_FACTOR_MT, XMLTool.doubleToXmlDouble(secondaryScale,
-						1)); // 22500
-					el.setAttribute(ATTR_AMOUNT_MT, XMLTool.moneyToXmlDouble(mAL)); // 22510
-					
-					el.setAttribute(ATTR_UNIT_TT, XMLTool.doubleToXmlDouble(tlTl / 100.0, 2)); // 22520
-					el.setAttribute(ATTR_UNIT_FACTOR_TT, XMLTool.doubleToXmlDouble(mult, 2)); // 22530
-					el.setAttribute(ATTR_SCALE_FACTOR_TT, XMLTool.doubleToXmlDouble(primaryScale, 1)); // 22540
-					el.setAttribute(ATTR_EXTERNAL_FACTOR_TT, XMLTool.doubleToXmlDouble(secondaryScale,
-						1)); // 22550
-					el.setAttribute(ATTR_AMOUNT_TT, XMLTool.moneyToXmlDouble(mTL)); // 22560
+					el.setAttribute(ATTR_SCALE_FACTOR_MT,
+							XMLTool.doubleToXmlDouble(primaryScale, 1)); // 22490
+					el.setAttribute(ATTR_EXTERNAL_FACTOR_MT,
+							XMLTool.doubleToXmlDouble(secondaryScale, 1)); // 22500
+					el.setAttribute(ATTR_AMOUNT_MT,
+							XMLTool.moneyToXmlDouble(mAL)); // 22510
+
+					el.setAttribute(ATTR_UNIT_TT,
+							XMLTool.doubleToXmlDouble(tlTl / 100.0, 2)); // 22520
+					el.setAttribute(ATTR_UNIT_FACTOR_TT,
+							XMLTool.doubleToXmlDouble(mult, 2)); // 22530
+					el.setAttribute(ATTR_SCALE_FACTOR_TT,
+							XMLTool.doubleToXmlDouble(primaryScale, 1)); // 22540
+					el.setAttribute(ATTR_EXTERNAL_FACTOR_TT,
+							XMLTool.doubleToXmlDouble(secondaryScale, 1)); // 22550
+					el.setAttribute(ATTR_AMOUNT_TT,
+							XMLTool.moneyToXmlDouble(mTL)); // 22560
 					Money mAmountLocal = new Money(mAL);
 					mAmountLocal.addMoney(mTL);
-					el.setAttribute(ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal)); // 22570
+					el.setAttribute(ATTR_AMOUNT,
+							XMLTool.moneyToXmlDouble(mAmountLocal)); // 22570
 					el.setAttribute(ATTR_VAT_RATE, "0"); // 22590 //$NON-NLS-1$
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 22620
-					
-					el
-						.setAttribute(ATTR_OBLIGATION, Boolean.toString(TarmedLeistung
-							.isObligation(vv)));
-					
-				} else if (v instanceof Labor2009Tarif){
+
+					el.setAttribute(ATTR_OBLIGATION,
+							Boolean.toString(TarmedLeistung.isObligation(vv)));
+					if (!bRFE) {
+						List<RFE> rfes = RFE.getRfeForKons(b.getId());
+						if (rfes.size() > 0) {
+							StringBuilder sb = new StringBuilder();
+							for (RFE rfe : rfes) {
+								sb.append("551_").append(rfe.getCode()).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
+							}
+							el.setAttribute(ATTR_REMARK, sb.toString());
+						}
+						bRFE = true;
+					}
+
+				} else if (v instanceof Labor2009Tarif) {
 					el = new Element(ELEMENT_RECORD_LAB, ns); // 28000
 					el.setAttribute(ATTR_TARIFF_TYPE, v.getCodeSystemCode());
 					Labor2009Tarif ll = (Labor2009Tarif) v;
 					double mult = ll.getFactor(tt, actFall);
 					Money preis = vv.getNettoPreis();
 					double korr = preis.getCents() / mult;
-					el.setAttribute(ATTR_UNIT, XMLTool.doubleToXmlDouble(
-							korr / 100.0, 2)); // 28470
-					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(
-							mult, 2)); // 28480
+					el.setAttribute(ATTR_UNIT,
+							XMLTool.doubleToXmlDouble(korr / 100.0, 2)); // 28470
+					el.setAttribute(ATTR_UNIT_FACTOR,
+							XMLTool.doubleToXmlDouble(mult, 2)); // 28480
 					Money mAmountLocal = new Money(preis);
 					mAmountLocal.multiply(zahl);
-					el.setAttribute(ATTR_AMOUNT, XMLTool
-							.moneyToXmlDouble(mAmountLocal)); // 28570
+					el.setAttribute(ATTR_AMOUNT,
+							XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
 					el.setAttribute(ATTR_VAT_RATE, StringConstants.ZERO); // 28590
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
 					mAnalysen.addMoney(mAmountLocal);
-					if(!bRFE){
-						List<RFE> rfes=RFE.getRfeForKons(b.getId());
-						StringBuilder sb=new StringBuilder();
-						for(RFE rfe:rfes){
-							sb.append("551_").append(rfe.getCode()).append(" "); //$NON-NLS-1$ //$NON-NLS-2$
-						}
-						el.setAttribute(ATTR_REMARK,sb.toString());
-					}
-				}else if (v instanceof LaborLeistung) {
+
+				} else if (v instanceof LaborLeistung) {
 					el = new Element(ELEMENT_RECORD_LAB, ns); // 28000
 					el.setAttribute(ATTR_TARIFF_TYPE, "316"); // 28060 //$NON-NLS-1$
 					LaborLeistung ll = (LaborLeistung) v;
@@ -767,30 +817,36 @@ public class XMLExporter implements IRnOutputter {
 					// Money preis = vv.getEffPreis(); // b.getEffPreis(v);
 					Money preis = vv.getNettoPreis();
 					double korr = preis.getCents() / mult;
-					el.setAttribute(ATTR_UNIT, XMLTool.doubleToXmlDouble(korr / 100.0, 2)); // 28470
-					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2)); // 28480
+					el.setAttribute(ATTR_UNIT,
+							XMLTool.doubleToXmlDouble(korr / 100.0, 2)); // 28470
+					el.setAttribute(ATTR_UNIT_FACTOR,
+							XMLTool.doubleToXmlDouble(mult, 2)); // 28480
 					Money mAmountLocal = new Money(preis);
 					mAmountLocal.multiply(zahl);
-					el.setAttribute(ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
+					el.setAttribute(ATTR_AMOUNT,
+							XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
 					el.setAttribute(ATTR_VAT_RATE, "0"); // 28590 //$NON-NLS-1$
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
 					mAnalysen.addMoney(mAmountLocal);
 				} else if ((v instanceof Medikament) || (v instanceof Medical)
-					|| (v.getCodeSystemCode() == "400")) { //$NON-NLS-1$
+						|| (v.getCodeSystemCode() == "400")) { //$NON-NLS-1$
 					el = new Element(ELEMENT_RECORD_DRUG, ns);
 					Artikel art = (Artikel) v;
 					double mult = art.getFactor(tt, actFall);
 					Money preis = vv.getNettoPreis();
 					// Money preis = vv.getEffPreis(); // b.getEffPreis(v);
 					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
-					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2));
+					el.setAttribute(ATTR_UNIT_FACTOR,
+							XMLTool.doubleToXmlDouble(mult, 2));
 					el.setAttribute(ATTR_TARIFF_TYPE, "400"); // Pharmacode-basiert //$NON-NLS-1$
-					String pk=((Artikel) v).getPharmaCode();
-					el.setAttribute(ATTR_CODE, StringTool.pad(StringTool.LEFT, '0', pk, 7));
+					String pk = ((Artikel) v).getPharmaCode();
+					el.setAttribute(ATTR_CODE,
+							StringTool.pad(StringTool.LEFT, '0', pk, 7));
 					Money mAmountLocal = new Money(preis);
 					mAmountLocal.multiply(zahl);
-					el.setAttribute(ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal));
+					el.setAttribute(ATTR_AMOUNT,
+							XMLTool.moneyToXmlDouble(mAmountLocal));
 					el.setAttribute(ATTR_VAT_RATE, StringConstants.ZERO);
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE);
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
@@ -805,7 +861,8 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute(ATTR_CODE, ((MiGelArtikel) v).getCode());
 					Money mAmountLocal = new Money(preis);
 					mAmountLocal.multiply(zahl);
-					el.setAttribute(ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal));
+					el.setAttribute(ATTR_AMOUNT,
+							XMLTool.moneyToXmlDouble(mAmountLocal));
 					el.setAttribute(ATTR_VAT_RATE, StringConstants.ZERO);
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE);
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
@@ -817,20 +874,24 @@ public class XMLExporter implements IRnOutputter {
 					double mult = pl.getFactor(tt, actFall);
 					Money preis = vv.getNettoPreis();
 					double korr = preis.getCents() / mult;
-					el.setAttribute(ATTR_UNIT, XMLTool.doubleToXmlDouble(korr / 100.0, 2)); // 28470
-					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2)); // 28480
+					el.setAttribute(ATTR_UNIT,
+							XMLTool.doubleToXmlDouble(korr / 100.0, 2)); // 28470
+					el.setAttribute(ATTR_UNIT_FACTOR,
+							XMLTool.doubleToXmlDouble(mult, 2)); // 28480
 					Money mAmountLocal = new Money(preis);
 					mAmountLocal.multiply(zahl);
-					el.setAttribute(ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
+					el.setAttribute(ATTR_AMOUNT,
+							XMLTool.moneyToXmlDouble(mAmountLocal)); // 28570
 					el.setAttribute(ATTR_VAT_RATE, StringConstants.ZERO); // 28590
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
-					el.setAttribute(ATTR_EAN_PROVIDER, TarmedRequirements.getProviderEAN(actFall));
-					el.setAttribute(ATTR_EAN_RESPONSIBLE, TarmedRequirements
-						.getResponsibleEAN(actFall));
-					
+					el.setAttribute(ATTR_EAN_PROVIDER,
+							TarmedRequirements.getProviderEAN(actFall));
+					el.setAttribute(ATTR_EAN_RESPONSIBLE,
+							TarmedRequirements.getResponsibleEAN(actFall));
+
 					mPhysio.addMoney(mAmountLocal);
-					
+
 				} else {
 					Money preis = vv.getNettoPreis();
 					el = new Element(ELEMENT_RECORD_UNCLASSIFIED, ns);
@@ -839,51 +900,67 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute(ATTR_UNIT_FACTOR, "1.0"); //$NON-NLS-1$
 					Money mAmountLocal = new Money(preis);
 					mAmountLocal.multiply(zahl);
-					el.setAttribute(ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal));
+					el.setAttribute(ATTR_AMOUNT,
+							XMLTool.moneyToXmlDouble(mAmountLocal));
 					el.setAttribute(ATTR_VAT_RATE, StringConstants.ZERO);
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
 					el.setAttribute(ATTR_OBLIGATION, "false"); //$NON-NLS-1$
 					el.setAttribute("external_factor", "1.0"); //$NON-NLS-1$ //$NON-NLS-2$
 					mUebrige.addMoney(mAmountLocal);
 				}
-				el.setAttribute(ATTR_RECORD_ID, Integer.toString(recordNumber++)); // 22010
+				el.setAttribute(ATTR_RECORD_ID,
+						Integer.toString(recordNumber++)); // 22010
 				el.setAttribute("number", Integer.toString(sessionNumber)); // 22030 //$NON-NLS-1$
 				el.setAttribute(ATTR_QUANTITY, Integer.toString(zahl)); // 22350
 				el.setAttribute(ATTR_DATE_BEGIN, dateForTarmed); // 22370
 				el.setText(vv.getText()); // 22340
 				// el.setAttribute("code",v.getCode()); // 22330
-				setAttributeWithDefault(el, ATTR_CODE, v.getCode(), StringConstants.ZERO); // 22330
+				setAttributeWithDefault(el, ATTR_CODE, v.getCode(),
+						StringConstants.ZERO); // 22330
 				services.addContent(el);
 			}
 		}
-		mTotal.addMoney(mTarmedAL).addMoney(mTarmedTL).addMoney(mAnalysen).addMoney(mMedikament)
-			.addMoney(mUebrige).addMoney(mKant).addMoney(mPhysio).addMoney(mMigel);
-		
+		mTotal.addMoney(mTarmedAL).addMoney(mTarmedTL).addMoney(mAnalysen)
+				.addMoney(mMedikament).addMoney(mUebrige).addMoney(mKant)
+				.addMoney(mPhysio).addMoney(mMigel);
+
 		Element balance = new Element(ELEMENT_BALANCE, ns); // 10300
 		balance.setAttribute("currency", curr); // 10310 //$NON-NLS-1$
 		balance.setAttribute(ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mTotal)); // 10330
 		// mPaid=rn.getAnzahlung();
-		balance.setAttribute(ATTR_AMOUNT_PREPAID, XMLTool.moneyToXmlDouble(mPaid)); // 10335
+		balance.setAttribute(ATTR_AMOUNT_PREPAID,
+				XMLTool.moneyToXmlDouble(mPaid)); // 10335
 		mDue = new Money(mTotal);
 		mDue.subtractMoney(mPaid);
 		mDue.roundTo5();
-		
+
 		// chfDue=Math.round(chfDue*20.0)/20.0;
 		mTarmed.addMoney(mTarmedAL).addMoney(mTarmedTL);
 		balance.setAttribute(ATTR_AMOUNT_DUE, XMLTool.moneyToXmlDouble(mDue)); // 10340
-		balance.setAttribute(ATTR_AMOUNT_TARMED, XMLTool.moneyToXmlDouble(mTarmed)); // 10341
-		balance.setAttribute(ATTR_UNIT_TARMED_MT, XMLTool.doubleToXmlDouble(tpTarmedAL / 100.0, 2)); // 10348
-		balance.setAttribute(ATTR_AMOUNT_TARMED_MT, XMLTool.moneyToXmlDouble(mTarmedAL)); // 10349
-		balance.setAttribute(ATTR_UNIT_TARMED_TT, XMLTool.doubleToXmlDouble(tpTarmedTL / 100.0, 2)); // 10350
-		balance.setAttribute(ATTR_AMOUNT_TARMED_TT, XMLTool.moneyToXmlDouble(mTarmedTL)); // 10351
+		balance.setAttribute(ATTR_AMOUNT_TARMED,
+				XMLTool.moneyToXmlDouble(mTarmed)); // 10341
+		balance.setAttribute(ATTR_UNIT_TARMED_MT,
+				XMLTool.doubleToXmlDouble(tpTarmedAL / 100.0, 2)); // 10348
+		balance.setAttribute(ATTR_AMOUNT_TARMED_MT,
+				XMLTool.moneyToXmlDouble(mTarmedAL)); // 10349
+		balance.setAttribute(ATTR_UNIT_TARMED_TT,
+				XMLTool.doubleToXmlDouble(tpTarmedTL / 100.0, 2)); // 10350
+		balance.setAttribute(ATTR_AMOUNT_TARMED_TT,
+				XMLTool.moneyToXmlDouble(mTarmedTL)); // 10351
 		balance.setAttribute(ATTR_AMOUNT_CANTONAL, StringConstants.DOUBLE_ZERO); // 10342
-		balance.setAttribute(ATTR_AMOUNT_UNCLASSIFIED, XMLTool.moneyToXmlDouble(mUebrige)); // 10343
-		balance.setAttribute(ATTR_AMOUNT_LAB, XMLTool.moneyToXmlDouble(mAnalysen)); // 10344
-		balance.setAttribute(ATTR_AMOUNT_PHYSIO, XMLTool.moneyToXmlDouble(mPhysio)); // 10346
-		balance.setAttribute(ATTR_AMOUNT_DRUG, XMLTool.moneyToXmlDouble(mMedikament)); // 10347
-		balance.setAttribute(ATTR_AMOUNT_MIGEL, XMLTool.moneyToXmlDouble(mMigel)); // 10345
-		balance.setAttribute(ATTR_AMOUNT_OBLIGATIONS, XMLTool.moneyToXmlDouble(mTotal)); // 10352
-		
+		balance.setAttribute(ATTR_AMOUNT_UNCLASSIFIED,
+				XMLTool.moneyToXmlDouble(mUebrige)); // 10343
+		balance.setAttribute(ATTR_AMOUNT_LAB,
+				XMLTool.moneyToXmlDouble(mAnalysen)); // 10344
+		balance.setAttribute(ATTR_AMOUNT_PHYSIO,
+				XMLTool.moneyToXmlDouble(mPhysio)); // 10346
+		balance.setAttribute(ATTR_AMOUNT_DRUG,
+				XMLTool.moneyToXmlDouble(mMedikament)); // 10347
+		balance.setAttribute(ATTR_AMOUNT_MIGEL,
+				XMLTool.moneyToXmlDouble(mMigel)); // 10345
+		balance.setAttribute(ATTR_AMOUNT_OBLIGATIONS,
+				XMLTool.moneyToXmlDouble(mTotal)); // 10352
+
 		// 10370 ff als stub, solange keine Mwst Pflicht
 		Element vat = new Element(ELEMENT_VAT, ns);
 		vat.setAttribute(ELEMENT_VAT, StringConstants.FLOAT_ZERO);
@@ -894,21 +971,24 @@ public class XMLExporter implements IRnOutputter {
 		vat.addContent(vatrate);
 		balance.addContent(vat);
 		invoice.addContent(balance);
-		
+
 		String esrmode = actMandant.getInfoString(ta.ESR5OR9);
 		Element esr; // 10400
 		String userdata = rn.getRnId();
-		ESR besr =
-			new ESR(actMandant.getInfoString(ta.ESRNUMBER), actMandant.getInfoString(ta.ESRSUB),
-				userdata, ESR.ESR27);
-		
+		ESR besr = new ESR(actMandant.getInfoString(ta.ESRNUMBER),
+				actMandant.getInfoString(ta.ESRSUB), userdata, ESR.ESR27);
+
 		// String ESRNumber=m.getInfoString(ta.ESRNUMBER);
 		// String ESRSubid=m.getInfoString(ta.ESRSUB);
 		// Zur Zeit nur esr9 unterstützt
 		if (esrmode.equals("esr5")) { // esr5 oder esr9 //$NON-NLS-1$
 			esr = new Element("esr5", ns); //$NON-NLS-1$
-			esr.setAttribute(ATTR_PARTICIPANT_NUMBER, besr.makeParticipantNumber(true)); // Teilnehmernummer
-			esr.setAttribute(ATTR_TYPE, actMandant.getInfoString(ta.ESRPLUS)); // 15 oder 15plus (mit
+			esr.setAttribute(ATTR_PARTICIPANT_NUMBER,
+					besr.makeParticipantNumber(true)); // Teilnehmernummer
+			esr.setAttribute(ATTR_TYPE, actMandant.getInfoString(ta.ESRPLUS)); // 15
+																				// oder
+																				// 15plus
+																				// (mit
 			// oder ohne Betrag)
 			// String refnr="01000234004554504"; // TODO
 			// String codingline="01322234°3423424"; // TODO
@@ -916,20 +996,25 @@ public class XMLExporter implements IRnOutputter {
 			// esr.setAttribute("coding_line",codingline); // codierzeile
 		} else if (esrmode.equals("esr9")) { // esr9 // 10403 //$NON-NLS-1$
 			esr = new Element("esr9", ns); //$NON-NLS-1$
-			esr.setAttribute(ATTR_PARTICIPANT_NUMBER, besr.makeParticipantNumber(true));// 9-stellige
+			esr.setAttribute(ATTR_PARTICIPANT_NUMBER,
+					besr.makeParticipantNumber(true));// 9-stellige
 			// Teilnehmernummer
 			// 10451
-			// esr.setAttribute("type",m.getInfoString(ta.ESRPLUS)); // 16or27 oder 16or27plus
+			// esr.setAttribute("type",m.getInfoString(ta.ESRPLUS)); // 16or27
+			// oder 16or27plus
 			esr.setAttribute(ATTR_TYPE, "16or27"); // Nur dieses Format unterstützt 10461 //$NON-NLS-1$
 			String refnr = besr.makeRefNr(true);
-			// String codingline=besr.createCodeline(mDue.getCentsAsString(),null);
-			String codingline =
-				besr.createCodeline(XMLTool.moneyToXmlDouble(mDue).replaceFirst("[.,]", ""), null); //$NON-NLS-1$ //$NON-NLS-2$
+			// String
+			// codingline=besr.createCodeline(mDue.getCentsAsString(),null);
+			String codingline = besr
+					.createCodeline(XMLTool.moneyToXmlDouble(mDue)
+							.replaceFirst("[.,]", ""), null); //$NON-NLS-1$ //$NON-NLS-2$
 			esr.setAttribute("reference_number", refnr); // 16 oder 27 stellige ref nr 10470 //$NON-NLS-1$
 			esr.setAttribute("coding_line", codingline); // codierzeile 10479 //$NON-NLS-1$
 		} else {
-			MessageDialog.openError(null, Messages.XMLExporter_MandatorErrorCaption,
-				Messages.XMLExporter_MandatorErrorText);
+			MessageDialog.openError(null,
+					Messages.XMLExporter_MandatorErrorCaption,
+					Messages.XMLExporter_MandatorErrorText);
 			return null;
 		}
 		String bankid = actMandant.getInfoString(ta.RNBANK);
@@ -941,7 +1026,7 @@ public class XMLExporter implements IRnOutputter {
 			esr.addContent(eBank);
 		}
 		invoice.addContent(esr);
-		
+
 		Element eTiers = null;
 		if (tiers.equals(TIERS_GARANT)) {
 			eTiers = new Element(ELEMENT_TIERS_GARANT, ns); // 11020 //$NON-NLS-1$
@@ -957,11 +1042,12 @@ public class XMLExporter implements IRnOutputter {
 			eTiers.setAttribute("purpose", ELEMENT_INVOICE); // 11265 //$NON-NLS-1$
 			// TODO Storno / anulment
 		}
-		
+
 		Element biller = new Element("biller", ns); // 11070 -> 11400 //$NON-NLS-1$
-		// biller.setAttribute("ean_party",actMandant.getInfoString("EAN")); // 11402
-		biller.setAttribute(ATTR_EAN_PARTY, TarmedRequirements
-			.getEAN(actMandant.getRechnungssteller())); // 11402
+		// biller.setAttribute("ean_party",actMandant.getInfoString("EAN")); //
+		// 11402
+		biller.setAttribute(ATTR_EAN_PARTY,
+				TarmedRequirements.getEAN(actMandant.getRechnungssteller())); // 11402
 		biller.setAttribute("zsr", TarmedRequirements.getKSK(actMandant)); // actMandant.getInfoString //$NON-NLS-1$
 		// ("KSK"));
 		// // 11403
@@ -971,19 +1057,24 @@ public class XMLExporter implements IRnOutputter {
 		}
 		biller.addContent(buildAdressElement(actMandant)); // 11600-11680
 		eTiers.addContent(biller);
-		
+
 		Element provider = (Element) biller.clone(); // 11080
 		provider.setName("provider"); //$NON-NLS-1$
 		eTiers.addContent(provider);
-		
-		Element onlineElement = null; // tschaller: see comments in buildOnlineElement
-		
+
+		Element onlineElement = null; // tschaller: see comments in
+										// buildOnlineElement
+
 		Element insurance = new Element("insurance", ns); // 11090 //$NON-NLS-1$
-		// The 'insurance' element is optional in Tiers Garant so in TG we only insert this Element,
+		// The 'insurance' element is optional in Tiers Garant so in TG we only
+		// insert this Element,
 		// if we have all data absolutely correct.
-		// In Tiers Payant, the insurance element is mandatory, and, furthermore, MUST be an
-		// Organization. So in TP, we insert an insurance element in any case, and, if the guarantor
-		// is a person, we "convert" it to an organization to make the validator happy
+		// In Tiers Payant, the insurance element is mandatory, and,
+		// furthermore, MUST be an
+		// Organization. So in TP, we insert an insurance element in any case,
+		// and, if the guarantor
+		// is a person, we "convert" it to an organization to make the validator
+		// happy
 		if (tiers.equals(TIERS_GARANT)) {
 			if (kostentraeger.istOrganisation()) {
 				if (kEAN.matches("[0-9]{13,13}")) { //$NON-NLS-1$
@@ -993,7 +1084,8 @@ public class XMLExporter implements IRnOutputter {
 				}
 			}
 		} else {
-			// insurance.addContent(buildAdressElement(kostentraeger)); // must be an organization,
+			// insurance.addContent(buildAdressElement(kostentraeger)); // must
+			// be an organization,
 			// so we fake one
 			/*
 			 * if(!kEAN.matches("[0-9]{13,13}")){ kEAN="2000000000000"; }
@@ -1001,35 +1093,40 @@ public class XMLExporter implements IRnOutputter {
 			insurance.setAttribute(ATTR_EAN_PARTY, kEAN);
 			Element company = new Element("company", ns); //$NON-NLS-1$
 			Element companyname = new Element("companyname", ns); //$NON-NLS-1$
-			companyname.setText(StringTool.limitLength(kostentraeger.get(Kontakt.FLD_NAME1), 35));
+			companyname.setText(StringTool.limitLength(
+					kostentraeger.get(Kontakt.FLD_NAME1), 35));
 			company.addContent(companyname);
 			company.addContent(buildPostalElement(kostentraeger));
 			company.addContent(buildTelekomElement(kostentraeger));
-			// company.addContent(buildOnlineElement(kostentraeger)); // tschaller: see comments in
+			// company.addContent(buildOnlineElement(kostentraeger)); //
+			// tschaller: see comments in
 			// buildOnlineElement
 			onlineElement = buildOnlineElement(kostentraeger);
 			if (onlineElement != null) {
 				company.addContent(onlineElement);
 			}
-			
+
 			insurance.addContent(company);
 			eTiers.addContent(insurance);
-			// note this may lead to a person mistreated as organization. So these faults should be
+			// note this may lead to a person mistreated as organization. So
+			// these faults should be
 			// caught when generating bills
-			
+
 		}
-		
+
 		Element patient = new Element("patient", ns); // 11100 //$NON-NLS-1$
-		
-		// patient.setAttribute("unique_id",rn.getFall().getId()); // this is optional and should be
+
+		// patient.setAttribute("unique_id",rn.getFall().getId()); // this is
+		// optional and should be
 		// ssn13 type. leave it out for now
 		String gender = "male"; //$NON-NLS-1$
 		if (pat == null) {
 			MessageDialog.openError(null, Messages.XMLExporter_ErrorCaption,
-				Messages.XMLExporter_NoPatientText);
+					Messages.XMLExporter_NoPatientText);
 			return null;
 		}
-		if (StringTool.isNothing(pat.getGeschlecht())) { // we fall back to female. why not?
+		if (StringTool.isNothing(pat.getGeschlecht())) { // we fall back to
+															// female. why not?
 			pat.set(Person.SEX, Person.FEMALE);
 		}
 		if (pat.getGeschlecht().equals(Person.FEMALE)) {
@@ -1037,54 +1134,62 @@ public class XMLExporter implements IRnOutputter {
 		}
 		patient.setAttribute("gender", gender); //$NON-NLS-1$
 		String gebDat = pat.getGeburtsdatum();
-		if (StringTool.isNothing(gebDat)) { // make validator happy if we don't know the birthdate
+		if (StringTool.isNothing(gebDat)) { // make validator happy if we don't
+											// know the birthdate
 			patient.setAttribute(ATTR_BIRTHDATE, "0001-00-00T00:00:00"); //$NON-NLS-1$
 		} else {
-			patient.setAttribute(ATTR_BIRTHDATE, new TimeTool(pat.getGeburtsdatum())
-				.toString(TimeTool.DATE_MYSQL)
-				+ "T00:00:00"); //$NON-NLS-1$
+			patient.setAttribute(
+					ATTR_BIRTHDATE,
+					new TimeTool(pat.getGeburtsdatum())
+							.toString(TimeTool.DATE_MYSQL) + "T00:00:00"); //$NON-NLS-1$
 		}
 		patient.addContent(buildAdressElement(pat));
 		eTiers.addContent(patient);
-		
+
 		Element guarantor = buildGuarantor(rnAdressat, actPatient); // 11110
 		eTiers.addContent(guarantor);
-		
+
 		Element referrer = new Element("referrer", ns); // 11120 //$NON-NLS-1$
 		Kontakt auftraggeber = actMandant; // TODO
-		referrer.setAttribute(ATTR_EAN_PARTY, TarmedRequirements.getEAN(auftraggeber)); // auftraggeber.
-		
+		referrer.setAttribute(ATTR_EAN_PARTY,
+				TarmedRequirements.getEAN(auftraggeber)); // auftraggeber.
+
 		referrer.setAttribute("zsr", TarmedRequirements.getKSK(auftraggeber)); // auftraggeber. //$NON-NLS-1$
-		
+
 		referrer.addContent(buildAdressElement(auftraggeber));
 		eTiers.addContent(referrer);
-		
-		if (tiers.equals(TIERS_GARANT) && (TarmedRequirements.hasTCContract(actMandant))) {
+
+		if (tiers.equals(TIERS_GARANT)
+				&& (TarmedRequirements.hasTCContract(actMandant))) {
 			Element demand = new Element("demand", ns); //$NON-NLS-1$
 			demand.setAttribute("tc_demand_id", "0"); //$NON-NLS-1$ //$NON-NLS-2$
-			
-			demand.setAttribute("tc_token", besr.createCodeline(XMLTool.moneyToXmlDouble(mDue) //$NON-NLS-1$
-				.replaceFirst("[.,]", ""), tcCode)); //$NON-NLS-1$ //$NON-NLS-2$
-			demand.setAttribute("insurance_demand_date", makeTarmedDatum(rn.getDatumRn())); //$NON-NLS-1$
+
+			demand.setAttribute(
+					"tc_token", besr.createCodeline(XMLTool.moneyToXmlDouble(mDue) //$NON-NLS-1$
+											.replaceFirst("[.,]", ""), tcCode)); //$NON-NLS-1$ //$NON-NLS-2$
+			demand.setAttribute(
+					"insurance_demand_date", makeTarmedDatum(rn.getDatumRn())); //$NON-NLS-1$
 			eTiers.addContent(demand);
 		}
-		
+
 		invoice.addContent(eTiers);
-		
+
 		Element detail = new Element(ELEMENT_DETAIL, ns); // 15000
-		
-		detail.setAttribute(ATTR_DATE_BEGIN, makeTarmedDatum(ttFirst.toString(TimeTool.DATE_GER))); // 15002
-		detail.setAttribute("date_end", makeTarmedDatum(ttLast.toString(TimeTool.DATE_GER))); // 15002 //$NON-NLS-1$
-		
+
+		detail.setAttribute(ATTR_DATE_BEGIN,
+				makeTarmedDatum(ttFirst.toString(TimeTool.DATE_GER))); // 15002
+		detail.setAttribute(
+				"date_end", makeTarmedDatum(ttLast.toString(TimeTool.DATE_GER))); // 15002 //$NON-NLS-1$
+
 		detail.setAttribute("canton", actMandant.getInfoString(ta.KANTON)); // 15004 //$NON-NLS-1$
 		detail.setAttribute("service_locality", "practice"); // 15021 //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 		// 15030 ff weggelassen
-		
+
 		Element diagnosis = new Element("diagnosis", ns); // 15500 //$NON-NLS-1$
 		/*
-		 * String dgType=actMandant.getInfoString(ta.DIAGSYS); if(dgType.equals("")){
-		 * dgType="by_contract"; }
+		 * String dgType=actMandant.getInfoString(ta.DIAGSYS);
+		 * if(dgType.equals("")){ dgType="by_contract"; }
 		 */
 
 		diagnosis.setAttribute(ATTR_TYPE, match_diag(dgsys)); // 15510
@@ -1098,61 +1203,73 @@ public class XMLExporter implements IRnOutputter {
 			diagnosis.setAttribute(ATTR_CODE, diagnosen);
 		}
 		detail.addContent(diagnosis);
-		
+
 		String gesetz = TarmedRequirements.getGesetz(actFall);
-		
+
 		Element versicherung = new Element(gesetz.toLowerCase(), ns); // 16700
 		versicherung.setAttribute("reason", match_type(actFall.getGrund())); //$NON-NLS-1$
 		if (gesetz.equalsIgnoreCase("ivg")) { //$NON-NLS-1$
-			String caseNumber = actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
+			String caseNumber = actFall
+					.getRequiredString(TarmedRequirements.CASE_NUMBER);
 			if ((!caseNumber.matches("[0-9]{14}")) && // seit 1.1.2000 gültige Nummer //$NON-NLS-1$
-				(!caseNumber.matches("[0-9]{10}")) && // bis 31.12.1999 gültige Nummer //$NON-NLS-1$
-				(!caseNumber.matches("[0-9]{9}")) && // auch bis 31.12.1999 gültige Nummer //$NON-NLS-1$
-				(!caseNumber.matches("[0-9]{6}"))) { // Nummer für Abklärungsmassnahmen //$NON-NLS-1$
+					(!caseNumber.matches("[0-9]{10}")) && // bis 31.12.1999 gültige Nummer //$NON-NLS-1$
+					(!caseNumber.matches("[0-9]{9}")) && // auch bis 31.12.1999 gültige Nummer //$NON-NLS-1$
+					(!caseNumber.matches("[0-9]{6}"))) { // Nummer für Abklärungsmassnahmen //$NON-NLS-1$
 				/* die spinnen, die Bürokraten */
 				if (Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true)) {
-					rn.reject(REJECTCODE.VALIDATION_ERROR, Messages.XMLExporter_IVCaseNumberInvalid);
+					rn.reject(REJECTCODE.VALIDATION_ERROR,
+							Messages.XMLExporter_IVCaseNumberInvalid);
 				} else {
 					caseNumber = "123456"; // sometimes it's better to cheat than to fight //$NON-NLS-1$
 					// bureaucrazy
 				}
 			}
 			versicherung.setAttribute(ATTR_CASE_ID, caseNumber);
-			String ahv = TarmedRequirements.getAHV(pat).replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+			String ahv = TarmedRequirements.getAHV(pat).replaceAll(
+					"[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
 			if (ahv.length() == 0) {
-				ahv = actFall.getRequiredString(TarmedRequirements.SSN).replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+				ahv = actFall.getRequiredString(TarmedRequirements.SSN)
+						.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
 			}
 			boolean bAHVValid = ahv.matches("[0-9]{11}") || ahv.matches("[0-9]{13}"); //$NON-NLS-1$ //$NON-NLS-2$
-			if (Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true) && (bAHVValid == false)) {
-				rn.reject(REJECTCODE.VALIDATION_ERROR, Messages.XMLExporter_AHVInvalid);
+			if (Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true)
+					&& (bAHVValid == false)) {
+				rn.reject(REJECTCODE.VALIDATION_ERROR,
+						Messages.XMLExporter_AHVInvalid);
 			} else {
 				versicherung.setAttribute("ssn", ahv); //$NON-NLS-1$
 			}
-			String nif =
-				TarmedRequirements.getNIF(actMandant.getRechnungssteller())
-					.replaceAll("[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
+			String nif = TarmedRequirements.getNIF(
+					actMandant.getRechnungssteller()).replaceAll(
+					"[^0-9]", StringConstants.EMPTY); //$NON-NLS-1$
 			if (Hub.userCfg.get(Leistungscodes.BILLING_STRICT, true)
-				&& (!nif.matches("[0-9]{1,7}"))) { //$NON-NLS-1$
-				rn.reject(REJECTCODE.VALIDATION_ERROR, Messages.XMLExporter_NIFInvalid);
+					&& (!nif.matches("[0-9]{1,7}"))) { //$NON-NLS-1$
+				rn.reject(REJECTCODE.VALIDATION_ERROR,
+						Messages.XMLExporter_NIFInvalid);
 			} else {
 				versicherung.setAttribute("nif", nif); //$NON-NLS-1$
 			}
 		} else if (gesetz.equalsIgnoreCase("uvg")) { //$NON-NLS-1$
-			String casenumber = actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
+			String casenumber = actFall
+					.getRequiredString(TarmedRequirements.CASE_NUMBER);
 			if (StringTool.isNothing(casenumber)) {
-				casenumber = actFall.getRequiredString(TarmedRequirements.ACCIDENT_NUMBER);
+				casenumber = actFall
+						.getRequiredString(TarmedRequirements.ACCIDENT_NUMBER);
 			}
 			if (!StringTool.isNothing(casenumber)) {
 				versicherung.setAttribute(ATTR_CASE_ID, casenumber);
 			}
-			String vnummer = actFall.getRequiredString(TarmedRequirements.INSURANCE_NUMBER);
+			String vnummer = actFall
+					.getRequiredString(TarmedRequirements.INSURANCE_NUMBER);
 			if (!StringTool.isNothing(vnummer)) {
 				versicherung.setAttribute("patient_id", vnummer); //$NON-NLS-1$
 			}
 		} else {
-			String vnummer = actFall.getRequiredString(TarmedRequirements.INSURANCE_NUMBER);
+			String vnummer = actFall
+					.getRequiredString(TarmedRequirements.INSURANCE_NUMBER);
 			if (StringTool.isNothing(vnummer)) {
-				vnummer = actFall.getRequiredString(TarmedRequirements.CASE_NUMBER);
+				vnummer = actFall
+						.getRequiredString(TarmedRequirements.CASE_NUMBER);
 			}
 			if (StringTool.isNothing(vnummer)) {
 				vnummer = pat.getId();
@@ -1164,23 +1281,24 @@ public class XMLExporter implements IRnOutputter {
 			casedate = rn.getDatumVon();
 		}
 		versicherung.setAttribute("case_date", makeTarmedDatum(casedate)); //$NON-NLS-1$
-		// versicherung.setAttribute("case_id",actFall.getFallNummer()); // 16730
+		// versicherung.setAttribute("case_id",actFall.getFallNummer()); //
+		// 16730
 		setAttributeIfNotEmpty(versicherung, "contract_number", actFall //$NON-NLS-1$
-			.getInfoString("Vertragsnummer")); // 16750 //$NON-NLS-1$
+				.getInfoString("Vertragsnummer")); // 16750 //$NON-NLS-1$
 		detail.addContent(versicherung);
-		
+
 		detail.addContent(services); // 20000
 		invoice.addContent(detail);
 		if (rn.setBetrag(mDue) == false) {
 			rn.reject(RnStatus.REJECTCODE.SUM_MISMATCH,
-				Messages.XMLExporter_SumMismatch);
-			
+					Messages.XMLExporter_SumMismatch);
+
 		} else if (doVerify) {
 			new Validator().checkBill(this, new Result<Rechnung>());
 		}
-		
+
 		checkXML(xmlRn, dest, rn, doVerify);
-		
+
 		if (rn.getStatus() != RnStatus.FEHLERHAFT) {
 			try {
 				StringWriter stringWriter = new StringWriter();
@@ -1190,31 +1308,35 @@ public class XMLExporter implements IRnOutputter {
 				blob.putString(stringWriter.toString());
 				if (dest != null) {
 					writeFile(xmlRn, dest);
-					
+
 				}
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
-				SWTHelper.alert(Messages.XMLExporter_ErrorCaption, MessageFormat.format(Messages.XMLExporter_CouldNotWriteFile,dest));
+				SWTHelper.alert(Messages.XMLExporter_ErrorCaption,
+						MessageFormat.format(
+								Messages.XMLExporter_CouldNotWriteFile, dest));
 				return null;
 			}
 		}
 		return xmlRn;
 	}
-	
-	public String getDescription(){
+
+	public String getDescription() {
 		return Messages.XMLExporter_TarmedForTrustCenter;
 	}
-	
-	public Element buildAdressElement(final Kontakt k){
+
+	public Element buildAdressElement(final Kontakt k) {
 		return buildAdressElement(k, false);
 	}
-	
-	public Element buildAdressElement(final Kontakt k, final boolean useAnschrift){
+
+	public Element buildAdressElement(final Kontakt k,
+			final boolean useAnschrift) {
 		Element ret;
 		if (k.istPerson() == false) {
 			ret = new Element("company", ns); //$NON-NLS-1$
 			Element companyname = new Element("companyname", ns); //$NON-NLS-1$
-			companyname.setText(StringTool.limitLength(k.get(Kontakt.FLD_NAME1), 35));
+			companyname.setText(StringTool.limitLength(
+					k.get(Kontakt.FLD_NAME1), 35));
 			ret.addContent(companyname);
 			ret.addContent(buildPostalElement(k));
 			ret.addContent(buildTelekomElement(k));
@@ -1226,14 +1348,18 @@ public class XMLExporter implements IRnOutputter {
 			ret = new Element("person", ns); //$NON-NLS-1$
 			Element familyname = new Element("familyname", ns); //$NON-NLS-1$
 			Element givenname = new Element("givenname", ns); //$NON-NLS-1$
-			
+
 			String anschrift = k.get(Kontakt.FLD_ANSCHRIFT);
 			if (!useAnschrift || StringTool.isNothing(anschrift)
-				|| anschrift.equals(k.createStdAnschrift())) {
-				setAttributeIfNotEmptyWithLimit(ret, "salutation", k.getInfoString("Anrede"), 35); //$NON-NLS-1$ //$NON-NLS-2$
-				setAttributeIfNotEmptyWithLimit(ret, "title", k.get(Person.TITLE), 35); //$NON-NLS-1$
-				familyname.setText(StringTool.limitLength(k.get(Kontakt.FLD_NAME1), 35));
-				String gn = k.get(StringTool.limitLength(Kontakt.FLD_NAME2, 35));
+					|| anschrift.equals(k.createStdAnschrift())) {
+				setAttributeIfNotEmptyWithLimit(ret,
+						"salutation", k.getInfoString("Anrede"), 35); //$NON-NLS-1$ //$NON-NLS-2$
+				setAttributeIfNotEmptyWithLimit(ret,
+						"title", k.get(Person.TITLE), 35); //$NON-NLS-1$
+				familyname.setText(StringTool.limitLength(
+						k.get(Kontakt.FLD_NAME1), 35));
+				String gn = k
+						.get(StringTool.limitLength(Kontakt.FLD_NAME2, 35));
 				if (StringTool.isNothing(gn)) {
 					gn = "Unbekannt"; // make validator happy //$NON-NLS-1$
 				}
@@ -1243,15 +1369,18 @@ public class XMLExporter implements IRnOutputter {
 				ret.addContent(buildPostalElement(k));
 			} else {
 				Postanschrift postAnschrift = new Postanschrift(k);
-				familyname.setText(StringTool.limitLength(postAnschrift.name, 35));
-				givenname.setText(StringTool.limitLength(postAnschrift.vorname, 35));
-				
-				setAttributeIfNotEmptyWithLimit(ret, "salutation", postAnschrift.anrede, 35); //$NON-NLS-1$
+				familyname.setText(StringTool.limitLength(postAnschrift.name,
+						35));
+				givenname.setText(StringTool.limitLength(postAnschrift.vorname,
+						35));
+
+				setAttributeIfNotEmptyWithLimit(ret,
+						"salutation", postAnschrift.anrede, 35); //$NON-NLS-1$
 				ret.addContent(familyname);
 				ret.addContent(givenname);
 				ret.addContent(buildPostalElement(postAnschrift));
 			}
-			
+
 			ret.addContent(buildTelekomElement(k));
 			Element onlineElement = buildOnlineElement(k);
 			if (onlineElement != null) {
@@ -1260,48 +1389,66 @@ public class XMLExporter implements IRnOutputter {
 		}
 		return ret;
 	}
-	
-	public Element buildPostalElement(final Kontakt k){
+
+	public Element buildPostalElement(final Kontakt k) {
 		Element ret = new Element("postal", ns); //$NON-NLS-1$
-		addElementIfExists(ret, "pobox", null, StringTool.limitLength(k.getInfoString("Postfach"), //$NON-NLS-1$ //$NON-NLS-2$
-			35), null);
-		addElementIfExists(ret, "street", null, StringTool.limitLength(k.get(Kontakt.FLD_STREET), 35), null); //$NON-NLS-1$
-		Element zip =
-			addElementIfExists(ret, "zip", null, StringTool.limitLength(k.get(Kontakt.FLD_ZIP), 9), "0000"); //$NON-NLS-1$ //$NON-NLS-2$
-		setAttributeIfNotEmpty(zip, "countrycode", StringTool.limitLength(k.get(Kontakt.FLD_COUNTRY), 3)); //$NON-NLS-1$
-		addElementIfExists(ret, "city", null, StringTool.limitLength(k.get(Kontakt.FLD_PLACE), 35), Messages.XMLExporter_Unknown); //$NON-NLS-1$
+		addElementIfExists(
+				ret,
+				"pobox", null, StringTool.limitLength(k.getInfoString("Postfach"), //$NON-NLS-1$ //$NON-NLS-2$
+								35), null);
+		addElementIfExists(
+				ret,
+				"street", null, StringTool.limitLength(k.get(Kontakt.FLD_STREET), 35), null); //$NON-NLS-1$
+		Element zip = addElementIfExists(
+				ret,
+				"zip", null, StringTool.limitLength(k.get(Kontakt.FLD_ZIP), 9), "0000"); //$NON-NLS-1$ //$NON-NLS-2$
+		setAttributeIfNotEmpty(
+				zip,
+				"countrycode", StringTool.limitLength(k.get(Kontakt.FLD_COUNTRY), 3)); //$NON-NLS-1$
+		addElementIfExists(
+				ret,
+				"city", null, StringTool.limitLength(k.get(Kontakt.FLD_PLACE), 35), Messages.XMLExporter_Unknown); //$NON-NLS-1$
 		return ret;
 	}
-	
-	public Element buildPostalElement(final Postanschrift postanschrift){
+
+	public Element buildPostalElement(final Postanschrift postanschrift) {
 		Element ret = new Element("postal", ns); //$NON-NLS-1$
-		addElementIfExists(ret, "pobox", null, StringTool.limitLength(postanschrift.adresse2, 35), //$NON-NLS-1$
-			null);
-		addElementIfExists(ret, "street", null, StringTool.limitLength(postanschrift.adresse1, 35), //$NON-NLS-1$
-			null);
-		Element zip =
-			addElementIfExists(ret, "zip", null, StringTool.limitLength(postanschrift.plz, 9), //$NON-NLS-1$
+		addElementIfExists(
+				ret,
+				"pobox", null, StringTool.limitLength(postanschrift.adresse2, 35), //$NON-NLS-1$
+				null);
+		addElementIfExists(
+				ret,
+				"street", null, StringTool.limitLength(postanschrift.adresse1, 35), //$NON-NLS-1$
+				null);
+		Element zip = addElementIfExists(ret,
+				"zip", null, StringTool.limitLength(postanschrift.plz, 9), //$NON-NLS-1$
 				"0000"); //$NON-NLS-1$
-		setAttributeIfNotEmpty(zip, "countrycode", StringTool.limitLength(postanschrift.land, 3)); //$NON-NLS-1$
-		addElementIfExists(ret, "city", null, StringTool.limitLength(postanschrift.ort, 35), //$NON-NLS-1$
-			Messages.XMLExporter_unknown);
+		setAttributeIfNotEmpty(zip,
+				"countrycode", StringTool.limitLength(postanschrift.land, 3)); //$NON-NLS-1$
+		addElementIfExists(ret,
+				"city", null, StringTool.limitLength(postanschrift.ort, 35), //$NON-NLS-1$
+				Messages.XMLExporter_unknown);
 		return ret;
 	}
-	
-	public Element buildOnlineElement(final Kontakt k){
-// Element ret = new Element("online", ns);
-// String email = StringTool.limitLength(k.get("E-Mail"), 70);
-// if (!email.matches(".+@.+")) {
-// email = "mail@invalid.invalid";
-// }
-// addElementIfExists(ret, "email", null, k.get("E-Mail"), "mail@invalid.invalid");
-// addElementIfExists(ret, "url", null, StringTool.limitLength(k.get("Website"), 100), null);
-// return ret;
-		
+
+	public Element buildOnlineElement(final Kontakt k) {
+		// Element ret = new Element("online", ns);
+		// String email = StringTool.limitLength(k.get("E-Mail"), 70);
+		// if (!email.matches(".+@.+")) {
+		// email = "mail@invalid.invalid";
+		// }
+		// addElementIfExists(ret, "email", null, k.get("E-Mail"),
+		// "mail@invalid.invalid");
+		// addElementIfExists(ret, "url", null,
+		// StringTool.limitLength(k.get("Website"), 100), null);
+		// return ret;
+
 		// Tony Schaller, 28.12.2008:
-		// optimized code: online element is created when it contains real content, only
+		// optimized code: online element is created when it contains real
+		// content, only
 		Element ret = null;
-		
+
 		// mail adresse
 		String value = StringTool.limitLength(k.get(Kontakt.FLD_E_MAIL), 70);
 		if (!value.equals(StringConstants.EMPTY)) {
@@ -1313,49 +1460,56 @@ public class XMLExporter implements IRnOutputter {
 			}
 			addElementIfExists(ret, ELEMENT_EMAIL, null, value, null);
 		}
-		
+
 		// webseite
 		value = StringTool.limitLength(k.get(Kontakt.FLD_WEBSITE), 100);
 		if (!value.equals(StringConstants.EMPTY)) {
 			if (ret == null) {
 				ret = new Element(ELEMENT_ONLINE, ns);
-				addElementIfExists(ret, ELEMENT_EMAIL, null, "mail@invalid.invalid", null); //$NON-NLS-1$
+				addElementIfExists(ret, ELEMENT_EMAIL, null,
+						"mail@invalid.invalid", null); //$NON-NLS-1$
 			}
 			addElementIfExists(ret, "url", null, value, null); //$NON-NLS-1$
 		}
 		return ret;
 	}
-	
-	public Element buildTelekomElement(final Kontakt k){
+
+	public Element buildTelekomElement(final Kontakt k) {
 		Element ret = new Element("telecom", ns); //$NON-NLS-1$
-		addElementIfExists(ret, "phone", null, StringTool.limitLength(k.get(Kontakt.FLD_PHONE1), 25), //$NON-NLS-1$
-			"555-555 55 55"); //$NON-NLS-1$
-		addElementIfExists(ret, "fax", null, StringTool.limitLength(k.get(Kontakt.FLD_FAX), 25), null); //$NON-NLS-1$
+		addElementIfExists(
+				ret,
+				"phone", null, StringTool.limitLength(k.get(Kontakt.FLD_PHONE1), 25), //$NON-NLS-1$
+				"555-555 55 55"); //$NON-NLS-1$
+		addElementIfExists(
+				ret,
+				"fax", null, StringTool.limitLength(k.get(Kontakt.FLD_FAX), 25), null); //$NON-NLS-1$
 		return ret;
 	}
-	
+
 	/**
-	 * Validate XML of the created bill against the appropriate schema. Subclasses can override to
-	 * provide specific handling of errors. The default implementation will mark the bill as
-	 * erroneous if STRICT_BILLING is active and XML Schema errors are present.
+	 * Validate XML of the created bill against the appropriate schema.
+	 * Subclasses can override to provide specific handling of errors. The
+	 * default implementation will mark the bill as erroneous if STRICT_BILLING
+	 * is active and XML Schema errors are present.
 	 * 
 	 * @param xmlDoc
 	 *            the bill
 	 * @param dest
-	 *            the destination path if the user chose output to file. Might be null
+	 *            the destination path if the user chose output to file. Might
+	 *            be null
 	 * @param rn
 	 *            the bill to output
 	 * @param doVerify
-	 *            false if the user doesn't want strict validity check (subclasses may ignore)
+	 *            false if the user doesn't want strict validity check
+	 *            (subclasses may ignore)
 	 */
-	protected void checkXML(final Document xmlDoc, String dest, final Rechnung rn,
-		final boolean doVerify){
+	protected void checkXML(final Document xmlDoc, String dest,
+			final Rechnung rn, final boolean doVerify) {
 		if (Hub.userCfg.get(Leistungscodes.BILLING_STRICT, false)) {
 			Source source = new JDOMSource(xmlDoc);
-			String path =
-				PlatformHelper.getBasePath("ch.elexis.arzttarife_ch") + File.separator + "rsc"; //$NON-NLS-1$ //$NON-NLS-2$
-			List<String> errs =
-				XMLTool.validateSchema(path + File.separator + "MDInvoiceRequest_400.xsd", source); //$NON-NLS-1$
+			String path = PlatformHelper.getBasePath("ch.elexis.arzttarife_ch") + File.separator + "rsc"; //$NON-NLS-1$ //$NON-NLS-2$
+			List<String> errs = XMLTool.validateSchema(path + File.separator
+					+ "MDInvoiceRequest_400.xsd", source); //$NON-NLS-1$
 			if (!errs.isEmpty()) {
 				StringBuilder sb = new StringBuilder();
 				for (String err : errs) {
@@ -1364,15 +1518,15 @@ public class XMLExporter implements IRnOutputter {
 				rn.reject(RnStatus.REJECTCODE.VALIDATION_ERROR, sb.toString());
 			}
 		}
-		
+
 	}
-	
-	public static String makeTarmedDatum(final String datum){
+
+	public static String makeTarmedDatum(final String datum) {
 		return new TimeTool(datum).toString(TimeTool.DATE_MYSQL) + "T00:00:00"; //$NON-NLS-1$
 	}
-	
-	private Element addElementIfExists(final Element parent, final String name, final String attr,
-		String val, final String defValue){
+
+	private Element addElementIfExists(final Element parent, final String name,
+			final String attr, String val, final String defValue) {
 		if (StringTool.isNothing(val)) {
 			val = defValue;
 		}
@@ -1388,9 +1542,9 @@ public class XMLExporter implements IRnOutputter {
 		}
 		return null;
 	}
-	
-	private void setAttributeWithDefault(final Element element, final String name, String value,
-		final String def){
+
+	private void setAttributeWithDefault(final Element element,
+			final String name, String value, final String def) {
 		if (element != null) {
 			if (!StringTool.isNothing(name)) {
 				if (StringTool.isNothing(value)) {
@@ -1400,17 +1554,17 @@ public class XMLExporter implements IRnOutputter {
 			}
 		}
 	}
-	
-	private boolean setAttributeIfNotEmptyWithLimit(final Element element, final String name,
-		String value, final int len){
+
+	private boolean setAttributeIfNotEmptyWithLimit(final Element element,
+			final String name, String value, final int len) {
 		if (value.length() >= len) {
 			value = value.substring(0, len - 1);
 		}
 		return setAttributeIfNotEmpty(element, name, value);
 	}
-	
-	private boolean setAttributeIfNotEmpty(final Element element, final String name,
-		final String value){
+
+	private boolean setAttributeIfNotEmpty(final Element element,
+			final String name, final String value) {
 		if (element == null) {
 			return false;
 		}
@@ -1423,8 +1577,8 @@ public class XMLExporter implements IRnOutputter {
 		element.setAttribute(name, value);
 		return true;
 	}
-	
-	private String match_type(final String type){
+
+	private String match_type(final String type) {
 		if (type == null) {
 			return DISEASE;
 		}
@@ -1445,8 +1599,8 @@ public class XMLExporter implements IRnOutputter {
 		}
 		return DISEASE;
 	}
-	
-	private String match_diag(final String name){
+
+	private String match_diag(final String name) {
 		if (name == null) {
 			return FREETEXT;
 		}
@@ -1464,8 +1618,8 @@ public class XMLExporter implements IRnOutputter {
 		}
 		return BY_CONTRACT;
 	}
-	
-	public Control createSettingsControl(final Composite parent){
+
+	public Control createSettingsControl(final Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout(2, false));
 		Label l = new Label(ret, SWT.NONE);
@@ -1476,21 +1630,22 @@ public class XMLExporter implements IRnOutputter {
 		Button b = new Button(ret, SWT.PUSH);
 		b.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(final SelectionEvent e){
-				outputDir = new DirectoryDialog(parent.getShell(), SWT.OPEN).open();
+			public void widgetSelected(final SelectionEvent e) {
+				outputDir = new DirectoryDialog(parent.getShell(), SWT.OPEN)
+						.open();
 				Hub.localCfg.set(PreferenceConstants.RNN_EXPORTDIR, outputDir);
 				text.setText(outputDir);
 			}
 		});
 		b.setText(Messages.XMLExporter_Change);
-		outputDir =
-			Hub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR, PreferenceInitializer
-				.getDefaultDBPath());
+		outputDir = Hub.localCfg.get(PreferenceConstants.RNN_EXPORTDIR,
+				PreferenceInitializer.getDefaultDBPath());
 		text.setText(outputDir);
 		return ret;
 	}
-	
-	protected void writeFile(final Document doc, final String dest) throws IOException{
+
+	protected void writeFile(final Document doc, final String dest)
+			throws IOException {
 		FileOutputStream fout = new FileOutputStream(dest);
 		OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8"); //$NON-NLS-1$
 		XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
@@ -1498,17 +1653,20 @@ public class XMLExporter implements IRnOutputter {
 		cout.close();
 		fout.close();
 		int status_vorher = rn.getStatus();
-		if ((status_vorher == RnStatus.OFFEN) || (status_vorher == RnStatus.MAHNUNG_1)
-			|| (status_vorher == RnStatus.MAHNUNG_2) || (status_vorher == RnStatus.MAHNUNG_3)) {
+		if ((status_vorher == RnStatus.OFFEN)
+				|| (status_vorher == RnStatus.MAHNUNG_1)
+				|| (status_vorher == RnStatus.MAHNUNG_2)
+				|| (status_vorher == RnStatus.MAHNUNG_3)) {
 			rn.setStatus(status_vorher + 1);
 		}
 		rn.addTrace(Rechnung.OUTPUT, getDescription() + ": " //$NON-NLS-1$
-			+ RnStatus.getStatusText(rn.getStatus()));
+				+ RnStatus.getStatusText(rn.getStatus()));
 	}
-	
-	public boolean canBill(final Fall fall){
+
+	public boolean canBill(final Fall fall) {
 		Kontakt garant = fall.getGarant();
-		Kontakt kostentraeger = fall.getRequiredContact(TarmedRequirements.INSURANCE);
+		Kontakt kostentraeger = fall
+				.getRequiredContact(TarmedRequirements.INSURANCE);
 		if ((garant != null) && (kostentraeger != null)) {
 			if (garant.isValid()) {
 				if (kostentraeger.isValid()) {
@@ -1520,12 +1678,12 @@ public class XMLExporter implements IRnOutputter {
 		}
 		return false;
 	}
-	
-	public void saveComposite(){
-	// Nothing
+
+	public void saveComposite() {
+		// Nothing
 	}
-	
-	protected String getIntermediateEAN(final Fall fall){
+
+	protected String getIntermediateEAN(final Fall fall) {
 		// Try to find the intermediate EAN. If we have explicitely set
 		// an intermediate EAN, we'll use this one. Otherweise, we'll
 		// check whether the mandator has a TC contract. if so, we try to
@@ -1544,25 +1702,26 @@ public class XMLExporter implements IRnOutputter {
 		}
 		return iEAN;
 	}
-	
-	protected String getRole(final Fall fall){
+
+	protected String getRole(final Fall fall) {
 		return "production"; //$NON-NLS-1$
 	}
-	
-	protected Element buildGuarantor(Kontakt garant, Kontakt patient){
+
+	protected Element buildGuarantor(Kontakt garant, Kontakt patient) {
 		// Patient wird im override des MediPort Plugins verwendet
 		// Hinweis:
-		// XML Standard: http://www.forum-datenaustausch.ch/mdinvoicerequest_xml4.00_v1.2_d.pdf
+		// XML Standard:
+		// http://www.forum-datenaustausch.ch/mdinvoicerequest_xml4.00_v1.2_d.pdf
 		// Dort steht beim Feld 11310: Gesetzlicher Vertreter des Patienten.
 		Element guarantor = new Element("guarantor", ns); //$NON-NLS-1$
 		guarantor.addContent(buildAdressElement(garant));
 		return guarantor;
 	}
-	
-	protected String getSenderEAN(Mandant actMandant){
+
+	protected String getSenderEAN(Mandant actMandant) {
 		return TarmedRequirements.getEAN(actMandant);
 	}
-	
+
 	private class Postanschrift {
 		private String anrede = StringConstants.EMPTY;
 		private String name = StringConstants.EMPTY;
@@ -1572,17 +1731,18 @@ public class XMLExporter implements IRnOutputter {
 		private String plz = StringConstants.EMPTY;
 		private String ort = StringConstants.EMPTY;
 		private String land = StringConstants.EMPTY;
-		
-		public Postanschrift(final Kontakt k){
+
+		public Postanschrift(final Kontakt k) {
 			super();
 			init(k);
 		}
-		
-		private void init(final Kontakt k){
+
+		private void init(final Kontakt k) {
 			String postAnschrift = k.getPostAnschrift(true);
-			
+
 			// Zeilen lesen
-			StringTokenizer tokenizer = new StringTokenizer(postAnschrift, StringConstants.LF);
+			StringTokenizer tokenizer = new StringTokenizer(postAnschrift,
+					StringConstants.LF);
 			List<String> zeileList = new Vector<String>();
 			while (tokenizer.hasMoreElements()) {
 				zeileList.add(tokenizer.nextToken());
@@ -1593,7 +1753,8 @@ public class XMLExporter implements IRnOutputter {
 			final int len = zeileList.size();
 			switch (len) {
 			case 0: // Kann gar nicht sein, aber man weiss ja nie!
-				throw new IllegalArgumentException(Messages.XMLExporter_NoPostal);
+				throw new IllegalArgumentException(
+						Messages.XMLExporter_NoPostal);
 			case 1: // Nur Name vorname
 				nameVorname = zeileList.get(0);
 				break;
@@ -1601,7 +1762,8 @@ public class XMLExporter implements IRnOutputter {
 				nameVorname = zeileList.get(0);
 				plzOrt = zeileList.get(1);
 				break;
-			case 3: // NameVorname, Adr1, Ortsangaben ODER Anrede, NameVorname, Ortsangaben
+			case 3: // NameVorname, Adr1, Ortsangaben ODER Anrede, NameVorname,
+					// Ortsangaben
 				if (zeileList.get(0).indexOf(" ") < 0) { //$NON-NLS-1$
 					// Erste Zeile Anrede
 					anrede = zeileList.get(0);
@@ -1614,7 +1776,8 @@ public class XMLExporter implements IRnOutputter {
 					plzOrt = zeileList.get(2);
 				}
 				break;
-			case 4: // NameVorname, Adr1, Adr2, Ortsangaben ODER Anrede, NameVorname, Adr1,
+			case 4: // NameVorname, Adr1, Adr2, Ortsangaben ODER Anrede,
+					// NameVorname, Adr1,
 				// Ortsangaben
 				if (zeileList.get(0).indexOf(" ") < 0) { //$NON-NLS-1$
 					// Erste Zeile Anrede
@@ -1640,7 +1803,7 @@ public class XMLExporter implements IRnOutputter {
 				}
 				break;
 			}
-			
+
 			// NameVorname aufteilen. Z.B. Von Allmen Christoph
 			if (!StringTool.isNothing(nameVorname)) {
 				nameVorname = nameVorname.trim();
@@ -1652,7 +1815,7 @@ public class XMLExporter implements IRnOutputter {
 					name = nameVorname;
 				}
 			}
-			
+
 			// plzOrt parsen. Z.B. CH-3600 Lenzburg
 			land = k.get(Kontakt.FLD_COUNTRY);
 			if (plzOrt.length() > 3 && plzOrt.substring(0, 3).indexOf("-") > 0) { //$NON-NLS-1$
