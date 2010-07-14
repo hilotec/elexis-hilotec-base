@@ -174,7 +174,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 			setLayout(new GridLayout());
 			cv = new CommonViewer();
 			vc = new ViewerConfigurer(
-					new DefaultContentProvider(cv, Brief.class) {
+					new DefaultContentProvider(cv, Brief.class, new String[]{Brief.FLD_DATE},true) {
 
 						@Override
 						public Object[] getElements(final Object inputElement) {
