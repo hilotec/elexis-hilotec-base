@@ -57,6 +57,7 @@ import ch.elexis.Hub;
 import ch.elexis.StringConstants;
 import ch.elexis.artikel_ch.data.Medical;
 import ch.elexis.artikel_ch.data.Medikament;
+import ch.elexis.artikel_ch.data.MedikamentImporter;
 import ch.elexis.artikel_ch.data.MiGelArtikel;
 import ch.elexis.banking.ESR;
 import ch.elexis.data.Artikel;
@@ -234,6 +235,7 @@ public class XMLExporter implements IRnOutputter {
 	private String outputDir;
 	private static final String PREFIX = "TarmedRn:"; //$NON-NLS-1$
 	private static final Log log = Log.get("XMLExporter"); //$NON-NLS-1$
+	private static final String TARMED_FALSE = "false";
 
 	/**
 	 * Reset exporter
@@ -848,7 +850,12 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute(ATTR_AMOUNT,
 							XMLTool.moneyToXmlDouble(mAmountLocal));
 					el.setAttribute(ATTR_VAT_RATE, StringConstants.ZERO);
-					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE);
+					String ckzl = art.getExt(MedikamentImporter.KASSENTYP);
+					if (ckzl.equals("1")) {
+						el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE);
+					} else {
+						el.setAttribute(ATTR_OBLIGATION, TARMED_FALSE);
+					}
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE);
 					mMedikament.addMoney(mAmountLocal);
 				} else if (v instanceof MiGelArtikel) {
