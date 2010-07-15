@@ -47,7 +47,7 @@ public class MedikamentImporter extends ImporterPage {
 	private static final String EAN = "EAN"; //$NON-NLS-1$
 	private static final String HERSTELLER = "Hersteller"; //$NON-NLS-1$
 	private static final String LAGERART = "Lagerart"; //$NON-NLS-1$
-	private static final String KASSENTYP = "Kassentyp"; //$NON-NLS-1$
+	public static final String KASSENTYP = "Kassentyp"; //$NON-NLS-1$
 	private static final String VK_PREIS = "VK_Preis"; //$NON-NLS-1$
 	
 	// Button bClear;
@@ -86,6 +86,7 @@ public class MedikamentImporter extends ImporterPage {
 			String reca = new String(in.substring(0, 2)); // recordart
 			String cmut = new String(in.substring(2, 3)); // mutationscode
 			String pkraw = new String(in.substring(3, 10)).trim(); // Pharmacode
+			// String ckzl = new String(in.substring(7,8)); // Kassenpflicht
 			String pk = "0"; //$NON-NLS-1$
 			try {
 				long pkl = Long.parseLong(pkraw); // führende Nullen entfernen
@@ -166,6 +167,7 @@ public class MedikamentImporter extends ImporterPage {
 				ext.put(HERSTELLER, hix);
 				ext.put(EAN, ean);
 				ext.put(MWST_TYP, mwst);
+				
 				a.setHashtable(Artikel.FLD_EXTINFO, ext);
 			} else if (reca.equals("10")) { // Update-Satz //$NON-NLS-1$
 				ek = new String(in.substring(10, 16));
