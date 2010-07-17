@@ -51,6 +51,9 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormText;
 
+import bsh.EvalError;
+import bsh.Interpreter;
+
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.StringConstants;
@@ -93,6 +96,7 @@ public class TextContainer {
 	public static final String MATCH_IDATACCESS = "\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?[^\\]]*\\]"; //$NON-NLS-1$
 	public static final String MATCH_SQLCLAUSE = "\\[SQL[^:]*:[^\\[]+\\]"; //$NON-NLS-1$
 	public static final String DISALLOWED_SQLEXPRESSIONS = "DROP,UPDATE,CREATE,INSERT"; //$NON-NLS-1$
+	public static final String MATCH_SCRIPT = "\\[SCRIPT:[a-zA-Z]+:.+\\]"; //$NON-NLS-1$
 
 	/**
 	 * Der Konstruktor sucht nach dem in den Settings definierten Textplugin
@@ -246,9 +250,9 @@ public class TextContainer {
 			}
 		} else {
 			if (plugin.loadFromByteArray(template.loadBinary(), true) == true) {
-				final Brief ret = new Brief(subject == null ? template
-						.getBetreff() : subject, null, Hub.actUser, adressat,
-						kons, typ);
+				final Brief ret = new Brief(
+						subject == null ? template.getBetreff() : subject,
+						null, Hub.actUser, adressat, kons, typ);
 
 				plugin.findOrReplace(MATCH_TEMPLATE, new ReplaceCallback() {
 					public Object replace(final String in) {
@@ -282,6 +286,14 @@ public class TextContainer {
 								MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
+				plugin.findOrReplace(MATCH_SCRIPT, new ReplaceCallback() {
+
+					@Override
+					public Object replace(String in) {
+						return executeScript(ret, in.replaceAll(
+								MATCH_SQUARE_BRACKET, StringTool.leer));
+					}
+				});
 				saveBrief(ret, typ);
 				addBriefToKons(ret, kons);
 				return ret;
@@ -295,10 +307,7 @@ public class TextContainer {
 		String[] q = b.split("\\."); //$NON-NLS-1$
 		if (q.length != 2) {
 			log.log(Messages.TextContainer_BadVariableFormat + b, Log.WARNINGS); // Kann
-			// eigentlich
-			// nie
-			// vorkommen
-			// ?!?
+			// eigentlich nie vorkommen?!?
 			return null;
 		}
 		if (q[0].equals("Datum")) { //$NON-NLS-1$
@@ -393,6 +402,33 @@ public class TextContainer {
 		} else {
 			// not yet supported
 			return null;
+		}
+	}
+
+	/**
+	 * Execute a Script to convert input value to output value. format:
+	 * SCRIPT:<intepreter>:script, where <interpreter> is one of BSH, SCALA
+	 * 
+	 * @param ret
+	 *            the Brief to fill in
+	 * @param in
+	 *            the input String to replace
+	 * @return the converted String
+	 */
+	private String executeScript(final Brief ret, final String in) {
+		String[] q = in.split(":");
+		if (q.length < 3) {
+			log.log("Falsches SCRIPT format: " + in, Log.ERRORS);
+			return "???SYNTAX???";
+
+		}
+		Interpreter scripter = new Interpreter();
+		try {
+			Object result = scripter.eval(q[2]);
+			return result == null ? q[2] : result.toString();
+		} catch (EvalError e) {
+			ExHandler.handle(e);
+			return "??SCRIPT SYNTAX??";
 		}
 	}
 
@@ -715,16 +751,16 @@ public class TextContainer {
 					Messages.TextContainer_SelectAdresseeBody);
 			if (ksl.open() == Dialog.OK) {
 				brief = new Brief(Messages.TextContainer_Letter, null,
-						Hub.actUser, (Kontakt) ksl.getSelection(), Konsultation
-								.getAktuelleKons(), typ);
+						Hub.actUser, (Kontakt) ksl.getSelection(),
+						Konsultation.getAktuelleKons(), typ);
 			}
 		}
 		if (brief != null) {
 			if (StringTool.isNothing(brief.getBetreff())) {
 				InputDialog dlg = new InputDialog(shell,
 						Messages.TextContainer_SaveDocumentHeader,
-						Messages.TextContainer_SaveDocumentBody, brief
-								.getBetreff(), null);
+						Messages.TextContainer_SaveDocumentBody,
+						brief.getBetreff(), null);
 				if (dlg.open() == Dialog.OK) {
 					brief.setBetreff(dlg.getValue());
 				} else {
@@ -856,8 +892,8 @@ public class TextContainer {
 			qbe.add(Brief.FLD_TYPE, Query.EQUALS, Brief.TEMPLATE);
 			if (selectedMand != null) {
 				qbe.startGroup();
-				qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, selectedMand
-						.getId());
+				qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS,
+						selectedMand.getId());
 				qbe.or();
 				qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, StringTool.leer);
 				qbe.endGroup();
