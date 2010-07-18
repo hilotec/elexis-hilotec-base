@@ -175,6 +175,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 		exi.put("BAG-Dossier", row[3]);
 		exi.put("Swissmedic-Nr.", row[4]);
 		exi.put("Swissmedic-Liste", row[5]);
+		exi.put("Kassentyp", "1");
 		try {
 			setEKPreis(new Money(Double.parseDouble(row[8])));
 		}catch(NumberFormatException nex){
