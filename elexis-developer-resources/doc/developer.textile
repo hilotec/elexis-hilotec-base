@@ -25,7 +25,7 @@ h2. Prerequisites
 We assume that you have good knowledge of the Java programming language and at least a basic knowledge of the Eclipse environment. Beside this you'll need:
 * Linux, Microsoft(tm) Windows(tm) 2000(tm) or newer,  Apple(tm) MacOS-X 10.6 or newer 
 * Java jdk 1.6 or higher
-* Eclipse 3.5 sdk for your os (<a href="http://www.eclipse.org">eclipse</a>)
+* Eclipse 3.6 (helios) plugin developer sdk for your os (<a href="http://www.eclipse.org">eclipse</a>)
 * A mercurial client plugin for Eclipse (we recommend "MercurialEclipse 1.6 or higher":http://javaforge.com/project/HGE. Use this update Site from within eclipse: http://cbes.javaforge.com/update)
 
 h2. Clone the repository
@@ -182,6 +182,8 @@ There are four configuration areas in elexis. Programmers should take care to us
 # Hub.userCfg: A Settings-Object that ist mapped to the table USERCONFIG. Here are configuration details stored, which are specific for the logged-in user (e.g. perspective layout, window sizes, colors and fonts etc.).
 # Hub.mandantCfg: A Settings-object that is mapped to the table USERCONFIG. Here are details concerning the actual Mandator. Keep in mind, that actUser and actMandant need not at all be the same person.
 # Hub.globalCfg: A Settings-object that is mapped to the table CONFIG. Here are all globally valid configuration details stored. 
+
+*Warning* A plugin must not make any assumptions on how and where configuration data are stored, but always use te API Hub.xxxCfg#get() and Hub.xxxCfg#set() and so on.
 
 h2. Event Dispatcher system
  
