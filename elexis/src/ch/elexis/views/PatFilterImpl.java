@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -124,7 +124,7 @@ public class PatFilterImpl implements IPatFilter {
 			try {
 				Script script=(Script)o;
 				script.setVariable("patient", p);
-				ret = script.execute(p);
+				ret = script.execute(Script.INTERPRETER_BEANSHELL,null,p);
 				if(ret instanceof Integer){
 					return (Integer)ret;
 				}

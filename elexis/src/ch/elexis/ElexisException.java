@@ -23,6 +23,7 @@ public class ElexisException extends Exception {
 	public static final int EE_UNEXPECTED_RESPONSE=3;
 	public static final int EE_FILE_ERROR = 4;
 	public static final int EE_NOT_SUPPORTED = 5;
+	public static final int EE_NOT_FOUND = 6;
 	
 	Class<?> clazz;
 	int errcode;

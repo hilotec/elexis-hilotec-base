@@ -183,7 +183,7 @@ public class ScriptView extends ViewPart {
 				if (sel != null && sel.size() != 0) {
 					Script script = (Script) sel.getFirstElement();
 					try {
-						Object ret = script.execute();
+						Object ret = script.execute(Script.INTERPRETER_BEANSHELL, null);
 						SWTHelper
 								.showInfo(
 										Messages

@@ -55,6 +55,7 @@ import bsh.EvalError;
 import bsh.Interpreter;
 
 import ch.elexis.Desk;
+import ch.elexis.ElexisException;
 import ch.elexis.Hub;
 import ch.elexis.StringConstants;
 import ch.elexis.actions.ElexisEventDispatcher;
@@ -66,6 +67,7 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
+import ch.elexis.data.Script;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.TextTemplatePreferences;
@@ -408,6 +410,7 @@ public class TextContainer {
 	/**
 	 * Execute a Script to convert input value to output value. format:
 	 * SCRIPT:<intepreter>:script, where <interpreter> is one of BSH, SCALA
+	 * Script can be of the form name(param,param) 
 	 * 
 	 * @param ret
 	 *            the Brief to fill in
@@ -422,13 +425,12 @@ public class TextContainer {
 			return "???SYNTAX???";
 
 		}
-		Interpreter scripter = new Interpreter();
 		try {
-			Object result = scripter.eval(q[2]);
+			Object result = Script.executeScript(q[1],q[2], ret);
 			return result == null ? q[2] : result.toString();
-		} catch (EvalError e) {
-			ExHandler.handle(e);
-			return "??SCRIPT SYNTAX??";
+		} catch (ElexisException e) {
+			SWTHelper.showError("Fehler beim Ausführen des Scripts", e.getMessage());
+			return "??SCRIPT ERROR??";
 		}
 	}
 

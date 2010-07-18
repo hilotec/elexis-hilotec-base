@@ -21,10 +21,12 @@ import bsh.EvalError;
 import bsh.Interpreter;
 import bsh.ParseException;
 import bsh.TargetError;
+import ch.elexis.ElexisException;
 import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.text.TextContainer;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
 /**
@@ -35,6 +37,8 @@ import ch.rgw.tools.StringTool;
  * 
  */
 public class Script extends NamedBlob2 {
+	public static final String INTERPRETER_BEANSHELL="BSH";
+	public static final String INTERPRETER_SCALA="SCALA";
 	private static final Pattern varPattern = Pattern
 			.compile(TextContainer.MATCH_TEMPLATE);
 	private static final String PREFIX = "Script:";
@@ -77,6 +81,13 @@ public class Script extends NamedBlob2 {
 		scripter.set(name, value);
 	}
 
+	/**
+	 * Replace variables of the form [Patient.Name] in the script with their respective values for
+	 * the current call
+	 * @param t the script
+	 * @param params all Variables to replace
+	 * @return the parsed Script
+	 */
 	private String parse(String t, PersistentObject... params) {
 		if (params == null) {
 			params = new PersistentObject[0];
@@ -111,10 +122,33 @@ public class Script extends NamedBlob2 {
 		return sb.toString();
 	}
 
-	public Object execute(PersistentObject... params) throws Exception {
+	/**
+	 * execute a script with the given interpreter
+	 * @param interpreter only BSH supported at this time
+	 * @param objects optional Objects to repalce in Variables like [Fall.Grund] in the script
+	 * @param params optional parameters. These can be of the form <i>name=value</i> or <i>value</i>.
+	 * if no name is given, the variables will be inserted for $1, $2 ... in the script. If a name is 
+	 * given, $names in the script will be replaced with the respective values. 
+	 * @return The result of the script interpreter
+	 * @throws ElexisException
+	 */
+	public Object execute(String interpreter, String params, PersistentObject... objects) throws ElexisException {
 		String t = getString();
 		if (!StringTool.isNothing(t)) {
-			String parsed = parse(t, params);
+			if(params!=null){
+				String var="\\$";
+				String[] parameters=params.split(",");
+				for(int i=0;i<parameters.length;i++){
+					String parm=parameters[i].trim();
+					String[] p=parm.split("=");
+					if(p.length==2){
+						t=t.replaceAll(var+p[0], p[1]);
+					}else{
+						t=t.replaceAll(var+i, p[0]);
+					}
+				}
+			}
+			String parsed = parse(t, objects);
 			try {
 				scripter.set("actPatient", ElexisEventDispatcher
 						.getSelectedPatient());
@@ -127,7 +161,7 @@ public class Script extends NamedBlob2 {
 			} catch (TargetError e) {
 				SWTHelper.showError("Script target Error", "Script Fehler",
 						"Target Error: " + e.getTarget());
-				throw (new Exception(e.getMessage()));
+				throw (new ElexisException(Script.class,e.getMessage(),ElexisException.EE_UNEXPECTED_RESPONSE));
 			} catch (ParseException e) {
 				String msg = "";
 				if (e != null) {
@@ -147,7 +181,7 @@ public class Script extends NamedBlob2 {
 			} catch (EvalError e) {
 				SWTHelper.showError("Script general error", "Script Fehler",
 						"Allgemeiner Script Fehler: " + e.getErrorText());
-				throw (new Exception(e.getMessage()));
+				throw (new ElexisException(Script.class,"Allgemeiner Script Fehler: " + e.getErrorText(),ElexisException.EE_UNEXPECTED_RESPONSE));
 			}
 		}
 		return null;
@@ -157,6 +191,29 @@ public class Script extends NamedBlob2 {
 		Query<Script> qbe = new Query<Script>(Script.class);
 		qbe.add("ID", "LIKE", PREFIX + "%");
 		return qbe.execute();
+	}
+	
+	public static Object executeScript(String interpreter, String call, PersistentObject... objects) throws ElexisException{
+		String name=call;
+		String params=null;
+		int x=call.indexOf('(');
+		if(x!=-1){
+			name=call.substring(0, x);
+			params=call.substring(x+1,call.length()-1);
+		}
+		Query<Script> qbe=new Query<Script>(Script.class);
+		qbe.add("ID", Query.EQUALS, PREFIX + name);
+		List<Script> found=qbe.execute();
+		if(found.size()==0){
+			throw new ElexisException(Script.class, "A Script with this name was not found "+name, ElexisException.EE_NOT_FOUND);
+		}
+		Script script=found.get(0);
+		try {
+			return script.execute(interpreter, params, objects);
+		} catch (Exception e) {
+			ExHandler.handle(e);
+			throw new ElexisException(Script.class, "Error while executing "+name+": "+e.getMessage(), ElexisException.EE_UNEXPECTED_RESPONSE);
+		}
 	}
 
 	@Override
