@@ -38,19 +38,19 @@ In Eclipse, choose Window..Preferences..General..Workspace. Set the Text-Encodin
 
 In Eclipse, choose Run-Run configurations. Right click on "Eclipse Application" and select "New". Enter an appropriate name for the project. You should see something like here:
 
-!runconfig1.png!
+!runconfig1.png!:http://www.rgw.ch/elexis/dox/developer/
 
 In "Program to Run" select "Run a Product" and find *ch.elexis.ElexisProduct* in the Combobox.
 
 Then, go to the tab "Arguments":
 
-!runconfig2.png!
+!runconfig2.png!:http://www.rgw.ch/elexis/dox/developer/
 
 If you do not change anything, elexis will run in the default locale of your operating system. If you want to try a different locale and language, you can add an -nl parameter in the upper box "Program arguments". The lower box "VM arguments" can be left empty for the beginning.
 
 Proceed to the tab "Plug-Ins"
 
-!runconfig3.png!
+!runconfig3.png!:http://www.rgw.ch/elexis/dox/developer/
 
 * change the "Launch with" Combobox to "plugins selected below only".
 * Click "Deselect all"
