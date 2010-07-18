@@ -142,7 +142,7 @@ public class Script extends NamedBlob2 {
 					String parm=parameters[i].trim();
 					String[] p=parm.split("=");
 					if(p.length==2){
-						t=t.replaceAll(var+p[0], p[1]);
+						t=t.replaceAll("\\"+p[0], p[1]);
 					}else{
 						t=t.replaceAll(var+i, p[0]);
 					}

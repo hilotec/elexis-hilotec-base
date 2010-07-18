@@ -13,9 +13,15 @@
 
 package ch.elexis.views;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -23,13 +29,19 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
 import ch.elexis.actions.RestrictedAction;
 import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Script;
 import ch.elexis.scripting.ScriptEditor;
 import ch.elexis.util.PersistentObjectDragSource;
@@ -183,7 +195,24 @@ public class ScriptView extends ViewPart {
 				if (sel != null && sel.size() != 0) {
 					Script script = (Script) sel.getFirstElement();
 					try {
-						Object ret = script.execute(Script.INTERPRETER_BEANSHELL, null);
+						String contents=script.getString();
+						ArrayList<String> vars=new ArrayList<String>();
+						Pattern var=Pattern.compile("\\$[0-9a-z]+",Pattern.CASE_INSENSITIVE);
+						Matcher m=var.matcher(contents);
+						while(m.find()){
+							String varname=m.group();
+							if(!vars.contains(varname)){
+								vars.add(varname);
+							}
+						}
+						String varString=null;
+						if(vars.size()>0){
+							SetVarsDlg dlg=new SetVarsDlg(getViewSite().getShell(), vars);
+							if(dlg.open()==Dialog.OK){
+								varString=dlg.getResult();
+							}
+						}
+						Object ret = script.execute(Script.INTERPRETER_BEANSHELL, varString);
 						SWTHelper
 								.showInfo(
 										Messages
@@ -195,4 +224,54 @@ public class ScriptView extends ViewPart {
 			}
 		};
 	}
+	class SetVarsDlg extends TitleAreaDialog{
+		List<String> myVars;
+		List<Text> inputs;
+		String result;
+		
+		SetVarsDlg(Shell shell, List<String> vars){
+			super(shell);
+			myVars=vars;
+			inputs=new ArrayList<Text>(vars.size());
+		}
+		@Override
+		protected Control createDialogArea(Composite parent) {
+			Composite ret=(Composite)super.createDialogArea(parent);
+			Composite cVars=new Composite(ret,SWT.NONE);
+			cVars.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			cVars.setLayout(new GridLayout(2,false));
+			for(String v:myVars){
+				new Label(cVars,SWT.NONE).setText(v);
+				Text text=new Text(cVars,SWT.BORDER);
+				text.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+				text.setData("varname", v);
+				inputs.add(text);
+			}
+			return ret;
+		}
+		@Override
+		public void create() {
+			super.create();
+			setMessage("Folgende Variablen sollten gesetzt werden:");
+			setTitle("Bitte vervollständigen");
+			getShell().setText("Script Ausführung");
+		}
+		@Override
+		protected void okPressed() {
+			StringBuilder sb=new StringBuilder();
+			for(Text text:inputs){
+				String varname=(String)text.getData("varname");
+				String varcontents=text.getText();
+				sb.append(varname).append("=").append(varcontents).append(",");
+			}
+			sb.deleteCharAt(sb.length()-1);
+			result=sb.toString();
+			super.okPressed();
+		}
+		
+		String getResult(){
+			return result;
+		}
+	}
 }
+
