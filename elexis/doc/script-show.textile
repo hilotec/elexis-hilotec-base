@@ -103,6 +103,23 @@ if(bezugskontakte.size()>0){
 }
 return ""; // Wenn kein Bezugskontakt gefunden wurde, Kopie-Zeile leer lassen.
 
+h3. MDRD Formel zur Abschätzung der Kreatininclearance
+
+* Name:  MDRD
+* Zweck: Aus Alter, Geschlecht und Serumkreatinin einen Schätzwert für die Kreatininclearance errechnen.
+* Kontext: Laborblatt, Direkt
+* Elexis: 1.4ff
+
+bc. // 186 x (cCr /88.4)^-1.154 x alter^0.203 (x0.742 bei Frauen) 
+factor=1.0; 
+if([Patient.Geschlecht].equals(Person.FEMALE)){ 
+	factor=0.742;
+} 
+crea=$krea/88.4; 
+term1=Math.pow(crea,-1.154); 
+term2=Math.pow(Integer.parseInt([Patient.Alter]),-0.203); 
+return Math.round(term1*term2*factor*186); 
+
 h3. Patienten nach Konsultationsdatum auflisten
 
 * Name:   PatNachDatum
