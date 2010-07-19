@@ -120,6 +120,15 @@ term1=Math.pow(crea,-1.154);
 term2=Math.pow(Integer.parseInt([Patient.Alter]),-0.203); 
 return Math.round(term1*term2*factor*186); 
 
+h3. Patient nach Gruppe filtern
+
+* Name: GruppeMandant1
+* Zweck: Filtert die Patientenliste nach Patienten, die der Gruppe "Mandant1" zugeordnet wurden
+* Kontext: Filter Patientenliste
+* Elexis: 1.4ff 
+
+bc. if([Patient.Gruppe].equals("Mandant1")) return 1; else return -1;
+
 h3. Patienten nach Konsultationsdatum auflisten
 
 * Name:   PatNachDatum
@@ -144,12 +153,25 @@ bc. if(patient!=void){
 } 
 return -1;
  
+h3. Patienten in Zeitraum pro Mandant
+
+* Name: PatientenVonBis
+* Zweck: Ausgabe wieviele Konsultationen von wievielen in der anzuegbenden Zeit stattgefunden haben
+* Kontext: Direkt
+* Elexis: 1.4ff
+
+bc. import ch.elexis.data.*;
+import ch.elexis.scripting.Patientenzaehler;
+z=new Patientenzaehler();
+z.open();
+return z.getResult();
+ 
 h3. Stammdatenexport
 
 * Name:  Stammdatenexport
 * Zweck: Exportiert Stammdaten in eine CSV-Datei 
 * Kontext: Direkt
-* Voraussetzung: Elexis 1.4ff
+* Elexis: 1.4ff
 
  Exportiert Daten aller Patienten, die seit "startDatum" eine Konsultation hatten, oder sämtlicher 
  Patienten, falls startDatum null ist.
@@ -157,3 +179,33 @@ h3. Stammdatenexport
 bc. import ch.elexis.scripting.*;
 startDatum="01.01.2002";
 new Stammdatenexport().doExport(startDatum);
+
+h2. Erläuterung Kontexte
+
+Ein Script kann in einem oder mehreren möglichen Kontext(en) sinnvoll asugeführt werden. Das sind z.B:
+
+h3. Kontext Filter
+
+Ein Script kann eine Liste, z.B. die Patientenliste, auf diejenigen Einträge limitieren, die  vom
+Script "durchgelassen" werden. So kann man sich sehr einfach eine Liste anzeigen lassen, die bestimmten
+Kriterien entwpricht. Ausserdem können Filter hintereinandergeschaltet werden, um noch bessere Steuerung der Anzeige zu ermöglichen.
+
+Das Konzept ist "im Elexis Forum":http://www.elexis-forum.ch/viewtopic.php?t=107&highlight=script  genauer erklärt.
+
+h3. Direktausführung
+
+Ein Script kann aus der Script-View direkt gestartet werden. Einfach mit der rechten Maustaste auf
+das gewünschte Script klicken und "Ausführen" wählen.
+Falls im Script Parameter verwendet werden, werden diese Parameter beim Start erfragt.
+
+h3. Briefvorlagen
+
+Ein Script kann von einem Platzhalter einer Briefvorlage aufgerufen werden. Die Ausgabe des Scripts wird dann anstelle des Platzhalters im Brief eingesetzt. Dieses Konzept ist "im Elexis Forum":http://www.elexis-forum.ch/viewtopic.php?t=283 genauer erklärt.
+ 
+h3. Laborblatt
+
+Manche Laborwerte werden aus anderen Laborwerten errechnet. Beispiele sind das LDL-Cholesterin nach der Friedewald-Formel oder die MDRD-Formel zur Errechnung der geschätzten Kreatinin-Clearance.
+ 
+h3. Befunde / Messwerte
+
+Auch hier können manche Resultate sich aus anderen Resulaten ergeben. Beispielsweise der BMI aus Grösse und Gewicht.
