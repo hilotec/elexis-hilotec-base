@@ -19,14 +19,55 @@ Hier soll eine Sammlung von nützlichen Scripts entstehen, die alle zur beliebig
 
 h2. Scriptparade
 
+h3. BMI
+
+* Name:   BMI
+* Zweck:  Body-Mass-Index errechnen und auf 1 Stelle runden
+* Kontext:Befunde, Labor, Direkt
+* Elexis: 1.4ff
+
+
+bc. return Math.round(($gewicht/($groesse*$groesse))*10)/10.0;
+
+h3. Durschnittsalter
+
+* Name:	Counter
+* Zweck:  Durchschnitts- und medianes Alter einer Patientenliste anzeigen.
+* Kontext:Filter Patientenliste; z.B. in Folge mit anderen Filtern
+* Elexis:	1.4ff
+
+bc. import ch.elexis.scripting.*;          //  Hilfsklassen 
+
+bc. if(init){                              // Vor dem ersten Durchlauf wird init aufgerufen 
+   counter=new Counter();             
+   maenner=0;                              // maenner und frauen als Ganzzahlen 
+   frauen=0; 
+}else if(finished){                        // nach dem letzten Durchlauf wird finished aufgerufen 
+   // Ergebnis auf 2 Stellen runden 
+   float sc=counter.getAverage(2); 
+   Util.display("Ausgewählte Patienten", 
+      Integer.toString(maenner)+" Männer, "+ 
+      Integer.toString(frauen)+" Frauen, "+ 
+      "Durchschnittsalter: "+Float.toString(sc)+ 
+      ", Median: "+counter.getMedian() 
+ 	); 
+}else{                              // Dieser Block wird für jeden Patienten aufgerufen 
+   if([Patient.Geschlecht].equalsIgnoreCase("m")){ 
+      maenner++; 
+   }else{ 
+      frauen++; 
+   } 
+   int jahre=Integer.parseInt([Patient.Alter]); 
+   counter.add(jahre); 
+} 
+return 1;                           // Wir lassen alle durch (wir zählen ja nur) 
+
 h3. Hausarztmodell anzeigen
 
-/*
- Name:  	Hausarztmodell
- Zweck:  Gibt einen Text zurück, wenn der aktuelle Patient im Hausarztmodell ist
- Kontext:  Briefvorlagen
- Elexis:  2.1ff
-*/
+* Name:  	Hausarztmodell
+* Zweck:  Gibt einen Text zurück, wenn der aktuelle Patient im Hausarztmodell ist
+* Kontext:  Briefvorlagen
+* Elexis:  2.1ff
 
 bc. import java.util.List;
 import ch.elexis.data.*;
@@ -41,12 +82,10 @@ return ""; // Nicht im Hausarztmodell, nichts schreiben.
 
 h3. Kopie an Hausarzt
 
-/*
- Name: KopieAnHA
- Zweck:  Erzeugt eine Zeile "Kopie an: ", sofern ein Hausarzt oder Zuweiser erfasst is
- Kontext: Briefvorlagen
- Elexis:  2.1ff
-*/
+* Name: KopieAnHA
+* Zweck:  Erzeugt eine Zeile "Kopie an: ", sofern ein Hausarzt oder Zuweiser erfasst is
+* Kontext: Briefvorlagen
+* Elexis:  2.1ff
 
 bc. import ch.elexis.data.*;
 import java.util.List;
@@ -64,16 +103,39 @@ if(bezugskontakte.size()>0){
 }
 return ""; // Wenn kein Bezugskontakt gefunden wurde, Kopie-Zeile leer lassen.
 
+h3. Patienten nach Konsultationsdatum auflisten
+
+* Name:   PatNachDatum
+* Zweck:  Listet alle Patienten, die eine Konsultation im angegebenen Zeitraum hatten
+* Kontext:Filter Patientenliste
+* Elexis: 1.4 ff
+
+bc. import ch.elexis.data.*; 
+import ch.elexis.scripting.Util; 
+
+bc. if(patient!=void){ 
+   Fall[] faelle=patient.getFaelle(); 
+   for(Fall fall:faelle){ 
+      Konsultation[] konsen=fall.getBehandlungen(false); 
+      for(Konsultation kons:konsen){ 
+         String konsDatum=kons.getDatum(); 
+         if(Util.compareDates(konsDatum, "01.06.2008")>0) { 
+            return 1; 
+         } 
+      } 
+   } 
+} 
+return -1;
+ 
 h3. Stammdatenexport
 
-/* Name:  Stammdatenexport
-    Zweck: Exportiert Stammdaten in eine CSV-Datei 
-    Kontext: Direkt
-    Voraussetzung: Elexis 1.4ff
+* Name:  Stammdatenexport
+* Zweck: Exportiert Stammdaten in eine CSV-Datei 
+* Kontext: Direkt
+* Voraussetzung: Elexis 1.4ff
 
  Exportiert Daten aller Patienten, die seit "startDatum" eine Konsultation hatten, oder sämtlicher 
  Patienten, falls startDatum null ist.
-*/
 
 bc. import ch.elexis.scripting.*;
 startDatum="01.01.2002";
