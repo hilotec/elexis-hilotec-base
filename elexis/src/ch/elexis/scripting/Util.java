@@ -42,7 +42,7 @@ public class Util {
 		return 0;
 	}
 	
-	public static String input(String title, String message, String url, Integer width, Integer height){
+	public static String inputWithURL(String title, String message, String url, Integer width, Integer height){
 		BrowserInputDialog dlg=new BrowserInputDialog(Desk.getTopShell(),url,title,message);
 		dlg.create();
 		dlg.getShell().setSize(width, height);
@@ -50,5 +50,9 @@ public class Util {
 			return dlg.getValue();
 		}
 		return null;
+	}
+	
+	public static int inputWithChoice(String title, String message, String[]choices){
+		return 0;
 	}
 }
