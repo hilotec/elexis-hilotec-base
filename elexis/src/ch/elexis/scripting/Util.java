@@ -14,9 +14,11 @@ package ch.elexis.scripting;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.program.Program;
 
 import ch.elexis.Desk;
+import ch.elexis.dialogs.BrowserInputDialog;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
@@ -40,11 +42,10 @@ public class Util {
 		return 0;
 	}
 	
-	public static String input(String title, String message, String url){
-		InputDialog dlg=new InputDialog(Desk.getTopShell(),title,message,"",null);
-		if(url!=null){
-			Program.launch(url);
-		}
+	public static String input(String title, String message, String url, Integer width, Integer height){
+		BrowserInputDialog dlg=new BrowserInputDialog(Desk.getTopShell(),url,title,message);
+		dlg.create();
+		dlg.getShell().setSize(width, height);
 		if(dlg.open()==Dialog.OK){
 			return dlg.getValue();
 		}
