@@ -19,6 +19,7 @@ import org.eclipse.swt.program.Program;
 
 import ch.elexis.Desk;
 import ch.elexis.dialogs.BrowserInputDialog;
+import ch.elexis.dialogs.ChoiceDialog;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
@@ -53,6 +54,10 @@ public class Util {
 	}
 	
 	public static int inputWithChoice(String title, String message, String[]choices){
-		return 0;
+		ChoiceDialog cd=new ChoiceDialog(Desk.getTopShell(), title, message, choices);
+		if(cd.open()==Dialog.OK){
+			return cd.getResult();
+		}
+		return -1;
 	}
 }
