@@ -9,7 +9,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 
 import ch.elexis.Desk;
-import ch.elexis.ElexisException;
 import ch.elexis.data.Patient;
 import ch.elexis.services.GlobalServiceDescriptors;
 import ch.elexis.services.IDocumentManager;
