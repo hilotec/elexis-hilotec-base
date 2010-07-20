@@ -16,8 +16,6 @@ import java.text.MessageFormat;
 import java.util.Date;
 import java.util.Hashtable;
 
-import javax.swing.event.HyperlinkListener;
-
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -28,11 +26,17 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
+import org.eclipse.ui.forms.widgets.Hyperlink;
 
+import bsh.EvalError;
 import ch.elexis.Desk;
+import ch.elexis.ElexisException;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
+import ch.elexis.data.Script;
+import ch.elexis.scripting.Interpreter;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -47,7 +51,8 @@ public class EditFindingDialog extends TitleAreaDialog {
 	boolean[] multiline;
 	String[] values;
 	Text[] inputs;
-	HyperlinkListener scriptListener;
+
+	// HyperlinkListener scriptListener;
 
 	EditFindingDialog(final Shell parent, final Messwert m, final String n) {
 		super(parent);
@@ -94,8 +99,9 @@ public class EditFindingDialog extends TitleAreaDialog {
 				if (heading.length == 1) {
 					new Label(ret, SWT.NONE).setText(flds[i]);
 				} else {
-					SWTHelper.createHyperlink(ret, heading[0],
+					Label hl = SWTHelper.createHyperlink(ret, heading[0],
 							new ScriptListener(heading[1], i));
+					hl.setForeground(Desk.getColor(Desk.COL_BLUE));
 				}
 				inputs[i] = SWTHelper.createText(ret, multiline[i] ? 4 : 1,
 						SWT.NONE);
@@ -111,14 +117,17 @@ public class EditFindingDialog extends TitleAreaDialog {
 	@Override
 	public void create() {
 		super.create();
-		getShell().setText(Messages.getString("EditFindingDialog.captionBefundEditDlg")); //$NON-NLS-1$
+		getShell().setText(
+				Messages.getString("EditFindingDialog.captionBefundEditDlg")); //$NON-NLS-1$
 		Patient pat = ElexisEventDispatcher.getSelectedPatient();
 		if (pat == null) {
 			setTitle(Messages.getString("EditFindingDialog.noPatientSelected")); //$NON-NLS-1$
 		} else {
 			setTitle(pat.getLabel());
 		}
-		setMessage(MessageFormat.format(Messages.getString("EditFindingDialog.enterTextForBefund"),name)); //$NON-NLS-1$
+		setMessage(MessageFormat
+				.format(Messages
+						.getString("EditFindingDialog.enterTextForBefund"), name)); //$NON-NLS-1$
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
 
@@ -156,8 +165,6 @@ public class EditFindingDialog extends TitleAreaDialog {
 
 		@Override
 		public void linkActivated(final HyperlinkEvent e) {
-
-			Interpreter scripter = new Interpreter();
 			for (int vals = 0; vals < inputs.length; vals++) {
 				String sval = inputs[vals].getText();
 				if (!StringTool.isNothing(sval)) {
@@ -172,11 +179,21 @@ public class EditFindingDialog extends TitleAreaDialog {
 									.toString(dval));
 				}
 			}
+
 			try {
-				Object result = scripter.eval(script);
+				Object result = null;
+				if (script.startsWith(Script.SCRIPT_MARKER)) {
+					String scriptname = script.substring(Script.SCRIPT_MARKER
+							.length());
+					result = Script.executeScript(scriptname);
+				} else {
+					Interpreter scripter = Script.loadInterpreter(script);
+					result = scripter.run(script, false);
+				}
 				values[v] = result.toString();
 				// values[v]=Double.toString((Double)scripter.eval(script));
-			} catch (EvalError e1) {
+			} catch (ElexisException e1) {
+				ExHandler.handle(e1);
 				values[v] = "?eval?"; //$NON-NLS-1$
 			}
 			inputs[v].setText(values[v]);

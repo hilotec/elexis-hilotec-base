@@ -23,6 +23,7 @@ import ch.elexis.StringConstants;
 import ch.elexis.scripting.Interpreter;
 import ch.elexis.text.TextContainer;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -38,7 +39,7 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class LabItem extends PersistentObject implements Comparable<LabItem> {
-	public static final String SCRIPT_MARKER = "SCRIPT:";
+
 	public static final String REF_MALE = "RefMann";
 	public static final String REF_FEMALE_OR_TEXT = "RefFrauOrTx";
 	public static final String PRIO = "prio";
@@ -138,6 +139,25 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 
 	}
 
+	public String evaluateNew(Patient pat, TimeTool date, List<LabResult> results) {
+		String formel = getFormula();
+		formel = formel.substring(Script.SCRIPT_MARKER.length());
+		boolean bMatched = false;
+		for (LabResult result : results) {
+			String var = result.getItem().makeVarName();
+			if (formel.indexOf(var) != -1) {
+				formel = formel.replaceAll(var, result.getResult());
+				bMatched = true;
+			}
+		}
+
+		try {
+			return Script.executeScript(formel, pat).toString();
+		} catch (ElexisException e) {
+			return "?formel?";
+		}
+
+	}
 	/**
 	 * Evaluate a formula-based LabItem for a given Patient at a given date. It
 	 * will try to retrieve all LabValues it depends on of that Patient and date
@@ -162,36 +182,8 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 				date.toString(TimeTool.DATE_COMPACT));
 		List<LabResult> results = qbe.execute();
 		String formel = getFormula();
-		if (!formel.startsWith(SCRIPT_MARKER)) {		// convert to new system
-			String scriptname="auto_"+getName();
-			Pattern varFinder = Pattern.compile("[a-z]+_[0-9]+",
-					Pattern.CASE_INSENSITIVE);
-			Matcher m = varFinder.matcher(formel);
-			StringBuffer sb = new StringBuffer();
-			StringBuilder params = new StringBuilder();
-			int i = 0;
-			while (m.find()) {
-				String vn = m.group();
-				String repl = "var" + i;
-				m.appendReplacement(sb, repl);
-				params.append("$").append(repl).append(vn).append(",");
-			}
-			if (params.length() > 0) {
-				params.deleteCharAt(params.length() - 1);
-				params.insert(0, "(");
-				params.append(")");
-			}
-			m.appendTail(sb);
-			String nscript = SCRIPT_MARKER + sb.toString();
-			try{
-			Script newscript=Script.create(scriptname, nscript);
-			}catch(ElexisException ex){
-				SWTHelper.showError("Fehler beim Konvertieren", MessageFormat.format("Die Formel {0} konnte nicht in ein Script konvertiert werden.",sb.toString()));
-			}
-			setFormula(nscript);
-			formel=nscript;
-		}else{
-			formel=formel.substring(SCRIPT_MARKER.length()+1);
+		if (formel.startsWith(Script.SCRIPT_MARKER)) {
+			return evaluateNew(pat, date, results);
 		}
 		boolean bMatched = false;
 		for (LabResult result : results) {
@@ -201,7 +193,6 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 				bMatched = true;
 			}
 		}
-		/*
 		Matcher matcher = varPattern.matcher(formel);
 		// Suche Variablen der Form [Patient.Alter]
 		StringBuffer sb = new StringBuffer();
@@ -222,12 +213,11 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 		if (!bMatched) {
 			return null;
 		}
-		*/	
-		
 		try {
-			
-			return (String)Script.executeScript(formel, pat);
+			Interpreter scripter = Script.loadInterpreter(formel);
+			return scripter.run(sb.toString(),false).toString();
 		} catch (ElexisException e) {
+			ExHandler.handle(e);
 			return "?formel?";
 		}
 
