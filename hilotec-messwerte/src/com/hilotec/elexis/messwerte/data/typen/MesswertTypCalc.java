@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, A. Kaufmann and Elexis
+ * Copyright (c) 2009-2010, A. Kaufmann and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    A. Kaufmann - initial implementation
+ *    G. Weirich - adapted to new Elexis scripting system by Ver. 2.1
  * 
  * $Id: MesswertTypCalc.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
@@ -20,14 +21,15 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 
+import ch.elexis.ElexisException;
+import ch.elexis.data.Script;
+import ch.elexis.scripting.Interpreter;
+import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.Log;
+
 import com.hilotec.elexis.messwerte.data.Messung;
 import com.hilotec.elexis.messwerte.data.Messwert;
 import com.hilotec.elexis.messwerte.data.MesswertBase;
-
-import bsh.EvalError;
-import bsh.Interpreter;
-import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.Log;
 
 /**
  * @author Antoine Kaufmann
@@ -66,12 +68,12 @@ public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 	 * @throws EvalError
 	 */
 	private void interpreterSetzeKontext(Interpreter interpreter,
-		Messung messung) throws EvalError
+		Messung messung) throws ElexisException
 		{
 		for (CalcVar cv: variables) {
 			Object wert = holeVariable(messung, cv.getName(), cv.getSource());
 			if (wert != null) {
-				interpreter.set(cv.getName(), wert);
+				interpreter.setValue(cv.getName(), wert);
 			}
 		}
 		}
@@ -182,18 +184,14 @@ public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 	}
 	
 	public String erstelleDarstellungswert(Messwert messwert) {
-		if (!interpreter.equals("beanshell")) {
-			log.log("Unbekannter Interpreter: " + interpreter, Log.ERRORS);
-			return "";
-		}
 		
-		Interpreter interpreter = new Interpreter();
 		
 		try {
+			Interpreter interpreter = Script.loadInterpreter(formula);
 			interpreterSetzeKontext(interpreter, messwert.getMessung());
-			Object wert = interpreter.eval(formula);
+			Object wert = interpreter.run(formula,false);
 			return wert.toString();
-		} catch (EvalError e) {
+		} catch (ElexisException e) {
 			e.printStackTrace();
 			log.log("Fehler beim Berechnen eines Wertes: " + e.getMessage(), Log.ERRORS);
 		} catch (Throwable e) {
