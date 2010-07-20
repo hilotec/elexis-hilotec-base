@@ -527,6 +527,8 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 				log.log("saved.", Log.DEBUGMSG); //$NON-NLS-1$
 			}
 			text.setDirty(false);
+		}else{
+			setKons((Konsultation) ElexisEventDispatcher.getInstance().getSelected(Konsultation.class));
 		}
 
 	}
