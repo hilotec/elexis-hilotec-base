@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, A. Kaufmann and Elexis
+ * Copyright (c) 2009-2010, A. Kaufmann and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    A. Kaufmann - initial implementation 
+ *    G. Weirich  - added layout option
  *    
  * $Id: MessungTyp.java 5766 2009-10-04 13:21:21Z freakypenguin $
  *******************************************************************************/
@@ -25,11 +26,17 @@ public class MessungTyp {
 	String name;
 	String title;
 	ArrayList<IMesswertTyp> fields;
+	Panel panel;
 	
 	public MessungTyp(String n, String t) {
 		name = n;
 		title = t;
 		fields = new ArrayList<IMesswertTyp>();
+	}
+	
+	public MessungTyp(String n, String t, Panel p){
+		this(n,t);
+		panel=p;
 	}
 	
 	/**

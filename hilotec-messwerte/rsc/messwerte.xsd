@@ -3,8 +3,9 @@
 
 <xs:element name="datatypes">
 	<xs:complexType>
-		<xs:sequence maxOccurs="unbounded">
-			<xs:element name="datatype" type="datatype" />
+		<xs:sequence>
+			<xs:element name="datatype" type="datatype"
+				maxOccurs="unbounded" minOccurs="1" />
 		</xs:sequence>
 	</xs:complexType>
 </xs:element>
@@ -29,15 +30,23 @@
 
 <xs:complexType name="datatype">
 	<xs:sequence>
-	<xs:choice maxOccurs="unbounded">
-		<xs:element name="numfield" type="numfieldtype" minOccurs="0" maxOccurs="unbounded" />
-		<xs:element name="strfield" type="strfieldtype" minOccurs="0" maxOccurs="unbounded" />
-		<xs:element name="boolfield" type="boolfieldtype" minOccurs="0" maxOccurs="unbounded" />
-		<xs:element name="scalefield" type="scalefieldtype" minOccurs="0" maxOccurs="unbounded" />
-		<xs:element name="enumfield" type="enumfieldtype" minOccurs="0" maxOccurs="unbounded" />
-		<xs:element name="calcfield" type="calcfieldtype" minOccurs="0" maxOccurs="unbounded" />
-		<xs:element name="datafield" type="datafieldtype" minOccurs="0" maxOccurs="unbounded" />
-	</xs:choice>
+		<xs:choice maxOccurs="unbounded">
+			<xs:element name="numfield" type="numfieldtype"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="strfield" type="strfieldtype"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="boolfield" type="boolfieldtype"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="scalefield" type="scalefieldtype"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="enumfield" type="enumfieldtype"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="calcfield" type="calcfieldtype"
+				minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="datafield" type="datafieldtype"
+				minOccurs="0" maxOccurs="unbounded" />
+		</xs:choice>
+		<xs:element name="design" type="paneltype"></xs:element>
 	</xs:sequence>
 	<xs:attribute name="name" type="nametype" use="required" />
 	<xs:attribute name="title" type="titletype" use="required" />
@@ -123,4 +132,31 @@
 	<xs:attribute name="unit" type="unittype" default="" />
 </xs:complexType>
 
+
+    
+    <xs:complexType name="paneltype">
+    	<xs:sequence>
+            <xs:element name="attribute" type="attributeType" maxOccurs="unbounded" minOccurs="0"></xs:element>
+    		<xs:element name="panel" type="paneltype"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</xs:element>
+    		<xs:element name="fieldref" type="fieldref"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</xs:element>
+    	</xs:sequence>
+
+    	<xs:attribute name="type" type="xs:string"></xs:attribute>
+    </xs:complexType>
+
+    
+
+
+    <xs:complexType name="fieldref">
+    	<xs:attribute name="name" type="xs:string"></xs:attribute>
+    </xs:complexType>
+
+    <xs:complexType name="attributeType">
+    	<xs:attribute name="name" type="xs:string"></xs:attribute>
+    	<xs:attribute name="value" type="xs:string"></xs:attribute>
+    </xs:complexType>
 </xs:schema>
