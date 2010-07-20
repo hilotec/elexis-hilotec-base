@@ -28,7 +28,6 @@ import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 
-import bsh.EvalError;
 import ch.elexis.Desk;
 import ch.elexis.ElexisException;
 import ch.elexis.actions.ElexisEventDispatcher;
