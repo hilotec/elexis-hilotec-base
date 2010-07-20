@@ -51,9 +51,6 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormText;
 
-import bsh.EvalError;
-import bsh.Interpreter;
-
 import ch.elexis.Desk;
 import ch.elexis.ElexisException;
 import ch.elexis.Hub;
@@ -409,8 +406,8 @@ public class TextContainer {
 
 	/**
 	 * Execute a Script to convert input value to output value. format:
-	 * SCRIPT:<intepreter>:script, where <interpreter> is one of BSH, SCALA
-	 * Script can be of the form name(param,param) 
+	 * SCRIPT:scriptname
+	 * scriptname can be of the form name(param,param) 
 	 * 
 	 * @param ret
 	 *            the Brief to fill in
@@ -420,13 +417,13 @@ public class TextContainer {
 	 */
 	private String executeScript(final Brief ret, final String in) {
 		String[] q = in.split(":");
-		if (q.length < 3) {
+		if (q.length != 2) {
 			log.log("Falsches SCRIPT format: " + in, Log.ERRORS);
 			return "???SYNTAX???";
 
 		}
 		try {
-			Object result = Script.executeScript(q[1],q[2], ret);
+			Object result = Script.executeScript(q[1], ret);
 			return result == null ? q[2] : result.toString();
 		} catch (ElexisException e) {
 			SWTHelper.showError("Fehler beim Ausführen des Scripts", e.getMessage());

@@ -39,6 +39,7 @@ import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
+import ch.elexis.ElexisException;
 import ch.elexis.actions.RestrictedAction;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.PersistentObject;
@@ -129,7 +130,12 @@ public class ScriptView extends ViewPart {
 						Messages.getString("ScriptView.enterNameBody"), null, //$NON-NLS-1$
 						null);
 				if (inp.open() == Dialog.OK) {
-					/* Script n= */Script.create(inp.getValue(), ""); //$NON-NLS-1$
+					try {
+						Script.create(inp.getValue(), "");
+					} catch (ElexisException e) {
+						ExHandler.handle(e);
+						SWTHelper.showError("Fehler bei Scripterstellung", e.getMessage());
+					}
 					tv.refresh();
 				}
 			}
@@ -212,13 +218,14 @@ public class ScriptView extends ViewPart {
 								varString=dlg.getResult();
 							}
 						}
-						Object ret = script.execute(Script.INTERPRETER_BEANSHELL, varString);
+						Object ret = script.execute(varString);
 						SWTHelper
 								.showInfo(
 										Messages
 												.getString("ScriptView.ScriptOutput"), ret.toString()); //$NON-NLS-1$
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
+						SWTHelper.showError("Fehler beim Ausführen des Scripts", ex.getMessage());
 					}
 				}
 			}

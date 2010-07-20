@@ -17,14 +17,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import bsh.EvalError;
-import bsh.Interpreter;
-import bsh.ParseException;
-import bsh.TargetError;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+
 import ch.elexis.ElexisException;
 import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.scripting.Interpreter;
 import ch.elexis.text.TextContainer;
+import ch.elexis.util.Extensions;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -37,14 +38,53 @@ import ch.rgw.tools.StringTool;
  * 
  */
 public class Script extends NamedBlob2 {
-	public static final String INTERPRETER_BEANSHELL="BSH";
-	public static final String INTERPRETER_SCALA="SCALA";
+	public static final String INTERPRETER_BEANSHELL = "BSH";
+	public static final String INTERPRETER_SCALA = "SCALA";
+	public static final String INTERPRETER_DEFAULT = INTERPRETER_BEANSHELL;
 	private static final Pattern varPattern = Pattern
 			.compile(TextContainer.MATCH_TEMPLATE);
 	private static final String PREFIX = "Script:";
-	private static Interpreter scripter = new Interpreter();
+	private static Interpreter scripter = null;
 
-	public static Script create(String name, String contents) {
+	private static Interpreter getInterpreter(String name)
+			throws ElexisException {
+		if (name == null) {
+			return getInterpreter(INTERPRETER_BEANSHELL);
+		}
+		List<IConfigurationElement> scripters = Extensions
+				.getExtensions("ch.elexis.scripting");
+		for (IConfigurationElement scripter : scripters) {
+			if (scripter.getAttribute("name").equals(name)) {
+				try {
+					return (Interpreter) scripter
+							.createExecutableExtension("class");
+				} catch (CoreException e) {
+					ExHandler.handle(e);
+					throw new ElexisException(Script.class,
+							"Could not load intepreter " + e.getMessage(),
+							ElexisException.EE_NOT_SUPPORTED);
+				}
+			}
+		}
+		throw new ElexisException(Script.class, "interpreter not installed "
+				+ name, ElexisException.EE_NOT_SUPPORTED);
+
+	}
+
+	private String load() throws ElexisException {
+		String script = getString();
+		Pattern ip = Pattern.compile("^#!\\s*([A-Z]+)$", Pattern.MULTILINE);
+		Matcher m = ip.matcher(script);
+		if (m.matches()) {
+			scripter = getInterpreter(m.group(1));
+		} else {
+			scripter = getInterpreter(null);
+		}
+		return script.substring(m.group().length() + 2);
+	}
+
+	public static Script create(String name, String contents)
+			throws ElexisException {
 		String mid = PREFIX + name;
 		Script ret = new Script(mid);
 		if (ret.state() == INEXISTENT) {
@@ -53,9 +93,10 @@ public class Script extends NamedBlob2 {
 			ret.undelete();
 		}
 		if (StringTool.isNothing(contents)) {
-			contents = "/* empty */";
+			contents = "#!BSH\n";
 		}
 		ret.putString(contents);
+		ret.load();
 		return ret;
 	}
 
@@ -66,26 +107,32 @@ public class Script extends NamedBlob2 {
 	}
 
 	public void init() throws Exception {
-		scripter.set("finished", false);
-		scripter.set("init", true);
-		scripter.eval(parse(getString(), new PersistentObject[0]));
-		scripter.set("init", false);
+		if (scripter == null) {
+			load();
+		}
+		scripter.setValue("finished", false);
+		scripter.setValue("init", true);
+		scripter.run(parse(getString(), new PersistentObject[0]));
+		scripter.setValue("init", false);
 	}
 
 	public void finished() throws Exception {
-		scripter.set("finished", true);
-		scripter.eval(parse(getString(), (PersistentObject[]) null));
+		scripter.setValue("finished", true);
+		scripter.run(parse(getString(), (PersistentObject[]) null));
 	}
 
-	public void setVariable(String name, Object value) throws EvalError {
-		scripter.set(name, value);
+	public void setVariable(String name, Object value) throws ElexisException {
+		scripter.setValue(name, value);
 	}
 
 	/**
-	 * Replace variables of the form [Patient.Name] in the script with their respective values for
-	 * the current call
-	 * @param t the script
-	 * @param params all Variables to replace
+	 * Replace variables of the form [Patient.Name] in the script with their
+	 * respective values for the current call
+	 * 
+	 * @param t
+	 *            the script
+	 * @param params
+	 *            all Variables to replace
 	 * @return the parsed Script
 	 */
 	private String parse(String t, PersistentObject... params) {
@@ -124,65 +171,47 @@ public class Script extends NamedBlob2 {
 
 	/**
 	 * execute a script with the given interpreter
-	 * @param interpreter only BSH supported at this time
-	 * @param objects optional Objects to repalce in Variables like [Fall.Grund] in the script
-	 * @param params optional parameters. These can be of the form <i>name=value</i> or <i>value</i>.
-	 * if no name is given, the variables will be inserted for $1, $2 ... in the script. If a name is 
-	 * given, $names in the script will be replaced with the respective values. 
+	 * 
+	 * @param interpreter
+	 *            only BSH supported at this time
+	 * @param objects
+	 *            optional Objects to repalce in Variables like [Fall.Grund] in
+	 *            the script
+	 * @param params
+	 *            optional parameters. These can be of the form
+	 *            <i>name=value</i> or <i>value</i>. if no name is given, the
+	 *            variables will be inserted for $1, $2 ... in the script. If a
+	 *            name is given, $names in the script will be replaced with the
+	 *            respective values.
 	 * @return The result of the script interpreter
 	 * @throws ElexisException
 	 */
-	public Object execute(String interpreter, String params, PersistentObject... objects) throws ElexisException {
-		String t = getString();
+	public Object execute(String params,
+			PersistentObject... objects) throws ElexisException {
+		String t = load();
 		if (!StringTool.isNothing(t)) {
-			if(params!=null){
-				String var="\\$";
-				String[] parameters=params.split(",");
-				for(int i=0;i<parameters.length;i++){
-					String parm=parameters[i].trim();
-					String[] p=parm.split("=");
-					if(p.length==2){
-						t=t.replaceAll("\\"+p[0], p[1]);
-					}else{
-						t=t.replaceAll(var+i, p[0]);
+			if (params != null) {
+				String var = "\\$";
+				String[] parameters = params.split(",");
+				for (int i = 0; i < parameters.length; i++) {
+					String parm = parameters[i].trim();
+					String[] p = parm.split("=");
+					if (p.length == 2) {
+						t = t.replaceAll("\\" + p[0], p[1]);
+					} else {
+						t = t.replaceAll(var + i, p[0]);
 					}
 				}
 			}
 			String parsed = parse(t, objects);
-			try {
-				scripter.set("actPatient", ElexisEventDispatcher
-						.getSelectedPatient());
-				scripter.set("actFall", ElexisEventDispatcher
-						.getSelected(Fall.class));
-				scripter.set("actKons", ElexisEventDispatcher
-						.getSelected(Konsultation.class));
-				scripter.set("Elexis", Hub.plugin);
-				return scripter.eval(parsed);
-			} catch (TargetError e) {
-				SWTHelper.showError("Script target Error", "Script Fehler",
-						"Target Error: " + e.getTarget());
-				throw (new ElexisException(Script.class,e.getMessage(),ElexisException.EE_UNEXPECTED_RESPONSE));
-			} catch (ParseException e) {
-				String msg = "";
-				if (e != null) {
-					try {
-						msg = e.getErrorText();
-						if (msg == null)
-							;
-						msg = "";
-					} catch (Exception ex) {
-						msg = "unbekannter Fehler";
-					}
-				}
-				String line = "Script Syntax Fehler " + msg;
-				String titel = "Script syntax Error";
-				SWTHelper.showError(titel, line);
-				// throw(new Exception(e.getMessage()));
-			} catch (EvalError e) {
-				SWTHelper.showError("Script general error", "Script Fehler",
-						"Allgemeiner Script Fehler: " + e.getErrorText());
-				throw (new ElexisException(Script.class,"Allgemeiner Script Fehler: " + e.getErrorText(),ElexisException.EE_UNEXPECTED_RESPONSE));
-			}
+			scripter.setValue("actPatient",
+					ElexisEventDispatcher.getSelectedPatient());
+			scripter.setValue("actFall",
+					ElexisEventDispatcher.getSelected(Fall.class));
+			scripter.setValue("actKons",
+					ElexisEventDispatcher.getSelected(Konsultation.class));
+			scripter.setValue("Elexis", Hub.plugin);
+			return scripter.run(parsed);
 		}
 		return null;
 	}
@@ -192,27 +221,32 @@ public class Script extends NamedBlob2 {
 		qbe.add("ID", "LIKE", PREFIX + "%");
 		return qbe.execute();
 	}
-	
-	public static Object executeScript(String interpreter, String call, PersistentObject... objects) throws ElexisException{
-		String name=call;
-		String params=null;
-		int x=call.indexOf('(');
-		if(x!=-1){
-			name=call.substring(0, x);
-			params=call.substring(x+1,call.length()-1);
+
+	public static Object executeScript(String call,
+			PersistentObject... objects) throws ElexisException {
+		String name = call;
+		String params = null;
+		int x = call.indexOf('(');
+		if (x != -1) {
+			name = call.substring(0, x);
+			params = call.substring(x + 1, call.length() - 1);
 		}
-		Query<Script> qbe=new Query<Script>(Script.class);
+		Query<Script> qbe = new Query<Script>(Script.class);
 		qbe.add("ID", Query.EQUALS, PREFIX + name);
-		List<Script> found=qbe.execute();
-		if(found.size()==0){
-			throw new ElexisException(Script.class, "A Script with this name was not found "+name, ElexisException.EE_NOT_FOUND);
+		List<Script> found = qbe.execute();
+		if (found.size() == 0) {
+			throw new ElexisException(Script.class,
+					"A Script with this name was not found " + name,
+					ElexisException.EE_NOT_FOUND);
 		}
-		Script script=found.get(0);
+		Script script = found.get(0);
 		try {
-			return script.execute(interpreter, params, objects);
+			return script.execute(params, objects);
 		} catch (Exception e) {
 			ExHandler.handle(e);
-			throw new ElexisException(Script.class, "Error while executing "+name+": "+e.getMessage(), ElexisException.EE_UNEXPECTED_RESPONSE);
+			throw new ElexisException(Script.class, "Error while executing "
+					+ name + ": " + e.getMessage(),
+					ElexisException.EE_UNEXPECTED_RESPONSE);
 		}
 	}
 

@@ -29,8 +29,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 
-import bsh.EvalError;
-import bsh.Interpreter;
 import ch.elexis.Desk;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
