@@ -366,12 +366,13 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 	 */
 	private void setKons(final Konsultation b) {
 		if (b != null) {
+			/*
 			System.out.println("setKons: " + b.getLabel());
 			Fall fall = b.getFall();
 			System.out.println(fall.getLabel());
 			Patient oat = fall.getPatient();
 			System.out.println(oat.getLabel());
-
+			 */
 			Fall act = b.getFall();
 			setPatient(act.getPatient());
 			setKonsText(b, b.getHeadVersion());
