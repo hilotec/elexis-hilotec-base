@@ -8,7 +8,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.jface.dialogs.MessageDialog;
 
+import ch.elexis.StringConstants;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.util.SWTHelper;
 
@@ -35,18 +37,43 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(IAction action) {
-		if(SWTHelper.askYesNo("Wirklich Datenbank anonymisieren", "Achtung! Diese Aktion macht die Datenbank unwiderruflich unbrauchbar! Wirklich anonymisieren?")){
+		if(SWTHelper.askYesNo("Wirklich Datenbank anonymisieren", "Achtung! Diese Aktion macht die Datenbank unwiderruflich unbrauchbar! Wirklich anonymisieren?")){		
+			boolean zufallsnahmen=false;
+			Namen n = null;
+			if(SWTHelper.askYesNo("Demo Datenbank", "Wollen Sie Zufallsnahmen bei der Anonymisierung verwenden bzw. eine Demo-DB erstellen?")) {
+				zufallsnahmen=true;
+				n = new Namen();
+			}
+			
 			Query<Kontakt> qbe=new Query<Kontakt>(Kontakt.class);
 			List<Kontakt> list=qbe.execute();
 			for(Kontakt k:list){
-				k.set("Bezeichnung1", getWord());
-				k.set("Bezeichnung2", getWord());
-				k.set("Anschrift", "");
-				k.set("Telefon1", getPhone());
-				k.set("Telefon2", getPhone());
-				k.set("E-Mail", "");
-				k.set("NatelNr", "");
-				k.set("Fax", "");
+				
+				// Mandanten behalten
+				//if(k.get(Kontakt.FLD_IS_MANDATOR).equalsIgnoreCase(StringConstants.ONE)) continue;		
+				
+				if(zufallsnahmen) {
+					k.set("Bezeichnung1", n.getRandomVorname());
+				} else {
+					k.set("Bezeichnung1", getWord());
+				}
+				
+				if(zufallsnahmen) {
+					k.set("Bezeichnung2", n.getRandomNachname());
+				} else {
+					k.set("Bezeichnung2", getWord());
+				}
+				
+				k.set(Kontakt.FLD_ANSCHRIFT, "");
+				k.set(Kontakt.FLD_PHONE1, getPhone());
+				k.set(Kontakt.FLD_PHONE2, getPhone());
+				k.set(Kontakt.FLD_MOBILEPHONE, "");
+				k.set(Kontakt.FLD_E_MAIL, "");
+				k.set(Kontakt.FLD_PLACE, "");
+				k.set(Kontakt.FLD_STREET, "");
+				k.set(Kontakt.FLD_ZIP, "");
+				k.set(Kontakt.FLD_FAX, "");
+				
 			}	
 		}
 	}
