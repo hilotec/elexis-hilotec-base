@@ -35,18 +35,36 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(IAction action) {
-		if(SWTHelper.askYesNo("Wirklich Datenbank anonymisieren", "Achtung! Diese Aktion macht die Datenbank unwiderruflich unbrauchbar! Wirklich anonymisieren?")){
+		if(SWTHelper.askYesNo("Wirklich Datenbank anonymisieren", "Achtung! Diese Aktion macht die Datenbank unwiderruflich unbrauchbar! Wirklich anonymisieren?")){		
+			boolean zufallsnahmen=false;
+			Namen n = null;
+			if(SWTHelper.askYesNo("Zufallsnahmen verwenden", "Wollen Sie Zufallsnahmen bei der Anonymisierung verwenden?")) {
+				zufallsnahmen=true;
+				n = new Namen();
+			}
 			Query<Kontakt> qbe=new Query<Kontakt>(Kontakt.class);
 			List<Kontakt> list=qbe.execute();
 			for(Kontakt k:list){
-				k.set("Bezeichnung1", getWord());
-				k.set("Bezeichnung2", getWord());
+				
+				if(zufallsnahmen) {
+					k.set("Bezeichnung1", n.getRandomVorname());
+				} else {
+					k.set("Bezeichnung1", getWord());
+				}
+				
+				if(zufallsnahmen) {
+					k.set("Bezeichnung2", n.getRandomNachname());
+				} else {
+					k.set("Bezeichnung2", getWord());
+				}
+				
 				k.set("Anschrift", "");
 				k.set("Telefon1", getPhone());
 				k.set("Telefon2", getPhone());
 				k.set("E-Mail", "");
 				k.set("NatelNr", "");
 				k.set("Fax", "");
+				
 			}	
 		}
 	}
