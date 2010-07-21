@@ -40,7 +40,7 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 		if(SWTHelper.askYesNo("Wirklich Datenbank anonymisieren", "Achtung! Diese Aktion macht die Datenbank unwiderruflich unbrauchbar! Wirklich anonymisieren?")){		
 			boolean zufallsnahmen=false;
 			Namen n = null;
-			if(SWTHelper.askYesNo("Demoe Datenbank", "Wollen Sie Zufallsnahmen bei der Anonymisierung verwenden bzw. eine Demo-DB erstellen?")) {
+			if(SWTHelper.askYesNo("Demo Datenbank", "Wollen Sie Zufallsnahmen bei der Anonymisierung verwenden bzw. eine Demo-DB erstellen?")) {
 				zufallsnahmen=true;
 				n = new Namen();
 			}
@@ -49,8 +49,8 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 			List<Kontakt> list=qbe.execute();
 			for(Kontakt k:list){
 				
-				// Mandant darf nicht gelöscht werden! Login!
-				if(k.get(Kontakt.FLD_IS_MANDATOR).equalsIgnoreCase(StringConstants.ONE)) continue;		
+				// Mandanten behalten
+				//if(k.get(Kontakt.FLD_IS_MANDATOR).equalsIgnoreCase(StringConstants.ONE)) continue;		
 				
 				if(zufallsnahmen) {
 					k.set("Bezeichnung1", n.getRandomVorname());
@@ -64,10 +64,10 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 					k.set("Bezeichnung2", getWord());
 				}
 				
-				k.set("Anschrift", "");
-				k.set("Telefon1", getPhone());
-				k.set("Telefon2", getPhone());
-				k.set("NatelNr", "");
+				k.set(Kontakt.FLD_ANSCHRIFT, "");
+				k.set(Kontakt.FLD_PHONE1, getPhone());
+				k.set(Kontakt.FLD_PHONE2, getPhone());
+				k.set(Kontakt.FLD_MOBILEPHONE, "");
 				k.set(Kontakt.FLD_E_MAIL, "");
 				k.set(Kontakt.FLD_PLACE, "");
 				k.set(Kontakt.FLD_STREET, "");
