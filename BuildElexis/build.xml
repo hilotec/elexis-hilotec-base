@@ -63,8 +63,8 @@
 <project name="elexis" default="all">
 	<property name="version" value="2.1.0" />
 	<property name="javatarget" value="1.6" />
-    <property name="debug" value="true"/>
-    <property name="optimize" value="off"/>
+	<property name="debug" value="true" />
+	<property name="optimize" value="off" />
 	<property file="local.properties" />
 
 	<record name="ant.info.log" action="start" loglevel="info" />
@@ -79,6 +79,10 @@
 	<property name="repositories" value="${base}/repositories" />
 	<property name="additions" value="${output}/additions" />
 	<property name="rsc" value="${repositories}/elexis-base/BuildElexis/rsc" />
+	<condition property="nopull">
+		<isset property="unplugged" />
+	</condition>
+
 	<mkdir dir="${base}" />
 
 	<tstamp />
@@ -124,7 +128,7 @@
 
 	</target>
 
-	<target name="update" unless="unplugged">
+	<target name="update" unless="nopull">
 		<for param="repo">
 			<path>
 				<dirset dir="${repositories}" includes="*/.hg" />
