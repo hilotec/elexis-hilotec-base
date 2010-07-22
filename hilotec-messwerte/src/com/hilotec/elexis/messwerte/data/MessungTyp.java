@@ -53,6 +53,10 @@ public class MessungTyp {
 		return name;
 	}
 	
+	public Panel getPanel(){
+		return panel;
+	}
+	
 	/**
 	 * @return Beschriftung die dem Benutzer angezeigt werden kann
 	 */
