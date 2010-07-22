@@ -31,5 +31,13 @@
             name="Messwerte">
       </Datenquelle>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="com.hilotec.elexis.messwerte.views.Preferences"
+            id="com.hilotec.elexis.messwerte.preferences"
+            name="Hilotec Messwerte">
+      </page>
+   </extension>
 </plugin>
 

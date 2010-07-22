@@ -16,6 +16,7 @@ package com.hilotec.elexis.messwerte.data;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -42,10 +43,13 @@ import com.hilotec.elexis.messwerte.data.typen.MesswertTypEnum;
 import com.hilotec.elexis.messwerte.data.typen.MesswertTypNum;
 import com.hilotec.elexis.messwerte.data.typen.MesswertTypScale;
 import com.hilotec.elexis.messwerte.data.typen.MesswertTypStr;
+import com.hilotec.elexis.messwerte.views.Preferences;
 
 import ch.elexis.Hub;
 import ch.elexis.util.Log;
 import ch.elexis.util.PlatformHelper;
+import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.ExHandler;
 
 public class MessungKonfiguration {
 	public static final String ATTR_TYPE = "type";
@@ -85,26 +89,33 @@ public class MessungKonfiguration {
 
 	private MessungKonfiguration() {
 		types = new ArrayList<MessungTyp>();
-		readFromXML(Hub.getWritableUserDir() + File.separator + CONFIG_FILENAME);
+		String filename = Hub.localCfg.get(Preferences.CONFIG_FILE,
+				Hub.getWritableUserDir() + File.separator + CONFIG_FILENAME);
+
+		readFromXML(filename);
 	}
 
 	private Panel createPanelFromNode(Element n) {
-		String type=n.getAttribute("type");
+		String type = n.getAttribute("type");
 		Panel ret = new Panel(type);
 		LinkedList<String> fieldrefList = new LinkedList<String>();
 		LinkedList<String> attributeList = new LinkedList<String>();
 		LinkedList<Panel> panelsList = new LinkedList<Panel>();
 		Node node = n.getFirstChild();
 		while (node != null) {
-			if (node.getLocalName().equals("fieldref")) {
-				fieldrefList.add(node.getAttributes().item(0).getNodeValue());
-			} else if (node.getLocalName().equals("attribute")) {
-				NamedNodeMap na = node.getAttributes();
-				String nx = na.getNamedItem("name").getNodeValue() + "="
-						+ na.getNamedItem("value").getNodeValue();
-				attributeList.add(nx);
-			} else if (node.getLocalName().equals("panel")) {
-				panelsList.add(createPanelFromNode((Element) node));
+			if (node.getNodeType() == Node.ELEMENT_NODE) {
+				String nodename=node.getNodeName();
+				if (nodename.equals("fieldref")) {
+					fieldrefList.add(node.getAttributes().item(0)
+							.getNodeValue());
+				} else if (nodename.equals("attribute")) {
+					NamedNodeMap na = node.getAttributes();
+					String nx = na.getNamedItem("name").getNodeValue() + "="
+							+ na.getNamedItem("value").getNodeValue();
+					attributeList.add(nx);
+				} else if (nodename.equals("panel")) {
+					panelsList.add(createPanelFromNode((Element) node));
+				}
 			}
 			node = node.getNextSibling();
 		}
@@ -163,7 +174,8 @@ public class MessungKonfiguration {
 				Element layout = (Element) nll.item(0);
 				MessungTyp dt = null;
 				if (layout != null) {
-					Panel panel = createPanelFromNode(layout);
+					NodeList nl2 = edt.getElementsByTagName("panel");
+					Panel panel = createPanelFromNode((Element) nl2.item(0));
 					dt = new MessungTyp(name, title, panel);
 				} else {
 					dt = new MessungTyp(name, title);
@@ -299,10 +311,22 @@ public class MessungKonfiguration {
 		} catch (Error e) {
 			log.log("Einlesen der XML-Datei felgeschlagen: " + e.getMessage(),
 					Log.ERRORS);
+		} catch (SAXParseException e) {
+			ExHandler.handle(e);
+			SWTHelper
+					.showError(
+							"Hilotec-Messwerte: Fehler in XML Struktur",
+							MessageFormat
+									.format("Die Datei {0} enthielt einen Fehler in Zeile {1}: {2}",
+											path, e.getLineNumber(),
+											e.getMessage()));
+			log.log("Einlesen der XML-Datei felgeschlagen: " + e.getMessage()
+					+ ", Zeile: " + e.getLineNumber(), Log.ERRORS);
 		} catch (Exception e) {
-			e.printStackTrace();
+			ExHandler.handle(e);
 			log.log("Einlesen der XML-Datei felgeschlagen: " + e.getMessage(),
 					Log.ERRORS);
+
 		}
 
 	}
