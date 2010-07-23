@@ -21,9 +21,18 @@
 		<design>
 			<panel type="grid">
 				<attribute name="columns" value="3" />
-				<fieldref name="groesse" />
-				<fieldref name="gewicht" />
-				<fieldref name="bmi" />
+				<panel type="field">
+					<attribute name="ref" value="groesse" />
+					<attribute name="editable" value="true"/>
+				</panel>
+				<panel type="field">
+					<attribute name="editable" value="true"/>
+					<attribute name="ref" value="gewicht" />
+				</panel>
+				<panel type="field">
+					<attribute name="editable" value="false"/>
+					<attribute name="ref" value="bmi" />
+				</panel>
 			</panel>
 		</design>
 	</datatype>

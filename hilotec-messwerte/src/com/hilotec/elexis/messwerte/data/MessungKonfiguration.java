@@ -98,17 +98,13 @@ public class MessungKonfiguration {
 	private Panel createPanelFromNode(Element n) {
 		String type = n.getAttribute("type");
 		Panel ret = new Panel(type);
-		LinkedList<String> fieldrefList = new LinkedList<String>();
 		LinkedList<String> attributeList = new LinkedList<String>();
 		LinkedList<Panel> panelsList = new LinkedList<Panel>();
 		Node node = n.getFirstChild();
 		while (node != null) {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				String nodename=node.getNodeName();
-				if (nodename.equals("fieldref")) {
-					fieldrefList.add(node.getAttributes().item(0)
-							.getNodeValue());
-				} else if (nodename.equals("attribute")) {
+				if (nodename.equals("attribute")) {
 					NamedNodeMap na = node.getAttributes();
 					String nx = na.getNamedItem("name").getNodeValue() + "="
 							+ na.getNamedItem("value").getNodeValue();
@@ -120,7 +116,6 @@ public class MessungKonfiguration {
 			node = node.getNextSibling();
 		}
 		ret.setAttributes(attributeList.toArray(new String[0]));
-		ret.setFields(fieldrefList.toArray(new String[0]));
 		ret.setPanels(panelsList.toArray(new Panel[0]));
 		return ret;
 

@@ -89,7 +89,7 @@ public class MessungBearbeiten extends TitleAreaDialog {
 			}
 
 		} else {
-			comp = new MessungTypDisplay(parent, typ);
+			comp = new MessungTypDisplay(parent, messung);
 			scroll.setContent(comp);
 
 		}

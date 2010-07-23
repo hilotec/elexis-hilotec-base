@@ -146,12 +146,10 @@
 	<xs:complexType name="paneltype">
 		<xs:sequence>
 			<xs:element name="attribute" type="attributeType"
-				maxOccurs="unbounded" minOccurs="0"></xs:element>
-			<xs:element name="panel" type="paneltype" maxOccurs="unbounded"
-				minOccurs="0">
+				maxOccurs="unbounded" minOccurs="0">
 			</xs:element>
-			<xs:element name="fieldref" type="fieldref" maxOccurs="unbounded"
-				minOccurs="0">
+			<xs:element name="panel" type="paneltype"
+				maxOccurs="unbounded" minOccurs="0">
 			</xs:element>
 		</xs:sequence>
 

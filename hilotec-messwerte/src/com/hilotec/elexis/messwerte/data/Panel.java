@@ -42,21 +42,9 @@ public class Panel {
 		}
 		return null;
 	}
-	public Composite createComposite(Composite parent){
-		Composite ret=new Composite(parent,SWT.NONE);
-		if(type.equals("plain")){
-			ret.setLayout(new FillLayout());
-		}else if(type.equals("grid")){
-			String cols=getAttribute("columns");
-			if(cols==null){
-				ret.setLayout(new GridLayout());
-			}else{
-				ret.setLayout(new GridLayout(Integer.parseInt(cols),false));
-			}
-		}
-		for(Panel p:panels){
-			p.createComposite(ret);
-		}
-		return ret;
+	
+	public String getType(){
+		return type;
 	}
+	
 }
