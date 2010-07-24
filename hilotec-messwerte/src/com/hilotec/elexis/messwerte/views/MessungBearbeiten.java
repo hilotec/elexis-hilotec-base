@@ -27,7 +27,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
 
+import ch.elexis.Desk;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
@@ -61,21 +63,22 @@ public class MessungBearbeiten extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-
-		ScrolledComposite scroll = new ScrolledComposite(parent, SWT.BORDER
-				| SWT.V_SCROLL | SWT.H_SCROLL);
-		scroll.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		Composite comp;
 		MessungTyp typ = messung.getTyp();
 		if (typ.getPanel() == null) {
-			comp = new Composite(scroll, SWT.NONE);
+
+			ScrolledComposite scroll = new ScrolledComposite(parent, SWT.BORDER
+					| SWT.V_SCROLL | SWT.H_SCROLL);
+			scroll.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			Composite comp = new Composite(scroll, SWT.NONE);
 			scroll.setContent(comp);
+
 			comp.setLayout(new GridLayout());
 			comp.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 
 			dateWidget = new DatePickerCombo(comp, SWT.NONE);
 			dateWidget.setDate(new TimeTool(messung.getDatum()).getTime());
-
+			dateWidget.setLayoutData(SWTHelper.getFillGridData(1, true, 1,
+					false));
 			for (Messwert messwert : messung.getMesswerte()) {
 				Label l = new Label(comp, SWT.NONE);
 				IMesswertTyp dft = messwert.getTyp();
@@ -87,15 +90,23 @@ public class MessungBearbeiten extends TitleAreaDialog {
 
 				widgetMap.put(messwert, dft.createWidget(comp, messwert));
 			}
+			comp.setSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+			return scroll;
 
 		} else {
-			comp = new MessungTypDisplay(parent, messung);
-			scroll.setContent(comp);
-
+			ScrolledForm form=Desk.getToolkit().createScrolledForm(parent);
+			form.setText(messung.getLabel());
+			form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			form.getBody().setLayout(new GridLayout());
+			dateWidget = new DatePickerCombo(form.getBody(), SWT.NONE);
+			dateWidget.setDate(new TimeTool(messung.getDatum()).getTime());
+			dateWidget.setLayoutData(SWTHelper.getFillGridData(1, true, 1,
+					false));
+			MessungTypDisplay mtd=new MessungTypDisplay(form.getBody(), messung);
+			mtd.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			return form;
 		}
 
-		comp.setSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		return scroll;
 	}
 
 	@Override
