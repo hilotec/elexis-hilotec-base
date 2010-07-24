@@ -19,6 +19,7 @@ import com.hilotec.elexis.messwerte.data.Messung;
 import com.hilotec.elexis.messwerte.data.MessungTyp;
 import com.hilotec.elexis.messwerte.data.Messwert;
 import com.hilotec.elexis.messwerte.data.Panel;
+import com.hilotec.elexis.messwerte.data.typen.IMesswertTyp;
 
 public class MessungTypDisplay extends Composite {
 	MessungTyp mt;
@@ -66,7 +67,9 @@ public class MessungTypDisplay extends Composite {
 				if(p.getAttribute("editable").equals("false")){
 					flags|=TextField.READONLY;
 				}
-				TextField tf=new TextField(ret,flags,mt.getTitle());
+				IMesswertTyp dft = mw.getTyp();
+				String labelText = dft.getTitle();
+				TextField tf=new TextField(ret,flags,labelText);
 				tf.setText(mw.getDarstellungswert());
 				setLayoutData(tf);
 

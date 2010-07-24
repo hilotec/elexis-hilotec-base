@@ -33,6 +33,19 @@
 					<attribute name="editable" value="false"/>
 					<attribute name="ref" value="bmi" />
 				</panel>
+				<panel type="field">
+					<attribute name="editable" value="true" />
+					<attribute name="ref" value="bdsys"/>
+				</panel>
+				<panel type="field">
+					<attribute name="editable" value="true" />
+					<attribute name="ref" value="bddia"/>
+				</panel>
+				<panel type="field">
+					<attribute name="editable" value="hfreq" />
+					<attribute name="ref" value="bdsys"/>
+				</panel>
+				
 			</panel>
 		</design>
 	</datatype>
