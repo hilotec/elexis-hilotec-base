@@ -42,8 +42,8 @@
 					<attribute name="ref" value="bddia"/>
 				</panel>
 				<panel type="field">
-					<attribute name="editable" value="hfreq" />
-					<attribute name="ref" value="bdsys"/>
+					<attribute name="editable" value="true" />
+					<attribute name="ref" value="hfreq"/>
 				</panel>
 				
 			</panel>
