@@ -43,9 +43,9 @@ public abstract class ActiveControl extends Composite {
 	protected Control ctl;
 	protected Composite controllers;
 	protected String textContents = "";
-	private String labelContents="";
+	private String labelContents = "";
 	private LinkedList<ActiveControlListener> listeners;
-	private HashMap<String,Object> properties=new HashMap<String,Object>();
+	private HashMap<String, Object> properties = new HashMap<String, Object>();
 
 	/** Constant to hide the label (Default: Label is visible) */
 	public static final int HIDE_LABEL = 0x0001;
@@ -67,7 +67,7 @@ public abstract class ActiveControl extends Composite {
 	/** Message to display if the field contents is invalid */
 	public static final String PROP_ERRMSG = "invalidContents"; //$NON-NLS-1$
 	/** Pattern for valid contents */
-	public static final String PROP_VALID_PATTERN="validPattern"; //$NON-NLS-1$
+	public static final String PROP_VALID_PATTERN = "validPattern"; //$NON-NLS-1$
 
 	/**
 	 * create a new field
@@ -84,11 +84,11 @@ public abstract class ActiveControl extends Composite {
 		} else {
 			setLayout(new GridLayout(2, false));
 		}
-		labelContents=displayName==null ? "" : displayName;
+		labelContents = displayName == null ? "" : displayName;
 		if ((displayBits & HIDE_LABEL) == 0) {
 			lbl = new Label(this, SWT.NONE);
 			lbl.setText(displayName);
-			
+
 			setData(PROP_DISPLAYNAME, displayName);
 			controllers = new Composite(this, SWT.NONE);
 			// controllers.setBackground(Desk.getColor(Desk.COL_GREEN));
@@ -97,9 +97,8 @@ public abstract class ActiveControl extends Composite {
 			gd.heightHint = size.y;
 			controllers.setLayoutData(gd);
 			controllers.setLayout(new FillLayout());
-
+			lbl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		}
-		lbl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 	}
 
 	public void addListener(ActiveControlListener listen) {
@@ -115,23 +114,23 @@ public abstract class ActiveControl extends Composite {
 		}
 	}
 
-	public boolean isValid(){
-		String validPattern=(String)properties.get(PROP_VALID_PATTERN);
-		if(validPattern!=null){
-			if(!getText().matches(validPattern)){
+	public boolean isValid() {
+		String validPattern = (String) properties.get(PROP_VALID_PATTERN);
+		if (validPattern != null) {
+			if (!getText().matches(validPattern)) {
 				return false;
 			}
 		}
 		return true;
 	}
+
 	public void fireChangedEvent() {
-		if(!isValid()){
-				if(listeners!=null){
-					for (ActiveControlListener sl : listeners) {
-						sl.invalidContents(this);
-					}
-					
-				
+		if (!isValid()) {
+			if (listeners != null) {
+				for (ActiveControlListener sl : listeners) {
+					sl.invalidContents(this);
+				}
+
 			}
 		}
 		if (listeners != null) {
@@ -151,7 +150,6 @@ public abstract class ActiveControl extends Composite {
 	public String getText() {
 		return textContents;
 	}
-
 
 	public void clear() {
 		textContents = "";
@@ -195,8 +193,6 @@ public abstract class ActiveControl extends Composite {
 		return ctl;
 	}
 
-	
-
 	public String getDisplayName() {
 		return (String) getData(PROP_DISPLAYNAME);
 	}
@@ -215,24 +211,27 @@ public abstract class ActiveControl extends Composite {
 	public Composite getControllerComposite() {
 		return controllers;
 	}
-	
+
 	@Override
-	public void setData(String name, Object value){
+	public void setData(String name, Object value) {
 		properties.put(name, value);
 	}
+
 	@Override
-	public Object getData(String name){
+	public Object getData(String name) {
 		return properties.get(name);
 	}
+
 	public String getProperty(String name) {
 		return (String) getData(name);
 	}
-	public void setValidPattern(String pattern, String errmsg){
-		setData(PROP_VALID_PATTERN,pattern);
-		setData(PROP_ERRMSG,errmsg);
+
+	public void setValidPattern(String pattern, String errmsg) {
+		setData(PROP_VALID_PATTERN, pattern);
+		setData(PROP_ERRMSG, errmsg);
 	}
-	
-	public String getErrMsg(){
-		return (String)properties.get(PROP_ERRMSG);
+
+	public String getErrMsg() {
+		return (String) properties.get(PROP_ERRMSG);
 	}
 }
