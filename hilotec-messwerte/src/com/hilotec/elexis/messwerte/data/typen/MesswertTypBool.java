@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, A. Kaufmann and Elexis
+ * Copyright (c) 2010, A. Kaufmann and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,6 +38,9 @@ public class MesswertTypBool extends MesswertBase implements IMesswertTyp {
 	}
 	
 	public String erstelleDarstellungswert(Messwert messwert) {
+		if(messwert.getWert().equals("1")){
+			return "Ja";
+		}
 		return (Boolean.parseBoolean(messwert.getWert()) ? "Ja" : "Nein");
 	}
 

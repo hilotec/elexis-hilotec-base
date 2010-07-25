@@ -20,34 +20,48 @@
 			max="5" default="5" />
 		<design>
 			<panel type="grid">
-				<attribute name="columns" value="3" />
-				<panel type="field">
-					<attribute name="ref" value="groesse" />
-					<attribute name="editable" value="true"/>
-					<attribute name="validpattern" value="[0-9\\.]*" />
-					<attribute name="invalidmessage" value="Es sind nur Zahlen und der Dezimalpunkt zulässig"/>
+				<attribute name="columns" value="1" />
+
+				<panel type="grid">
+					<attribute name="columns" value="3" />
+					<panel type="field">
+						<attribute name="ref" value="groesse" />
+						<attribute name="editable" value="true" />
+						<attribute name="validpattern" value="[0-9\\.]*" />
+						<attribute name="invalidmessage"
+							value="Es sind nur Zahlen und der Dezimalpunkt zulässig" />
+					</panel>
+					<panel type="field">
+						<attribute name="editable" value="true" />
+						<attribute name="ref" value="gewicht" />
+					</panel>
+					<panel type="field">
+						<attribute name="editable" value="false" />
+						<attribute name="ref" value="bmi" />
+					</panel>
+					<panel type="field">
+						<attribute name="editable" value="true" />
+						<attribute name="ref" value="bdsys" />
+					</panel>
+					<panel type="field">
+						<attribute name="editable" value="true" />
+						<attribute name="ref" value="bddia" />
+					</panel>
+					<panel type="field">
+						<attribute name="editable" value="true" />
+						<attribute name="ref" value="hfreq" />
+					</panel>
 				</panel>
-				<panel type="field">
-					<attribute name="editable" value="true"/>
-					<attribute name="ref" value="gewicht" />
+
+				<panel type="grid">
+					<attribute name="columns" value="1" />
+					<panel type="field">
+						<attribute name="ref" value="herger" />
+					</panel>
+					<panel type="field">
+						<attribute name="ref" value="arfaeh" />
+					</panel>
 				</panel>
-				<panel type="field">
-					<attribute name="editable" value="false"/>
-					<attribute name="ref" value="bmi" />
-				</panel>
-				<panel type="field">
-					<attribute name="editable" value="true" />
-					<attribute name="ref" value="bdsys"/>
-				</panel>
-				<panel type="field">
-					<attribute name="editable" value="true" />
-					<attribute name="ref" value="bddia"/>
-				</panel>
-				<panel type="field">
-					<attribute name="editable" value="true" />
-					<attribute name="ref" value="hfreq"/>
-				</panel>
-				
 			</panel>
 		</design>
 	</datatype>

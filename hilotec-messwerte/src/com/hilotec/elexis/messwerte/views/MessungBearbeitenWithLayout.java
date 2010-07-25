@@ -73,11 +73,11 @@ public class MessungBearbeitenWithLayout extends TitleAreaDialog {
 			if(mw!=null){
 				IMesswertTyp dft = mw.getTyp();
 				boolean bEditable=true;
-				if(p.getAttribute("editable").equals("false")){
+				String iattr=p.getAttribute("editable");
+				if(iattr!=null && iattr.equals("false")){
 					bEditable=false;
 				}
 				ActiveControl ac=dft.createControl(ret, mw, bEditable);
-				int flags=0;
 				ac.setData("messwert", mw);
 				String validPattern=p.getAttribute("validpattern");
 				if(validPattern!=null){
