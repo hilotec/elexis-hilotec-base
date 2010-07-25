@@ -46,6 +46,7 @@ public abstract class ActiveControl extends Composite {
 	private String labelContents = "";
 	private LinkedList<ActiveControlListener> listeners;
 	private HashMap<String, Object> properties = new HashMap<String, Object>();
+	private int flags;
 
 	/** Constant to hide the label (Default: Label is visible) */
 	public static final int HIDE_LABEL = 0x0001;
@@ -84,6 +85,7 @@ public abstract class ActiveControl extends Composite {
 		} else {
 			setLayout(new GridLayout(2, false));
 		}
+		flags=displayBits;
 		labelContents = displayName == null ? "" : displayName;
 		if ((displayBits & HIDE_LABEL) == 0) {
 			lbl = new Label(this, SWT.NONE);
@@ -124,6 +126,9 @@ public abstract class ActiveControl extends Composite {
 		return true;
 	}
 
+	public boolean isReadonly(){
+		return (flags&READONLY)==READONLY;
+	}
 	public void fireChangedEvent() {
 		if (!isValid()) {
 			if (listeners != null) {

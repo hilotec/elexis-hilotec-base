@@ -24,7 +24,11 @@ public class TextField extends ActiveControl {
 	
 	public TextField(Composite parent, int displayBits, String displayName){
 		super(parent, displayBits, displayName);
-		setControl(new Text(this,SWT.BORDER));
+		int swtoption=SWT.BORDER;
+		if(isReadonly()){
+			swtoption|=SWT.READ_ONLY;
+		}
+		setControl(new Text(this,swtoption));
 		getTextControl().addModifyListener(new ModifyListener(){
 			public void modifyText(ModifyEvent e){
 				textContents=getTextControl().getText();

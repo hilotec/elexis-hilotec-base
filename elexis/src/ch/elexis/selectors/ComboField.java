@@ -25,7 +25,11 @@ public class ComboField extends ActiveControl {
 	
 	public ComboField(Composite parent, int displayBits, String displayName, String... values){
 		super(parent, displayBits, displayName);
-		combo=new Combo(parent,SWT.READ_ONLY|SWT.SINGLE);
+		int swtflag=SWT.READ_ONLY|SWT.SINGLE;
+		if(isReadonly()){
+			swtflag|=SWT.READ_ONLY;
+		}
+		combo=new Combo(parent,swtflag);
 		combo.setItems(values);
 		combo.addSelectionListener(new SelectionAdapter() {
 
