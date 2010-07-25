@@ -1,5 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2010, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *******************************************************************************/
+
 package com.hilotec.elexis.messwerte.views;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -13,7 +25,6 @@ import org.eclipse.swt.widgets.Shell;
 
 import ch.elexis.selectors.ActiveControl;
 import ch.elexis.selectors.ActiveControlListener;
-import ch.elexis.selectors.TextField;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
@@ -22,12 +33,19 @@ import com.hilotec.elexis.messwerte.data.MessungTyp;
 import com.hilotec.elexis.messwerte.data.Messwert;
 import com.hilotec.elexis.messwerte.data.Panel;
 import com.hilotec.elexis.messwerte.data.typen.IMesswertTyp;
+import com.hilotec.elexis.messwerte.data.typen.MesswertTypCalc;
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
+/**
+ * An edit dialog that honors layout hints in the measurement description XML
+ * @author gerry
+ *
+ */
 public class MessungBearbeitenWithLayout extends TitleAreaDialog {
 	private Messung messung;
 	private DatePickerCombo dateWidget;
 	private List<Messwert> messwerte;
+	private List<ActiveControl> calcFields=new ArrayList<ActiveControl>();
 
 	public MessungBearbeitenWithLayout(Shell shell, Messung m) {
 		super(shell);
@@ -72,6 +90,7 @@ public class MessungBearbeitenWithLayout extends TitleAreaDialog {
 			Messwert mw=getMesswert(fieldref);
 			if(mw!=null){
 				IMesswertTyp dft = mw.getTyp();
+				
 				boolean bEditable=true;
 				String iattr=p.getAttribute("editable");
 				if(iattr!=null && iattr.equals("false")){
@@ -79,6 +98,9 @@ public class MessungBearbeitenWithLayout extends TitleAreaDialog {
 				}
 				ActiveControl ac=dft.createControl(ret, mw, bEditable);
 				ac.setData("messwert", mw);
+				if(dft instanceof MesswertTypCalc){
+					calcFields.add(ac);
+				}
 				String validPattern=p.getAttribute("validpattern");
 				if(validPattern!=null){
 					String invalidMsg=p.getAttribute("invalidmessage");
@@ -99,10 +121,14 @@ public class MessungBearbeitenWithLayout extends TitleAreaDialog {
 					
 					@Override
 					public void contentsChanged(ActiveControl ac) {
-						if(ac.isValid()){
+						if(ac.isValid() && !ac.isReadonly()){
 							Messwert messwert=(Messwert)ac.getData("messwert");
 							messwert.setWert(ac.getText());
 							setErrorMessage(null);
+							for(ActiveControl cc:calcFields){
+								Messwert mc=(Messwert)cc.getData("messwert");
+								cc.setText(((MesswertTypCalc)mc.getTyp()).erstelleDarstellungswert(mc));
+							}
 						}else{
 							setErrorMessage(ac.getErrMsg());
 						}
