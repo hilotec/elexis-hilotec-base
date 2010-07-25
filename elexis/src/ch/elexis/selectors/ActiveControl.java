@@ -66,6 +66,8 @@ public abstract class ActiveControl extends Composite {
 	public static final String PROP_HASHNAME = "hashName"; //$NON-NLS-1$
 	/** Message to display if the field contents is invalid */
 	public static final String PROP_ERRMSG = "invalidContents"; //$NON-NLS-1$
+	/** Pattern for valid contents */
+	public static final String PROP_VALID_PATTERN="validPattern"; //$NON-NLS-1$
 
 	/**
 	 * create a new field
@@ -113,7 +115,25 @@ public abstract class ActiveControl extends Composite {
 		}
 	}
 
+	public boolean isValid(){
+		String validPattern=(String)properties.get(PROP_VALID_PATTERN);
+		if(validPattern!=null){
+			if(!getText().matches(validPattern)){
+				return false;
+			}
+		}
+		return true;
+	}
 	public void fireChangedEvent() {
+		if(!isValid()){
+				if(listeners!=null){
+					for (ActiveControlListener sl : listeners) {
+						sl.invalidContents(this);
+					}
+					
+				
+			}
+		}
 		if (listeners != null) {
 			for (ActiveControlListener sl : listeners) {
 				sl.contentsChanged(this);
@@ -132,7 +152,6 @@ public abstract class ActiveControl extends Composite {
 		return textContents;
 	}
 
-	public abstract boolean isValid();
 
 	public void clear() {
 		textContents = "";
@@ -207,5 +226,13 @@ public abstract class ActiveControl extends Composite {
 	}
 	public String getProperty(String name) {
 		return (String) getData(name);
+	}
+	public void setValidPattern(String pattern, String errmsg){
+		setData(PROP_VALID_PATTERN,pattern);
+		setData(PROP_ERRMSG,errmsg);
+	}
+	
+	public String getErrMsg(){
+		return (String)properties.get(PROP_ERRMSG);
 	}
 }

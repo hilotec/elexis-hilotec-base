@@ -45,10 +45,5 @@ public class TextField extends ActiveControl {
 			}
 		});
 	}
-
-	@Override
-	public boolean isValid(){
-		return true;
-	}
 	
 }
