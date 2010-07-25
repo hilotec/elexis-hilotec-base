@@ -225,9 +225,16 @@ public class MessungenUebersicht extends ViewPart implements
 				TableItem[] tableitems = seite.table.getSelection();
 				if (tableitems.length == 1) {
 					Messung messung = (Messung) tableitems[0].getData();
+					if(messung.getTyp().getPanel()==null){
 					MessungBearbeiten dialog = new MessungBearbeiten(getSite()
 							.getShell(), messung, ci.getText());
 					if (dialog.open() == Dialog.OK) {
+						aktualisieren();
+						
+					}
+					}else{
+						MessungBearbeitenWithLayout dlg=new MessungBearbeitenWithLayout(getSite().getShell(),messung);
+						dlg.open();
 						aktualisieren();
 					}
 				}

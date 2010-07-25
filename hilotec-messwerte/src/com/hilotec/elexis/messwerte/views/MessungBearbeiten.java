@@ -63,7 +63,6 @@ public class MessungBearbeiten extends TitleAreaDialog {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		MessungTyp typ = messung.getTyp();
 		ScrolledComposite scroll = new ScrolledComposite(parent, SWT.BORDER
 				| SWT.V_SCROLL | SWT.H_SCROLL);
 		scroll.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -77,22 +76,16 @@ public class MessungBearbeiten extends TitleAreaDialog {
 		dateWidget.setDate(new TimeTool(messung.getDatum()).getTime());
 		dateWidget.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 
-		if (typ.getPanel() == null) {
-
-			for (Messwert messwert : messung.getMesswerte()) {
-				Label l = new Label(comp, SWT.NONE);
-				IMesswertTyp dft = messwert.getTyp();
-				String labelText = dft.getTitle();
-				if (!dft.getUnit().equals("")) {
-					labelText += " [" + dft.getUnit() + "]";
-				}
-				l.setText(labelText);
-
-				widgetMap.put(messwert, dft.createWidget(comp, messwert));
+		for (Messwert messwert : messung.getMesswerte()) {
+			Label l = new Label(comp, SWT.NONE);
+			IMesswertTyp dft = messwert.getTyp();
+			String labelText = dft.getTitle();
+			if (!dft.getUnit().equals("")) {
+				labelText += " [" + dft.getUnit() + "]";
 			}
-		} else {
-			MessungTypDisplay mtd = new MessungTypDisplay(comp, messung);
-			mtd.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			l.setText(labelText);
+
+			widgetMap.put(messwert, dft.createWidget(comp, messwert));
 		}
 		comp.setSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		return scroll;

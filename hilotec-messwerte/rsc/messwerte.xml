@@ -24,6 +24,8 @@
 				<panel type="field">
 					<attribute name="ref" value="groesse" />
 					<attribute name="editable" value="true"/>
+					<attribute name="validpattern" value="[0-9\\.]*" />
+					<attribute name="invalidmessage" value="Es sind nur Zahlen und der Dezimalpunkt zulässig"/>
 				</panel>
 				<panel type="field">
 					<attribute name="editable" value="true"/>
