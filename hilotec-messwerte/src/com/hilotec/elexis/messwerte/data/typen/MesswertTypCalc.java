@@ -24,6 +24,8 @@ import org.eclipse.swt.widgets.Widget;
 import ch.elexis.ElexisException;
 import ch.elexis.data.Script;
 import ch.elexis.scripting.Interpreter;
+import ch.elexis.selectors.ActiveControl;
+import ch.elexis.selectors.TextField;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.Log;
 
@@ -215,5 +217,16 @@ public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 	}
 	
 	public void saveInput(Widget widget, Messwert messwert) {
+	}
+
+	@Override
+	public ActiveControl createControl(Composite parent, Messwert messwert,
+			boolean bEditable) {
+		IMesswertTyp dft = messwert.getTyp();
+		String labelText = dft.getTitle();
+		TextField tf = new TextField(parent, ActiveControl.READONLY, labelText);
+		tf.setText(messwert.getDarstellungswert());
+		return tf;
+	
 	}
 }

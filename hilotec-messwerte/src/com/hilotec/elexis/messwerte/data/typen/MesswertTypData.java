@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, A. Kaufmann and Elexis
+ * Copyright (c) 2009-2010, A. Kaufmann and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import com.hilotec.elexis.messwerte.data.Messwert;
 import com.hilotec.elexis.messwerte.data.MesswertBase;
 
 import ch.elexis.data.Patient;
+import ch.elexis.selectors.ActiveControl;
 
 /**
  * @author Antoine Kaufmann
@@ -114,5 +115,12 @@ public class MesswertTypData extends MesswertBase implements IMesswertTyp {
 		}
 		
 		return Messung.load(messwert.getWert());
+	}
+
+	@Override
+	public ActiveControl createControl(Composite parent, Messwert messwert,
+			boolean bEditable) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

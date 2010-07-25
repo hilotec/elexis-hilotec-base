@@ -19,6 +19,10 @@ import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.SWT;
 
+import ch.elexis.selectors.ActiveControl;
+import ch.elexis.selectors.BooleanField;
+import ch.elexis.selectors.TextField;
+
 import com.hilotec.elexis.messwerte.data.Messwert;
 import com.hilotec.elexis.messwerte.data.MesswertBase;
 
@@ -49,6 +53,19 @@ public class MesswertTypBool extends MesswertBase implements IMesswertTyp {
 		Button button = new Button(parent, SWT.CHECK);
 		button.setSelection(Boolean.parseBoolean(messwert.getWert()));
 		return button;
+	}
+
+	public ActiveControl createControl(Composite parent, Messwert messwert,
+			boolean bEditable) {
+		int flags = 0;
+		if (!bEditable) {
+			flags |= TextField.READONLY;
+		}
+		IMesswertTyp dft = messwert.getTyp();
+		String labelText = dft.getTitle();
+		BooleanField bf=new BooleanField(parent, flags, labelText);
+		bf.setText(messwert.getDarstellungswert());
+		return bf;
 	}
 
 	public void saveInput(Widget widget, Messwert messwert) {

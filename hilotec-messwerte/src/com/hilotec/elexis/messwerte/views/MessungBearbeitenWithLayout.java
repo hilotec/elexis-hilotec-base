@@ -71,21 +71,20 @@ public class MessungBearbeitenWithLayout extends TitleAreaDialog {
 			String fieldref=p.getAttribute("ref");
 			Messwert mw=getMesswert(fieldref);
 			if(mw!=null){
-				int flags=0;
-				if(p.getAttribute("editable").equals("false")){
-					flags|=TextField.READONLY;
-				}
 				IMesswertTyp dft = mw.getTyp();
-				String labelText = dft.getTitle();
-				TextField tf=new TextField(ret,flags,labelText);
-				tf.setText(mw.getDarstellungswert());
-				tf.setData("messwert", mw);
+				boolean bEditable=true;
+				if(p.getAttribute("editable").equals("false")){
+					bEditable=false;
+				}
+				ActiveControl ac=dft.createControl(ret, mw, bEditable);
+				int flags=0;
+				ac.setData("messwert", mw);
 				String validPattern=p.getAttribute("validpattern");
 				if(validPattern!=null){
 					String invalidMsg=p.getAttribute("invalidmessage");
-					tf.setValidPattern(validPattern, invalidMsg==null ? "ungültige Eingabe" : invalidMsg);
+					ac.setValidPattern(validPattern, invalidMsg==null ? "ungültige Eingabe" : invalidMsg);
 				}
-				tf.addListener(new ActiveControlListener() {
+				ac.addListener(new ActiveControlListener() {
 					
 					@Override
 					public void titleClicked(ActiveControl field) {
@@ -94,17 +93,23 @@ public class MessungBearbeitenWithLayout extends TitleAreaDialog {
 					
 					@Override
 					public void invalidContents(ActiveControl field) {
-						setMessage(field.getErrMsg());
+						
+				
 					}
 					
 					@Override
 					public void contentsChanged(ActiveControl ac) {
-						Messwert messwert=(Messwert)ac.getData("messwert");
-						messwert.setWert(ac.getText());
+						if(ac.isValid()){
+							Messwert messwert=(Messwert)ac.getData("messwert");
+							messwert.setWert(ac.getText());
+							setErrorMessage(null);
+						}else{
+							setErrorMessage(ac.getErrMsg());
+						}
 						
 					}
 				});
-				setLayoutData(tf);
+				setLayoutData(ac);
 
 			}
 		}

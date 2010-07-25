@@ -21,23 +21,25 @@ import org.eclipse.swt.widgets.Text;
 import com.hilotec.elexis.messwerte.data.Messwert;
 import com.hilotec.elexis.messwerte.data.MesswertBase;
 
+import ch.elexis.selectors.ActiveControl;
+import ch.elexis.selectors.TextField;
 import ch.elexis.util.SWTHelper;
 
 /**
  * @author Antoine Kaufmann
  */
 public class MesswertTypStr extends MesswertBase implements IMesswertTyp {
-	String  defVal = "";
-	
+	String defVal = "";
+
 	/**
 	 * Anzahl Zeilen, die das Textfeld haben soll
 	 */
 	int lines = 1;
-	
+
 	public MesswertTypStr(String n, String t, String u) {
 		super(n, t, u);
 	}
-	
+
 	public String erstelleDarstellungswert(Messwert messwert) {
 		return messwert.getWert();
 	}
@@ -45,11 +47,11 @@ public class MesswertTypStr extends MesswertBase implements IMesswertTyp {
 	public String getDefault() {
 		return defVal;
 	}
-	
+
 	public void setDefault(String def) {
 		defVal = def;
 	}
-	
+
 	/**
 	 * Anzahl der anzuzeigenden Zeilen setzen
 	 */
@@ -62,7 +64,20 @@ public class MesswertTypStr extends MesswertBase implements IMesswertTyp {
 		text.setText(messwert.getWert());
 		return text;
 	}
-	
+
+	public ActiveControl createControl(Composite parent, Messwert messwert,
+			boolean bEditable) {
+		int flags = 0;
+		if (!bEditable) {
+			flags |= TextField.READONLY;
+		}
+		IMesswertTyp dft = messwert.getTyp();
+		String labelText = dft.getTitle();
+		TextField tf = new TextField(parent, flags, labelText);
+		tf.setText(messwert.getDarstellungswert());
+		return tf;
+	}
+
 	public void saveInput(Widget widget, Messwert messwert) {
 		Text text = (Text) widget;
 		messwert.setWert(text.getText());

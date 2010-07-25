@@ -17,7 +17,7 @@ import ch.elexis.data.PersistentObject;
 public class FieldDescriptor<T extends PersistentObject> {
 	
 	public enum Typ {
-		STRING, INT, CURRENCY, LIST, HYPERLINK, DATE, COMBO
+		STRING, INT, CURRENCY, LIST, HYPERLINK, DATE, COMBO, BOOLEAN
 	};
 	
 	String sAnzeige, sFeldname, sHashname;

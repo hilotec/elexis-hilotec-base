@@ -16,6 +16,8 @@ package com.hilotec.elexis.messwerte.data.typen;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
 
+import ch.elexis.selectors.ActiveControl;
+
 import com.hilotec.elexis.messwerte.data.Messwert;
 
 public interface IMesswertTyp {
@@ -59,6 +61,15 @@ public interface IMesswertTyp {
 	 * @return Widget
 	 */
 	public abstract Widget createWidget(Composite parent, Messwert messwert);
+	
+	/**
+	 * Erzeugt ein AciveControl und befüllt es mit dem Messwert
+	 * @param parent
+	 * @param messwert
+	 * @param bEditable true wenn das Feld editierbar sein soll
+	 * @return
+	 */
+	public abstract ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable);
 
 	/**
 	 * Eingaben, die im Uebergebenen Widget getaetigt wurden, in den

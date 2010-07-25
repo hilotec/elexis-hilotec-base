@@ -23,6 +23,9 @@ import org.eclipse.swt.widgets.Widget;
 import com.hilotec.elexis.messwerte.data.Messwert;
 import com.hilotec.elexis.messwerte.data.MesswertBase;
 
+import ch.elexis.selectors.ActiveControl;
+import ch.elexis.selectors.ComboField;
+import ch.elexis.selectors.TextField;
 import ch.rgw.tools.StringTool;
 
 
@@ -93,9 +96,25 @@ public class MesswertTypEnum extends MesswertBase implements IMesswertTyp {
 		return combo;
 	}
 	
+	@Override
+	public ActiveControl createControl(Composite parent, Messwert messwert,
+			boolean bEditable) {
+		int flags = 0;
+		if (!bEditable) {
+			flags |= TextField.READONLY;
+		}
+		IMesswertTyp dft = messwert.getTyp();
+		String labelText = dft.getTitle();
+		ComboField cf=new ComboField(parent, flags, labelText, choices.toArray(new String[0]));
+		cf.setText(messwert.getDarstellungswert());
+		return cf;
+	}
+	
 	public void saveInput(Widget widget, Messwert messwert) {
 		Combo combo = (Combo) widget;
 		messwert.setWert(Integer.toString(values.get(
 			combo.getSelectionIndex())));
 	}
+
+	
 }
