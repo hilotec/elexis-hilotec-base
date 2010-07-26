@@ -4,10 +4,8 @@ h1. Elexis Scripts
 
 h2. Was ist das?
 
-Scripts sind die "Apps" von Elexis: Schnell gebaute, leicht installier- und löschbare Helferlein für eng umrissene 
-Aufgaben. Scripts können auf verschiedene Arten benutzt werden:
-* Als Filter in manchen Listen, z.B. der Patientenliste. Ein solches Script durchsucht alle Elemente der Liste
-auf beliebige Merkmale, die es dann anzeigen, summieren oder sonstwie verarbeiten kann.
+Scripts sind die "Apps" von Elexis: Schnell gebaute, leicht installier- und löschbare Helferlein für eng umrissene Aufgaben. Scripts können auf verschiedene Arten benutzt werden:
+* Als Filter in manchen Listen, z.B. der Patientenliste. Ein solches Script durchsucht alle Elemente der Liste auf beliebige Merkmale, die es dann anzeigen, summieren oder sonstwie verarbeiten kann.
 * Als Formel um einen Befund oder Laborwert zu errechnen.
 * Als Teil eines Platzhalters in einer Textvorlage.
 * Als selbständig ablaufendes Unterprogramm in Elexis
@@ -166,6 +164,28 @@ z=new Patientenzaehler();
 z.open();
 return z.getResult();
  
+h3. Rechnung an Patient oder an Kasse
+
+* Name: RnAnPatient
+* Zweck: Wenn der Patient es wünscht, wird die Rechnung z.B. des Labors an ihn geschickt, sonst an die Kasse. Dazu muss ein Sticker "Rechnung an Patient" erstellt und den entsprechenden Patienten zugeteilt werden. Das Script gibt entweder die Krankenkassendaten oder den Text "Rechnung an Patient" aus.
+* Kontext: Briefvorlagen, speziell Laborauftragsetiketten etc.
+* Elexis: 2.1ff
+
+bc. /* !BSH! */
+import java.util.List;
+import ch.elexis.data.*;
+List stickers=actPatient.getStickers();
+for(int i=0;i<stickers.size();i++){
+	sticker=stickers.get(i);
+	if(sticker.getLabel().equals("Rechnung an Patient")){
+		return "Bitte Rechnung an Patient";
+	}
+}
+Kontakt k=actFall.getRequiredContact("Kostenträger");
+return k.get("Bezeichnung1")+", Nr. "+actFall.getRequiredString("Versicherungsnummer");
+
+
+
 h3. Stammdatenexport
 
 * Name:  Stammdatenexport
