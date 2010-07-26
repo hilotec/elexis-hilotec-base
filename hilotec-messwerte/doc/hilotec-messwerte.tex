@@ -6,8 +6,8 @@
 % * http://www.eclipse.org/legal/epl-v10.html
 % *
 % * Contributors:
-% *    A. Kaufmann - initial implementation 
-% *    
+% *    A. Kaufmann - initial implementation
+% *
 % * $Id: MesswertBase.java 5386 2009-06-23 11:34:17Z rgw_ch $
 % *******************************************************************************/
 
@@ -30,15 +30,15 @@
 \section{Einführung}
 Dieses Elexis-Plugin ist dazu gedacht, Messungen und andere Erhebungsdaten in
 Elexis strukturiert zu erfassen und zu verarbeiten. Mit dem Plugin
-\textit{hilotec-pluginstatisktiken} wird es auch ermöglicht, Auswertungen
+\textit{hilotec-pluginstatistiken} wird es auch ermöglicht, Auswertungen
 darüber zu erstellen, und die Werte zu exportieren als CSV.
 
 Das Plugin stellt eine View zur Verfügung, die eine Übersicht über alle
 Messungen eines Patienten bietet, wo auch Neue Erfasst und Bestehende gelöscht
 oder verändert werden können.
 
-Die Konfiguration der möglichen Messungen und deren Struktur kann in einer
-XML-Datei spezifiziert werden. 
+Die Konfiguration der möglichen Messungen und deren Struktur wird in einer
+XML-Datei spezifiziert.
 
 
 \section{Voraussetzungen}
@@ -92,7 +92,7 @@ Bei allen Feldtypen sind die folgenden Attribute verfügbar:
 
 Im Folgenden wird auf die einzelnen Feldtypen genauer eingegangen. Die
 angegebenen Typnamen sind gleichzeitig auch die XML-Tagnamen um Felder des
-entsprechenden 
+entsprechenden
 
 
 \subsection{strfield}
@@ -244,7 +244,7 @@ Elexis-Handbuch zu ent\-neh\-men, wo die Schnittstelle genauer beschrieben wird.
 folgenden soll nur auf den plug\-in\-spe\-zi\-fi\-schen Teil eingegangen werden.
 
 Das Plugin benutzt den Identifier \texttt{Messwerte} fuer die Schnittstelle. Das
-heisst, die Platzhalter für den Zugriff haben die Form 
+heisst, die Platzhalter für den Zugriff haben die Form
 \texttt{Messwerte:Patient:auswahl:daten}. Wobei für den Teil \texttt{auswahl} die
 folgenden Möglichkeiten bestehen:
 \begin{description}
@@ -264,6 +264,6 @@ referenzierten Messung spezifiziert werden. Auch hier können die Datafelder
 wieder beliebig verschachtelt werden.
 
 \section{Layout Steuerung}
-Standardm"assig wird bei Doppelklick auf eine Messwertreihe ein Dialogfenster ge"offnet, welches alle Werte untereinander zum Eingeben und "Andern anbietet. Auf Wunsch kann den einzelnen Messwertreihen aber auch Darstellungsinformation mitgegeben werden. Dies wird gemacht, indem man ein Element <design> der <datatype> - Definition zuf"ugt.
+Standardmässig wird bei Doppelklick auf eine Messwertreihe ein Dialogfenster geöffnet, welches alle Werte untereinander zum Eingeben und Ändern anbietet. Auf Wunsch kann den einzelnen Messwertreihen aber auch Darstellungsinformation mitgegeben werden. Dies wird gemacht, indem man ein Element $<$design$>$ der $<$datatype$>$ - Definition zufügt.
 
 \end{document}

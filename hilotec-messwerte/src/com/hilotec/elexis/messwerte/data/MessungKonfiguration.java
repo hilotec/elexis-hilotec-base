@@ -79,7 +79,8 @@ public class MessungKonfiguration {
 	private static MessungKonfiguration the_one_and_only_instance = null;
 	ArrayList<MessungTyp> types;
 	private final Log log = Log.get("DataConfiguration");
-
+	private String defaultFile;
+	
 	public static MessungKonfiguration getInstance() {
 		if (the_one_and_only_instance == null) {
 			the_one_and_only_instance = new MessungKonfiguration();
@@ -89,10 +90,10 @@ public class MessungKonfiguration {
 
 	private MessungKonfiguration() {
 		types = new ArrayList<MessungTyp>();
-		String filename = Hub.localCfg.get(Preferences.CONFIG_FILE,
+		defaultFile = Hub.localCfg.get(Preferences.CONFIG_FILE,
 				Hub.getWritableUserDir() + File.separator + CONFIG_FILENAME);
 
-		readFromXML(filename);
+		readFromXML(null);
 	}
 
 	private Panel createPanelFromNode(Element n) {
@@ -121,13 +122,16 @@ public class MessungKonfiguration {
 
 	}
 
-	private void readFromXML(String path) {
+	public void readFromXML(String path) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		Document doc;
 		SchemaFactory sfac = SchemaFactory
 				.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
+		if(path==null){
+			path=defaultFile;
+		}
 		try {
 			String schemapath = PlatformHelper
 					.getBasePath("com.hilotec.elexis.messwerte")

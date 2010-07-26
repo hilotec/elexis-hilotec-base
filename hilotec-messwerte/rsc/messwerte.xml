@@ -58,7 +58,7 @@
 						<attribute name="ref" value="bddia" />
 						<attribute name="validpattern" value="[0-9]*" />
 						<attribute name="invalidmessage" value="Es sind nur ganze Zahlen zulässig" />
-						<attribute name="size" value="30,-1"/>
+						<attribute name="size" value="30,-1" />
 
 					</panel>
 					<panel type="field">
@@ -99,6 +99,52 @@
 		<datafield name="teststatus" title="Teststatus" type="status" />
 	</datatype>
 
+	<datatype name="mms" title="Mini Mental Status">
+		<numfield name="subtraktion" title="Subtraktion" />
+		<numfield name="zo_wochentag" title=""/>
+		<numfield name="zo_jahr" title=""/>
+		<calcfield name="resultat" title="Resultat">
+			<var name="s" source="subtraktion" />
+			<var name="zot" source="zo_wochentag"/>
+			<var name="zoj" source="zo_jahr"/>
+			<formula interpreter="beanshell">
+				return s+zot+zoj;
+		</formula>
+		</calcfield>
+		<design>
+			<panel type="grid">
+				<attribute name="columns" value="2" />
+				<panel type="label">
+					<attribute name="text" value="Fragen Sie:'Welcher Wochentag ist heute?'"/>
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="zo_wochentag" />
+				</panel>
+				
+				<panel type="label">
+					<attribute name="text" value="Fragen Sie:'Welches Jahr haben wir?'"/>
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="zo_jahr" />
+				</panel>
+				
+				<panel type="display">
+					<attribute name="url" value="file://d:/temp/expl.html" />
+					<attribute name="size" value="400,90" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="subtraktion" />
+				</panel>
+				<panel type="label">
+					<attribute name="text" value="Resultat (von 30 möglichen Punkten)" />
+				</panel>
+				<panel type="field">
+					<attribute name="ref" value="resultat" />
+				</panel>
+			</panel>
+
+		</design>
+	</datatype>
 	<datatype name="ergometrie" title="Ergometrie">
 		<numfield name="pstart" title="Startleistung" unit="W" />
 		<numfield name="stgzeit" title="Steigerungszeit" unit="Min" />

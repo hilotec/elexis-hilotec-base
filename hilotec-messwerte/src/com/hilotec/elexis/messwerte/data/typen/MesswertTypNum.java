@@ -67,6 +67,9 @@ public class MesswertTypNum extends MesswertBase implements IMesswertTyp {
 		}
 		IMesswertTyp dft = messwert.getTyp();
 		String labelText = dft.getTitle();
+		if(labelText.length()==0){
+			flags|=TextField.HIDE_LABEL;
+		}
 		TextField tf = new TextField(parent, flags, labelText);
 		tf.setText(messwert.getDarstellungswert());
 		return tf;

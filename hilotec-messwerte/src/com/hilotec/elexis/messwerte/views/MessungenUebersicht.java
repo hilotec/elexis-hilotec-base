@@ -30,6 +30,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
@@ -70,6 +71,7 @@ public class MessungenUebersicht extends ViewPart implements
 	private Action copyAktion;
 	private Action loeschenAktion;
 	private Action exportAktion;
+	private Action reloadXMLAction;
 
 	public MessungenUebersicht() {
 		config = MessungKonfiguration.getInstance();
@@ -385,6 +387,26 @@ public class MessungenUebersicht extends ViewPart implements
 				}
 			}
 		};
+		
+		reloadXMLAction=new Action("XML neu einlesen"){
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REFRESH));
+				setToolTipText("Die Strukturdefinition neu einlesen");
+			}
+			
+			public void run(){
+				for(CTabItem ci:tabsfolder.getItems()){
+					ci.getControl().dispose();
+					ci.dispose();
+				}
+				for(Control c:tabsfolder.getChildren()){
+					c.dispose();
+				}
+				config.readFromXML(null);
+				erstelleSeiten();
+				aktualisieren();
+			}
+		};
 	}
 
 	/**
@@ -395,6 +417,7 @@ public class MessungenUebersicht extends ViewPart implements
 		erstelleAktionen();
 		menu.createToolbar(neuAktion, editAktion, copyAktion, loeschenAktion,
 				exportAktion);
+		menu.createMenu(reloadXMLAction);
 		return menu;
 	}
 
@@ -410,7 +433,11 @@ public class MessungenUebersicht extends ViewPart implements
 		tabsfolder.setLayout(new FillLayout());
 
 		erstelleMenu(getViewSite());
+		erstelleSeiten();
+				ElexisEventDispatcher.getInstance().addListeners(this);
+	}
 
+	void erstelleSeiten(){
 		for (MessungTyp t : config.getTypes()) {
 			CTabItem cti = new CTabItem(tabsfolder, SWT.NONE);
 			cti.setText(t.getTitle());
@@ -419,11 +446,9 @@ public class MessungenUebersicht extends ViewPart implements
 			cti.setControl(mts);
 		}
 		tabsfolder.setSelection(0);
-
 		setCurPatient(ElexisEventDispatcher.getSelectedPatient());
-		ElexisEventDispatcher.getInstance().addListeners(this);
 	}
-
+	
 	@Override
 	public void dispose() {
 		ElexisEventDispatcher.getInstance().removeListeners(this);
