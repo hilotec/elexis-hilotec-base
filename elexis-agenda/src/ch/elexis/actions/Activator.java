@@ -143,9 +143,10 @@ public class Activator extends AbstractUIPlugin {
 			//ElexisEventCascade.getInstance().stop();
 			try {
 				ElexisEventDispatcher.fireSelectionEvent(pat);
+				/*
 				final Konsultation kons =
 					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-				
+				*/
 				final String sVgl = getActDate().toString(TimeTool.DATE_COMPACT);
 				/*
 				if ((kons == null)
