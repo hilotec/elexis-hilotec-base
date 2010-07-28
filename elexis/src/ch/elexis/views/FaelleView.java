@@ -54,6 +54,7 @@ public class FaelleView extends ViewPart implements IActivationListener {
 	ViewMenus menus;
 	private IAction konsFilterAction;
 	private final FallKonsFilter filter = new FallKonsFilter();
+	
 	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
 		public void runInUi(ElexisEvent ev){
 			tv.refresh();

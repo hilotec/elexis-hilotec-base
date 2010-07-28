@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich, Daniel Lutz and Elexis
+ * Copyright (c) 2006-2010, G. Weirich, Daniel Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,12 +13,6 @@
 
 package ch.elexis.views;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -29,15 +23,14 @@ import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.actions.GlobalActions;
-import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.StringTool;
 
 /**
  * Diese View reichtet einen Browser aufs Arzneimittel-Kompendium ein.
  */
 public class KompendiumView extends ViewPart implements ISaveablePart2{
 	public static final String ID="ch.elexis.Kompendium"; //$NON-NLS-1$
-	Browser browser;
+	static Browser browser;
+	
 	@Override
 	public void createPartControl(Composite parent) {
 		browser=new Browser(parent,SWT.NONE);
@@ -45,8 +38,8 @@ public class KompendiumView extends ViewPart implements ISaveablePart2{
 
 			@Override
 			public void changed(LocationEvent arg0) {
-				String text=getText(arg0.location);
-				System.out.println(text);
+				String text=browser.getText();
+				//System.out.println(text);
 			}
 			
 		});
@@ -54,33 +47,16 @@ public class KompendiumView extends ViewPart implements ISaveablePart2{
 		
 	}
 
+	public static String getText(){
+		return browser.getText();
+	}
 	@Override
 	public void setFocus() {
 		// TODO Auto-generated method stub
 
 	}
 	
-	public String getText(String loc){
-		 try {
-			 if(StringTool.isNothing(loc)){
-				 loc=browser.getUrl();
-			 }
-			 URLConnection url=new URL(loc).openConnection();
-			 url.setDoInput(true);
-			  BufferedReader in = new BufferedReader(new InputStreamReader(url.getInputStream()));
-		     StringBuilder ret=new StringBuilder();
-		     String line;;
-			 while ((line= in.readLine()) != null) {
-				 ret.append(line);
-			 }
-			 //Programm beenden
-			 in.close();
-			 return ret.toString();
-			} catch (IOException e) {
-				ExHandler.handle(e);
-				return ""; //$NON-NLS-1$
-			 }
-	}
+	
 	/* ******
 	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2
 	 * Wir benötigen das Interface nur, um das Schliessen einer View zu verhindern,

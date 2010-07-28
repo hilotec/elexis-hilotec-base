@@ -33,6 +33,12 @@ import ch.elexis.util.SWTHelper;
 public class FallDetailView extends ViewPart implements ISaveablePart2, IActivationListener {
 	public static final String ID = "ch.elexis.FallDetailView"; //$NON-NLS-1$
 	FallDetailBlatt2 fdb;
+	
+	private final ElexisEventListenerImpl eeli_kons = new ElexisEventListenerImpl(Konsultation.class){
+		public void runInUi(final ElexisEvent ev){
+			fdb.setFall(((Konsultation)ev.getObject()).getFall());
+		}
+	};
 	private final ElexisEventListenerImpl eeli_fall = new ElexisEventListenerImpl(
 		Fall.class) {
 		
@@ -115,11 +121,11 @@ public class FallDetailView extends ViewPart implements ISaveablePart2, IActivat
 	
 	public void visible(boolean mode){
 		if(mode){
-			ElexisEventDispatcher.getInstance().addListeners(eeli_fall, eeli_pat);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_fall, eeli_pat, eeli_kons);
 			eeli_pat.catchElexisEvent(ElexisEvent.createPatientEvent());
 		}else{
 			ElexisEventDispatcher.getInstance()
-			.removeListeners(eeli_fall, eeli_pat);
+			.removeListeners(eeli_fall, eeli_pat, eeli_kons);
 			
 		}
 		
