@@ -18,5 +18,13 @@
             name="Medikamente BAG">
       </Artikel>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            class="ch.elexis.medikamente.bag.views.AddMenuToKompendium"
+            locationURI="toolbar:ch.elexis.Kompendium">
+      </menuContribution>
+   </extension>
 
 </plugin>
