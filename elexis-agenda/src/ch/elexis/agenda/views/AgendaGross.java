@@ -52,6 +52,7 @@ import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
@@ -333,11 +334,10 @@ public class AgendaGross extends BaseAgendaView {
 
 	@Override
 	public void setTermin(Termin t) {
-		Patient pat = t.getPatient();
+		Kontakt pat = t.getKontakt();
 		StringBuilder sb = new StringBuilder(200);
 		TimeSpan ts = t.getTimeSpan();
-		sb
-				.append(ts.from.toString(TimeTool.TIME_SMALL))
+		sb.append(ts.from.toString(TimeTool.TIME_SMALL))
 				.append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
 				.append(" ").append(t.getPersonalia()).append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
 				.append(t.getType())
@@ -350,29 +350,34 @@ public class AgendaGross extends BaseAgendaView {
 		ElexisEventDispatcher.fireSelectionEvent(t);
 		if (pat != null) {
 			ElexisEventDispatcher.fireSelectionEvent(pat);
-			Konsultation kons = (Konsultation) ElexisEventDispatcher
-					.getSelected(Konsultation.class);
+			if (pat instanceof Patient) {
+				Konsultation kons = (Konsultation) ElexisEventDispatcher
+						.getSelected(Konsultation.class);
 
-			String sVgl = agenda.getActDate().toString(TimeTool.DATE_COMPACT);
-			if ((kons == null)
-					|| // Falls nicht die richtige Kons selektiert ist, passende
-					// Kons für heute suchen
-					!(kons.getFall().getPatient().getId().equals(pat.getId()))
-					|| !(new TimeTool(kons.getDatum())
-							.toString(TimeTool.DATE_COMPACT).equals(sVgl))) {
-				Fall[] faelle = pat.getFaelle();
-				TimeTool ttVgl = new TimeTool();
-				for (Fall f : faelle) {
-					Konsultation[] konsen = f.getBehandlungen(true);
-					for (Konsultation k : konsen) {
-						ttVgl.set(k.getDatum());
-						if (ttVgl.toString(TimeTool.DATE_COMPACT).equals(sVgl)) {
-							ElexisEventDispatcher.fireSelectionEvent(k);
-							return;
+				String sVgl = agenda.getActDate().toString(
+						TimeTool.DATE_COMPACT);
+				if ((kons == null) || // Falls nicht die richtige Kons
+										// selektiert ist, passende
+										// Kons für heute suchen
+						!(kons.getFall().getPatient().getId().equals(pat
+								.getId()))
+						|| !(new TimeTool(kons.getDatum())
+								.toString(TimeTool.DATE_COMPACT).equals(sVgl))) {
+					Fall[] faelle = ((Patient)pat).getFaelle();
+					TimeTool ttVgl = new TimeTool();
+					for (Fall f : faelle) {
+						Konsultation[] konsen = f.getBehandlungen(true);
+						for (Konsultation k : konsen) {
+							ttVgl.set(k.getDatum());
+							if (ttVgl.toString(TimeTool.DATE_COMPACT).equals(
+									sVgl)) {
+								ElexisEventDispatcher.fireSelectionEvent(k);
+								return;
+							}
 						}
 					}
-				}
 
+				}
 			}
 
 		}

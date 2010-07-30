@@ -9,6 +9,7 @@ import java.util.Stack;
 import java.util.Vector;
 
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.jdom.IllegalAddException;
@@ -20,7 +21,9 @@ import org.xml.sax.SAXException;
 
 import ch.elexis.util.Log;
 
-import com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl;
+
+
+
 
 /**
  * This class helps exporting/importing of database data.<br>
@@ -255,7 +258,7 @@ public class XML2Database {
 		if (is == null) {
 			return null;
 		}
-		DocumentBuilder builder = new DocumentBuilderFactoryImpl().newDocumentBuilder();
+		DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 		return builder.parse(is);
 	}
 
