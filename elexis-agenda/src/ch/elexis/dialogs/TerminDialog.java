@@ -35,6 +35,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -59,6 +60,7 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.agenda.util.TimeInput;
 import ch.elexis.agenda.util.TimeInput.TimeInputListener;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.util.Log;
@@ -99,7 +101,7 @@ public class TerminDialog extends TitleAreaDialog {
 	Slider slider;
 	dayOverview dayBar;
 
-	Patient actPatient;
+	Kontakt actKontakt;
 	IPlannable actPlannable;
 	// TagesView base;
 	// String[] bereiche;
@@ -118,9 +120,9 @@ public class TerminDialog extends TitleAreaDialog {
 					TimeTool.DATE_COMPACT), 0, 30);
 		}
 		if (act instanceof Termin) {
-			actPatient = ((Termin) act).getPatient();
+			actKontakt = ((Termin) act).getKontakt();
 		} else {
-			actPatient = ElexisEventDispatcher.getSelectedPatient();
+			actKontakt = ElexisEventDispatcher.getSelectedPatient();
 		}
 		Color green = Desk.getColor(Desk.COL_GREEN);
 		if (green == null) {
@@ -272,9 +274,9 @@ public class TerminDialog extends TitleAreaDialog {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				if (actPatient != null) {
+				if (actKontakt != null) {
 					Query<Termin> qbe = new Query<Termin>(Termin.class);
-					qbe.add("Wer", "=", actPatient.getId());
+					qbe.add("Wer", "=", actKontakt.getId());
 					qbe.add("deleted", "<>", "1");
 					if (bFuture.getSelection() == false) {
 						qbe.add("Tag", ">", new TimeTool()
@@ -324,6 +326,9 @@ public class TerminDialog extends TitleAreaDialog {
 
 		// Zeile 1
 		new Label(cBottom, SWT.NONE).setText("PatientID"); //$NON-NLS-1$
+		//Composite cLinks=new Composite(cBottom,SWT.NONE);
+		//cLinks.setLayout(new FillLayout());
+		
 		Hyperlink hl = new Hyperlink(cBottom, SWT.NONE);
 		hl.setText(Messages.TerminDialog_enterPersonalia);
 		hl.addHyperlinkListener(new HyperlinkAdapter() {
@@ -335,7 +340,7 @@ public class TerminDialog extends TitleAreaDialog {
 				if (inp.open() == Dialog.OK) {
 					tName.setText(inp.getValue());
 					tNr.setText(""); //$NON-NLS-1$
-					actPatient = null;
+					actKontakt = null;
 					// actTermin=null;
 					actPlannable = new Termin.Free(agenda.getActDate()
 							.toString(TimeTool.DATE_COMPACT), tiVon
@@ -471,7 +476,7 @@ public class TerminDialog extends TitleAreaDialog {
 			lTermine.add((Termin) actPlannable);
 			lTerminListe.select(0);
 		}
-		if (actPatient == null) {
+		if (actKontakt == null) {
 			setTitle(Messages.TerminDialog_noPatSelected);
 			tNr.setText(""); //$NON-NLS-1$
 			if (actPlannable instanceof Termin) {
@@ -481,10 +486,10 @@ public class TerminDialog extends TitleAreaDialog {
 			}
 			tBem.setText(""); //$NON-NLS-1$
 		} else {
-			setTitle(actPatient.getLabel());
-			tNr.setText(actPatient.getPatCode());
-			tName.setText(actPatient.getLabel());
-			tBem.setText(actPatient.getBemerkung());
+			setTitle(actKontakt.getLabel());
+			tNr.setText(Kontakt.FLD_SHORT_LABEL);
+			tName.setText(actKontakt.getLabel());
+			tBem.setText(actKontakt.getBemerkung());
 		}
 
 		setAll();
@@ -800,8 +805,8 @@ public class TerminDialog extends TitleAreaDialog {
 
 		lTerminListe.add(actTermin.getLabel());
 		lTermine.add(actTermin);
-		if (actPatient != null) {
-			actTermin.setPatient(actPatient);
+		if (actKontakt != null) {
+			actTermin.setKontakt(actKontakt);
 		} else {
 			actTermin.set("Wer", tName.getText()); //$NON-NLS-1$
 		}
