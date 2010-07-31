@@ -51,8 +51,7 @@ public class FallDetailView extends ViewPart implements ISaveablePart2, IActivat
 		
 		public void runInUi(final ElexisEvent ev) {
 			Patient patient = (Patient) ev.getObject();
-			Fall selectedFall = (Fall) ElexisEventDispatcher
-			.getSelected(Fall.class);
+			Fall selectedFall = fdb.getFall();
 			if (selectedFall == null
 					|| !selectedFall.getPatient().equals(patient)) {
 				
