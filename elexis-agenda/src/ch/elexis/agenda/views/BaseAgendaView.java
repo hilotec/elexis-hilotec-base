@@ -56,9 +56,11 @@ import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.Anwender;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminDialog;
 import ch.elexis.dialogs.TerminListeDruckenDialog;
@@ -77,7 +79,7 @@ IActivationListener {
 	protected IAction newTerminAction, blockAction, terminKuerzenAction,
 	terminVerlaengernAction, terminAendernAction;
 	protected IAction dayLimitsAction, newViewAction, printAction,
-	exportAction, importAction;
+	exportAction, importAction, newTerminForAction;
 	protected IAction printPatientAction;
 	MenuManager menu = new MenuManager();
 	protected Log log = Log.get("Agenda"); //$NON-NLS-1$
@@ -127,18 +129,16 @@ IActivationListener {
 		tv.setUseHashlookup(true);
 		tv.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection sel = (IStructuredSelection) tv
-				.getSelection();
-				if ((sel == null || (sel.isEmpty()))) {
+				IPlannable pl=getSelection();
+				if (pl==null) {
 					newTerminAction.run();
 				} else {
-					IPlannable pl = (IPlannable) sel.getFirstElement();
 					TerminDialog dlg = new TerminDialog(pl);
 					dlg.open();
 					tv.refresh(true);
 				}
-				
 			}
+				
 		});
 		
 		menu.setRemoveAllWhenShown(true);
@@ -170,6 +170,17 @@ IActivationListener {
 		updateActions();
 	}
 	
+	public IPlannable getSelection(){
+		IStructuredSelection sel = (IStructuredSelection) tv
+		.getSelection();
+		if ((sel == null || (sel.isEmpty()))) {
+			return null;
+		} else {
+			IPlannable pl = (IPlannable) sel.getFirstElement();
+			return pl;
+		}
+	}
+
 	@Override
 	public void dispose() {
 		GlobalEventDispatcher.removeActivationListener(this, getViewSite()
@@ -363,6 +374,24 @@ IActivationListener {
 					tv.refresh(true);
 				}
 			}
+		};
+		
+		newTerminForAction = new Action("Neuer Termin für..."){
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
+				setToolTipText("Dialog zum Auswählen eines Kontakts für den Termin öffnen");
+			}
+			@Override
+			public void run() {
+				KontaktSelektor ksl=new KontaktSelektor(getSite().getShell(), Kontakt.class, "Terminvergabe", "Bitte wähöen Sie aus, wer einen Termin braucht");
+				IPlannable sel=getSelection();
+				TerminDialog dlg = new TerminDialog(null);
+				dlg.open();
+				if (tv != null) {
+					tv.refresh(true);
+				}
+			}
+
 		};
 		printAction = new Action(Messages.BaseAgendaView_printDayList) {
 			{

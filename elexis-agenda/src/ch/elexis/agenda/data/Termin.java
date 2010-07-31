@@ -24,6 +24,7 @@ import ch.elexis.StringConstants;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
@@ -267,7 +268,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		Termin ret =
 			new Termin(get(FLD_BEREICH), get(FLD_TAG), getStartMinute(), getStartMinute()
 				+ getDauer(), getType(), getStatus());
-		ret.setPatient(getPatient());
+		ret.setKontakt(getKontakt());
 		return ret;
 	}
 	
@@ -522,7 +523,11 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		return getInt(FLD_LASTEDIT);
 	}
 	
-	public void setPatient(final Patient pers){
+	/**
+	 * For whom is the appointment
+	 * @param pers
+	 */
+	public void setKontakt(final Kontakt pers){
 		if (!checkLock()) {
 			set(new String[] {
 				FLD_PATIENT, FLD_LASTEDIT
@@ -538,7 +543,11 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		}
 	}
 	
-	public Patient getPatient(){
+	/**
+	 * For whom is the appointment?
+	 * @return
+	 */
+	public Kontakt getKontakt(){
 		String pid = get(FLD_PATIENT);
 		Patient pat = Patient.load(pid);
 		if (pat.exists()) {
