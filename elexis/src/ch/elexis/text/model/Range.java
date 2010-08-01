@@ -13,11 +13,12 @@ import org.jdom.Element;
  *
  */
 public class Range{
+	public static final String ELEM_NAME="range";
 	private static final String ATTR_LOCKED="locked";
 	private static final String ATTR_TYPENAME="typename";
 	private static final String ATTR_ID="ID";
 	private static final String ATTR_PROVIDER="provider";
-	private static final String ATTR_VIEWPORT="viewport";
+	public static final String ATTR_VIEWPORT="viewport";
 	private static final String ATTR_LENGTH = "length";
 	private static final String ATTR_START_OFFSET = "startOffset";
 	
@@ -27,7 +28,6 @@ public class Range{
 	int position;
 	Rectangle viewport;
 	boolean bLocked;
-	String provider;
 	
 	public Range(Element el){
 		id=el.getAttributeValue(ATTR_ID);
@@ -36,7 +36,7 @@ public class Range{
 		length = Integer.parseInt(el.getAttributeValue(ATTR_LENGTH));
 		length=Integer.parseInt(el.getAttributeValue(""));
 	}
-	public Range(final int start, final int len, String typename, String id, String provider){
+	public Range(final int start, final int len, String typename, String id){
 		length=len;
 		position=start;
 		this.id=id;
@@ -65,12 +65,11 @@ public class Range{
 	}
 
 	public Element toElement(){
-		Element el=new Element("range");
+		Element el=new Element(ELEM_NAME);
 		el.setAttribute(ATTR_ID,id);
 		el.setAttribute(ATTR_LENGTH,Integer.toString(length));
 		el.setAttribute(ATTR_START_OFFSET,Integer.toString(position));
 		el.setAttribute(ATTR_TYPENAME,typename);
-		el.setAttribute(ATTR_PROVIDER,provider);
 		return el;
 	}
 }
