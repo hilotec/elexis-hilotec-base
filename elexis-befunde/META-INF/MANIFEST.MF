@@ -11,3 +11,4 @@ Require-Bundle: ch.elexis,
  org.eclipse.core.runtime,
  org.eclipse.ui.forms
 Export-Package: ch.elexis.befunde.xchange
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
