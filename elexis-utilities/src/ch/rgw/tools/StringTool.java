@@ -615,6 +615,12 @@ public class StringTool {
 		return s.toString();
 	}
 	
+	public static String RectangleToString(int x, int y, int w, int h){
+		StringBuilder sb=new StringBuilder();
+		sb.append(x).append(",").append(y)
+		.append(",").append(w).append(",").append(h);
+		return sb.toString();
+	}
 	/**
 	 * Verknüpft die Elemente eines String-Arrays mittels tren zu einem String
 	 * 
