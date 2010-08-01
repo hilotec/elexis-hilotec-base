@@ -18,7 +18,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.StyleRange;
 
 import ch.elexis.text.IRichTextDisplay;
-import ch.elexis.text.model.IRange;
 
 /**
  * Erweiterung für Konsultationseinträge. Wird vom Extensionpoint KonsExtensions
