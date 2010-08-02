@@ -63,6 +63,7 @@
 				<include name="plugins/ch.elexis.h2.connector_*/**"/>
 				<include name="plugins/ch.elexis.postgresql.connector_*/**"/>
 				<include name="plugins/ch.elexis.importer.div_*/**"/>
+				<include name="plugins/ch.elexis.scripting.beanshell_*/**"/>
 				<include name="plugins/org.eclipse*"/>
 				<include name="plugins/org.eclipse*/**"/>
 				<include name="plugins/org.apache*"/>
