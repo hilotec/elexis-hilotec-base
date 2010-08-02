@@ -4,11 +4,15 @@
 
     <complexType name="ContainerType">
     	<sequence>
-            <element name="displayHint" type="SSD:displayHintType" maxOccurs="1" minOccurs="0">
-            	<annotation>
-            		<documentation>A hint how to display this document best.</documentation>
-            	</annotation></element>
-            <element name="text" type="string" maxOccurs="1"
+    		<element name="displayHint" type="SSD:displayHintType"
+    			maxOccurs="1" minOccurs="0">
+    			<annotation>
+    				<documentation>
+    					A hint how to display this document best.
+    				</documentation>
+    			</annotation>
+    		</element>
+    		<element name="text" type="string" maxOccurs="1"
     			minOccurs="1">
     			<annotation>
     				<documentation>
@@ -17,11 +21,7 @@
     			</annotation>
     		</element>
 
-    		<choice maxOccurs="unbounded" minOccurs="0">
-    			<element name="section" type="SSD:sectionType"></element>
-    			<element name="markup" type="SSD:markupType"></element>
-    			<element name="xref" type="SSD:xrefType"></element>
-    		</choice>
+    		<element name="range" type="SSD:rangeType" maxOccurs="unbounded" minOccurs="0"></element>
     	</sequence>
     	<attribute name="created" type="dateTime">
     		<annotation>
@@ -57,91 +57,49 @@
 
 
     <complexType name="rangeType">
+        <attribute name="ID" type="ID"></attribute>
+        <attribute name="typename" type="string">
+        	<annotation>
+        		<documentation>name of this kind of range so the provider can identify it</documentation>
+        	</annotation></attribute>
+    	<attribute name="provider" type="string">
+    		<annotation>
+    			<documentation>provider that is able to handle such ranges</documentation>
+    		</annotation></attribute>
     	<attribute name="startOffset" type="int" use="required">
     		<annotation>
-    			<documentation>Start position as characters from the beginning of the document.</documentation></annotation></attribute>
-    	<attribute name="length" type="int" use="required"></attribute>
-    	<attribute name="fixed" type="boolean" use="optional"></attribute>
+    			<documentation>
+    				Start position as characters from the beginning of
+    				the document.
+    			</documentation>
+    		</annotation>
+    	</attribute>
+    	<attribute name="length" type="int" use="required">
+    		<annotation>
+    			<documentation>Length of this range in characters
+</documentation>
+    		</annotation></attribute>
+    	<attribute name="locked" type="boolean" use="optional">
+    		<annotation>
+    			<documentation>true if contents can not be changed</documentation>
+    		</annotation></attribute>
+    	<attribute name="viewport" type="string" use="optional">
+    		<annotation>
+    			<documentation>
+    				A comma separated list of left,top,width,height
+    				where dhis range should be displayed.
+    			</documentation>
+    		</annotation>
+    	</attribute>
     </complexType>
 
-    <complexType name="sectionType">
-        <annotation>
-        	<documentation>A section of the document</documentation>
-        </annotation>
-        <complexContent>
-    		<extension base="SSD:rangeType">
-    			<attribute name="name" type="string">
-    				<annotation>
-    					<documentation>Name of this section (free form)</documentation>
-    				</annotation></attribute>
-    			<attribute name="position">
-                    <annotation>
-                    	<documentation>A position hint for displaying the Section. Four integers indicating x,y,width and height. Units are the same as indicated in the displayHint element
-</documentation>
-                    </annotation>
-                    <simpleType>
-                        <annotation>
-                        	<documentation></documentation>
-                        </annotation>
-                        <restriction base="string">
-    						<pattern value="\d+,\d+,\d+,\d+"></pattern>
-    					</restriction>
-    				</simpleType>
-    			</attribute>
-    			<attribute name="type">
-                    <annotation>
-                    	<documentation>Some predefined section types</documentation>
-                    </annotation>
-                    <simpleType>
-    					<restriction base="string">
-    						<enumeration value="header"></enumeration>
-    						<enumeration value="footer"></enumeration>
-    						<enumeration value="paragraph"></enumeration>
-    						<enumeration value="address"></enumeration>
-    						<enumeration value="subject"></enumeration>
-    					</restriction>
-    				</simpleType>
-    			</attribute>
-    			<attribute name="contents" type="string">
-    				<annotation>
-    					<documentation>Contents as mimetype.</documentation>
-    				</annotation></attribute>
-    		</extension>
-    	</complexContent>
-    </complexType>
 
     <element name="container" type="SSD:ContainerType"></element>
 
 
-    <complexType name="markupType">
-    	<complexContent>
-    		<extension base="SSD:rangeType">
-    			<sequence>
-    				<element name="font" type="SSD:fontType" minOccurs="0" maxOccurs="1"></element>
-    				<element name="color" type="SSD:colorType" minOccurs="0" maxOccurs="1"></element>
-    			</sequence>
-    		</extension>
-    	</complexContent>
-    </complexType>
 
-    <complexType name="fontType">
-    	<attribute name="family" type="string"></attribute>
-    	<attribute name="name" type="string"></attribute>
-    	<attribute name="size" type="string"></attribute>
-    	<attribute name="weight" type="string"></attribute>
-    </complexType>
 
-    <complexType name="colorType">
-    	<attribute name="foreground" type="hexBinary"></attribute>
-    	<attribute name="background" type="hexBinary"></attribute>
-    </complexType>
 
-    <complexType name="xrefType">
-    	<attribute name="ID" type="ID"></attribute>
-    	<attribute name="name" type="string"></attribute>
-    	<attribute name="provider" type="string"></attribute>
-    	<attribute name="position" type="int"></attribute>
-    </complexType>
     <simpleType name="versionType">
     	<restriction base="string">
     		<pattern value="\d+\.\d+\.\d+(\.\w+)?"></pattern>

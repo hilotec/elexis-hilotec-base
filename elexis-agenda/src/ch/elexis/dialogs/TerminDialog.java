@@ -38,6 +38,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
@@ -279,8 +280,8 @@ public class TerminDialog extends TitleAreaDialog {
 					qbe.add("Wer", "=", actKontakt.getId());
 					qbe.add("deleted", "<>", "1");
 					if (bFuture.getSelection() == false) {
-						qbe.add("Tag", ">", new TimeTool()
-								.toString(TimeTool.DATE_COMPACT));
+						qbe.add("Tag", ">",
+								new TimeTool().toString(TimeTool.DATE_COMPACT));
 					}
 					java.util.List<Termin> list = qbe.execute();
 					lTermine.clear();
@@ -326,12 +327,13 @@ public class TerminDialog extends TitleAreaDialog {
 
 		// Zeile 1
 		new Label(cBottom, SWT.NONE).setText("PatientID"); //$NON-NLS-1$
-		//Composite cLinks=new Composite(cBottom,SWT.NONE);
-		//cLinks.setLayout(new FillLayout());
-		
-		Hyperlink hl = new Hyperlink(cBottom, SWT.NONE);
-		hl.setText(Messages.TerminDialog_enterPersonalia);
-		hl.addHyperlinkListener(new HyperlinkAdapter() {
+		Composite cLinks = new Composite(cBottom, SWT.NONE);
+		cLinks.setLayout(new RowLayout(SWT.HORIZONTAL));
+		new Label(cLinks, SWT.NONE).setText("Personalien ");
+
+		Hyperlink hlText = new Hyperlink(cLinks, SWT.NONE);
+		hlText.setText(Messages.TerminDialog_enterPersonalia);
+		hlText.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
 			public void linkActivated(final HyperlinkEvent e) {
 				InputDialog inp = new InputDialog(getShell(),
@@ -350,6 +352,34 @@ public class TerminDialog extends TitleAreaDialog {
 			}
 
 		});
+		hlText.setForeground(Desk.getColor(Desk.COL_BLUE));
+		// new Label(cLinks,SWT.SEPARATOR|SWT.VERTICAL);
+		Hyperlink hlSelect = new Hyperlink(cLinks, SWT.NONE);
+		hlSelect.setForeground(Desk.getColor(Desk.COL_BLUE));
+		hlSelect.setText("(Kontakt auswählen)");
+		hlSelect.addHyperlinkListener(new HyperlinkAdapter() {
+			@Override
+			public void linkActivated(final HyperlinkEvent e) {
+				KontaktSelektor ksl = new KontaktSelektor(getShell(),
+						Kontakt.class, "Termin zuordnen",
+						"Bitte suchen Sie aus, wer den Termin hat");
+				if (ksl.open() == Dialog.OK) {
+					actKontakt = (Kontakt) ksl.getSelection();
+					tName.setText(actKontakt.getLabel());
+					tNr.setText(actKontakt.get(Kontakt.FLD_SHORT_LABEL)); 
+					/*
+					if (actPlannable == null) {
+						actPlannable = new Termin(agenda.getActDate()
+								.toString(TimeTool.DATE_COMPACT), tiVon
+								.getTimeAsMinutes(), niDauer.getValue());
+					}
+					*/
+
+				}
+			}
+
+		});
+
 		new Label(cBottom, SWT.NONE).setText(Messages.TerminDialog_Mandator);
 		// Zeile 2
 		tNr = new Text(cBottom, SWT.BORDER | SWT.READ_ONLY);
@@ -618,8 +648,8 @@ public class TerminDialog extends TitleAreaDialog {
 		 * 
 		 */
 		void recalc() {
-			list = Plannables.loadTermine(agenda.getActResource(), agenda
-					.getActDate());
+			list = Plannables.loadTermine(agenda.getActResource(),
+					agenda.getActDate());
 
 			tagStart = ts * 60;
 			tagEnd = te * 60;
@@ -679,9 +709,8 @@ public class TerminDialog extends TitleAreaDialog {
 
 			// Lineal zeichnen
 			g.setBackground(def);
-			g
-					.setFont(Desk
-							.getFont(ch.elexis.preferences.PreferenceConstants.USR_SMALLFONT));
+			g.setFont(Desk
+					.getFont(ch.elexis.preferences.PreferenceConstants.USR_SMALLFONT));
 
 			g.drawLine(0, sep, d.x, sep);
 			if (rasterIndex >= rasterValues.length) {

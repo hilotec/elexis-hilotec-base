@@ -12,3 +12,4 @@ Require-Bundle: ch.elexis,
  org.eclipse.ui.forms,
  ch.rgw.utility
 Export-Package: ch.elexis.banking
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6

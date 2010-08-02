@@ -21,7 +21,6 @@ import org.eclipse.ui.PartInitException;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.data.Brief;
-import ch.elexis.text.model.IRange;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.views.TextView;
 import ch.rgw.tools.ExHandler;

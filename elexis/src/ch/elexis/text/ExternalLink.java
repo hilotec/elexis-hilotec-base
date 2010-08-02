@@ -19,7 +19,6 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.program.Program;
 
 import ch.elexis.Desk;
-import ch.elexis.text.model.IRange;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
