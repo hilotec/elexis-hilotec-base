@@ -77,7 +77,7 @@ import ch.rgw.tools.StringTool;
  */
 public class EnhancedTextField extends Composite implements IRichTextDisplay {
 	public static final String MACRO_KEY = "enhancedtextfield/macro_key"; //$NON-NLS-1$
-	public static final String MACRO_KEY_DEFAULT = "#"; //$NON-NLS-1$
+	public static final String MACRO_KEY_DEFAULT = "$"; //$NON-NLS-1$
 	
 	StyledText text;
 	Hashtable<String, IKonsExtension> hXrefs;

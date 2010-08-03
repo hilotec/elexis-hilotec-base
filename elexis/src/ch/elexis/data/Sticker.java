@@ -227,6 +227,11 @@ public class Sticker extends PersistentObject implements Comparable<Sticker> {
 		"SELECT sticker FROM " + Sticker.CLASSLINK + " WHERE objclass=?";
 	private static PreparedStatement queryStickers = null;
 	
+	/**
+	 * Find all Stickers applicable for a given class
+	 * @param clazz
+	 * @return
+	 */
 	public static List<Sticker> getStickersForClass(Class<?> clazz){
 		List<Sticker> ret = cache.get(clazz);
 		if (ret != null) {

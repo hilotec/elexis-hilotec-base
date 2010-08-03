@@ -25,6 +25,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -63,6 +64,7 @@ import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Rechnungssteller;
 import ch.elexis.data.Sticker;
+import ch.elexis.dialogs.AssignStickerDialog;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.text.EnhancedTextField;
 import ch.elexis.util.Extensions;
@@ -98,11 +100,12 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 	FormToolkit tk;
 	Form form;
 	Patient actPat;
+	Color defaultBackground;
 
 	private DiagnosenDisplay dd;
 	private VerrechnungsDisplay vd;
 	private Action versionBackAction, purgeAction, saveAction;
-	Action versionFwdAction;
+	Action versionFwdAction, assignStickerAction;
 	int displayedVersion;
 	Font emFont;
 	Composite cDesc;
@@ -119,10 +122,10 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 			if (pat != null) {
 				if (!pat.equals(actPat)) {
 					Konsultation b = pat.getLetzteKons(false);
-					//setKons(b);
+					// setKons(b);
 					Konsultation act = (Konsultation) ElexisEventDispatcher
 							.getSelected(Konsultation.class);
-					if (b == null && act!=null ) {
+					if (b == null && act != null) {
 						ElexisEventDispatcher.getInstance().fire(
 								new ElexisEvent(null, Konsultation.class,
 										ElexisEvent.EVENT_DESELECTED));
@@ -179,7 +182,8 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 		lBeh = tk.createLabel(cDesc, NO_CONS_SELECTED);
 		emFont = Desk.getFont("Helvetica", 11, SWT.BOLD); //$NON-NLS-1$
 		lBeh.setFont(emFont);
-		lBeh.setBackground(p.getBackground());
+		defaultBackground=p.getBackground();
+		//lBeh.setBackground();
 		hlMandant = tk.createHyperlink(cDesc, "--", SWT.NONE); //$NON-NLS-1$
 		hlMandant.addHyperlinkListener(new HyperlinkAdapter() {
 
@@ -279,11 +283,11 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 		if (Hub.acl.request(AccessControlDefaults.AC_PURGE)) {
 			menu.createMenu(versionFwdAction, versionBackAction,
 					GlobalActions.neueKonsAction, GlobalActions.delKonsAction,
-					GlobalActions.redateAction, purgeAction);
+					GlobalActions.redateAction, assignStickerAction,purgeAction);
 		} else {
 			menu.createMenu(versionFwdAction, versionBackAction,
 					GlobalActions.neueKonsAction, GlobalActions.delKonsAction,
-					GlobalActions.redateAction);
+					GlobalActions.redateAction, assignStickerAction);
 		}
 		sash.setWeights(sashWeights == null ? new int[] { 80, 20 }
 				: sashWeights);
@@ -367,11 +371,9 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 	private void setKons(final Konsultation b) {
 		if (b != null) {
 			/*
-			System.out.println("setKons: " + b.getLabel());
-			Fall fall = b.getFall();
-			System.out.println(fall.getLabel());
-			Patient oat = fall.getPatient();
-			System.out.println(oat.getLabel());
+			 * System.out.println("setKons: " + b.getLabel()); Fall fall =
+			 * b.getFall(); System.out.println(fall.getLabel()); Patient oat =
+			 * fall.getPatient(); System.out.println(oat.getLabel());
 			 */
 			Fall act = b.getFall();
 			setPatient(act.getPatient());
@@ -404,8 +406,18 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 					.request(AccessControlDefaults.KONS_REASSIGN));
 			dd.setDiagnosen(b);
 			vd.setLeistungen(b);
-			text.setEnabled(true);
 			// ElexisEventDispatcher.fireSelectionEvent(b);
+			if(b.isEditable(false)){
+				text.setEnabled(true);
+				text.setToolTipText("");
+				lBeh.setForeground(Desk.getColor(Desk.COL_BLACK));
+				lBeh.setBackground(defaultBackground);
+			}else{
+				text.setEnabled(false);
+				text.setToolTipText("Konsultation geschlossen oder nicht von Ihnen");
+				lBeh.setForeground(Desk.getColor(Desk.COL_GREY60));
+				lBeh.setBackground(Desk.getColor(Desk.COL_GREY20));
+			}
 
 		} else {
 			form.setText(NO_CONS_SELECTED);
@@ -512,6 +524,16 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 				.getImageDescriptor(Desk.IMG_PREVIOUS));
 		purgeAction
 				.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
+		assignStickerAction=new Action("Sticker..."){
+			{
+				setToolTipText("Der Konsultation einer Sticker zuweisen");
+			}
+			@Override
+			public void run(){
+				AssignStickerDialog asd=new AssignStickerDialog(getViewSite().getShell(), actKons);
+				asd.open();
+			}
+		};
 	}
 
 	public void save() {
@@ -528,8 +550,9 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 				log.log("saved.", Log.DEBUGMSG); //$NON-NLS-1$
 			}
 			text.setDirty(false);
-		}else{
-			setKons((Konsultation) ElexisEventDispatcher.getInstance().getSelected(Konsultation.class));
+		} else {
+			setKons((Konsultation) ElexisEventDispatcher.getInstance()
+					.getSelected(Konsultation.class));
 		}
 
 	}

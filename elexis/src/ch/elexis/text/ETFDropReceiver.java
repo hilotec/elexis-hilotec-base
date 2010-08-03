@@ -18,6 +18,8 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.graphics.Point;
 
 import ch.elexis.Desk;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.PersistentObjectDropTarget.IReceiver;
@@ -62,7 +64,12 @@ public class ETFDropReceiver implements IReceiver{
 		if(rec!=null){
 			rec.insert(o, pos);
 		}else{
-			etf.text.insert(o.getLabel());
+			Konsultation actKons=(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+			if(actKons!=null){
+				etf.text.insert(o.getLabel());
+				actKons.updateEintrag(etf.getDocumentAsText(), false);
+			}
+			
 		}
 		
 	}
