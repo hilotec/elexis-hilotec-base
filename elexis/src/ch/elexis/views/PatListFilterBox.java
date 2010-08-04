@@ -150,7 +150,7 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 		if (toTest instanceof Patient) {
 			Patient p = (Patient) toTest;
 			
-			for (PersistentObject cond : getAll()) {
+			for (final PersistentObject cond : getAll()) {
 				boolean handled = false;
 				for (IPatFilter filter : filters) {
 					int result = filter.accept(p, cond);
@@ -170,7 +170,11 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 						return false;
 					}
 					if (result == IPatFilter.FILTER_FAULT) {
-						remove(cond);
+						Desk.asyncExec(new Runnable() {
+							public void run() {
+								remove(cond);
+							}
+						});
 						parseError = true;
 					}
 				}

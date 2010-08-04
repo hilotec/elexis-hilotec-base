@@ -46,28 +46,28 @@ public class Script extends NamedBlob2 {
 	public static final String SCRIPT_MARKER = "SCRIPT:";
 	private Interpreter interpreter = null;
 
-	private static Interpreter getInterpreter(String name)
-			throws ElexisException {
-		if (name == null) {
-			return getInterpreter(INTERPRETER_BEANSHELL);
-		}
-		List<IConfigurationElement> scripters = Extensions
-				.getExtensions("ch.elexis.scripting");
-		for (IConfigurationElement scripter : scripters) {
-			if (scripter.getAttribute("name").equals(name)) {
-				try {
-					return (Interpreter) scripter
-							.createExecutableExtension("class");
-				} catch (CoreException e) {
-					ExHandler.handle(e);
-					throw new ElexisException(Script.class,
-							"Could not load intepreter " + e.getMessage(),
-							ElexisException.EE_NOT_SUPPORTED);
+	private static Interpreter getInterpreter(String name) throws ElexisException {
+			if (name == null) {
+				return getInterpreter(INTERPRETER_BEANSHELL);
+			}
+			List<IConfigurationElement> scripters = Extensions
+					.getExtensions("ch.elexis.scripting");
+			for (IConfigurationElement scripter : scripters) {
+				if (scripter.getAttribute("name").equals(name)) {
+					try {
+						return (Interpreter) scripter
+								.createExecutableExtension("class");
+					} catch (CoreException e) {
+						ExHandler.handle(e);
+						throw new ElexisException(Script.class,
+								"Could not load intepreter " + e.getMessage(),
+								ElexisException.EE_NOT_SUPPORTED);
+					}
 				}
 			}
-		}
-		throw new ElexisException(Script.class, "interpreter not installed "
-				+ name, ElexisException.EE_NOT_SUPPORTED);
+			throw new ElexisException(Script.class,
+					"interpreter not installed " + name,
+					ElexisException.EE_NOT_SUPPORTED);
 
 	}
 
@@ -83,15 +83,19 @@ public class Script extends NamedBlob2 {
 	 * @throws ElexisException
 	 *             if the interpreter was not found or could not be instantiated
 	 */
-	public static Interpreter loadInterpreter(String script)
-			throws ElexisException {
-		Pattern ip = Pattern.compile("^\\/\\*\\s*!([A-Z]+)!\\s*\\*\\/",
-				Pattern.MULTILINE);
-		Matcher m = ip.matcher(script);
-		if (m.matches()) {
-			return getInterpreter(m.group(1));
-		} else {
-			return getInterpreter(null);
+	private void loadInterpreter(String script) throws ElexisException {
+		if (interpreter == null) {
+			if(script==null){
+				script=getString();
+			}
+			Pattern ip = Pattern.compile("^\\/\\*\\s*!([A-Z]+)!\\s*\\*\\/",
+					Pattern.MULTILINE);
+			Matcher m = ip.matcher(script);
+			if (m.matches()) {
+				interpreter=getInterpreter(m.group(1));
+			} else {
+				interpreter=getInterpreter(null);
+			}
 		}
 	}
 
@@ -108,7 +112,6 @@ public class Script extends NamedBlob2 {
 			contents = "/* !BSH! */";
 		}
 		ret.putString(contents);
-		ret.interpreter = loadInterpreter(contents);
 		return ret;
 	}
 
@@ -119,9 +122,7 @@ public class Script extends NamedBlob2 {
 	}
 
 	public void init() throws ElexisException {
-		if (interpreter == null) {
-			interpreter = loadInterpreter(getString());
-		}
+		loadInterpreter(null);
 		interpreter.setValue("finished", false);
 		interpreter.setValue("init", true);
 		interpreter.run(parse(getString(), new PersistentObject[0]), false);
@@ -129,11 +130,14 @@ public class Script extends NamedBlob2 {
 	}
 
 	public void finished() throws ElexisException {
+		loadInterpreter(null);
 		interpreter.setValue("finished", true);
 		interpreter.run(parse(getString(), (PersistentObject[]) null), false);
 	}
 
-	public void setVariable(String name, Object value) throws ElexisException {
+	public void setVariable(String name, Object value)
+			throws ElexisException {
+		loadInterpreter(null);
 		interpreter.setValue(name, value);
 	}
 
@@ -182,11 +186,11 @@ public class Script extends NamedBlob2 {
 	}
 
 	/**
-	 * execute a script with the given interpreter
+	 * execute a script entered as string with the given interpreter
 	 * 
 	 * 
 	 * @param objects
-	 *            optional Objects to repalce in Variables like [Fall.Grund] in
+	 *            optional Objects to replace in Variables like [Fall.Grund] in
 	 *            the script
 	 * @param params
 	 *            optional parameters. These can be of the form
@@ -226,9 +230,10 @@ public class Script extends NamedBlob2 {
 		return null;
 	}
 
-	public Object execute(String params, PersistentObject... objects) throws ElexisException{
-		String script=getString();
-		Interpreter interpreter=loadInterpreter(script);
+	public Object execute(String params, PersistentObject... objects)
+			throws ElexisException {
+		String script = getString();
+		loadInterpreter(script);
 		return execute(interpreter, script, params, objects);
 	}
 
@@ -238,9 +243,20 @@ public class Script extends NamedBlob2 {
 		return qbe.execute();
 	}
 
+	/**
+	 * Execute a script that is part of the call
+	 * 
+	 * @param call
+	 *            e.g. scriptname(a="foo",b="bar")
+	 * @param objects
+	 *            some Objects to cinvert in the script
+	 * @return the result of the interpreter
+	 * @throws ElexisException
+	 *             if no such scruiopt was found or an error occurred
+	 */
 	public static Object executeScript(String call, PersistentObject... objects)
 			throws ElexisException {
-		call=call.trim();
+		call = call.trim();
 		String name = call;
 		String params = null;
 		int x = name.indexOf('(');
@@ -295,4 +311,9 @@ public class Script extends NamedBlob2 {
 	protected Script() {
 	}
 
+	public static Interpreter getInterpreterFor(String script) throws ElexisException{
+		Script s=new Script();
+		s.loadInterpreter(script);
+		return s.interpreter;
+	}
 }

@@ -189,7 +189,7 @@ public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 		
 		
 		try {
-			Interpreter interpreter = Script.loadInterpreter(formula);
+			Interpreter interpreter = Script.getInterpreterFor(formula);
 			interpreterSetzeKontext(interpreter, messwert.getMessung());
 			Object wert = interpreter.run(formula,false);
 			return wert.toString();

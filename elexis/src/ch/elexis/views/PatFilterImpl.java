@@ -30,6 +30,7 @@ import ch.elexis.data.Query;
 import ch.elexis.data.Script;
 import ch.elexis.data.Sticker;
 import ch.elexis.data.Verrechnet;
+import ch.elexis.scripting.Interpreter;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.views.PatListFilterBox.IPatFilter;
 import ch.rgw.tools.ExHandler;
@@ -124,7 +125,7 @@ public class PatFilterImpl implements IPatFilter {
 			try {
 				Script script=(Script)o;
 				script.setVariable("patient", p);
-				ret = script.execute(Script.INTERPRETER_BEANSHELL,null,p);
+				ret = script.execute(null,p);
 				if(ret instanceof Integer){
 					return (Integer)ret;
 				}

@@ -186,7 +186,7 @@ public class EditFindingDialog extends TitleAreaDialog {
 							.length());
 					result = Script.executeScript(scriptname);
 				} else {
-					Interpreter scripter = Script.loadInterpreter(script);
+					Interpreter scripter = Script.getInterpreterFor(script);
 					result = scripter.run(script, false);
 				}
 				values[v] = result.toString();
