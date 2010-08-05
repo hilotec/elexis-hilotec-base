@@ -18,6 +18,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import ch.elexis.Hub;
 import ch.elexis.util.Log;
@@ -31,8 +33,6 @@ import ch.elexis.util.Log;
 @SuppressWarnings("unchecked")
 public class SoftCache<K> implements IPersistentObjectCache<K> {
 	private static boolean enabled = true;
-	private int num = 2000;
-	private float load = 0.7f;
 	protected Map<K, CacheEntry> cache;
 	protected long hits, misses, removed, inserts, expired;
 	protected Log log = Log.get("SoftCache");
@@ -44,14 +44,11 @@ public class SoftCache<K> implements IPersistentObjectCache<K> {
 	}
 	
 	public SoftCache(final int num, final float load){
-		cache = new HashMap<K, CacheEntry>(num, load);
-		this.num = num;
-		this.load = load;
+		cache = Collections.synchronizedMap(new HashMap<K, CacheEntry>(num, load));
 	}
 	
 	public SoftCache(final int num){
-		cache = new HashMap<K, CacheEntry>(num);
-		this.num = num;
+		cache = Collections.synchronizedMap(new HashMap<K, CacheEntry>(num));
 	}
 	
 	/*
@@ -137,17 +134,17 @@ public class SoftCache<K> implements IPersistentObjectCache<K> {
 	 * 
 	 * @see ch.elexis.data.cache.IPersistentObjectCache#purge()
 	 */
-	public void purge(){
-		Iterator<K> it = cache.keySet().iterator();
+	public synchronized void purge(){
+		
+		Iterator<Entry<K, CacheEntry>> it = cache.entrySet().iterator();
 		long freeBefore = Runtime.getRuntime().freeMemory();
 		while (it.hasNext()) {
-			K k = it.next();
-			CacheEntry ce = cache.get(k);
+			Entry<K,CacheEntry> e= it.next();
+			CacheEntry ce = e.getValue();
 			ce.expires = 0;
 			ce.get();
 			it.remove();
 		}
-		
 		if (Hub.plugin.DEBUGMODE) {
 			long freeAfter = Runtime.getRuntime().freeMemory();
 			StringBuilder sb = new StringBuilder();
@@ -155,6 +152,7 @@ public class SoftCache<K> implements IPersistentObjectCache<K> {
 			", free memory after: ").append(freeAfter).append("\n");
 			Hub.log.log(sb.toString(), Log.INFOS);
 		}
+		
 	}
 	
 	/*
@@ -164,7 +162,7 @@ public class SoftCache<K> implements IPersistentObjectCache<K> {
 	 */
 	public synchronized void reset(){
 		purge();
-		cache = new HashMap<K, CacheEntry>(num, load);
+		cache.clear();
 	}
 	
 	public class CacheEntry extends SoftReference {
@@ -176,7 +174,7 @@ public class SoftCache<K> implements IPersistentObjectCache<K> {
 		}
 		
 		@Override
-		public Object get(){
+		public synchronized Object get(){
 			Object ret = super.get();
 			if (System.currentTimeMillis() > expires) {
 				expired++;
