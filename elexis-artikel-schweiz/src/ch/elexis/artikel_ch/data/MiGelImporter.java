@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.regex.Matcher;
@@ -35,7 +34,6 @@ import ch.elexis.util.ImporterPage;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Money;
-import ch.rgw.tools.StringTool;
 
 public class MiGelImporter extends ImporterPage
 {

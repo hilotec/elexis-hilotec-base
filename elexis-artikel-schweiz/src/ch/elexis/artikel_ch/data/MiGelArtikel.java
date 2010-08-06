@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,26 @@
  *******************************************************************************/
 package ch.elexis.artikel_ch.data;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import ch.elexis.data.Artikel;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 
 public class MiGelArtikel extends Artikel{
+	static Pattern pattern=Pattern.compile("([a-z0-9A-Z])([A-Z][a-z])");
+
 	public MiGelArtikel(String code, String text, String unit, Money price){
 		create("MiGeL"+code); //$NON-NLS-1$
 		String shortname=StringTool.getFirstLine(text,120);
+		Matcher matcher=pattern.matcher(shortname);
+		StringBuffer sb=new StringBuffer();
+		while(matcher.find()){
+			matcher.appendReplacement(sb, matcher.group(1)+" "+matcher.group(2));
+		}
+		matcher.appendTail(sb);
+		shortname=sb.toString();
 		set(new String[]{"Name","Typ","SubID"},new String[]{shortname,"MiGeL",code}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		setExt("FullText",text); //$NON-NLS-1$
 		setExt("unit",unit==null? "-" : unit); //$NON-NLS-1$ //$NON-NLS-2$
