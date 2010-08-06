@@ -13,13 +13,25 @@ import org.jdom.Element;
  *
  */
 public class Range{
+	public static final String TYPE_MARKUP="markup";
+	
 	public static final String ELEM_NAME="range";
+	/** It is not possible to set the cursor within this range */
 	private static final String ATTR_LOCKED="locked";
+	/** Identifier of this range. Used to find a matching renderer */
 	private static final String ATTR_TYPENAME="typename";
+	/** ID of this range. Hint for the renderer */
 	private static final String ATTR_ID="ID";
-	private static final String ATTR_PROVIDER="provider";
+	/** Some range types are displayed off the text flow. This is a hint in 
+	 * wich region of the screen to display */
 	public static final String ATTR_VIEWPORT="viewport";
+	/**
+	 * Length of the range within the text flow in characters
+	 */
 	private static final String ATTR_LENGTH = "length";
+	/**
+	 * Position of the range as characters from text start.
+	 */
 	private static final String ATTR_START_OFFSET = "startOffset";
 	
 	String id;
@@ -53,6 +65,13 @@ public class Range{
 		return position;
 	}
 
+	public String getType(){
+		return typename;
+	}
+	
+	public String getID(){
+		return id;
+	}
 	public void setLength(final int pos) {
 		length=pos;
 	}

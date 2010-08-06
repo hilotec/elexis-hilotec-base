@@ -16,18 +16,16 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
 import ch.elexis.ElexisException;
 import ch.elexis.data.Patient;
 import ch.rgw.io.FileTool;
-import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
 /**
- * An IDocument based on a file.
+ * An IDocument implementation, based on a File
  * 
  * @author gerry
  * 

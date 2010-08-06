@@ -148,7 +148,7 @@ public class TarmedImporter extends ImporterPage {
 			TimeTool ttToday=new TimeTool();
 			while (res.next() == true) {
 				String cc = res.getString("LNR"); //$NON-NLS-1$
-				
+				//System.out.println(cc);
 				TarmedLeistung tl = TarmedLeistung.load(cc);
 				if (tl.exists()) {
 					tl.set("DigniQuanti", convert(res, "QT_DIGNITAET")); //$NON-NLS-1$ //$NON-NLS-2$
@@ -163,115 +163,116 @@ public class TarmedImporter extends ImporterPage {
 					tl.set(new String[] {
 							"GueltigVon", "GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
 					}, tsValid.from.toString(TimeTool.DATE_COMPACT), tsValid.until.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				Stm sub = j.getStatement();
-				String dqua =
-					sub
-					.queryString("SELECT QL_DIGNITAET FROM LEISTUNG_DIGNIQUALI WHERE LNR=" + tl.getWrappedId()); //$NON-NLS-1$
-				String kurz = ""; //$NON-NLS-1$
-				ResultSet rsub =
-					sub
-					.query("SELECT * FROM LEISTUNG_TEXT WHERE SPRACHE=" + lang + " AND LNR=" + tl.getWrappedId()); //$NON-NLS-1$ //$NON-NLS-2$
-				if (rsub.next() == true) {
-					kurz = convert(rsub, "BEZ_255"); //$NON-NLS-1$
-					String med = convert(rsub, "MED_INTERPRET"); //$NON-NLS-1$
-					String tech = convert(rsub, "TECH_INTERPRET"); //$NON-NLS-1$
-					preps_extension.setString(1, med);
-					preps_extension.setString(2, tech);
-					preps_extension.setString(3, tl.getId());
-					preps_extension.execute();
-				}
-				rsub.close();
-				tl.set(new String[] {
-						"DigniQuali", "Text"}, dqua, kurz); //$NON-NLS-1$ //$NON-NLS-2$
-				Hashtable<String, String> ext = tl.loadExtension();
-				put(ext, res, "LEISTUNG_TYP", "SEITE", "SEX", "ANAESTHESIE", "K_PFL", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-						"BEHANDLUNGSART", "TP_AL", "TP_ASSI", "TP_TL", "ANZ_ASSI", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-						"LSTGIMES_MIN", "VBNB_MIN", "BEFUND_MIN", "RAUM_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-						"WECHSEL_MIN", "F_AL", "F_TL"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					Stm sub = j.getStatement();
+					String dqua =
+						sub
+						.queryString("SELECT QL_DIGNITAET FROM LEISTUNG_DIGNIQUALI WHERE LNR=" + tl.getWrappedId()); //$NON-NLS-1$
+					String kurz = ""; //$NON-NLS-1$
+					ResultSet rsub =
+						sub
+						.query("SELECT * FROM LEISTUNG_TEXT WHERE SPRACHE=" + lang + " AND LNR=" + tl.getWrappedId()); //$NON-NLS-1$ //$NON-NLS-2$
+					if (rsub.next() == true) {
+						kurz = convert(rsub, "BEZ_255"); //$NON-NLS-1$
+						String med = convert(rsub, "MED_INTERPRET"); //$NON-NLS-1$
+						String tech = convert(rsub, "TECH_INTERPRET"); //$NON-NLS-1$
+						preps_extension.setString(1, med);
+						preps_extension.setString(2, tech);
+						preps_extension.setString(3, tl.getId());
+						preps_extension.execute();
+					}
+					rsub.close();
+					tl.set(new String[] {
+							"DigniQuali", "Text"}, dqua, kurz); //$NON-NLS-1$ //$NON-NLS-2$
+					Hashtable<String, String> ext = tl.loadExtension();
+					put(ext, res, "LEISTUNG_TYP", "SEITE", "SEX", "ANAESTHESIE", "K_PFL", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+							"BEHANDLUNGSART", "TP_AL", "TP_ASSI", "TP_TL", "ANZ_ASSI", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+							"LSTGIMES_MIN", "VBNB_MIN", "BEFUND_MIN", "RAUM_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+							"WECHSEL_MIN", "F_AL", "F_TL"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-				rsub =
-					sub
-					.query("SELECT LNR_MASTER FROM LEISTUNG_HIERARCHIE WHERE LNR_SLAVE=" + tl.getWrappedId()); //$NON-NLS-1$
-				if (rsub.next()) {
-					ext.put("Bezug", rsub.getString(1)); //$NON-NLS-1$
-				}
-				rsub.close();
-				rsub =
-					sub
-					.query("SELECT LNR_SLAVE,TYP FROM LEISTUNG_KOMBINATION WHERE LNR_MASTER=" + tl.getWrappedId()); //$NON-NLS-1$
-				String kombination_and = ""; //$NON-NLS-1$
-				String kombination_or = ""; //$NON-NLS-1$
-				while (rsub.next()) {
-					String typ = rsub.getString(2);
-					String slave = rsub.getString(1);
-					if (typ != null) {
-						if (typ.equals("and")) { //$NON-NLS-1$
-							kombination_and += slave + ","; //$NON-NLS-1$
-						} else if (typ.equals("or")) { //$NON-NLS-1$
-							kombination_or += slave + ","; //$NON-NLS-1$
+					rsub =
+						sub
+						.query("SELECT LNR_MASTER FROM LEISTUNG_HIERARCHIE WHERE LNR_SLAVE=" + tl.getWrappedId()); //$NON-NLS-1$
+					if (rsub.next()) {
+						ext.put("Bezug", rsub.getString(1)); //$NON-NLS-1$
+					}
+					rsub.close();
+					rsub =
+						sub
+						.query("SELECT LNR_SLAVE,TYP FROM LEISTUNG_KOMBINATION WHERE LNR_MASTER=" + tl.getWrappedId()); //$NON-NLS-1$
+					String kombination_and = ""; //$NON-NLS-1$
+					String kombination_or = ""; //$NON-NLS-1$
+					while (rsub.next()) {
+						String typ = rsub.getString(2);
+						String slave = rsub.getString(1);
+						if (typ != null) {
+							if (typ.equals("and")) { //$NON-NLS-1$
+								kombination_and += slave + ","; //$NON-NLS-1$
+							} else if (typ.equals("or")) { //$NON-NLS-1$
+								kombination_or += slave + ","; //$NON-NLS-1$
+							}
 						}
 					}
-				}
-				rsub.close();
-				if (!kombination_and.equals("")) { //$NON-NLS-1$
-					String k = kombination_and.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-					ext.put("kombination_and", k); //$NON-NLS-1$
-				}
-				if (!kombination_or.equals("")) { //$NON-NLS-1$
-					String k = kombination_or.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-					ext.put("kombination_or", k); //$NON-NLS-1$
-				}
-				rsub =
-					sub
-					.query("SELECT * FROM LEISTUNG_KUMULATION WHERE LNR_MASTER=" + tl.getWrappedId()); //$NON-NLS-1$
-				String exclusion = ""; //$NON-NLS-1$
-				String inclusion = ""; //$NON-NLS-1$
-				String exclusive = ""; //$NON-NLS-1$
-				while (rsub.next()) {
-					String typ = rsub.getString("typ"); //$NON-NLS-1$
-					String slave = rsub.getString("LNR_SLAVE"); //$NON-NLS-1$
-					if (typ != null) {
-						if (typ.equals("E")) { //$NON-NLS-1$
-							exclusion += slave + ","; //$NON-NLS-1$
-						} else if (typ.equals("I")) { //$NON-NLS-1$
-							inclusion += slave + ","; //$NON-NLS-1$
-						} else if (typ.equals("X")) { //$NON-NLS-1$
-							exclusive += slave + ","; //$NON-NLS-1$
+					rsub.close();
+					if (!kombination_and.equals("")) { //$NON-NLS-1$
+						String k = kombination_and.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+						ext.put("kombination_and", k); //$NON-NLS-1$
+					}
+					if (!kombination_or.equals("")) { //$NON-NLS-1$
+						String k = kombination_or.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+						ext.put("kombination_or", k); //$NON-NLS-1$
+					}
+					rsub =
+						sub
+						.query("SELECT * FROM LEISTUNG_KUMULATION WHERE LNR_MASTER=" + tl.getWrappedId()); //$NON-NLS-1$
+					String exclusion = ""; //$NON-NLS-1$
+					String inclusion = ""; //$NON-NLS-1$
+					String exclusive = ""; //$NON-NLS-1$
+					while (rsub.next()) {
+						String typ = rsub.getString("typ"); //$NON-NLS-1$
+						String slave = rsub.getString("LNR_SLAVE"); //$NON-NLS-1$
+						if (typ != null) {
+							if (typ.equals("E")) { //$NON-NLS-1$
+								exclusion += slave + ","; //$NON-NLS-1$
+							} else if (typ.equals("I")) { //$NON-NLS-1$
+								inclusion += slave + ","; //$NON-NLS-1$
+							} else if (typ.equals("X")) { //$NON-NLS-1$
+								exclusive += slave + ","; //$NON-NLS-1$
+							}
 						}
 					}
+					rsub.close();
+					if (!exclusion.equals("")) { //$NON-NLS-1$
+						String k = exclusion.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+						ext.put("exclusion", k); //$NON-NLS-1$
+					}
+					if (!inclusion.equals("")) { //$NON-NLS-1$
+						String k = inclusion.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+						ext.put("inclusion", k); //$NON-NLS-1$
+					}
+					if (!exclusive.equals("")) { //$NON-NLS-1$
+						String k = exclusive.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+						ext.put("exclusive", k); //$NON-NLS-1$
+					}
+					rsub =
+						sub.query("SELECT * FROM LEISTUNG_MENGEN_ZEIT WHERE LNR=" + tl.getWrappedId()); //$NON-NLS-1$
+					String limits = ""; //$NON-NLS-1$
+					while (rsub.next()) {
+						StringBuilder sb = new StringBuilder();
+						sb.append(rsub.getString("Operator")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
+						sb.append(rsub.getString("Menge")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
+						sb.append(rsub.getString("ZR_ANZAHL")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
+						sb.append(rsub.getString("PRO_NACH")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
+						sb.append(rsub.getString("ZR_EINHEIT")).append("#"); //$NON-NLS-1$ //$NON-NLS-2$
+						limits += sb.toString();
+					}
+					rsub.close();
+					if (!limits.equals("")) { //$NON-NLS-1$
+						ext.put("limits", limits); //$NON-NLS-1$
+					}
+					tl.flushExtension();
+					j.releaseStatement(sub);
+
 				}
-				rsub.close();
-				if (!exclusion.equals("")) { //$NON-NLS-1$
-					String k = exclusion.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-					ext.put("exclusion", k); //$NON-NLS-1$
-				}
-				if (!inclusion.equals("")) { //$NON-NLS-1$
-					String k = inclusion.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-					ext.put("inclusion", k); //$NON-NLS-1$
-				}
-				if (!exclusive.equals("")) { //$NON-NLS-1$
-					String k = exclusive.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-					ext.put("exclusive", k); //$NON-NLS-1$
-				}
-				rsub =
-					sub.query("SELECT * FROM LEISTUNG_MENGEN_ZEIT WHERE LNR=" + tl.getWrappedId()); //$NON-NLS-1$
-				String limits = ""; //$NON-NLS-1$
-				while (rsub.next()) {
-					StringBuilder sb = new StringBuilder();
-					sb.append(rsub.getString("Operator")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
-					sb.append(rsub.getString("Menge")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
-					sb.append(rsub.getString("ZR_ANZAHL")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
-					sb.append(rsub.getString("PRO_NACH")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
-					sb.append(rsub.getString("ZR_EINHEIT")).append("#"); //$NON-NLS-1$ //$NON-NLS-2$
-					limits += sb.toString();
-				}
-				rsub.close();
-				if (!limits.equals("")) { //$NON-NLS-1$
-					ext.put("limits", limits); //$NON-NLS-1$
-				}
-				tl.flushExtension();
-				j.releaseStatement(sub);
 				monitor.worked(1);
 				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
