@@ -6,7 +6,9 @@ Bundle-Version: 2.0.0
 Bundle-ClassPath: bin/,
  .,
  lib/jdom.jar,
- lib/bcprov-jdk15-140.jar
+ lib/bcprov-jdk15-140.jar,
+ lib/log4j-over-slf4j-1.6.1.jar,
+ lib/slf4j-jdk14-1.6.1.jar
 Bundle-Vendor: G. Weirich
 Export-Package: .,
  ch.rgw.compress;uses:="ch.rgw.io",
@@ -15,6 +17,7 @@ Export-Package: .,
  ch.rgw.tools;uses:="org.jdom",
  ch.rgw.tools.net,
  org.apache.commons.compress.bzip2,
+ org.apache.log4j,
  org.jdom;uses:="org.jdom.filter",
  org.jdom.adapters;uses:="org.jdom,org.w3c.dom",
  org.jdom.filter;uses:="org.jdom",
@@ -35,7 +38,8 @@ Export-Package: .,
    org.jdom,
    javax.xml.transform.sax,
    org.xml.sax",
- org.jdom.xpath;uses:="org.jdom"
+ org.jdom.xpath;uses:="org.jdom",
+ org.slf4j.impl
 Require-Bundle: ch.elexis.postgresql.connector;bundle-version="1.0.0";resolution:=optional,
  ch.elexis.mysql.connector;resolution:=optional,
  ch.elexis.hsql.connector;resolution:=optional,

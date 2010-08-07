@@ -370,6 +370,14 @@ find the Xid of the given object from the specified domain. Equivalent to ob.get
 Xid.findObject(String domain, String id)
 find the object indentified by the given XID of the given domain. findObject(Xid.DOMAIN_AHV,"123.45.678.9") will retrieve the Person whose AHV is 123.45.678.9 or will return null if no such object exists in the database.
 
+h2. Logging
+
+We recommend that you use eclipse's ILog facility for logging. If you use external libraries, you'll often notice that they depend on log4j. Please DO NOT include lots of mutually dependent apache-commons-libraries in your plugin only to support such logging. Instead, make your plugin dependent of ch.rgw.utility. This plugin inlcudes a lightweight wrapper that converts log4j calls transparently to java.util.Logging calls. You do not need to change any code to use this wrapper, only add the dependency to ch.rgw.utility instead of including the apache libraries. Then, in the "Dependencies"-Tab of the Plugin manifest editor of your Plugin, add the following libs in "Imported packages:"
+
+org.apache.commons.logging
+org.apache.commons.logging.impl
+
+This will redirect all calls of your Plugin and its libraries to apache's log4j to the wrapper.
 
 
 h2. Internationalization (il18n)

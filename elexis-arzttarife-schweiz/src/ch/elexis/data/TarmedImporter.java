@@ -15,8 +15,11 @@
 // 8.12.07 G.Weirich avoid duplicate imports
 package ch.elexis.data;
 
+import java.io.File;
+import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,8 +27,10 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
+import ch.elexis.ElexisException;
 import ch.elexis.Hub;
 import ch.elexis.arzttarife_schweiz.Messages;
+import ch.elexis.importers.AccessWrapper;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.SWTHelper;
@@ -49,6 +54,7 @@ public class TarmedImporter extends ImporterPage {
 
 	private static final String SRC_ENCODING = "iso-8859-1"; //$NON-NLS-1$
 
+	AccessWrapper aw;
 	JdbcLink j, pj;
 	Stm source, dest;
 	// Text tDb;
@@ -91,11 +97,30 @@ public class TarmedImporter extends ImporterPage {
 
 	@Override
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception{
+		/*
 		if (connect() == false) {
 			return new Status(Status.ERROR,
 					"tarmed", 1, Messages.TarmedImporter_couldntConnect, null); //$NON-NLS-1$
 		}
-
+		 */
+		File h2=File.createTempFile("elexis", "h2");
+		j=JdbcLink.createH2Link(h2.getAbsolutePath());
+		if(!j.connect("sa", "")){
+			throw new ElexisException(getClass(), "Can't connect to H2", ElexisException.EE_UNEXPECTED_RESPONSE);
+		}
+		aw=new AccessWrapper(new File(results[0]));
+		aw.convertTable("LEISTUNG", j);
+		aw.convertTable("LEISTUNG_TEXT", j);
+		aw.convertTable("KAPITEL_TEXT", j);
+		aw.convertTable("LEISTUNG_DIGNIQUALI", j);
+		aw.convertTable("LEISTUNG_HIERARCHIE", j);
+		aw.convertTable("LEISTUNG_KOMBINATION", j);
+		aw.convertTable("LEISTUNG_KUMULATION", j);
+		aw.convertTable("LEISTUNG_MENGEN_ZEIT", j);
+	
+		
+		
+		
 		pj = PersistentObject.getConnection();
 		lang = JdbcLink.wrap(Hub.localCfg.get(PreferenceConstants.ABL_LANGUAGE, "d").toUpperCase()); //$NON-NLS-1$
 
@@ -305,7 +330,10 @@ public class TarmedImporter extends ImporterPage {
 		}
 	}
 
-	private void importDefinition(final String... strings){
+	private void importDefinition(final String... strings) throws IOException, SQLException{
+		for(String s:strings){
+			aw.convertTable("CT_"+s, j);
+		}
 		Stm stm = j.getStatement();
 		PreparedStatement ps =
 			pj
@@ -336,16 +364,22 @@ public class TarmedImporter extends ImporterPage {
 
 	@Override
 	public Composite createPage(final Composite parent){
+		/*
 		DBBasedImporter obi = new ImporterPage.DBBasedImporter(parent, this);
 		obi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return obi;
+		*/
+		FileBasedImporter fbi=new FileBasedImporter(parent, this);
+		fbi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		return fbi;
 	}
 
 	private String convert(ResultSet res, String field) throws Exception{
-		byte[] raw = res.getBytes(field);
+		String orig=res.getString(field);
+		byte[] raw = orig.getBytes(SRC_ENCODING);
 		if (raw == null) {
 			return ""; //$NON-NLS-1$
 		}
-		return new String(raw, SRC_ENCODING);
+		return new String(raw);
 	}
 }

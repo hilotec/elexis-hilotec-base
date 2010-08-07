@@ -14,7 +14,8 @@ Require-Bundle: ch.elexis,
  ch.rgw.utility
 Bundle-ClassPath: .,
  RXTXcomm.jar,
- poi-3.0.1-FINAL-20070705.jar
+ poi-3.0.1-FINAL-20070705.jar,
+ jackcess-1.2.1.jar
 Export-Package: au.com.bytecode.opencsv,
  ch.elexis.importers;
   uses:="org.eclipse.jface.wizard,
@@ -36,6 +37,9 @@ Export-Package: au.com.bytecode.opencsv,
    org.eclipse.swt.widgets,
    org.eclipse.jface.dialogs",
  ch.elexis.rs232;uses:="org.eclipse.osgi.util,org.eclipse.swt.widgets,gnu.io",
+ com.healthmarketscience.jackcess,
+ com.healthmarketscience.jackcess.query,
+ com.healthmarketscience.jackcess.scsu,
  gnu.io,
  org.apache.poi.ddf,
  org.apache.poi.dev,
@@ -81,3 +85,5 @@ Export-Package: au.com.bytecode.opencsv,
    org.apache.poi.poifs.dev",
  org.apache.poi.poifs.storage;uses:="org.apache.poi.poifs.property,org.apache.poi.poifs.filesystem",
  org.apache.poi.util;uses:="new org.apache.poi.util"
+Import-Package: org.apache.commons.logging;version="1.0.4",
+ org.apache.commons.logging.impl;version="1.0.4"
