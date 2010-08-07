@@ -593,7 +593,7 @@ public class JdbcLink {
 	 * @author gerry
 	 * 
 	 */
-	public int exec(String sql) {
+	public int exec(final String sql) {
 		Stm stm = getStatement();
 		int res = stm.exec(sql);
 		releaseStatement(stm);
@@ -659,12 +659,12 @@ public class JdbcLink {
 		 *            Von der Datenbank verstandener SQL-String
 		 * @return Zahl der affected rows.
 		 */
-		public int exec(String sql){
+		public int exec(final String sql){
 			return internalExec(sql,false);
 		}
 		
-		private synchronized int internalExec(String SQLText, boolean inError) {
-			log.log("executing " + SQLText, Log.DEBUGMSG);
+		private int internalExec(final String SQLText, final boolean inError) {
+			//log.log("executing " + SQLText, Log.DEBUGMSG);
 			try {
 				return stm.executeUpdate(SQLText);
 			} catch (Exception e) {
@@ -688,19 +688,20 @@ public class JdbcLink {
 		 *            ein Query String in von der Datenbank verstandener Syntax
 		 * @return ein ResultSet oder null bei Fehler
 		 */
-		public ResultSet query(String SQLText) {
+		public ResultSet query(final String SQLText) {
 			return internalQuery(SQLText, false);
 		}
 
-		private synchronized ResultSet internalQuery(String SQLText, boolean inError) {
+		private ResultSet internalQuery(final String SQLText, final boolean inError) {
 			ResultSet res = null;
-			log.log("querying " + SQLText, Log.DEBUGMSG);
+			//log.log("querying " + SQLText, Log.DEBUGMSG);
 			try {
 				res = stm.executeQuery(SQLText);
 				return res;
 			} catch (Exception e) {
 				if (!inError) {
 					if (reconnect()) {
+						log.log(Level.WARNING, "Reconnect");
 						return internalQuery(SQLText, true);
 					}
 				}
