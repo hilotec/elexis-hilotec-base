@@ -275,7 +275,7 @@ public abstract class PersistentObject implements ISelectable {
 				System.exit(-1);
 			} else {
 				String d = PreferenceInitializer.getDefaultDBPath();
-				j = JdbcLink.createH2Link(d);
+				j = JdbcLink.createH2Link(d+File.separator+"elexisdb");
 				user = "sa";
 				pwd = StringTool.leer;
 				typ = getConnection().DBFlavor;
