@@ -19,7 +19,7 @@ public class TimeTool extends GregorianCalendar {
 	private static final long serialVersionUID = 0xc3efadd1L;
 	
 	public static String Version(){
-		return "3.2.1";
+		return "3.2.2";
 	}
 	
 	/** first day that can be set into a TimeTool */
@@ -418,7 +418,11 @@ public class TimeTool extends GregorianCalendar {
 	 * @return int[hr,min,s]
 	 */
 	public static int[] parseTime(final String tx){
+		
 		String t = tx.trim();
+		if(t.endsWith(".0")){
+			t=t.substring(0,t.length()-2);
+		}
 		String[] tim = t.split(":"); // hh:mm
 		if (tim.length < 2) {
 			if (t.matches("[0-2][0-9][0-5][0-9]"))// t.length()==4) //hhmm

@@ -26,7 +26,7 @@ import sun.security.action.GetLongAction;
 
 public class JdbcLink {
 	public static final String getVersion() {
-		return "3.2.0";
+		return "3.2.1";
 	}
 
 	public int lastErrorCode;
