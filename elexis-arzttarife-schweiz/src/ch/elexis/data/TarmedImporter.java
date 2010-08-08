@@ -15,8 +15,10 @@
 // 8.12.07 G.Weirich avoid duplicate imports
 package ch.elexis.data;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -56,8 +58,10 @@ import ch.rgw.tools.JdbcLink.Stm;
  */
 public class TarmedImporter extends ImporterPage {
 
-	private static final String SRC_ENCODING = "iso-8859-1"; //$NON-NLS-1$
+	//private static final String SRC_ENCODING = "iso-8859-1"; //$NON-NLS-1$
+	private static final String SRC_ENCODING = "MacRoman"; //$NON-NLS-1$
 
+	
 	AccessWrapper aw;
 	JdbcLink j, pj;
 	Stm source, dest;
@@ -87,7 +91,7 @@ public class TarmedImporter extends ImporterPage {
 				j = JdbcLink.createPostgreSQLLink(server, db);
 				return j.connect(user, password);
 			} else if (type.equals("H2")) {
-				j = JdbcLink.createH2Link(server);
+				j = JdbcLink.createH2Link(db);
 				return j.connect(user, password);
 			} else if (type.equals("ODBC")) { //$NON-NLS-1$
 
@@ -199,6 +203,7 @@ public class TarmedImporter extends ImporterPage {
 				TimeSpan tsValid = new TimeSpan(new TimeTool(
 						res.getString("GUELTIG_VON")), new TimeTool(
 						res.getString("GUELTIG_BIS")));
+				//System.out.println(tsValid.dump());
 				if (tsValid.contains(ttToday)) {
 					tl.set(new String[] { "GueltigVon", "GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
 					}, tsValid.from.toString(TimeTool.DATE_COMPACT),
@@ -344,9 +349,7 @@ public class TarmedImporter extends ImporterPage {
 
 	private void importDefinition(final String... strings) throws IOException,
 			SQLException {
-		for (String s : strings) {
-			aw.convertTable("CT_" + s, j);
-		}
+		
 		Stm stm = j.getStatement();
 		PreparedStatement ps = pj
 				.prepareStatement("INSERT INTO TARMED_DEFINITIONEN (Spalte,Kuerzel,Titel) VALUES (?,?,?)"); //$NON-NLS-1$
@@ -391,14 +394,16 @@ public class TarmedImporter extends ImporterPage {
 	}
 
 	private String convert(ResultSet res, String field) throws Exception {
-		String orig = res.getString(field);
-		if (orig == null) {
+		Reader reader=res.getCharacterStream(field);
+		if(reader==null){
 			return "";
 		}
-		byte[] raw = orig.getBytes();
-		if (raw == null) {
-			return ""; //$NON-NLS-1$
+		StringBuilder sb=new StringBuilder();
+		BufferedReader br=new BufferedReader(reader);
+		int c;
+		while((c=br.read())!=-1){
+			sb.append((char)c);
 		}
-		return new String(raw, SRC_ENCODING);
+		return sb.toString();
 	}
 }
