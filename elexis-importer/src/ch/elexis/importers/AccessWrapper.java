@@ -2,17 +2,17 @@ package ch.elexis.importers;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
+import ch.rgw.tools.JdbcLink;
+
 import com.healthmarketscience.jackcess.Column;
-import com.healthmarketscience.jackcess.DataType;
 import com.healthmarketscience.jackcess.Database;
 import com.healthmarketscience.jackcess.Table;
-
-import ch.rgw.tools.JdbcLink;
 
 /**
  * Simple conversions from mdb databases
@@ -26,6 +26,9 @@ public class AccessWrapper{
 		db=Database.open(mdbFile, true);
 	}
 	
+	public AccessWrapper(File mdbFile, Charset ch) throws IOException{
+		db=Database.open(mdbFile, true, false, null, null);
+	}
 	public void convertTable(String name, JdbcLink dest) throws IOException, SQLException{
 		Table table=db.getTable(name);
 		List<Column> cols=table.getColumns();
@@ -77,6 +80,7 @@ public class AccessWrapper{
 			}
 			ps.execute();
 		}
+	
 	}
 	
 }
