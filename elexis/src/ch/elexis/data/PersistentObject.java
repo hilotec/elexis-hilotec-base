@@ -24,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -2288,8 +2289,22 @@ public abstract class PersistentObject implements ISelectable {
 	 * Used for export functionality
 	 */
 	protected String[] getExportFields() {
+		try{
+			ResultSet res=getConnection().getStatement().query("Select count(id) from "+getTableName());
+			ResultSetMetaData rmd=res.getMetaData();
+			String[] ret=new String[rmd.getColumnCount()];
+			for(int i=0;i<ret.length;i++){
+				ret[i]=rmd.getColumnName(i+1);
+			}
+			return ret;
+		}catch(Exception ex){
+			ExHandler.handle(ex);
+			return null;
+		}
+		/*
 		throw new IllegalArgumentException("No export fields for "
 				+ getClass().getSimpleName() + " available");
+	*/
 	}
 
 	/**
