@@ -33,24 +33,37 @@ public class Range{
 	 * Position of the range as characters from text start.
 	 */
 	private static final String ATTR_START_OFFSET = "startOffset";
+	/**
+	 * Hint what to to if an application does not know this type of Range
+	 * one of: prefix:(prefix), append:(append), replace:replace 
+	 */
+	private static final String ATTR_HINT="hint";
 	
+	public static final String STYLE_BOLD="bold";
+	public static final String STYLE_ITALIC="italic";
+	public static final String STYLE_UNDERLINE="underline";
+	public static final String STYLE_FOREGROUND="foreground:";
+	public static final String STYLE_BACKGROUND="backgreound:";
 	String id;
 	String typename;
 	int length;
 	int position;
 	Rectangle viewport;
 	boolean bLocked;
+	String hint;
 	
 	public Range(Element el){
 		id=el.getAttributeValue(ATTR_ID);
 		typename=el.getAttributeValue(ATTR_TYPENAME);
 		position = Integer.parseInt(el.getAttributeValue(ATTR_START_OFFSET));
 		length = Integer.parseInt(el.getAttributeValue(ATTR_LENGTH));
-		length=Integer.parseInt(el.getAttributeValue(""));
+		//length=Integer.parseInt(el.getAttributeValue(""));
+		hint=el.getAttributeValue(ATTR_HINT);
 	}
 	public Range(final int start, final int len, String typename, String id){
 		length=len;
 		position=start;
+		this.typename=typename;
 		this.id=id;
 	}
 	
@@ -83,12 +96,22 @@ public class Range{
 		return null;
 	}
 
+	public String getHint(){
+		return hint;
+	}
 	public Element toElement(){
-		Element el=new Element(ELEM_NAME);
+		Element el=new Element(ELEM_NAME,SimpleStructuredDocument.ns);
 		el.setAttribute(ATTR_ID,id);
 		el.setAttribute(ATTR_LENGTH,Integer.toString(length));
 		el.setAttribute(ATTR_START_OFFSET,Integer.toString(position));
 		el.setAttribute(ATTR_TYPENAME,typename);
+		setAttributeIfExists(el, ATTR_HINT, hint);
 		return el;
+	}
+	
+	private void setAttributeIfExists(Element e, String attr, String value){
+		if(attr!=null && value!=null){
+			e.setAttribute(attr,value);
+		}
 	}
 }

@@ -715,5 +715,14 @@
             type="ch.elexis.data.Rezept">
       </Transporter>
    </extension>
+   <extension
+         point="ch.elexis.ServiceRegistry">
+      <Service
+            actor="ch.elexis.text.DefaultRenderer"
+            description="IRangeRenderer for simple markups"
+            name="TextContentsExtension"
+            value="50">
+      </Service>
+   </extension>
 
 </plugin>
