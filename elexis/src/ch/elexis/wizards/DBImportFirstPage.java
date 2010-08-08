@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,11 +39,12 @@ public class DBImportFirstPage extends WizardPage {
 	JdbcLink j = null;
 	
 	static final String[] supportedDB = new String[] {
-		"mySQl", "PostgreSQL", "ODBC" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		"mySQl", "PostgreSQL", "H2", "ODBC" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	};
 	static final int MYSQL = 0;
 	static final int POSTGRESQL = 1;
-	static final int ODBC = 2;
+	static final int ODBC = 3;
+	static final int H2=2;
 	
 	public DBImportFirstPage(String pageName){
 		super(
@@ -81,6 +82,12 @@ public class DBImportFirstPage extends WizardPage {
 					dbName.setEnabled(true);
 					defaultUser = ""; //$NON-NLS-1$
 					defaultPassword = ""; //$NON-NLS-1$
+					break;
+				case H2:
+					server.setEnabled(false);
+					dbName.setEnabled(true);
+					defaultUser="sa";
+					defaultPassword="";
 					break;
 				case ODBC:
 					server.setEnabled(false);

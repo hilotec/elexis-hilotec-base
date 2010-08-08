@@ -285,6 +285,8 @@ public abstract class ImporterPage implements IExecutableExtension{
         		ret=JdbcLink.createMySqlLink(h.results[1], h.results[2]);
         	}else if(h.results[0].equalsIgnoreCase("postgresql")){ //$NON-NLS-1$
         		ret=JdbcLink.createPostgreSQLLink(h.results[1], h.results[2]);
+        	}else if(h.results[0].equalsIgnoreCase("h2")){
+        		ret=JdbcLink.createH2Link(h.results[1]);
         	}else if(h.results[0].equalsIgnoreCase("odbc")){ //$NON-NLS-1$
         		ret=JdbcLink.createODBCLink(h.results[1]);
         	}else{

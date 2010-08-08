@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,9 @@ public class DBImportWizard extends Wizard {
 			break;
 		case DBImportFirstPage.POSTGRESQL:
 			type = "PostgreSQL"; //$NON-NLS-1$
+			break;
+		case DBImportFirstPage.H2:
+			type="H2";
 			break;
 		case DBImportFirstPage.ODBC:
 			type = "ODBC"; //$NON-NLS-1$

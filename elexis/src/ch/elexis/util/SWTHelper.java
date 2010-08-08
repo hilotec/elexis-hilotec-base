@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@
 package ch.elexis.util;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
@@ -253,6 +252,13 @@ public class SWTHelper {
 		}
 	}
 	
+	/**
+	 * Shortcut for getFillGridData(1,true,1,true);
+	 * @return
+	 */
+	public static GridData getFillGridData(){
+		return getFillGridData(1,true,1,true);
+	}
 	/**
 	 * Ein GridData-Objekt erzeugen, das den horizontalen und/oder vertikalen Freiraum ausfüllt.
 	 * 
