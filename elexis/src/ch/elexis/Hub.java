@@ -30,10 +30,10 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 import ch.elexis.actions.ElexisEvent;
-import ch.elexis.actions.ElexisEventCascade;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
@@ -53,7 +53,6 @@ import ch.elexis.util.FileUtility;
 import ch.elexis.util.Log;
 import ch.elexis.util.PlatformHelper;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.io.FileTool;
 import ch.rgw.io.LockFile;
 import ch.rgw.io.Settings;
 import ch.rgw.io.SqlSettings;
@@ -76,7 +75,7 @@ public class Hub extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "ch.elexis"; //$NON-NLS-1$
 	public static final String COMMAND_PREFIX = PLUGIN_ID + ".commands."; //$NON-NLS-1$
 	static final String neededJRE = "1.6.0"; //$NON-NLS-1$
-	public static final String Version = "2.1.0"; //$NON-NLS-1$
+	public static final String Version = "2.1.1"; //$NON-NLS-1$
 	public static final String DBVersion = "1.8.6"; //$NON-NLS-1$
 	static final String[] mine = {
 		"ch.elexis", "ch.rgw"}; //$NON-NLS-1$ //$NON-NLS-2$
@@ -268,8 +267,9 @@ public class Hub extends AbstractUIPlugin {
 		
 		// Java Version prüfen
 		VersionInfo vI = new VersionInfo(System.getProperty("java.version", "0.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
-		log.log("Elexis " + Version + ", build " + getRevision(true) + Messages.Hub_19 + //$NON-NLS-1$ //$NON-NLS-2$
-			Messages.Hub_20 + vI.version(), Log.SYNCMARK);
+		StringBuilder sb=new StringBuilder();
+		sb.append(getId());
+		log.log(getId()+ "; Java: " + vI.version(), Log.SYNCMARK);
 		
 		if (vI.isOlder(neededJRE)) {
 			String msg = Messages.Hub_21 + neededJRE;
@@ -404,8 +404,12 @@ public class Hub extends AbstractUIPlugin {
 	}
 	
 	public static String getId(){
-		return "Elexis v." + Version + ", r." + getRevision(false) + " " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		+ System.getProperty("os.name") + "/" + System.getProperty("os.version"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		StringBuilder sb=new StringBuilder();
+		sb.append(APPLICATION_NAME).append(" v.").append(Version).append("\n")
+		.append(getRevision(true)).append("\n")
+		.append(System.getProperty("os.name")).append("/")
+		.append(System.getProperty("os.version")); //$NON-NLS-1$
+		return sb.toString();
 	}
 	
 	/**
@@ -413,7 +417,10 @@ public class Hub extends AbstractUIPlugin {
 	 * Commit von Subversion geänderte Variable LastChangedRevision untersucht, und fürs Datum das
 	 * von ANT beim build eingetragene Datum gesucht. Wenn diese Instanz nicht von ANT erstellt
 	 * wurde, handelt es sich um eine Entwicklerversion, welche unter Eclipse-Kontrolle abläuft.
+	 * 
+	 * Note: Obsoleted with change to mercurial
 	 */
+	/*
 	public static String getRevision(final boolean withdate){
 		String SVNREV = "$LastChangedRevision: 6387 $"; //$NON-NLS-1$
 		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -436,9 +443,28 @@ public class Hub extends AbstractUIPlugin {
 				res += Messages.Hub_compiletimenotknown;
 			}
 		}
+		Hub.plugin.getBundle().
 		return res;
 	}
+	*/
 	
+	public static String getRevision(final boolean withDate){
+		StringBuilder sb=new StringBuilder();
+		Bundle bundle=plugin.getBundle();
+		org.osgi.framework.Version v=bundle.getVersion();
+		sb.append("[Bundle info: ").append(v.toString());
+		String check=System.getProperty("inEclipse"); //$NON-NLS-1$
+		if(check!=null && check.equals("true")){ //$NON-NLS-1$
+			sb.append(" (developer version)");
+		}		
+		if(withDate){
+			long lastModify=bundle.getLastModified();
+			TimeTool tt=new TimeTool(lastModify);
+			sb.append("; ").append(tt.toString(TimeTool.DATE_ISO));
+		}
+		sb.append("]");
+		return sb.toString();
+	}
 	/**
 	 * get the base directory of this currently running elexis application
 	 * 
