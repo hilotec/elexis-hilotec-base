@@ -116,20 +116,7 @@ public class TarmedImporter extends ImporterPage {
 					"tarmed", 1, Messages.TarmedImporter_couldntConnect, null); //$NON-NLS-1$
 		}
 
-		/*
-		 * File h2=File.createTempFile("elexis", "h2");
-		 * j=JdbcLink.createH2Link(h2.getAbsolutePath()); if(!j.connect("sa",
-		 * "")){ throw new ElexisException(getClass(), "Can't connect to H2",
-		 * ElexisException.EE_UNEXPECTED_RESPONSE); } aw=new AccessWrapper(new
-		 * File(results[0]),Charset.defaultCharset());
-		 * aw.convertTable("LEISTUNG", j); aw.convertTable("LEISTUNG_TEXT", j);
-		 * aw.convertTable("KAPITEL_TEXT", j);
-		 * aw.convertTable("LEISTUNG_DIGNIQUALI", j);
-		 * aw.convertTable("LEISTUNG_HIERARCHIE", j);
-		 * aw.convertTable("LEISTUNG_KOMBINATION", j);
-		 * aw.convertTable("LEISTUNG_KUMULATION", j);
-		 * aw.convertTable("LEISTUNG_MENGEN_ZEIT", j);
-		 */
+		
 
 		pj = PersistentObject.getConnection();
 		lang = JdbcLink.wrap(Hub.localCfg.get(PreferenceConstants.ABL_LANGUAGE,
@@ -386,11 +373,6 @@ public class TarmedImporter extends ImporterPage {
 		obi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return obi;
 
-		/*
-		 * FileBasedImporter fbi = new FileBasedImporter(parent, this);
-		 * fbi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		 * return fbi;
-		 */
 	}
 
 	private String convert(ResultSet res, String field) throws Exception {
