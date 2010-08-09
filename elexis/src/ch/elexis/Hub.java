@@ -267,9 +267,7 @@ public class Hub extends AbstractUIPlugin {
 		
 		// Java Version prüfen
 		VersionInfo vI = new VersionInfo(System.getProperty("java.version", "0.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
-		StringBuilder sb=new StringBuilder();
-		sb.append(getId());
-		log.log(getId()+ "; Java: " + vI.version(), Log.SYNCMARK);
+		log.log(getId()+ "; Java: " + vI.version()+"\nencoding: "+System.getProperty("file.encoding"), Log.SYNCMARK);
 		
 		if (vI.isOlder(neededJRE)) {
 			String msg = Messages.Hub_21 + neededJRE;
@@ -407,8 +405,9 @@ public class Hub extends AbstractUIPlugin {
 		StringBuilder sb=new StringBuilder();
 		sb.append(APPLICATION_NAME).append(" v.").append(Version).append("\n")
 		.append(getRevision(true)).append("\n")
-		.append(System.getProperty("os.name")).append("/")
-		.append(System.getProperty("os.version")); //$NON-NLS-1$
+		.append(System.getProperty("os.name")).append(StringConstants.SLASH)
+		.append(System.getProperty("os.version"))
+		.append(StringConstants.SLASH).append(System.getProperty("os.arch")); //$NON-NLS-1$
 		return sb.toString();
 	}
 	
