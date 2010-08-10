@@ -17,8 +17,6 @@ import java.sql.Types;
 import java.util.Vector;
 import java.util.logging.Level;
 
-import sun.security.action.GetLongAction;
-
 /**
  * Weiterer Abstraktionslayer zum einfacheren Zugriff auf eine jdbc-fähige
  * Datenbank
@@ -118,10 +116,15 @@ public class JdbcLink {
 	public static JdbcLink createH2Link(String database) {
 		log.log(Level.INFO, "Creating H2-Link");
 		String driver = "org.h2.Driver";
-		String connect = "jdbc:h2:" + database + ";MODE=MySQL";
+		String prefix="jdbc:h2:";
+		if(database.contains(".zip!")){
+			prefix+="zip:";
+		}
+		String connect = prefix + database + ";MODE=MySQL";
 		return new JdbcLink(driver, connect, "mysql");
 	}
 
+	
 	/**
 	 * Bequemlichkeitsmethode für einen JdbcLink auf einen 4D-Server
 	 * 
