@@ -721,7 +721,8 @@
             actor="ch.elexis.text.DefaultRenderer"
             description="IRangeRenderer for simple markups"
             name="TextContentsExtension"
-            value="50">
+            value="50"
+            variant="markup">
       </Service>
    </extension>
 

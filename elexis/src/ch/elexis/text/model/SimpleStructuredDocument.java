@@ -182,7 +182,7 @@ public class SimpleStructuredDocument {
 			eRoot.addContent(el);
 
 		}
-		XMLOutputter xout = new XMLOutputter(Format.getCompactFormat());
+		XMLOutputter xout = new XMLOutputter(Format.getRawFormat());
 		return xout.outputString(doc);
 	}
 

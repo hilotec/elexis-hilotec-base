@@ -21,7 +21,7 @@ public class DocumentExport {
 
 	public String doExport() {
 		IDocumentManager mgr = (IDocumentManager) Extensions
-				.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
+				.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT,null);
 		if (mgr == null) {
 			return "Keine Dokumente gefunden";
 		}
