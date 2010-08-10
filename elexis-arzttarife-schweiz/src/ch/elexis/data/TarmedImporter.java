@@ -113,7 +113,7 @@ public class TarmedImporter extends ImporterPage {
 
 		if (connect() == false) {
 			return new Status(Status.ERROR,
-					"tarmed", 1, Messages.TarmedImporter_couldntConnect, null); //$NON-NLS-1$
+					"tarmed", 1, Messages.TarmedImporter_couldntConnect+": "+j.lastErrorString, null); //$NON-NLS-1$
 		}
 
 		
@@ -145,7 +145,7 @@ public class TarmedImporter extends ImporterPage {
 			monitor.subTask(Messages.TarmedImporter_chapter);
 			ResultSet res = source
 					.query("SELECT * FROM KAPITEL_TEXT WHERE SPRACHE=" + lang); //$NON-NLS-1$
-			while (res.next()) {
+			while (res!=null && res.next()) {
 				String code = res.getString("KNR"); //$NON-NLS-1$
 
 				if (code.trim().equals("I")) { //$NON-NLS-1$

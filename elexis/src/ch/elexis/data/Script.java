@@ -46,28 +46,28 @@ public class Script extends NamedBlob2 {
 	public static final String SCRIPT_MARKER = "SCRIPT:";
 	private Interpreter interpreter = null;
 
-	private static Interpreter getInterpreter(String name) throws ElexisException {
-			if (name == null) {
-				return getInterpreter(INTERPRETER_BEANSHELL);
-			}
-			List<IConfigurationElement> scripters = Extensions
-					.getExtensions("ch.elexis.scripting");
-			for (IConfigurationElement scripter : scripters) {
-				if (scripter.getAttribute("name").equals(name)) {
-					try {
-						return (Interpreter) scripter
-								.createExecutableExtension("class");
-					} catch (CoreException e) {
-						ExHandler.handle(e);
-						throw new ElexisException(Script.class,
-								"Could not load intepreter " + e.getMessage(),
-								ElexisException.EE_NOT_SUPPORTED);
-					}
+	private static Interpreter getInterpreter(String name)
+			throws ElexisException {
+		if (name == null) {
+			return getInterpreter(INTERPRETER_BEANSHELL);
+		}
+		List<IConfigurationElement> scripters = Extensions
+				.getExtensions("ch.elexis.scripting");
+		for (IConfigurationElement scripter : scripters) {
+			if (scripter.getAttribute("name").equals(name)) {
+				try {
+					return (Interpreter) scripter
+							.createExecutableExtension("class");
+				} catch (CoreException e) {
+					ExHandler.handle(e);
+					throw new ElexisException(Script.class,
+							"Could not load intepreter " + e.getMessage(),
+							ElexisException.EE_NOT_SUPPORTED);
 				}
 			}
-			throw new ElexisException(Script.class,
-					"interpreter not installed " + name,
-					ElexisException.EE_NOT_SUPPORTED);
+		}
+		throw new ElexisException(Script.class, "interpreter not installed "
+				+ name, ElexisException.EE_NOT_SUPPORTED);
 
 	}
 
@@ -85,16 +85,16 @@ public class Script extends NamedBlob2 {
 	 */
 	private void loadInterpreter(String script) throws ElexisException {
 		if (interpreter == null) {
-			if(script==null){
-				script=getString();
+			if (script == null) {
+				script = getString();
 			}
 			Pattern ip = Pattern.compile("^\\/\\*\\s*!([A-Z]+)!\\s*\\*\\/",
 					Pattern.MULTILINE);
 			Matcher m = ip.matcher(script);
 			if (m.matches()) {
-				interpreter=getInterpreter(m.group(1));
+				interpreter = getInterpreter(m.group(1));
 			} else {
-				interpreter=getInterpreter(null);
+				interpreter = getInterpreter(null);
 			}
 		}
 	}
@@ -135,8 +135,7 @@ public class Script extends NamedBlob2 {
 		interpreter.run(parse(getString(), (PersistentObject[]) null), false);
 	}
 
-	public void setVariable(String name, Object value)
-			throws ElexisException {
+	public void setVariable(String name, Object value) throws ElexisException {
 		loadInterpreter(null);
 		interpreter.setValue(name, value);
 	}
@@ -224,6 +223,9 @@ public class Script extends NamedBlob2 {
 					ElexisEventDispatcher.getSelected(Fall.class));
 			scripter.setValue("actKons",
 					ElexisEventDispatcher.getSelected(Konsultation.class));
+			scripter.setValue("actMandant",Hub.actMandant);
+			scripter.setValue("actUser",Hub.actUser);
+					
 			scripter.setValue("Elexis", Hub.plugin);
 			return scripter.run(parsed, true);
 		}
@@ -311,8 +313,9 @@ public class Script extends NamedBlob2 {
 	protected Script() {
 	}
 
-	public static Interpreter getInterpreterFor(String script) throws ElexisException{
-		Script s=new Script();
+	public static Interpreter getInterpreterFor(String script)
+			throws ElexisException {
+		Script s = new Script();
 		s.loadInterpreter(script);
 		return s.interpreter;
 	}
