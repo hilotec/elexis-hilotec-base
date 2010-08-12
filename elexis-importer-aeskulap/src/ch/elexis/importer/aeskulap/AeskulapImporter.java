@@ -59,9 +59,11 @@ public class AeskulapImporter extends ImporterPage {
 	 */
 	final static String[][] MANDANT_MAPPING={
 		{"1","Dr. Schär","bs"},
-		{"2","Dr. Baumann","db"},
-		{"3","Dr. Chiffelle Huber","cc"},
-		{"4","MPA","MPA"}
+		{"2","Dr. Schär","bs"},
+		{"3","Dr. Chiffelle","cc"},
+		{"4","Dr. Schär","bs"},
+		{"5","MPA","MPA"},
+		{"6","Dr. Baumann","db"}
 	};
 	// we'll use these local XID's to reference the external data
 	final static String IMPORT_XID = "elexis.ch/aeskulap_import";

@@ -65,7 +65,7 @@ public class DateienImporter {
 				if (file != null) {
 					try {
 						dm.addDocument(new GenericDocument(pat, title,
-								CATEGORY_AESKULAP_DATEIEN, file, date, ""));
+								CATEGORY_AESKULAP_DATEIEN, file, date, "",null));
 					} catch (Exception e) {
 						ExHandler.handle(e);
 					}

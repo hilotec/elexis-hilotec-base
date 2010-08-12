@@ -37,6 +37,7 @@ public class GenericDocument implements IDocument {
 	String date;
 	Patient pat;
 	String keywords;
+	String mimetype;
 	String guid = StringTool.unique("FileDocument");
 
 	/**
@@ -57,12 +58,13 @@ public class GenericDocument implements IDocument {
 	 *            null
 	 */
 	public GenericDocument(Patient pat, String title, String category, File file,
-			String date, String keywords) throws IOException{
+			String date, String keywords, String mimetype) throws IOException{
 		this.title = title;
 		this.category = category;
 		this.date = date;
 		this.pat = pat;
 		this.keywords = keywords;
+		this.mimetype=mimetype==null ? file.getName() : mimetype;
 		FileInputStream fis=new FileInputStream(file);
 		ByteArrayOutputStream baos=new ByteArrayOutputStream();
 		FileTool.copyStreams(fis, baos);
@@ -79,7 +81,7 @@ public class GenericDocument implements IDocument {
 
 	@Override
 	public String getMimeType() {
-		return "binary/octet-stream";
+		return mimetype==null ? "binary/octet-stream" : mimetype;
 	}
 
 	/**

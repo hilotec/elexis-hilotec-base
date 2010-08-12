@@ -63,7 +63,7 @@ public class BriefeImporter {
 				if (file != null) {
 					try {
 						dm.addDocument(new GenericDocument(pat,title,
-								CATEGORY_AESKULAP_BRIEFE, file, date,""));
+								CATEGORY_AESKULAP_BRIEFE, file, date,"",null));
 					} catch (Exception e) {
 						ExHandler.handle(e);
 					}

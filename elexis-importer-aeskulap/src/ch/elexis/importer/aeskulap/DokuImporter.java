@@ -64,7 +64,7 @@ public class DokuImporter {
 				if (file != null) {
 					try {
 						dm.addDocument(new GenericDocument(pat, title,
-								CATEGORY_AESKULAP_DOKUMENTE, file, date, ""));
+								CATEGORY_AESKULAP_DOKUMENTE, file, date, "", null));
 					} catch (Exception e) {
 						ExHandler.handle(e);
 					}
