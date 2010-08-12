@@ -3,6 +3,8 @@ package ch.elexis.text.model;
 import org.eclipse.swt.graphics.Rectangle;
 import org.jdom.Element;
 
+import ch.rgw.tools.StringTool;
+
 
 /**
  * A Range is some part of a document. It has a position and a length within the text
@@ -51,6 +53,7 @@ public class Range{
 	Rectangle viewport;
 	boolean bLocked;
 	String hint;
+	String contents;
 	
 	public Range(Element el){
 		id=el.getAttributeValue(ATTR_ID);
@@ -59,6 +62,7 @@ public class Range{
 		length = Integer.parseInt(el.getAttributeValue(ATTR_LENGTH));
 		//length=Integer.parseInt(el.getAttributeValue(""));
 		hint=el.getAttributeValue(ATTR_HINT);
+		contents=el.getText();
 	}
 	public Range(final int start, final int len, String typename, String id){
 		length=len;
@@ -93,12 +97,25 @@ public class Range{
 		position=pos;
 	}
 	public Rectangle getViewPort() {
-		return null;
+		return viewport;
 	}
 
+	public void setViewPort(Rectangle r){
+		this.viewport=r;
+	}
+	
 	public String getHint(){
 		return hint;
 	}
+	
+	public String getContents(){
+		return contents;
+	}
+	
+	public void setContents(String c){
+		contents=c;
+	}
+	
 	public Element toElement(){
 		Element el=new Element(ELEM_NAME,SimpleStructuredDocument.ns);
 		el.setAttribute(ATTR_ID,id);
@@ -106,6 +123,10 @@ public class Range{
 		el.setAttribute(ATTR_START_OFFSET,Integer.toString(position));
 		el.setAttribute(ATTR_TYPENAME,typename);
 		setAttributeIfExists(el, ATTR_HINT, hint);
+		setAttributeIfExists(el,ATTR_VIEWPORT,viewport==null ? null : StringTool.RectangleToString(viewport.x, viewport.y, viewport.width, viewport.height));
+		if(contents!=null){
+			el.setText(contents);
+		}
 		return el;
 	}
 	
