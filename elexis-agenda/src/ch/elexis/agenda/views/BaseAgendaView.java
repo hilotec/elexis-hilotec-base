@@ -212,6 +212,7 @@ IActivationListener {
 			ElexisEventDispatcher.getInstance().addListeners(eeli_termin,
 				eeli_user);
 			heartbeat();
+			updateActions();
 		} else {
 			Hub.heart.removeListener(this);
 			tv.removeSelectionChangedListener(sListen);
