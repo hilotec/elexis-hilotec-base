@@ -13,7 +13,6 @@
 
 package ch.elexis.data;
 
-import java.text.MessageFormat;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,7 +21,6 @@ import ch.elexis.ElexisException;
 import ch.elexis.StringConstants;
 import ch.elexis.scripting.Interpreter;
 import ch.elexis.text.TextContainer;
-import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -320,8 +318,8 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 		}
 
 		// compare item priorities
-		String mine = getPrio();
-		String others = other.getPrio();
+		String mine = getPrio().trim();
+		String others = other.getPrio().trim();
 		if ((mine.matches("[0-9]+")) && (others.matches("[0-9]+"))) {
 			Integer iMine = Integer.parseInt(mine);
 			Integer iOthers = Integer.parseInt(others);

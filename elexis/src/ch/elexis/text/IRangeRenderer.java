@@ -26,5 +26,5 @@ public interface IRangeRenderer {
 	 * @param outputType the desired type of output
 	 * @return an output specific result.
 	 */
-	public Object doRender(Range range, OUTPUT outputType) throws ElexisException;
+	public Object doRender(Range range, OUTPUT outputType, IRichTextDisplay display) throws ElexisException;
 }

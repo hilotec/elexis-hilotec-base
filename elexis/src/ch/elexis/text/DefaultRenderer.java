@@ -20,7 +20,7 @@ public class DefaultRenderer implements IRangeRenderer {
 	}
 
 	@Override
-	public Object doRender(Range range, OUTPUT outputType)
+	public Object doRender(Range range, OUTPUT outputType, IRichTextDisplay rt)
 			throws ElexisException {
 		if (range.getType().equals(Range.TYPE_MARKUP)) {
 			StyleRange sr = new StyleRange();
