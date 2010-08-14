@@ -321,6 +321,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 				<include name="*.so" />
 			</fileset>
 		</copy>
+		<echo message="x dist ist ${dist} platfor ${platform-runtime}/" />
 		<copy tofile="${dist}/elexis" file="${platform-runtime}/eclipse" preservelastmodified="true" verbose="true" />
 		<chmod file="${dist}/elexis" perm="ugo+rx" />
 		<antcall target="create-default" />
