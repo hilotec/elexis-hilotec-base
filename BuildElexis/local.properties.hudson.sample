@@ -1,6 +1,0 @@
-base=/Users/gerry/elexisfactory/hudsonbuild
-hg=hg
-platform-runtime=/Users/gerry/elexisfactory/hudsonbuild/platform
-skipPlugins=ElexisBasicFeature,TestElexis,TestElexisUI,archie-patientstatistik,Statistics,StatisticsFragmentExample,hilotec-pluginstatistiken,elexis-buchhaltung-basis,hilotec-messwerte,marlovits-addressSearch,marlovits-vornamen,marlovits-plz
-texify=texi2pdf
-texifyArgs=--silent
