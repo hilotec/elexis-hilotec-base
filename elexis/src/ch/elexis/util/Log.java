@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,10 +27,10 @@ import ch.rgw.tools.TimeTool;
 /**
  * Standardisiertes Log. Ein Programm kann das Log mit Log.get(präfix) anfordern und fortan Ausgaben
  * ins Log mittels Log(Text,level) machen. Die Ausgabe erfolgt einstellbar nach stdout oder in eine
- * Datei. Ob eine bestimmte Ausgabe ins Log gelangt, h�ngt vom LogLevel und dem Text-Level ab. Wenn
+ * Datei. Ob eine bestimmte Ausgabe ins Log gelangt, hängt vom LogLevel und dem Text-Level ab. Wenn
  * der Level einer Meldung gleich oder niedriger ist, als der aktuell eingestellte LogLevel, wird
  * die Ausgabe gemacht, andernfalls wird sie verworfen. Ausserdem kann festgelegt werden, ab welchem
- * level eine Nachricht zu einer direkten Benachrichtigung des Anwenders mittels MessageBox f�hrt
+ * level eine Nachricht zu einer direkten Benachrichtigung des Anwenders mittels MessageBox führt
  * (setAlert und setAlertLevel
  * 
  * @author G. Weirich
@@ -71,7 +71,7 @@ public class Log {
 		out = System.out;
 		LogLevel = 2;
 		doAlert = null;
-		alertLevel = Log.ERRORS;
+		alertLevel = Log.FATALS;
 	}
 	
 	/**

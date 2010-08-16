@@ -634,11 +634,14 @@ public class JdbcLink {
 		}
 
 		public boolean isClosed() {
+			if("postgresql".equals(DBFlavor)){
+				return false; 
+			}
 			try {
 				return stm.isClosed();
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
-				return true;
+				return false;
 			}
 		}
 
