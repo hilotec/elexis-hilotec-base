@@ -17,55 +17,57 @@ import java.util.HashMap;
 import java.util.List;
 
 public class TrustCenters {
-	public static final int CTESIAS=51;
-	public static final int GALLONET=52;
-	public static final int HAWATRUST=53;
-	public static final int MEDKEY=54;
-	public static final int PONTENOVA=55;
-	public static final int SYNDATA=55;
-	public static final int TC_AARGAU=57;
-	public static final int THURCARE=58;
-	public static final int TC_TICINO=59;
-	public static final int ZUERIDOC=60;
-	public static final int TRUSTMED=61;
-	public static final int TC_TEST=69;
-	
-	public static List<String> getTCList(){
-		ArrayList<String> list=new ArrayList<String>(tc.size());
-		for(String o:tc.keySet()){
+	public static final int CTESIAS = 51;
+	public static final int GALLONET = 52;
+	public static final int HAWATRUST = 53;
+	public static final int MEDKEY = 54;
+	public static final int PONTENOVA = 55;
+	public static final int SYNDATA = 55;
+	public static final int TC_AARGAU = 57;
+	public static final int THURCARE = 58;
+	public static final int TC_TICINO = 59;
+	public static final int ZUERIDOC = 60;
+	public static final int TRUSTMED = 61;
+	public static final int VD_CDC = 62;
+	public static final int TC_TEST = 69;
+
+	public static List<String> getTCList() {
+		ArrayList<String> list = new ArrayList<String>(tc.size());
+		for (String o : tc.keySet()) {
 			list.add(o);
 		}
 		return list;
 	}
-	
+
 	/** EAN des TrustCenters holen */
-	public static String getTCEAN(String tcName){
+	public static String getTCEAN(String tcName) {
 		return getTCEAN(tc.get(tcName));
 	}
-	
-	public static String getTCEAN(Integer tcCode){
-		if(tcCode==null){
+
+	public static String getTCEAN(Integer tcCode) {
+		if (tcCode == null) {
 			return null;
 		}
 		return tcEAN.get(tcCode);
 	}
-	/*
-	TC Aargau  	aar  	7601001370135  	57
-	Ctésias 	cte 	7601001370210 	51
-	GallOnet  	gal 	7601001370241 	52
-	hawatrust 	haw 	7601001370159 	53
-	medkey 	med 		7601001370333 	54
-	PonteNova 	pon 	7601001370203 	55
-	syndata 	syn 	7601001370166 	56
-	TC thurcare thu 	7601001370173 	58
-	TC ticino 	tic 	7601001370722 	59
-	trustmed 	tru 	7601001370227 	61
-	ZueriDoc 	zue 	7601001370456 	60
-	TC test 	tes 	7601001370128 	69
-	 */
-	public static final HashMap<String, Integer> tc=new HashMap<String, Integer>();
-	public static final HashMap<Integer,String> tcEAN=new HashMap<Integer,String>();
-	static{
+
+	// Ctésias cte 7601001370210 51
+	// GallOnet gal 7601001370241 52
+	// hawatrust haw 7601001370159 53
+	// medkey med 7601001370333 54
+	// PonteNova pon 7601001370203 55
+	// syndata syn 7601001370166 56
+	// TC Aargau aar 7601001370135 57
+	// TC thurcare thu 7601001370173 58
+	// TC ticino tic 7601001370722 59
+	// ZueriDoc zue 7601001370456 60
+	// trustmed tru 7601001370227 61
+	// CdC Vd 7609999036705 62
+	// TC test tes 7601001370128 69
+
+	public static final HashMap<String, Integer> tc = new HashMap<String, Integer>();
+	public static final HashMap<Integer, String> tcEAN = new HashMap<Integer, String>();
+	static {
 		tc.put("Ctésias", CTESIAS); //$NON-NLS-1$
 		tcEAN.put(CTESIAS, "7601001370210"); //$NON-NLS-1$
 		tc.put("GallOnet", GALLONET); //$NON-NLS-1$
@@ -88,25 +90,9 @@ public class TrustCenters {
 		tcEAN.put(ZUERIDOC, "7601001370456"); //$NON-NLS-1$
 		tc.put("trustmed", TRUSTMED); //$NON-NLS-1$
 		tcEAN.put(TRUSTMED, "7601001370227"); //$NON-NLS-1$
+		tc.put("CdC Vaudois", VD_CDC); //$NON-NLS-1$
+		tcEAN.put(VD_CDC, "7609999036705"); //$NON-NLS-1$
 		tc.put("TC test", TC_TEST); //$NON-NLS-1$
 		tcEAN.put(TC_TEST, "7601001370128"); //$NON-NLS-1$
-		
 	}
-	
-	
-	/*
-	Ctésias 51 71
-	GallOnet 52 72
-	hawatrust 53 73
-	+medkey 54 74
-	PonteNova 55 75
-	syndata 56 76
-	TC Aargau 57 77
-	thurcare 58 78
-	TC Ticiono 59 79
-	TC züridoc 60 80
-	trustmed 61 81
-	TC test 69 89
-	*/
-	
 }

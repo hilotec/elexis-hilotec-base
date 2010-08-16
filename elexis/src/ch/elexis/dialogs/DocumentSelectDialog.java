@@ -145,7 +145,7 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 					qbe.endGroup();
 				}
 				qbe.and();
-				qbe.add(Messages.getString("DocumentSelectDialog.deleted"), Query.NOT_EQUAL, StringConstants.ONE); //$NON-NLS-1$
+				qbe.add("DocumentSelectDialog.deleted", Query.NOT_EQUAL, StringConstants.ONE); //$NON-NLS-1$
 
 				if (type != TYPE_LOAD_DOCUMENT) {
 					qbe.orderBy(false, Brief.FLD_SUBJECT);

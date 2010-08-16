@@ -38,7 +38,7 @@
  	  cd ${base}/repositories && hg clone http://elexis.hg.sourceforge.net/hgweb/elexis/elexis-base
 	  "hg clone" more repositories if you want as subdirectories of ${base}/repositories
 	  cd ${base}/repositories/elexis-base/BuildElexis
-	  call "ant -Dos=windows", "ant -Dos=linux" or "ant -Dos=macosx" 	
+	  call "ant -Dos=windows", "ant -Dos=linux", "ant -Dos=linux.x86_64 linux" or "ant -Dos=macosx" 	
  	
 	Caveat:
 	- If some Plugins in your repositories do have dependencies to resources you don't have access to,
