@@ -12,7 +12,7 @@ import ch.elexis.Desk;
 import ch.elexis.data.Patient;
 import ch.elexis.services.GlobalServiceDescriptors;
 import ch.elexis.services.IDocumentManager;
-import ch.elexis.text.IDocument;
+import ch.elexis.text.IOpaqueDocument;
 import ch.elexis.util.Extensions;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
@@ -39,10 +39,10 @@ public class DocumentExport {
 
 				CSVWriter writer = new CSVWriter(new FileWriter(csv));
 				String[] header=new String[]{"Patient","Name","Kategorie","Datum","Stichwörter","Pfad"};
-				List<IDocument> dox = mgr.listDocuments(null, null, null, null,
+				List<IOpaqueDocument> dox = mgr.listDocuments(null, null, null, null,
 						null, null);
 				writer.writeNext(header);
-				for (IDocument doc : dox) {
+				for (IOpaqueDocument doc : dox) {
 					Patient pat=doc.getPatient();
 					if(pat!=null){
 						String subdirname = pat.get(Patient.FLD_PATID);

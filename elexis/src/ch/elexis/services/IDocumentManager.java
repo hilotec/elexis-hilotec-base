@@ -17,7 +17,7 @@ import java.util.List;
 
 import ch.elexis.ElexisException;
 import ch.elexis.data.Patient;
-import ch.elexis.text.IDocument;
+import ch.elexis.text.IOpaqueDocument;
 import ch.rgw.tools.TimeSpan;
 
 /**
@@ -42,7 +42,7 @@ public interface IDocumentManager {
 	 * @return ID of the newly created internal representation
 	 * @throws ElexisException
 	 */
-	public String addDocument(IDocument doc) throws ElexisException;
+	public String addDocument(IOpaqueDocument doc) throws ElexisException;
 
 	/**
 	 * Render a Document to a Stream
@@ -78,7 +78,7 @@ public interface IDocumentManager {
 	 *            ElexisException EE_NOT_SUPPORTED.
 	 * @return lust of all IDocuments matching the goven criteria
 	 */
-	public List<IDocument> listDocuments(Patient pat, String categoryMatch,
+	public List<IOpaqueDocument> listDocuments(Patient pat, String categoryMatch,
 			String titleMatch, String keywordMatch, TimeSpan dateMatch,
 			String contentsMatch) throws ElexisException;
 }

@@ -52,7 +52,6 @@ import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Reminder;
-import ch.elexis.text.EnhancedTextField;
 import ch.elexis.text.IRichTextDisplay;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.SWTHelper;

@@ -21,11 +21,12 @@ import ch.elexis.data.Patient;
  * A Contract for a piece of Information in an arbitrary format - a document -
  * that can be stored and retrieved in the system.
  * The IDocument holds the reference to the original contents and some metadata.
+ * The Interface has no means to analyze the contents of the document. thus Opaque.
  * 
  * @author gerry
  * 
  */
-public interface IDocument {
+public interface IOpaqueDocument {
 
 	/**
 	 * Title for the document. Not more than 80 characters. Must not be null and must not be empty

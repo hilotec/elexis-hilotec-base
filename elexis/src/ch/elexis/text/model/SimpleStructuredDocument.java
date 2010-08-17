@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.eclipse.swt.custom.TextChangeListener;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -18,6 +17,8 @@ import org.jdom.output.XMLOutputter;
 import ch.elexis.ElexisException;
 import ch.elexis.Hub;
 import ch.elexis.exchange.XChangeContainer;
+import ch.elexis.text.Samdas;
+import ch.elexis.text.Samdas.Record;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
@@ -108,34 +109,19 @@ public class SimpleStructuredDocument {
 	}
 
 	private void parseSamdas(Element eRoot) {
-	}
+		Samdas samdas = new Samdas();
+		samdas.setRoot(eRoot);
+		Record record = samdas.getRecord();
+		List<Samdas.XRef> xrefs = record.getXrefs();
+		List<Samdas.Markup> markups = record.getMarkups();
+		contents.append(record.getText());
+		for (Samdas.Markup m : markups) {
+			Range range = new Range(m.getPos(), m.getLength(),
+					Range.TYPE_MARKUP, m.getType());
+			ranges.add(range);
+		}
 
-	/*
-	 * Element eRecord = eRoot.getChild("record", ns); List<Element> eXRef =
-	 * eRecord.getChildren(ELEM_XREF, ns); Element eText =
-	 * eRecord.getChild("text", ns); contents.append(eText.getText());
-	 * List<Element> eMarkup = eRecord.getChildren(ELEM_MARKUP, ns); for
-	 * (Element el : eXRef) { int pos =
-	 * Integer.parseInt(el.getAttributeValue(ATTR_SAMDAS_FROM)); int len =
-	 * Integer.parseInt(el.getAttributeValue(ATTR_LENGTH)); String provider =
-	 * el.getAttributeValue("provider"); String id = el.getAttributeValue("id");
-	 * ranges.add(new Xref(pos, len, provider, id)); } for (Element el :
-	 * eMarkup) { int pos =
-	 * Integer.parseInt(el.getAttributeValue(ATTR_SAMDAS_FROM)); int len =
-	 * Integer.parseInt(el.getAttributeValue(ATTR_LENGTH)); String type =
-	 * el.getAttributeValue(ATTR_TYPE); IMarkup.TYPE t = IMarkup.TYPE.NORMAL; if
-	 * (type.equalsIgnoreCase(ATTR_TYPE_EMPHASIZED)) { t = IMarkup.TYPE.EM; }
-	 * else if (type.equals(ATTR_TYPE_BOLD)) { t = IMarkup.TYPE.BOLD; } else if
-	 * (type.equalsIgnoreCase(ATTR_TYPE_ITALIC)) { //$NON-NLS-1$ t =
-	 * IMarkup.TYPE.ITALIC; } else if
-	 * (type.equalsIgnoreCase(ATTR_TYPE_UNDERLINED)) { //$NON-NLS-1$ t =
-	 * IMarkup.TYPE.UNDERLINE; } else if
-	 * (type.equalsIgnoreCase(ATTR_TYPE_STRIKETHRU)) { t =
-	 * IMarkup.TYPE.STRIKETHRU; } Markup m = new Markup(pos, len, t);
-	 * ranges.add(m); }
-	 * 
-	 * }
-	 */
+	}
 
 	private void parseSSD(Element eRoot) {
 		Element eText = eRoot.getChild(ELEM_TEXT, ns);
@@ -219,37 +205,40 @@ public class SimpleStructuredDocument {
 				}
 			}
 			contents.insert(pos, ins);
-			for(SSDChangeListener tcl:textChangeListeners){
+			for (SSDChangeListener tcl : textChangeListeners) {
 				tcl.contentsChanged(pos);
 			}
 		}
 	}
 
 	/**
-	 *  remove some text
-	 *  @param pos position from which to remove
-	 *  @param len length of text to remove
-	 *  @return the removed String
+	 * remove some text
+	 * 
+	 * @param pos
+	 *            position from which to remove
+	 * @param len
+	 *            length of text to remove
+	 * @return the removed String
 	 */
 	public String remove(int pos, int len) {
-		if (pos > contents.length() || pos<0) {
+		if (pos > contents.length() || pos < 0) {
 			return "";
 		}
 		int end = pos + len;
-		for(Range r:ranges){
-			int p=r.getPosition();
-			int l=r.getLength();
-			if(p<pos){
-				if(p+l>pos){
-					
+		for (Range r : ranges) {
+			int p = r.getPosition();
+			int l = r.getLength();
+			if (p < pos) {
+				if (p + l > pos) {
+
 				}
-			}else{
-				r.setPosition(p-len);
+			} else {
+				r.setPosition(p - len);
 			}
 		}
 		String ret = contents.substring(pos, end);
 		contents.delete(pos, end);
-		for(SSDChangeListener ssdc:textChangeListeners){
+		for (SSDChangeListener ssdc : textChangeListeners) {
 			ssdc.contentsChanged(pos);
 		}
 		return ret;
@@ -262,37 +251,5 @@ public class SimpleStructuredDocument {
 	public List<Range> getRanges() {
 		return Collections.unmodifiableList(ranges);
 	}
-
-	public void addTextChangeListener(SSDChangeListener listener) {
-		textChangeListeners.add(listener);
-	}
-
-	public int getCharCount() {
-		return contents.length();
-	}
-
-	public String getLineDelimiter() {
-		return "\n";
-	}
-
-	public String getTextRange(int start, int length) {
-		if (start < 0 || start > contents.length()) {
-			return "";
-		}
-		return contents.substring(start, start + length);
-	}
-
-	public void removeTextChangeListener(TextChangeListener listener) {
-		textChangeListeners.remove(listener);
-	}
-
-	public void replaceTextRange(int start, int replaceLength, String newText) {
-		contents.replace(start, start + replaceLength, newText);
-	}
-
-	public void removeRange(Range range) {
-		ranges.remove(range);
-	}
-	
 
 }

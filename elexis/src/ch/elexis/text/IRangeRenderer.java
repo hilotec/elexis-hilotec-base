@@ -1,5 +1,7 @@
 package ch.elexis.text;
 
+import org.eclipse.jface.action.IAction;
+
 import ch.elexis.ElexisException;
 import ch.elexis.text.model.Range;
 
@@ -27,4 +29,15 @@ public interface IRangeRenderer {
 	 * @return an output specific result.
 	 */
 	public Object doRender(Range range, OUTPUT outputType, IRichTextDisplay display) throws ElexisException;
+
+	/**
+	 * return an array of actions that are possible on these ranges
+	 * @param rangeType the type of ranges in question
+	 * @return an array of all Actions that can be done on this range. can be null. The first 
+	 * Action on index [0] will be executed if the user double-clicks on the range, the others
+	 * will be presented in a context menu if the user right-clicks on the range. (that is: the user
+	 * right-clicks or double clicks on some text between start and start+length of the range. A click on a 
+	 * separate window created by a range will not be handled by the framework)
+	 */
+	public IAction[] getActions(String rangeType);
 }

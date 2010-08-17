@@ -30,7 +30,7 @@ import ch.rgw.tools.StringTool;
  * @author gerry
  * 
  */
-public class GenericDocument implements IDocument {
+public class GenericDocument implements IOpaqueDocument {
 	String title;
 	String category;
 	byte[] contents;

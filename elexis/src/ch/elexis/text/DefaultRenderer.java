@@ -1,5 +1,6 @@
 package ch.elexis.text;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 
@@ -7,6 +8,11 @@ import ch.elexis.Desk;
 import ch.elexis.ElexisException;
 import ch.elexis.text.model.Range;
 
+/**
+ * An IRangeRenderer that handles only some markups 
+ * @author Gerry Weirich
+ *
+ */
 public class DefaultRenderer implements IRangeRenderer {
 
 	@Override
@@ -47,6 +53,11 @@ public class DefaultRenderer implements IRangeRenderer {
 			throw new ElexisException(getClass(), range.getType()
 					+ " not supported", ElexisException.EE_NOT_SUPPORTED);
 		}
+	}
+
+	@Override
+	public IAction[] getActions(String rangeType) {
+		return null;
 	}
 
 }

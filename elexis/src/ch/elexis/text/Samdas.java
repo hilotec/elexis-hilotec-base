@@ -91,6 +91,10 @@ public class Samdas {
 		doc.setRootElement(eRoot);
 	}
 	
+	public void setRoot(Element el){
+		doc.removeContent();
+		doc.setRootElement(el);
+	}
 	public Document getDocument(){
 		return doc;
 	}
