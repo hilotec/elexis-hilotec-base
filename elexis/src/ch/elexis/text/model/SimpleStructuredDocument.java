@@ -55,12 +55,12 @@ public class SimpleStructuredDocument {
 			"schemaLocation", "http://www.elexis.ch/XSD sst.xsd"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	private final StringBuilder contents;
-	private final ArrayList<Range> ranges;
+	private final ArrayList<SSDRange> ranges;
 	private final List<SSDChangeListener> textChangeListeners = new ArrayList<SSDChangeListener>();
 
 	public SimpleStructuredDocument() {
 		contents = new StringBuilder();
-		ranges = new ArrayList<Range>();
+		ranges = new ArrayList<SSDRange>();
 	}
 
 	/**
@@ -116,8 +116,8 @@ public class SimpleStructuredDocument {
 		List<Samdas.Markup> markups = record.getMarkups();
 		contents.append(record.getText());
 		for (Samdas.Markup m : markups) {
-			Range range = new Range(m.getPos(), m.getLength(),
-					Range.TYPE_MARKUP, m.getType());
+			SSDRange range = new SSDRange(m.getPos(), m.getLength(),
+					SSDRange.TYPE_MARKUP, m.getType());
 			ranges.add(range);
 		}
 
@@ -128,7 +128,7 @@ public class SimpleStructuredDocument {
 		contents.append(eText.getText());
 		List<Element> eRanges = eRoot.getChildren(ELEM_RANGE, ns);
 		for (Element el : eRanges) {
-			Range range = new Range(el);
+			SSDRange range = new SSDRange(el);
 			ranges.add(range);
 		}
 
@@ -163,7 +163,7 @@ public class SimpleStructuredDocument {
 		eText.setText(contents.toString());
 		doc.setRootElement(eRoot);
 		eRoot.addContent(eText);
-		for (Range r : ranges) {
+		for (SSDRange r : ranges) {
 			Element el = r.toElement();
 			eRoot.addContent(el);
 
@@ -189,7 +189,7 @@ public class SimpleStructuredDocument {
 		if (pos > contents.length()) {
 			contents.append(ins);
 		} else {
-			for (Range r : ranges) {
+			for (SSDRange r : ranges) {
 				if (!r.isLocked()) {
 					int p = r.getPosition();
 					int l = r.getLength();
@@ -225,7 +225,7 @@ public class SimpleStructuredDocument {
 			return "";
 		}
 		int end = pos + len;
-		for (Range r : ranges) {
+		for (SSDRange r : ranges) {
 			int p = r.getPosition();
 			int l = r.getLength();
 			if (p < pos) {
@@ -244,11 +244,11 @@ public class SimpleStructuredDocument {
 		return ret;
 	}
 
-	public void addRange(Range r) {
+	public void addRange(SSDRange r) {
 		ranges.add(r);
 	}
 
-	public List<Range> getRanges() {
+	public List<SSDRange> getRanges() {
 		return Collections.unmodifiableList(ranges);
 	}
 

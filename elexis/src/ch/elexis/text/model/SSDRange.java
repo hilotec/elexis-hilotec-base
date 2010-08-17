@@ -6,8 +6,8 @@ import org.jdom.Element;
 import ch.rgw.tools.StringTool;
 
 /**
- * A Range is some part of a document. It has a position and a length within the
- * text Optionally, it can be places outside the text flow. In that case, it
+ * An SSDRange is some part of a SimpleStructuredDocument. It has a position and a length within the
+ * text Optionally, it can be placed outside the text flow. In that case, it
  * must provide a viewport position relative to the character indicated by
  * position. The contents of the Range is totally implementation specific. It
  * might be some text or some graphics or both.
@@ -15,7 +15,7 @@ import ch.rgw.tools.StringTool;
  * @author gerry
  * 
  */
-public class Range {
+public class SSDRange {
 	public static final String TYPE_MARKUP = "markup";
 
 	public static final String ELEM_NAME = "range";
@@ -58,7 +58,7 @@ public class Range {
 	String hint;
 	String contents;
 
-	public Range(Element el) {
+	public SSDRange(Element el) {
 		id = el.getAttributeValue(ATTR_ID);
 		typename = el.getAttributeValue(ATTR_TYPENAME);
 		position = Integer.parseInt(el.getAttributeValue(ATTR_START_OFFSET));
@@ -75,7 +75,7 @@ public class Range {
 		contents = el.getText();
 	}
 
-	public Range(final int start, final int len, String typename, String id) {
+	public SSDRange(final int start, final int len, String typename, String id) {
 		length = len;
 		position = start;
 		this.typename = typename;

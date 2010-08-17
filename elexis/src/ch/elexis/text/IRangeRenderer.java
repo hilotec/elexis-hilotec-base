@@ -3,7 +3,7 @@ package ch.elexis.text;
 import org.eclipse.jface.action.IAction;
 
 import ch.elexis.ElexisException;
-import ch.elexis.text.model.Range;
+import ch.elexis.text.model.SSDRange;
 
 /**
  * Contract to display a Range in some specific context
@@ -28,7 +28,7 @@ public interface IRangeRenderer {
 	 * @param outputType the desired type of output
 	 * @return an output specific result.
 	 */
-	public Object doRender(Range range, OUTPUT outputType, IRichTextDisplay display) throws ElexisException;
+	public Object doRender(SSDRange range, OUTPUT outputType, IRichTextDisplay display) throws ElexisException;
 
 	/**
 	 * return an array of actions that are possible on these ranges
