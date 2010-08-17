@@ -29,14 +29,14 @@ import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.omnivore.views.FileImportDialog;
-import ch.elexis.text.IDocument;
+import ch.elexis.text.IOpaqueDocument;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
-public class DocHandle extends PersistentObject implements IDocument{
+public class DocHandle extends PersistentObject implements IOpaqueDocument{
 	public static final String TABLENAME = "CH_ELEXIS_OMNIVORE_DATA"; //$NON-NLS-1$
 	public static final String DBVERSION = "1.2.1"; //$NON-NLS-1$
 	public static final String createDB=

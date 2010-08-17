@@ -12,7 +12,7 @@ import ch.elexis.ElexisException;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.services.IDocumentManager;
-import ch.elexis.text.IDocument;
+import ch.elexis.text.IOpaqueDocument;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.RegexpFilter;
@@ -26,7 +26,7 @@ public class DocumentManagement implements IDocumentManager {
 		return false;
 	}
 
-	public String addDocument(IDocument doc) throws ElexisException{
+	public String addDocument(IOpaqueDocument doc) throws ElexisException{
 		DocHandle dh=new DocHandle(doc.getContentsAsBytes(),doc.getPatient(),doc.getTitle(),doc.getMimeType(),doc.getKeywords());
 		return dh.getId();
 	}
@@ -75,7 +75,7 @@ public class DocumentManagement implements IDocumentManager {
 	}
 
 	@Override
-	public List<IDocument> listDocuments(final Patient pat, final String categoryMatch,
+	public List<IOpaqueDocument> listDocuments(final Patient pat, final String categoryMatch,
 			final String titleMatch, final String keywordMatch, final TimeSpan dateMatch,
 			final String contentsMatch) throws ElexisException {
 		Query<DocHandle> qbe=new Query<DocHandle>(DocHandle.class);
@@ -115,7 +115,7 @@ public class DocumentManagement implements IDocumentManager {
 			throw new ElexisException(getClass(), "ContentsMatch not supported", ElexisException.EE_NOT_SUPPORTED); //$NON-NLS-1$
 		}
 		List<DocHandle> dox=qbe.execute();
-		ArrayList<IDocument> ret=new ArrayList<IDocument>(dox.size());
+		ArrayList<IOpaqueDocument> ret=new ArrayList<IOpaqueDocument>(dox.size());
 		for(DocHandle doc:dox){
 			ret.add(doc);
 		}
