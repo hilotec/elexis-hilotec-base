@@ -5,6 +5,10 @@ public class GenericRange {
 	int pos;
 	int len;
 	
+	public GenericRange(GenericRange other){
+		pos=other.pos;
+		len=other.len;
+	}
 	public GenericRange(){
 		pos=0;
 		len=0;
@@ -31,7 +35,9 @@ public class GenericRange {
 	}
 	
 	public void setPos(int p){
+		int end=getEnd();
 		pos=p;
+		setEnd(end);
 	}
 	
 	public void setLen(int l){
