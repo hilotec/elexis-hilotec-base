@@ -956,7 +956,6 @@ public abstract class PersistentObject implements ISelectable {
 	 * @return Der Inhalt des Felds (kann auch null sein), oder **ERROR**, wenn
 	 *         versucht werden sollte, ein nicht existierendes Feld auszulesen
 	 */
-	@SuppressWarnings("unchecked")
 	public String get(final String field) {
 		String key = getKey(field);
 		Object ret = cache.get(key);
@@ -1123,7 +1122,7 @@ public abstract class PersistentObject implements ISelectable {
 	 *            Feldname der Hashtable
 	 * @return eine Hashtable (ggf. leer). Nie null.
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Hashtable getHashtable(final String field) {
 		String key = getKey(field);
 		Object o = cache.get(key);

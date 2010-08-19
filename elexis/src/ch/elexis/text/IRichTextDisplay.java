@@ -1,15 +1,20 @@
 package ch.elexis.text;
 
 import ch.elexis.util.IKonsExtension;
+import ch.rgw.tools.GenericRange;
 
 public interface IRichTextDisplay {
 
-	void addXrefHandler(String id, IKonsExtension ike);
+	public void addXrefHandler(String id, IKonsExtension ike);
 
-	void insertXRef(int pos, String textToDisplay, String providerId, String itemID);
+	public void insertXRef(int pos, String textToDisplay, String providerId, String itemID);
 
-	void addDropReceiver(Class<?> clazz, IKonsExtension konsExtension);
+	public void addDropReceiver(Class<?> clazz, IKonsExtension konsExtension);
 
-	String getDocumentAsText();
-
+	public String getContentsAsXML();
+	
+	public String getContentsPlaintext();
+	
+	public GenericRange getSelectedRange();
+	
 }

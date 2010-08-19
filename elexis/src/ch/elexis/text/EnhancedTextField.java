@@ -65,6 +65,7 @@ import ch.elexis.text.model.Samdas;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.GenericRange;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 
@@ -252,7 +253,7 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 									
 								}
 								record.remove(eRemove);
-								doFormat(getDocumentAsText());
+								doFormat(getContentsAsXML());
 							}
 							
 						});
@@ -443,7 +444,7 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 		Samdas.XRef xref = new Samdas.XRef(provider, id, pos, len);
 		record.add(xref);
 		setDirty(true);
-		doFormat(getDocumentAsText());
+		doFormat(getContentsAsXML());
 	}
 	
 	/**
@@ -464,7 +465,7 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 		}
 		Samdas.Markup markup = new Samdas.Markup(pos, len, typ);
 		record.add(markup);
-		doFormat(getDocumentAsText());
+		doFormat(getContentsAsXML());
 	}
 	
 	/**
@@ -505,7 +506,7 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 					start += 1;
 					text.replaceTextRange(start, (e.end - start), comp);
 					e.doit = false;
-					doFormat(getDocumentAsText());
+					doFormat(getContentsAsXML());
 					text.setCaretOffset(start + comp.length());
 				} else { // Nein -> prüfen, ob es einem Leistungsblocknamen
 					// entspricht
@@ -530,7 +531,7 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 						start += 1;
 						text.replaceTextRange(start, e.end - start, StringTool.leer);
 						e.doit = false;
-						actKons.updateEintrag(getDocumentAsText(), false);
+						actKons.updateEintrag(getContentsAsXML(), false);
 						setDirty(false);
 						ElexisEventDispatcher.update(actKons);
 					}
@@ -624,7 +625,8 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 	/**
 	 * Liefert den Inhalt des Textfelds als XML-Text zurück
 	 */
-	public String getDocumentAsText(){
+	@Override
+	public String getContentsAsXML(){
 		XMLOutputter xo = new XMLOutputter(Format.getRawFormat());
 		return xo.outputString(getDocument());
 	}
@@ -764,5 +766,18 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 			return filter;
 		}
 		
+	}
+
+		
+
+	@Override
+	public String getContentsPlaintext() {
+		return text.getText();
+	}
+
+	@Override
+	public GenericRange getSelectedRange() {
+		Point pt=text.getSelection();
+		return new GenericRange(pt.x,pt.y);
 	}
 }

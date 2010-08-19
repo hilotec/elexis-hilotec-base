@@ -67,7 +67,7 @@ public class ETFDropReceiver implements IReceiver{
 			Konsultation actKons=(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 			if(actKons!=null){
 				etf.text.insert(o.getLabel());
-				actKons.updateEintrag(etf.getDocumentAsText(), false);
+				actKons.updateEintrag(etf.getContentsAsXML(), false);
 			}
 			
 		}

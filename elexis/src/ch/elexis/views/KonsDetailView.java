@@ -538,7 +538,7 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 
 	public void save() {
 		if (actKons != null) {
-			actKons.updateEintrag(text.getDocumentAsText(), false);
+			actKons.updateEintrag(text.getContentsAsXML(), false);
 			log.log("saved.", Log.DEBUGMSG); //$NON-NLS-1$
 		}
 	}
@@ -546,7 +546,7 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 	public void activation(final boolean mode) {
 		if ((mode == false) && (text.isDirty())) {
 			if (actKons != null) {
-				actKons.updateEintrag(text.getDocumentAsText(), false);
+				actKons.updateEintrag(text.getContentsAsXML(), false);
 				log.log("saved.", Log.DEBUGMSG); //$NON-NLS-1$
 			}
 			text.setDirty(false);

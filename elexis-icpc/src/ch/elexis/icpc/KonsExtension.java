@@ -68,7 +68,7 @@ public class KonsExtension implements IKonsExtension {
 			}
 			mine.insertXRef(pos, EPISODE_TITLE + ep.getLabel(),
 					Activator.PLUGIN_ID, enc.getId());
-			k.updateEintrag(mine.getDocumentAsText(), false);
+			k.updateEintrag(mine.getContentsAsXML(), false);
 			ElexisEventDispatcher.update(k);
 		}
 

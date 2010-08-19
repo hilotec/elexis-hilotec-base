@@ -158,7 +158,7 @@ public class Konsultation extends PersistentObject implements
 		return vr;
 	}
 
-	public void addSection(String title, int pos) {
+	private void addSection(String title, int pos) {
 		VersionedResource vr = getEintrag();
 		String ntext = vr.getHead();
 		Samdas samdas = new Samdas(ntext);
@@ -211,14 +211,14 @@ public class Konsultation extends PersistentObject implements
 		updateEintrag(samdas.toString(), true); // XRefs may always be added
 	}
 
-	public Samdas getEntryRaw() {
+	private Samdas getEntryRaw() {
 		VersionedResource vr = getEintrag();
 		String ntext = vr.getHead();
 		Samdas samdas = new Samdas(ntext);
 		return samdas;
 	}
 
-	public void updateEntryRaw(Samdas samdas) {
+	private void updateEntryRaw(Samdas samdas) {
 		updateEintrag(samdas.toString(), false);
 	}
 

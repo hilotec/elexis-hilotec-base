@@ -51,10 +51,12 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 		public void catchElexisEvent(ElexisEvent ev) {
 			switch (ev.getType()) {
 			case ElexisEvent.EVENT_CREATE:
+				/*
 				Konsultation k = (Konsultation) ev.getObject();
 				Samdas entry = k.getEntryRaw();
 				Record record = entry.getRecord();
 				break;
+				*/
 			}
 		}
 

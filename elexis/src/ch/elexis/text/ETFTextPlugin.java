@@ -141,7 +141,7 @@ public class ETFTextPlugin implements ITextPlugin {
 
 	public byte[] storeToByteArray() {
 		try {
-			String cnt = etf.getDocumentAsText();
+			String cnt = etf.getContentsAsXML();
 			byte[] exp = cnt.getBytes(CHARSET);
 			return CompEx.Compress(exp, CompEx.ZIP);
 		} catch (Exception ex) {
