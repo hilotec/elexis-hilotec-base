@@ -42,7 +42,7 @@ import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.services.GlobalServiceDescriptors;
 import ch.elexis.text.ExternalLink;
-import ch.elexis.text.Samdas;
+import ch.elexis.text.model.Samdas;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.compress.CompEx;
