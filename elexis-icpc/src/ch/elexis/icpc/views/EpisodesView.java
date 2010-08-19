@@ -32,8 +32,8 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.Episode;
 import ch.elexis.icpc.KonsFilter;
-import ch.elexis.text.Samdas;
-import ch.elexis.text.Samdas.Record;
+import ch.elexis.text.model.Samdas;
+import ch.elexis.text.model.Samdas.Record;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 
