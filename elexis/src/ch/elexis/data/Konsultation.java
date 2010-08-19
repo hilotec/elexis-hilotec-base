@@ -26,7 +26,7 @@ import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.Messages;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.text.Samdas;
+import ch.elexis.text.model.Samdas;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;

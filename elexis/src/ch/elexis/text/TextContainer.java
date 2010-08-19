@@ -68,6 +68,7 @@ import ch.elexis.data.Script;
 import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.TextTemplatePreferences;
+import ch.elexis.text.model.Samdas;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ScriptUtil;

@@ -14,7 +14,7 @@
 package ch.elexis.exchange.elements;
 
 import ch.elexis.exchange.XChangeExporter;
-import ch.elexis.text.Samdas.XRef;
+import ch.elexis.text.model.Samdas.XRef;
 
 public class MarkupElement extends XChangeElement {
 	public static final String XMLNAME = "markup";

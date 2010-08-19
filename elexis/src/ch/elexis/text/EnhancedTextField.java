@@ -61,6 +61,7 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.Query;
 import ch.elexis.preferences.PreferenceConstants;
+import ch.elexis.text.model.Samdas;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;

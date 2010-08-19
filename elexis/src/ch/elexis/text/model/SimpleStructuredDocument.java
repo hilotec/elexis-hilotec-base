@@ -17,8 +17,7 @@ import org.jdom.output.XMLOutputter;
 import ch.elexis.ElexisException;
 import ch.elexis.Hub;
 import ch.elexis.exchange.XChangeContainer;
-import ch.elexis.text.Samdas;
-import ch.elexis.text.Samdas.Record;
+import ch.elexis.text.model.Samdas.Record;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
@@ -85,7 +84,7 @@ public class SimpleStructuredDocument {
 				CharArrayReader car = new CharArrayReader(input.toCharArray());
 				Document doc = builder.build(car);
 				Element eRoot = doc.getRootElement();
-				if (eRoot.getName().equals("EMR")) {
+				if (eRoot.getName().equals(Samdas.ELEM_ROOT)) {
 					parseSamdas(eRoot);
 				} else if (eRoot.getName().equals(ELEM_ROOT)) {
 					parseSSD(eRoot);
@@ -110,11 +109,13 @@ public class SimpleStructuredDocument {
 
 	private void parseSamdas(Element eRoot) {
 		Samdas samdas = new Samdas();
+		eRoot.detach();
 		samdas.setRoot(eRoot);
 		Record record = samdas.getRecord();
 		List<Samdas.XRef> xrefs = record.getXrefs();
 		List<Samdas.Markup> markups = record.getMarkups();
-		contents.append(record.getText());
+		String text=record.getText();
+		contents.append(text);
 		for (Samdas.Markup m : markups) {
 			SSDRange range = new SSDRange(m.getPos(), m.getLength(),
 					SSDRange.TYPE_MARKUP, m.getType());
@@ -126,6 +127,7 @@ public class SimpleStructuredDocument {
 	private void parseSSD(Element eRoot) {
 		Element eText = eRoot.getChild(ELEM_TEXT, ns);
 		contents.append(eText.getText());
+		@SuppressWarnings("unchecked")
 		List<Element> eRanges = eRoot.getChildren(ELEM_RANGE, ns);
 		for (Element el : eRanges) {
 			SSDRange range = new SSDRange(el);

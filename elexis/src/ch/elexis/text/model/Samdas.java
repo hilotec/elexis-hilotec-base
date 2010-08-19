@@ -11,7 +11,7 @@
  *  $Id: Samdas.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
 
-package ch.elexis.text;
+package ch.elexis.text.model;
 
 import java.io.CharArrayReader;
 import java.util.ArrayList;
@@ -34,8 +34,9 @@ import ch.rgw.tools.TimeTool;
  * zwischen verschiedenen Endanwendungen ermöglicht. Diese Klasse ist ein API dafür
  * 
  * @author Gerry
- * 
+ * @deprecated use SimpleStructuredDocument
  */
+@Deprecated
 public class Samdas {
 	public static final String ELEM_ROOT = "EMR"; //$NON-NLS-1$
 	public static final String ELEM_TEXT = "text"; //$NON-NLS-1$
@@ -93,6 +94,8 @@ public class Samdas {
 	
 	public void setRoot(Element el){
 		doc.removeContent();
+		//doc.getRootElement().detach();
+		eRoot=el;
 		doc.setRootElement(el);
 	}
 	public Document getDocument(){

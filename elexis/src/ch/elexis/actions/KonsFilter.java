@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
-import ch.elexis.text.Samdas;
+import ch.elexis.text.model.Samdas;
 
 /**
  * Ein Filter für Konsultationen

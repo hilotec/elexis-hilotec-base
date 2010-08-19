@@ -10,7 +10,7 @@
  *    
  *  $Id: MimePart.java 5321 2009-05-28 12:06:28Z rgw_ch $
  *******************************************************************************/
-package ch.elexis.text;
+package ch.elexis.text.model;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
