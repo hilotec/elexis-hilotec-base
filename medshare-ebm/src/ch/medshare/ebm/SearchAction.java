@@ -33,11 +33,13 @@ import ch.elexis.text.IRichTextDisplay;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.GenericRange;
+import ch.rgw.tools.StringTool;
 
 public class SearchAction extends Action implements IKonsExtension, IHandler {
 	
 	public static final String ID = "ch.medshare.ebm";
-	private static EnhancedTextField textField;
+	private static IRichTextDisplay textField;
 	private static SearchAction instance;
 	
 	public String connect(IRichTextDisplay tf){
@@ -61,9 +63,13 @@ public class SearchAction extends Action implements IKonsExtension, IHandler {
 	public void run(){
 		String search = "";
 		if(textField != null){
-			search = textField.getSelectedText();
-			if (search.isEmpty())
-				search = textField.getWordUnderCursor();
+			String text=textField.getContentsPlaintext();
+			GenericRange gr=textField.getSelectedRange();
+			if(gr.getLength()==0){
+				search=StringTool.getWordAtIndex(text, gr.getPos());
+			}else{
+				search=text.substring(gr.getPos(), gr.getEnd());
+			}
 			search = search.trim().replace("\r\n", " ");
 		}
 		
