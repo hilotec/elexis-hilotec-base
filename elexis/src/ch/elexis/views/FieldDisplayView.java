@@ -146,7 +146,7 @@ public class FieldDisplayView extends ViewPart implements IActivationListener,
 
 	public void catchElexisEvent(final ElexisEvent ev) {
 		final PersistentObject po = ev.getObject();
-		if (ev.getClass().equals(myClass) && po != null) {
+		if (ev.getObjectClass().equals(myClass) && po != null) {
 			Desk.asyncExec(new Runnable() {
 				public void run() {
 					if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
@@ -180,7 +180,7 @@ public class FieldDisplayView extends ViewPart implements IActivationListener,
 		}
 	}
 
-	final private ElexisEvent template = new ElexisEvent(null, null,
+	final private ElexisEvent template = new ElexisEvent(null, myClass,
 			ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
 
 	public ElexisEvent getElexisEventFilter() {
