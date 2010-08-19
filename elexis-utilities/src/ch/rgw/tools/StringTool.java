@@ -48,7 +48,7 @@ import ch.rgw.tools.net.NetTool;
 public class StringTool {
 	
 	public static final String Version() {
-		return "2.0.3";
+		return "2.0.4";
 	}
 	
 	private static String default_charset = "utf-8";
@@ -61,6 +61,7 @@ public class StringTool {
 	public static final String backslash="\\";
 	
 	public static final String numbers = "[0-9]+";
+	public static final String wordSeparatorChars="\n\r\t.,;:!? ";
 	public static final String wordSeparators = "[\\t ,\\.:\\?!\\n\\r]";
 	public static final String lineSeparators = "[\\n\\r\\.\\?!;]";
 	public static final String ipv4address= "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}";
@@ -996,6 +997,7 @@ public class StringTool {
 		return words[0];
 	}
 	
+	
 	/**
 	 * Return the first line if the given String but at most maxChars
 	 */
@@ -1011,6 +1013,35 @@ public class StringTool {
 		return lines[0];
 	}
 	
+	public static String getWordAtIndex(String text, int index){
+		char c;
+		if(index<0 || text==null || index>=text.length()){
+			return null;
+		}
+		int start;
+		int end;
+		for (start = index - 1; start >= 0; start--) {
+			c = text.charAt(start);
+			if (wordSeparatorChars.indexOf(c)!=-1) {
+				start++;
+				break;
+			}
+		}
+		if(start<0){
+			start=0;
+		}
+		for (end = index; end < text.length(); end++) {
+			c = text.charAt(end);
+			if (wordSeparatorChars.indexOf(c)!=-1) {
+				break;
+			}
+		}
+		if(--end>text.length()){
+			end=text.length();
+		}
+		return text.substring(start, end);
+	}
+
 	@SuppressWarnings("unchecked")
 	public static void dumpHashtable(final Log log, final Hashtable table) {
 		Set<String> keys = table.keySet();
