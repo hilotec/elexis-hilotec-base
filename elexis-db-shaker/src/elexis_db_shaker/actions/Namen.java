@@ -53,10 +53,10 @@ public class Namen {
 	
 	
 	public String getRandomVorname() {
-		return vornamen.get((int)Math.round(Math.random()*100)%vornamen.size()).trim();
+		return vornamen.get((int)Math.round(Math.random()*(vornamen.size()-1))).trim();
 	}
 	
 	public String getRandomNachname() {
-		return nachnamen.get((int)Math.round(Math.random()*100)%nachnamen.size()).trim();
+		return nachnamen.get((int)Math.round(Math.random()*(nachnamen.size()-1))).trim();
 	}
 }
