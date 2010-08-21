@@ -13,6 +13,10 @@
 
 package ch.elexis.data;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -26,6 +30,7 @@ import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.scripting.Interpreter;
 import ch.elexis.text.TextContainer;
 import ch.elexis.util.Extensions;
+import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
@@ -223,9 +228,9 @@ public class Script extends NamedBlob2 {
 					ElexisEventDispatcher.getSelected(Fall.class));
 			scripter.setValue("actKons",
 					ElexisEventDispatcher.getSelected(Konsultation.class));
-			scripter.setValue("actMandant",Hub.actMandant);
-			scripter.setValue("actUser",Hub.actUser);
-					
+			scripter.setValue("actMandant", Hub.actMandant);
+			scripter.setValue("actUser", Hub.actUser);
+
 			scripter.setValue("Elexis", Hub.plugin);
 			return scripter.run(parsed, true);
 		}
@@ -318,5 +323,32 @@ public class Script extends NamedBlob2 {
 		Script s = new Script();
 		s.loadInterpreter(script);
 		return s.interpreter;
+	}
+
+	public static Script importFromFile(String filepath) throws ElexisException {
+		File file = new File(filepath);
+		if (!file.exists()) {
+			file = new File(filepath + ".script");
+			if (!file.exists()) {
+				throw new ElexisException(Script.class, "Could not find file "
+						+ filepath, ElexisException.EE_NOT_FOUND);
+			}
+		}
+		try {
+			FileReader fr = new FileReader(file);
+			BufferedReader br=new BufferedReader(fr);
+			StringBuilder sb=new StringBuilder();
+			String in;
+			while((in=br.readLine())!=null){
+				sb.append(in);
+			}
+			br.close();
+			String name=FileTool.getNakedFilename(filepath);
+			return create(name,sb.toString());
+		} catch (IOException ioex) {
+			throw new ElexisException(Script.class, "Error loading file "
+					+ filepath + ": " + ioex.getMessage(),
+					ElexisException.EE_FILE_ERROR);
+		}
 	}
 }
