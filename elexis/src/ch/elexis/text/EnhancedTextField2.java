@@ -2,9 +2,13 @@ package ch.elexis.text;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 
+import ch.elexis.Desk;
+import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.IKonsExtension;
+import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.GenericRange;
 
 public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
@@ -12,6 +16,10 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 	
 	public EnhancedTextField2(Composite parent) {
 		super(parent, SWT.NONE);
+		setLayout(new GridLayout());
+		st = new StyledText(this, SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
+		st.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
+		st.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 	}
 
 	@Override
