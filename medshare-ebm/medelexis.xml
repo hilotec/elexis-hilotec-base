@@ -9,5 +9,5 @@
   	</service:roles>
   </service:conditions>
   <service:description>Search in EBM-Guidelines</service:description>
-  <service:depends>ch.medshare.base.external</service:depends>
+  <service:depends>ch.medshare.base.external ch.medelexis.nucleus</service:depends>
 </service:service>
