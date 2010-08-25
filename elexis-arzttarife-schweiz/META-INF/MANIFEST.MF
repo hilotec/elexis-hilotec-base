@@ -21,6 +21,4 @@ Export-Package: ch.elexis.TarmedRechnung,
  ch.elexis.views
 Bundle-ClassPath: bin/,
  .
-Import-Package: org.apache.commons.logging;version="1.0.4",
- org.apache.commons.logging.impl;version="1.0.4",
- org.jdom
+Import-Package: org.jdom
