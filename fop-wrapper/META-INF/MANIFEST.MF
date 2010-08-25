@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Fop-wrapper
-Bundle-SymbolicName: fop-wrapper
+Bundle-SymbolicName: ch.elexis.fop.wrapper
 Bundle-Version: 1.0.0
 Bundle-ClassPath: avalon-framework-4.2.0.jar,
  batik-all-1.6.jar,
