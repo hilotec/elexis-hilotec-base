@@ -11,6 +11,8 @@ public interface IRichTextDisplay {
 
 	public void addDropReceiver(Class<?> clazz, IKonsExtension konsExtension);
 
+	public String getWordUnderCursor();
+	
 	public String getContentsAsXML();
 	
 	public String getContentsPlaintext();
