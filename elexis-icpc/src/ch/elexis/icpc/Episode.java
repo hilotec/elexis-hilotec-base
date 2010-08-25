@@ -30,7 +30,7 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 	public static final int INACTIVE = 0;
 	public static final int ACTIVE = 1;
 	
-	protected static final String VERSION = "0.4.1";
+	protected static final String VERSION = "0.4.2";
 	protected final static String TABLENAME = "CH_ELEXIS_ICPC_EPISODES";
 	
 	protected static final String INACTIVE_VALUE = "0";
@@ -64,6 +64,8 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 	
 	private static final String upd041="ALTER TABLE "+TABLENAME+" add lastupdate BIGINT;"+
 	"ALTER TABLE "+LINKNAME+" ADD lastupdate BIGINT;";
+	
+	private static final String upd042="CREATE INDEX "+TABLENAME+"2 ON "+TABLENAME+" (Title);";
 	
 	static {
 		addMapping(TABLENAME, "PatientID", "Title", "StartDate", "Number", "Status", "ExtInfo",
@@ -117,6 +119,10 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 				}
 				if(vi.isOlder("0.4.1")){
 					createOrModifyTable(upd041);
+					version.set("Title", VERSION);
+				}
+				if(vi.isOlder("0.4.2")){
+					createOrModifyTable(upd042);
 					version.set("Title", VERSION);
 				}
 			}
