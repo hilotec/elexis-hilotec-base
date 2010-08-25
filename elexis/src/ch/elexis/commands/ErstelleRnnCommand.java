@@ -86,7 +86,7 @@ public class ErstelleRnnCommand extends AbstractHandler {
 						.getString("KonsZumVerrechnenView.errorInInvoice"), //$NON-NLS-1$
 						Messages.getString("KonsZumVerrechnenView.invoiceForCase", //$NON-NLS-1$
 							new Object[] {
-								fall.getLabel()
+								fall.getLabel(), fall.getPatient().getLabel()
 							}), ResultAdapter.getResultAsStatus(res));
 				} else {
 					tPat.remove(tFall);
