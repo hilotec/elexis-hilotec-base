@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,6 +18,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.data.IDiagnose;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -27,6 +28,11 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VersionInfo;
 
 public class Episode extends PersistentObject implements Comparable<Episode> {
+	public static final String FLD_PATIENT_ID = "PatientID";
+	public static final String FLD_STATUS = "Status";
+	public static final String FLD_NUMBER = "Number";
+	public static final String FLD_START_DATE = "StartDate";
+	public static final String FLD_TITLE = "Title";
 	public static final int INACTIVE = 0;
 	public static final int ACTIVE = 1;
 	
@@ -68,20 +74,20 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 	private static final String upd042="CREATE INDEX "+TABLENAME+"2 ON "+TABLENAME+" (Title);";
 	
 	static {
-		addMapping(TABLENAME, "PatientID", "Title", "StartDate", "Number", "Status", "ExtInfo",
+		addMapping(TABLENAME, FLD_PATIENT_ID, FLD_TITLE, FLD_START_DATE, FLD_NUMBER, FLD_STATUS, FLD_EXTINFO,
 			"DiagLink=JOINT:Diagnosis:Episode:" + LINKNAME);
 		JdbcLink j = getConnection();
-		Episode version = load("1");
+		Episode version = load(StringConstants.ONE);
 		if (!version.exists()) {
 			createOrModifyTable(createDB);
 			createOrModifyTable(createLink);
 		} else {
-			VersionInfo vi = new VersionInfo(version.get("Title"));
+			VersionInfo vi = new VersionInfo(version.get(FLD_TITLE));
 			if (vi.isOlder(VERSION)) {
 				if (vi.isOlder("0.2.0")) {
 					j.exec(j.translateFlavor("ALTER TABLE " + TABLENAME
 						+ " ADD deleted CHAR(1) default '0';"));
-					version.set("Title", VERSION);
+					version.set(FLD_TITLE, VERSION);
 				}
 				
 				if (vi.isOlder("0.3.0")) {
@@ -99,31 +105,31 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 					sql = "ALTER TABLE " + TABLENAME + " ADD Status CHAR(1) DEFAULT '1';";
 					j.exec(j.translateFlavor(sql));
 					
-					version.set("Title", VERSION);
+					version.set(FLD_TITLE, VERSION);
 				}
 				
 				if (vi.isOlder("0.3.1")) {
 					String sql = "ALTER TABLE " + TABLENAME + " ADD ExtInfo BLOB;";
 					j.exec(j.translateFlavor(sql));
-					version.set("Title", VERSION);
+					version.set(FLD_TITLE, VERSION);
 				}
 				
 				if (vi.isOlder("0.3.2")) {
 					String sql = "ALTER TABLE " + TABLENAME + " MODIFY Title VARCHAR(256);";
 					j.exec(j.translateFlavor(sql));
-					version.set("Title", VERSION);
+					version.set(FLD_TITLE, VERSION);
 				}
 				if (vi.isOlder("0.4.0")) {
 					createOrModifyTable(createLink);
-					version.set("Title", VERSION);
+					version.set(FLD_TITLE, VERSION);
 				}
 				if(vi.isOlder("0.4.1")){
 					createOrModifyTable(upd041);
-					version.set("Title", VERSION);
+					version.set(FLD_TITLE, VERSION);
 				}
 				if(vi.isOlder("0.4.2")){
 					createOrModifyTable(upd042);
-					version.set("Title", VERSION);
+					version.set(FLD_TITLE, VERSION);
 				}
 			}
 		}
@@ -132,15 +138,15 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 	public Episode(final Patient pat, final String title){
 		create(null);
 		set(new String[] {
-			"PatientID", "Title"
+			FLD_PATIENT_ID, FLD_TITLE
 		}, pat.getId(), title);
 	}
 	
 	@Override
 	public String getLabel(){
-		String title = get("Title");
+		String title = get(FLD_TITLE);
 		// String startDate = get("StartDate");
-		String number = get("Number");
+		String number = get(FLD_NUMBER);
 		int status = getStatus();
 		
 		StringBuffer sb = new StringBuffer();
@@ -205,7 +211,7 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 	}
 	
 	public Patient getPatient(){
-		String id = get("PatientID");
+		String id = get(FLD_PATIENT_ID);
 		Patient patient = Patient.load(id);
 		return patient;
 	}
@@ -216,7 +222,7 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 	 * @return Episode.ACTIVE or Episode.INACTIVE
 	 */
 	public int getStatus(){
-		String statusText = get("Status");
+		String statusText = get(FLD_STATUS);
 		if ((statusText != null) && statusText.equals(ACTIVE_VALUE)) {
 			return ACTIVE;
 		} else {
@@ -247,20 +253,20 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 	public void setStatus(final int status){
 		switch (status) {
 		case ACTIVE:
-			set("Status", ACTIVE_VALUE);
+			set(FLD_STATUS, ACTIVE_VALUE);
 			break;
 		case INACTIVE:
-			set("Status", INACTIVE_VALUE);
+			set(FLD_STATUS, INACTIVE_VALUE);
 			break;
 		default:
-			set("Status", ACTIVE_VALUE);
+			set(FLD_STATUS, ACTIVE_VALUE);
 			break;
 		}
 	}
 	
 	public int compareTo(final Episode e2){
-		VersionInfo v1 = new VersionInfo(get("Number"));
-		VersionInfo v2 = new VersionInfo(e2.get("Number"));
+		VersionInfo v1 = new VersionInfo(get(FLD_NUMBER));
+		VersionInfo v2 = new VersionInfo(e2.get(FLD_NUMBER));
 		if (v1.isNewer(v2)) {
 			return 1;
 		} else if (v1.isOlder(v2)) {
@@ -270,40 +276,40 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 	}
 	
 	public String getStartDate(){
-		return get("StartDate");
+		return get(FLD_START_DATE);
 	}
 	
 	public void setStartDate(final String startDate){
-		set("StartDate", startDate);
+		set(FLD_START_DATE, startDate);
 	}
 	
 	public String getTitle(){
-		return get("Title");
+		return get(FLD_TITLE);
 	}
 	
 	public void setTitle(final String title){
-		set("Title", title);
+		set(FLD_TITLE, title);
 	}
 	
 	public String getNumber(){
-		return get("Number");
+		return get(FLD_NUMBER);
 	}
 	
 	public void setNumber(final String number){
-		set("Number", number);
+		set(FLD_NUMBER, number);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public String getExtField(final String name){
-		Hashtable extInfo = getHashtable("ExtInfo");
+		Hashtable extInfo = getHashtable(FLD_EXTINFO);
 		return (String) extInfo.get(name);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void setExtField(final String name, final String text){
-		Hashtable extInfo = getHashtable("ExtInfo");
+		Hashtable extInfo = getHashtable(FLD_EXTINFO);
 		extInfo.put(name, text);
-		setHashtable("ExtInfo", extInfo);
+		setHashtable(FLD_EXTINFO, extInfo);
 	}
 	
 	/**
@@ -314,7 +320,7 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 	 * @return the Episode with that name or null if none or more than one exist
 	 */
 	public static Episode findEpisode(final String name){
-		List<Episode> res = new Query<Episode>(Episode.class, "Title", name).execute();
+		List<Episode> res = new Query<Episode>(Episode.class, FLD_TITLE, name).execute();
 		if (res.size() == 1) {
 			return res.get(0);
 		}
