@@ -25,15 +25,13 @@ import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalEventDispatcher;
-import ch.elexis.actions.ObjectFilterRegistry;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.actions.ObjectFilterRegistry;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.icpc.Episode;
 import ch.elexis.icpc.KonsFilter;
-import ch.elexis.text.model.Samdas;
-import ch.elexis.text.model.Samdas.Record;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 
@@ -52,11 +50,9 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 			switch (ev.getType()) {
 			case ElexisEvent.EVENT_CREATE:
 				/*
-				Konsultation k = (Konsultation) ev.getObject();
-				Samdas entry = k.getEntryRaw();
-				Record record = entry.getRecord();
-				break;
-				*/
+				 * Konsultation k = (Konsultation) ev.getObject(); Samdas entry
+				 * = k.getEntryRaw(); Record record = entry.getRecord(); break;
+				 */
 			}
 		}
 
@@ -191,9 +187,8 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 			public void run() {
 				Episode ep = display.getSelectedEpisode();
 				if (ep != null) {
-					ep
-							.setStatus(activateEpisodeAction.isChecked() ? Episode.ACTIVE
-									: Episode.INACTIVE);
+					ep.setStatus(activateEpisodeAction.isChecked() ? Episode.ACTIVE
+							: Episode.INACTIVE);
 					display.tvEpisodes.refresh();
 				}
 			}
@@ -203,7 +198,7 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 		konsFilterAction = new Action("Konsultationen filtern",
 				Action.AS_CHECK_BOX) {
 			{
-				setToolTipText("Konsultationslisten auf markiertes Problem gebrenzen");
+				setToolTipText("Konsultationslisten auf markiertes Problem begrenzen");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
 			}
 
