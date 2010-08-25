@@ -14,7 +14,7 @@
          </menu>
          <action
                class="elexis_db_shaker.actions.Shake"
-               icon="icons/sample.gif"
+               icon="icons/bomb.png"
                id="elexis_db_shaker.actions.Shake"
                label="Shredder (Vorsicht!)"
                menubarPath="sampleMenu/sampleGroup"

@@ -958,7 +958,7 @@ public class StringTool {
 		if (isNothing(name)) {
 			return false;
 		}
-		final String[] suffices = { "a", "is", "e", "id" };
+		final String[] suffices = { "a", "is", "e", "id", "ah", "eh", "th" };
 		for (String s : suffices) {
 			if (name.endsWith(s)) {
 				return true;

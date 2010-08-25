@@ -5,4 +5,5 @@ Bundle-SymbolicName: ch.elexis.support.dbshaker;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.ui,
- ch.elexis
+ ch.elexis,
+ ch.rgw.utility;bundle-version="2.0.1"
