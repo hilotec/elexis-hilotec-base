@@ -46,34 +46,34 @@ import ch.rgw.tools.net.NetTool;
  */
 
 public class StringTool {
-	
+
 	public static final String Version() {
 		return "2.0.4";
 	}
-	
+
 	private static String default_charset = "utf-8";
 	public static final String leer = "";
 	public static final String space = " ";
 	public static final String equals = "=";
 	public static final String crlf = "\r\n";
-	public static final String lf="\n";
-	public static final String slash="/";
-	public static final String backslash="\\";
-	
+	public static final String lf = "\n";
+	public static final String slash = "/";
+	public static final String backslash = "\\";
+
 	public static final String numbers = "[0-9]+";
-	public static final String wordSeparatorChars="\n\r\t.,;:!? ";
+	public static final String wordSeparatorChars = "\n\r\t.,;:!? ";
 	public static final String wordSeparators = "[\\t ,\\.:\\?!\\n\\r]";
 	public static final String lineSeparators = "[\\n\\r\\.\\?!;]";
-	public static final String ipv4address= "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}";
-	public static final String ipv6address="((([0-9a-f]{1,4}+:){7}+[0-9a-f]{1,4}+)|(:(:[0-9a-f]{1,4}+){1,6}+)|(([0-9a-f]{1,4}+:){1,6}+:)|(::)|(([0-9a-f]{1,4}+:)(:[0-9a-f]{1,4}+){1,5}+)|(([0-9a-f]{1,4}+:){1,2}+(:[0-9a-f]{1,4}+){1,4}+)|(([0-9a-f]{1,4}+:){1,3}+(:[0-9a-f]{1,4}+){1,3}+)|(([0-9a-f]{1,4}+:){1,4}+(:[0-9a-f]{1,4}+){1,2}+)|(([0-9a-f]{1,4}+:){1,5}+(:[0-9a-f]{1,4}+))|(((([0-9a-f]{1,4}+:)?([0-9a-f]{1,4}+:)?([0-9a-f]{1,4}+:)?([0-9a-f]{1,4}+:)?)|:)(:(([0-9]{1,3}+\\.){3}+[0-9]{1,3}+)))|(:(:[0-9a-f]{1,4}+)*:([0-9]{1,3}+\\.){3}+[0-9]{1,3}+))(/[0-9]+)?";
-	
+	public static final String ipv4address = "[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}";
+	public static final String ipv6address = "((([0-9a-f]{1,4}+:){7}+[0-9a-f]{1,4}+)|(:(:[0-9a-f]{1,4}+){1,6}+)|(([0-9a-f]{1,4}+:){1,6}+:)|(::)|(([0-9a-f]{1,4}+:)(:[0-9a-f]{1,4}+){1,5}+)|(([0-9a-f]{1,4}+:){1,2}+(:[0-9a-f]{1,4}+){1,4}+)|(([0-9a-f]{1,4}+:){1,3}+(:[0-9a-f]{1,4}+){1,3}+)|(([0-9a-f]{1,4}+:){1,4}+(:[0-9a-f]{1,4}+){1,2}+)|(([0-9a-f]{1,4}+:){1,5}+(:[0-9a-f]{1,4}+))|(((([0-9a-f]{1,4}+:)?([0-9a-f]{1,4}+:)?([0-9a-f]{1,4}+:)?([0-9a-f]{1,4}+:)?)|:)(:(([0-9]{1,3}+\\.){3}+[0-9]{1,3}+)))|(:(:[0-9a-f]{1,4}+)*:([0-9]{1,3}+\\.){3}+[0-9]{1,3}+))(/[0-9]+)?";
+
 	// public static final String wordChars="a-zA-ZäöüÄÖÜéèàâê\'";
 	public static final String wordChars = "\\p{L}\'";
 	private static int ipHash;
 	private static long sequence;
 	public static final int LEFT = 1;
 	public static final int RIGHTS = 2;
-	
+
 	/**
 	 * Set the charset to use in all charset-dependent String operations
 	 * 
@@ -83,7 +83,7 @@ public class StringTool {
 	public static void setDefaultCharset(String charset_name) {
 		default_charset = charset_name;
 	}
-	
+
 	/**
 	 * get the configured default charset
 	 * 
@@ -92,7 +92,7 @@ public class StringTool {
 	public static String getDefaultCharset() {
 		return default_charset;
 	}
-	
+
 	/**
 	 * create a String from a byte array, using the configured charset (defaults
 	 * to utf-8)
@@ -111,7 +111,7 @@ public class StringTool {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Create a byte arra from a String using the configured charset (defaults
 	 * to utf-8)
@@ -128,7 +128,7 @@ public class StringTool {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * return the bounds of a Rectangle around a String
 	 * 
@@ -144,12 +144,12 @@ public class StringTool {
 		Rectangle2D r = fnt.getStringBounds(s, frc);
 		return r;
 	}
-	
+
 	/**
 	 * Split a String into a String Arry
 	 * 
-	 * @deprecated obsoleted by java 1.4x 's
-	 *             {@link String#split(String) String.split} method.
+	 * @deprecated obsoleted by java 1.4x 's {@link String#split(String)
+	 *             String.split} method.
 	 */
 	@Deprecated
 	@SuppressWarnings("unchecked")
@@ -161,7 +161,7 @@ public class StringTool {
 		String[] ret = (String[]) v.toArray(new String[1]);
 		return ret;
 	}
-	
+
 	/**
 	 * Spaltet einen String in einen Vektor
 	 * 
@@ -170,7 +170,7 @@ public class StringTool {
 	 * @param delim
 	 *            Trennzeichen, an dem zu splitten ist.
 	 */
-	
+
 	@SuppressWarnings("unchecked")
 	public static Vector splitV(final String m, final String delim) {
 		String mi = m;
@@ -178,7 +178,7 @@ public class StringTool {
 			return null;
 		}
 		Vector v = new Vector(30, 30);
-		
+
 		int i = 0, j = 0;
 		while (true) {
 			j = mi.indexOf(delim, i);
@@ -192,10 +192,10 @@ public class StringTool {
 			}
 			i = j + 1;
 		}
-		
+
 		return v;
 	}
-	
+
 	/**
 	 * Split a String into an ArrayList
 	 * 
@@ -225,20 +225,20 @@ public class StringTool {
 		}
 		return al;
 	}
-	
+
 	public static final String flattenSeparator = "~#<";
-	
+
 	/**
 	 * Wandelt eine Hashtable in einen String aus Kommagetrennten a=b-Paaren um.
 	 */
-	
+
 	@SuppressWarnings("unchecked")
 	public static String flattenStrings(final Hashtable h) {
 		return flattenStrings(h, null);
 	}
-	
+
 	public static String flattenStrings(final Hashtable<Object, Object> h,
-		final flattenFilter fil) {
+			final flattenFilter fil) {
 		if (h == null) {
 			return null;
 		}
@@ -267,14 +267,14 @@ public class StringTool {
 		String r = res.toString();
 		return r.replaceFirst(flattenSeparator + "$", "");
 	}
-	
+
 	public static final int NONE = 0;
 	public static final int HUFF = 1;
 	public static final int BZIP = 2;
 	public static final int GLZ = 3;
 	public static final int ZIP = 4;
 	public static final int GUESS = 99;
-	
+
 	/**
 	 * Eine String-Collection comprimieren
 	 * 
@@ -286,7 +286,7 @@ public class StringTool {
 		String res = join(strings, "\n");
 		return CompEx.Compress(res, CompEx.ZIP);
 	}
-	
+
 	/**
 	 * compress an array of single-lined Strings into a byte array
 	 * 
@@ -299,7 +299,7 @@ public class StringTool {
 		String res = join(strings, "\n");
 		return CompEx.Compress(res, CompEx.ZIP);
 	}
-	
+
 	/**
 	 * Unpack a Zip-compressed byte-Array in a List of Strings.
 	 * 
@@ -316,9 +316,9 @@ public class StringTool {
 		} catch (Exception ex) {
 			return null; // Sollte sowieso nie vorkommen
 		}
-		
+
 	}
-	
+
 	/**
 	 * Eine Hashtable in ein komprimiertes Byte-Array umwandeln
 	 * 
@@ -334,7 +334,7 @@ public class StringTool {
 	@SuppressWarnings("unchecked")
 	@Deprecated
 	public static byte[] flatten(final Hashtable hash, final int compressMode,
-		final Object ExtInfo) {
+			final Object ExtInfo) {
 		ByteArrayOutputStream baos = null;
 		OutputStream os = null;
 		ObjectOutputStream oos = null;
@@ -358,7 +358,7 @@ public class StringTool {
 			default:
 				os = baos;
 			}
-			
+
 			oos = new ObjectOutputStream(os);
 			oos.writeObject(hash);
 			if (os != null) {
@@ -371,7 +371,7 @@ public class StringTool {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Ein mit flatten() erzeugtes Byte-Array wieder in eine HAshtable
 	 * zurückverwandeln
@@ -386,7 +386,7 @@ public class StringTool {
 	@SuppressWarnings("unchecked")
 	@Deprecated
 	public static Hashtable fold(final byte[] flat, final int compressMode,
-		final Object ExtInfo) {
+			final Object ExtInfo) {
 		ObjectInputStream ois = null;
 		try {
 			ByteArrayInputStream bais = new ByteArrayInputStream(flat);
@@ -424,19 +424,19 @@ public class StringTool {
 				ois = new ObjectInputStream(bais);
 				break;
 			}
-			
+
 			Hashtable<Object, Object> res = (Hashtable<Object, Object>) ois
-			.readObject();
+					.readObject();
 			ois.close();
 			bais.close();
 			return res;
 		} catch (Exception ex) {
-			// ExHandler.handle(ex);  deliberately don't mind
+			// ExHandler.handle(ex); deliberately don't mind
 			return null;
 		}
-		
+
 	}
-	
+
 	static private String ObjectToString(final Object o) {
 		if (o instanceof String) {
 			return "A" + (String) o;
@@ -453,7 +453,7 @@ public class StringTool {
 				oos.close();
 				byte[] ret = baos.toByteArray();
 				return "Z" + enPrintable(ret);
-				
+
 			} catch (IOException e) {
 				ExHandler.handle(e);
 				return null;
@@ -461,7 +461,7 @@ public class StringTool {
 		}
 		return null;
 	}
-	
+
 	static private Object StringToObject(final String s) {
 		String sx = s.substring(1);
 		char pref = s.charAt(0);
@@ -486,7 +486,7 @@ public class StringTool {
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static Hashtable foldStrings(final String s) {
 		Hashtable h = new Hashtable();
@@ -512,7 +512,7 @@ public class StringTool {
 		}
 		return h;
 	}
-	
+
 	/** gibt true zurück, wenn das Objekt kein String oder null oder "" ist */
 	static public boolean isNothing(final Object n) {
 		if (n == null) {
@@ -526,7 +526,7 @@ public class StringTool {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Gibt true zurück, wenn das Feld null ist, leer ist, oder nur Leerstrings
 	 * enthält
@@ -542,7 +542,7 @@ public class StringTool {
 		}
 		return true;
 	}
-	
+
 	/** Verleicht zwei byte-Arrays */
 	static public boolean compare(final byte[] a, final byte[] b) {
 		if (a.length == b.length) {
@@ -555,7 +555,7 @@ public class StringTool {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Sucht einen String in einem String-Array und gibt dessen Index zurück.
 	 * Die Suche erfolgt ohne Berücksichtigung von Gross/Kleinschreibung.
@@ -570,7 +570,7 @@ public class StringTool {
 		}
 		return -1;
 	}
-	
+
 	/**
 	 * Verlängert oder kürzt einen String.
 	 * 
@@ -585,7 +585,7 @@ public class StringTool {
 	 * @return der neue String
 	 */
 	static public String pad(final int where, final char chr, final String src,
-		final int size) {
+			final int size) {
 		int diff = size - src.length();
 		if (diff > 0) {
 			StringBuffer s = new StringBuffer(diff);
@@ -599,7 +599,7 @@ public class StringTool {
 		}
 		return src.substring(0, size);
 	}
-	
+
 	/**
 	 * Erstellt einen String aus mehreren nacheinander folgenden Strings
 	 * 
@@ -615,20 +615,21 @@ public class StringTool {
 		}
 		return s.toString();
 	}
-	
-	public static String RectangleToString(int x, int y, int w, int h){
-		StringBuilder sb=new StringBuilder();
-		sb.append(x).append(",").append(y)
-		.append(",").append(w).append(",").append(h);
+
+	public static String RectangleToString(int x, int y, int w, int h) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(x).append(",").append(y).append(",").append(w).append(",")
+				.append(h);
 		return sb.toString();
 	}
+
 	/**
 	 * Verknüpft die Elemente eines String-Arrays mittels tren zu einem String
 	 * 
-	 * @param arr -
-	 *            String Array
-	 * @param tren -
-	 *            Verbindingsstring
+	 * @param arr
+	 *            - String Array
+	 * @param tren
+	 *            - Verbindingsstring
 	 * @return den verknüpften String
 	 */
 	static public String join(final String[] arr, final String tren) {
@@ -645,7 +646,7 @@ public class StringTool {
 		String r2 = res.toString();
 		return r2.replaceFirst(tren + "$", "");
 	}
-	
+
 	public static String join(final Iterable<String> i, final String tren) {
 		StringBuilder ret = new StringBuilder();
 		Iterator<String> it = i.iterator();
@@ -657,7 +658,7 @@ public class StringTool {
 		}
 		return ret.toString();
 	}
-	
+
 	/**
 	 * Wandelt ein Byte-Array in einen druckbaren String um. (Alle Bytes werden
 	 * in ihre Nibbles zerlegt, diese werden ähnlich wie mit base64 als Zeichen
@@ -666,7 +667,7 @@ public class StringTool {
 	public static String enPrintable(final byte[] src) {
 		return enPrintable(src, 70); // compatibility
 	}
-	
+
 	static public String enPrintable(final byte[] src, final int offset) {
 		byte[] out = new byte[src.length * 2];
 		for (int i = 0; i < src.length; i++) {
@@ -680,14 +681,14 @@ public class StringTool {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Wandelt einen mit enPrintable erhaltenen String in ein byte-Array zurück.
 	 */
 	public static byte[] dePrintable(final String src) {
 		return dePrintable(src, 70); // compatibility
 	}
-	
+
 	static public byte[] dePrintable(final String src, final int offset) {
 		byte[] input = null;
 		try {
@@ -702,7 +703,7 @@ public class StringTool {
 		}
 		return out;
 	}
-	
+
 	/**
 	 * Convert a byte array into a String that consists strictly only of numbers
 	 * and capital Letters. This can be useful for transmission over
@@ -715,7 +716,7 @@ public class StringTool {
 	 *         only of [0-9A-P]*
 	 */
 	public static String enPrintableStrict(byte[] src) {
-		if(src==null){
+		if (src == null) {
 			return null;
 		}
 		byte[] out = new byte[(src.length << 1) + 3];
@@ -725,19 +726,19 @@ public class StringTool {
 			out[2] = '1'; // Version
 			for (int i = 0; i < src.length; i++) {
 				int i1 = (src[i] & 0xff) >> 4;
-			byte o1 = (byte) (i1 + 65);
-			byte o2 = (byte) ((src[i] & 0x0f) + 65);
-			out[2 * i + 3] = o1;
-			out[2 * i + 4] = o2;
+				byte o1 = (byte) (i1 + 65);
+				byte o2 = (byte) ((src[i] & 0x0f) + 65);
+				out[2 * i + 3] = o1;
+				out[2 * i + 4] = o2;
 			}
 			return new String(out, default_charset);
-			
+
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Convert a String that was created with enPrintableStrict() back into a
 	 * byte array
@@ -757,15 +758,15 @@ public class StringTool {
 			ExHandler.handle(ex);
 			return null;
 		}
-		byte[] out = new byte[(input.length-3) >> 1];
+		byte[] out = new byte[(input.length - 3) >> 1];
 		for (int i = 0; i < out.length; i++) {
-			int o1 = input[2 * i + 3]-65;
-			int o2 = input[2 * i + 4]-65;
+			int o1 = input[2 * i + 3] - 65;
+			int o2 = input[2 * i + 4] - 65;
 			out[i] = (byte) ((o1 << 4) + o2);
 		}
 		return out;
 	}
-	
+
 	/**
 	 * Gibt eine zufällige und eindeutige Zeichenfolge zurück
 	 * 
@@ -779,7 +780,7 @@ public class StringTool {
 				ipHash += (it.next()).hashCode();
 			}
 		}
-		
+
 		long t = System.currentTimeMillis();
 		int t1 = System.getProperty("user.name").hashCode();
 		long t2 = ((long) ipHash) << 32;
@@ -790,14 +791,16 @@ public class StringTool {
 			t4 ^= t0;
 		}
 		t4 += sequence++;
-		if(sequence>99999){
-			sequence=0;
+		if (sequence > 99999) {
+			sequence = 0;
 		}
-		long idx=sequence%salties.length;
-		char start=salties[(int)idx];
-		return new StringBuilder().append(start).append(Long.toHexString(t4)).append(Long.toHexString((long)Math.random()*1000)).append(sequence).toString();
+		long idx = sequence % salties.length;
+		char start = salties[(int) idx];
+		return new StringBuilder().append(start).append(Long.toHexString(t4))
+				.append(Long.toHexString((long) Math.random() * 1000))
+				.append(sequence).toString();
 	}
-	
+
 	/**
 	 * make sure a String is never null
 	 * 
@@ -808,7 +811,7 @@ public class StringTool {
 	public static String unNull(final String in) {
 		return (in == null) ? "" : in;
 	}
-	
+
 	/**
 	 * Dem StreamTokenizer nachempfundene Klasse, die auf einem String arbeitet.
 	 * Kann gequotete und geklammerte ausdrücke als token zusammenfassen. Wirft
@@ -837,7 +840,7 @@ public class StringTool {
 		private final int mode;
 		private int pos;
 		private final String mine;
-		
+
 		/**
 		 * Einziger Konstruktor
 		 * 
@@ -854,7 +857,7 @@ public class StringTool {
 			this.mode = mode;
 			pos = 0;
 		}
-		
+
 		/** Splittet den String auf und liefert die tokens als List */
 		@SuppressWarnings("unchecked")
 		public List<String> tokenize() throws IOException {
@@ -913,9 +916,9 @@ public class StringTool {
 			ret.add(token.toString());
 			return ret;
 		}
-		
+
 		private StringBuffer readToMatching(final char open, final char close)
-		throws IOException {
+				throws IOException {
 			StringBuffer ret = new StringBuffer();
 			int level = 1;
 			while (pos < mine.length()) {
@@ -930,20 +933,20 @@ public class StringTool {
 				} else if (c == '\r') {
 					if ((mode & CRLF_MATTERS) != 0) {
 						throw new IOException(
-							"Unexpected end of line while looking for "
-							+ close);
+								"Unexpected end of line while looking for "
+										+ close);
 					}
 				}
 			}
 			throw new IOException("Unexpected end of line while looking for "
-				+ close);
+					+ close);
 		}
 	}
-	
+
 	public interface flattenFilter {
 		boolean accept(Object key);
 	}
-	
+
 	/**
 	 * Versucht herauszufinden, ob ein Name weiblich ist
 	 * 
@@ -963,29 +966,32 @@ public class StringTool {
 		}
 		return false;
 	}
-	
+
 	public static boolean isMailAddress(final String in) {
-		if(StringTool.isNothing(in)){
+		if (StringTool.isNothing(in)) {
 			return false;
 		}
 		return in.matches("\\w[\\w|\\.\\-]+@\\w[\\w\\.\\-]+\\.[a-zA-Z]{2,4}");
 		// oder \w[\w|\.\-]+@\w[\w\.\-]+\.[a-zA-Z]{2,4}
 	}
-	
+
 	/**
 	 * Test whether a String is an IPV4 or IPV6-Address
-	 * @param in a String that is possibly an ipv4 or ipv6-Address
+	 * 
+	 * @param in
+	 *            a String that is possibly an ipv4 or ipv6-Address
 	 * @return true if ir seems to be an IP-Address
 	 */
-	public static boolean isIPAddress(final String in){
-		if(in.matches(ipv4address)){
+	public static boolean isIPAddress(final String in) {
+		if (in.matches(ipv4address)) {
 			return true;
 		}
-		if(in.matches(ipv6address)){
+		if (in.matches(ipv6address)) {
 			return true;
 		}
 		return false;
 	}
+
 	/**
 	 * Return the first word of the given String
 	 */
@@ -996,8 +1002,7 @@ public class StringTool {
 		String[] words = in.split(wordSeparators);
 		return words[0];
 	}
-	
-	
+
 	/**
 	 * Return the first line if the given String but at most maxChars
 	 */
@@ -1012,32 +1017,40 @@ public class StringTool {
 		}
 		return lines[0];
 	}
-	
-	public static String getWordAtIndex(String text, int index){
+
+	/**
+	 * Gibt das Wort des Inhalts zurück das an oder unmittelbar vor der
+	 * angegebenen Position ist 
+	 * 
+	 * @return Das mit an dieser Stelle befindliche Wort des Strings,
+	 *         <code>String.empty</code> falls kein Wort dort ist idt oder der
+	 *         Index ausserhalb des Textbereichs ist
+	 */
+	public static String getWordAtIndex(String text, int index) {
 		char c;
-		if(index<0 || text==null || index>=text.length()){
-			return null;
+		if (index < 0 || text == null || index >= text.length()) {
+			return "";
 		}
 		int start;
 		int end;
 		for (start = index - 1; start >= 0; start--) {
 			c = text.charAt(start);
-			if (wordSeparatorChars.indexOf(c)!=-1) {
+			if (wordSeparatorChars.indexOf(c) != -1) {
 				start++;
 				break;
 			}
 		}
-		if(start<0){
-			start=0;
+		if (start < 0) {
+			start = 0;
 		}
 		for (end = index; end < text.length(); end++) {
 			c = text.charAt(end);
-			if (wordSeparatorChars.indexOf(c)!=-1) {
+			if (wordSeparatorChars.indexOf(c) != -1) {
 				break;
 			}
 		}
-		if(--end>text.length()){
-			end=text.length();
+		if (--end > text.length()) {
+			end = text.length();
 		}
 		return text.substring(start, end);
 	}
@@ -1051,7 +1064,7 @@ public class StringTool {
 		}
 		log.log("End dump\n", Log.INFOS);
 	}
-	
+
 	/**
 	 * Change first lettere to uppercase, other letters to lowercase
 	 * 
@@ -1068,24 +1081,26 @@ public class StringTool {
 			return orig;
 		}
 		return orig.substring(0, 1).toUpperCase()
-		+ orig.substring(1).toLowerCase();
+				+ orig.substring(1).toLowerCase();
 	}
-	
+
 	/**
 	 * Convert first Character to uppercase. leave rest unchanged
-	 * @param orig the original String
+	 * 
+	 * @param orig
+	 *            the original String
 	 * @return the original String with first Character uppercase
 	 */
-	public static String capitalize(final String orig){
+	public static String capitalize(final String orig) {
 		if (orig == null) {
 			return "";
 		}
 		if (orig.length() < 2) {
 			return orig;
 		}
-		return orig.substring(0, 1).toUpperCase()
-		+ orig.substring(1);
+		return orig.substring(0, 1).toUpperCase() + orig.substring(1);
 	}
+
 	/**
 	 * Zwei Strings verleichen. Berücksichtigen, dass einer oder beide auch Null
 	 * sein könnten.
@@ -1109,7 +1124,7 @@ public class StringTool {
 			return a.compareTo(b);
 		}
 	}
-	
+
 	/**
 	 * String wenn nötig kürzen
 	 * 
@@ -1128,7 +1143,7 @@ public class StringTool {
 		}
 		return orig;
 	}
-	
+
 	/**
 	 * String aus einem Array holen. Leerstring, wenn der angeforderte Index
 	 * ausserhalb des Arrays liegt
@@ -1143,82 +1158,99 @@ public class StringTool {
 		}
 		return "";
 	}
+
 	/**
 	 * Parse a String but don't throw expetion if not parsable. Return 0 instead
+	 * 
 	 * @param string
 	 * @return
 	 */
-	public static int parseSafeInt(String string){
-		if(string==null){
+	public static int parseSafeInt(String string) {
+		if (string == null) {
 			return 0;
 		}
-		try{
+		try {
 			return Integer.parseInt(string.trim());
-		}catch(NumberFormatException ne){
+		} catch (NumberFormatException ne) {
 			return 0;
 		}
 	}
-	
-	
+
 	/**
-	 * Parse a Double from a string but don't throw an Exception if not parseable. Return 0.0 instead.
-	 * @param string a String containing probably a Double
-	 * @return always a double. 0.0 if the origin was 0.0 or null or not a Double
+	 * Parse a Double from a string but don't throw an Exception if not
+	 * parseable. Return 0.0 instead.
+	 * 
+	 * @param string
+	 *            a String containing probably a Double
+	 * @return always a double. 0.0 if the origin was 0.0 or null or not a
+	 *         Double
 	 */
-	public static double parseSafeDouble(String string){
-		if(string==null){
+	public static double parseSafeDouble(String string) {
+		if (string == null) {
 			return 0.0;
 		}
-		try{
+		try {
 			return Double.parseDouble(string.trim());
-		}catch(NumberFormatException ne){
+		} catch (NumberFormatException ne) {
 			return 0.0;
 		}
 	}
+
 	/**
 	 * String mit unterschiedlicher möglicher Schreibweise in einheitliche
 	 * Schreibweise bringen
 	 * 
 	 * @param in
 	 *            ein String
-	 * @return derselbe String, aber alle möglicherweise kritische Zeichen durch _
-	 *         ersetzt.
+	 * @return derselbe String, aber alle möglicherweise kritische Zeichen durch
+	 *         _ ersetzt.
 	 */
 	public static String unambiguify(final String in) {
 		String ret = in.toLowerCase();
 		ret = ret.replaceAll("([^a-z]|ue|oe|ae)", "_");
-		ret=ret.replaceAll("__+", "_");
+		ret = ret.replaceAll("__+", "_");
 		return ret;
 	}
-	
+
 	/**
-	 * convert a String from a source encoding to this platform's default encoding
-	 * @param src the source string
-	 * @param srcEncoding the name of the encoding of the source
-	 * @return the transcoded String or the source String if the encoding is not supported
+	 * convert a String from a source encoding to this platform's default
+	 * encoding
+	 * 
+	 * @param src
+	 *            the source string
+	 * @param srcEncoding
+	 *            the name of the encoding of the source
+	 * @return the transcoded String or the source String if the encoding is not
+	 *         supported
 	 */
-	public static String convertEncoding(String src, String srcEncoding){
+	public static String convertEncoding(String src, String srcEncoding) {
 		try {
-			byte[] bytes=src.getBytes();
-			return new String(bytes,srcEncoding);
+			byte[] bytes = src.getBytes();
+			return new String(bytes, srcEncoding);
 		} catch (UnsupportedEncodingException e) {
 			return src;
 		}
 	}
-	
+
 	/**
-	 * convert a String Array from a source encoding to this platform's default encoding
-	 * @param src the source Array
-	 * @param srcEncoding the name of the encoding of the source
-	 * @return the transcoded Array or the source Array if the encoding is not supported
+	 * convert a String Array from a source encoding to this platform's default
+	 * encoding
+	 * 
+	 * @param src
+	 *            the source Array
+	 * @param srcEncoding
+	 *            the name of the encoding of the source
+	 * @return the transcoded Array or the source Array if the encoding is not
+	 *         supported
 	 */
-	public static String[] convertEncoding(String[] src, String srcEncoding){
-		String[] ret=new String[src.length];
-		for(int i=0;i<src.length;i++){
-			ret[i]=convertEncoding(src[i],srcEncoding);
+	public static String[] convertEncoding(String[] src, String srcEncoding) {
+		String[] ret = new String[src.length];
+		for (int i = 0; i < src.length; i++) {
+			ret[i] = convertEncoding(src[i], srcEncoding);
 		}
 		return ret;
 	}
+
 	/**
 	 * Eine beliebige Ziffernfolge mit der Modulo-10 Prüfsumme verpacken
 	 * 
@@ -1234,9 +1266,9 @@ public class StringTool {
 			row = mod10Checksum[row][col];
 		}
 		return number + Integer.toString(mod10Checksum[row][10]);
-		
+
 	}
-	
+
 	/**
 	 * Die Modulo-10-Prüfsumme wieder entfernen
 	 * 
@@ -1253,26 +1285,23 @@ public class StringTool {
 		}
 		return null;
 	}
-	
-	
+
 	/** Array für den modulo-10-Prüfsummencode */
 	private static final int[][] mod10Checksum = {
-		{ 0, 9, 4, 6, 8, 2, 7, 1, 3, 5, 0 },
-		{ 9, 4, 6, 8, 2, 7, 1, 3, 5, 0, 9 },
-		{ 4, 6, 8, 2, 7, 1, 3, 5, 0, 9, 8 },
-		{ 6, 8, 2, 7, 1, 3, 5, 0, 9, 4, 7 },
-		{ 8, 2, 7, 1, 3, 5, 0, 9, 4, 6, 6 },
-		{ 2, 7, 1, 3, 5, 0, 9, 4, 6, 8, 5 },
-		{ 7, 1, 3, 5, 0, 9, 4, 6, 8, 2, 4 },
-		{ 1, 3, 5, 0, 9, 4, 6, 8, 2, 7, 3 },
-		{ 3, 5, 0, 9, 4, 6, 8, 2, 7, 1, 2 },
-		{ 5, 0, 9, 4, 6, 8, 2, 7, 1, 3, 1 } };
-	
-	private static final char[] salties={
-		'q','w','e','r','t','z','u','o','i','p',
-		'a','s','d','f','g','h','j','k','l','y',
-		'x','c','v','b','n','m','Q','A','Y','W',
-		'E','D','C','R','F','V','T','G','B','Z',
-		'H','N','U','J','M','I','K','O','L','P'
-	};
+			{ 0, 9, 4, 6, 8, 2, 7, 1, 3, 5, 0 },
+			{ 9, 4, 6, 8, 2, 7, 1, 3, 5, 0, 9 },
+			{ 4, 6, 8, 2, 7, 1, 3, 5, 0, 9, 8 },
+			{ 6, 8, 2, 7, 1, 3, 5, 0, 9, 4, 7 },
+			{ 8, 2, 7, 1, 3, 5, 0, 9, 4, 6, 6 },
+			{ 2, 7, 1, 3, 5, 0, 9, 4, 6, 8, 5 },
+			{ 7, 1, 3, 5, 0, 9, 4, 6, 8, 2, 4 },
+			{ 1, 3, 5, 0, 9, 4, 6, 8, 2, 7, 3 },
+			{ 3, 5, 0, 9, 4, 6, 8, 2, 7, 1, 2 },
+			{ 5, 0, 9, 4, 6, 8, 2, 7, 1, 3, 1 } };
+
+	private static final char[] salties = { 'q', 'w', 'e', 'r', 't', 'z', 'u',
+			'o', 'i', 'p', 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'y',
+			'x', 'c', 'v', 'b', 'n', 'm', 'Q', 'A', 'Y', 'W', 'E', 'D', 'C',
+			'R', 'F', 'V', 'T', 'G', 'B', 'Z', 'H', 'N', 'U', 'J', 'M', 'I',
+			'K', 'O', 'L', 'P' };
 }
