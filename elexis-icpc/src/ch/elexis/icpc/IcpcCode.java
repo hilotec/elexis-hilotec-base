@@ -97,6 +97,7 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 		return realCode + " " + get("short");
 	}
 	
+	
 	public void setLabel(String l){
 		realCode = l;
 	}
@@ -107,7 +108,7 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 	}
 	
 	public String getCode(){
-		return realCode == null ? getId() : realCode;
+		return getId();
 	}
 	
 	public String getCodeSystemCode(){

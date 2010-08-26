@@ -34,13 +34,14 @@ import ch.elexis.icpc.Episode;
 import ch.elexis.icpc.KonsFilter;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
+import ch.elexis.util.ViewMenus.IMenuPopulator;
 
 public class EpisodesView extends ViewPart implements IActivationListener {
 	public static final String ID = "ch.elexis.icpc.episodesView";
 	EpisodesDisplay display;
 	KonsFilter episodesFilter = new KonsFilter(this);
 	private IAction addEpisodeAction, removeEpisodeAction, editEpisodeAction,
-			activateEpisodeAction, konsFilterAction;
+			activateEpisodeAction, konsFilterAction, removeDiagnosesAction;
 
 	private ElexisEventListenerImpl eeli_kons = new ElexisEventListenerImpl(
 			Konsultation.class, ElexisEvent.EVENT_CREATE) {
@@ -93,8 +94,18 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 		makeActions();
 		ViewMenus menu = new ViewMenus(getViewSite());
 
+		/*
 		menu.createViewerContextMenu(display.tvEpisodes, activateEpisodeAction,
 				editEpisodeAction, null, removeEpisodeAction);
+		*/
+		menu.createControlContextMenu(display.tvEpisodes.getControl(), new IMenuPopulator(){
+			@Override
+			public IAction[] fillMenu() {
+				return new IAction[]{activateEpisodeAction,
+						editEpisodeAction, null, removeEpisodeAction,removeDiagnosesAction};
+
+			}});
+	
 		menu.createToolbar(konsFilterAction, addEpisodeAction,
 				editEpisodeAction);
 		GlobalEventDispatcher.addActivationListener(this, getViewSite()
@@ -160,6 +171,22 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 				}
 			}
 		};
+		
+		removeDiagnosesAction=new Action("Diagnosen entfernen"){
+			{
+				setToolTipText("Entfernt die Verknüpfungen mit Diagnosen");
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
+			}
+			@Override
+			public void run(){
+				Episode act = display.getSelectedEpisode();
+				if (act != null) {
+					act.removeFromList("DiagLink");
+					display.tvEpisodes.refresh();
+				}
+			}
+		};
+		
 		editEpisodeAction = new Action("Problem bearbeiten") {
 			{
 				setToolTipText("Titel des Problems ändern");
@@ -215,6 +242,7 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 				}
 			}
 		};
+		
 	}
 
 	public void activateKonsFilterAction(final boolean bActivate) {

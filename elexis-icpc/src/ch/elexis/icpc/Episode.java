@@ -187,7 +187,7 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 	
 	public void removeDiagnosis(final IDiagnose id){
 		String clazz = id.getClass().getName();
-		// removeFromList("DiagLink", clazz+"::"+id.getCode());
+		removeFromList("DiagLink", clazz+"::"+id.getCode());
 	}
 	
 	@Override
