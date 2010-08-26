@@ -296,6 +296,9 @@ public class TextContainer {
 				});
 				saveBrief(ret, typ);
 				addBriefToKons(ret, kons);
+				if("_direct_".equals(template.get(Brief.FLD_PATIENT_ID))){
+					plugin.print(null, null, true);
+				}
 				return ret;
 			}
 		}
