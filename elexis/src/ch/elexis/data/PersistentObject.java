@@ -1491,6 +1491,35 @@ public abstract class PersistentObject implements ISelectable {
 		return 0;
 	}
 
+	/**
+	 * Remove all relations to this object from link
+	 * @param field
+	 */
+	public void removeFromList(String field){
+		String mapped = map(field);
+		if (mapped.startsWith("JOINT:")) {
+			String[] m = mapped.split(":");// m[1] FremdID, m[2] eigene ID, m[3]
+			// Name Joint
+			if (m.length > 3) {
+				StringBuilder sql = new StringBuilder(200);
+				sql.append("DELETE FROM ").append(m[3]).append(" WHERE ")
+						.append(m[2]).append("=").append(getWrappedId());
+				if (tracetable != null) {
+					String sq = sql.toString();
+					doTrace(sq);
+				}
+				getConnection().exec(sql.toString());
+				return;
+			}
+		}
+		log.log("Fehlerhaftes Mapping: " + mapped, Log.ERRORS);
+	}
+	
+	/**
+	 * Remove a relation to this object from link
+	 * @param field
+	 * @param oID
+	 */
 	public void removeFromList(String field, String oID) {
 		String mapped = map(field);
 		if (mapped.startsWith("JOINT:")) {
