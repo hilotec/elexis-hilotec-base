@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Import für verschiedene Dateien
 Bundle-SymbolicName: ch.elexis.importer.div;singleton:=true
-Bundle-Version: 1.4.0
+Bundle-Version: 1.4.1
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Bundle-ClassPath: .,
@@ -77,7 +77,7 @@ Export-Package: au.com.bytecode.opencsv,
    org.apache.poi.poifs.dev",
  org.apache.poi.poifs.storage;uses:="org.apache.poi.poifs.property,org.apache.poi.poifs.filesystem",
  org.apache.poi.util;uses:="new org.apache.poi.util"
-Require-Bundle: ch.elexis;bundle-version="2.1.2",
+Require-Bundle: ch.elexis;bundle-version="2.1.0",
  org.eclipse.ui;bundle-version="3.6.0",
  org.eclipse.core.runtime;bundle-version="3.6.0",
  ch.rgw.utility;bundle-version="2.0.1",
