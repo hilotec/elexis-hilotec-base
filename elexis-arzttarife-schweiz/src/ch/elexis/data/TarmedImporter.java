@@ -58,8 +58,8 @@ import ch.rgw.tools.JdbcLink.Stm;
  */
 public class TarmedImporter extends ImporterPage {
 
-	//private static final String SRC_ENCODING = "iso-8859-1"; //$NON-NLS-1$
-	private static final String SRC_ENCODING = "MacRoman"; //$NON-NLS-1$
+	private static final String SRC_ENCODING = "iso-8859-1"; //$NON-NLS-1$
+	//private static final String SRC_ENCODING = "MacRoman"; //$NON-NLS-1$
 
 	
 	AccessWrapper aw;

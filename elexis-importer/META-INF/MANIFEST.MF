@@ -5,17 +5,9 @@ Bundle-SymbolicName: ch.elexis.importer.div;singleton:=true
 Bundle-Version: 1.4.0
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
-Require-Bundle: ch.elexis,
- org.eclipse.core.runtime,
- org.eclipse.swt,
- org.eclipse.jface,
- org.eclipse.ui.forms,
- org.eclipse.ui,
- ch.rgw.utility
 Bundle-ClassPath: .,
  RXTXcomm.jar,
- poi-3.0.1-FINAL-20070705.jar,
- jackcess-1.2.1.jar
+ poi-3.0.1-FINAL-20070705.jar
 Export-Package: au.com.bytecode.opencsv,
  ch.elexis.importers;
   uses:="org.eclipse.jface.wizard,
@@ -85,3 +77,9 @@ Export-Package: au.com.bytecode.opencsv,
    org.apache.poi.poifs.dev",
  org.apache.poi.poifs.storage;uses:="org.apache.poi.poifs.property,org.apache.poi.poifs.filesystem",
  org.apache.poi.util;uses:="new org.apache.poi.util"
+Require-Bundle: ch.elexis;bundle-version="2.1.2",
+ org.eclipse.ui;bundle-version="3.6.0",
+ org.eclipse.core.runtime;bundle-version="3.6.0",
+ ch.rgw.utility;bundle-version="2.0.1",
+ org.apache.commons.logging;bundle-version="1.0.4",
+ org.apache.commons.lang;bundle-version="2.3.0"
