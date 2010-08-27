@@ -320,4 +320,9 @@ public class ElexisTextPlugin implements ITextPlugin {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public boolean isDirectOutput() {
+		return false;
+	}
 }

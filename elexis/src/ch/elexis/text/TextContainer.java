@@ -74,9 +74,9 @@ import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ScriptUtil;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.JdbcLink.Stm;
 
 public class TextContainer {
 
@@ -296,7 +296,7 @@ public class TextContainer {
 				});
 				saveBrief(ret, typ);
 				addBriefToKons(ret, kons);
-				if("_direct_".equals(template.get(Brief.FLD_PATIENT_ID))){
+				if(plugin.isDirectOutput()){
 					plugin.print(null, null, true);
 				}
 				return ret;
@@ -305,7 +305,6 @@ public class TextContainer {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	private Object replaceFields(final Brief brief, final String b) {
 		String[] q = b.split("\\."); //$NON-NLS-1$
 		if (q.length != 2) {
@@ -328,6 +327,7 @@ public class TextContainer {
 		if ((ret == null) || (ret.startsWith("**"))) { //$NON-NLS-1$
 
 			if (!(o.map(PersistentObject.FLD_EXTINFO).startsWith("**"))) { //$NON-NLS-1$
+				@SuppressWarnings("rawtypes")
 				Hashtable ext = o.getHashtable(PersistentObject.FLD_EXTINFO);
 				String an = (String) ext.get(q[1]);
 				if (an != null) {
@@ -1049,6 +1049,11 @@ public class TextContainer {
 		public void setSaveOnFocusLost(final boolean bSave) {
 			// TODO Auto-generated method stub
 
+		}
+
+		@Override
+		public boolean isDirectOutput() {
+			return false;
 		}
 	}
 

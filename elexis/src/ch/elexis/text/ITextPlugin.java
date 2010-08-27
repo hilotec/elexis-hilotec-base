@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -181,6 +181,12 @@ public interface ITextPlugin extends IExecutableExtension{
 	 * Default Mimettype of the documents that this implementation creates
 	 */
 	public String getMimeType();
+	
+	/**
+	 * does the plugin want to output the document immediately after creating
+	 * @return true if output should start immerdiately, false if the user triggers output manually
+	 */
+	public boolean isDirectOutput();
 	
 	/**
 	 * Callback interface for save operations
