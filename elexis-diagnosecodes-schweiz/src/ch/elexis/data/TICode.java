@@ -29,6 +29,7 @@ import ch.elexis.diagnosecodes_schweiz.Messages;
  *
  */
 public class TICode extends PersistentObject implements IDiagnose{
+	public static final String CODESYSTEM_NAME = "TI-Code";
 	private static Hashtable<String,TICode> hash=new Hashtable<String,TICode>();
 	private String Text;
 	
@@ -49,7 +50,7 @@ public class TICode extends PersistentObject implements IDiagnose{
 	}
 	public String getCodeSystemName()
 	{
-		return "TI-Code"; //$NON-NLS-1$
+		return CODESYSTEM_NAME; //$NON-NLS-1$
 	}
 	
 	public static TICode load(String code){
