@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -132,9 +132,16 @@ public class LaborblattView extends ViewPart implements ICallback {
 				rows.add(row);
 			}
 		}
-		return text.getPlugin().insertTable("[Laborwerte]", //$NON-NLS-1$
+		if(text.getPlugin().insertTable("[Laborwerte]", //$NON-NLS-1$
 				ITextPlugin.FIRST_ROW_IS_HEADER, rows.toArray(new String[0][]),
-				null);
+				null)){
+			if(text.getPlugin().isDirectOutput()){
+				text.getPlugin().print(null, null, true);
+				getSite().getPage().hideView(this);
+				return true;
+			}
+		}
+		return false;
 
 	}
 
