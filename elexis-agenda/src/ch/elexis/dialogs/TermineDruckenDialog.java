@@ -71,7 +71,10 @@ public class TermineDruckenDialog extends TitleAreaDialog implements ICallback {
 				Plannables.getStartTimeAsString(t)).append("\n");
 		}
 		text.replace("\\[Termine\\]", sb.toString());
-		
+		if(text.getPlugin().isDirectOutput()){
+			text.getPlugin().print(null, null, true);
+			okPressed();
+		}
 		return ret;
 	}
 	
