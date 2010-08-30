@@ -115,7 +115,7 @@ public class Mandanten extends PreferencePage implements IWorkbenchPreferencePag
 						KontaktSelektor ksl =
 							new KontaktSelektor(getShell(), Kontakt.class,
 								Messages.Mandanten_selectBiller,
-								Messages.Mandanten_pleaseSelectBiller);
+								Messages.Mandanten_pleaseSelectBiller,new String[]{Kontakt.FLD_NAME1,Kontakt.FLD_NAME2});
 						if (ksl.open() == Dialog.OK) {
 							rsi = (Kontakt) ksl.getSelection();
 						}

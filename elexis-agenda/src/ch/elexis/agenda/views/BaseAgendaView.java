@@ -384,7 +384,8 @@ IActivationListener {
 			}
 			@Override
 			public void run() {
-				KontaktSelektor ksl=new KontaktSelektor(getSite().getShell(), Kontakt.class, "Terminvergabe", "Bitte wähöen Sie aus, wer einen Termin braucht");
+				KontaktSelektor ksl=new KontaktSelektor(getSite().getShell(), Kontakt.class, 
+						"Terminvergabe", "Bitte wählen Sie aus, wer einen Termin braucht",Kontakt.DEFAULT_SORT);
 				IPlannable sel=getSelection();
 				TerminDialog dlg = new TerminDialog(null);
 				dlg.open();

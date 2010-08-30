@@ -109,7 +109,7 @@ public class BAGMediDetailBlatt extends Composite {
 			public void reloadContent(PersistentObject po, InputData ltf){
 				KontaktSelektor ksl =
 					new KontaktSelektor(Hub.getActiveShell(), Kontakt.class, "Lieferant",
-					"Bitte wählen Sie, wer diesen Artikel liefert");
+					"Bitte wählen Sie, wer diesen Artikel liefert",Kontakt.DEFAULT_SORT);
 				if (ksl.open() == Dialog.OK) {
 					Kontakt k = (Kontakt) ksl.getSelection();
 					((Artikel) po).setLieferant(k);

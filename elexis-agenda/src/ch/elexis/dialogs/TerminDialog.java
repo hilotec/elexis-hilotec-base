@@ -362,7 +362,7 @@ public class TerminDialog extends TitleAreaDialog {
 			public void linkActivated(final HyperlinkEvent e) {
 				KontaktSelektor ksl = new KontaktSelektor(getShell(),
 						Kontakt.class, "Termin zuordnen",
-						"Bitte suchen Sie aus, wer den Termin hat");
+						"Bitte suchen Sie aus, wer den Termin hat",Kontakt.DEFAULT_SORT);
 				if (ksl.open() == Dialog.OK) {
 					actKontakt = (Kontakt) ksl.getSelection();
 					tName.setText(actKontakt.getLabel());

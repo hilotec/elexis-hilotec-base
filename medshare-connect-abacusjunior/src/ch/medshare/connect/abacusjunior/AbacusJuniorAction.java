@@ -60,7 +60,7 @@ public class AbacusJuniorAction extends Action implements ComPortListener {
 			KontaktSelektor ksl = new KontaktSelektor(Hub.getActiveShell(),
 					Patient.class, Messages
 							.getString("AbacusJuniorAction.Patient.Title"),
-					Messages.getString("AbacusJuniorAction.Patient.Text"));
+					Messages.getString("AbacusJuniorAction.Patient.Text"),Patient.DEFAULT_SORT);
 			ksl.create();
 			ksl.getShell().setText(
 					Messages.getString("AbacusJuniorAction.Patient.Title"));

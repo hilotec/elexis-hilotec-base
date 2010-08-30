@@ -127,7 +127,7 @@ public class ESRRecordDialog extends TitleAreaDialog {
 				public void reloadContent(PersistentObject po, InputData ltf){
 					KontaktSelektor ksl =
 						new KontaktSelektor(getShell(), Patient.class, Messages.ESRRecordDialog_selectPatient,
-							Messages.ESRRecordDialog_pleaseSelectPatient);
+							Messages.ESRRecordDialog_pleaseSelectPatient,Patient.DEFAULT_SORT);
 					if (ksl.open() == Dialog.OK) {
 						Patient actPatient = (Patient) ksl.getSelection();
 						rec.set("PatientID", actPatient.getId()); //$NON-NLS-1$

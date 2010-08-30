@@ -292,7 +292,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 								KontaktSelektor ksl =
 									new KontaktSelektor(Hub.getActiveShell(), Patient.class,
 										Messages.getString("AfinionAS100Action.Patient.Title"), //$NON-NLS-1$
-										Messages.getString("AfinionAS100Action.Patient.Text")); //$NON-NLS-1$
+										Messages.getString("AfinionAS100Action.Patient.Text"),Patient.DEFAULT_SORT); //$NON-NLS-1$
 								ksl.create();
 								ksl.getShell().setText(
 									Messages.getString("AfinionAS100Action.Patient.Title")); //$NON-NLS-1$

@@ -85,7 +85,7 @@ public class Artikeldetail extends ViewPart implements IActivationListener,
 								KontaktSelektor ksl = new KontaktSelektor(
 										shell, Kontakt.class,
 										Messages.Artikeldetail_lieferant,
-										Messages.Artikeldetail_LieferantWaehlen);
+										Messages.Artikeldetail_LieferantWaehlen,Kontakt.DEFAULT_SORT);
 								if (ksl.open() == Dialog.OK) {
 									Kontakt k = (Kontakt) ksl.getSelection();
 									((Artikel) po).setLieferant(k);

@@ -25,7 +25,7 @@ public class Verifier {
 			return k;
 		}
 		KontaktSelektor ksl=new KontaktSelektor(Hub.getActiveShell(),
-				k.getClass(),t,Messages.Verifier_PleaseSelectCorrectContact);
+				k.getClass(),t,Messages.Verifier_PleaseSelectCorrectContact,Kontakt.DEFAULT_SORT);
 		if(ksl.open()==Dialog.OK){
 			return (Kontakt)ksl.getSelection();
 		}

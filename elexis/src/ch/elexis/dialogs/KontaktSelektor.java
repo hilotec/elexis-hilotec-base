@@ -99,7 +99,7 @@ public class KontaktSelektor extends TitleAreaDialog implements
 	private final PersistentObjectLoader kl;
 
 	@SuppressWarnings("unchecked")
-	public KontaktSelektor(Shell parentShell, Class which, String title, String message, String... orderFields) {
+	public KontaktSelektor(Shell parentShell, Class which, String title, String message, String[] orderFields) {
 		super(parentShell);
 		// clazz=which;
 		cv = new CommonViewer();

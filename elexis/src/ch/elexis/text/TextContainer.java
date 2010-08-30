@@ -232,7 +232,7 @@ public class TextContainer {
 		if (adressat == null) {
 			KontaktSelektor ksel = new KontaktSelektor(shell, Kontakt.class,
 					Messages.TextContainer_SelectDestinationHeader,
-					Messages.TextContainer_SelectDestinationBody);
+					Messages.TextContainer_SelectDestinationBody,Kontakt.DEFAULT_SORT);
 			if (ksel.open() != Dialog.OK) {
 				return null;
 			}
@@ -748,7 +748,7 @@ public class TextContainer {
 		if ((brief == null) || (brief.getAdressat() == null)) {
 			KontaktSelektor ksl = new KontaktSelektor(shell, Kontakt.class,
 					Messages.TextContainer_SelectAdresseeHeader,
-					Messages.TextContainer_SelectAdresseeBody);
+					Messages.TextContainer_SelectAdresseeBody,Kontakt.DEFAULT_SORT);
 			if (ksl.open() == Dialog.OK) {
 				brief = new Brief(Messages.TextContainer_Letter, null,
 						Hub.actUser, (Kontakt) ksl.getSelection(),

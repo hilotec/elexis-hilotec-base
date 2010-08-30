@@ -274,7 +274,7 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 										Patient.class,
 										Messages
 												.getString("ReflotronSprintAction.Patient.Title"), Messages //$NON-NLS-1$
-												.getString("ReflotronSprintAction.Patient.Text")); //$NON-NLS-1$
+												.getString("ReflotronSprintAction.Patient.Text"),Patient.DEFAULT_SORT); //$NON-NLS-1$
 								ksl.create();
 								ksl
 										.getShell()

@@ -230,7 +230,7 @@ public class SysmexAction extends Action implements ComPortListener {
 						KontaktSelektor ksl =
 							new KontaktSelektor(Hub.getActiveShell(), Patient.class, Messages
 								.getString("SysmexAction.Patient.Title"), Messages //$NON-NLS-1$
-								.getString("SysmexAction.Patient.Text")); //$NON-NLS-1$
+								.getString("SysmexAction.Patient.Text"),Patient.DEFAULT_SORT); //$NON-NLS-1$
 						ksl.create();
 						ksl.getShell().setText(Messages.getString("SysmexAction.Patient.Title")); //$NON-NLS-1$
 						if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {
