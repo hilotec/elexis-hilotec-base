@@ -83,6 +83,7 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 	}
 
 	private void doShakeKons(IProgressMonitor monitor, int workUnits){
+		monitor.subTask("Anonymisiere Konsultationen");
 		Query<Konsultation> qbe=new Query<Konsultation>(Konsultation.class);
 		List<Konsultation> list=qbe.execute();
 		int workPerKons=(Math.round(workUnits*.8f)/list.size());
@@ -98,10 +99,14 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 			vr.update(par.toString(), "random contents");
 			k.setEintrag(vr, true);
 			k.purgeEintrag();
+			if(monitor.isCanceled()){
+				break;
+			}
 			monitor.worked(workPerKons);
 		}
 	}
 	private void doShakeNames(IProgressMonitor monitor, int workUnits) {
+		monitor.subTask("Anonymisiere Patienten und Kontakte");
 		Query<Kontakt> qbe = new Query<Kontakt>(Kontakt.class);
 		List<Kontakt> list = qbe.execute();
 		int workPerName=(Math.round(workUnits*.8f)/list.size());
@@ -144,6 +149,9 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 			k.set(Kontakt.FLD_STREET, "");
 			k.set(Kontakt.FLD_ZIP, "");
 			k.set(Kontakt.FLD_FAX, Math.random() > 0.8 ? getPhone() : "");
+			if(monitor.isCanceled()){
+				break;
+			}
 			monitor.worked(workPerName);
 		}
 	}

@@ -75,6 +75,10 @@ public class BestellBlatt extends ViewPart implements ICallback {
 			actBest.setPatient(Hub.actUser);
 			text.getPlugin().insertTable("[" + TEMPLATENAME + "]", //$NON-NLS-1$ //$NON-NLS-2$
 				ITextPlugin.FIRST_ROW_IS_HEADER | ITextPlugin.GRID_VISIBLE, tbl, null);
+			if(text.getPlugin().isDirectOutput()){
+				text.getPlugin().print(null, null, true);
+				getSite().getPage().hideView(this);
+			}
 		}
 	}
 	

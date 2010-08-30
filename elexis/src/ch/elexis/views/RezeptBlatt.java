@@ -85,7 +85,14 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 			
 		}
 		rp.setBrief(actBrief);
-		return text.getPlugin().insertTable(replace, 0, fields, wt);
+		if(text.getPlugin().insertTable(replace, 0, fields, wt)){
+			if(text.getPlugin().isDirectOutput()){
+				text.getPlugin().print(null, null, true);
+				getSite().getPage().hideView(this);
+			}
+			return true;
+		}
+		return false;
 	}
 	
 	public boolean createRezept(Rezept rp){

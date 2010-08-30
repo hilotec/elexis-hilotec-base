@@ -296,9 +296,6 @@ public class TextContainer {
 				});
 				saveBrief(ret, typ);
 				addBriefToKons(ret, kons);
-				if(plugin.isDirectOutput()){
-					plugin.print(null, null, true);
-				}
 				return ret;
 			}
 		}
