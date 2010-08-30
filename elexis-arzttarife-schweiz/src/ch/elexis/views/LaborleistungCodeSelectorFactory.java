@@ -37,7 +37,7 @@ public class LaborleistungCodeSelectorFactory extends CodeSelectorFactory {
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
 		fdl = new FlatDataLoader(cv, new Query<LaborLeistung>(LaborLeistung.class));
-		fdl.setOrderField("Text");
+		fdl.setOrderFields("Text");
 		vc =
 			new ViewerConfigurer(fdl, new DefaultLabelProvider(), new DefaultControlFieldProvider(
 				cv, new String[] {

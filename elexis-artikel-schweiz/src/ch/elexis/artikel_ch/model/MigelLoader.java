@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, G. Weirich and Elexis
+ * Copyright (c) 2009-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,6 +21,6 @@ import ch.elexis.util.viewers.CommonViewer;
 public class MigelLoader extends FlatDataLoader {
 	public MigelLoader(CommonViewer cv){
 		super(cv,new Query<MiGelArtikel>(MiGelArtikel.class));
-		orderField=MiGelArtikel.FLD_NAME;
+		setOrderFields(MiGelArtikel.FLD_NAME);
 	}
 }

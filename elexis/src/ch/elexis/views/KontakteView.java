@@ -74,6 +74,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 		parent.setLayout(new FillLayout());
 		cv = new CommonViewer();
 		loader = new FlatDataLoader(cv, new Query<Kontakt>(Kontakt.class));
+		loader.setOrderFields(new String[]{Kontakt.FLD_NAME1,Kontakt.FLD_NAME2, Kontakt.FLD_STREET, Kontakt.FLD_PLACE});
 		vc =
 			new ViewerConfigurer(loader, new KontaktLabelProvider(),
 				new DefaultControlFieldProvider(cv, fields),
@@ -119,7 +120,7 @@ public class KontakteView extends ViewPart implements ControlFieldListener, ISav
 	}
 	
 	public void reorder(String field){
-		loader.setOrderField(field);
+		loader.reorder(field);
 	}
 	
 	/**

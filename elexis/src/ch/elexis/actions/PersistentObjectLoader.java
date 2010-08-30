@@ -46,7 +46,7 @@ IWorker {
 	private final LinkedList<QueryFilter> queryFilters = new LinkedList<QueryFilter>();
 	// protected IFilter viewerFilter;
 	protected DelayableJob dj;
-	protected String orderField;
+	protected String[] orderFields;
 	private boolean bSuspended;
 	
 	public PersistentObjectLoader(CommonViewer cv,
@@ -126,7 +126,7 @@ IWorker {
 	 *            the field name after which the table should e reordered
 	 */
 	public void reorder(String field) {
-		setOrderField(field);
+		setOrderFields(new String[]{field});
 		dj.launch(20);
 	}
 	
@@ -154,8 +154,8 @@ IWorker {
 		}
 	}
 	
-	public void setOrderField(String name) {
-		orderField = name;
+	public void setOrderFields(String... name) {
+		orderFields = name;
 	}
 	
 	/**
