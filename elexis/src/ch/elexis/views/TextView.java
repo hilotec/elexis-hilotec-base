@@ -238,9 +238,9 @@ public class TextView extends ViewPart implements IActivationListener {
 					} else {
 						FileDialog fdl = new FileDialog(getViewSite()
 								.getShell(), SWT.SAVE);
-						fdl.setFilterExtensions(new String[] { "*.odt" });
+						fdl.setFilterExtensions(new String[] { "*.odt","*.xml","*.*" });
 						fdl
-								.setFilterNames(new String[] { "OpenOffice.org Text" });
+								.setFilterNames(new String[] { "OpenOffice.org Text","XML File", "All files" });
 						String filename = fdl.open();
 						if (filename != null) {
 							if (FileTool.getExtension(filename).equals("")) {
