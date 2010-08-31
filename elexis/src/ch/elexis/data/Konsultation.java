@@ -302,7 +302,7 @@ public class Konsultation extends PersistentObject implements
 	public void updateEintrag(String eintrag, boolean force) {
 		if (force || isEintragEditable()) {
 			setVersionedResource(FLD_ENTRY, eintrag);
-			ElexisEventDispatcher.update(this);
+			//ElexisEventDispatcher.update(this);
 		}
 	}
 
