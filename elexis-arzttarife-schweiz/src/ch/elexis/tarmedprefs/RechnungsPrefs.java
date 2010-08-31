@@ -417,7 +417,9 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 						new KontaktSelektor(
 							getShell(),
 							Organisation.class,
-							Messages.getString("RechnungsPrefs.paymentinst"), Messages.getString("RechnungsPrefs.PleseChooseBank")); //$NON-NLS-1$ //$NON-NLS-2$
+							Messages.getString("RechnungsPrefs.paymentinst"), 
+							Messages.getString("RechnungsPrefs.PleseChooseBank"),
+									new String[]{Organisation.FLD_NAME1,Organisation.FLD_NAME2}); //$NON-NLS-1$ //$NON-NLS-2$
 					if (ksl.open() == Dialog.OK) {
 						actBank = (Kontakt) ksl.getSelection();
 						actMandant.setInfoElement(ta.RNBANK, actBank.getId());

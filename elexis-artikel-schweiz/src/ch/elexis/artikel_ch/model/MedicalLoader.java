@@ -23,6 +23,6 @@ public class MedicalLoader extends FlatDataLoader {
 
 	public MedicalLoader(CommonViewer cv){
 		super(cv,new Query<Medical>(Medical.class));
-		orderField=Medical.FLD_NAME;
+		orderFields=new String[]{Medical.FLD_NAME};
 	}
 }

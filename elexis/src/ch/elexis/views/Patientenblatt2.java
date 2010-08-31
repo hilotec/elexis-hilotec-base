@@ -246,10 +246,11 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 					 */
 
 					public void hyperlinkActivated(final String l) {
+						final String[] sortFields=new String[]{Kontakt.FLD_NAME1,Kontakt.FLD_NAME2,Kontakt.FLD_STREET};
 						KontaktSelektor ksl = new KontaktSelektor(
 								getShell(),
 								Kontakt.class,
-								Messages.getString("Patientenblatt2.contactForAdditionalAddress"), Messages.getString("Patientenblatt2.pleaseSelectardress")); //$NON-NLS-1$ //$NON-NLS-2$
+								Messages.getString("Patientenblatt2.contactForAdditionalAddress"), Messages.getString("Patientenblatt2.pleaseSelectardress"),sortFields); //$NON-NLS-1$ //$NON-NLS-2$
 						if (ksl.open() == Dialog.OK) {
 							Kontakt k = (Kontakt) ksl.getSelection();
 							BezugsKontaktAuswahl bza = new BezugsKontaktAuswahl();

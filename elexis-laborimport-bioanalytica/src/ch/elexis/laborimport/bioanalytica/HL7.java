@@ -1,5 +1,5 @@
 /**
- * (c) 2007-2009 by G. Weirich
+ * (c) 2007-2010 by G. Weirich
  * All rights reserved
  * $Id: HL7.java 2491 2007-06-08 07:14:29Z rgw_ch $
  * 
@@ -518,7 +518,7 @@ public class HL7 {
 			Desk.getDisplay().syncExec(new Runnable() {
 				public void run() {
 					KontaktSelektor ksl = new KontaktSelektor(Hub.getActiveShell(), Patient.class,
-							PatientSelektorAdapter.this.title, PatientSelektorAdapter.this.message);
+							PatientSelektorAdapter.this.title, PatientSelektorAdapter.this.message,Patient.DEFAULT_SORT);
 					if (ksl.open() == Dialog.OK) {
 						Kontakt sel =(Kontakt) ksl.getSelection();
 						if (sel instanceof Patient) {

@@ -193,7 +193,9 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 						getSite().getShell(),
 						Mandant.class,
 						Messages.getString("KonsDetailView.SelectMandatorCaption"), //$NON-NLS-1$
-						Messages.getString("KonsDetailView.SelectMandatorBody")); //$NON-NLS-1$
+						Messages.getString("KonsDetailView.SelectMandatorBody")
+						,new String[]{Mandant.FLD_SHORT_LABEL,Mandant.FLD_NAME1,Mandant.FLD_NAME2}
+				); //$NON-NLS-1$
 				if (ksl.open() == Dialog.OK) {
 					actKons.setMandant((Mandant) ksl.getSelection());
 					setKons(actKons);

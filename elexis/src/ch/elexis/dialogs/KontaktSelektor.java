@@ -99,30 +99,31 @@ public class KontaktSelektor extends TitleAreaDialog implements
 	private final PersistentObjectLoader kl;
 
 	@SuppressWarnings("unchecked")
-	public KontaktSelektor(Shell parentShell, Class which, String t, String m) {
+	public KontaktSelektor(Shell parentShell, Class which, String title, String message, String[] orderFields) {
 		super(parentShell);
 		// clazz=which;
 		cv = new CommonViewer();
 		fba = new FilterButtonAdapter();
-		title = t;
-		message = m;
+		this.title = title;
+		this.message = message;
 
 		kl = new FlatDataLoader(cv, new Query<Kontakt>(which));
+		kl.setOrderFields(orderFields);
 		fp = new KontaktFilter(0);
 	}
 
 	public KontaktSelektor(Shell parentShell,
 			Class<? extends PersistentObject> which, String t, String m,
-			boolean showBezugsKontakt) {
-		this(parentShell, which, t, m);
+			boolean showBezugsKontakt, String... orderFields) {
+		this(parentShell, which, t, m,orderFields);
 
 		this.showBezugsKontakt = showBezugsKontakt;
 	}
 
 	public KontaktSelektor(Shell parentShell,
 			Class<? extends PersistentObject> which, String t, String m,
-			String extra) {
-		this(parentShell, which, t, m);
+			String extra, String... orderFields) {
+		this(parentShell, which, t, m, orderFields);
 		extraText = extra;
 	}
 
@@ -521,20 +522,25 @@ public class KontaktSelektor extends TitleAreaDialog implements
 		Class<? extends Kontakt> clazz;
 		String extra;
 		String[] hints;
+		private String[] orderFields;
 
 		InSync(Class<? extends Kontakt> clazz, String title, String message,
-				String extra, String[] hints) {
+				String extra, String[] hints, String... orderFields) {
 			this.title = title;
 			this.message = message;
 			this.clazz = clazz;
 			this.extra = extra;
 			this.hints = hints;
+			this.orderFields=orderFields;
+			if(orderFields==null){
+				this.orderFields=new String[]{Kontakt.FLD_NAME1,Kontakt.FLD_NAME2, Kontakt.FLD_STREET, Kontakt.FLD_PLACE};
+			}
 		}
 
 		public void run() {
 			Shell shell = Desk.getDisplay().getActiveShell();
 			KontaktSelektor ksl = new KontaktSelektor(shell, clazz, title,
-					message, extra);
+					message, extra, orderFields);
 			if (hints != null) {
 				ksl.setHints(hints);
 			}

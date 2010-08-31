@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,7 +106,7 @@ public class KontaktFieldEditor extends FieldEditor {
 				public void mouseUp(MouseEvent e){
 					KontaktSelektor ksl =
 						new KontaktSelektor(parent.getShell(), Kontakt.class, Messages.getString("KontaktFieldEditor.SelectContact"), //$NON-NLS-1$
-							Messages.getString("KontaktFieldEditor.PleaseSelectContact")); //$NON-NLS-1$
+							Messages.getString("KontaktFieldEditor.PleaseSelectContact"),Kontakt.DEFAULT_SORT); //$NON-NLS-1$
 					if (ksl.open() == Dialog.OK) {
 						selected = (Kontakt) ksl.getSelection();
 						contactLabel.setText(selected.getLabel());

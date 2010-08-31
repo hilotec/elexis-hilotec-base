@@ -63,6 +63,7 @@ public class Patient extends Person {
 	public static final String FLD_PHONE1 = "Telefon1";
 	public static final String FLD_FAX = "Fax";
 	public static final String FLD_BALANCE = "Konto";
+	public static final String[] DEFAULT_SORT={FLD_NAME,FLD_FIRSTNAME,FLD_DOB};
 
 	static {
 		addMapping(

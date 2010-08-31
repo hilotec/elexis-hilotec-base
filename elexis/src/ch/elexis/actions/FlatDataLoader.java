@@ -67,8 +67,8 @@ public class FlatDataLoader extends PersistentObjectLoader implements ILazyConte
 		filtered = null;
 		setQuery();
 		applyQueryFilters();
-		if (orderField != null) {
-			qbe.orderBy(false, orderField);
+		if (orderFields != null) {
+			qbe.orderBy(false, orderFields);
 		}
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;

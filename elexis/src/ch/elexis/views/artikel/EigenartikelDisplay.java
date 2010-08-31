@@ -78,7 +78,8 @@ public class EigenartikelDisplay implements IDetailDisplay {
 																shell,
 																Kontakt.class,
 																Messages.EigenartikelDisplay_dealer,
-																Messages.EigenartikelDisplay_pleaseChooseDealer);
+																Messages.EigenartikelDisplay_pleaseChooseDealer,
+																Kontakt.DEFAULT_SORT);
 															if (ksl.open() == Dialog.OK) {
 																Kontakt k = (Kontakt) ksl.getSelection();
 																((Artikel) po).setLieferant(k);
