@@ -142,6 +142,17 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 		}, pat.getId(), title);
 	}
 	
+	public static Episode findEpisode(Patient pat, String title){
+		Query<Episode> qbe=new Query<Episode>(Episode.class);
+		qbe.add(FLD_PATIENT_ID, Query.EQUALS, pat.getId());
+		qbe.add(FLD_TITLE, Query.EQUALS, title);
+		List<Episode> result=qbe.execute();
+		if(result==null || result.size()==0){
+			return null;
+		}
+		return result.get(0);
+	}
+	
 	@Override
 	public String getLabel(){
 		String title = get(FLD_TITLE);

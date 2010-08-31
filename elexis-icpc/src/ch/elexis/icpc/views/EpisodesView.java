@@ -70,17 +70,28 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 	};
 
 	private ElexisEventListenerImpl eeli_episode = new ElexisEventListenerImpl(
-			Episode.class) {
+			Episode.class, ElexisEvent.EVENT_DESELECTED|ElexisEvent.EVENT_SELECTED|ElexisEvent.EVENT_UPDATE) {
 		@Override
 		public void runInUi(ElexisEvent ev) {
 			Episode ep = (Episode) ev.getObject();
-			if (ep.getStatus() == Episode.ACTIVE) {
-				activateEpisodeAction.setChecked(true);
-			} else {
-				activateEpisodeAction.setChecked(false);
-			}
-			if (konsFilterAction.isChecked()) {
-				episodesFilter.setProblem(ep);
+			switch(ev.getType()){
+			case ElexisEvent.EVENT_SELECTED:
+				if (ep.getStatus() == Episode.ACTIVE) {
+					activateEpisodeAction.setChecked(true);
+				} else {
+					activateEpisodeAction.setChecked(false);
+				}
+				if (konsFilterAction.isChecked()) {
+					episodesFilter.setProblem(ep);
+				}
+				break;
+			case ElexisEvent.EVENT_DESELECTED:
+				episodesFilter.setProblem(null);
+				break;
+			case ElexisEvent.EVENT_UPDATE:
+				display.tvEpisodes.refresh();
+				break;
+				
 			}
 
 		}
