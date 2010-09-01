@@ -44,6 +44,14 @@ public interface IDocumentManager {
 	 */
 	public String addDocument(IOpaqueDocument doc) throws ElexisException;
 
+	
+	/**
+	 * remove and delete a document
+	 * @param guid the guid of the doucment to remove
+	 * @return true on success
+	 */
+	public boolean removeDocument(String guid);
+	
 	/**
 	 * Render a Document to a Stream
 	 * 
