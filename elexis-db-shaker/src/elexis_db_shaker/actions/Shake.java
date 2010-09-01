@@ -16,9 +16,11 @@ import org.eclipse.ui.progress.IProgressService;
 
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Kontakt;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.VersionedResource;
 
@@ -63,11 +65,23 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 							pm.beginTask("Anonymisiere Datenbank", TOTAL);
 							int jobs=1;
 							if(sd.replaceKons){
-								jobs=2;
+								jobs++;
+							}
+							if(sd.deleteDocs){
+								jobs++;
+							}
+							if(sd.purgeDB){
+								jobs++;
 							}
 							doShakeNames(pm,TOTAL/jobs);
 							if(sd.replaceKons){
 								doShakeKons(pm,TOTAL/jobs);
+							}
+							if(sd.deleteDocs) {
+								new DocumentRemover().run(pm, TOTAL/jobs);
+							}
+							if(sd.purgeDB){
+								doPurgeDB(pm,TOTAL/jobs);
 							}
 						}
 					});
@@ -80,6 +94,32 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 				}
 			}
 		}
+	}
+	
+	private void doPurgeDB(IProgressMonitor monitor, int workUnits){
+		monitor.subTask("Bereinige Datenbank");
+		JdbcLink j=PersistentObject.getConnection();
+		j.exec("DELETE FROM kontakt where deleted='1'");
+		j.exec("DELETE FROM briefe where deleted='1'");
+		j.exec("DELETE FROM faelle where deleted='1'");
+		j.exec("DELETE FROM behandlungen where deleted='1'");
+		j.exec("DELETE FROM artikel where deleted='1'");
+		j.exec("DELETE FROM leistungen where deleted='1'");
+		j.exec("DELETE FROM output_log");
+		j.exec("DELETE FROM rechnungen where deleted='1'");
+		j.exec("DELETE FROM reminders where deleted='1'");
+		j.exec("DELETE FROM traces");
+		j.exec("DELETE FROM laboritems where deleted='1'");
+		j.exec("DELETE FROM laborwerte where deleted='1'");
+		j.exec("DELETE FROM rezepte where deleted='1'");
+		j.exec("DELETE FROM heap where deleted='1'");
+		j.exec("DELETE FROM auf where deleted='1'");
+		j.exec("DELETE FROM heap2 where deleted='1'");
+		j.exec("DELETE FROM logs where deleted='1'");
+		j.exec("DELETE FROM xid where deleted='1'");
+		j.exec("DELETE FROM etiketten where deleted='1'");
+		j.exec("DELETE FROM CH_ELEXIS_OMNIVORE_DATA where deleted='1'");
+		
 	}
 
 	private void doShakeKons(IProgressMonitor monitor, int workUnits){

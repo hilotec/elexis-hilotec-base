@@ -10,8 +10,12 @@ import org.eclipse.swt.widgets.Shell;
 public class SettingsDialog extends Dialog {
 	Button bNames;
 	Button bKons;
+	Button bDocuments;
+	Button bPurge;
 	boolean replaceNames;
 	boolean replaceKons;
+	boolean deleteDocs;
+	boolean purgeDB;
 	
 	protected SettingsDialog(Shell parentShell) {
 		super(parentShell);
@@ -24,6 +28,10 @@ public class SettingsDialog extends Dialog {
 		bNames.setText("Namen durch echt wirkende Pseudos ersetzen");
 		bKons=new Button(ret,SWT.CHECK);
 		bKons.setText("Auch Konsultationstexte überschreiben");
+		bDocuments=new Button(ret,SWT.CHECK);
+		bDocuments.setText("Alle Dokumente löschen");
+		bPurge=new Button(ret,SWT.CHECK);
+		bPurge.setText("Gelöscht markierte Objekte definitiv löschen");
 		return ret;
 	}
 
@@ -37,6 +45,7 @@ public class SettingsDialog extends Dialog {
 	protected void okPressed() {
 		replaceNames=bNames.getSelection();
 		replaceKons=bKons.getSelection();
+		deleteDocs=bDocuments.getSelection();
 		super.okPressed();
 	}
 
