@@ -293,11 +293,10 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		     we must make sure that there will be a correct elexis.app with an
 		     executable launcher within
 		 -->
-		<zip destfile="${output}/elexis-macosx-${version}.${DSTAMP}.zip">
+		<zip destfile="${output}/elexis-macosx-${version}.${DSTAMP}.zip" duplicate="overwrite">
 			<zipfileset dir="${dist}">
 				<include name="*" />
 				<include name="elexis.app/**" />
-				<exclude name="elexis.app/Contents/MacOS/elexis" />
 				<include name="configuration/**" />
 				<include name="plugins/ch.elexis_*/**" />
 				<include name="plugins/ch.rgw.utility_*/**" />
