@@ -19,14 +19,14 @@ public class RFE extends PersistentObject {
 		"INSERT INTO "+TABLENAME+" (ID, konsID) VALUES ('VERSION','"+Version+"');";
 	
 	static final String[][] rfe = {
-			{ "01", "Kontakt auf Wunsch des Patienten", "01-Wunsch" },
-			{ "02", "Notfallkonsultation", "02-NF" },
-			{ "03", "Kontakt auf Zuweisung","03-Zuw." },
-			{ "04", "Folgekontakt auf Verordnung/Empfehlung","04-Verord." },
-			{ "05", "Folgekontakt wegen auswärtiger Hämatologie und Chemie","05-Labor" },
-			{ "06", "Kontakt in Zusammenhang mit Langzeitpflege", "06-Langz."},
-			{ "07",	"Kontakt in kausalem Zusammenhang mit Eingriff / Hospitalisation", "07-Spital" },
-			{ "99", "Kein Arztkontakt","99-" }
+			{ "01", "01- Kontakt auf Wunsch des Patienten", "01-Wunsch" },
+			{ "02", "02- Notfallkonsultation", "02-NF" },
+			{ "03", "03- Kontakt auf Zuweisung","03-Zuweis." },
+			{ "04", "04- Folgekontakt auf Verordnung/Empfehlung","04-Verord." },
+			{ "05", "05- Folgekontakt wegen auswärtiger Hämatologie und Chemie","05-Labor" },
+			{ "06", "06- Kontakt in Zusammenhang mit Langzeitpflege", "06-Langz."},
+			{ "07",	"07- Kontakt in kausalem Zusammenhang mit Eingriff / Hospitalisation", "07-Spital" },
+			{ "99", "99- Kein Arztkontakt","99-" }
 
 	};
 	

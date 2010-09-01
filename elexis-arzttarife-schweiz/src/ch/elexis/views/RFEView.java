@@ -17,6 +17,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.part.ViewPart;
 
+import ch.elexis.Desk;
 import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListenerImpl;
@@ -38,23 +39,33 @@ public class RFEView extends ViewPart {
 		@Override
 		public void runInUi(ElexisEvent ev) {
 			Konsultation k = (Konsultation) ev.getObject();
-			List<RFE> rfeForKOns=RFE.getRfeForKons(k.getId());
-			CTabItem top=tabs.getSelection();
-			if(top!=null){
-				Control c=top.getControl();
-				if(c instanceof Table){
-					Table table=(Table)c;
-					table.deselectAll();
-					for(RFE rfe:rfeForKOns){
-						table.select(mapCodeToIndex.get(rfe.getCode()));
-					}
-				}
-			}
-		
+			adjustTable(k);
 		}
 
 	};
 
+	private void adjustTable(Konsultation k){
+		List<RFE> rfeForKOns=RFE.getRfeForKons(k.getId());
+		CTabItem top=tabs.getSelection();
+		if(top!=null){
+			Control c=top.getControl();
+			if(c instanceof Table){
+				Table table=(Table)c;
+				table.deselectAll();
+				for(TableItem it:table.getItems()){
+					it.setBackground(table.getBackground());
+					it.setForeground(table.getForeground());
+				}
+				for(RFE rfe:rfeForKOns){
+					int idx=mapCodeToIndex.get(rfe.getCode());
+					TableItem item=table.getItem(idx);
+					item.setBackground(Desk.getColor(Desk.COL_SKYBLUE));
+					item.setForeground(Desk.getColor(Desk.COL_RED));
+					//table.select(idx);
+				}
+			}
+		}
+	}
 	@Override
 	public void createPartControl(Composite parent) {
 		tabs=new CTabFolder(parent, SWT.BOTTOM);
@@ -67,13 +78,6 @@ public class RFEView extends ViewPart {
 		ctMedium.setText("kurz");
 		mediumTable= new Table(tabs, SWT.MULTI | SWT.FULL_SELECTION);
 		ctMedium.setControl(mediumTable);
-
-		/*
-		CTabItem ctShort=new CTabItem(tabs,SWT.NONE);
-		ctShort.setText("kurz");
-		shortTable= new Table(tabs, SWT.MULTI | SWT.FULL_SELECTION);
-		ctShort.setControl(shortTable);
-		*/
 		
 		CTabItem ctStat=new CTabItem(tabs,SWT.NONE);
 		ctStat.setText("Statistik");
@@ -161,6 +165,7 @@ public class RFEView extends ViewPart {
 					String code=mapIndexToCode.get(s);
 					new RFE(k.getId(),code);
 				}
+				adjustTable(k);
 			}
 		}
 	
