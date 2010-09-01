@@ -31,6 +31,7 @@ public class RFEView extends ViewPart {
 	Table longTable, shortTable, mediumTable;
 	CTabFolder tabs;
 	Composite cCalc;
+	boolean bDaempfung = false;
 	HashMap<String, Integer> mapCodeToIndex = new HashMap<String, Integer>();
 	HashMap<Integer, String> mapIndexToCode = new HashMap<Integer, String>();
 
@@ -54,15 +55,15 @@ public class RFEView extends ViewPart {
 				Table table = (Table) c;
 				table.deselectAll();
 				for (TableItem it : table.getItems()) {
-					//it.setBackground(null);
-					//it.setForeground(null);
-					it.setImage((Image)null);
+					// it.setBackground(null);
+					// it.setForeground(null);
+					it.setImage((Image) null);
 				}
 				for (RFE rfe : rfeForKOns) {
 					int idx = mapCodeToIndex.get(rfe.getCode());
 					TableItem item = table.getItem(idx);
-					//item.setBackground(Desk.getColor(Desk.COL_SKYBLUE));
-					//item.setForeground(Desk.getColor(Desk.COL_RED));
+					// item.setBackground(Desk.getColor(Desk.COL_SKYBLUE));
+					// item.setForeground(Desk.getColor(Desk.COL_RED));
 					item.setImage(Desk.getImage(Desk.IMG_TICK));
 					// table.select(idx);
 				}
@@ -165,13 +166,16 @@ public class RFEView extends ViewPart {
 			Konsultation k = (Konsultation) ElexisEventDispatcher
 					.getSelected(Konsultation.class);
 			if (k != null) {
-				RFE.clear(k);
 				int[] sel = table.getSelectionIndices();
-				for (int s : sel) {
-					String code = mapIndexToCode.get(s);
-					new RFE(k.getId(), code);
+				if (sel.length > 0) {
+					RFE.clear(k);
+					
+					for (int s : sel) {
+						String code = mapIndexToCode.get(s);
+						new RFE(k.getId(), code);
+					}
+					adjustTable(k);
 				}
-				adjustTable(k);
 			}
 		}
 
