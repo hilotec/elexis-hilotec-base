@@ -121,4 +121,13 @@ public class DocumentManagement implements IDocumentManager {
 		}
 		return ret;
 	}
+
+	@Override
+	public boolean removeDocument(String guid) {
+		DocHandle dh=DocHandle.load(guid);
+		if(dh.exists()){
+			return dh.delete();
+		}
+		return false;
+	}
 }
