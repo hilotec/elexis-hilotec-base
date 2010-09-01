@@ -31,11 +31,11 @@ import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionedResource;
-import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.VersionedResource.ResourceItem;
 
 /**
@@ -158,6 +158,7 @@ public class Konsultation extends PersistentObject implements
 		return vr;
 	}
 
+	/*
 	private void addSection(String title, int pos) {
 		VersionedResource vr = getEintrag();
 		String ntext = vr.getHead();
@@ -180,7 +181,7 @@ public class Konsultation extends PersistentObject implements
 	public void removeSection(int pos) {
 
 	}
-
+*/
 	/**
 	 * Insert an XREF to the EMR text
 	 * 
@@ -428,7 +429,7 @@ public class Konsultation extends PersistentObject implements
 	public boolean isEditable(boolean showError) {
 		Fall fall = getFall();
 		if (fall != null) {
-			if (!fall.isOpen()) {
+			if ((!fall.isOpen()) && showError) {
 				SWTHelper
 						.showError("Fall geschlossen",
 								"Diese Konsultation gehört zu einem abgeschlossenen Fall");
