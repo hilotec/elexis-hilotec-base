@@ -83,6 +83,7 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 							if(sd.purgeDB){
 								doPurgeDB(pm,TOTAL/jobs);
 							}
+							pm.done();
 						}
 					});
 				} catch (InvocationTargetException e) {
@@ -119,7 +120,7 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 		j.exec("DELETE FROM xid where deleted='1'");
 		j.exec("DELETE FROM etiketten where deleted='1'");
 		j.exec("DELETE FROM CH_ELEXIS_OMNIVORE_DATA where deleted='1'");
-		
+		monitor.worked(workUnits);
 	}
 
 	private void doShakeKons(IProgressMonitor monitor, int workUnits){
