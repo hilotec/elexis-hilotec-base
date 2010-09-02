@@ -60,7 +60,10 @@ public class EtiketteDruckenDialog extends TitleAreaDialog implements ICallback 
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
 		text.createFromTemplateName(null, template, Brief.UNKNOWN, kontakt, title);
-		
+		if(text.getPlugin().isDirectOutput()){
+			text.getPlugin().print(null, null, true);
+			okPressed();
+		}
 		return ret;
 	}
 	
