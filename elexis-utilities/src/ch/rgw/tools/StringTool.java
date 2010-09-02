@@ -1028,7 +1028,7 @@ public class StringTool {
 	 */
 	public static String getWordAtIndex(String text, int index) {
 		char c;
-		if (index < 0 || text == null || index >= text.length()) {
+		if (index < 0 || text == null || index > text.length()) {
 			return "";
 		}
 		int start;
@@ -1049,8 +1049,8 @@ public class StringTool {
 				break;
 			}
 		}
-		if (--end > text.length()) {
-			end = text.length();
+		if (end > text.length()) {
+			end = text.length()+1;
 		}
 		return text.substring(start, end);
 	}

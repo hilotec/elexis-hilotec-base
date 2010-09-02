@@ -45,7 +45,7 @@ public class GenericRange {
 	}
 	
 	public void setEnd(int e){
-		len=e-pos+1;
+		len=e-pos;
 	}
 
 	public static final int IS_BEFORE_OTHER = 1;
