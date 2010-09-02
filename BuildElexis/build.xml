@@ -310,7 +310,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 				<include name="plugins/com.ibm*" />
 				<include name="plugins/javax*" />
 			</zipfileset>
-			<zipfileset file="${dist}/elexis.app/Contents/MacOS/elexis" prefix="elexis.app/Contents/MacOS" filemode="755" />
+			<zipfileset file="${rsc}/macosx/starter-mac" prefix="elexis.app/Contents/MacOS" filemode="755" />
 		</zip>
 	</target>
 

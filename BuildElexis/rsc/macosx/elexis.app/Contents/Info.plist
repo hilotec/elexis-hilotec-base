@@ -1,43 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-
 <dict>
 	<key>CFBundleExecutable</key>
-		<string>elexis</string>
+	<string>starter-mac</string>
 	<key>CFBundleGetInfoString</key>
-		<string>Elexis 2.1 for Mac OS X. (c) 2010 by G. Weirich. All rights reserved</string>
+	<string>Elexis 2.1 for Mac OS X. (c) 2010 by G. Weirich. All rights reserved</string>
 	<key>CFBundleIconFile</key>
-		<string>elexis-mac.icns</string>
+	<string>elexis-mac.icns</string>
 	<key>CFBundleIdentifier</key>
-		<string>ch.elexis.elexis</string>
+	<string>ch.elexis.elexis</string>
 	<key>CFBundleInfoDictionaryVersion</key>
-		<string>6.0</string>
+	<string>6.0</string>
 	<key>CFBundleName</key>
-		<string>elexis</string>
+	<string>elexis</string>
 	<key>CFBundlePackageType</key>
-		<string>APPL</string>
+	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-		<string>2.1</string>
+	<string>2.1</string>
 	<key>CFBundleSignature</key>
-		<string>????</string>
+	<string>????</string>
 	<key>CFBundleVersion</key>
-		<string>2.1</string>
-		
+	<string>2.1</string>
 	<key>Eclipse</key>
-		<array>
-			<!-- to use a specific Java version (instead of the platform's default) uncomment one of the following options:
-				<string>-vm</string><string>/System/Library/Frameworks/JavaVM.framework/Versions/1.4.2/Commands/java</string>
-				<string>-vm</string><string>/System/Library/Frameworks/JavaVM.framework/Versions/1.5.0/Commands/java</string>
-			-->
-			<string>-keyring</string><string>~/.eclipse_keyring</string>
-			<string>-showlocation</string>
-			<!-- WARNING:
-				If you try to add a single VM argument (-vmargs) here,
-				*all* vmargs specified in eclipse.ini will be ignored.
-				We recommend to add all arguments in eclipse.ini
-			 -->
-		</array>
+	<array>
+		<string>-keyring</string>
+		<string>~/.eclipse_keyring</string>
+		<string>-showlocation</string>
+	</array>
 </dict>
-
 </plist>
