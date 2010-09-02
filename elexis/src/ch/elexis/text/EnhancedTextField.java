@@ -781,6 +781,8 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 	@Override
 	public GenericRange getSelectedRange() {
 		Point pt = text.getSelection();
-		return new GenericRange(pt.x, pt.y);
+		GenericRange gr= new GenericRange(pt.x);
+		gr.setEnd(pt.y);
+		return gr;
 	}
 }
