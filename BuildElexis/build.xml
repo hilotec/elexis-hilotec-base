@@ -282,9 +282,10 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<copy todir="${dist}">
 			<fileset dir="${rsc}/macosx" />
 		</copy>
-		<exec executable="chmod" dir="${dist}/elexis.app/Contents/MacOS">
-			<arg line="+x elexis" />
-		</exec>
+		<!-- exec executable="chmod" dir="${dist}/elexis.app/Contents/MacOS">
+			<arg line="+x starter-mac" />
+		</exec -->
+		
 		<antcall target="create-default" />
 
 		<!-- For the Mac, we do not create a jar installer, because on MacOSX,
@@ -293,7 +294,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		     we must make sure that there will be a correct elexis.app with an
 		     executable launcher within
 		 -->
-		<zip destfile="${output}/elexis-macosx-${version}.${DSTAMP}.zip" duplicate="preserve">
+		<zip destfile="${output}/elexis-macosx-${version}.${DSTAMP}.zip">
 			<zipfileset dir="${dist}">
 				<include name="*" />
 				<include name="elexis.app/**" />
@@ -310,7 +311,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 				<include name="plugins/com.ibm*" />
 				<include name="plugins/javax*" />
 			</zipfileset>
-			<zipfileset file="${rsc}/macosx/starter-mac" prefix="elexis.app/Contents/MacOS" filemode="755" />
+			<zipfileset file="${rsc}/macosx/starter-mac" fullpath="/elexis.app/Contents/MacOS/starter-mac" filemode="755" />
 		</zip>
 	</target>
 
