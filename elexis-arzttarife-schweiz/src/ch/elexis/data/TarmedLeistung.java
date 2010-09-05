@@ -57,7 +57,9 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 	public static final String FLD_NICK = "Nick";
 	public static final String XIDDOMAIN = "www.xid.ch/id/tarmedsuisse";
 	Hashtable<String, String> ext;
-	private static final String VERSION = "1.1.1";
+	private static final String VERSION_000 = "0.0.0";
+	private static final String VERSION_110 = "1.1.0";
+	private static final String VERSION_111 = "1.1.1";
 	public static final TarmedComparator tarmedComparator;
 	public static final TarmedOptifier tarmedOptifier;
 	public static final TimeTool INFINITE = new TimeTool("19991231");
@@ -94,16 +96,16 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 		if (!tlv.exists()) {
 			tlv = new TarmedLeistung();
 			tlv.create("Version");
-			tlv.set(FLD_NICK, VERSION);
+			tlv.set(FLD_NICK, VERSION_000);
 		}
 		VersionInfo vi = new VersionInfo(tlv.get(FLD_NICK));
-		if (vi.isOlder("1.1.0")) {
+		if (vi.isOlder(VERSION_110)) {
 			createOrModifyTable(upd110);
-			tlv.set(FLD_NICK, VERSION);
+			tlv.set(FLD_NICK, VERSION_110);
 		}
-		if (vi.isOlder(VERSION)) {
+		if (vi.isOlder(VERSION_111)) {
 			createOrModifyTable("Update TARMED set gueltigbis='20993112' where id='39.0305'");
-			tlv.set(FLD_NICK, VERSION);
+			tlv.set(FLD_NICK, VERSION_111);
 		}
 		tarmedComparator = new TarmedComparator();
 		tarmedOptifier = new TarmedOptifier();
