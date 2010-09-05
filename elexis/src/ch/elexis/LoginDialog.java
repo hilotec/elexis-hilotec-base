@@ -60,8 +60,8 @@ public class LoginDialog extends TitleAreaDialog {
 			usr.setText("Administrator"); //$NON-NLS-1$
 			pwd.setText("admin"); //$NON-NLS-1$
 		}
-		usr.addModifyListener(be);
-		pwd.addModifyListener(be);
+		//usr.addModifyListener(be);
+		//pwd.addModifyListener(be);
 		return ret;
 	}
 	
@@ -74,7 +74,7 @@ public class LoginDialog extends TitleAreaDialog {
 		}
 		else{
 			setMessage(Messages.LoginDialog_4,IMessageProvider.ERROR);
-			getButton(IDialogConstants.OK_ID).setEnabled(false);
+			//getButton(IDialogConstants.OK_ID).setEnabled(false);
 		}
 	}
 	@Override
@@ -89,7 +89,7 @@ public class LoginDialog extends TitleAreaDialog {
 		super.create();
 		getButton(IDialogConstants.OK_ID).setText(Messages.LoginDialog_login);
 		getButton(IDialogConstants.CANCEL_ID).setText(Messages.LoginDialog_terminate);
-		getButton(IDialogConstants.OK_ID).setEnabled(false);
+		//getButton(IDialogConstants.OK_ID).setEnabled(false);
 
 	}
 	class ButtonEnabler implements ModifyListener{
@@ -97,9 +97,9 @@ public class LoginDialog extends TitleAreaDialog {
 		@Override
 		public void modifyText(ModifyEvent e) {
 			if(usr.getText().length()==0 || pwd.getText().length()==0){
-				getButton(IDialogConstants.OK_ID).setEnabled(false);
+				//getButton(IDialogConstants.OK_ID).setEnabled(false);
 			}else{
-				getButton(IDialogConstants.OK_ID).setEnabled(true);
+				//getButton(IDialogConstants.OK_ID).setEnabled(true);
 			}
 			
 		}

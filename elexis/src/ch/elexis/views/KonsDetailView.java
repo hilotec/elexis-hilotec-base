@@ -410,12 +410,13 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 			vd.setLeistungen(b);
 			// ElexisEventDispatcher.fireSelectionEvent(b);
 			if(b.isEditable(false)){
+				//text.getControl().
 				text.setEnabled(true);
 				text.setToolTipText("");
 				lBeh.setForeground(Desk.getColor(Desk.COL_BLACK));
 				lBeh.setBackground(defaultBackground);
 			}else{
-				text.setEnabled(false);
+				//text.setEnabled(false);
 				text.setToolTipText("Konsultation geschlossen oder nicht von Ihnen");
 				lBeh.setForeground(Desk.getColor(Desk.COL_GREY60));
 				lBeh.setBackground(Desk.getColor(Desk.COL_GREY20));
