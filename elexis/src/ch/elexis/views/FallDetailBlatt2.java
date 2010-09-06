@@ -418,7 +418,7 @@ public class FallDetailBlatt2 extends Composite {
 									SELECT_CONTACT_CAPTION, MessageFormat
 											.format(SELECT_CONTACT_BODY,
 													new Object[] { r[0] }),
-									true);
+									true, Kontakt.DEFAULT_SORT);
 							// "Bitte wählen Sie den Kontakt für " + r[0] +
 							// " aus", true);
 							if (ksl.open() == Dialog.OK) {
