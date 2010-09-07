@@ -1,3 +1,15 @@
+/*******************************************************************************
+ * Copyright (c) 2010, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ * 
+ *  $Id: EnhancedTextField.java 6247 2010-03-21 06:36:34Z rgw_ch $
+ *******************************************************************************/
 package ch.elexis.text.model;
 
 import org.eclipse.swt.graphics.Rectangle;
@@ -17,7 +29,8 @@ import ch.rgw.tools.StringTool;
  */
 public class SSDRange {
 	public static final String TYPE_MARKUP = "markup";
-
+	public static final String TYPE_XREF="xref";
+	
 	public static final String ELEM_NAME = "range";
 	/** It is not possible to set the cursor within this range */
 	private static final String ATTR_LOCKED = "locked";

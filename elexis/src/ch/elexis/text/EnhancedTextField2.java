@@ -12,11 +12,17 @@
  *******************************************************************************/
 package ch.elexis.text;
 
+import java.util.HashMap;
+
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
+import ch.elexis.StringConstants;
+import ch.elexis.text.model.SSDRange;
+import ch.elexis.text.model.SimpleStructuredDocument;
 import ch.elexis.util.IKonsExtension;
 import ch.rgw.tools.GenericRange;
 import ch.rgw.tools.StringTool;
@@ -29,6 +35,7 @@ import ch.rgw.tools.StringTool;
 
 public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 	private StyledText st;
+	private HashMap<String,IKonsExtension> xRefHandlers=new HashMap<String,IKonsExtension>();
 	
 	public EnhancedTextField2(Composite parent) {
 		super(parent, SWT.NONE);
@@ -36,15 +43,13 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 
 	@Override
 	public void addXrefHandler(String id, IKonsExtension ike) {
-		// TODO Auto-generated method stub
-
+		xRefHandlers.put(id, ike);
 	}
 
 	@Override
 	public void insertXRef(int pos, String textToDisplay, String providerId,
 			String itemID) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override
@@ -53,10 +58,34 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 
 	}
 
+	/**
+	 * Contents will always be saved as SimpleStructuredDocument
+	 */
 	@Override
 	public String getContentsAsXML() {
-		// TODO Auto-generated method stub
-		return null;
+		SimpleStructuredDocument sd = new SimpleStructuredDocument();
+		sd.insertText(st.getText(), 0);
+		StyleRange[] ranges = st.getStyleRanges(true);
+		for (StyleRange sr : ranges) {
+			StringBuilder id = new StringBuilder();
+			if (sr.underline) {
+				id.append(SSDRange.STYLE_UNDERLINE).append(
+						StringConstants.COMMA);
+			}
+			if ((sr.fontStyle & SWT.BOLD) != 0) {
+				id.append(SSDRange.STYLE_BOLD).append(StringConstants.COMMA);
+			}
+			if ((sr.fontStyle & SWT.ITALIC) != 0) {
+				id.append(SSDRange.STYLE_ITALIC).append(StringConstants.COMMA);
+			}
+			if (id.length() > 1) {
+				id.deleteCharAt(id.length() - 1);
+			}
+			SSDRange r = new SSDRange(sr.start, sr.length,
+					SSDRange.TYPE_MARKUP, id.toString());
+			sd.addRange(r);
+		}
+		return sd.toXML(false);
 	}
 
 	@Override
