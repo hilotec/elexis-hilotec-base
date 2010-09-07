@@ -286,7 +286,7 @@ public class FallDetailBlatt2 extends Composite {
 						getShell(),
 						Kontakt.class,
 						Messages.getString("FallDetailBlatt2.SelectGuarantorCaption"), //$NON-NLS-1$
-						Messages.getString("FallDetailBlatt2.SelectGuarantorBody"), true); //$NON-NLS-1$
+						Messages.getString("FallDetailBlatt2.SelectGuarantorBody"), true, Kontakt.DEFAULT_SORT); //$NON-NLS-1$
 				if (ksl.open() == Dialog.OK) {
 					Kontakt sel = (Kontakt) ksl.getSelection();
 					Fall fall = getFall();
