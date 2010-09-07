@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service:service category="invisible" id="ch.elexis.fop_wrapper" name="FOP-Wrapper" provider="weirich@elexis.ch" type="Datenaustausch" version="1.0.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+  <service:description>Einbindung von Apache FOP</service:description>
+</service:service>
