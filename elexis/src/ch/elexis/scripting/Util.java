@@ -60,4 +60,19 @@ public class Util {
 		}
 		return -1;
 	}
+	
+	public static boolean isNumeric(String input){
+		if(input==null){
+			return false;
+		}
+		return input.matches("[0-9\\.]+");
+	}
+	
+	public static boolean isNumeric(double d){
+		return true;
+	}
+	
+	public static boolean isNumeric(int i){
+		return true;
+	}
 }

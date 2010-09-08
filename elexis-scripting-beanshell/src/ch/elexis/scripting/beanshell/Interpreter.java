@@ -48,11 +48,13 @@ public class Interpreter implements ch.elexis.scripting.Interpreter,
 			String msg = "";
 			if (e != null) {
 				try {
-					msg = e.getErrorText();
-					if (msg == null)
-						;
-					msg = "";
+					msg=e.getMessage();
+					//msg = e.getErrorText();
+					if (msg == null){
+						msg = "";
+					}
 				} catch (Exception ex) {
+					ExHandler.handle(ex);
 					msg = "unbekannter Fehler";
 				}
 			}
