@@ -37,3 +37,7 @@ syntax: regexp
 
 syntax: regexp
 ^BuildElexis/local\.properties\.hudson$
+syntax: regexp
+^dokumentation/elexis\.synctex\.gz\(busy\)$
+syntax: regexp
+^TestElexis/ch/elexis/tests/Rename\.java$
