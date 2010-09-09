@@ -62,6 +62,7 @@ public class SSDRange {
 	public static final String STYLE_UNDERLINE = "underline";
 	public static final String STYLE_FOREGROUND = "foreground:";
 	public static final String STYLE_BACKGROUND = "backgreound:";
+	Object data;
 	String id;
 	String typename;
 	int length;
@@ -166,5 +167,21 @@ public class SSDRange {
 		if (attr != null && value != null) {
 			e.setAttribute(attr, value);
 		}
+	}
+	
+	/**
+	 * Link some user defined data to the object
+	 * @param data
+	 */
+	public void setData(Object data){
+		this.data=data;
+	}
+	
+	/**
+	 * return user defined fata
+	 * @return data as perviously set by setData()
+	 */
+	public Object getData(){
+		return data;
 	}
 }

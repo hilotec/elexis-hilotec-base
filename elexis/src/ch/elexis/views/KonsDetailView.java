@@ -262,7 +262,7 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 			String provider = x.connect(text);
 			hXrefs.put(provider, x);
 		}
-		text.setXrefs(hXrefs);
+		text.setXrefHandlers(hXrefs);
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL
 				| GridData.FILL_VERTICAL | GridData.GRAB_VERTICAL
 				| GridData.GRAB_HORIZONTAL);

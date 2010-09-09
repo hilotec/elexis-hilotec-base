@@ -40,4 +40,26 @@ public interface IRangeRenderer {
 	 * separate window created by a range will not be handled by the framework)
 	 */
 	public IAction[] getActions(String rangeType);
+	
+	/**
+	 * The user double-clicked or selected the specified range
+	 * @param range the range that was selected by the user
+	 * @return
+	 */
+	public boolean onSelection(SSDRange range);
+	
+	/**
+	 * The user inserted a Range into a context (e.g. drag&drop)
+	 * @param range the SSDRange that was inserted
+	 * @param context the context the range was inserted into
+	 */
+	public void inserted(SSDRange range, Object context);
+	
+	/**
+	 * The user removed a Range from a context
+	 * @param range the range that was removed
+	 * @param context the context it was removed from
+	 */
+	public void removed(SSDRange range, Object context);
+	
 }

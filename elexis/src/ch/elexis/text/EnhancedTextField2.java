@@ -13,6 +13,9 @@
 package ch.elexis.text;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
@@ -20,9 +23,13 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
+import ch.elexis.ElexisException;
 import ch.elexis.StringConstants;
+import ch.elexis.services.GlobalServiceDescriptors;
+import ch.elexis.text.IRangeRenderer.OUTPUT;
 import ch.elexis.text.model.SSDRange;
 import ch.elexis.text.model.SimpleStructuredDocument;
+import ch.elexis.util.Extensions;
 import ch.elexis.util.IKonsExtension;
 import ch.rgw.tools.GenericRange;
 import ch.rgw.tools.StringTool;
@@ -35,8 +42,10 @@ import ch.rgw.tools.StringTool;
 
 public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 	private StyledText st;
-	private HashMap<String,IKonsExtension> xRefHandlers=new HashMap<String,IKonsExtension>();
-	
+	private Map<String,IKonsExtension> xRefHandlers=new HashMap<String,IKonsExtension>();
+	private List<SSDRange> ranges;
+	private HashMap<String, IRangeRenderer> renderers = new HashMap<String, IRangeRenderer>();
+
 	public EnhancedTextField2(Composite parent) {
 		super(parent, SWT.NONE);
 	}
@@ -49,7 +58,15 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 	@Override
 	public void insertXRef(int pos, String textToDisplay, String providerId,
 			String itemID) {
-		
+		if(ranges==null){
+			ranges=new LinkedList<SSDRange>();
+		}
+		SSDRange sdr=new SSDRange(pos, textToDisplay.length(), providerId, itemID);
+		ranges.add(sdr);
+		StyleRange sr=new StyleRange();
+		sr.start=pos;
+		sr.length=textToDisplay.length();
+		sr.data=sdr;
 	}
 
 	@Override
@@ -63,6 +80,15 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 	 */
 	@Override
 	public String getContentsAsXML() {
+		return getContents().toXML(false);
+	}
+
+	@Override
+	public String getContentsPlaintext() {
+		return st.getText();
+	}
+
+	public SimpleStructuredDocument getContents(){
 		SimpleStructuredDocument sd = new SimpleStructuredDocument();
 		sd.insertText(st.getText(), 0);
 		StyleRange[] ranges = st.getStyleRanges(true);
@@ -85,14 +111,8 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 					SSDRange.TYPE_MARKUP, id.toString());
 			sd.addRange(r);
 		}
-		return sd.toXML(false);
+		return sd;
 	}
-
-	@Override
-	public String getContentsPlaintext() {
-		return st.getText();
-	}
-
 	@Override
 	public GenericRange getSelectedRange() {
 		Point pt=st.getSelection();
@@ -104,4 +124,41 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 		return StringTool.getWordAtIndex(st.getText(), st.getCaretOffset());
 	}
 
+	@Override
+	public void setXrefHandlers(Map<String, IKonsExtension> handlers) {
+		if(xRefHandlers!=null){
+			xRefHandlers.clear();
+		}
+		xRefHandlers=handlers;
+		
+	}
+
+	void doFormat(SimpleStructuredDocument ssd) throws ElexisException{
+		st.setText(ssd.getPlaintext());
+		for (SSDRange r : ssd.getRanges()) {
+			IRangeRenderer renderer = renderers.get(r.getType());
+			if (renderer == null) {
+				renderer = (IRangeRenderer) Extensions.findBestService(
+						GlobalServiceDescriptors.TEXT_CONTENTS_EXTENSION,
+						r.getType());
+				if (renderer != null) {
+					renderers.put(r.getType(), renderer);
+				}
+			}
+			if (renderer == null
+					|| (!renderer.canRender(r.getType(),
+							IRangeRenderer.OUTPUT.STYLED_TEXT))) {
+				String hint = r.getHint();
+			} else {
+				Object rendered = renderer
+						.doRender(r, OUTPUT.STYLED_TEXT, this);
+				if (rendered instanceof StyleRange) {
+					StyleRange sr = (StyleRange) rendered;
+					st.setStyleRange(sr);
+		
+				} 
+			}
+		}
+
+	}
 }

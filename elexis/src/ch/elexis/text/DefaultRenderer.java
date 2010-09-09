@@ -69,7 +69,26 @@ public class DefaultRenderer implements IRangeRenderer {
 
 	@Override
 	public IAction[] getActions(String rangeType) {
+		// We are not active
 		return null;
+	}
+
+	@Override
+	public boolean onSelection(SSDRange range) {
+		// Uh? we have been clicked! DON'T! 
+		return false;
+	}
+
+	@Override
+	public void inserted(SSDRange range, Object context) {
+		// We have been inserted. Don't mind.
+		
+	}
+
+	@Override
+	public void removed(SSDRange range, Object context) {
+		// We have been removed. Don't worry.
+		
 	}
 
 }

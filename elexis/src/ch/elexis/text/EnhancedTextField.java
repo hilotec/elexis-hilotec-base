@@ -16,6 +16,7 @@ package ch.elexis.text;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -82,7 +83,7 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 	public static final String MACRO_KEY_DEFAULT = "$"; //$NON-NLS-1$
 
 	StyledText text;
-	Hashtable<String, IKonsExtension> hXrefs;
+	Map<String, IKonsExtension> hXrefs;
 	ETFDropReceiver dropper;
 	private List<Samdas.XRef> links;
 	private List<Samdas.Markup> markups;
@@ -101,6 +102,7 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 	private IMenuListener globalMenuListener;
 	private final ElexisEventListener eeli_user = new UserChangeListener();
 
+	/*
 	public void addMenuListener(IMenuListener ml) {
 		menuMgr.addMenuListener(ml);
 	}
@@ -108,8 +110,8 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 	public void removeMenuListener(IMenuListener ml) {
 		menuMgr.removeMenuListener(ml);
 	}
-
-	public void setXrefs(Hashtable<String, IKonsExtension> xrefs) {
+*/
+	public void setXrefHandlers(Map<String,IKonsExtension> xrefs) {
 		hXrefs = xrefs;
 	}
 
@@ -126,6 +128,7 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 	 * @param k
 	 *            kons to bill, can be null then billing macros are disabled
 	 */
+	
 	public void setKons(Konsultation k) {
 		actKons = k;
 	}

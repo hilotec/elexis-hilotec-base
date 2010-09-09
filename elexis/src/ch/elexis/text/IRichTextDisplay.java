@@ -1,11 +1,15 @@
 package ch.elexis.text;
 
+import java.util.Map;
+
 import ch.elexis.util.IKonsExtension;
 import ch.rgw.tools.GenericRange;
 
 public interface IRichTextDisplay {
 
 	public void addXrefHandler(String id, IKonsExtension ike);
+	
+	public void setXrefHandlers(Map<String, IKonsExtension> handlers);
 
 	public void insertXRef(int pos, String textToDisplay, String providerId, String itemID);
 
