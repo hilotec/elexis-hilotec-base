@@ -91,6 +91,9 @@ public class AccessControlDefaults {
 	
 	public static final ACE CASE = new ACE(ACE.ACE_ROOT, "Fall", Plafs.get(Messages.getString("AccessControlDefaults.main_case"))); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final ACE CASE_MODIFY = new ACE(CASE, "Ändern", Messages.getString("AccessControlDefaults.change")); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final ACE CASE_SPECIALS = new ACE(CASE, "Specials", Messages.getString("AccessControlDefaults.CaseSpecialFields")); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final ACE CASE_DEFINE_SPECIALS = new ACE(CASE_SPECIALS, "Define_specials", Messages.getString("AccessControlDefaults.DefineCaseSpecialFields")); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final ACE CASE_MODIFY_SPECIALS = new ACE(CASE_SPECIALS, "Ändern_specials", Messages.getString("AccessControlDefaults.ChangeCaseSpecialFields")); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	// allows to change the text of an already billed consultation
 	// TODO: maybe we should just use KONS_EDIT

@@ -141,6 +141,14 @@ public class Desk implements IApplication {
 	public static final String IMG_NEXT = "arrow_next"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** Arrow left */
 	public static final String IMG_PREVIOUS = "arrow_prev"; // $NON_NLS-1$ //$NON-NLS-1$
+	/** Arrow up */
+	public static final String IMG_ARROWUP = "arrow_up"; // $NON_NLS-1$ //$NON-NLS-1$
+	/** Arrow down */
+	public static final String IMG_ARROWDOWN = "arrow_down"; // $NON_NLS-1$ //$NON-NLS-1$
+	/** Move to upper list */
+	public static final String IMG_MOVETOUPPERLIST = "movetoupperlist"; // $NON_NLS-1$ //$NON-NLS-1$
+	/** Move to lower list */
+	public static final String IMG_MOVETOLOWERLIST = "movetolowerlist"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** clear input field */
 	public static final String IMG_CLEAR = "cross_small"; // $NON_NLS-1$ //$NON-NLS-1$
 
@@ -294,6 +302,14 @@ public class Desk implements IApplication {
 				theImageRegistry.put(IMG_NEXT, getImageDescriptor(IMG_NEXT));
 				theImageRegistry.put(IMG_PREVIOUS,
 						getImageDescriptor(IMG_PREVIOUS));
+				theImageRegistry.put(IMG_ARROWUP,
+						getImageDescriptor(IMG_ARROWUP));
+				theImageRegistry.put(IMG_ARROWDOWN,
+						getImageDescriptor(IMG_ARROWDOWN));
+				theImageRegistry.put(IMG_MOVETOUPPERLIST,
+						getImageDescriptor(IMG_MOVETOUPPERLIST));
+				theImageRegistry.put(IMG_MOVETOLOWERLIST,
+						getImageDescriptor(IMG_MOVETOLOWERLIST));
 				theImageRegistry.put(IMG_CLEAR, getImageDescriptor(IMG_CLEAR));
 			}
 		}

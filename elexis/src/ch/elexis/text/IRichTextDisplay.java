@@ -7,9 +7,14 @@ import ch.rgw.tools.GenericRange;
 
 public interface IRichTextDisplay {
 
+	/**
+	 * Note IKonsExtension is replaced by IRangeRenderer/SSDRange. addXRefHandler
+	 * is deprecated because the framework finds all appropriate renderers by itself
+	 * @Deprecated Don't use IKonsExtension and addXRefHandlers for new code
+	 */
 	public void addXrefHandler(String id, IKonsExtension ike);
-	
-	public void setXrefHandlers(Map<String, IKonsExtension> handlers);
+
+	@Deprecated public void setXrefHandlers(Map<String, IKonsExtension> handlers);
 
 	public void insertXRef(int pos, String textToDisplay, String providerId, String itemID);
 

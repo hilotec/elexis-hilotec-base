@@ -20,7 +20,7 @@ import ch.elexis.data.Patient;
 /**
  * A Contract for a piece of Information in an arbitrary format - a document -
  * that can be stored and retrieved in the system.
- * The IDocument holds the reference to the original contents and some metadata.
+ * The IOpaqueDocument holds the reference to the original contents and some metadata.
  * The Interface has no means to analyze the contents of the document. thus Opaque.
  * 
  * @author gerry
@@ -79,7 +79,7 @@ public interface IOpaqueDocument {
 	
 	/**
 	 * A globally unique identifier for this document. The implementation must ensure that
-	 * (1) No two documents ever exist with the same GUID, and
+	 * (1) No two documents in the world ever exist with the same GUID, and
 	 * (2) A document will always have the same GUID assigned within this application, i.e. the call getGUID on
 	 * the same document will always return the same value.
 	 * @return

@@ -7,6 +7,8 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    H. Marlovits added noPatientHandled test to avoid flickering on startupwhen
+ *                 no patient selected in some cases
  *    
  *  $Id: FallListeView.java 5970 2010-01-27 16:43:04Z rgw_ch $
  *******************************************************************************/
@@ -79,6 +81,7 @@ import ch.rgw.tools.IFilter;
  */
 public class FallListeView extends ViewPart implements IActivationListener,
 		ISaveablePart2 {
+	private static boolean noPatientHandled = true;
 	public static final String ID = "ch.elexis.FallListeView"; //$NON-NLS-1$
 	CommonViewer fallViewer;
 	CommonViewer behandlViewer;
@@ -342,19 +345,21 @@ public class FallListeView extends ViewPart implements IActivationListener,
 			actBehandlung = b;
 			reopenFallAction.setEnabled(!f.isOpen());
 			behandlViewer.getViewerWidget().refresh(true);
-
+			noPatientHandled = false;
 		} else {
-			ElexisEventDispatcher.clearSelection(Konsultation.class);
-			ElexisEventDispatcher.clearSelection(Fall.class);
-			if (actPatient == null) {
-				form.setText(Messages
-						.getString("FallListeView.NoPatientSelected")); //$NON-NLS-1$
-			} else {
-				form.setText(actPatient.getLabel());
+			if (!noPatientHandled)	{
+				ElexisEventDispatcher.clearSelection(Konsultation.class);
+				ElexisEventDispatcher.clearSelection(Fall.class);
+				if (actPatient == null) {
+					form.setText(Messages.getString("FallListeView.NoPatientSelected")); //$NON-NLS-1$
+				} else {
+					form.setText(actPatient.getLabel());
+				}
+				fallViewer.notify(CommonViewer.Message.update);
+				reopenFallAction.setEnabled(false);
+				behandlViewer.getViewerWidget().refresh(true);
+				noPatientHandled = true;
 			}
-			fallViewer.notify(CommonViewer.Message.update);
-			reopenFallAction.setEnabled(false);
-			behandlViewer.getViewerWidget().refresh(true);
 		}
 
 	}
@@ -374,7 +379,6 @@ public class FallListeView extends ViewPart implements IActivationListener,
 
 	public void activation(boolean mode) {
 		// TODO Auto-generated method stub
-
 	}
 
 	public void visible(boolean mode) {

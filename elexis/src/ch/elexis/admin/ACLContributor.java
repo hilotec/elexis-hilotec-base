@@ -34,6 +34,8 @@ import static ch.elexis.admin.AccessControlDefaults.ADMIN_CHANGE_BILLSTATUS_MANU
 import static ch.elexis.admin.AccessControlDefaults.ADMIN_KONS_EDIT_IF_BILLED;
 import static ch.elexis.admin.AccessControlDefaults.ADMIN_VIEW_ALL_REMINDERS;
 import static ch.elexis.admin.AccessControlDefaults.CASE_MODIFY;
+import static ch.elexis.admin.AccessControlDefaults.CASE_MODIFY_SPECIALS;
+import static ch.elexis.admin.AccessControlDefaults.CASE_DEFINE_SPECIALS;
 import static ch.elexis.admin.AccessControlDefaults.DATA;
 import static ch.elexis.admin.AccessControlDefaults.DELETE;
 import static ch.elexis.admin.AccessControlDefaults.DELETE_FORCED;
@@ -82,7 +84,7 @@ public class ACLContributor implements IACLContributor {
 		AC_SHOWPERSPECTIVE, AC_SHOWVIEW, DOCUMENT, DOCUMENT_CREATE, DOCUMENT_SYSTEMPLATE,
 		DOCUMENT_TEMPLATE, ADMIN_CHANGE_BILLSTATUS_MANUALLY, ADMIN_KONS_EDIT_IF_BILLED,
 		ADMIN_VIEW_ALL_REMINDERS, MEDICATION_MODIFY, DELETE_MEDICATION, DELETE_LABITEMS,
-		CASE_MODIFY, SCRIPT_EXECUTE, SCRIPT_EDIT
+		CASE_MODIFY, CASE_MODIFY_SPECIALS, CASE_DEFINE_SPECIALS, SCRIPT_EXECUTE, SCRIPT_EDIT
 		
 	};
 	

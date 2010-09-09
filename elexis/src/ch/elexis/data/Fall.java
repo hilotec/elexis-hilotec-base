@@ -131,10 +131,24 @@ public class Fall extends PersistentObject {
 		String reqs = getRequirements(getAbrechnungsSystem());
 		if (reqs != null) {
 			for (String req : reqs.split(";")) { //$NON-NLS-1$
+				String localReq = ""; //$NON-NLS-1$
 				String[] r = req.split(":"); //$NON-NLS-1$
-				String localReq = getInfoString(r[0]);
-				if (StringTool.isNothing(localReq)) {
-					return false;
+				if ((r[1].equalsIgnoreCase("X")) && (r.length > 2)) { //$NON-NLS-1$
+					// *** support for additional field types (checkboxes with multiple items are special)
+					String[] items = r[2].split("\t"); //$NON-NLS-1$
+					if (items.length > 1)	{
+						for (int rIx = 0; rIx < items.length; rIx++)	{
+							localReq = getInfoString(r[0] + "_" + items[rIx]); //$NON-NLS-1$
+							if (StringTool.isNothing(localReq)) {
+								return false;
+							}
+						}
+					}
+				} else	{
+					localReq = getInfoString(r[0]);
+					if (StringTool.isNothing(localReq)) {
+						return false;
+					}
 				}
 				if (r[1].equals("K")) { //$NON-NLS-1$
 					Kontakt k = Kontakt.load(localReq);
@@ -414,10 +428,62 @@ public class Fall extends PersistentObject {
 	 * 
 	 * @return a ; separated String of fields name:type where type is one of
 	 *         K,T,D for Kontakt, Text, Date
+	 *         TM Text Multiline
+	 *         TS Text Styled
+	 *         CS Combo saved as string
+	 *         CN Combo saved as numeric (selected index)
+	 *         LS List items, saved as strings, tab-delimited
+	 *         LN List items, saved as numerics, tab-delimited (selected indexes)
+	 *         X  CheckBox always saved as numeric
+	 *         RS Radios, saved as string
+	 *         RN Radios, saved as numeric, selected index
 	 */
 
 	public String getRequirements() {
 		String req = getRequirements(getAbrechnungsSystem());
+		return req == null ? "" : req; //$NON-NLS-1$
+	}
+
+	/**
+	 * Retrieve optionals of this Cases billing system
+	 * 
+	 * @return a ; separated String of fields name:type where type is one of
+	 *         K,T,D for Kontakt, Text, Date
+	 *         TM Text Multiline
+	 *         TS Text Styled
+	 *         CS Combo saved as string
+	 *         CN Combo saved as numeric (selected index)
+	 *         LS List items, saved as strings, tab-delimited
+	 *         LN List items, saved as numerics, tab-delimited (selected indexes)
+	 *         X  CheckBox always saved as numeric
+	 *         RS Radios, saved as string
+	 *         RN Radios, saved as numeric, selected index
+	 */
+
+	public String getOptionals() {
+		String req = getOptionals(getAbrechnungsSystem());
+		return req == null ? "" : req; //$NON-NLS-1$
+	}
+
+	/**
+	 * Retrieve unused/saved definitions of previously used required and optional
+	 * field of this Cases billing system
+	 * 
+	 * @return a ; separated String of fields name:type where type is one of
+	 *         K,T,D for Kontakt, Text, Date
+	 *         TM Text Multiline
+	 *         TS Text Styled
+	 *         CS Combo saved as string
+	 *         CN Combo saved as numeric (selected index)
+	 *         LS List items, saved as strings, tab-delimited
+	 *         LN List items, saved as numerics, tab-delimited (selected indexes)
+	 *         X  CheckBox always saved as numeric
+	 *         RS Radios, saved as string
+	 *         RN Radios, saved as numeric, selected index
+	 */
+
+	public String getUnused() {
+		String req = getUnused(getAbrechnungsSystem());
 		return req == null ? "" : req; //$NON-NLS-1$
 	}
 
@@ -860,10 +926,64 @@ public class Fall extends PersistentObject {
 	 * @param billingSystem
 	 * @return a ; separated String of fields name:type where type is one of
 	 *         K,T,D for Kontakt, Text, Date
+	 *         TM Text Multiline
+	 *         TS Text Styled
+	 *         CS Combo saved as string
+	 *         CN Combo saved as numeric (selected index)
+	 *         LS List items, saved as strings, tab-delimited
+	 *         LN List items, saved as numerics, tab-delimited (selected indexes)
+	 *         X  CheckBox always saved as numeric
+	 *         RS Radios, saved as string
+	 *         RN Radios, saved as numeric, selected index
 	 */
 	public static String getRequirements(final String billingSystem) {
 		String ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/" //$NON-NLS-1$
 				+ billingSystem + "/bedingungen", null); //$NON-NLS-1$
+		return ret;
+	}
+
+	/**
+	 * Retrieve optionals of a given billingSystem
+	 * 
+	 * @param billingSystem
+	 * @return a ; separated String of fields name:type where type is one of
+	 *         K,T,D for Kontakt, Text, Date
+	 *         TM Text Multiline
+	 *         TS Text Styled
+	 *         CS Combo saved as string
+	 *         CN Combo saved as numeric (selected index)
+	 *         LS List items, saved as strings, tab-delimited
+	 *         LN List items, saved as numerics, tab-delimited (selected indexes)
+	 *         X  CheckBox always saved as numeric
+	 *         RS Radios, saved as string
+	 *         RN Radios, saved as numeric, selected index
+	 */
+	public static String getOptionals(final String billingSystem) {
+		String ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/" //$NON-NLS-1$
+				+ billingSystem + "/fakultativ", null); //$NON-NLS-1$
+		return ret;
+	}
+
+	/**
+	 * Retrieve unused/saved definitions of previously used required and optional
+	 * field for a given billingSystem
+	 * 
+	 * @param billingSystem
+	 * @return a ; separated String of fields name:type where type is one of
+	 *         K,T,D for Kontakt, Text, Date
+	 *         TM Text Multiline
+	 *         TS Text Styled
+	 *         CS Combo saved as string
+	 *         CN Combo saved as numeric (selected index)
+	 *         LS List items, saved as strings, tab-delimited
+	 *         LN List items, saved as numerics, tab-delimited (selected indexes)
+	 *         X  CheckBox always saved as numeric
+	 *         RS Radios, saved as string
+	 *         RN Radios, saved as numeric, selected index
+	 */
+	public static String getUnused(final String billingSystem) {
+		String ret = Hub.globalCfg.get(Leistungscodes.CFG_KEY + "/" //$NON-NLS-1$
+				+ billingSystem + "/unused", null); //$NON-NLS-1$
 		return ret;
 	}
 

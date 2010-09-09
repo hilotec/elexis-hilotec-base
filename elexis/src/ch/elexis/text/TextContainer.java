@@ -79,25 +79,25 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class TextContainer {
-
 	private static final String WARNING_SIGN = "??"; //$NON-NLS-1$
 	private static final String EXTENSION_POINT_TEXT = "ch.elexis.Text"; //$NON-NLS-1$
-	private static final String MATCH_SQUARE_BRACKET = "[\\[\\]]"; //$NON-NLS-1$
+	public static final String MATCH_SQUARE_BRACKET = "[\\[\\]]"; //$NON-NLS-1$
 	private static final String TEMPLATE_NOT_FOUND_HEADER = Messages.TextContainer_TemplateNotFoundHeader;
 	private static final String TEMPLATE_NOT_FOUND_BODY = Messages.TextContainer_TemplateNotFoundBody;
 
 	private ITextPlugin plugin = null;
 	private static Log log = Log.get("TextContainer"); //$NON-NLS-1$
 	private Shell shell;
-	public static final String MATCH_TEMPLATE = "\\[[-a-zA-ZäöüÄÖÜéàè]+\\.[-a-zA-Z0-9äöüÄÖÜéàè]+\\]"; //$NON-NLS-1$
-	public static final String MATCH_INDIRECT_TEMPLATE = "\\[[-a-zA-ZäöüÄÖÜéàè]+(\\.[-a-zA-Z0-9äöüÄÖÜéàè]+)+\\]"; //$NON-NLS-1$
-	public static final String MATCH_GENDERIZE = "\\[[a-zA-Z]+:mwn?:[^\\[]+\\]"; //$NON-NLS-1$
+	private static final String DONT_SHOW_REPLACEMENT_ERRORS = "*";
+	public static final String MATCH_TEMPLATE = "\\[[" + DONT_SHOW_REPLACEMENT_ERRORS + "]?[-a-zA-ZäöüÄÖÜéàè_ ]+\\.[-a-zA-Z0-9äöüÄÖÜéàè_ ]+\\]"; //$NON-NLS-1$
+	public static final String MATCH_INDIRECT_TEMPLATE = "\\[[" + DONT_SHOW_REPLACEMENT_ERRORS + "]?[-a-zA-ZäöüÄÖÜéàè_ ]+(\\.[-a-zA-Z0-9äöüÄÖÜéàè_ ]+)+\\]"; //$NON-NLS-1$
+	public static final String MATCH_GENDERIZE = "\\[[" + DONT_SHOW_REPLACEMENT_ERRORS + "]?[a-zA-Z]+:mwn?:[^\\[]+\\]"; //$NON-NLS-1$
 	//public static final String MATCH_IDATACCESS = "\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?.*\\]"; //$NON-NLS-1$
-	public static final String MATCH_IDATACCESS = "\\[[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?[^\\]]*\\]"; //$NON-NLS-1$
-	public static final String MATCH_SQLCLAUSE = "\\[SQL[^:]*:[^\\[]+\\]"; //$NON-NLS-1$
+	public static final String MATCH_IDATACCESS = "\\[[" + DONT_SHOW_REPLACEMENT_ERRORS + "]?[-_a-zA-Z0-9]+:[-a-zA-Z0-9]+:[-a-zA-Z0-9\\.]+:[-a-zA-Z0-9\\.]:?[^\\]]*\\]"; //$NON-NLS-1$
+	public static final String MATCH_SQLCLAUSE = "\\[[" + DONT_SHOW_REPLACEMENT_ERRORS + "]?SQL[^:]*:[^\\[]+\\]"; //$NON-NLS-1$
 	public static final String DISALLOWED_SQLEXPRESSIONS = "DROP,UPDATE,CREATE,INSERT"; //$NON-NLS-1$
 	public static final String MATCH_SCRIPT = "\\["+Script.SCRIPT_MARKER+".+\\]"; //$NON-NLS-1$
-
+	
 	/**
 	 * Der Konstruktor sucht nach dem in den Settings definierten Textplugin
 	 * Wenn er kein Textplugin findet, wählt er ein rudimentäres Standardplugin
@@ -302,22 +302,36 @@ public class TextContainer {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Object replaceFields(final Brief brief, final String b) {
-		String[] q = b.split("\\."); //$NON-NLS-1$
+		String bl = b;
+		boolean showErrors = true;
+		if (bl.substring(0, 1).equalsIgnoreCase(DONT_SHOW_REPLACEMENT_ERRORS))	{
+			bl = bl.substring(1);
+			showErrors = false;
+		}
+		String[] q = bl.split("\\."); //$NON-NLS-1$
 		if (q.length != 2) {
-			log.log(Messages.TextContainer_BadVariableFormat + b, Log.WARNINGS); // Kann
-			// eigentlich nie vorkommen?!?
+			log.log(Messages.TextContainer_BadVariableFormat + bl, Log.WARNINGS); // Kann
+			// eigentlich
+			// nie
+			// vorkommen
+			// ?!?
 			return null;
 		}
 		if (q[0].equals("Datum")) { //$NON-NLS-1$
 			return new TimeTool().toString(TimeTool.DATE_GER);
 		}
 		if (q[0].indexOf(":") != -1) { //$NON-NLS-1$
-			return ScriptUtil.loadDataFromPlugin(b);
+			return ScriptUtil.loadDataFromPlugin(bl);
 		}
 		PersistentObject o = resolveObject(brief, q[0]);
 		if (o == null) {
-			return WARNING_SIGN + b + WARNING_SIGN;
+			if (showErrors)	{
+				return WARNING_SIGN + bl + WARNING_SIGN;
+			} else	{
+				return "";
+			}
 		}
 
 		String ret = o.get(q[1]);
@@ -331,8 +345,12 @@ public class TextContainer {
 					return an;
 				}
 			}
-			log.log("Nicht erkanntes Feld in " + b, Log.WARNINGS); //$NON-NLS-1$
-			return "???" + b + "???";
+			log.log("Nicht erkanntes Feld in " + bl, Log.WARNINGS); //$NON-NLS-1$
+			if (showErrors)	{
+				return "???" + bl + "???";
+			} else	{
+				return "";
+			}
 		}
 
 		if (ret.startsWith("<?xml")) { //$NON-NLS-1$
@@ -352,9 +370,19 @@ public class TextContainer {
 	 * @return the resolved value
 	 */
 	private Object replaceIndirectFields(final Brief brief, final String field) {
-		String[] tokens = field.split("\\."); //$NON-NLS-1$
+		String fieldl = field;
+		boolean showErrors = true;
+		if (fieldl.substring(0, 1).equalsIgnoreCase(DONT_SHOW_REPLACEMENT_ERRORS))	{
+			fieldl = fieldl.substring(1);
+			showErrors = false;
+		}
+		String[] tokens = fieldl.split("\\."); //$NON-NLS-1$
 		if (tokens.length <= 2) {
-			return WARNING_SIGN + field + WARNING_SIGN;
+			if (showErrors)	{
+				return WARNING_SIGN + fieldl + WARNING_SIGN;
+			} else	{
+				return "";
+			}
 		}
 
 		String firstToken = tokens[0];
@@ -363,7 +391,11 @@ public class TextContainer {
 		// resolve the first field
 		PersistentObject first = resolveObject(brief, firstToken);
 		if (first == null) {
-			return WARNING_SIGN + field + WARNING_SIGN;
+			if (showErrors)	{
+				return WARNING_SIGN + fieldl + WARNING_SIGN;
+			} else	{
+				return "";
+			}
 		}
 
 		// resolve intermediate objects
@@ -371,7 +403,11 @@ public class TextContainer {
 		for (int i = 1; i < tokens.length - 1; i++) {
 			PersistentObject next = resolveIndirectObject(current, tokens[i]);
 			if (next == null) {
-				return WARNING_SIGN + field + WARNING_SIGN;
+				if (showErrors)	{
+					return WARNING_SIGN + fieldl + WARNING_SIGN;
+				} else	{
+					return "";
+				}
 			}
 			current = next;
 		}
@@ -382,8 +418,12 @@ public class TextContainer {
 
 		String value = o.get(valueToken);
 		if ((value == null) || (value.startsWith("**"))) { //$NON-NLS-1$
-			log.log("Nicht erkanntes Feld in " + field, Log.WARNINGS); //$NON-NLS-1$
-			return WARNING_SIGN + field + WARNING_SIGN;
+			log.log("Nicht erkanntes Feld in " + fieldl, Log.WARNINGS); //$NON-NLS-1$
+			if (showErrors)	{
+				return WARNING_SIGN + fieldl + WARNING_SIGN;
+			} else	{
+				return "";
+			}
 		}
 
 		if (value.startsWith("<?xml")) { //$NON-NLS-1$
@@ -396,9 +436,15 @@ public class TextContainer {
 	private PersistentObject resolveIndirectObject(PersistentObject parent,
 			String field) {
 		if (parent instanceof Fall) {
+			String fieldl = field;
+			boolean showErrors = true;
+			if (fieldl.substring(0, 1).equalsIgnoreCase(DONT_SHOW_REPLACEMENT_ERRORS))	{
+				fieldl = fieldl.substring(1);
+				showErrors = false;
+			}
 			Fall fall = (Fall) parent;
 
-			return fall.getReferencedObject(field);
+			return fall.getReferencedObject(fieldl);
 		} else {
 			// not yet supported
 			return null;
@@ -437,22 +483,40 @@ public class TextContainer {
 	 * [Feld:mwn:mann/frau/neutral]
 	 */
 	private String genderize(final Brief brief, final String in) {
-		String[] q = in.split(":"); //$NON-NLS-1$
+		String inl = in;
+		boolean showErrors = true;
+		if (inl.substring(0, 1).equalsIgnoreCase(DONT_SHOW_REPLACEMENT_ERRORS))	{
+			inl = inl.substring(1);
+			showErrors = false;
+		}
+		String[] q = inl.split(":"); //$NON-NLS-1$
 		PersistentObject o = resolveObject(brief, q[0]);
 		if (o == null) {
-			return "???";
+			if (showErrors)	{
+				return "???";
+			} else	{
+				return "";
+			}
 		}
 		if (q.length != 3) {
-			log.log("falsches genderize Format " + in, Log.ERRORS); //$NON-NLS-1$
+			log.log("falsches genderize Format " + inl, Log.ERRORS); //$NON-NLS-1$
 			return null;
 		}
 		if (!(o instanceof Kontakt)) {
-			return Messages.TextContainer_FieldTypeForContactsOnly;
+			if (showErrors)	{
+				return Messages.TextContainer_FieldTypeForContactsOnly;
+			} else	{
+				return "";
+			}
 		}
 		Kontakt k = (Kontakt) o;
 		String[] g = q[2].split("/"); //$NON-NLS-1$
 		if (g.length < 2) {
-			return Messages.TextContainer_BadFieldDefinition;
+			if (showErrors)	{
+				return Messages.TextContainer_BadFieldDefinition;
+			} else	{
+				return "";
+			}
 		}
 		if (k.istPerson()) {
 			Person p = Person.load(k.getId());
@@ -470,32 +534,42 @@ public class TextContainer {
 			}
 		} else {
 			if (g.length < 3) {
-				return Messages.TextContainer_FieldTypeForPersonsOnly;
+				if (showErrors)	{
+					return Messages.TextContainer_FieldTypeForPersonsOnly;
+				} else	{
+					return "";
+				}
 			}
 			return g[2];
 		}
 	}
-
+	
 	private PersistentObject resolveObject(final Brief actBrief, final String k) {
+		String kl = k;
+		boolean showErrors = true;
+		if (kl.substring(0, 1).equalsIgnoreCase(DONT_SHOW_REPLACEMENT_ERRORS))	{
+			kl = kl.substring(1);
+			showErrors = false;
+		}
 		PersistentObject ret = null;
-		if (k.equalsIgnoreCase("Mandant")) { //$NON-NLS-1$
+		if (kl.equalsIgnoreCase("Mandant")) { //$NON-NLS-1$
 			ret = Hub.actMandant;
-		} else if (k.equalsIgnoreCase("Anwender")) { //$NON-NLS-1$
+		} else if (kl.equalsIgnoreCase("Anwender")) { //$NON-NLS-1$
 			ret = Hub.actUser;
-		} else if (k.equalsIgnoreCase("Adressat")) { //$NON-NLS-1$
+		} else if (kl.equalsIgnoreCase("Adressat")) { //$NON-NLS-1$
 			ret = actBrief.getAdressat();
 		} else {
 			try {
-				String fqname = "ch.elexis.data." + k; //$NON-NLS-1$
+				String fqname = "ch.elexis.data." + kl; //$NON-NLS-1$
 				ret = ElexisEventDispatcher.getSelected(Class.forName(fqname));
 			} catch (Throwable ex) {
-				log.log(Messages.TextContainer_UnrecognizedFieldType + k,
+				log.log(Messages.TextContainer_UnrecognizedFieldType + kl,
 						Log.WARNINGS);
 				ret = null;
 			}
 		}
 		if (ret == null) {
-			log.log(Messages.TextContainer_UnrecognizedFieldType + k,
+			log.log(Messages.TextContainer_UnrecognizedFieldType + kl,
 					Log.WARNINGS);
 		}
 		return ret;
@@ -547,16 +621,29 @@ public class TextContainer {
 	 * **************************************************************************
 	 * ******************************
 	 */
-
+	
+	static public String replaceSQLClause(final String b)	{
+		TextContainer tmpMe = new TextContainer();
+		String result = (String) tmpMe.replaceSQLClause(null, b);
+		tmpMe.dispose();
+		return result;
+	}
+	
 	@SuppressWarnings("unchecked")
 	private Object replaceSQLClause(final Brief brief, final String b) {
+		String bl = b;
+		boolean showErrors = true;
+		if (bl.substring(0, 1).equalsIgnoreCase(DONT_SHOW_REPLACEMENT_ERRORS))	{
+			bl = bl.substring(1);
+			showErrors = false;
+		}
 		// get db/statement
 		JdbcLink j = PersistentObject.getConnection();
 		Stm stm = j.getStatement();
 
 		// get fieldDelimiter and rowDelimiter from params, else provide
 		// default-values tab and newline
-		String sql = b;
+		String sql = bl;
 		String sqlPrefix = sql.split(":")[0];
 		String[] sqlPrefixParts = sqlPrefix.split("\\|");
 		String fieldDelimiter = "	"; // default: tab
@@ -629,7 +716,11 @@ public class TextContainer {
 				statement.close();
 			} catch (SQLException e) {
 			}
-			return "[???" + b + " ***" + e1.getMessage() + "*** ???]";
+			if (showErrors)	{
+				return "[???" + bl + " ***" + e1.getMessage() + "*** ???]";
+			} else	{
+				return "";
+			}
 		}
 
 		// create result by reading rows/fields and extracting hashTable fields
@@ -688,7 +779,11 @@ public class TextContainer {
 				statement.close();
 			} catch (SQLException e1) {
 			}
-			return "[???" + b + " ***" + e.getMessage() + "*** ???]";
+			if (showErrors)	{
+				return "[???" + bl + " ***" + e.getMessage() + "*** ???]";
+			} else	{
+				return "";
+			}
 		}
 		// aufräumen
 		j.releaseStatement(stm);

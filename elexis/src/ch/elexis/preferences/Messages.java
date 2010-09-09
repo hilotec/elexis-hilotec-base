@@ -303,7 +303,21 @@ public class Messages extends NLS {
 
 	public static String Leistungscodes_caseConstants;
 
+	public static String Leistungscodes_changeFieldTypeTo;
+
+	public static String Leistungscodes_changeTextInTitleBar;
+
+	public static String Leistungscodes_checkbox;
+
+	public static String Leistungscodes_checkboxHL;
+
 	public static String Leistungscodes_checkPositions;
+
+	public static String Leistungscodes_combo;
+
+	public static String Leistungscodes_comboHL;
+
+	public static String Leistungscodes_comboNumeric;
 
 	public static String Leistungscodes_constantHL;
 
@@ -321,19 +335,61 @@ public class Messages extends NLS {
 
 	public static String Leistungscodes_defineBillingSystem;
 
+	public static String Leistungscodes_definitionAlreadyExistsInDestination;
+
+	public static String Leistungscodes_definitionAlreadyExistsSomewhere;
+
 	public static String Leistungscodes_delete;
 
 	public static String Leistungscodes_deleteAction;
+
+	public static String Leistungscodes_deleteItem;
 
 	public static String Leistungscodes_delText;
 
 	public static String Leistungscodes_didNotFindMulitplier;
 
+	public static String Leistungscodes_EnterItems;
+
+	public static String Leistungscodes_ErrorAtLeast2Items;
+
+	public static String Leistungscodes_ErrorFieldAlreadyExists;
+
+	public static String Leistungscodes_ErrorItemsNoSpecialChars;
+
+	public static String Leistungscodes_ErrorMessageTitlebar;
+
+	public static String Leistungscodes_ErrorNameMissing;
+
+	public static String Leistungscodes_ErrorNameNoSpecialChars;
+
+	public static String Leistungscodes_ErrorNoEmptyItemsAllowed;
+
+	public static String Leistungscodes_editItem;
+	
+	public static String Leistungscodes_editItemType;
+
 	public static String Leistungscodes_explainEntry;
+
+	public static String Leistungscodes_list;
+
+	public static String Leistungscodes_listHL;
+
+	public static String Leistungscodes_ListNumeric;
+
+	public static String Leistungscodes_moveItemDown;
+
+	public static String Leistungscodes_moveItemToOptionalData;
+
+	public static String Leistungscodes_moveItemToRequiredData;
+
+	public static String Leistungscodes_moveItemUp;
 
 	public static String Leistungscodes_multiplier;
 
 	public static String Leistungscodes_multiplierLabel;
+
+	public static String Leistungscodes_mustSelectALine;
 
 	public static String Leistungscodes_nameLabel;
 
@@ -345,6 +401,8 @@ public class Messages extends NLS {
 
 	public static String Leistungscodes_notUndoable;
 
+	public static String Leistungscodes_optionalData;
+
 	public static String Leistungscodes_pleaseEnterDataForBillingSystem;
 
 	public static String Leistungscodes_pleaseEnterName;
@@ -353,15 +411,35 @@ public class Messages extends NLS {
 
 	public static String Leistungscodes_query;
 
+	public static String Leistungscodes_radiogroup;
+
+	public static String Leistungscodes_radiogroupNumeric;
+
+	public static String Leistungscodes_radioHL;
+
 	public static String Leistungscodes_reallyDelete;
 
+	public static String Leistungscodes_reallyWantToDeleteItem;
+
 	public static String Leistungscodes_removeConstraintTT;
+
+	public static String Leistungscodes_SaveAsMultiplelinesText;
+
+	public static String Leistungscodes_SaveAsNumeric;
+
+	public static String Leistungscodes_SaveAsStyledText;
 
 	public static String Leistungscodes_strictValidityCheck;
 
 	public static String Leistungscodes_text;
 
 	public static String Leistungscodes_textHL;
+
+	public static String Leistungscodes_textMultipleLines;
+
+	public static String Leistungscodes_textStyled;
+
+	public static String Leistungscodes_unusedData;
 
 	public static String Mandanten_0;
 

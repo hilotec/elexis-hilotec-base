@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
@@ -52,7 +53,7 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 
 	@Override
 	public void addXrefHandler(String id, IKonsExtension ike) {
-		xRefHandlers.put(id, ike);
+		renderers.put(id, adapt(ike));
 	}
 
 	@Override
@@ -160,5 +161,45 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 			}
 		}
 
+	}
+	
+	IRangeRenderer adapt(final IKonsExtension ik){
+		return new IRangeRenderer(){
+
+			@Override
+			public boolean canRender(String rangeType, OUTPUT outputType) {
+				return outputType.equals(OUTPUT.STYLED_TEXT);
+			}
+
+			@Override
+			public Object doRender(SSDRange range, OUTPUT outputType,
+					IRichTextDisplay display) throws ElexisException {
+				StyleRange sr=new StyleRange();
+				sr.start=range.getPosition();
+				sr.length=range.getLength();
+				ik.doLayout(sr, range.getHint(), range.getID());
+				return sr;
+			}
+
+			@Override
+			public IAction[] getActions(String rangeType) {
+				return ik.getActions();
+			}
+
+			@Override
+			public boolean onSelection(SSDRange range) {
+				return ik.doXRef(range.getContents(), range.getID());
+				
+			}
+
+			@Override
+			public void inserted(SSDRange range, Object context) {
+				ik.insert(range, 0);
+			}
+
+			@Override
+			public void removed(SSDRange range, Object context) {
+				ik.removeXRef(range.getContents(), range.getID());
+			}};
 	}
 }
