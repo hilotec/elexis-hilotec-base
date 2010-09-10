@@ -517,6 +517,7 @@ public class XMLExporter implements IRnOutputter {
 
 		sender.setAttribute(ATTR_EAN_PARTY, getSenderEAN(actMandant));
 		String kEAN = TarmedRequirements.getEAN(kostentraeger); // (String)kostentraeger.
+		String kg=kostentraeger.getLabel();
 		// getInfoElement("EAN");
 		String rEAN = TarmedRequirements.getRecipientEAN(kostentraeger);
 		if (rEAN.equals("unknown")) { //$NON-NLS-1$
