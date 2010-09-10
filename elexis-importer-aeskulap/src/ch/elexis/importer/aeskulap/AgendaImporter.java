@@ -34,6 +34,7 @@ public class AgendaImporter {
 				String start = StringTool.getSafe(actLine, 3);
 				String end = StringTool.getSafe(actLine, 4);
 				String text = StringTool.getSafe(actLine, 5);
+				String typ= StringTool.getSafe(actLine, 6);
 				String id = StringTool.getSafe(actLine, 8);
 				Patient pat = (Patient) Xid.findObject(AeskulapImporter.PATID,
 						patno);
@@ -48,7 +49,7 @@ public class AgendaImporter {
 				TimeTool ttDay=new TimeTool(datum);
 				Plannables.loadTermine(bereich, ttDay);
 				Termin t = new Termin(bereich, ttDay.toString(TimeTool.DATE_COMPACT), calcMinutes(start),
-						calcMinutes(end), Termin.typStandard(), Termin
+						calcMinutes(end), typ, Termin
 								.statusStandard());
 				t.set(new String[]{"Wer","Grund"},id,text);
 
