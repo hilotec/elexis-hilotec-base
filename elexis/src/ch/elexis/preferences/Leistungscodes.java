@@ -281,7 +281,8 @@ public class Leistungscodes extends PreferencePage implements
 					InputDialog inp=new InputDialog(getShell(),l+Messages.Leistungscodes_add,msg,"",null); //$NON-NLS-1$
 					if(inp.open()==Dialog.OK){
 						String req=inp.getValue();
-						if(l.startsWith("Ko")){ //$NON-NLS-1$
+						String contactDef=Messages.Leistungscodes_contact.substring(0, 2);
+						if(l.startsWith(contactDef)){ //$NON-NLS-1$
 							req+=":K";							// Kontakt //$NON-NLS-1$
 						}else if(l.trim().startsWith("T")){ //$NON-NLS-1$
 							req+=":T";							// Text //$NON-NLS-1$
