@@ -1,8 +1,12 @@
 package ch.elexis.importer.aeskulap;
 
 import java.io.File;
+import java.io.FileReader;
+import java.util.HashMap;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+
+import au.com.bytecode.opencsv.CSVReader;
 
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.util.Plannables;
@@ -16,6 +20,22 @@ import ch.rgw.tools.TimeTool;
 public class AgendaImporter {
 	public AgendaImporter(File dir, IProgressMonitor moni) {
 		moni.subTask("importiere Agenda");
+		File ums=new File(dir, "agendaumsetzung.csv");
+		HashMap<String, String> hConv=new HashMap<String,String>();
+		if(ums.exists()){
+			try{
+				CSVReader conv=new CSVReader(new FileReader(ums),',');
+				String[] line=null;
+				while((line=conv.readNext())!=null){
+					String key=StringTool.getSafe(line, 0).trim();
+					String value=StringTool.getSafe(line, 1).trim();
+					hConv.put(key, value);
+				}
+			}catch(Exception ex){
+				
+			}
+		}
+		
 		ExcelWrapper hofs = AeskulapImporter.checkImport(dir + File.separator
 				+ "agenda.xls");
 		if (hofs != null) {
@@ -38,7 +58,10 @@ public class AgendaImporter {
 				String id = StringTool.getSafe(actLine, 8);
 				Patient pat = (Patient) Xid.findObject(AeskulapImporter.PATID,
 						patno);
-
+				String cTyp=hConv.get(typ);
+				if(cTyp==null){
+					cTyp="Diverses";
+				}
 				if (pat != null) {
 					id = pat.getId();
 				}
@@ -49,7 +72,7 @@ public class AgendaImporter {
 				TimeTool ttDay=new TimeTool(datum);
 				Plannables.loadTermine(bereich, ttDay);
 				Termin t = new Termin(bereich, ttDay.toString(TimeTool.DATE_COMPACT), calcMinutes(start),
-						calcMinutes(end), typ, Termin
+						calcMinutes(end), cTyp, Termin
 								.statusStandard());
 				t.set(new String[]{"Wer","Grund"},id,text);
 
