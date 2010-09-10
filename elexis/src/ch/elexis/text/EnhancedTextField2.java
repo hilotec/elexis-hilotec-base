@@ -43,7 +43,6 @@ import ch.rgw.tools.StringTool;
 
 public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 	private StyledText st;
-	private Map<String,IKonsExtension> xRefHandlers=new HashMap<String,IKonsExtension>();
 	private List<SSDRange> ranges;
 	private HashMap<String, IRangeRenderer> renderers = new HashMap<String, IRangeRenderer>();
 
@@ -127,11 +126,10 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 
 	@Override
 	public void setXrefHandlers(Map<String, IKonsExtension> handlers) {
-		if(xRefHandlers!=null){
-			xRefHandlers.clear();
+		// we don't need xrefhandlers but some clients send them, so convert to renderers
+		for(String key:handlers.keySet()){
+			renderers.put(key, adapt(handlers.get(key)));
 		}
-		xRefHandlers=handlers;
-		
 	}
 
 	void doFormat(SimpleStructuredDocument ssd) throws ElexisException{
@@ -163,6 +161,13 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 
 	}
 	
+	/**
+	 * Adapter for existing code. DO NOT use this in new code
+	 * convert an IKonsExtension to an IRangeRenderer
+	 * @param ik an iKonsExtention
+	 * @return an IRangeRenderer with the same properties as the input
+	 * @deprecated only for compatibility reasons
+	 */
 	IRangeRenderer adapt(final IKonsExtension ik){
 		return new IRangeRenderer(){
 
