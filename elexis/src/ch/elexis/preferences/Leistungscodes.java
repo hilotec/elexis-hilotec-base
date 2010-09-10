@@ -236,7 +236,7 @@ public class Leistungscodes extends PreferencePage implements
 				String name = Hub.globalCfg.get(cfgkey + "name", "default"); //$NON-NLS-1$ //$NON-NLS-2$
 				it.setText(0, name);
 				it.setText(1, Hub.globalCfg.get(cfgkey
-						+ Messages.Leistungscodes_0, "?")); //$NON-NLS-1$
+						+ "leistungscodes", "?")); //$NON-NLS-1$
 				it.setText(2,
 						Hub.globalCfg.get(cfgkey + "standardausgabe", "?")); //$NON-NLS-1$ //$NON-NLS-2$
 				StringBuilder sql = new StringBuilder();
