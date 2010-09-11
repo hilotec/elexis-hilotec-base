@@ -25,7 +25,7 @@ import ch.elexis.text.model.SSDRange;
  * @author Gerry Weirich
  *
  */
-public class DefaultRenderer implements IRangeRenderer {
+public class DefaultRenderer implements IRangeHandler {
 
 	@Override
 	public boolean canRender(String rangeType, OUTPUT outputType) {

@@ -62,6 +62,7 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.Query;
 import ch.elexis.preferences.PreferenceConstants;
+import ch.elexis.text.model.SSDRange;
 import ch.elexis.text.model.Samdas;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.PersistentObjectDropTarget;
@@ -101,16 +102,7 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 	private IAction copyAction, cutAction, pasteAction;
 	private IMenuListener globalMenuListener;
 	private final ElexisEventListener eeli_user = new UserChangeListener();
-
-	/*
-	public void addMenuListener(IMenuListener ml) {
-		menuMgr.addMenuListener(ml);
-	}
-
-	public void removeMenuListener(IMenuListener ml) {
-		menuMgr.removeMenuListener(ml);
-	}
-*/
+	
 	public void setXrefHandlers(Map<String,IKonsExtension> xrefs) {
 		hXrefs = xrefs;
 	}
@@ -787,5 +779,11 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 		GenericRange gr= new GenericRange(pt.x);
 		gr.setEnd(pt.y);
 		return gr;
+	}
+
+	@Override
+	public void insertRange(SSDRange range) {
+		// TODO Auto-generated method stub
+		
 	}
 }

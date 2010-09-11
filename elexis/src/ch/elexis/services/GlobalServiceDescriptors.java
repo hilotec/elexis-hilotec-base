@@ -13,6 +13,6 @@ public class GlobalServiceDescriptors {
 	public static final String SCAN_TO_PDF="ScanToPDFService";
 	/** Document manager */
 	public static final String DOCUMENT_MANAGEMENT="DocumentManagement";
-	/** IRangeRenderers */
+	/** IRangeHandlers */
 	public static final String TEXT_CONTENTS_EXTENSION="TextContentsExtension";
 }

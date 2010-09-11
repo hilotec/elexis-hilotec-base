@@ -6,13 +6,17 @@ import ch.elexis.ElexisException;
 import ch.elexis.text.model.SSDRange;
 
 /**
- * Contract to display a Range in some specific context
+ * An IRangeHandler can add, display and act upon clicking on SSDRanges.
+ * It registers itself for one ore more types of SSDRanges
+ * It can display supported SSDRanges on zero or more output types
+ * 
+ * An IRangeHandler is connected to the framework with the ExtensionPoint ch.elexis.ServiceRegistry as a
+ * Service with the name "TextContentsExtension".
  * @author Gerry Weirich
  *
  */
-public interface IRangeRenderer {
+public interface IRangeHandler {
 	public static enum OUTPUT{HTML,STYLED_TEXT,XCHANGE};
-	
 	
 	
 	/**

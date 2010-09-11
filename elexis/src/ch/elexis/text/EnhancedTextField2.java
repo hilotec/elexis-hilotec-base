@@ -17,17 +17,29 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.actions.ActionFactory;
 
+import ch.elexis.ApplicationActionBarAdvisor;
+import ch.elexis.Desk;
 import ch.elexis.ElexisException;
 import ch.elexis.StringConstants;
+import ch.elexis.actions.ElexisEvent;
+import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListener;
+import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.services.GlobalServiceDescriptors;
-import ch.elexis.text.IRangeRenderer.OUTPUT;
+import ch.elexis.text.IRangeHandler.OUTPUT;
 import ch.elexis.text.model.SSDRange;
 import ch.elexis.text.model.SimpleStructuredDocument;
 import ch.elexis.util.Extensions;
@@ -36,44 +48,35 @@ import ch.rgw.tools.GenericRange;
 import ch.rgw.tools.StringTool;
 
 /**
- * This is a pop-in replacement for EnhancedTextField that can handle SimpleStructuredDocument
- * contents and for backwards compatibility also Samdas
+ * This is a pop-in replacement for EnhancedTextField that can handle
+ * SimpleStructuredDocument contents and for backwards compatibility also Samdas
+ * 
  * @author Gerry Weirich
  */
 
-public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
+public class EnhancedTextField2 extends AbstractRichTextDisplay {
 	private StyledText st;
 	private List<SSDRange> ranges;
-	private HashMap<String, IRangeRenderer> renderers = new HashMap<String, IRangeRenderer>();
+	private final ElexisEventListener eeli_user = new UserChangeListener();
+	private IMenuListener globalMenuListener;
 
+	
 	public EnhancedTextField2(Composite parent) {
-		super(parent, SWT.NONE);
+		super(parent);
 	}
 
 	@Override
-	public void addXrefHandler(String id, IKonsExtension ike) {
-		renderers.put(id, adapt(ike));
-	}
-
-	@Override
-	public void insertXRef(int pos, String textToDisplay, String providerId,
-			String itemID) {
-		if(ranges==null){
-			ranges=new LinkedList<SSDRange>();
+	public void insertRange(SSDRange range){
+		if (ranges == null) {
+			ranges = new LinkedList<SSDRange>();
 		}
-		SSDRange sdr=new SSDRange(pos, textToDisplay.length(), providerId, itemID);
-		ranges.add(sdr);
-		StyleRange sr=new StyleRange();
-		sr.start=pos;
-		sr.length=textToDisplay.length();
-		sr.data=sdr;
+		ranges.add(range);
+		StyleRange sr = new StyleRange();
+		sr.start = range.getPosition();
+		sr.length = range.getLength();
+		sr.data = range;
 	}
 
-	@Override
-	public void addDropReceiver(Class<?> clazz, IKonsExtension konsExtension) {
-		// TODO Auto-generated method stub
-
-	}
 
 	/**
 	 * Contents will always be saved as SimpleStructuredDocument
@@ -88,7 +91,7 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 		return st.getText();
 	}
 
-	public SimpleStructuredDocument getContents(){
+	public SimpleStructuredDocument getContents() {
 		SimpleStructuredDocument sd = new SimpleStructuredDocument();
 		sd.insertText(st.getText(), 0);
 		StyleRange[] ranges = st.getStyleRanges(true);
@@ -113,10 +116,11 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 		}
 		return sd;
 	}
+
 	@Override
 	public GenericRange getSelectedRange() {
-		Point pt=st.getSelection();
-		return new GenericRange(pt.x,pt.y);
+		Point pt = st.getSelection();
+		return new GenericRange(pt.x, pt.y);
 	}
 
 	@Override
@@ -124,20 +128,48 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 		return StringTool.getWordAtIndex(st.getText(), st.getCaretOffset());
 	}
 
-	@Override
-	public void setXrefHandlers(Map<String, IKonsExtension> handlers) {
-		// we don't need xrefhandlers but some clients send them, so convert to renderers
-		for(String key:handlers.keySet()){
-			renderers.put(key, adapt(handlers.get(key)));
-		}
+	public void connectGlobalActions(IViewSite site) {
+		makeActions();
+		IActionBars actionBars = site.getActionBars();
+		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(),
+				copyAction);
+		actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(), cutAction);
+		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(),
+				pasteAction);
+		globalMenuListener = new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager) {
+				if (st.getSelectionCount() == 0) {
+					copyAction.setEnabled(false);
+					cutAction.setEnabled(false);
+				} else {
+					copyAction.setEnabled(true);
+					cutAction.setEnabled(true);
+				}
+
+			}
+		};
+		ApplicationActionBarAdvisor.editMenu
+				.addMenuListener(globalMenuListener);
+		ElexisEventDispatcher.getInstance().addListeners(eeli_user);
 	}
 
-	void doFormat(SimpleStructuredDocument ssd) throws ElexisException{
+	public void disconnectGlobalActions(IViewSite site) {
+		IActionBars actionBars = site.getActionBars();
+		actionBars.setGlobalActionHandler(ActionFactory.COPY.getId(), null);
+		actionBars.setGlobalActionHandler(ActionFactory.CUT.getId(), null);
+		actionBars.setGlobalActionHandler(ActionFactory.PASTE.getId(), null);
+		ApplicationActionBarAdvisor.editMenu
+				.removeMenuListener(globalMenuListener);
+		ElexisEventDispatcher.getInstance().removeListeners(eeli_user);
+
+	}
+
+	void doFormat(SimpleStructuredDocument ssd) throws ElexisException {
 		st.setText(ssd.getPlaintext());
 		for (SSDRange r : ssd.getRanges()) {
-			IRangeRenderer renderer = renderers.get(r.getType());
+			IRangeHandler renderer = renderers.get(r.getType());
 			if (renderer == null) {
-				renderer = (IRangeRenderer) Extensions.findBestService(
+				renderer = (IRangeHandler) Extensions.findBestService(
 						GlobalServiceDescriptors.TEXT_CONTENTS_EXTENSION,
 						r.getType());
 				if (renderer != null) {
@@ -146,7 +178,7 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 			}
 			if (renderer == null
 					|| (!renderer.canRender(r.getType(),
-							IRangeRenderer.OUTPUT.STYLED_TEXT))) {
+							IRangeHandler.OUTPUT.STYLED_TEXT))) {
 				String hint = r.getHint();
 			} else {
 				Object rendered = renderer
@@ -154,57 +186,55 @@ public class EnhancedTextField2 extends Composite implements IRichTextDisplay {
 				if (rendered instanceof StyleRange) {
 					StyleRange sr = (StyleRange) rendered;
 					st.setStyleRange(sr);
-		
-				} 
+
+				}
 			}
 		}
 
 	}
-	
-	/**
-	 * Adapter for existing code. DO NOT use this in new code
-	 * convert an IKonsExtension to an IRangeRenderer
-	 * @param ik an iKonsExtention
-	 * @return an IRangeRenderer with the same properties as the input
-	 * @deprecated only for compatibility reasons
-	 */
-	IRangeRenderer adapt(final IKonsExtension ik){
-		return new IRangeRenderer(){
 
-			@Override
-			public boolean canRender(String rangeType, OUTPUT outputType) {
-				return outputType.equals(OUTPUT.STYLED_TEXT);
-			}
+	class UserChangeListener implements ElexisEventListener {
+		ElexisEvent filter = new ElexisEvent(null, null,
+				ElexisEvent.EVENT_USER_CHANGED);
 
-			@Override
-			public Object doRender(SSDRange range, OUTPUT outputType,
-					IRichTextDisplay display) throws ElexisException {
-				StyleRange sr=new StyleRange();
-				sr.start=range.getPosition();
-				sr.length=range.getLength();
-				ik.doLayout(sr, range.getHint(), range.getID());
-				return sr;
-			}
+		public void catchElexisEvent(ElexisEvent ev) {
+			Desk.asyncExec(new Runnable() {
+				public void run() {
+					st.setFont(Desk
+							.getFont(PreferenceConstants.USR_DEFAULTFONT));
 
-			@Override
-			public IAction[] getActions(String rangeType) {
-				return ik.getActions();
-			}
+				}
+			});
+		}
 
-			@Override
-			public boolean onSelection(SSDRange range) {
-				return ik.doXRef(range.getContents(), range.getID());
-				
-			}
+		public ElexisEvent getElexisEventFilter() {
+			return filter;
+		}
 
-			@Override
-			public void inserted(SSDRange range, Object context) {
-				ik.insert(range, 0);
-			}
-
-			@Override
-			public void removed(SSDRange range, Object context) {
-				ik.removeXRef(range.getContents(), range.getID());
-			}};
 	}
+
+	private void makeActions() {
+		// copyAction=ActionFactory.COPY.create();
+		cutAction = new Action(Messages.EnhancedTextField_cutAction) {
+			@Override
+			public void run() {
+				st.cut();
+			}
+
+		};
+		pasteAction = new Action(Messages.EnhancedTextField_pasteAction) {
+			@Override
+			public void run() {
+				st.paste();
+			}
+		};
+		copyAction = new Action(Messages.EnhancedTextField_copyAction) {
+			@Override
+			public void run() {
+				st.copy();
+			}
+		};
+
+	}
+
 }
