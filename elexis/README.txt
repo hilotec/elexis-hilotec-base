@@ -1,4 +1,4 @@
-$Id$
+﻿$Id$
 ------------------------------------------------------------------------
 
 Versionen
@@ -15,7 +15,7 @@ DATUM 1.1.2
 1.9.2008: Letzte revision 1.3.4, SVN rev. 4329. 
           Release 1.3.4 auf Server, Trunk auf 1.4.0
 1.1.2009: Release 1.4.0 auf Server, Trunk auf 2.0.0
-
+12.9.2010: Release 2.1.1 branch
 
 Änderungen
 ==========
