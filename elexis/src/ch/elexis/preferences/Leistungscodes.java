@@ -27,6 +27,7 @@ import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.MouseAdapter;
@@ -35,6 +36,7 @@ import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -43,6 +45,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -235,8 +238,7 @@ public class Leistungscodes extends PreferencePage implements
 				TableItem it = new TableItem(table, SWT.NONE);
 				String name = Hub.globalCfg.get(cfgkey + "name", "default"); //$NON-NLS-1$ //$NON-NLS-2$
 				it.setText(0, name);
-				it.setText(1, Hub.globalCfg.get(cfgkey
-						+ "leistungscodes", "?")); //$NON-NLS-1$
+				it.setText(1, Hub.globalCfg.get(cfgkey + "leistungscodes", "?")); //$NON-NLS-1$
 				it.setText(2,
 						Hub.globalCfg.get(cfgkey + "standardausgabe", "?")); //$NON-NLS-1$ //$NON-NLS-2$
 				StringBuilder sql = new StringBuilder();
@@ -676,14 +678,17 @@ public class Leistungscodes extends PreferencePage implements
 		@SuppressWarnings("unchecked")
 		@Override
 		protected Control createDialogArea(final Composite parent) {
-			Composite ret = new Composite(parent, SWT.NONE);
+			ScrolledComposite scroller = new ScrolledComposite(parent,
+					SWT.V_SCROLL);
+
+			Composite ret = new Composite(scroller, SWT.NONE);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, false, 1, true));
 			ret.setLayout(new GridLayout(1, false));
 
 			// ****** upper part: three combos, has separator below
 			Composite upperPartComp = new Composite(ret, SWT.NONE);
 			upperPartComp.setLayoutData(SWTHelper.getFillGridData(1, false, 1,
-					true));
+					false));
 			upperPartComp.setLayout(new GridLayout(2, false));
 
 			// *** label/text field for LeistungsSystem name
@@ -738,7 +743,7 @@ public class Leistungscodes extends PreferencePage implements
 			// right column
 			Composite middlePartComp = new Composite(ret, SWT.NONE);
 			middlePartComp.setLayoutData(SWTHelper.getFillGridData(1, true, 1,
-					true));
+					false));
 			middlePartComp.setLayout(new GridLayout(2, true));
 			Composite leftMiddlePart = new Composite(middlePartComp, SWT.NONE);
 			leftMiddlePart.setLayout(grid1);
@@ -827,7 +832,7 @@ public class Leistungscodes extends PreferencePage implements
 			// ****** lower part: required, optional and unused fields
 			Composite lowerPartComp = new Composite(ret, SWT.NONE);
 			lowerPartComp.setLayoutData(SWTHelper.getFillGridData(1, true, 1,
-					true));
+					false));
 			lowerPartComp.setLayout(new GridLayout(2, false));
 
 			// *** label/editor field for required fields
@@ -891,8 +896,19 @@ public class Leistungscodes extends PreferencePage implements
 			fdOpt.setNoDuplicatesList(ldRequirements);
 			fdOpt.setNoDuplicatesCreateList(ldRequirements, ldOptional);
 
+			// *** calc size of full-height-composite, make it correctly scroll
+			Point retSize = ret.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+			ret.setSize(retSize.x, retSize.y);
+			scroller.setContent(ret);
+			scroller.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			ScrollBar sbY = scroller.getVerticalBar();
+			if (sbY != null) {
+				sbY.setPageIncrement(ret.getSize().y);
+				sbY.setIncrement(20);
+			}
+
 			// *** return composite
-			return ret;
+			return scroller;
 		}
 
 		@Override
@@ -916,9 +932,9 @@ public class Leistungscodes extends PreferencePage implements
 					DEFINITIONSDELIMITER);
 			result[4] = StringTool.join(ldOptional.getAll(),
 					DEFINITIONSDELIMITER);
-			if (ldUnused != null)	{
-				result[5] = StringTool
-						.join(ldUnused.getAll(), DEFINITIONSDELIMITER);
+			if (ldUnused != null) {
+				result[5] = StringTool.join(ldUnused.getAll(),
+						DEFINITIONSDELIMITER);
 			}
 			super.okPressed();
 		}
