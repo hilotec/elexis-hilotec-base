@@ -42,8 +42,9 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
 import ch.elexis.util.PersistentObjectDragSource;
-import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.PersistentObjectDragSource.ISelectionRenderer;
+import ch.elexis.util.PersistentObjectDropTarget;
+import ch.elexis.util.SWTHelper;
 import ch.elexis.views.codesystems.DiagnosenView;
 import ch.rgw.tools.ExHandler;
 
@@ -70,10 +71,8 @@ public class DiagnosenDisplay extends Composite implements ISelectionRenderer {
 							dropTarget);
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
-					log
-							.log(
-									Messages
-											.getString("DiagnosenDisplay.ErrorStartingCodeSystem") + ex.getMessage(), Log.ERRORS); //$NON-NLS-1$
+					log.log(Messages
+							.getString("DiagnosenDisplay.ErrorStartingCodeSystem") + ex.getMessage(), Log.ERRORS); //$NON-NLS-1$
 				}
 			}
 		});
@@ -97,9 +96,14 @@ public class DiagnosenDisplay extends Composite implements ISelectionRenderer {
 		public void dropped(final PersistentObject o, final DropTargetEvent ev) {
 			Konsultation actKons = (Konsultation) ElexisEventDispatcher
 					.getSelected(Konsultation.class);
-			if (o instanceof IDiagnose) {
-				actKons.addDiagnose((IDiagnose) o);
-				setDiagnosen(actKons);
+			if (actKons == null) {
+				SWTHelper.alert("Keine Konsultation ausgewählt",
+						"Bitte wählen Sie zuerst eine Konsultation aus");
+			} else {
+				if (o instanceof IDiagnose) {
+					actKons.addDiagnose((IDiagnose) o);
+					setDiagnosen(actKons);
+				}
 			}
 		}
 
