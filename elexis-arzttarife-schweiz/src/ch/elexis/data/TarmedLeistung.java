@@ -96,7 +96,6 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 		if (!tlv.exists()) {
 			tlv = new TarmedLeistung();
 			tlv.create("Version");
-			tlv.set(FLD_NICK, VERSION_000);
 		}
 		VersionInfo vi = new VersionInfo(tlv.get(FLD_NICK));
 		if (!tlv.exists() || vi.isOlder(VERSION_110)) {
