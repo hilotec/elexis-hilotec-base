@@ -232,8 +232,7 @@ public class LabNotSeenView extends ViewPart implements HeartListener {
 		lastUpdate = last;
 		log.log(Level.FINE, "Heartbeat used"); //$NON-NLS-1$
 		unseen = LabResult.getUnseen().toArray(new LabResult[0]);
-		Desk.getDisplay().asyncExec(new Runnable() {
-
+		Desk.getDisplay().syncExec(new Runnable() {
 
 			public void run() {
 				if (!inUpdate) {
