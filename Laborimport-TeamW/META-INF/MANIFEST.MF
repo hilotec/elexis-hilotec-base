@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Elexis Plugin für Import Laborwerte TeamW
+Bundle-Name: Elexis Plugin fuer Import Laborwerte TeamW
 Bundle-SymbolicName: ch.elexis.laborimport_teamw;singleton:=true
-Bundle-Version: 1.2.1
+Bundle-Version: 1.2.2
 Bundle-Vendor: elexis.ch
 Bundle-ClassPath: .,
  bin/
