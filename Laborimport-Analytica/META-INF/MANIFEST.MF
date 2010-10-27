@@ -11,5 +11,6 @@ Require-Bundle: ch.rgw.utility,
  org.eclipse.ui,
  org.eclipse.ui.forms,
  ch.ngiger.utilities.comm
-Bundle-ClassPath: bin/
+Bundle-ClassPath: .,
+ bin/
 Export-Package: ch.elexis.laborimport.analytica
