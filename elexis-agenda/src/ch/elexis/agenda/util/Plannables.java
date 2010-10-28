@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -213,7 +213,7 @@ public final class Plannables {
 			return new ArrayList<IPlannable>();
 		}
 		
-		Query qbe = new Query(Termin.class);
+		Query<Termin> qbe = new Query<Termin>(Termin.class);
 		String day = date.toString(TimeTool.DATE_COMPACT);
 		qbe.add("Tag", "=", day);
 		qbe.and();
