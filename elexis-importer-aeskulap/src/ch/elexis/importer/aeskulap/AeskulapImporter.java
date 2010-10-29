@@ -58,12 +58,14 @@ public class AeskulapImporter extends ImporterPage {
 	 * Mapping as Aeskulap-ArztNr, Agenda-Kürzel, Anwender-Kürzel
 	 */
 	final static String[][] MANDANT_MAPPING={
-		{"1","Schär","bs"},
-		{"2","Schär","bs"},
-		{"3","Chiffelle","cc"},
-		{"4","Schär","bs"},
-		{"5","MPA","MPA"},
-		{"6","Baumann","db"}
+		{"1","Henzen","sh"},
+		{"2","Henzen","sh"},
+		{"3","Henzen","sh"},
+		{"4","Henzen","sh"},
+		{"5","Henzen","sh"},
+		{"6","Henzen","sh"},
+		{"7","MPA","MPA"}
+		
 	};
 	// we'll use these local XID's to reference the external data
 	final static String IMPORT_XID = "elexis.ch/aeskulap_import";
