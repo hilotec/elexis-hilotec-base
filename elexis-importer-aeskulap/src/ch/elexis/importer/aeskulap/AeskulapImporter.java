@@ -1,4 +1,4 @@
-/*******************************************************************************
+﻿/*******************************************************************************
  * Copyright (c) 2007-2009, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -63,7 +63,7 @@ public class AeskulapImporter extends ImporterPage {
 		{"3","Henzen","sh"},
 		{"4","Henzen","sh"},
 		{"5","Henzen","sh"},
-		{"6","Henzen","sh"},
+		{"6","Müntener","cm"},
 		{"7","MPA","MPA"}
 		
 	};
