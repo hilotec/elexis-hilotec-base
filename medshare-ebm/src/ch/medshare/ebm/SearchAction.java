@@ -68,7 +68,7 @@ public class SearchAction extends Action implements IKonsExtension, IHandler {
 			if(gr.getLength()==0){
 				search=StringTool.getWordAtIndex(text, gr.getPos());
 			}else{
-				search=text.substring(gr.getPos(), gr.getEnd()-1);
+				search=text.substring(gr.getPos(),gr.getPos()+gr.getLength()); 
 			}
 			search = search.trim().replace("\r\n", " ");
 		}
