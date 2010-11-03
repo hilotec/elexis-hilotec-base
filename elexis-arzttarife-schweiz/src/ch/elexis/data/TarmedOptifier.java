@@ -20,6 +20,7 @@ import java.util.List;
 import ch.elexis.Hub;
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.preferences.Leistungscodes;
+import ch.elexis.tarmedprefs.PreferenceConstants;
 import ch.elexis.util.IOptifier;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
@@ -198,6 +199,11 @@ public class TarmedOptifier implements IOptifier {
 						if (f.length == 5) {
 							switch (Integer.parseInt(f[4].trim())) {
 							case 7: // Pro Sitzung
+								if(check.getCode().equals("00.0020")){
+									if(Hub.mandantCfg.get(PreferenceConstants.BILL_ELECTRONICALLY, false)){
+										break;
+									}
+								}
 								// todo check if electronic billing
 								if (f[2].equals("1")) { // 1 Sitzung //$NON-NLS-1$
 									int menge = Math.round(Float

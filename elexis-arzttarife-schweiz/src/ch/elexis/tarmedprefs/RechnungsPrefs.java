@@ -264,11 +264,11 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		// bills electronically
 		bBillsElec=new Button(ret,SWT.CHECK);
 		bBillsElec.setText("Bills electronically");
-		bBillsElec.setSelection(Hub.globalCfg.get(PreferenceConstants.BILL_ELECTRONICALLY, false));
+		bBillsElec.setSelection(Hub.mandantCfg.get(PreferenceConstants.BILL_ELECTRONICALLY, false));
 		bBillsElec.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				Hub.globalCfg.set(PreferenceConstants.BILL_ELECTRONICALLY, bBillsElec.getSelection());
+				Hub.mandantCfg.set(PreferenceConstants.BILL_ELECTRONICALLY, bBillsElec.getSelection());
 			}
 		});
 		/*
