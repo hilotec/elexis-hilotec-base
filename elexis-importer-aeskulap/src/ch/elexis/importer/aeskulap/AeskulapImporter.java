@@ -1,4 +1,4 @@
-﻿/*******************************************************************************
+/*******************************************************************************
  * Copyright (c) 2007-2010, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
+ *
  * $Id: AeskulapImporter.java 231 2007-08-23 19:12:43Z Gerry $
  *******************************************************************************/
 
@@ -48,9 +48,9 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * Importer for Data from the practice program "Aeskulap" by Kern AG
- * 
+ *
  * @author Gerry
- * 
+ *
  */
 public class AeskulapImporter extends ImporterPage {
 
@@ -65,7 +65,7 @@ public class AeskulapImporter extends ImporterPage {
 		{"5","Henzen","sh"},
 		{"6","Müntener","cm"},
 		{"7","MPA","MPA"}
-		
+
 	};
 	// we'll use these local XID's to reference the external data
 	final static String IMPORT_XID = "elexis.ch/aeskulap_import";
@@ -108,7 +108,7 @@ public class AeskulapImporter extends ImporterPage {
 		}
 		return null;
 	}
-	
+
 	static String getLabel(String aeskulapNr){
 		for(String[] l:MANDANT_MAPPING){
 			if(l[0].equals(aeskulapNr)){
@@ -122,7 +122,7 @@ public class AeskulapImporter extends ImporterPage {
 	 * containing only basic personal patient data, or a more elaborate source
 	 * consisting of five microsoft(tm) excel(tm) files containing personal data
 	 * and insurance data.
-	 * 
+	 *
 	 * This method creates the contents of one tab in the import dialog.
 	 */
 	@Override
@@ -209,7 +209,7 @@ public class AeskulapImporter extends ImporterPage {
 	/**
 	 * This method is called after the user has pressed ok and the dialog has
 	 * been closed.
-	 * 
+	 *
 	 */
 	@Override
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
