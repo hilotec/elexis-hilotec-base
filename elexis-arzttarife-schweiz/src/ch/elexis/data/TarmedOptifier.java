@@ -198,6 +198,7 @@ public class TarmedOptifier implements IOptifier {
 						if (f.length == 5) {
 							switch (Integer.parseInt(f[4].trim())) {
 							case 7: // Pro Sitzung
+								// todo check if electronic billing
 								if (f[2].equals("1")) { // 1 Sitzung //$NON-NLS-1$
 									int menge = Math.round(Float
 											.parseFloat(f[1]));

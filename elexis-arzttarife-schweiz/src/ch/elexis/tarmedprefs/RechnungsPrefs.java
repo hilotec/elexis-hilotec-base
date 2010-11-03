@@ -70,6 +70,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	Kontakt actBank;
 	Button bUseTC;
 	Combo cbTC;
+	Button bBillsElec;
 	// Button bUseEDA;
 	// Button bWithImage;
 	
@@ -260,6 +261,16 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			
 		});
 		
+		// bills electronically
+		bBillsElec=new Button(ret,SWT.CHECK);
+		bBillsElec.setText("Bills electronically");
+		bBillsElec.setSelection(Hub.globalCfg.get(PreferenceConstants.BILL_ELECTRONICALLY, false));
+		bBillsElec.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				Hub.globalCfg.set(PreferenceConstants.BILL_ELECTRONICALLY, bBillsElec.getSelection());
+			}
+		});
 		/*
 		 * bUseEDA=new Button(gTC,SWT.CHECK);
 		 * bUseEDA.setText(Messages.getString("RechnungsPrefs.TrustCewntereDA")); //$NON-NLS-1$
