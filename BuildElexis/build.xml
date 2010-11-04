@@ -175,7 +175,7 @@
 			<fileset dir="${sourcedir}/src" includes="**/*.script" />
 			<fileset dir="${sourcedir}/src" includes="**/*.properties" />
 		</copy>
-		<scalac srcdir="${sourcedir}" destdir="${plugindir}" excludes="Tests/**" encoding="UTF-8" classpathref="${cp}" classpath="${lib}/scala-library.jar"/>
+		<scalac srcdir="${sourcedir}" destdir="${plugindir}" excludes="Tests/**" encoding="UTF-8" classpathref="${cp}" classpath="${lib}/scala-library.jar" />
 		<javac srcdir="${sourcedir}" destdir="${plugindir}" excludes="Tests/**" debug="${debug}" optimize="${optimize}" target="${javatarget}" encoding="UTF-8" classpathref="${cp}" />
 		<packager plugindir="${plugindir}" dest="${additions}" skipOnMissing="true" targetVersion="${version}" />
 		<mkdir dir="${dox}/${dirname}" />
@@ -285,7 +285,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<!-- exec executable="chmod" dir="${dist}/elexis.app/Contents/MacOS">
 			<arg line="+x starter-mac" />
 		</exec -->
-		
+
 		<antcall target="create-default" />
 
 		<!-- For the Mac, we do not create a jar installer, because on MacOSX,
@@ -297,7 +297,6 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<zip destfile="${output}/elexis-macosx-${version}.${DSTAMP}.zip">
 			<zipfileset dir="${dist}">
 				<include name="*" />
-				<include name="elexis.app/**" />
 				<include name="configuration/**" />
 				<include name="plugins/ch.elexis_*/**" />
 				<include name="plugins/ch.rgw.utility_*/**" />
@@ -311,7 +310,9 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 				<include name="plugins/com.ibm*" />
 				<include name="plugins/javax*" />
 			</zipfileset>
-			<zipfileset file="${rsc}/macosx/starter-mac" fullpath="/elexis.app/Contents/MacOS/starter-mac" filemode="755" />
+			<zipfileset dir="${rsc}/macosx/elexis.app" prefix="elexis.app" />
+			<zipfileset file="${rsc}/macosx/starter-mac" fullpath="elexis.app/Contents/MacOS/starter-mac" filemode="755" />
+			<zipfileset file="${rsc}/macosx/starter-mac.ini" fullpath="elexis.app/Contents/MacOS/starter-mac.ini" />
 		</zip>
 	</target>
 
