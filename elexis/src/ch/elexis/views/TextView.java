@@ -17,12 +17,14 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.part.ViewPart;
@@ -45,6 +47,7 @@ import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.MimeTool;
 
 public class TextView extends ViewPart implements IActivationListener {
 	public final static String ID = "ch.elexis.TextView"; //$NON-NLS-1$
@@ -110,6 +113,21 @@ public class TextView extends ViewPart implements IActivationListener {
 		} else {
 			actBrief = null;
 			setName();
+			String ext=MimeTool.getExtension(doc.getMimeType());
+			if(ext.length()==0){
+				ext="ods";
+			}
+			try {
+				File tmp=File.createTempFile("elexis", "brief."+ext);
+				tmp.deleteOnExit();
+				ByteArrayInputStream bais=new ByteArrayInputStream(doc.loadBinary());
+				FileOutputStream fos=new FileOutputStream(tmp);
+				FileTool.copyStreams(bais, fos);
+				return Program.launch(tmp.getAbsolutePath());
+			} catch (IOException e) {
+				ExHandler.handle(e);
+			}
+		
 			return false;
 		}
 	}
