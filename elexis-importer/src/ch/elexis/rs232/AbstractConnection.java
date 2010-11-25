@@ -44,7 +44,7 @@ public abstract class AbstractConnection implements PortEventListener {
 	private CommPortIdentifier portId;
 	private SerialPort sPort;
 	private boolean bOpen;
-	private OutputStream os;
+	protected OutputStream os;
 	private InputStream is;
 	private final String myPort;
 	private final String[] mySettings;
