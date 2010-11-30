@@ -117,15 +117,32 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	}
 	
 	/**
-	 * Ad a new user to the list of responsibles for that reminder. The reminder will show up among
-	 * the reminders, if one of its responsibles is logged in.
+	 * Add a new user to the list of responsibles for that reminder, if not already in list.
+	 * The reminder will show up among the reminders, if one of its responsibles is logged in.
 	 * 
 	 * @param a
 	 *            the user to add to the list of responsible users
 	 */
 	public void addResponsible(final Anwender a){
+		for (Anwender anwender : getResponsibles()) {
+			if(anwender.getId().equalsIgnoreCase(a.getId())) return;
+		}
 		addToList("Responsibles", a.getId(), (String[]) null);
 	}
+	
+	/**
+	 * Removes a user from the list of responsibles for that reminder, if the user is in the list.
+	 * If the user is not in the list, nothing is done.
+	 * 
+	 * @param a
+	 * 			the user to remove from the list of responsible users
+	 */
+	public void removeResponsible(final Anwender a){
+		for (Anwender anwender : getResponsibles()) {
+			if(anwender.getId().equalsIgnoreCase(a.getId())) removeFromList("Responsibles", a.getId());
+		}
+	}
+	
 	
 	/** Einen Reminder anhand seiner ID aus der Datenbank einlesen */
 	public static Reminder load(final String id){

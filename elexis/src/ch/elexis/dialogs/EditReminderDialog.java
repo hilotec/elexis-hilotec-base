@@ -286,19 +286,21 @@ public class EditReminderDialog extends TitleAreaDialog {
 			mine.setStatus(Reminder.Status.STATE_PLANNED);
 		}
 		int[] resps = lUser.getSelectionIndices();
+		
+		// Delete all responsible persons before setting the new
+		for (Anwender anwender : mine.getResponsibles()) {
+			mine.removeResponsible(anwender);
+		}
+		// Set the new List of responsible persons
 		if (resps.length > 0) {
-			if (resps[0] == 0) { // "Alle"
+			if (resps[0] == 0) { // If none select set all users ("Alle")
 				for (Anwender a : users) {
 					mine.addResponsible(a);
-					// mine.addToList("Responsibles", a.getId(),
-					// (String[])null);
 				}
 			} else {
 				for (int i = 0; i < resps.length; i++) {
 					int idx = resps[i];
 					Anwender a = users.get(idx - 1);
-					// mine.addToList("Responsibles", a.getId(),
-					// (String[])null);
 					mine.addResponsible(a);
 				}
 			}
