@@ -26,18 +26,18 @@ public class HL7Parser {
 	private static final String COMMENT_NAME = Messages.HL7Parser_CommentName;
 	private static final String COMMENT_CODE = Messages.HL7Parser_CommentCode;
 	private static final String COMMENT_GROUP = Messages.HL7Parser_CommentGroup;
-
+	
 	public String myLab = "?"; //$NON-NLS-1$
-
-	public HL7Parser(String mylab) {
+	
+	public HL7Parser(String mylab){
 		myLab = mylab;
 	}
-
-	public Result<Object> parse(final HL7 hl7, boolean createPatientIfNotFound) {
+	
+	public Result<Object> parse(final HL7 hl7, boolean createPatientIfNotFound){
 		Result<Kontakt> res = hl7.getLabor();
 		if (!res.isOK()) {
-			return new Result<Object>(Result.SEVERITY.ERROR, 1,
-					Messages.HL7Parser_LabNotFound, hl7.getFilename(), true);
+			return new Result<Object>(Result.SEVERITY.ERROR, 1, Messages.HL7Parser_LabNotFound,
+				hl7.getFilename(), true);
 		}
 		final Kontakt labor = res.get();
 		Result<Object> r2 = hl7.getPatient(createPatientIfNotFound);
@@ -45,9 +45,9 @@ public class HL7Parser {
 			return r2;
 		}
 		Patient pat = (Patient) r2.get();
-
+		
 		HL7.OBR obr = hl7.firstOBR();
-
+		
 		int nummer = 0;
 		String dat = new TimeTool().toString(TimeTool.DATE_GER);
 		while (obr != null) {
@@ -66,10 +66,11 @@ public class HL7Parser {
 					if (obx.isFormattedText() || obx.isPlainText()) {
 						typ = LabItem.typ.TEXT;
 					}
-					li = new LabItem(obx.getItemCode(), itemname, labor, obx
-							.getRefRange(), obx.getRefRange(), obx.getUnits(),
-							typ, Messages.HL7Parser_AutomaticAddedGroup + dat, Integer
-									.toString(nummer++));
+					li =
+						new LabItem(obx.getItemCode(), itemname, labor, obx.getRefRange(),
+							obx.getRefRange(), obx.getUnits(), typ,
+							Messages.HL7Parser_AutomaticAddedGroup + dat,
+							Integer.toString(nummer++));
 				} else {
 					li = list.get(0);
 				}
@@ -81,24 +82,31 @@ public class HL7Parser {
 				List<LabResult> qrr = qr.execute();
 				if (qrr.size() != 0) {
 					LabResult lrr = qrr.get(0);
-
-					if (!SWTHelper.askYesNo(
-							Messages.HL7Parser_LabAlreadyImported
-									+ pat.getLabel(), lrr.getLabel()
-									+ Messages.HL7Parser_AskOverwrite)) {
+					
+					if (!SWTHelper.askYesNo(Messages.HL7Parser_LabAlreadyImported + pat.getLabel(),
+						lrr.getLabel() + Messages.HL7Parser_AskOverwrite)) {
 						obx = obr.nextOBX(obx);
 						continue;
 					}
 				}
-				if (obx.isFormattedText() || (obx.isPlainText())) {
-					lr = new LabResult(pat, obr.getDate(), li, "text", obx //$NON-NLS-1$
-							.getResultValue()
-							+ "\n" + obx.getComment()); //$NON-NLS-1$
-				} else {
-					lr = new LabResult(pat, obr.getDate(), li, obx
-							.getResultValue(), obx.getComment());
+				boolean importAsLongText = (obx.isFormattedText() || obx.isPlainText());
+				if (importAsLongText) {
+					if (obx.isNumeric())
+						importAsLongText = false;
 				}
-
+				if (importAsLongText) {
+					if (obx.getResultValue().length() < 20)
+						importAsLongText = false;
+				}
+				if (importAsLongText) {
+					lr = new LabResult(pat, obr.getDate(), li, "text", obx //$NON-NLS-1$
+						.getResultValue() + "\n" + obx.getComment()); //$NON-NLS-1$
+				} else {
+					lr =
+						new LabResult(pat, obr.getDate(), li, obx.getResultValue(),
+							obx.getComment());
+				}
+				
 				if (obx.isPathologic()) {
 					lr.setFlag(LabResult.PATHOLOGIC, true);
 				}
@@ -106,15 +114,15 @@ public class HL7Parser {
 			}
 			obr = obr.nextOBR(obr);
 		}
-
+		
 		// add comments as a LabResult
-
+		
 		String comments = hl7.getComments();
 		if (!StringTool.isNothing(comments)) {
 			obr = hl7.firstOBR();
 			if (obr != null) {
 				TimeTool commentsDate = obr.getDate();
-
+				
 				// find LabItem
 				Query<LabItem> qbe = new Query<LabItem>(LabItem.class);
 				qbe.add("LaborID", "=", labor.getId()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -126,11 +134,11 @@ public class HL7Parser {
 					// LabItem doesn't yet exist
 					LabItem.typ typ = LabItem.typ.TEXT;
 					li = new LabItem(COMMENT_CODE, COMMENT_NAME, labor, "", "", //$NON-NLS-1$ //$NON-NLS-2$
-							"", typ, COMMENT_GROUP, Integer.toString(nummer++)); //$NON-NLS-1$
+						"", typ, COMMENT_GROUP, Integer.toString(nummer++)); //$NON-NLS-1$
 				} else {
 					li = list.get(0);
 				}
-
+				
 				// add LabResult
 				Query<LabResult> qr = new Query<LabResult>(LabResult.class);
 				qr.add("PatientID", "=", pat.getId()); //$NON-NLS-1$ //$NON-NLS-2$
@@ -142,23 +150,22 @@ public class HL7Parser {
 				}
 			}
 		}
-
+		
 		return new Result<Object>("OK"); //$NON-NLS-1$
 	}
-
+	
 	/**
-	 * Import the given HL7 file. Optionally, move the file into the given
-	 * archive directory
+	 * Import the given HL7 file. Optionally, move the file into the given archive directory
 	 * 
 	 * @param file
 	 *            the file to be imported (full path)
 	 * @param archiveDir
-	 *            a directory where the file should be moved to on success, or
-	 *            null if it should not be moved.
+	 *            a directory where the file should be moved to on success, or null if it should not
+	 *            be moved.
 	 * @return the result as type Result
 	 */
 	public Result<?> importFile(final File file, final File archiveDir,
-			boolean bCreatePatientIfNotExists) {
+		boolean bCreatePatientIfNotExists){
 		HL7 hl7 = new HL7("Labor " + myLab, myLab); //$NON-NLS-1$
 		Result<Object> r = hl7.load(file.getAbsolutePath());
 		if (r.isOK()) {
@@ -170,13 +177,9 @@ public class HL7Parser {
 						if (file.exists() && file.isFile() && file.canRead()) {
 							File newFile = new File(archiveDir, file.getName());
 							if (!file.renameTo(newFile)) {
-								SWTHelper
-										.showError(
-												Messages.HL7Parser_ErrorArchiving,
-												Messages.HL7Parser_TheFile
-														+ file
-																.getAbsolutePath()
-														+ Messages.HL7Parser_CouldNotMoveToArchive);
+								SWTHelper.showError(Messages.HL7Parser_ErrorArchiving,
+									Messages.HL7Parser_TheFile + file.getAbsolutePath()
+										+ Messages.HL7Parser_CouldNotMoveToArchive);
 							}
 						}
 					}
@@ -188,17 +191,16 @@ public class HL7Parser {
 			return ret;
 		}
 		return r;
-
+		
 	}
-
-	public void importFromDir(final File dir, final File archiveDir,
-			Result<?> res, boolean bCreatePatientIfNotExists) {
+	
+	public void importFromDir(final File dir, final File archiveDir, Result<?> res,
+		boolean bCreatePatientIfNotExists){
 		File[] files = dir.listFiles(new FileFilter() {
-
-			public boolean accept(File pathname) {
+			
+			public boolean accept(File pathname){
 				if (pathname.isDirectory()) {
-					if (!pathname.getName().equalsIgnoreCase(
-							archiveDir.getName())) {
+					if (!pathname.getName().equalsIgnoreCase(archiveDir.getName())) {
 						return true;
 					}
 				} else {
@@ -213,8 +215,7 @@ public class HL7Parser {
 			if (file.isDirectory()) {
 				importFromDir(file, archiveDir, res, bCreatePatientIfNotExists);
 			} else {
-				Result<?> r = importFile(file, archiveDir,
-						bCreatePatientIfNotExists);
+				Result<?> r = importFile(file, archiveDir, bCreatePatientIfNotExists);
 				if (res == null) {
 					res = r;
 				} else {
@@ -223,7 +224,7 @@ public class HL7Parser {
 			}
 		}
 	}
-
+	
 	/**
 	 * Equivalent to importFile(new File(file), null)
 	 * 
@@ -231,8 +232,7 @@ public class HL7Parser {
 	 *            the file to be imported (full path)
 	 * @return
 	 */
-	public Result<?> importFile(final String filepath,
-			boolean bCreatePatientIfNotExists) {
+	public Result<?> importFile(final String filepath, boolean bCreatePatientIfNotExists){
 		return importFile(new File(filepath), null, bCreatePatientIfNotExists);
 	}
 }

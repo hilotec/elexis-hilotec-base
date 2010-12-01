@@ -6,10 +6,8 @@
 
 package ch.elexis.importers;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.util.List;
 
@@ -24,9 +22,9 @@ import ch.elexis.dialogs.KontaktSelektor;
 import ch.elexis.exchange.KontaktMatcher;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
+import ch.rgw.tools.Result.SEVERITY;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.Result.SEVERITY;
 
 /**
  * This class parses a HL7 file containing lab results. It tries to comply with several possible
@@ -91,13 +89,13 @@ public class HL7 {
 		this.filename = filename;
 		if (!file.canRead()) {
 			return new Result<Object>(SEVERITY.WARNING, 1, Messages.HL7_CannotReadFile, filename,
-					true);
+				true);
 		}
 		try {
-			FileInputStream fis=new FileInputStream(file);
-			InputStreamReader isr=new InputStreamReader(fis, "iso-8859-1"); //$NON-NLS-1$
-			//FileReader fr = new FileReader(file);
-
+			FileInputStream fis = new FileInputStream(file);
+			InputStreamReader isr = new InputStreamReader(fis, "iso-8859-1"); //$NON-NLS-1$
+			// FileReader fr = new FileReader(file);
+			
 			char[] in = new char[(int) file.length()];
 			if (isr.read(in) != in.length) {
 				return new Result<Object>(SEVERITY.WARNING, 3, "EOF", filename, true); //$NON-NLS-1$
@@ -109,8 +107,8 @@ public class HL7 {
 			return new Result<Object>("OK"); //$NON-NLS-1$
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return new Result<Object>(SEVERITY.ERROR, 2, Messages.HL7_ExceptionWhileReading, ex
-					.getMessage(), true);
+			return new Result<Object>(SEVERITY.ERROR, 2, Messages.HL7_ExceptionWhileReading,
+				ex.getMessage(), true);
 		}
 		
 	}
@@ -222,8 +220,8 @@ public class HL7 {
 				qbe.clear();
 				qbe.add(Person.NAME, Query.EQUALS, StringTool.normalizeCase(nachname));
 				qbe.add(Person.FIRSTNAME, Query.EQUALS, StringTool.normalizeCase(vorname));
-				qbe.add(Person.BIRTHDATE, Query.EQUALS, new TimeTool(gebdat)
-				.toString(TimeTool.DATE_COMPACT));
+				qbe.add(Person.BIRTHDATE, Query.EQUALS,
+					new TimeTool(gebdat).toString(TimeTool.DATE_COMPACT));
 				list = qbe.execute();
 				if ((list != null) && (list.size() == 1)) {
 					pat = list.get(0);
@@ -246,9 +244,7 @@ public class HL7 {
 							if (adr.length > 1) {
 								an.setOrt(adr[1]);
 								if (adr.length > 2) {
-									an
-									.setPlz(adr[2].length() > 5 ? adr[2].substring(0, 4)
-											: adr[2]);
+									an.setPlz(adr[2].length() > 5 ? adr[2].substring(0, 4) : adr[2]);
 									if (adr.length > 3) {
 										an.setLand(adr[3]);
 									}
@@ -262,10 +258,10 @@ public class HL7 {
 						pat =
 							(Patient) KontaktSelektor.showInSync(Patient.class,
 								Messages.HL7_SelectPatient, Messages.HL7_WhoIs + nachname + " " //$NON-NLS-1$
-								+ vorname + " ," + gebdat + "?"); //$NON-NLS-1$ //$NON-NLS-2$
+									+ vorname + " ," + gebdat + "?"); //$NON-NLS-1$ //$NON-NLS-2$
 						if (pat == null) {
 							return new Result<Object>(SEVERITY.WARNING, 1,
-									Messages.HL7_PatientNotInDatabase, null, true);
+								Messages.HL7_PatientNotInDatabase, null, true);
 						}
 					}
 				}
@@ -275,11 +271,13 @@ public class HL7 {
 				if (nachname.length() != 0 && vorname.length() != 0) {
 					if (!KontaktMatcher.isSame(pat, nachname, vorname, gebdat)) {
 						StringBuilder sb = new StringBuilder();
-						sb.append(Messages.HL7_NameConflictWithID).append(pid).append(":\n") //$NON-NLS-1$
-						.append(Messages.HL7_Lab).append(nachname).append(StringTool.space)
-						.append(vorname)
-						.append("(").append(sex).append("),").append(gebdat).append("\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						.append(Messages.HL7_Database).append(pat.getLabel());
+						sb.append(Messages.HL7_NameConflictWithID)
+							.append(pid)
+							.append(":\n") //$NON-NLS-1$
+							.append(Messages.HL7_Lab).append(nachname).append(StringTool.space)
+							.append(vorname)
+							.append("(").append(sex).append("),").append(gebdat).append("\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							.append(Messages.HL7_Database).append(pat.getLabel());
 						pat = null;
 						return new Result<Object>(SEVERITY.WARNING, 4, sb.toString(), null, true);
 					}
@@ -486,6 +484,24 @@ public class HL7 {
 		private void setPosition(final int off){
 			of = off;
 			obxFields = lines[of].split(separator);
+			
+			// remove spaces from numeric results
+			if (obxFields.length >= 5) {
+				String value = obxFields[5];
+				value = value.replace(" ", "");
+				if (isNumeric(value)) {
+					obxFields[5] = value;
+				}
+			}
+			
+			// remove spaces from numeric reference ranges
+			if (obxFields.length >= 7) {
+				String value = obxFields[7];
+				value = value.replace(" ", "");
+				if (isNumeric(value)) {
+					obxFields[7] = value;
+				}
+			}
 		}
 		
 		public String getObxNr(){
@@ -523,7 +539,7 @@ public class HL7 {
 					while (flds[0].startsWith("HIS-")) { //$NON-NLS-1$
 						lastPos = of;
 						ret.append("*.").append(flds[1]).append(".*:\n").append(getField(5)) //$NON-NLS-1$ //$NON-NLS-2$
-						.append("\n\n"); //$NON-NLS-1$
+							.append("\n\n"); //$NON-NLS-1$
 						OBX nextOBX = myOBR.nextOBX(this);
 						if (nextOBX == null) {
 							break;
@@ -587,7 +603,7 @@ public class HL7 {
 		public RECORDTYPE getType(){
 			String type = getField(2);
 			if (type.equals(TX) || type.equals("ST") || type.equals(FT)) { //$NON-NLS-1$
-				if (getField(5).matches("[<>]?[0-9\\.,]+")) { //$NON-NLS-1$
+				if (isNumeric(getField(5))) {
 					return RECORDTYPE.NUMERIC;
 				}
 				return RECORDTYPE.TEXT;
@@ -611,22 +627,21 @@ public class HL7 {
 		public boolean isPlainText(){
 			if (getField(2).equals(TX)) {
 				String res = getField(5);
-				if (res.matches("[<>0-9\\.,]+")) { //$NON-NLS-1$
-					return false;
-				} else {
-					return true;
-				}
+				return !isNumeric(res);
 			}
 			return false;
+		}
+		
+		private boolean isNumeric(String str){
+			return str.matches("((<|>|-|\\+)?[0-9]+(\\.[0-9]+)?)+"); //$NON-NLS-1$
 		}
 		
 		public boolean isNumeric(){
 			String type = getField(2);
 			if (type.equals(TX)) {
 				String res = getField(5);
-				if (res.matches("<>[0-9\\.,]+")) { //$NON-NLS-1$
-					return true;
-				}
+				res = res.replace(" ", "");
+				return isNumeric(res);
 			} else if (type.equals(NM)) {
 				return true;
 			}
