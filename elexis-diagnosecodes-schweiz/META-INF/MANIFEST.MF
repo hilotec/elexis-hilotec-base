@@ -12,3 +12,4 @@ Require-Bundle: ch.elexis,
  org.eclipse.ui.forms,
  org.eclipse.ui,
  ch.rgw.utility
+Export-Package: ch.elexis.data
