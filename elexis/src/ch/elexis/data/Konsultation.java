@@ -115,7 +115,7 @@ public class Konsultation extends PersistentObject implements
 	}
 
 	/** Eine neue Konsultation zu einem Fall erstellen */
-	Konsultation(Fall fall) {
+	public Konsultation(Fall fall) {
 		if (fall == null) {
 			fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
 			if (fall == null) {
