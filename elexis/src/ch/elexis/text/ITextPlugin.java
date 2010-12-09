@@ -120,6 +120,8 @@ public interface ITextPlugin extends IExecutableExtension{
 	// Properties for tables
 	public final static int	FIRST_ROW_IS_HEADER	=	0x0001; // If set, the first row will be formatted differently
 	public final static int GRID_VISIBLE		= 	0x0002; // If set, Grid Lines will be visible
+	public final static String ENTRY_TYPE_TABLE 	=	"TypeTable";
+	public final static String ENTRY_TYPE_TEXT		=	"TypeText";
 	
 	/** Position text into a  rectangular area. 
 	 * @param adjust SWT.LEFT, SWT.RIGHT, SWT.CENTER
