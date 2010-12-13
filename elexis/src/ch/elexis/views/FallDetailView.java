@@ -61,6 +61,8 @@ public class FallDetailView extends ViewPart implements ISaveablePart2, IActivat
 				} else {
 					fdb.setFall(null);
 				}
+			} else {
+				fdb.setFall(selectedFall);
 			}
 		}
 	};
