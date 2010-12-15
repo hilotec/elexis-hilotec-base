@@ -18,18 +18,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
+import ch.elexis.Desk;
 import ch.elexis.ElexisException;
-import ch.elexis.Hub;
-import ch.elexis.data.Fall;
-import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
@@ -63,7 +59,6 @@ public final class ElexisEventDispatcher extends Job {
 	private final Map<Class<?>, PersistentObject> lastSelection;
 	private final PriorityQueue<ElexisEvent> eventQueue;
 	private transient boolean bStop = false;
-	private static Lock eventQueueLock = new ReentrantLock(true);
 	private final Log log = Log.get("EventDispatcher");
 	private int listenerCount = 0;
 
@@ -216,15 +211,8 @@ public final class ElexisEventDispatcher extends Job {
 			if (ied != null) {
 				ied.fire(ee);
 			}
-			eventQueueLock.lock();
-			try {
-				/*
-				 * Iterator<ElexisEvent> it = eventQueue.iterator(); while
-				 * (it.hasNext()) { if (it.next().isSame(ee)) { it.remove(); } }
-				 */
+			synchronized (eventQueue) {
 				eventQueue.offer(ee);
-			} finally {
-				eventQueueLock.unlock();
 			}
 		}
 	}
@@ -338,41 +326,46 @@ public final class ElexisEventDispatcher extends Job {
 		return Status.OK_STATUS;
 	}
 
-	private void doDispatch(ElexisEvent ee) {
+	private void doDispatch(final ElexisEvent ee) {
 
 		
-		if (Hub.plugin.DEBUGMODE) {
-			StringBuilder sb = new StringBuilder();
-			synchronized (sb) {
-				sb.append(ee.getObjectClass().getName());
-				if (ee.getObject() != null) {
-					sb.append(": ").append(ee.getObject().getLabel());
-				}
-				if (getSelectedPatient() != null) {
-					sb.append("\nPat: ").append(
-							getSelected(Patient.class).getLabel());
-				}
-				if (getSelected(Fall.class) != null) {
-					sb.append("\nFall: ").append(
-							getSelected(Fall.class).getLabel());
-				}
-				if (getSelected(Konsultation.class) != null) {
-					sb.append("\nKons: ").append(
-							getSelected(Konsultation.class).getLabel());
-				}
-				sb.append("\nto ").append(listenerCount).append("listeners.");
-				sb.append("\n--------------\n");
-			}
-			log.log(sb.toString(), Log.INFOS);
-
-		}
+//		if (Hub.plugin.DEBUGMODE) {
+//			StringBuilder sb = new StringBuilder();
+//			synchronized (sb) {
+//				sb.append(ee.getObjectClass().getName());
+//				if (ee.getObject() != null) {
+//					sb.append(": ").append(ee.getObject().getLabel());
+//				}
+//				if (getSelectedPatient() != null) {
+//					sb.append("\nPat: ").append(
+//							getSelected(Patient.class).getLabel());
+//				}
+//				if (getSelected(Fall.class) != null) {
+//					sb.append("\nFall: ").append(
+//							getSelected(Fall.class).getLabel());
+//				}
+//				if (getSelected(Konsultation.class) != null) {
+//					sb.append("\nKons: ").append(
+//							getSelected(Konsultation.class).getLabel());
+//				}
+//				sb.append("\nto ").append(listenerCount).append("listeners.");
+//				sb.append("\n--------------\n");
+//			}
+//			log.log(sb.toString(), Log.INFOS);
+//
+//		}
 		 
 		
 		if (ee != null) {
 			synchronized (listeners) {
-				for (ElexisEventListener l : listeners) {
+				for (final ElexisEventListener l : listeners) {
 					if (ee.matches(l.getElexisEventFilter())) {
-						l.catchElexisEvent(ee);
+						Desk.asyncExec(new Runnable() {
+							@Override
+							public void run() {
+								l.catchElexisEvent(ee);
+							}
+						});
 					}
 				}
 			}
