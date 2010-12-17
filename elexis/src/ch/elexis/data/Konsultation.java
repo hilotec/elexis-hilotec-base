@@ -486,7 +486,7 @@ public class Konsultation extends PersistentObject implements
 		ArrayList<IDiagnose> ret = new ArrayList<IDiagnose>();
 		Stm stm = j.getStatement();
 		ResultSet rs1 = stm
-				.query("SELECT DIAGNOSEID FROM BEHDL_DG_JOINT WHERE BEHANDLUNGSID="
+				.query("SELECT DIAGNOSEID FROM BEHDL_DG_JOINT inner join behandlungen on BehandlungsID=behandlungen.id where BEHDL_DG_JOINT.deleted=0 and behandlungen.deleted=0 AND BEHANDLUNGSID="
 						+ JdbcLink.wrap(getId()));
 		StringBuilder sb = new StringBuilder();
 		try {
