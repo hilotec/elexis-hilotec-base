@@ -954,39 +954,49 @@ public class Leistungscodes extends PreferencePage implements
 	 */
 	private boolean fieldExistsAlready(final String fieldName,
 			ListDisplay<String>... ldNoDuplicates) {
-		// *** get just any case
+		final String tempCaseID = "marlovits-14x@8w1"; //$NON-NLS-1$
+
 		JdbcLink j = PersistentObject.getConnection();
-		
-		//String minID = j.queryString("select min(id) from faelle"); //$NON-NLS-1$
-		String minID=j.queryString("select id from faelle limit 1");
-		Fall fall = Fall.load(minID);
-		if(fall==null){
-			return false;
-		}
+		String minID = "";
+		try {
+			// *** get just any case
+			minID = j.queryString("select min(id) from faelle"); //$NON-NLS-1$
+			if ((minID == null) || (minID.isEmpty())) {
+				// *** there is no case yet created -> create temp dummy case
+				j.exec("insert into faelle (id) values(" + JdbcLink.wrap(tempCaseID) + ")"); //$NON-NLS-1$  //$NON-NLS-2$
+				minID = tempCaseID;
+			}
+			Fall fall = Fall.load(minID);
 
-		// *** try to find a field in the db or in the mapping
-		// (case-sensitive!!!)
-		String mapped = fall.map(fieldName);
-		if (mapped.equalsIgnoreCase(fieldName)) {
-			return true;
-		}
-		if (!mapped.substring(0, 8).equalsIgnoreCase("**ERROR:")) { //$NON-NLS-1$
-			return true;
-		}
+			// *** try to find a field in the db or in the mapping
+			// (case-sensitive!!!)
+			String mapped = fall.map(fieldName);
+			if (mapped.equalsIgnoreCase(fieldName)) {
+				return true;
+			}
+			if (!mapped.substring(0, 8).equalsIgnoreCase("**ERROR:")) { //$NON-NLS-1$
+				return true;
+			}
 
-		// *** try to find in existing lists
-		for (ListDisplay<String> ld : ldNoDuplicates) {
-			for (String str : ld.getAll()) {
-				if (str.split(ARGUMENTSSDELIMITER)[0]
-						.equalsIgnoreCase(fieldName)) {
-					return true;
+			// *** try to find in existing lists
+			for (ListDisplay<String> ld : ldNoDuplicates) {
+				for (String str : ld.getAll()) {
+					if (str.split(ARGUMENTSSDELIMITER)[0]
+							.equalsIgnoreCase(fieldName)) {
+						return true;
+					}
 				}
 			}
+		} finally {
+			// *** clean up: delete any created dummy case before leaving
+			if (minID.equalsIgnoreCase(tempCaseID))
+				j.exec("delete from faelle where id = " + JdbcLink.wrap(tempCaseID)); //$NON-NLS-1$
 		}
 
 		return false;
 
 	}
+
 
 	/**
 	 * creates a composite with a label on the top, <br>
