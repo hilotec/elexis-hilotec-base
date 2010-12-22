@@ -956,7 +956,8 @@ public class Leistungscodes extends PreferencePage implements
 			ListDisplay<String>... ldNoDuplicates) {
 		// *** get just any case
 		JdbcLink j = PersistentObject.getConnection();
-		String minID = j.queryString("select min(id) from faelle"); //$NON-NLS-1$
+		//String minID = j.queryString("select min(id) from faelle"); //$NON-NLS-1$
+		String minID=j.queryString("select id from faelle limit 1"); //$NON-NLS-1$
 		Fall fall = Fall.load(minID);
 
 		// *** try to find a field in the db or in the mapping
