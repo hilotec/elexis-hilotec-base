@@ -943,7 +943,6 @@ public class Leistungscodes extends PreferencePage implements
 			return result;
 		}
 	}
-
 	/**
 	 * test if a field already exists in the database table (faelle) or in any
 	 * existing field definitions
@@ -997,7 +996,7 @@ public class Leistungscodes extends PreferencePage implements
 
 	}
 
-
+	
 	/**
 	 * creates a composite with a label on the top, <br>
 	 * below there is a ListDisplay on the left side and a navigator on the
