@@ -616,7 +616,6 @@ public class NOAText implements ITextPlugin {
 							}
 							textTable.spreadColumnsEvenly();
 							
-							return true;
 						} catch (Exception ex) {
 							ExHandler.handle(ex);
 							r.setText("Fehler beim Ersetzen");
