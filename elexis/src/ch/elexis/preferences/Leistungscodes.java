@@ -959,13 +959,14 @@ public class Leistungscodes extends PreferencePage implements
 		String minID = "";
 		try {
 			// *** get just any case
-			minID = j.queryString("select min(id) from faelle"); //$NON-NLS-1$
-			if ((minID == null) || (minID.isEmpty())) {
+			minID = j.queryString("select id from faelle limit 1"); //$NON-NLS-1$
+			Fall fall = Fall.load(minID);
+			if (fall==null) {
 				// *** there is no case yet created -> create temp dummy case
 				j.exec("insert into faelle (id) values(" + JdbcLink.wrap(tempCaseID) + ")"); //$NON-NLS-1$  //$NON-NLS-2$
 				minID = tempCaseID;
+				fall=Fall.load(minID);
 			}
-			Fall fall = Fall.load(minID);
 
 			// *** try to find a field in the db or in the mapping
 			// (case-sensitive!!!)
