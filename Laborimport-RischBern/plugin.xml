@@ -9,16 +9,16 @@
    <extension
          point="ch.elexis.LaborDatenImport">
       <Importer
-            Class="ch.elexis.laborimport.Risch-Bern.Importer"
-            name="Labor Risch-Bern"/>
+            Class="ch.elexis.laborimport.RischBern.Importer"
+            name="Labor RischBern"/>
    </extension>
    <extension
          point="org.eclipse.ui.preferencePages">
       <page
             category="ch.elexis.preferences.transporters"
-            class="ch.elexis.laborimport.Risch-Bern.PreferencePage"
-            id="ch.elexis.laborimport_risch-bern.prefs"
-            name="Labor Risch-Bern"/>
+            class="ch.elexis.laborimport.RischBern.PreferencePage"
+            id="ch.elexis.laborimport_rischbern.prefs"
+            name="Labor RischBern"/>
    </extension>
 
 </plugin>

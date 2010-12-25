@@ -1,10 +1,10 @@
 // Copyright 2010 (c) Niklaus Giger <niklaus.giger@member.fsf.org>
-package ch.elexis.laborimport.Risch-Bern;
+package ch.elexis.laborimport.RischBern;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.laborimport.Risch-Bern.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "ch.elexis.laborimport.RischBern.messages"; //$NON-NLS-1$
 	public static String PreferencePage_DownloadDir;
 	public static String PreferencePage_JMedTrasferJar;
 	public static String PreferencePage_JMedTrasferJni;

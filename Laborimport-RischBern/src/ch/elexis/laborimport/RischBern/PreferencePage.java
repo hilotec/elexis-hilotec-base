@@ -8,7 +8,7 @@
  * 
  */
 
-package ch.elexis.laborimport.Risch-Bern;
+package ch.elexis.laborimport.RischBern;
 
 import org.eclipse.jface.preference.DirectoryFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -22,9 +22,9 @@ import ch.elexis.preferences.SettingsPreferenceStore;
 public class PreferencePage extends FieldEditorPreferencePage
 		implements IWorkbenchPreferencePage {
 	
-	public static final String JAR_PATH ="risch-bern/jar_path"; //$NON-NLS-1$
-	public static final String INI_PATH ="risch-bern/ini_path"; //$NON-NLS-1$
-	public static final String DL_DIR = "risch-bern/downloaddir"; //$NON-NLS-1$
+	public static final String JAR_PATH ="rischbern/jar_path"; //$NON-NLS-1$
+	public static final String INI_PATH ="rischbern/ini_path"; //$NON-NLS-1$
+	public static final String DL_DIR = "rischbern/downloaddir"; //$NON-NLS-1$
 	
 	public PreferencePage(){
 		super(GRID);

@@ -8,7 +8,7 @@
  * 
  */
 
-package ch.elexis.laborimport.Risch-Bern;
+package ch.elexis.laborimport.RischBern;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -41,8 +41,8 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.Result.SEVERITY;
 
 public class Importer extends ImporterPage {
-	public static final String MY_LAB = "Risch-Bern";
-	public static final String PLUGIN_ID = "ch.elexis.laborimport_risch-bern";
+	public static final String MY_LAB = "RischBern";
+	public static final String PLUGIN_ID = "ch.elexis.laborimport_rischbern";
 
 	private static final String OPENMEDICAL_MAINCLASS = "ch.openmedical.JMedTransfer.JMedTransfer";
 
