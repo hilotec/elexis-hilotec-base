@@ -70,6 +70,7 @@ public class RnDialogs {
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			new Label(ret, SWT.NONE).setText(Messages.getString("RnDialogs.date")); //$NON-NLS-1$
 			dp = new DatePickerCombo(ret, SWT.NONE);
+			dp.setDate(new Date());
 			new Label(ret, SWT.NONE).setText(Messages.getString("RnDialogs.amount")); //$NON-NLS-1$
 			// nf=NumberFormat.getCurrencyInstance();
 			amount = new Text(ret, SWT.BORDER);
