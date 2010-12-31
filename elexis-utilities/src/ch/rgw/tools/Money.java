@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Money.java 5170 2009-02-21 19:44:23Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.rgw.tools;

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Konsultation.java 6127 2010-02-12 15:44:52Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 package ch.elexis.data;
 
