@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Patientenblatt2.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -24,8 +24,6 @@ import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -33,8 +31,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
@@ -89,7 +85,7 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 	private final FormToolkit tk;
 	private InputPanel ipp;
 	private IAction lockAction, removeZAAction, showZAAction;
-	//MenuItem delZA;
+	// MenuItem delZA;
 	private final static String CFG_BEZUGSKONTAKTTYPEN = "views/patientenblatt/Bezugskontakttypen"; //$NON-NLS-1$
 	public final static String CFG_EXTRAFIELDS = "views/patientenblatt/extrafelder"; //$NON-NLS-1$
 	private final static String SPLITTER = "#!>"; //$NON-NLS-1$
@@ -246,11 +242,13 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 					 */
 
 					public void hyperlinkActivated(final String l) {
-						final String[] sortFields=new String[]{Kontakt.FLD_NAME1,Kontakt.FLD_NAME2,Kontakt.FLD_STREET};
+						final String[] sortFields = new String[] {
+								Kontakt.FLD_NAME1, Kontakt.FLD_NAME2,
+								Kontakt.FLD_STREET };
 						KontaktSelektor ksl = new KontaktSelektor(
 								getShell(),
 								Kontakt.class,
-								Messages.getString("Patientenblatt2.contactForAdditionalAddress"), Messages.getString("Patientenblatt2.pleaseSelectardress"),sortFields); //$NON-NLS-1$ //$NON-NLS-2$
+								Messages.getString("Patientenblatt2.contactForAdditionalAddress"), Messages.getString("Patientenblatt2.pleaseSelectardress"), sortFields); //$NON-NLS-1$ //$NON-NLS-2$
 						if (ksl.open() == Dialog.OK) {
 							Kontakt k = (Kontakt) ksl.getSelection();
 							BezugsKontaktAuswahl bza = new BezugsKontaktAuswahl();
@@ -311,8 +309,8 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 				});
 		inpZusatzAdresse.addHyperlinks(Messages
 				.getString("Patientenblatt2.add")); //$NON-NLS-1$
-		//inpZusatzAdresse.setMenu(createZusatzAdressMenu());
-		inpZusatzAdresse.setMenu(removeZAAction,showZAAction);
+		// inpZusatzAdresse.setMenu(createZusatzAdressMenu());
+		inpZusatzAdresse.setMenu(removeZAAction, showZAAction);
 
 		ecZA.setClient(inpZusatzAdresse);
 		for (int i = 0; i < lbExpandable.length; i++) {
@@ -362,7 +360,7 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 		ecdm.addExpansionListener(ecExpansionListener);
 		dmd = new FixMediDisplay(ecdm, site);
 		ecdm.setClient(dmd);
-		
+
 		viewmenu = new ViewMenus(viewsite);
 		viewmenu.createMenu(GlobalActions.printEtikette,
 				GlobalActions.printAdresse, GlobalActions.printBlatt,
@@ -409,39 +407,27 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 	}
 
 	/*
-	private Menu createZusatzAdressMenu() {
-		Menu ret = new Menu(inpZusatzAdresse);
-		delZA = new MenuItem(ret, SWT.NONE);
-		delZA.setText(Messages.getString("Patientenblatt2.removeAddress")); //$NON-NLS-1$
-		delZA.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				if (!bLocked) {
-					BezugsKontakt a = (BezugsKontakt) inpZusatzAdresse
-							.getSelection();
-					actPatient.removeBezugsKontakt(Kontakt.load(a
-							.get(BezugsKontakt.OTHER_ID)));
-					setPatient(actPatient);
-				}
-			}
+	 * private Menu createZusatzAdressMenu() { Menu ret = new
+	 * Menu(inpZusatzAdresse); delZA = new MenuItem(ret, SWT.NONE);
+	 * delZA.setText(Messages.getString("Patientenblatt2.removeAddress"));
+	 * //$NON-NLS-1$ delZA.addSelectionListener(new SelectionAdapter() {
+	 * 
+	 * @Override public void widgetSelected(final SelectionEvent e) { if
+	 * (!bLocked) { BezugsKontakt a = (BezugsKontakt) inpZusatzAdresse
+	 * .getSelection(); actPatient.removeBezugsKontakt(Kontakt.load(a
+	 * .get(BezugsKontakt.OTHER_ID))); setPatient(actPatient); } }
+	 * 
+	 * }); MenuItem showZA = new MenuItem(ret, SWT.NONE);
+	 * showZA.setText(Messages.getString("Patientenblatt2.showAddress"));
+	 * //$NON-NLS-1$ showZA.addSelectionListener(new SelectionAdapter() {
+	 * 
+	 * @Override public void widgetSelected(final SelectionEvent e) { Kontakt a
+	 * = Kontakt.load(((BezugsKontakt) inpZusatzAdresse
+	 * .getSelection()).get(BezugsKontakt.OTHER_ID)); KontaktDetailDialog kdd =
+	 * new KontaktDetailDialog(form .getShell(), a); kdd.open(); } }); return
+	 * ret; }
+	 */
 
-		});
-		MenuItem showZA = new MenuItem(ret, SWT.NONE);
-		showZA.setText(Messages.getString("Patientenblatt2.showAddress")); //$NON-NLS-1$
-		showZA.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				Kontakt a = Kontakt.load(((BezugsKontakt) inpZusatzAdresse
-						.getSelection()).get(BezugsKontakt.OTHER_ID));
-				KontaktDetailDialog kdd = new KontaktDetailDialog(form
-						.getShell(), a);
-				kdd.open();
-			}
-		});
-		return ret;
-	}
-*/
-	
 	class Hyperlinkreact extends HyperlinkAdapter {
 
 		@Override
@@ -513,27 +499,29 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 			}
 
 		};
-		
-		removeZAAction=new Action( Messages.getString("Patientenblatt2.removeAddress")){
+
+		removeZAAction = new Action(
+				Messages.getString("Patientenblatt2.removeAddress")) {
 			@Override
 			public void run() {
 				if (!bLocked) {
 					BezugsKontakt a = (BezugsKontakt) inpZusatzAdresse
 							.getSelection();
-					actPatient.removeBezugsKontakt(Kontakt.load(a
-							.get(BezugsKontakt.OTHER_ID)));
+					a.delete();
 					setPatient(actPatient);
 				}
 			}
 		};
-		
-		showZAAction=new RestrictedAction(AccessControlDefaults.PATIENT_DISPLAY,Messages.getString("Patientenblatt2.showAddress")){
+
+		showZAAction = new RestrictedAction(
+				AccessControlDefaults.PATIENT_DISPLAY,
+				Messages.getString("Patientenblatt2.showAddress")) {
 			@Override
 			public void doRun() {
 				Kontakt a = Kontakt.load(((BezugsKontakt) inpZusatzAdresse
 						.getSelection()).get(BezugsKontakt.OTHER_ID));
-				KontaktDetailDialog kdd = new KontaktDetailDialog(form
-						.getShell(), a);
+				KontaktDetailDialog kdd = new KontaktDetailDialog(
+						form.getShell(), a);
 				kdd.open();
 			}
 		};
@@ -544,7 +532,7 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 		ipp.setLocked(bLock);
 		inpZusatzAdresse.enableHyperlinks(!bLock);
 		hHA.setEnabled(!bLock);
-		//delZA.setEnabled(!bLock);
+		// delZA.setEnabled(!bLock);
 		removeZAAction.setEnabled(!bLock);
 		if (bLock) {
 			hHA.setForeground(Desk.getColor(Desk.COL_GREY));
