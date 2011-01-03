@@ -3,6 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Smooks Libraries
 Bundle-SymbolicName: at.medevit.smooks.libs
 Bundle-Version: 1.4
+Eclipse-BuddyPolicy: registered
 Bundle-ClassPath: antlr-2.7.7.jar,
  commons-collections-3.1.jar,
  commons-lang-2.4.jar,
@@ -427,3 +428,4 @@ Export-Package: antlr,
  org.yaml.snakeyaml.tokens,
  org.yaml.snakeyaml.util
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.apache.log4j;bundle-version="1.2.15"
