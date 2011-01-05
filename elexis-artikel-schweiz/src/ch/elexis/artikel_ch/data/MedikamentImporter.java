@@ -81,15 +81,25 @@ public class MedikamentImporter extends ImporterPage {
 		.beginTask(Messages.MedikamentImporter_MedikamentImportTitle + mode, (int) (l / 100));
 		Query<Artikel> qbe = new Query<Artikel>(Artikel.class);
 		int counter = 0;
-		String titel, ek, vk, kasse, mwst;
+		String titel, ek, vk, kasse, cmws;
 		while ((in = br.readLine()) != null) {
-			String reca = new String(in.substring(0, 2)); // recordart
-			String cmut = new String(in.substring(2, 3)); // mutationscode
-			String pkraw = new String(in.substring(3, 10)).trim(); // Pharmacode
+			// Recordart (RECA) - 2stellig
+			// 11: Stamm-Satz (mit Mehrwertsteuer-Code)
+			String reca = new String(in.substring(0, 2));
+			
+			// Mutationscode (CMUT) - 1stellig
+			// 1: Datensatz (Artikel) neu (im Handel)
+			// 2: Datensatz (Artikel) Update
+			// 3: Datensatz (Artikel) ausser Handel
+			String cmut = new String(in.substring(2, 3));
+			
+			// Pharmacode (PHAR) - 7stellig
+			String phar = new String(in.substring(3, 10)).trim();
+			
 			// String ckzl = new String(in.substring(7,8)); // Kassenpflicht
 			String pk = "0"; //$NON-NLS-1$
 			try {
-				long pkl = Long.parseLong(pkraw); // führende Nullen entfernen
+				long pkl = Long.parseLong(phar); // führende Nullen entfernen
 				pk = Long.toString(pkl);
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
@@ -124,14 +134,14 @@ public class MedikamentImporter extends ImporterPage {
 					// nicht existiert
 				}
 			} else {
-				if (cmut.equals("3")) { // Wen n er existiert, muss er gelöscht //$NON-NLS-1$
+				if (cmut.equals("3")) { // Wenn er existiert, muss er gelöscht //$NON-NLS-1$
 					// werden
 					a.delete();
 					continue;
 				}
 			}
 			
-			if (reca.equals("11")) { // Stammsatz //$NON-NLS-1$
+			if (reca.equals("11")) { 
 				titel = new String(in.substring(10, 60)).trim(); // Text
 				ek = new String(in.substring(60, 66)).trim(); // EK-Preis
 				vk = new String(in.substring(66, 72)).trim(); // VK-Preis
@@ -141,10 +151,15 @@ public class MedikamentImporter extends ImporterPage {
 				String ithe = new String(in.substring(76, 83)); // index
 				// therapeuticus
 				String ean = new String(in.substring(83, 96)); // EAN
-				mwst = new String(in.substring(96, 97)); // MWSt-Typ
+				
+				// Code Mehrwertsteuer (CMWS) - 1stellig
+				// 1: voller MWSt-Satz (zur Zeit 6.5%)
+				// 2: reduzierter MWSt-Satz (zur Zeit 2%)
+				// 3: von der MWSt befreit
+				cmws = new String(in.substring(96, 97)); // MWSt-Typ
 				
 				if (a == null) {
-					if (mwst.equals("1")) { //$NON-NLS-1$
+					if (cmws.equals("1")) { //$NON-NLS-1$
 						a = new Artikel(titel, MEDICAL, pk);
 					} else {
 						a = new Artikel(titel, MEDIKAMENT, pk);
@@ -166,14 +181,14 @@ public class MedikamentImporter extends ImporterPage {
 				ext.put(LAGERART, lager);
 				ext.put(HERSTELLER, hix);
 				ext.put(EAN, ean);
-				ext.put(MWST_TYP, mwst);
+				ext.put(MWST_TYP, cmws);
 				
 				a.setHashtable(Artikel.FLD_EXTINFO, ext);
 			} else if (reca.equals("10")) { // Update-Satz //$NON-NLS-1$
 				ek = new String(in.substring(10, 16));
 				vk = new String(in.substring(16, 22));
 				kasse = new String(in.substring(22, 23));
-				mwst = new String(in.substring(23, 24));
+				cmws = new String(in.substring(23, 24));
 				if (vk.matches("0+")) { //$NON-NLS-1$
 					a.set(EK_PREIS, ek);
 				} else {
