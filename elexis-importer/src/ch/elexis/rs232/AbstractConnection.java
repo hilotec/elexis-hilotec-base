@@ -82,6 +82,8 @@ public abstract class AbstractConnection implements PortEventListener {
 		sp.setDatabits(mySettings[1]);
 		sp.setParity(mySettings[2]);
 		sp.setStopbits(mySettings[3]);
+		if(mySettings.length >=5 && mySettings[4] != null) sp.setFlowControlIn(mySettings[4]);
+		if(mySettings.length >=6 && mySettings[5] != null) sp.setFlowControlOut(mySettings[5]);
 		try {
 			if (simulate != null) {
 				final AbstractConnection mine = this;
@@ -313,7 +315,11 @@ public abstract class AbstractConnection implements PortEventListener {
 	 * Send a one second break signal.
 	 */
 	public void sendBreak(){
-		sPort.sendBreak(1000);
+		if(sPort!=null) {
+			sPort.sendBreak(1000);
+		} else {
+			ExHandler.handle(new Throwable("sPort is null"));
+		}
 	}
 	
 	public boolean send(final String data){
