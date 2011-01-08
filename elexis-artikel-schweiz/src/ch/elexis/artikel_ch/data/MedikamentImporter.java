@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    G. Weirich 1/08 - major redesign to implement IGM updates etc.
  * 
- *  $Id: MedikamentImporter.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
