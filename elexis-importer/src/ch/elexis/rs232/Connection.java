@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    M. Descher - [1]
  *    
  * $Id: Connection.java 6137 2010-02-14 09:45:36Z rgw_ch $
  *******************************************************************************/
@@ -77,6 +78,12 @@ public class Connection implements PortEventListener {
 
 	public boolean connect() {
 		SerialParameters sp = new SerialParameters();
+		
+		// [1] Set as default - Windows RS232 problem with Fuji DRI / Cobas Mira also requires it
+		//     can be overridden, by manually setting parameters (see line 92 + 93)
+		sp.setFlowControlIn(SerialPort.FLOWCONTROL_RTSCTS_IN);
+		sp.setFlowControlOut(SerialPort.FLOWCONTROL_RTSCTS_OUT);
+		
 		sp.setPortName(myPort);
 		sp.setBaudRate(mySettings[0]);
 		sp.setDatabits(mySettings[1]);
