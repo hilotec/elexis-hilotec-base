@@ -7,7 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    M. Descher - [1]
+ *    M. Descher - honor flow control
  *    
  * $Id: Connection.java 6137 2010-02-14 09:45:36Z rgw_ch $
  *******************************************************************************/
@@ -78,19 +78,14 @@ public class Connection implements PortEventListener {
 
 	public boolean connect() {
 		SerialParameters sp = new SerialParameters();
-		
-		// [1] Set as default - Windows RS232 problem with Fuji DRI / Cobas Mira also requires it
-		//     can be overridden, by manually setting parameters (see line 92 + 93)
-		//sp.setFlowControlIn(SerialPort.FLOWCONTROL_RTSCTS_IN);
-		//sp.setFlowControlOut(SerialPort.FLOWCONTROL_RTSCTS_OUT);
-		
+
 		sp.setPortName(myPort);
 		sp.setBaudRate(mySettings[0]);
 		sp.setDatabits(mySettings[1]);
 		sp.setParity(mySettings[2]);
 		sp.setStopbits(mySettings[3]);
-		if(mySettings.length >=5 && mySettings[4] != null) sp.setFlowControlIn(mySettings[4]);
-		if(mySettings.length >=6 && mySettings[5] != null) sp.setFlowControlOut(mySettings[5]);
+		if(mySettings.length >=5 && mySettings[4] != null) sp.setFlowControlIn(Integer.parseInt(mySettings[4]));
+		if(mySettings.length >=6 && mySettings[5] != null) sp.setFlowControlOut(Integer.parseInt(mySettings[5]));
 		try {
 			if (simulate != null) {
 				final Connection mine = this;
