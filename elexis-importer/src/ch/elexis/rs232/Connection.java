@@ -81,8 +81,8 @@ public class Connection implements PortEventListener {
 		
 		// [1] Set as default - Windows RS232 problem with Fuji DRI / Cobas Mira also requires it
 		//     can be overridden, by manually setting parameters (see line 92 + 93)
-		sp.setFlowControlIn(SerialPort.FLOWCONTROL_RTSCTS_IN);
-		sp.setFlowControlOut(SerialPort.FLOWCONTROL_RTSCTS_OUT);
+		//sp.setFlowControlIn(SerialPort.FLOWCONTROL_RTSCTS_IN);
+		//sp.setFlowControlOut(SerialPort.FLOWCONTROL_RTSCTS_OUT);
 		
 		sp.setPortName(myPort);
 		sp.setBaudRate(mySettings[0]);
