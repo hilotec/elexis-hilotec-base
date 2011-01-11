@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    M. Descher - honor flow control
  *    
- * $Id: Connection.java 6137 2010-02-14 09:45:36Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.rs232;
