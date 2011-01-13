@@ -90,15 +90,20 @@ public class Money extends Number implements Comparable<Money> {
 	}
 	
 	private static Double parse(String raw) throws ParseException{
-		if(raw.matches("[0-9]+")){
+		if(raw.matches("-?[0-9]+")){
 			return Double.parseDouble(raw);
 		}
-		if(raw.matches("[0-9]+[\\.,][0-9]{1,2}")){
+		if(raw.matches("-?[0-9]+[\\.,][0-9]{1,2}")){
 			String[] vals=raw.split("[\\.,]");
 			if(vals[1].length()==1){
 				vals[1]+="0";
 			}
-			int cents=100*Integer.parseInt(vals[0])+Integer.parseInt(vals[1]);
+			int fac=1;
+			if(vals[0].startsWith("-")){
+				vals[0]=vals[0].substring(1);
+				fac=-1;
+			}
+			int cents=fac*(100*Integer.parseInt(vals[0])+Integer.parseInt(vals[1]));
 			double d=cents/100.0;
 			return d;
 		}
