@@ -9,7 +9,7 @@
  *    G. Weirich   - initial implementation
  *    H. Marlovits - added support for placeholders inside controls
  *    
- *  $Id: NOAText.java 5548 2009-07-11 21:29:11Z tschaller $
+ *  $Id$
  *******************************************************************************/
 package ch.elexis.noa;
 

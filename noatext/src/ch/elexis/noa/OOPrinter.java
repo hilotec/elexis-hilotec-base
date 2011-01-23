@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: OOPrinter.java 2125 2007-03-18 22:04:16Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.noa;
