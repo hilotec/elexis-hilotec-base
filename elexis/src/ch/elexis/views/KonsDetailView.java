@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: KonsDetailView.java 6246 2010-03-20 19:42:29Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -622,7 +622,7 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 			public void run() {
 				switch (ev.getType()) {
 				case ElexisEvent.EVENT_DELETE:
-					if (actKons.equals(ev.getObject())) {
+					if ((actKons!=null) && actKons.equals(ev.getObject())) {
 						setKons(null);
 					}
 					break;
