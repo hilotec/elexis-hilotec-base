@@ -706,11 +706,36 @@ public class JdbcLink {
 				return res;
 			} catch (Exception e) {
 				if (!inError) {
+					// try to solve the problem with a simpel reconnect
 					if (reconnect()) {
 						log.log(Level.WARNING, "Reconnect");
 						return internalQuery(SQLText, true);
+					} else {
+						// the problem could not be solved with a reconnect ...
+						// if this is a network connection error, give the connection a little time
+						if(e instanceof SQLException) {
+							String sqlState = ((SQLException)e).getSQLState();
+							if ("08S01".equals(sqlState)) {
+								int retryCount = 0;
+								// 5 reconnect attempts
+								while (retryCount < 5) {
+		                            if(reconnect()) {
+		                                return internalQuery(SQLText, true);
+		                            } else {
+		                                try {
+		                                	retryCount++;
+		                                    Thread.sleep(10);
+		                                } catch (InterruptedException ie) {
+		                                    // if we get interrupted the loop will take us back to the reconnect
+		                                    // everything is fine ...
+		                                }
+		                            }
+		                        }
+							}
+						}
 					}
 				}
+				
 				ExHandler.handle(e);
 				lastErrorString = e.getMessage();
 				lastErrorCode = CONNECTION_SQL_ERROR;
