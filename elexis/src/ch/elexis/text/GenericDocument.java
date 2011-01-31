@@ -73,7 +73,36 @@ public class GenericDocument implements IOpaqueDocument {
 		baos.close();
 	}
 
-
+	/**
+	 * Create a new GenericDocument from a File. 
+	 * 
+	 * @param pat
+	 *            The patient this document belongs to. Can be null
+	 * @param title
+	 *            Title for the document. Never Null and Never empty
+	 * @param category
+	 *            Category for the document. Can be null or empty
+	 * @param content
+	 *            Content as byte array
+	 * @param date
+	 *            date of creation
+	 * @param keywords
+	 *            space- or comma- separated list of keywords. May be empty or
+	 *            null
+	 */
+	public GenericDocument(Patient pat, String title, String category, byte[] content,
+			String date, String keywords, String mimetype) throws IOException{
+		this.title = title;
+		this.category = category;
+		this.date = date;
+		this.pat = pat;
+		this.keywords = keywords;
+		this.mimetype = mimetype;
+		// make a copy of the content, as we do not know if source will get changed ...
+		contents = new byte[content.length];
+		System.arraycopy(content, 0, contents, 0, content.length);
+	}
+	
 	@Override
 	public String getTitle() {
 		return title;

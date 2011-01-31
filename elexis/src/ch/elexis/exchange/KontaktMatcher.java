@@ -89,16 +89,14 @@ public class KontaktMatcher {
 						name+SEP+strasse+SEP+plz+StringTool.space+ort,
 						resolve1,hints);
 			}
-		}
-		if(found.size()==1){
+			return null;
+		} else if(found.size()==1){
 			return found.get(0);
-		}
-		// more than 1 hit
-		if(createMode==CreateMode.ASK){
+		} else if(createMode==CreateMode.ASK){ // more than 1 hit
 			return (Organisation)KontaktSelektor.showInSync(Organisation.class, Messages.KontaktMatcher_OrganizationNotUnique,
 					name+SEP+strasse+SEP+plz+StringTool.space+ort,
 					resolve1,hints);
-		}else{
+		} else {
 			return (Organisation)matchAddress(found.toArray(new Kontakt[0]),strasse,plz,ort, null);
 		}
 	}
@@ -107,7 +105,10 @@ public class KontaktMatcher {
 			final String gender, final String strasse, final String plz, final String ort,
 			final String natel, final CreateMode createMode){
 		Person pat= findPerson(name,vorname,gebdat,gender,strasse,plz,ort,natel,createMode,true);
-		return Patient.load(pat.getId());
+		if(pat != null)
+			return Patient.load(pat.getId());
+		else
+			return null;
 	}
 	public static Person findPerson(final String name, final String vorname, final String gebdat,
 			final String gender, final String strasse, final String plz, final String ort,
