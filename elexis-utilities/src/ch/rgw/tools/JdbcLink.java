@@ -1,4 +1,4 @@
-// $Id: JdbcLink.java 3969 2008-05-27 12:31:42Z michael_imhof $
+// $Id$
 
 package ch.rgw.tools;
 

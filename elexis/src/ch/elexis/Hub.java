@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Hub.java 6387 2010-05-23 05:51:17Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 
 package ch.elexis;
