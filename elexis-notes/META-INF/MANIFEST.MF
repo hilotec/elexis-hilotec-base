@@ -9,6 +9,4 @@ Require-Bundle: ch.elexis,
  org.eclipse.ui,
  org.eclipse.ui.forms,
  org.eclipse.core.runtime,
- ch.elexis.Textplugin;resolution:=optional,
- ch.rgw.utility,
- ch.medelexis.text.templator;bundle-version="1.0.1";resolution:=optional
+ ch.rgw.utility
