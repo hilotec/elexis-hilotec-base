@@ -89,7 +89,7 @@ to   = "#{savedDir}/local.properties"
 properties    = File.open(to, "w+")
 properties.puts("skipPlugins=archie-patientstatistik,Statistics,StatisticsFragmentExample,"+
          "hilotec-pluginstatistiken,elexis-buchhaltung-basis,hilotec-messwerte,"+
-	 "marlovits-addressSearch,marlovits-vornamen,marlovits-plz")
+	 "marlovits-addressSearch,marlovits-vornamen,marlovits-plz,elexis-notes")
 properties.puts("base=#{origin}")
 properties.puts("hg=hg")
 properties.puts("repositories=#{origin}")
@@ -99,5 +99,5 @@ properties.puts("output=#{File.expand_path(File.dirname(savedDir))}/deploy")
 # properties.puts("unplugged=true")
 Dir.chdir("#{savedDir}/..")
 if !File.directory?("archie")
-	system("svn --quiet checkout http://archie.googlecode.com/svn/archie/ch.unibe.iam.scg.archie/trunk archie");
+	system("svn --quiet checkout http://archie.googlecode.com/svn/archie/ch.unibe.iam.scg.archie/branches/elexis-2.1");
 end
