@@ -83,6 +83,7 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.DateSelectorDialog;
+import ch.elexis.dialogs.DisplayLabDokumenteDialog;
 import ch.elexis.dialogs.DisplayTextDialog;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.Importer;
@@ -144,7 +145,7 @@ public class LaborView extends ViewPart implements IActivationListener,
 	Hashtable<String, Integer> hDaten; // Mapping von Datum auf Tabellenspalten
 
 	private Action fwdAction, backAction, printAction, importAction, xmlAction,
-			newAction, setStateAction;
+			newAction, setStateAction, refreshAction;
 	private ViewMenus menu;
 	private final FormToolkit tk = Desk.getToolkit();
 	private Form form;
@@ -306,6 +307,19 @@ public class LaborView extends ViewPart implements IActivationListener,
 						new DisplayTextDialog(
 								getViewSite().getShell(),
 								Messages.getString("LaborView.textResultTitle"), li.getName(), lr.getComment()).open(); //$NON-NLS-1$
+					} else if (li.getTyp().equals(LabItem.typ.DOCUMENT)) {
+						Patient patient = ElexisEventDispatcher.getSelectedPatient();
+						if (patient !=null) {
+							Query<LabResult> labResultQuery = new Query<LabResult>(LabResult.class);
+							labResultQuery.add(LabResult.PATIENT_ID, Query.EQUALS, patient.getId());
+							labResultQuery.add(LabResult.DATE, Query.EQUALS, lr.getDate());
+							labResultQuery.add(LabResult.ITEM_ID, Query.EQUALS, li.getId());
+							List<LabResult> labResultList = labResultQuery.execute();
+							if (labResultList != null && labResultList.size() > 0) {
+								new DisplayLabDokumenteDialog(getViewSite().getShell(), Messages
+									.getString("LaborView.Documents"), labResultList).open();//$NON-NLS-1$
+							}
+						}
 					}
 				}
 				super.mouseDoubleClick(e);
@@ -343,6 +357,7 @@ public class LaborView extends ViewPart implements IActivationListener,
 		if (importers.size() > 0) {
 			tm.add(new Separator());
 		}
+		tm.add(refreshAction);
 		tm.add(newAction);
 		tm.add(backAction);
 		tm.add(fwdAction);
@@ -355,8 +370,11 @@ public class LaborView extends ViewPart implements IActivationListener,
 			public void menuAboutToShow(final IMenuManager manager) {
 				LabResult lr = getSelectedResult();
 				if (lr != null) {
-					mgr.add(setStateAction);
-					setStateAction.setChecked(lr.isFlag(LabResult.PATHOLOGIC));
+					LabItem li = lr.getItem();
+					if (!li.getTyp().equals(LabItem.typ.DOCUMENT)) {
+						mgr.add(setStateAction);
+						setStateAction.setChecked(lr.isFlag(LabResult.PATHOLOGIC));
+					}
 				}
 
 			}
@@ -662,7 +680,11 @@ public class LaborView extends ViewPart implements IActivationListener,
 			if (row == null) {
 				continue;
 			}
-			rows[row].setText(col_display, lr.getResult()); // Spalte für die
+			if (LabItem.typ.DOCUMENT.equals(lit.getTyp())) {
+				rows[row].setText(col_display,  Messages.getString("LaborView.Open")); //$NON-NLS-1$
+			}  else {
+				rows[row].setText(col_display, lr.getResult()); // Spalte für die
+			}
 			// Anzeige
 			LabResult[] lrs = (LabResult[]) rows[row].getData(KEY_VALUES); // LabResult
 			// anfügen
@@ -949,6 +971,12 @@ public class LaborView extends ViewPart implements IActivationListener,
 				loadPage(getLastPage());
 			}
 		};
+		refreshAction = new Action(Messages.getString("LaborView.Refresh")) { //$NON-NLS-1$
+			@Override
+			public void run(){
+				rebuild();
+			}
+		};
 
 		newAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM)); // Hub.getImageDescriptor("rsc/add.gif"));
 		fwdAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEXT));
@@ -957,6 +985,7 @@ public class LaborView extends ViewPart implements IActivationListener,
 		printAction.setImageDescriptor(Desk
 				.getImageDescriptor(Desk.IMG_PRINTER));
 		xmlAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EXPORT));
+		refreshAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REFRESH));
 	}
 
 	public Document makeXML() {

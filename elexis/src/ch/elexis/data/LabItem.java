@@ -62,7 +62,7 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 	}
 
 	public enum typ {
-		NUMERIC, TEXT, ABSOLUTE, FORMULA
+		NUMERIC, TEXT, ABSOLUTE, DOCUMENT, FORMULA
 	};
 
 	public LabItem(String k, String t, Kontakt labor, String RefMann,
@@ -72,6 +72,8 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 			tp = "0";
 		} else if (type == typ.ABSOLUTE) {
 			tp = "2";
+		} else if (type == typ.DOCUMENT) {
+			tp = "3";
 		}
 		create(null);
 		if (StringTool.isNothing(seq)) {
@@ -131,6 +133,8 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 			return typ.TEXT;
 		} else if (t.equals("2")) {
 			return typ.ABSOLUTE;
+		} else if (t.equals("3")) {
+			return typ.DOCUMENT;
 		} else {
 			return typ.FORMULA;
 		}
