@@ -56,6 +56,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
@@ -89,8 +90,8 @@ import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.JdbcLink.Stm;
+import ch.rgw.tools.TimeTool;
 
 /**
  * Anzeige von Laboritems und Anzeige und Eingabemöglichkeit von Laborwerten.
@@ -316,10 +317,31 @@ public class LaborView extends ViewPart implements IActivationListener,
 		menu = new ViewMenus(getViewSite());
 		menu.createMenu(newAction, backAction, fwdAction, printAction,
 				importAction, xmlAction);
+		// Orders		
+		final LaborOrderPulldownMenuCreator menuCreator = new LaborOrderPulldownMenuCreator(parent.getShell());
+		if (menuCreator.getSelected() != null) {
+			IAction dropDownAction = new Action("Dropdown", IAction.AS_DROP_DOWN_MENU) {
+				@Override
+				public void run(){
+					((LaborOrderPulldownMenuCreator) getMenuCreator()).getSelected().run();
+				}
+			};
+			dropDownAction.setMenuCreator(menuCreator);
+			
+			IActionBars actionBars = getViewSite().getActionBars();
+			IToolBarManager toolbar = actionBars.getToolBarManager();
+			
+			toolbar.add(dropDownAction);
+			
+			// Set data
+			dropDownAction.setText(menuCreator.getSelected().getText());
+			dropDownAction.setToolTipText(menuCreator.getSelected().getToolTipText());
+			dropDownAction.setImageDescriptor(menuCreator.getSelected().getImageDescriptor());
+		}
+		// Importers
 		IToolBarManager tm = getViewSite().getActionBars().getToolBarManager();
 		List<IAction> importers = Extensions
-				.getClasses(Extensions.getExtensions(Messages
-						.getString("LaborView.0")), "ToolbarAction", //$NON-NLS-1$ //$NON-NLS-2$
+				.getClasses(Extensions.getExtensions("ch.elexis.LaborDatenImport"), "ToolbarAction", //$NON-NLS-1$ //$NON-NLS-2$
 						false);
 		for (IAction ac : importers) {
 			tm.add(ac);
