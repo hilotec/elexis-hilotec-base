@@ -88,8 +88,10 @@ origin=File.dirname(File.dirname(savedDir))
 to   = "#{savedDir}/local.properties"
 properties    = File.open(to, "w+")
 properties.puts("skipPlugins=archie-patientstatistik,Statistics,StatisticsFragmentExample,"+
-         "hilotec-pluginstatistiken,elexis-buchhaltung-basis,hilotec-messwerte,"+
-	 "marlovits-addressSearch,marlovits-vornamen,marlovits-plz,elexis-notes")
+	"hilotec-pluginstatistiken,elexis-buchhaltung-basis,hilotec-messwerte,"+
+	"marlovits-addressSearch,marlovits-vornamen,marlovits-plz,"+
+	"elexis-notes,elexis-connect-cobasmira,ch.elexis.docmanager.couchdb,ch.elexis.docmanager.couchdb_test,"+
+	"elexis-regiomed-estudio,elexis-impfplan,elexis-haftnotizen,elexis-connect-mythic,elexis-order-medicom-pharma,global-inbox")
 properties.puts("base=#{origin}")
 properties.puts("hg=hg")
 properties.puts("repositories=#{origin}")
