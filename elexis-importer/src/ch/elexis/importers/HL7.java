@@ -296,6 +296,18 @@ public class HL7 {
 	}
 	
 	/**
+	 * 
+	 * @return Date of the HL7 message
+	 */
+	public TimeTool getDate() {
+		String[] msh = getElement("MSH", 0);
+		if(msh.length > 9) {
+			return new TimeTool(msh[6]);
+		}
+		return new TimeTool();
+	}
+	
+	/**
 	 * Find the lab issuing this file. If we provided a lab name in the constructor, ths will return
 	 * that lab.
 	 * 
