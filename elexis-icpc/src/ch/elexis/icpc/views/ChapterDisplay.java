@@ -158,8 +158,14 @@ public class ChapterDisplay extends Composite {
 
 		public Object[] getElements(Object inputElement) {
 			Query<IcpcCode> qbe = new Query<IcpcCode>(IcpcCode.class);
+			qbe.startGroup();
 			qbe.add("ID", "Like", chapter.substring(0, 1) + "%");
+			qbe.or();
+			qbe.add("ID", "Like", "*%");
+			qbe.endGroup();
+			qbe.and();
 			qbe.add("component", StringTool.equals, component.substring(0, 1));
+			qbe.orderBy(false, new String[] {"ID"});
 			List<IcpcCode> codes = qbe.execute();
 			return codes.toArray();
 		}
