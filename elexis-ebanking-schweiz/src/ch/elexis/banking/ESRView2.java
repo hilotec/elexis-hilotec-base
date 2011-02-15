@@ -122,7 +122,7 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 		parent.setLayout(new GridLayout());
 		cv = new CommonViewer();
 		qbe = new Query<ESRRecord>(ESRRecord.class);
-		fdl=new FlatDataLoader(qbe);
+		fdl=new FlatDataLoader(cv, qbe);
 		/*
 		esrloader = (ESRLoader) JobPool.getJobPool().getJob(JOB_NAME);
 		if (esrloader == null) {
