@@ -12,7 +12,6 @@ public class Preferences extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
 	public static final String CONFIG_FILE="findings/hilotec/configfile";
 	
-	@Override
 	public void init(IWorkbench workbench) {
 		setPreferenceStore(new SettingsPreferenceStore(Hub.localCfg));
 	}
