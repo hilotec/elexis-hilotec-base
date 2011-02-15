@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.List;
 import java.util.Vector;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.swt.SWT;
@@ -126,6 +127,25 @@ public class LaborOrderPulldownMenuCreator implements IMenuCreator {
 		}
 		
 		return this.menu;
+	}
+	
+	/**
+	 * Returns action to the pulldown button
+	 * @return
+	 */
+	public IAction getAction() {
+		int buttonStyle = IAction.AS_DROP_DOWN_MENU;
+		if (actions.size() == 1) {
+			buttonStyle = IAction.AS_PUSH_BUTTON;
+		}
+		IAction dropDownAction = new Action("Dropdown", buttonStyle) {
+			@Override
+			public void run(){
+				getSelected().run();
+			}
+		};
+		dropDownAction.setMenuCreator(this);
+		return dropDownAction;
 	}
 	
 }

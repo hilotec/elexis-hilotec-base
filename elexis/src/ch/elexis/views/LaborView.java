@@ -320,14 +320,8 @@ public class LaborView extends ViewPart implements IActivationListener,
 		// Orders		
 		final LaborOrderPulldownMenuCreator menuCreator = new LaborOrderPulldownMenuCreator(parent.getShell());
 		if (menuCreator.getSelected() != null) {
-			IAction dropDownAction = new Action("Dropdown", IAction.AS_DROP_DOWN_MENU) {
-				@Override
-				public void run(){
-					((LaborOrderPulldownMenuCreator) getMenuCreator()).getSelected().run();
-				}
-			};
-			dropDownAction.setMenuCreator(menuCreator);
-			
+			IAction dropDownAction = menuCreator.getAction();
+				
 			IActionBars actionBars = getViewSite().getActionBars();
 			IToolBarManager toolbar = actionBars.getToolBarManager();
 			
