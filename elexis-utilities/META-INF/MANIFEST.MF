@@ -8,7 +8,8 @@ Bundle-ClassPath: bin/,
  lib/jdom.jar,
  lib/bcprov-jdk15-140.jar,
  lib/log4j-over-slf4j-1.6.1.jar,
- lib/slf4j-jdk14-1.6.1.jar
+ lib/slf4j-jdk14-1.6.1.jar,
+ lib/slf4j-api-1.6.1.jar
 Bundle-Vendor: G. Weirich
 Export-Package: .,
  ch.rgw.compress;uses:="ch.rgw.io",
