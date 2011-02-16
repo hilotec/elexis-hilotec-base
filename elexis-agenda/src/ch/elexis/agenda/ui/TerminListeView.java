@@ -120,8 +120,8 @@ public class TerminListeView extends ViewPart implements IActivationListener,
 	}
 
 	public ElexisEvent getElexisEventFilter() {
-		// TODO Auto-generated method stub
-		return null;
+		return new ElexisEvent(null, Patient.class,
+				ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
 	}
 
 }
