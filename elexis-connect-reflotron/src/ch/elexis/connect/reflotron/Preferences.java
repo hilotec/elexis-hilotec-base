@@ -1,5 +1,8 @@
 package ch.elexis.connect.reflotron;
 
+import java.nio.charset.Charset;
+import java.util.Set;
+
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -28,8 +31,9 @@ public class Preferences extends PreferencePage implements
 	public static final String PARAMS = REFLOTRON_BASE + "params"; //$NON-NLS-1$
 	public static final String LOG = REFLOTRON_BASE + "log"; //$NON-NLS-1$
 	public static final String BACKGROUND = REFLOTRON_BASE + "background"; //$NON-NLS-1$
+	public static final String ENCODING = REFLOTRON_BASE + "encoding"; //$NON-NLS-1$
 
-	Combo ports;
+	Combo ports, encoding;
 	Text speed, data, stop, timeout, logFile;
 	Button parity, log, background;
 
@@ -54,6 +58,20 @@ public class Preferences extends PreferencePage implements
 		ports.setItems(Connection.getComPorts());
 		ports.setText(Hub.localCfg.get(PORT, Messages
 				.getString("ReflotronSprintAction.DefaultPort"))); //$NON-NLS-1$
+		
+		Label lblEncoding = new Label(ret, SWT.NONE);
+		lblEncoding.setText("Daten-Encoding"); //$NON-NLS-1$
+		lblEncoding.setLayoutData(new GridData(SWT.NONE));
+		encoding = new Combo(ret, SWT.SINGLE);
+		Set<String> availableCharsets = Charset.availableCharsets().keySet();
+		String[] charsetArray = new String[availableCharsets.size()];
+		int i=0; 
+		for (String charset: availableCharsets) {
+			charsetArray[i] = charset;
+			i++;
+		}
+		encoding.setItems(charsetArray);
+		encoding.setText(Hub.localCfg.get(ENCODING, Charset.defaultCharset().displayName()));
 
 		Label lblSpeed = new Label(ret, SWT.NONE);
 		lblSpeed.setText(Messages.getString("Preferences.Baud")); //$NON-NLS-1$
@@ -113,6 +131,7 @@ public class Preferences extends PreferencePage implements
 			.append(stop.getText());
 		Hub.localCfg.set(PARAMS, sb.toString());
 		Hub.localCfg.set(PORT, ports.getText());
+		Hub.localCfg.set(ENCODING, encoding.getText());
 		Hub.localCfg.set(TIMEOUT, timeout.getText());
 		Hub.localCfg.set(LOG, log.getSelection() ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$
 		Hub.localCfg.set(BACKGROUND, background.getSelection() ? "y" : "n"); //$NON-NLS-1$ //$NON-NLS-2$

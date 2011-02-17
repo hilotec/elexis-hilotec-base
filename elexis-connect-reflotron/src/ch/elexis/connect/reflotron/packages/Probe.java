@@ -9,7 +9,7 @@ public class Probe {
 	private String resultat;
 	private String hint;
 	private String zusatztext;
-
+	
 	public Probe(final String[] strArray) {
 		parse(strArray);
 	}
@@ -49,8 +49,9 @@ public class Probe {
 
 	/**
 	 * Schreibt Labordaten
+	 * @return String Warnungsmeldung, die geloggt werden sollte
 	 */
-	public void write(Patient patient) throws PackageException {
+	public String write(Patient patient) throws PackageException {
 		if (getResultat().length() < 19) {
 			throw new PackageException(Messages.getString("Probe.ResultatMsg")); //$NON-NLS-1$
 		}
@@ -78,8 +79,9 @@ public class Probe {
 		}
 
 		Value val = Value.getValue(paramName, unit);
-
 		val.fetchValue(patient, value, "", getDate()); //$NON-NLS-1$
+		
+		return val.getWarning();
 	}
 
 	public TimeTool getDate() {
