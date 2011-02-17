@@ -243,6 +243,7 @@ public class TagesView extends BaseAgendaView {
 				.append(" ").append(t.getPersonalia()).append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
 				.append(t.getType())
 				.append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
+		sb.append("\n--------\n").append(t.getStatusHistoryDesc());
 		tDetail.setText(sb.toString());
 		sb.setLength(0);
 		sb.append(StringTool.unNull(t.get("ErstelltVon"))).append("/").append( //$NON-NLS-2$
