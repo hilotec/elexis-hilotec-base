@@ -83,6 +83,9 @@ public class Hub extends AbstractUIPlugin {
 	private static List<ShutdownJob> shutdownJobs = new LinkedList<ShutdownJob>();
 	
 	// Globale Variable
+	/** Suche externe Config - poor mans dependency -> see ch.elexis.ElexisConfigurationConstants.java */
+	public static boolean ecc = ElexisConfigurationConstants.init();
+	
 	/** Das Singleton-Objekt dieser Klasse */
 	public static Hub plugin;
 	

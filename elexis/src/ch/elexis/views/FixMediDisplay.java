@@ -15,6 +15,7 @@ package ch.elexis.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -24,6 +25,8 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IViewSite;
 
 import ch.elexis.Desk;
+import ch.elexis.ElexisConfigurationConstants;
+import ch.elexis.Hub;
 import ch.elexis.StringConstants;
 import ch.elexis.actions.CodeSelectorHandler;
 import ch.elexis.actions.ElexisEventDispatcher;
@@ -239,7 +242,10 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 						 */
 						rp.addPrescription(new Prescription(p));
 					}
-					RezeptBlatt rpb = (RezeptBlatt) site.getPage().showView(RezeptBlatt.ID);
+					
+					//PMDI - Dependency Injection through ElexisConfigurationConstants
+					RezeptBlatt rpb = (RezeptBlatt) site.getPage().showView(ElexisConfigurationConstants.rezeptausgabe);
+					//PMDI - Dependency Injection through ElexisConfigurationConstants
 					rpb.createRezept(rp);
 				} else if (l.equals(KOPIEREN)) {
 					toClipBoard(true);
