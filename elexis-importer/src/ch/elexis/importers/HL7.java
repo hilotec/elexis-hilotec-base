@@ -1,7 +1,7 @@
 /**
  * (c) 2007-2010 by G. Weirich
  * All rights reserved
- * $Id: HL7.java 6254 2010-03-31 07:38:18Z rgw_ch $
+ * $Id$
  */
 
 package ch.elexis.importers;
