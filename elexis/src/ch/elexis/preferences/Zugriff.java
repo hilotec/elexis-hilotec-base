@@ -68,13 +68,17 @@ public class Zugriff extends PreferencePage implements IWorkbenchPreferencePage 
 
 	@Override
 	public boolean performOk() {
-		apt.flush();
+		if (apt != null) {
+			apt.flush();
+		}
 		return super.performOk();
 	}
 
 	@Override
 	protected void performDefaults() {
-		apt.reload();
+		if (apt != null) {
+			apt.reload();
+		}
 	}
 
 }
