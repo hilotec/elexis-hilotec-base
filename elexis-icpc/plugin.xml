@@ -17,6 +17,13 @@
             name="IcpcFactory"/>
    </extension>
    <extension
+         point="ch.elexis.DataAccess">
+      <DataAccess
+            class="ch.elexis.icpc.DataAccessor"
+            name="ICPC">
+      </DataAccess>
+   </extension>
+   <extension
          point="org.eclipse.ui.views">
       <category
             id="ch.elexis.icpcCategory"
