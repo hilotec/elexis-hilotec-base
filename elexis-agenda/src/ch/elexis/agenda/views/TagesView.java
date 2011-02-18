@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TagesView.java 1247 2006-11-07 20:08:28Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.agenda.views;

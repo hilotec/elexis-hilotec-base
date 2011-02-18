@@ -11,7 +11,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TerminLabel.java 6134 2010-02-13 09:51:29Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;

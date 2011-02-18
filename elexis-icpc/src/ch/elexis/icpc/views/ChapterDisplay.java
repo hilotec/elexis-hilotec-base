@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ChapterDisplay.java 6164 2010-02-26 18:17:09Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 package ch.elexis.icpc.views;
 

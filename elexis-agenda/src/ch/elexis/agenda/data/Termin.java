@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Termin.java 5699 2009-08-29 20:40:15Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 
 package ch.elexis.agenda.data;

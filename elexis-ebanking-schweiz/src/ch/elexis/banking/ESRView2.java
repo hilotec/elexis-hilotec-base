@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    D. Lutz    - show records in a table
  *    
- *  $Id: ESRView2.java 6049 2010-02-02 06:00:56Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 package ch.elexis.banking;
 
