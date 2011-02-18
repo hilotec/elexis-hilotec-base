@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Zugriff.java 6117 2010-02-12 06:15:09Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 package ch.elexis.preferences;
 
