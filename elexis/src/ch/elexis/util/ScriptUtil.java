@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
 import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
@@ -53,6 +54,8 @@ public class ScriptUtil {
 		PersistentObject ref = null;
 		if (dependendObject.equals("Patient")) {
 			ref = ElexisEventDispatcher.getSelectedPatient();
+		} else if (dependendObject.equals("Konsultation")) {
+			ref = Konsultation.getAktuelleKons();
 		}
 		for (IConfigurationElement ic : Extensions
 				.getExtensions("ch.elexis.DataAccess")) {
