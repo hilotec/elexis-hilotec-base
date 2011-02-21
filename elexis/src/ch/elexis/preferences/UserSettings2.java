@@ -26,6 +26,7 @@ import ch.elexis.Hub;
 import ch.elexis.data.Person;
 import ch.elexis.preferences.inputs.MultilineFieldEditor;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.views.PatientenListeView;
 import ch.elexis.views.Patientenblatt2;
 import ch.rgw.tools.StringTool;
 
@@ -79,7 +80,9 @@ public class UserSettings2 extends FieldEditorPreferencePage implements
 	}
 	@Override
 	public boolean performOk() {
+		prefs.flush();
 		Hub.userCfg.flush();
+		SWTHelper.reloadViewPart(PatientenListeView.ID);
 		return super.performOk();
 	}
 	

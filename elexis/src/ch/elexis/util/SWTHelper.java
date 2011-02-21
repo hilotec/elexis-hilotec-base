@@ -13,6 +13,8 @@
 
 package ch.elexis.util;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
@@ -35,13 +37,18 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.rgw.tools.StringTool;
 
 /** statische Hilfsfunktionen für SWT-Objekte */
@@ -555,6 +562,26 @@ public class SWTHelper {
 			int columns = ((GridLayout) parentlayout).numColumns;
 			GridData gridData = new GridData(SWT.FILL, SWT.NONE, true, false, columns, 1);
 			separator.setLayoutData(gridData);
+		}
+	}
+	
+	/**
+	 * This method "reloads" a view, by closing and opening it. It is the programmatical equivalent
+	 * to closing a view and then select Open/View/and the view ID.
+	 * 
+	 * This method should NOT be used, as it identifies an architectural problem. The UI itself should
+	 * support the respective update.
+	 * 
+	 * @param viewID
+	 */
+	public static void reloadViewPart(String viewID) {
+		IViewPart page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(viewID);
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().hideView(page);
+		try {
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(viewID);
+		} catch (PartInitException e) {
+			Status status = new Status(IStatus.ERROR, Hub.PLUGIN_ID, "Error reopening viewPart "+viewID, e);
+			StatusManager.getManager().handle(status, StatusManager.SHOW);
 		}
 	}
 }
