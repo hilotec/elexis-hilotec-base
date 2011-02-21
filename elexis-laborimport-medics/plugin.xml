@@ -27,11 +27,11 @@
             name="LabOrder">
       </Importer>
    </extension>
-   <extension
-         point="ch.elexis.FremdDatenImport">
-      <importer
+      <extension
+         point="ch.elexis.LaborDatenImport">
+      <Importer
             Class="ch.elexis.labor.medics.labimport.LabOrderImport"
             name="%importer.name">
-      </importer>
+      </Importer>
    </extension>
 </plugin>
