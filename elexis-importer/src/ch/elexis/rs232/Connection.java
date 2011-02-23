@@ -109,6 +109,7 @@ public class Connection implements PortEventListener {
 			return true;
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
+			ex.printStackTrace();
 			return false;
 		}
 
@@ -138,9 +139,10 @@ public class Connection implements PortEventListener {
 		// a different application to reliquish the port if the user
 		// wants to.
 		try {
+
 			sPort = (SerialPort) portId.open(name, 30000);
 		} catch (PortInUseException e) {
-			throw new SerialConnectionException(e.getMessage());
+			throw new SerialConnectionException(e.getMessage(), e);
 		}
 
 		// Set the parameters of the connection. If they won't set, close the

@@ -1,5 +1,7 @@
 package ch.elexis.rs232;
 
+import gnu.io.PortInUseException;
+
 /* @(#)SerialConnectionException.java	1.3 98/06/04 SMI
  *
  * Copyright (c) 1998 Sun Microsystems, Inc. All Rights Reserved.
@@ -51,4 +53,8 @@ public class SerialConnectionException extends Exception {
     public SerialConnectionException() {
         super();
     }
+
+	public SerialConnectionException(String message, PortInUseException e) {
+		super(message, e);
+	}
 }
