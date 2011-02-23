@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: SWTHelper.java 6425 2010-06-23 09:27:08Z marcode79 $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.util;
