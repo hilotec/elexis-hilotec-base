@@ -65,6 +65,19 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 		NUMERIC, TEXT, ABSOLUTE, DOCUMENT, FORMULA
 	};
 
+	/**
+	 * Erstellt ein neues LaborItem.
+	 * 
+	 * @param k Testkuerzel (e.g. BILI) 
+	 * @param t Testname (e.g. Bilirubin gesamt)
+	 * @param labor Labor-Identitaet (e.g. Eigenlabor)
+	 * @param RefMann Referenzwerte Mann (e.g. 0.0-1.2)
+	 * @param RefFrau Referenzwerte Frau (e.g. 0.0-1.2)
+	 * @param Unit Masseinheit (e.g. mg/dl)
+	 * @param type NUMERIC, ABSOLUTE or DOCUMENT 
+	 * @param grp Gruppenzugehoerigkeit
+	 * @param seq Sequenz-Nummer
+	 */
 	public LabItem(String k, String t, Kontakt labor, String RefMann,
 			String RefFrau, String Unit, typ type, String grp, String seq) {
 		String tp = "1";
