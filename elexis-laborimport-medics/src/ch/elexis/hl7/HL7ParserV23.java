@@ -50,7 +50,7 @@ public class HL7ParserV23 extends HL7Parser {
 				oru.getMSH().getMsh7_DateTimeOfMessage().getTs1_TimeOfAnEvent().getValue();
 			
 			String dateStr = HL7Helper.stringToDate(msh7_dateTimeOfMessage).toString();
-			System.out.println(msh7_dateTimeOfMessage + " = " +dateStr); //$NON-NLS-1$
+			System.out.println(msh7_dateTimeOfMessage + " = " + dateStr); //$NON-NLS-1$
 			
 			String pid2_patientExternalId =
 				oru.getRESPONSE(0).getPATIENT().getPID().getPid2_PatientIDExternalID().getCx1_ID()
@@ -66,41 +66,46 @@ public class HL7ParserV23 extends HL7Parser {
 					msh7_dateTimeOfMessage, pid2_patientExternalId, pid3_patientInternalId,
 					or2_placerOrderNumber);
 			
-			for (int i = 0; i < oru.getRESPONSE().getORDER_OBSERVATION(0).getOBSERVATIONReps(); i++) {
-				OBX obx = oru.getRESPONSE().getORDER_OBSERVATION(0).getOBSERVATION(i).getOBX();
-				String valueType = obx.getObx2_ValueType().getValue();
-				if (HL7Constants.OBX_VALUE_TYPE_ED.equals(valueType)) {
-					String observationId =
-						obx.getObx3_ObservationIdentifier().getCe1_Identifier().getValue();
-					if (!"DOCUMENT".equals(observationId)) { //$NON-NLS-1$
-						addWarning(MessageFormat.format(
-							Messages.HL7Parser_wrongObservationId,
-							observationId));
+			int obscount = oru.getRESPONSE().getORDER_OBSERVATIONReps();
+			for (int j = 0; j < obscount; j++) {
+				for (int i = 0; i < oru.getRESPONSE().getORDER_OBSERVATION(j).getOBSERVATIONReps(); i++) {
+					OBX obx = oru.getRESPONSE().getORDER_OBSERVATION(j).getOBSERVATION(i).getOBX();
+					String valueType = obx.getObx2_ValueType().getValue();
+					if (HL7Constants.OBX_VALUE_TYPE_ED.equals(valueType)) {
+						String observationId =
+							obx.getObx3_ObservationIdentifier().getCe1_Identifier().getValue();
+						if (!"DOCUMENT".equals(observationId)) { //$NON-NLS-1$
+							addWarning(MessageFormat.format(Messages.HL7Parser_wrongObservationId,
+								observationId));
+						}
+						ED ed = (ED) obx.getObx5_ObservationValue(0).getData();
+						String filename = ed.getEd3_DataSubtype().getValue();
+						String encoding = ed.getEd4_Encoding().getValue();
+						String data = ed.getEd5_Data().getValue();
+						String dateOfObservation =
+							obx.getObx14_DateTimeOfTheObservation().getTs1_TimeOfAnEvent()
+								.getValue();
+						observation.add(new EncapsulatedData(filename, encoding, data,
+							dateOfObservation));
+					} else if (HL7Constants.OBX_VALUE_TYPE_ST.equals(valueType)) {
+						String name = obx.getObx4_ObservationSubID().getValue();
+						String value = ((ST) obx.getObx5_ObservationValue(0).getData()).getValue();
+						String unit = obx.getObx6_Units().getCe1_Identifier().getValue();
+						String range = obx.getObx7_ReferencesRange().getValue();
+						String dateOfObservation =
+							obx.getObx14_DateTimeOfTheObservation().getTs1_TimeOfAnEvent()
+								.getValue();
+						observation
+							.add(new StringData(name, unit, value, range, dateOfObservation));
+					} else {
+						addError(MessageFormat.format(Messages.HL7Parser_valueTypeNotImplemented,
+							valueType));
 					}
-					ED ed = (ED) obx.getObx5_ObservationValue(0).getData();
-					String filename = ed.getEd3_DataSubtype().getValue();
-					String encoding = ed.getEd4_Encoding().getValue();
-					String data = ed.getEd5_Data().getValue();
-					String dateOfObservation =
-						obx.getObx14_DateTimeOfTheObservation().getTs1_TimeOfAnEvent().getValue();
-					observation.add(new EncapsulatedData(filename, encoding, data,
-						dateOfObservation));
-				} else if (HL7Constants.OBX_VALUE_TYPE_ST.equals(valueType)) {
-					String name = obx.getObx4_ObservationSubID().getValue();
-					String value = ((ST) obx.getObx5_ObservationValue(0).getData()).getValue();
-					String unit = obx.getObx6_Units().getCe1_Identifier().getValue();
-					String range = obx.getObx7_ReferencesRange().getValue();
-					String dateOfObservation =
-						obx.getObx14_DateTimeOfTheObservation().getTs1_TimeOfAnEvent().getValue();
-					observation.add(new StringData(name, unit, value, range, dateOfObservation));
-				} else {
-					addError(MessageFormat.format(Messages.HL7Parser_valueTypeNotImplemented, valueType));
 				}
 			}
 			System.out.println();
 		} else {
-			addError(MessageFormat.format(Messages.HL7Parser_wrongMessageType,
-				hl7Msg.getName()));
+			addError(MessageFormat.format(Messages.HL7Parser_wrongMessageType, hl7Msg.getName()));
 		}
 		
 		return observation;
