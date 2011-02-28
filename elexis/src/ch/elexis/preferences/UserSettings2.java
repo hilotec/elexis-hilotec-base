@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: UserSettings2.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -23,7 +23,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 import ch.elexis.Hub;
-import ch.elexis.data.Person;
 import ch.elexis.preferences.inputs.MultilineFieldEditor;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.views.PatientenListeView;
