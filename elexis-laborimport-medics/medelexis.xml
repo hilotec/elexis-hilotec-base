@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<service:service category="feature" id="ch.elexis.laborimport.medics" name="Laborschnittstelle Medics" provider="support@medelexis.net" type="Datenaustausch" version="2.1.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+<service:service category="feature" id="ch.elexis.laborimport.medics" name="Laborschnittstelle Medics" provider="support@medelexis.net" type="Laboranbindung" version="2.1.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
   <service:conditions>
   	<service:roles>
   		<service:role available="true" priceClass="fixed-low">
