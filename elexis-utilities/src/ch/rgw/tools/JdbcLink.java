@@ -3,6 +3,7 @@
 package ch.rgw.tools;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.sql.Connection;
@@ -181,13 +182,18 @@ public class JdbcLink {
 	/**
 	 * Verbindung zur Datenbank herstellen
 	 * 
+	 * TODO return value is always true because exception is thrown on error
+	 * 
 	 * @param user
 	 *            Username, kann null sein
 	 * @param password
 	 *            Passwort, kann null sein
 	 * @return errcode
+	 * 
+	 * @throws JdbcLinkException
 	 */
 	public boolean connect(String user, String password) {
+		Exception cause = null;
 		try {
 			// Driver
 			// D=(Driver)Class.forName("org.gjt.mm.mysql.Driver").newInstance();
@@ -201,30 +207,58 @@ public class JdbcLink {
 			// "jdbc:mysql://<host>:<port>/<dbname>"
 			// "jdbc:odbc:<dsn>
 			log.log(Level.INFO, "Loading database driver " + sDrv);
-			conn = DriverManager.getConnection(sConn, user, password);
+			conn = getConnectionWithRetry(user, password);
 			statements = new Vector<Stm>();
 			lastErrorCode = CONNECT_SUCCESS;
 			lastErrorString = "Connect successful";
 			log.log("Connect successful", Log.DEBUGMSG);
 			return true;
 		} catch (ClassNotFoundException ex) {
-			log.log(Level.SEVERE, "Database driver class not found");
 			lastErrorCode = CONNECT_CLASSNOTFOUND;
 			lastErrorString = ex.getMessage();
+			cause = ex;
 		} catch (SQLException ex) {
-			log.log(Level.SEVERE, "Connection failed");
 			lastErrorCode = CONNECT_FAILED;
 			lastErrorString = ex.getMessage();
-		} catch (Throwable e) {
-			log.log(Level.SEVERE, "Connect failed for unknown reason");
-			ExHandler.handle(e);
+			cause = ex;
+		} catch (InstantiationException e) {
 			lastErrorCode = CONNECT_UNKNOWN_ERROR;
 			lastErrorString = e.getMessage();
+			cause = e;
+		} catch (IllegalAccessException e) {
+			lastErrorCode = CONNECT_UNKNOWN_ERROR;
+			lastErrorString = e.getMessage();
+			cause = e;
 		}
-		log.log("Connect failed: " + lastErrorString, Log.ERRORS);
-		return false;
+		throw new JdbcLinkException("Connect failed: " + lastErrorString, cause);
 	}
 
+	private Connection getConnectionWithRetry(String user, String password) throws SQLException {
+		SQLException lastException;
+		int retryCount = 5;
+		do {
+			try {
+				return DriverManager.getConnection(sConn, user, password);
+			} catch (SQLException sqlEx) {
+				lastException = sqlEx;
+				//
+	            // The two SQL states that are 'retry-able' are 08S01
+	            // for a communications error, and 40001 for deadlock.
+	            //
+	            // Only retry if the error was due to a stale connection,
+	            // communications problem or deadlock
+	            //
+	            String sqlState = sqlEx.getSQLState();
+	            if ("08S01".equals(sqlState) || "40001".equals(sqlState)) {
+	                retryCount--;
+	            } else {
+	                retryCount = 0;
+	            }
+			}
+		}  while (retryCount > 0);
+		throw lastException;
+	}
+	
 	public JdbcLink(Connection c) {
 		conn = c;
 		statements = new Vector<Stm>();
@@ -334,8 +368,7 @@ public class JdbcLink {
 		if (statements == null) {
 			lastErrorCode = CONNECT_UNKNOWN_ERROR;
 			lastErrorString = "Keine Verbindung zur Datenbank";
-			log.log(lastErrorString, Log.FATALS);
-			return null;
+			throw new JdbcLinkException(lastErrorString);
 		}
 		synchronized (statements) {
 			if (statements.isEmpty()) {
@@ -355,14 +388,11 @@ public class JdbcLink {
 	private Stm createStatement() {
 		try {
 			return new Stm();
-		} catch (Throwable ex) {
-			ExHandler.handle(ex);
+		} catch (Exception ex) {
 			lastErrorCode = CONNECTION_CANT_CREATE_STATEMENT;
 			lastErrorString = ex.getMessage();
-			log.log(lastErrorString, Log.ERRORS);
-			return null;
+			throw new JdbcLinkException(lastErrorString, ex);
 		}
-
 	}
 
 	/**
@@ -398,12 +428,10 @@ public class JdbcLink {
 	public PreparedStatement prepareStatement(String sql) {
 		try {
 			return conn.prepareStatement(sql);
-		} catch (Exception ex) {
-			ExHandler.handle(ex);
+		} catch (SQLException ex) {
 			lastErrorCode = CONNECTION_CANT_PREPARE_STAMENT;
 			lastErrorString = ex.getMessage();
-			log.log(lastErrorString, Log.ERRORS);
-			return null;
+			throw new JdbcLinkException(lastErrorString, ex);
 		}
 	}
 
@@ -478,7 +506,7 @@ public class JdbcLink {
 			}
 			statements = null;
 			log.log("Disconnected", Log.INFOS);
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			ExHandler.handle(e);
 		}
 	}
@@ -497,7 +525,7 @@ public class JdbcLink {
 		try {
 			conn.setAutoCommit(value);
 			return true;
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			ExHandler.handle(e);
 			lastErrorCode = TRANSACTION_COMMIT_NOT_SUPPORTED;
 			lastErrorString = e.getMessage();
@@ -509,7 +537,7 @@ public class JdbcLink {
 		try {
 			conn.commit();
 			return true;
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			ExHandler.handle(e);
 			lastErrorCode = TRANSACTION_COMMIT_FAILED;
 			lastErrorString = e.getMessage();
@@ -522,7 +550,7 @@ public class JdbcLink {
 		try {
 			conn.rollback();
 			return true;
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			ExHandler.handle(e);
 			lastErrorCode = TRANSACTION_ROLLBACK_FAILED;
 			lastErrorString = e.getMessage();
@@ -551,7 +579,7 @@ public class JdbcLink {
 				}
 			}
 			return false;
-		} catch (Exception ex) {
+		} catch (SQLException ex) {
 			ExHandler.handle(ex);
 		}
 		return false;
@@ -606,24 +634,29 @@ public class JdbcLink {
 	public class Stm {
 		private Statement stm;
 
+		private void checkStm() {
+			if(stm == null)
+				throw new JdbcLinkException("Statement not valid!");
+		}
+		
 		private boolean reconnect() {
 			try {
 				log.log(Level.WARNING, "Stm()Trying reconnect");
-				if (connect(sUser, sPwd)) {
-					stm = conn.createStatement();
-					return true;
-				} else {
-					return false;
-				}
+				connect(sUser, sPwd);
+				stm = conn.createStatement();
+				return true;
 			} catch (SQLException ex) {
 				log.log(Level.WARNING, "Reconnect failed " + ex.getMessage());
 				lastErrorCode = ex.getErrorCode();
 				lastErrorString = ex.getMessage();
 				return false;
+			} catch (JdbcLinkException je) {
+				log.log(Level.WARNING, "Reconnect failed " + je.getMessage());
+				return false;
 			}
 		}
 
-		Stm() throws Throwable {
+		Stm() throws Exception {
 			try {
 				stm = conn.createStatement();
 			} catch (SQLException se) {
@@ -634,12 +667,13 @@ public class JdbcLink {
 		}
 
 		public boolean isClosed() {
+			checkStm();
 			if("postgresql".equals(DBFlavor)){
 				return false; 
 			}
 			try {
 				return stm.isClosed();
-			} catch (Exception ex) {
+			} catch (SQLException ex) {
 				ExHandler.handle(ex);
 				return false;
 			}
@@ -651,7 +685,7 @@ public class JdbcLink {
 				if (stm != null) {
 					stm.close();
 				}
-			} catch (Exception ex) {
+			} catch (SQLException ex) {
 				ExHandler.handle(ex);
 				/* egal */
 			}
@@ -670,18 +704,17 @@ public class JdbcLink {
 		}
 		
 		private int internalExec(final String SQLText, final boolean inError) {
+			checkStm();
 			//log.log("executing " + SQLText, Log.DEBUGMSG);
 			try {
 				return stm.executeUpdate(SQLText);
-			} catch (Exception e) {
+			} catch (SQLException e) {
 				if(!inError){
 					if(connect(sUser, sPwd)){
 						return internalExec(SQLText,true);
 					}
 				}
-				ExHandler.handle(e);
-				log.log("Fehler bei: " + SQLText, Log.ERRORS);
-				return 0;
+				throw new JdbcLinkException("Fehler bei: " + SQLText, e);
 			}
 		}
 		
@@ -693,59 +726,33 @@ public class JdbcLink {
 		 * @param SQLText
 		 *            ein Query String in von der Datenbank verstandener Syntax
 		 * @return ein ResultSet oder null bei Fehler
+		 * @throws JdbcException
 		 */
 		public ResultSet query(final String SQLText) {
 			return internalQuery(SQLText, false);
 		}
 
 		private ResultSet internalQuery(final String SQLText, final boolean inError) {
+			checkStm();
 			ResultSet res = null;
 			//log.log("querying " + SQLText, Log.DEBUGMSG);
 			try {
 				res = stm.executeQuery(SQLText);
 				return res;
-			} catch (Exception e) {
+			} catch (SQLException e) {
 				if (!inError) {
 					// try to solve the problem with a simpel reconnect
 					if (reconnect()) {
 						log.log(Level.WARNING, "Reconnect");
 						return internalQuery(SQLText, true);
-					} else {
-						// the problem could not be solved with a reconnect ...
-						// if this is a network connection error, give the connection a little time
-						if(e instanceof SQLException) {
-							String sqlState = ((SQLException)e).getSQLState();
-							if ("08S01".equals(sqlState)) {
-								int retryCount = 0;
-								// 5 reconnect attempts
-								while (retryCount < 5) {
-		                            if(reconnect()) {
-		                                return internalQuery(SQLText, true);
-		                            } else {
-		                                try {
-		                                	retryCount++;
-		                                    Thread.sleep(10);
-		                                } catch (InterruptedException ie) {
-		                                    // if we get interrupted the loop will take us back to the reconnect
-		                                    // everything is fine ...
-		                                }
-		                            }
-		                        }
-							}
-						}
 					}
 				}
-				
-				ExHandler.handle(e);
 				lastErrorString = e.getMessage();
 				lastErrorCode = CONNECTION_SQL_ERROR;
-				log.log("Fehler bei: " + SQLText + "\n:" + e.getMessage(),
-						Log.ERRORS);
-				return null;
+				throw new JdbcLinkException(lastErrorString, e);
 			}
-
 		}
-
+		
 		/**
 		 * Eine Anzahl Werte als Vector zurückliefern
 		 * 
@@ -847,7 +854,7 @@ public class JdbcLink {
 				System.out.println(sql);
 				try {
 					stm.execute(sql);
-				} catch (Exception ex) {
+				} catch (SQLException ex) {
 					ExHandler.handle(ex);
 					if (stopOnError == true) {
 						return false;
@@ -888,7 +895,7 @@ public class JdbcLink {
 				return null;
 			}
 			return sql;
-		} catch (Exception ex) {
+		} catch (IOException ex) {
 			ExHandler.handle(ex);
 			return null;
 		}
