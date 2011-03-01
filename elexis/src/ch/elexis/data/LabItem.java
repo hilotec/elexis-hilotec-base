@@ -62,7 +62,7 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 	}
 
 	public enum typ {
-		NUMERIC, TEXT, ABSOLUTE, DOCUMENT, FORMULA
+		NUMERIC, TEXT, ABSOLUTE, FORMULA, DOCUMENT
 	};
 
 	/**
@@ -85,8 +85,10 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 			tp = "0";
 		} else if (type == typ.ABSOLUTE) {
 			tp = "2";
-		} else if (type == typ.DOCUMENT) {
+		} else if (type == typ.FORMULA) {
 			tp = "3";
+		} else if (type == typ.DOCUMENT) {
+			tp = "4";
 		}
 		create(null);
 		if (StringTool.isNothing(seq)) {
@@ -147,11 +149,11 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 		} else if (t.equals("2")) {
 			return typ.ABSOLUTE;
 		} else if (t.equals("3")) {
-			return typ.DOCUMENT;
-		} else {
 			return typ.FORMULA;
+		} else if (t.equals("4")) {
+			return typ.DOCUMENT;
 		}
-
+		return typ.TEXT;
 	}
 
 	public String evaluateNew(Patient pat, TimeTool date, List<LabResult> results) {
