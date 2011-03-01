@@ -14,6 +14,7 @@ import ch.elexis.Hub;
 import ch.elexis.ResourceManager;
 import ch.elexis.preferences.PreferenceInitializer;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.JdbcLinkException;
 
 public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	
@@ -70,7 +71,7 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 		try {
 			PersistentObject.connect(link);
 			fail("Expected Exception not thrown!");
-		} catch (PersistenceException pe) {
+		} catch (JdbcLinkException je) {
 			
 		}
 		
