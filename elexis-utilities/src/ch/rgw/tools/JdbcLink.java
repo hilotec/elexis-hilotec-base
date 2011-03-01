@@ -259,6 +259,11 @@ public class JdbcLink {
 		throw lastException;
 	}
 	
+	private void checkConn() {
+		if(conn == null)
+			throw new JdbcLinkException("Connection not valid!");
+	}
+	
 	public JdbcLink(Connection c) {
 		conn = c;
 		statements = new Vector<Stm>();
@@ -426,6 +431,7 @@ public class JdbcLink {
 	 * @return das vorkompilierte PreparedStatement
 	 */
 	public PreparedStatement prepareStatement(String sql) {
+		checkConn();
 		try {
 			return conn.prepareStatement(sql);
 		} catch (SQLException ex) {
@@ -522,6 +528,8 @@ public class JdbcLink {
 	}
 
 	public boolean setAutoCommit(boolean value) {
+		if(conn == null)
+			return false;
 		try {
 			conn.setAutoCommit(value);
 			return true;
@@ -534,6 +542,8 @@ public class JdbcLink {
 	}
 
 	public boolean commit() {
+		if(conn == null)
+			return false;
 		try {
 			conn.commit();
 			return true;
@@ -547,6 +557,8 @@ public class JdbcLink {
 	}
 
 	public boolean rollback() {
+		if(conn == null)
+			return false;
 		try {
 			conn.rollback();
 			return true;
@@ -640,6 +652,8 @@ public class JdbcLink {
 		}
 		
 		private boolean reconnect() {
+			if(conn == null)
+				return false;
 			try {
 				log.log(Level.WARNING, "Stm()Trying reconnect");
 				connect(sUser, sPwd);
@@ -657,6 +671,7 @@ public class JdbcLink {
 		}
 
 		Stm() throws Exception {
+			checkConn();
 			try {
 				stm = conn.createStatement();
 			} catch (SQLException se) {
