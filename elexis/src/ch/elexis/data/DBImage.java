@@ -18,15 +18,17 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.ImageLoader;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.StringConstants;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
 /**
@@ -75,8 +77,11 @@ public class DBImage extends PersistentObject {
 			set(new String[]{FLD_PREFIX,FLD_TITLE},prefix,name);
 			setBinary(FLD_IMAGE, baos.toByteArray());
 		}catch(Exception ex){
-			SWTHelper.showError("Image error", "Bild ungültig","Das Bild konnte nicht geladen werden "+ex.getMessage());
-			ExHandler.handle(ex);
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR,
+					Hub.PLUGIN_ID, IStatus.ERROR,
+					"Image error: Das Bild konnte nicht geladen werden "
+							+ ex.getMessage(), ex);
+			throw new PersistenceException(status);
 		}
 	}
 	

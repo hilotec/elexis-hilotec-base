@@ -5,13 +5,16 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.data.Patient;
 import ch.elexis.services.GlobalServiceDescriptors;
 import ch.elexis.services.IDocumentManager;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.text.IOpaqueDocument;
 import ch.elexis.util.Extensions;
 import ch.rgw.io.FileTool;
@@ -75,8 +78,10 @@ public class DocumentExport {
 
 			}
 		} catch (Exception e) {
-			ExHandler.handle(e);
-			return "Fehler: " + e.getMessage();
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+					"Fehler beim Export: " + e.getMessage(),
+					e);
+			throw new ScriptingException(status);
 		}
 
 	}

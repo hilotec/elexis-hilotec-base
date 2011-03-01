@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -25,6 +26,7 @@ import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -37,12 +39,11 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -57,7 +58,7 @@ import ch.elexis.data.cache.SoftCache;
 import ch.elexis.dialogs.ErsterMandantDialog;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.preferences.PreferenceInitializer;
-import ch.elexis.preferences.SettingsPreferenceStore;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.DBUpdate;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
@@ -68,11 +69,12 @@ import ch.rgw.io.Settings;
 import ch.rgw.io.SqlSettings;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.JdbcLink.Stm;
+import ch.rgw.tools.JdbcLinkException;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 import ch.rgw.tools.VersionedResource;
-import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.net.NetTool;
 
 /**
@@ -112,7 +114,7 @@ import ch.rgw.tools.net.NetTool;
  * @author gerry
  */
 public abstract class PersistentObject implements ISelectable {
-	private static final String MAPPING_ERROR_MARKER = "**ERROR:";
+	protected static final String MAPPING_ERROR_MARKER = "**ERROR:";
 	public static final String CFG_CONNECTSTRING = "connectionstring";
 	public static final String CFG_TYPE = "typ";
 	public static final String CFG_PWD = "pwd";
@@ -192,15 +194,14 @@ public abstract class PersistentObject implements ISelectable {
 				Log.DEBUGMSG);
 		if (demo.exists() && demo.isDirectory()) {
 			j = JdbcLink.createInProcHsqlDBLink(demo.getAbsolutePath() + "/db");
-			if (getConnection().connect("sa", StringTool.leer)) {
+			try {
+				getConnection().connect("sa", StringTool.leer);
 				return connect(getConnection());
-			} else {
-				MessageDialog
-						.openError(
-								Desk.getTopShell(),
-								"Fehler mit Demo-Datenbank",
-								"Es wurde zwar ein demoDB-Verzeichnis gefunden, aber dort ist keine verwendbare Datenbank");
-				return false;
+			} catch (JdbcLinkException je) {
+				ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+						"Fehler mit Demo-Datenbank: Es wurde zwar ein demoDB-Verzeichnis gefunden, aber dort ist keine verwendbare Datenbank",
+						je);
+				throw new PersistenceException(status);
 			}
 		} else if ("SWTBot".equals(System.getProperty("elexis-run-mode"))) {
 			String template = System.getProperty("SWTBot-DBTemplate");
@@ -217,13 +218,17 @@ public abstract class PersistentObject implements ISelectable {
 				FileTool.copyDirectory(new File(template), dbDir);
 				j = JdbcLink.createH2Link(new File(dbDir, "h2db")
 						.getAbsolutePath());
-				if (getConnection().connect("sa", StringTool.leer)) {
+				try {
+					getConnection().connect("sa", StringTool.leer);
 					return connect(getConnection());
-				} else {
-					log.log("Can't connect to Test_Database", Log.FATALS);
+				} catch (JdbcLinkException je) {
+					ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+							"Can't connect to Test_Database",
+							je, ElexisStatus.LOG_FATALS);
+					throw new PersistenceException(status);
 				}
 
-			} catch (Exception ex) {
+			} catch (IOException ex) {
 				ExHandler.handle(ex);
 				System.exit(-5);
 			}
@@ -258,7 +263,6 @@ public abstract class PersistentObject implements ISelectable {
 				typ = checkNull((String) hConn.get(CFG_TYPE));
 				connectstring = checkNull((String) hConn.get(CFG_CONNECTSTRING));
 			}
-
 		}
 		log.log("Driver is " + driver, Log.INFOS);
 		if (StringTool.leer.equals(driver)) {
@@ -284,12 +288,17 @@ public abstract class PersistentObject implements ISelectable {
 		} else {
 			j = new JdbcLink(driver, connectstring, typ);
 		}
-		if (getConnection().connect(user, pwd) == true) {
-			log.log("Verbunden mit " + getConnection().dbDriver() + ", "
-					+ connectstring, Log.SYNCMARK);
-			return connect(getConnection());
+		try {
+			getConnection().connect(user, pwd);
+		} catch (JdbcLinkException je) {
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+					"Persistence error",
+					je, ElexisStatus.LOG_FATALS);
+			throw new PersistenceException(status);
 		}
-		return false;
+		log.log("Verbunden mit " + getConnection().dbDriver() + ", "
+				+ connectstring, Log.SYNCMARK);
+		return connect(getConnection());
 	}
 
 	public static boolean connect(final JdbcLink jd) {
@@ -1038,17 +1047,19 @@ public abstract class PersistentObject implements ISelectable {
 					return "?invalid field? " + mapped;
 				}
 			} catch (Exception ex) {
-				ExHandler.handle(ex);
-				log.log("Fehler in Felddefinition " + field, Log.ERRORS);
-				return mapped;
+				ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+						"Fehler in Felddefinition " + field,
+						ex, ElexisStatus.LOG_ERRORS);
+				throw new PersistenceException(status);
 			}
 		}
 		sql.append("SELECT ").append(mapped).append(" FROM ").append(table)
 				.append(" WHERE ID='").append(id).append("'");
-		Stm stm = getConnection().getStatement();
-		ResultSet rs = stm.query(sql.toString());
 		String res = null;
+		Stm stm = null;
 		try {
+			stm = getConnection().getStatement();
+			ResultSet rs = stm.query(sql.toString());
 			if ((rs != null) && (rs.next() == true)) {
 				if (decrypt) {
 					res = decode(field, rs);
@@ -1060,10 +1071,17 @@ public abstract class PersistentObject implements ISelectable {
 				}
 				cache.put(key, res, getCacheTime());
 			}
-		} catch (Exception ex) {
+		} catch (SQLException ex) {
 			ExHandler.handle(ex);
+		} catch (JdbcLinkException je) {
+			ExHandler.handle(je);
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+					"Persistence error",
+					je, ElexisStatus.LOG_ERRORS);
+			throw new PersistenceException(status);
 		} finally {
-			getConnection().releaseStatement(stm);
+			if(stm != null)
+				getConnection().releaseStatement(stm);
 		}
 		return res;
 	}
@@ -1237,9 +1255,10 @@ public abstract class PersistentObject implements ISelectable {
 				return list;
 
 			} catch (Exception ex) {
-				ExHandler.handle(ex);
-				log.log("Fehler beim Lesen der Liste ", Log.ERRORS);
-				return null;
+				ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+						"Fehler beim Lesen der Liste ",
+						ex, ElexisStatus.LOG_ERRORS);
+				throw new PersistenceException(status);
 			} finally {
 				getConnection().releaseStatement(stm);
 
@@ -1321,10 +1340,10 @@ public abstract class PersistentObject implements ISelectable {
 			// ElexisEvent(this,this.getClass(),ElexisEvent.EVENT_UPDATE));
 			return true;
 		} catch (Exception ex) {
-			ExHandler.handle(ex);
-			log.log("Fehler bei: " + cmd + "(" + field + "=" + value + ")",
-					Log.ERRORS);
-			return false;
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+					"Fehler bei: " + cmd + "(" + field + "=" + value + ")",
+					ex, ElexisStatus.LOG_ERRORS);
+			throw new PersistenceException(status);
 		}
 
 	}
@@ -1710,8 +1729,10 @@ public abstract class PersistentObject implements ISelectable {
 			for (int i = 0; i < fields.length; i++) {
 				sb.append(fields[i]).append("=").append(values[i]).append("\n");
 			}
-			log.log(sb.toString(), Log.ERRORS);
-			return false;
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+					sb.toString(),
+					ex, ElexisStatus.LOG_ERRORS);
+			throw new PersistenceException(status);
 		}
 	}
 
@@ -1781,6 +1802,15 @@ public abstract class PersistentObject implements ISelectable {
 
 	}
 
+	/**
+	 * Apply some magic to the input parameters, and return a decoded string object.
+	 * TODO describe magic
+	 * 
+	 * @param field
+	 * @param rs
+	 * @return decoded string
+	 * @throws PersistenceException
+	 */
 	private String decode(final String field, final ResultSet rs) {
 
 		try {
@@ -1817,8 +1847,10 @@ public abstract class PersistentObject implements ISelectable {
 				}
 			}
 		} catch (Exception ex) {
-			ExHandler.handle(ex);
-			log.log("Fehler bei decode ", Log.ERRORS);
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+					"Fehler bei decode ",
+					ex, ElexisStatus.LOG_ERRORS);
+			throw new PersistenceException(status);
 		}
 		return null;
 	}
@@ -1855,10 +1887,11 @@ public abstract class PersistentObject implements ISelectable {
 			} else {
 				pst.setString(num, value);
 			}
-		} catch (Throwable ex) {
-			ExHandler.handle(ex);
-			log.log("Fehler beim String encoder: " + ex.getMessage(),
-					Log.ERRORS);
+		} catch (Exception ex) {
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+					"Fehler beim String encoder",
+					ex, ElexisStatus.LOG_ERRORS);
+			throw new PersistenceException(status);
 		}
 		return ret;
 	}

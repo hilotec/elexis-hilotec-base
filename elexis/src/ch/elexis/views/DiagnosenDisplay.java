@@ -16,6 +16,7 @@ package ch.elexis.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -31,6 +32,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -40,6 +42,7 @@ import ch.elexis.data.IDiagnose;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.Log;
 import ch.elexis.util.PersistentObjectDragSource;
 import ch.elexis.util.PersistentObjectDragSource.ISelectionRenderer;
@@ -70,9 +73,11 @@ public class DiagnosenDisplay extends Composite implements ISelectionRenderer {
 					CodeSelectorHandler.getInstance().setCodeSelectorTarget(
 							dropTarget);
 				} catch (Exception ex) {
-					ExHandler.handle(ex);
-					log.log(Messages
-							.getString("DiagnosenDisplay.ErrorStartingCodeSystem") + ex.getMessage(), Log.ERRORS); //$NON-NLS-1$
+					ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+							Messages.getString("DiagnosenDisplay.ErrorStartingCodeSystem") +
+							ex.getMessage(),
+							ex, ElexisStatus.LOG_ERRORS);
+					StatusManager.getManager().handle(status, StatusManager.SHOW);
 				}
 			}
 		});

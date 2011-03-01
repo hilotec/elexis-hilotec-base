@@ -14,15 +14,19 @@
 package ch.elexis.util;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.statushandlers.StatusManager;
 
+import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.views.TemplatePrintView;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
@@ -82,14 +86,10 @@ public class TemplateDrucker {
 			page.hideView(tpw);
 			
 		} catch (Exception ex) {
-			ExHandler.handle(ex);
-			Status status =
-				new Status(Status.ERROR, "ch.elexis", 1, StringTool.unNull(ex.getMessage()), ex);
-			ErrorDialog
-			.openError(
-				null,
-				Messages.getString("TemplateDrucker.errorPrinting"), Messages.getString("TemplateDrucker.couldntOpen"), //$NON-NLS-1$ //$NON-NLS-2$
-				status);
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+					Messages.getString("TemplateDrucker.errorPrinting") + ": " +  Messages.getString("TemplateDrucker.couldntOpen"),
+					ex);
+			StatusManager.getManager().handle(status);
 		}
 	}
 }

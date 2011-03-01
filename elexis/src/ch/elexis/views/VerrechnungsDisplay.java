@@ -16,6 +16,7 @@ package ch.elexis.views;
 import java.text.ParseException;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -36,6 +37,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.forms.events.HyperlinkAdapter;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Hyperlink;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -48,6 +50,7 @@ import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Verrechnet;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.Log;
 import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
@@ -96,12 +99,11 @@ public class VerrechnungsDisplay extends Composite {
 					CodeSelectorHandler.getInstance().setCodeSelectorTarget(
 						dropTarget);
 				} catch (Exception ex) {
-					ExHandler.handle(ex);
-					log
-					.log(
-						Messages
-						.getString("VerrechnungsDisplay.errorStartingCodeWindow") + ex.getMessage(), //$NON-NLS-1$
-						Log.ERRORS);
+					ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+							Messages.getString("VerrechnungsDisplay.errorStartingCodeWindow") +
+							ex.getMessage(),
+							ex, ElexisStatus.LOG_ERRORS);
+					StatusManager.getManager().handle(status, StatusManager.SHOW);
 				}
 			}
 		});

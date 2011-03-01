@@ -14,15 +14,20 @@
 package ch.elexis.util;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.statushandlers.StatusManager;
 
+import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.Patient;
+import ch.elexis.scripting.ScriptingException;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.views.KGPrintView;
 import ch.rgw.tools.ExHandler;
 
@@ -61,12 +66,10 @@ public class KGDrucker {
 			kgPage.hideView(kgp);
 			
 		} catch (Exception ex) {
-			ExHandler.handle(ex);
-			ErrorDialog
-			.openError(
-				null,
-				Messages.getString("KGDrucker.errorPrinting"), Messages.getString("KGDrucker.couldntShow"), //$NON-NLS-1$ //$NON-NLS-2$
-				new Status(Status.ERROR, "ch.elexis", 1, ex.getMessage(), null)); //$NON-NLS-1$
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+					Messages.getString("KGDrucker.errorPrinting") + ": " + Messages.getString("KGDrucker.couldntShow"),
+					ex);
+			StatusManager.getManager().handle(status);
 		}
 	}
 }

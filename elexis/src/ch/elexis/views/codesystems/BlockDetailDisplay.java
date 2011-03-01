@@ -15,6 +15,7 @@ package ch.elexis.views.codesystems;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -45,6 +46,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -57,6 +59,7 @@ import ch.elexis.data.Leistungsblock;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
@@ -203,13 +206,12 @@ public class BlockDetailDisplay implements IDetailDisplay {
 				try {
 					site.getPage().showView(LeistungenView.ID);
 				} catch (Exception ex) {
-					ExHandler.handle(ex);
-					log.log("Fehler beim Starten des Leistungscodes " + ex.getMessage(), //$NON-NLS-1$
-						Log.ERRORS);
+					ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+							"Fehler beim Starten des Leistungscodes " + ex.getMessage(),
+							ex, ElexisStatus.LOG_ERRORS);
+					StatusManager.getManager().handle(status, StatusManager.SHOW);
 				}
-				
 			}
-			
 		});
 		
 		bEigen =

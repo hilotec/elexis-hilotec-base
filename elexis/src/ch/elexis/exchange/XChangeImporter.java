@@ -18,12 +18,15 @@ import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.jdom.Element;
 import org.jdom.JDOMException;
 import org.jdom.input.SAXBuilder;
 import org.jdom.xpath.XPath;
 
+import ch.elexis.Hub;
 import ch.elexis.exchange.elements.XChangeElement;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
@@ -78,8 +81,10 @@ public class XChangeImporter implements IDataReceiver {
 								}
 							}
 						} catch (JDOMException e) {
-							ExHandler.handle(e);
-							log.log("Parse error JDOM " + e.getMessage(), Log.WARNINGS); //$NON-NLS-1$
+							ElexisStatus status = new ElexisStatus(IStatus.WARNING, Hub.PLUGIN_ID, IStatus.WARNING, 
+									"Parse error JDOM: " + e.getMessage(),
+									e, ElexisStatus.LOG_WARNINGS);
+							throw new ExchangeException(status);
 						}
 					}
 					

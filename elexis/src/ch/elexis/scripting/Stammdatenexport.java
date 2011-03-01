@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 
@@ -13,6 +14,7 @@ import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
+import ch.elexis.status.ElexisStatus;
 import ch.rgw.tools.ExHandler;
 
 public class Stammdatenexport {
@@ -69,8 +71,10 @@ public class Stammdatenexport {
 				csv.close();
 				return "Der Export wurde efrolgreich abgeschlossen";
 			} catch (Exception ex) {
-				ExHandler.handle(ex);
-				return "Es ist ein Fehler passiert: " + ex.getMessage();
+				ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+						"Fehler beim Export: " + ex.getMessage(),
+						ex);
+				throw new ScriptingException(status);
 			}
 		}
 		return "Abbruch durch den Benutzer";

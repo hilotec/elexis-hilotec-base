@@ -136,6 +136,7 @@ Export-Package: .,
    com.tiff.common.ui.datepicker",
  ch.elexis.selectors;uses:="org.eclipse.osgi.util,ch.elexis.data,org.eclipse.swt.widgets",
  ch.elexis.services;uses:="ch.rgw.tools,ch.elexis.data,ch.elexis.text",
+ ch.elexis.status,
  ch.elexis.text;
   uses:="ch.elexis.actions,
    org.eclipse.core.runtime,

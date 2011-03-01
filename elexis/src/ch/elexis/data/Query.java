@@ -22,7 +22,10 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+
 import ch.elexis.Hub;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.IFilter;
@@ -76,10 +79,12 @@ public class Query<T> {
 			load = cl.getMethod("load", new Class[] { String.class });
 			clear();
 
-		} catch (Throwable ex) {
-			log.log("Query: Konnte Methode load auf " + cl.getName()
-					+ " nicht auflösen", Log.ERRORS);
-			ExHandler.handle(ex);
+		} catch (Exception ex) {
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR,
+					Hub.PLUGIN_ID, IStatus.ERROR,
+					"Query: Konnte Methode load auf " + cl.getName()
+							+ " nicht auflösen", ex, ElexisStatus.LOG_ERRORS);
+			throw new PersistenceException(status);
 		}
 
 	}
@@ -103,10 +108,12 @@ public class Query<T> {
 			clear();
 			add(field, "=", value);
 
-		} catch (Throwable ex) {
-			log.log("Konnte Methode load auf " + cl.getName()
-					+ " nicht auflösen", Log.ERRORS);
-			ExHandler.handle(ex);
+		} catch (Exception ex) {
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR,
+					Hub.PLUGIN_ID, IStatus.ERROR,
+					"Query: Konnte Methode load auf " + cl.getName()
+							+ " nicht auflösen", ex, ElexisStatus.LOG_ERRORS);
+			throw new PersistenceException(status);
 		}
 
 	}
@@ -363,9 +370,10 @@ public class Query<T> {
 					.prepareStatement(sql.toString());
 			return ps;
 		} catch (Exception ex) {
-			ExHandler.handle(ex);
-			log.log("Fehler beim PreparedStatement ", Log.ERRORS);
-			return null;
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+					"Fehler beim PreparedStatement ",
+					ex, ElexisStatus.LOG_ERRORS);
+			throw new PersistenceException(status);
 		}
 	}
 
@@ -385,8 +393,10 @@ public class Query<T> {
 				return ret;
 			}
 		} catch (Exception ex) {
-			ExHandler.handle(ex);
-			log.log("Fehler beim Ausführen von " + sql.toString(), Log.ERRORS);
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR,
+					Hub.PLUGIN_ID, IStatus.ERROR, "Fehler beim Ausführen von "
+							+ sql.toString(), ex, ElexisStatus.LOG_ERRORS);
+			throw new PersistenceException(status);
 		}
 		return null;
 	}
@@ -518,9 +528,10 @@ public class Query<T> {
 			return ret;
 
 		} catch (Exception ex) {
-			log.log("Fehler bei Datenbankabfrage ", Log.ERRORS);
-			ExHandler.handle(ex);
-			return null;
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+					"Fehler bei Datenbankabfrage ",
+					ex, ElexisStatus.LOG_ERRORS);
+			throw new PersistenceException(status);
 		} finally {
 			PersistentObject.getConnection().releaseStatement(stm);
 		}

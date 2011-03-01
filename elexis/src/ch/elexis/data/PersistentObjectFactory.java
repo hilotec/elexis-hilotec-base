@@ -18,7 +18,10 @@ import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IStatus;
 
+import ch.elexis.Hub;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;
@@ -29,8 +32,12 @@ public class PersistentObjectFactory  implements IExecutableExtension{
 	 * Ein Objekt als Schablone eines beliebigen abgeleiteten Typs erstellen,
 	 * ohne es in die Datenbank einzutragen. Wenn der Programmkern kein Objekt dieser Klasse erstellen kann,
 	 * werden der Reihe nach alle Plugins abgeklappert, die eine PersistentObjectFactory deklariert haben.
+	 * 
 	 * @param typ Der gewünschte Subtyp von PersistentObject
+	 * 
 	 * @return ein unabhängiges Objekt des gewünschten Typs oder null
+	 * 
+	 * @throws PersistenceException
 	 */
 	@SuppressWarnings("unchecked")
 	public  PersistentObject createTemplate(Class typ){
@@ -44,12 +51,13 @@ public class PersistentObjectFactory  implements IExecutableExtension{
 	        	if(ret!=null){
 	        		return ret;
 	        	}
-	         }
+	        }
 		}
 		catch(Exception ex){
-			ExHandler.handle(ex);
-			PersistentObject.log.log("create: Konnte Objekt nicht erstellen "+ex.getMessage(),Log.ERRORS);
-	
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+					"create: Konnte Objekt nicht erstellen "+ex.getMessage(),
+					ex, ElexisStatus.LOG_ERRORS);
+			throw new PersistenceException(status);
 		}
 	    return null;
 	}

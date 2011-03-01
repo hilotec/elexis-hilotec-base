@@ -5,14 +5,18 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
 import ch.elexis.data.Brief;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistenceException;
 import ch.elexis.data.Person;
 import ch.elexis.data.Query;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
@@ -66,9 +70,10 @@ public class BriefExport {
 				writer.close();
 				return "Export ok";
 			} catch (Exception ex) {
-				ExHandler.handle(ex);
-				SWTHelper.showError("Fehler beim Export", ex.getMessage());
-				return "Fehler beim Export";
+				ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+						"Fehler beim Export: " + ex.getMessage(),
+						ex);
+				throw new ScriptingException(status);
 			}
 		}
 		return "Abgebrochen";

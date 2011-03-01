@@ -165,15 +165,9 @@ public class HistoryDisplay extends ScrolledComposite implements
 
 				// check if widget is valid
 				if (!isDisposed()) {
-					try {
-						text.setText(s, true, true);
-						text.setSize(text.computeSize(self.getSize().x - 10,
-								SWT.DEFAULT));
-					} catch (Exception ex) {
-						ExHandler.handle(ex);
-						Hub.log.log("Text kann nicht geparsed werden " + s,
-								Log.ERRORS);
-					}
+					text.setText(s, true, true);
+					text.setSize(text.computeSize(self.getSize().x - 10,
+							SWT.DEFAULT));
 				}
 
 			}

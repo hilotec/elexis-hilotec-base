@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -26,6 +27,7 @@ import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.Messages;
 import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.text.model.Samdas;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
@@ -517,8 +519,10 @@ public class Konsultation extends PersistentObject implements
 			}
 			rs1.close();
 		} catch (Exception ex) {
-			ExHandler.handle(ex);
-			log.log(ex.getMessage(), Log.ERRORS);
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+					"Persistence error: " + ex.getMessage(),
+					ex, ElexisStatus.LOG_ERRORS);
+			throw new PersistenceException(status);
 		} finally {
 			j.releaseStatement(stm);
 		}

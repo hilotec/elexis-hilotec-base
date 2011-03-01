@@ -17,6 +17,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+
+import ch.elexis.Hub;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
@@ -127,8 +131,10 @@ public class LabGroup extends PersistentObject implements Comparable<LabGroup>{
     		}
     		rs.close();
     	} catch (Exception ex) {
-    		ExHandler.handle(ex);
-    		log.log(ex.getMessage(), Log.ERRORS);
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+					"Persistence error: " + ex.getMessage(),
+					ex, ElexisStatus.LOG_ERRORS);
+			throw new PersistenceException(status);
     	} finally {
     		j.releaseStatement(stm);
     	}

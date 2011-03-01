@@ -39,6 +39,7 @@ import ch.elexis.Hub;
 import ch.elexis.wizards.DBImportWizard;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.JdbcLinkException;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
 
@@ -293,8 +294,11 @@ public abstract class ImporterPage implements IExecutableExtension{
         		return new Result<JdbcLink>(Result.SEVERITY.ERROR,1,Messages.getString("ImporterPage.unknownType"),null,true); //$NON-NLS-1$
         	}
         	if(ret!=null){
-        		if(ret.connect(h.results[3], h.results[4])){
+        		try {
+        			ret.connect(h.results[3], h.results[4]);
         			return new Result<JdbcLink>(ret);
+        		} catch (JdbcLinkException je) {
+        			// ignore this and fallback to next return statement
         		}
         	}
         	return new Result<JdbcLink>(Result.SEVERITY.ERROR,2,Messages.getString("ImporterPage.couldntConnect"),ret,true); //$NON-NLS-1$

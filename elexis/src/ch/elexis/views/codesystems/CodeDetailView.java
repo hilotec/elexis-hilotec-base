@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -33,6 +34,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEvent;
@@ -41,6 +43,7 @@ import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Log;
@@ -48,6 +51,7 @@ import ch.elexis.util.ViewMenus;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.IDetailDisplay;
+import ch.elexis.wizards.Messages;
 import ch.rgw.tools.ExHandler;
 
 public class CodeDetailView extends ViewPart implements IActivationListener, ISaveablePart2 {
@@ -173,15 +177,9 @@ public class CodeDetailView extends ViewPart implements IActivationListener, ISa
 				ct.setData(d);
 				
 			} catch (Exception ex) {
-				ExHandler.handle(ex);
-				Hub.log.log("Fehler beim Initialisieren von " + ce.getName(), Log.WARNINGS);
-				/*
-				 * MessageBox mb = new MessageBox(getViewSite().getShell(), SWT.ICON_ERROR |
-				 * SWT.OK); mb.setText(Messages.getString("CodeDetailView.errorCaption" ));
-				 * //$NON-NLS-1$ mb.setMessage(Messages.getString("CodeDetailView.errorBody") +
-				 * ce.getName() + ":\n" //$NON-NLS-1$ //$NON-NLS-2$ + ex.getLocalizedMessage());
-				 * mb.open();
-				 */
+				ElexisStatus status = new ElexisStatus(IStatus.WARNING, Hub.PLUGIN_ID, IStatus.WARNING,
+						"Fehler beim Initialisieren von " + ce.getName(), ex, ElexisStatus.LOG_WARNINGS);
+				StatusManager.getManager().handle(status, StatusManager.SHOW);
 			}
 		}
 	}

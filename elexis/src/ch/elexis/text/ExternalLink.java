@@ -14,12 +14,17 @@ package ch.elexis.text;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.program.Program;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Desk;
+import ch.elexis.Hub;
+import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.IKonsExtension;
+import ch.elexis.text.Messages;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 
@@ -53,8 +58,10 @@ public class ExternalLink implements IKonsExtension {
 				}
 			}
 		}catch(Exception ex){
-			ExHandler.handle(ex);
-			SWTHelper.showError(Messages.ExternalLink_CouldNotStartFile, ex.getMessage());
+			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
+					Messages.ExternalLink_CouldNotStartFile,
+					ex);
+			StatusManager.getManager().handle(status);
 		}
 
 		return true;
