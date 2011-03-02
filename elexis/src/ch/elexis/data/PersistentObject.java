@@ -1047,10 +1047,9 @@ public abstract class PersistentObject implements ISelectable {
 					return "?invalid field? " + mapped;
 				}
 			} catch (Exception ex) {
-				ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
-						"Fehler in Felddefinition " + field,
-						ex, ElexisStatus.LOG_ERRORS);
-				throw new PersistenceException(status);
+				// ignore the exceptions calling functions look for MAPPING_ERROR_MARKER
+				ExHandler.handle(ex);
+				return mapped;
 			}
 		}
 		sql.append("SELECT ").append(mapped).append(" FROM ").append(table)
