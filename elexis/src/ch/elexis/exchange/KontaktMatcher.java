@@ -74,10 +74,30 @@ public class KontaktMatcher {
 		hints[HINT_ZIP]=plz;
 		hints[HINT_PLACE]=ort;
 		Query<Organisation> qbe=new Query<Organisation>(Organisation.class);
-		qbe.add(Organisation.FLD_NAME1, Query.EQUALS, name);
-		if(!StringTool.isNothing(zusatz)){
-			qbe.add("Zusatz1", Query.EQUALS, zusatz); //$NON-NLS-1$
+		
+		if(!StringTool.isNothing(name)){
+			qbe.startGroup();
+			qbe.add(Organisation.FLD_NAME1, "LIKE", name+"%",true); //$NON-NLS-1$ //$NON-NLS-2$
+			String un=StringTool.unambiguify(name);
+			if(!un.equalsIgnoreCase(name)){
+				qbe.or();
+				qbe.add(Organisation.FLD_NAME1, "LIKE", un+"%",true); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			qbe.endGroup();
+			qbe.and();
 		}
+		
+		if(!StringTool.isNothing(zusatz)){
+			qbe.startGroup();
+			qbe.add("Zusatz1", "LIKE", zusatz+"%",true); //$NON-NLS-1$ //$NON-NLS-2$
+			String un=StringTool.unambiguify(zusatz);
+			if(!un.equalsIgnoreCase(zusatz)){
+				qbe.or();
+				qbe.add("Zusatz1", "LIKE", un+"%",true); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			qbe.endGroup();
+		}
+		
 		List<Organisation> found=qbe.execute();
 		if(found.size()==0){
 			if(createMode==CreateMode.CREATE){
