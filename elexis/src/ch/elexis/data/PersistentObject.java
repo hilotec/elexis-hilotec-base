@@ -71,6 +71,7 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.JdbcLinkException;
+import ch.rgw.tools.JdbcLinkTableNotFoundException;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
@@ -657,24 +658,27 @@ public abstract class PersistentObject implements ISelectable {
 
 		StringBuilder sb = new StringBuilder("SELECT ID FROM ");
 		sb.append(getTableName()).append(" WHERE ID=").append(getWrappedId());
-		String obj = j.queryString(sb.toString());
+		try {
+			String obj = j.queryString(sb.toString());
 
-		if (id.equalsIgnoreCase(obj)) {
-			String deleted = get("deleted");
-			if (deleted == null) { // if we cant't find the column called
-				// 'deleted', the object exists anyway
-				return EXISTS;
-			}
-			if (showDeleted) {
-				return EXISTS;
+			if (id.equalsIgnoreCase(obj)) {
+				String deleted = get("deleted");
+				if (deleted == null) { // if we cant't find the column called
+					// 'deleted', the object exists anyway
+					return EXISTS;
+				}
+				if (showDeleted) {
+					return EXISTS;
+				} else {
+					return deleted.equals("1") ? DELETED : EXISTS;
+				}
+
 			} else {
-				return deleted.equals("1") ? DELETED : EXISTS;
+				return INEXISTENT;
 			}
-
-		} else {
+		} catch (JdbcLinkTableNotFoundException ex) {
 			return INEXISTENT;
 		}
-
 	}
 
 	/**
