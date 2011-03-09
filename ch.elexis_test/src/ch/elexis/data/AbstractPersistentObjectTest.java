@@ -41,8 +41,7 @@ public abstract class AbstractPersistentObjectTest {
 		JdbcLink link = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:test_mem", "");
 		assertNotNull(link);
 		link.connect("", "");
-		boolean ret = PersistentObject.connect(link);
-		assertFalse(ret);
+		PersistentObject.connect(link);
 		return link;
 	}
 }

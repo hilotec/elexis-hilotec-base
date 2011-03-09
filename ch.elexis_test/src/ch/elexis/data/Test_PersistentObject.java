@@ -132,9 +132,6 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 		PersistentObjectImpl impl = new PersistentObjectImpl();
 		try {
 			String ret = impl.get("");
-			fail("Expected Exception not thrown!");
-			link.disconnect();
-			
 			assertNotNull(ret);
 			assertEquals(PersistentObject.MAPPING_ERROR_MARKER + "**", ret);
 		} catch (PersistenceException pe) {
