@@ -115,6 +115,17 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	}
 	
 	@Test
+	public void testState() {
+		JdbcLink link = initDB();
+		
+		PersistentObjectImpl impl = new PersistentObjectImpl();
+		impl.tablename = "abc";
+		int ret = impl.state();
+		assertEquals(PersistentObject.INEXISTENT, ret);
+		link.disconnect();
+	}
+	
+	@Test
 	public void testGetFail() {
 		JdbcLink link = initDB();
 		
@@ -122,6 +133,7 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 		try {
 			String ret = impl.get("");
 			fail("Expected Exception not thrown!");
+			link.disconnect();
 			
 			assertNotNull(ret);
 			assertEquals(PersistentObject.MAPPING_ERROR_MARKER + "**", ret);
@@ -134,6 +146,7 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 		try {
 			impl.get("ID");
 			fail("Expected Exception not thrown!");
+			link.disconnect();
 		} catch (PersistenceException pe) {
 			
 		}
@@ -143,6 +156,8 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	
 	private class PersistentObjectImpl extends PersistentObject {
 
+		String tablename;
+		
 		public String getTestGet() {
 			return "test";
 		}
@@ -154,7 +169,7 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 
 		@Override
 		protected String getTableName() {
-			return null;
+			return tablename;
 		}
 		
 	}
