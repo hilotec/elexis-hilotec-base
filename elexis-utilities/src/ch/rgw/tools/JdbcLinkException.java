@@ -13,4 +13,8 @@ public class JdbcLinkException extends RuntimeException {
 	public JdbcLinkException(String string) {
 		super(string);
 	}
+	
+	public JdbcLinkException(Exception cause) {
+		super(cause);
+	}
 }

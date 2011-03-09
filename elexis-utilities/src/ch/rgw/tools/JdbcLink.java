@@ -230,7 +230,7 @@ public class JdbcLink {
 			lastErrorString = e.getMessage();
 			cause = e;
 		}
-		throw new JdbcLinkException("Connect failed: " + lastErrorString, cause);
+		throw JdbcLinkExceptionTranslation.translateException("Connect failed: " + lastErrorString, cause);
 	}
 
 	private Connection getConnectionWithRetry(String user, String password) throws SQLException {
@@ -396,7 +396,7 @@ public class JdbcLink {
 		} catch (Exception ex) {
 			lastErrorCode = CONNECTION_CANT_CREATE_STATEMENT;
 			lastErrorString = ex.getMessage();
-			throw new JdbcLinkException(lastErrorString, ex);
+			throw JdbcLinkExceptionTranslation.translateException(lastErrorString, ex);
 		}
 	}
 
@@ -437,7 +437,7 @@ public class JdbcLink {
 		} catch (SQLException ex) {
 			lastErrorCode = CONNECTION_CANT_PREPARE_STAMENT;
 			lastErrorString = ex.getMessage();
-			throw new JdbcLinkException(lastErrorString, ex);
+			throw JdbcLinkExceptionTranslation.translateException(lastErrorString, ex);
 		}
 	}
 
@@ -729,7 +729,7 @@ public class JdbcLink {
 						return internalExec(SQLText,true);
 					}
 				}
-				throw new JdbcLinkException("Fehler bei: " + SQLText, e);
+				throw JdbcLinkExceptionTranslation.translateException("Fehler bei: " + SQLText, e);
 			}
 		}
 		
@@ -764,7 +764,7 @@ public class JdbcLink {
 				}
 				lastErrorString = e.getMessage();
 				lastErrorCode = CONNECTION_SQL_ERROR;
-				throw new JdbcLinkException(lastErrorString, e);
+				throw JdbcLinkExceptionTranslation.translateException(lastErrorString, e);
 			}
 		}
 		
