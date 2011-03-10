@@ -22,11 +22,11 @@ public class JdbcLinkExceptionTranslation {
 		String state = sql.getSQLState();
 		
 		if("42S02".equalsIgnoreCase(state)) {
-			return new JdbcLinkTableNotFoundException(message, sql);
+			return new JdbcLinkTableNotFoundException(message + " (SQLState: " + state + ")", sql);
 		} else if("08S01".equalsIgnoreCase(state)) {
-			return new JdbcLinkCommunicationException(message, sql);
+			return new JdbcLinkCommunicationException(message + " (SQLState: " + state + ")", sql);
 		}
 		
-		return new JdbcLinkException(message, sql);
+		return new JdbcLinkException(message + " (SQLState: " + state + ")", sql);
 	}
 }
