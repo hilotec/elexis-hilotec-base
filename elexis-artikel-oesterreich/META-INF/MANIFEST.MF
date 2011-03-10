@@ -14,3 +14,4 @@ Bundle-ClassPath: bin/,
  .
 Bundle-Activator: ch.elexis.artikel_at.Activator
 Bundle-ActivationPolicy: lazy
+Export-Package: ch.elexis.artikel_at.data
