@@ -71,7 +71,7 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.JdbcLinkException;
-import ch.rgw.tools.JdbcLinkTableNotFoundException;
+import ch.rgw.tools.JdbcLinkSyntaxException;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
@@ -676,7 +676,7 @@ public abstract class PersistentObject implements ISelectable {
 			} else {
 				return INEXISTENT;
 			}
-		} catch (JdbcLinkTableNotFoundException ex) {
+		} catch (JdbcLinkSyntaxException ex) {
 			return INEXISTENT;
 		}
 	}
