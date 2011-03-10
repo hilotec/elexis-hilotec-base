@@ -41,6 +41,7 @@ import ch.elexis.data.Query;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.JdbcLinkException;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
@@ -116,8 +117,23 @@ public class MedikamentImporterVidal extends ImporterPage {
 				String SubstSalt = eSubstance.getAttributeValue("SubstSalt");
 				String Name = eSubstance.getTextTrim();
 				monitor.subTask("Lese Substanzen ein "+"["+counter+"/"+noOfSubstances+"]: "+Name);
-				new Substance(SubstID, Name, SubstSalt);
-				counter++;
+				try {
+					// Should check wether substance already exists
+					new Substance(SubstID, Name, SubstSalt);
+				} catch (JdbcLinkException e) {
+					// INFO: Loading database driver org.postgresql.Driver
+//					Fehler bei: INSERT INTO CH_ELEXIS_AUSTRIAMEDI_SUBSTANCE(ID) VALUES ('100') (SQLState: 23505)
+//					10.03.2011 18:01:56 ch.rgw.tools.Log log
+//					INFO: Loading database driver org.postgresql.Driver
+//					Fehler bei: INSERT INTO CH_ELEXIS_AUSTRIAMEDI_SUBSTANCE(ID) VALUES ('1002') (SQLState: 23505)
+//					10.03.2011 18:01:56 ch.rgw.tools.Log log
+//					INFO: Loading database driver org.postgresql.Driver
+//					Fehler bei: INSERT INTO CH_ELEXIS_AUSTRIAMEDI_SUBSTANCE(ID) VALUES ('1003') (SQLState: 23505)
+//					10.03.2011 18:01:56 ch.rgw.tools.Log log
+//					INFO: Loading database driver org.postgresql.Driver
+					System.out.println(e.getMessage());
+				}
+					counter++;
 			}
 		}
 		monitor.worked(1);
