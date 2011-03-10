@@ -241,15 +241,9 @@ public class JdbcLink {
 				return DriverManager.getConnection(sConn, user, password);
 			} catch (SQLException sqlEx) {
 				lastException = sqlEx;
-				//
-	            // The two SQL states that are 'retry-able' are 08S01
-	            // for a communications error, and 40001 for deadlock.
-	            //
-	            // Only retry if the error was due to a stale connection,
-	            // communications problem or deadlock
-	            //
-	            String sqlState = sqlEx.getSQLState();
-	            if ("08S01".equals(sqlState) || "40001".equals(sqlState)) {
+	            // The two SQL states that are 'retry-able' are communication error or concurrency
+	            JdbcLinkException je = JdbcLinkExceptionTranslation.translateException(sqlEx);
+	            if (je instanceof JdbcLinkResourceException || je instanceof JdbcLinkConcurrencyException) {
 	                retryCount--;
 	            } else {
 	                retryCount = 0;
