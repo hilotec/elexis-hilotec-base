@@ -127,10 +127,14 @@ public class Prescription extends PersistentObject {
 			addTerm(new TimeTool(),newDose);
 		}
 	}
+	
 	public String getBemerkung(){
-		return checkNull(get(REMARK));
-		
+		return checkNull(get(REMARK));	
 	}
+	public void setBemerkung(String value) {
+		set(REMARK, checkNull(value));
+	}
+	
 	
 	/**
 	 * Ein Medikament stoppen
@@ -218,4 +222,5 @@ public class Prescription extends PersistentObject {
 	public boolean isDragOK() {
 		return true;
 	}
+
 }
