@@ -572,6 +572,12 @@ public class GlobalActions {
 					if (dlg.open() == Dialog.OK) {
 						TimeTool date = dlg.getSelectedDate();
 						k.setDatum(date.toString(TimeTool.DATE_GER), false);
+						
+						// notify listeners about change
+						ElexisEventDispatcher.getInstance().fire(
+										new ElexisEvent(k, k.getClass(),
+										ElexisEvent.EVENT_UPDATE));
+						
 						ElexisEventDispatcher.fireSelectionEvent(k);
 					}
 				}
