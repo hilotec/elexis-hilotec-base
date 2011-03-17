@@ -13,13 +13,9 @@
 
 package ch.elexis.preferences;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
@@ -34,18 +30,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
@@ -53,12 +44,9 @@ import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
-import ch.elexis.data.Labor;
 import ch.elexis.data.Query;
-import ch.elexis.scripting.ScriptEditor;
+import ch.elexis.dialogs.EditLabItem;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.util.WidgetFactory;
-import ch.rgw.tools.StringTool;
 
 public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePage {
 	
@@ -67,7 +55,6 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 	// FormToolkit tk;
 	private TableViewer tv;
 	private Table table;
-	ArrayList<String> groups;
 	int sortC = 1;
 	private String[] headers = {
 		Messages.LaborPrefs_lab, Messages.LaborPrefs_name, Messages.LaborPrefs_short,
@@ -77,12 +64,11 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 	private int[] colwidth = {
 		100, 100, 50, 50, 50, 100, 100, 100
 	};
-	
-	public LaborPrefs(){
+
+	public LaborPrefs() {
 		super(Messages.LaborPrefs_labTitle);
-		groups = new ArrayList<String>();
 	}
-	
+
 	protected Control createContents(Composite parn){
 		// parn.setLayout(new FillLayout());
 		noDefaultAndApplyButton();
@@ -90,7 +76,7 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 		Composite ret = new Composite(parn, SWT.NONE);
 		ret.setLayout(new GridLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		table = new Table(ret, SWT.SINGLE | SWT.V_SCROLL);
+		table = new Table(ret, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
 		for (int i = 0; i < headers.length; i++) {
 			TableColumn tc = new TableColumn(table, SWT.LEFT);
 			tc.setText(headers[i]);
@@ -98,11 +84,11 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 			tc.setData(i);
 			tc.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent e){
+				public void widgetSelected(SelectionEvent e) {
 					sortC = (Integer) ((TableColumn) e.getSource()).getData();
 					tv.refresh(true);
 				}
-				
+
 			});
 		}
 		table.setHeaderVisible(true);
@@ -110,51 +96,41 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tv = new TableViewer(table);
 		tv.setContentProvider(new IStructuredContentProvider() {
-			
-			@SuppressWarnings("unchecked")
-			public Object[] getElements(Object inputElement){
-				Query qbe = new Query(LabItem.class);
-				List list = qbe.execute();
-				groups.clear();
-				for (LabItem li : (List<LabItem>) list) {
-					if (groups.contains(li.getGroup())) {
-						continue;
-					}
-					groups.add(li.getGroup());
-				}
-				Collections.sort(groups);
-				return list.toArray();
+
+			public Object[] getElements(Object inputElement) {
+				return LabItem.getLabItems().toArray();
 			}
-			
-			public void dispose(){}
-			
-			public void inputChanged(Viewer viewer, Object oldInput, Object newInput){}
-			
+
+			public void dispose() {
+			}
+
+			public void inputChanged(Viewer viewer, Object oldInput,
+					Object newInput) {
+			}
+
 		});
 		tv.setLabelProvider(new LabListLabelProvider());
 		tv.addDoubleClickListener(new IDoubleClickListener() {
-			
-			public void doubleClick(DoubleClickEvent event){
-				IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
+
+			public void doubleClick(DoubleClickEvent event) {
+				IStructuredSelection sel = (IStructuredSelection) tv
+						.getSelection();
 				Object o = sel.getFirstElement();
 				if (o instanceof LabItem) {
 					LabItem li = (LabItem) o;
-					editLabItem eli = new editLabItem(getShell(), li);
+					EditLabItem eli = new EditLabItem(getShell(), li);
 					eli.create();
-					eli.getShell().setText(Messages.LaborPrefs_labParams);
-					eli.setTitle(Messages.LaborPrefs_enterNewLabParam);
-					eli.setMessage(Messages.LaborPrefs_pleaseEditParam);
 					if (eli.open() == Dialog.OK) {
 						tv.refresh();
 					}
 				}
 			}
-			
+
 		});
 		tv.setSorter(new ViewerSorter() {
-			
+
 			@Override
-			public int compare(Viewer viewer, Object e1, Object e2){
+			public int compare(Viewer viewer, Object e1, Object e2) {
 				LabItem li1 = (LabItem) e1;
 				LabItem li2 = (LabItem) e2;
 				String s1 = "", s2 = ""; //$NON-NLS-1$ //$NON-NLS-2$
@@ -185,7 +161,7 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 				}
 				return res;
 			}
-			
+
 		});
 		tv.setInput(this);
 		Composite buttons = new Composite(ret, SWT.BORDER);
@@ -196,23 +172,21 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 		bNewItem.setText(Messages.LaborPrefs_labValue);
 		bNewItem.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e){
-				editLabItem eli = new editLabItem(getShell(), null);
+			public void widgetSelected(SelectionEvent e) {
+				EditLabItem eli = new EditLabItem(getShell(), null);
 				eli.create();
-				eli.getShell().setText(Messages.LaborPrefs_labParam);
-				eli.setTitle(Messages.LaborPrefs_enterNewLabParam);
-				eli.setMessage(Messages.LaborPrefs_pleaseEnterLabParam);
 				if (eli.open() == Dialog.OK) {
 					tv.refresh();
 				}
 			}
-			
+
 		});
 		Button bDelItem = new Button(buttons, SWT.PUSH);
 		bDelItem.setText(Messages.LaborPrefs_deleteItem);
 		bDelItem.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e){
-				IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
+			public void widgetSelected(SelectionEvent e) {
+				IStructuredSelection sel = (IStructuredSelection) tv
+						.getSelection();
 				Object o = sel.getFirstElement();
 				if (o instanceof LabItem) {
 					LabItem li = (LabItem) o;
@@ -230,13 +204,15 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 		Button bDelAllItems = new Button(buttons, SWT.PUSH);
 		bDelAllItems.setText(Messages.LaborPrefs_deleteAllItems);
 		bDelAllItems.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e){
-				if (SWTHelper.askYesNo(Messages.LaborPrefs_deleteReallyAllItems,
-					Messages.LaborPrefs_deleteAllExplain)) {
+			public void widgetSelected(SelectionEvent e) {
+				if (SWTHelper.askYesNo(
+						Messages.LaborPrefs_deleteReallyAllItems,
+						Messages.LaborPrefs_deleteAllExplain)) {
 					Query<LabItem> qbli = new Query<LabItem>(LabItem.class);
 					List<LabItem> items = qbli.execute();
 					for (LabItem li : items) {
-						Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
+						Query<LabResult> qbe = new Query<LabResult>(
+								LabResult.class);
 						qbe.add("ItemID", "=", li.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 						List<LabResult> list = qbe.execute();
 						for (LabResult po : list) {
@@ -253,20 +229,21 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 		}
 		return ret;
 	}
-	
-	static class LabListLabelProvider extends LabelProvider implements ITableLabelProvider {
-		
-		public Image getColumnImage(Object element, int columnIndex){
+
+	static class LabListLabelProvider extends LabelProvider implements
+			ITableLabelProvider {
+
+		public Image getColumnImage(Object element, int columnIndex) {
 			// TODO Automatisch erstellter Methoden-Stub
 			return null;
 		}
-		
-		public String getColumnText(Object element, int columnIndex){
+
+		public String getColumnText(Object element, int columnIndex) {
 			LabItem li = (LabItem) element;
 			switch (columnIndex) {
 			case 0:
-				return li.getLabor() == null ? Messages.LaborPrefs_unkown : li.getLabor()
-					.getLabel();
+				return li.getLabor() == null ? Messages.LaborPrefs_unkown : li
+						.getLabor().getLabel();
 			case 1:
 				return li.getName();
 			case 2:
@@ -293,212 +270,11 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 				return "?col?"; //$NON-NLS-1$
 			}
 		}
-		
+
 	};
 	
 	public void init(IWorkbench workbench){
 		// Nothing to initialize
 	}
-	
-	class editLabItem extends TitleAreaDialog {
-		// private String[] fields={"Kürzel","Titel","Typ","Referenzbereich","Einheit"};
-		Text iKuerzel, iTitel, iRef, iRfF, iUnit, iPrio;
-		Combo cGroup;
-		Button alph, numeric, abs, formula, document;
-		String formel;
-		org.eclipse.swt.widgets.List labors;
-		Hashtable<String, Labor> lablist = new Hashtable<String, Labor>();
-		Labor actLabor;
-		LabItem result;
-		
-		public editLabItem(Shell parentShell, LabItem act){
-			super(parentShell);
-			result = act;
-			if (act == null) {
-				String al =
-					new Query<Labor>(Labor.class).findSingle(
-						"istLabor", Messages.LaborPrefs_34, Messages.LaborPrefs_35); //$NON-NLS-1$
-				if (al == null) {
-					actLabor = new Labor(Messages.LaborPrefs_36, Messages.LaborPrefs_37);
-				} else {
-					actLabor = Labor.load(al);
-				}
-			} else {
-				actLabor = act.getLabor();
-			}
-		}
-		
-		@Override
-		protected Control createDialogArea(Composite parent){
-			Composite ret = new Composite(parent, SWT.NONE);
-			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-			ret.setLayout(new GridLayout(4, false));
-			labors = new org.eclipse.swt.widgets.List(ret, SWT.BORDER);
-			labors.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
-			labors.addSelectionListener(new SelectionAdapter() {
-				
-				public void widgetSelected(SelectionEvent e){
-					int i = labors.getSelectionIndex();
-					if (i != -1) {
-						actLabor = lablist.get(labors.getItem(i));
-					}
-					
-				}
-				
-			});
-			Query<Labor> qbe = new Query<Labor>(Labor.class);
-			List<Labor> list = qbe.execute();
-			int idx = 0, i = 0;
-			String al = actLabor.getLabel();
-			for (Labor o : list) {
-				String lb = o.getLabel();
-				lablist.put(lb, (Labor) o);
-				labors.add(lb);
-				if (lb.equals(al)) {
-					idx = i;
-				}
-				i++;
-			}
-			labors.setSelection(idx);
-			WidgetFactory.createLabel(ret, Messages.LaborPrefs_38);
-			iKuerzel = new Text(ret, SWT.BORDER);
-			iKuerzel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			WidgetFactory.createLabel(ret, Messages.LaborPrefs_39);
-			iTitel = new Text(ret, SWT.BORDER);
-			iTitel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			
-			WidgetFactory.createLabel(ret, Messages.LaborPrefs_40);
-			Group grp = new Group(ret, SWT.NONE);
-			grp.setLayout(new FillLayout(SWT.HORIZONTAL));
-			grp.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
-			numeric = new Button(grp, SWT.RADIO);
-			numeric.setText(Messages.LaborPrefs_41);
-			alph = new Button(grp, SWT.RADIO);
-			alph.setText(Messages.LaborPrefs_42);
-			abs = new Button(grp, SWT.RADIO);
-			abs.setText(Messages.LaborPrefs_43);
-			formula = new Button(grp, SWT.RADIO);
-			formula.setText(Messages.LaborPrefs_44);
-			formula.addSelectionListener(new SelectionAdapter() {
-				
-				@Override
-				public void widgetSelected(SelectionEvent e){
-					if (formula.getSelection()) {
-						
-						ScriptEditor se =
-							new ScriptEditor(getShell(), formel, Messages.LaborPrefs_45);
-						if (se.open() == Dialog.OK) {
-							formel = se.getScript();
-						}
-					}
-				}
-				
-			});
-			document = new Button(grp, SWT.RADIO);
-			document.setText(Messages.LaborPrefs_document);
-			document.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e){
-					documentSelectionChanged();
-				}
-				
-			});
-			WidgetFactory.createLabel(ret, Messages.LaborPrefs_46);
-			
-			iRef = new Text(ret, SWT.BORDER);
-			iRef.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			WidgetFactory.createLabel(ret, Messages.LaborPrefs_47);
-			iRfF = new Text(ret, SWT.BORDER);
-			iRfF.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			WidgetFactory.createLabel(ret, Messages.LaborPrefs_48);
-			iUnit = new Text(ret, SWT.BORDER);
-			iUnit.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
-			WidgetFactory.createLabel(ret, Messages.LaborPrefs_49);
-			cGroup = new Combo(ret, SWT.SINGLE | SWT.DROP_DOWN);
-			cGroup.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			cGroup.setToolTipText(Messages.LaborPrefs_50);
-			cGroup.setItems(groups.toArray(new String[0]));
-			WidgetFactory.createLabel(ret, Messages.LaborPrefs_51);
-			iPrio = new Text(ret, SWT.BORDER);
-			iPrio.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			iPrio.setToolTipText(Messages.LaborPrefs_52);
-			if (result != null) {
-				iKuerzel.setText(result.getKuerzel());
-				iTitel.setText(result.getName());
-				if (result.getTyp() == LabItem.typ.NUMERIC) {
-					numeric.setSelection(true);
-				} else if (result.getTyp() == LabItem.typ.TEXT) {
-					alph.setSelection(true);
-				} else if (result.getTyp() == LabItem.typ.ABSOLUTE) {
-					abs.setSelection(true);
-				} else if (result.getTyp() == LabItem.typ.DOCUMENT) {
-					document.setSelection(true);
-					documentSelectionChanged();
-				} else {
-					formula.setSelection(true);
-				}
-				iUnit.setText(result.getEinheit());
-				iRef.setText(result.get(Messages.LaborPrefs_53));
-				iRfF.setText(result.getRefW());
-				cGroup.setText(result.getGroup());
-				iPrio.setText(result.getPrio());
-				formel = result.getFormula();
-			}
-			return ret;
-		}
-		
-		/**
-		 * Event method is called when document radio button is selected or deselected
-		 */
-		private void documentSelectionChanged(){
-			iRef.setEnabled(!document.getSelection());
-			iRfF.setEnabled(!document.getSelection());
-		}
-		
-		@Override
-		protected void okPressed(){
-			LabItem.typ typ;
-			// String refmin="",refmax;
-			// refmax=iRef.getText();
-			if (numeric.getSelection() == true) {
-				typ = LabItem.typ.NUMERIC;
-			} else if (abs.getSelection() == true) {
-				typ = LabItem.typ.ABSOLUTE;
-			} else if (formula.getSelection()) {
-				typ = LabItem.typ.FORMULA;
-			} else if (document.getSelection()) {
-				typ = LabItem.typ.DOCUMENT;
-			} else {
-				typ = LabItem.typ.TEXT;
-			}
-			if (result == null) {
-				result =
-					new LabItem(iKuerzel.getText(), iTitel.getText(), actLabor, iRef.getText(),
-						iRfF.getText(), iUnit.getText(), typ, cGroup.getText(), iPrio.getText());
-			} else {
-				String t = "0";
-				if (typ == LabItem.typ.TEXT) {
-					t = "1";
-				} else if (typ == LabItem.typ.ABSOLUTE) {
-					t = "2";
-				} else if (typ == LabItem.typ.FORMULA) {
-					t = "3";
-				} else if (typ == LabItem.typ.DOCUMENT) {
-					t = "4";
-				}
-				result.set(new String[] {
-					Messages.LaborPrefs_58, Messages.LaborPrefs_59, Messages.LaborPrefs_60,
-					Messages.LaborPrefs_61, Messages.LaborPrefs_62, Messages.LaborPrefs_63,
-					Messages.LaborPrefs_64, Messages.LaborPrefs_65, Messages.LaborPrefs_66
-				}, iKuerzel.getText(), iTitel.getText(), actLabor.getId(), iRef.getText(),
-					iRfF.getText(), iUnit.getText(), t, cGroup.getText(), iPrio.getText());
-			}
-			if (!StringTool.isNothing(formel)) {
-				result.setFormula(formel);
-			}
-			super.okPressed();
-		}
-		
-	}
-	
+
 }
