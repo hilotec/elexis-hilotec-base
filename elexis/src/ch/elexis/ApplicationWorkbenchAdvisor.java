@@ -24,10 +24,12 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Hub.ShutdownJob;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.data.Anwender;
+import ch.elexis.data.PersistenceException;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
 import ch.elexis.wizards.DBConnectWizard;
@@ -61,13 +63,10 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	public void initialize(final IWorkbenchConfigurer configurer){
 		loginshell = new Shell(Desk.getDisplay());
 		Log.setAlert(loginshell);
-		if (PersistentObject.connect(Hub.localCfg, loginshell) == false) {
-			Log.setAlertLevel(Log.ERRORS);
-			Hub.log.log(Messages.ApplicationWorkbenchAdvisor_0
-				+ PersistentObject.getConnection().lastErrorString, Log.ERRORS);
-			MessageDialog.openError(loginshell, Messages.ApplicationWorkbenchAdvisor_1,
-				Messages.ApplicationWorkbenchAdvisor_2
-					+ PersistentObject.getConnection().lastErrorString);
+		try {
+			PersistentObject.connect(Hub.localCfg, loginshell);
+		} catch (PersistenceException pex) {
+			StatusManager.getManager().handle(pex.getStatus(), StatusManager.SHOW);
 			PersistentObject.disconnect();
 			WizardDialog wd = new WizardDialog(loginshell, new DBConnectWizard());
 			wd.open();

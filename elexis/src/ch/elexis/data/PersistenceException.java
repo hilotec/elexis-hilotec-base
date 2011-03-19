@@ -41,22 +41,6 @@ public class PersistenceException extends RuntimeException {
 
 	/**
 	 * Returns the status object for this exception.
-	 * <p>
-	 *   <b>IMPORTANT:</b><br>
-	 *   The result must NOT be used for logging, error reporting, or as a method 
-	 *   return value, since that code pattern hides the original stack trace. Instead, 
-	 *   create a new {@link Status} with your plug-in ID and this 
-	 *   <code>CoreException</code>, and use that new status for error reporting
-	 *   or as a method return value. For example, instead of:
-	 *   <pre>
-	 *      yourPlugin.getLog().log(exception.getStatus());
-	 *   </pre>
-	 *   Use:
-	 *   <pre>
-	 *      IStatus result = new Status(exception.getStatus().getSeverity(), pluginId, message, exception);
-	 *      yourPlugin.getLog().log(result);
-	 *   </pre>
-	 * </p>
 	 *
 	 * @return a status object
 	 */
