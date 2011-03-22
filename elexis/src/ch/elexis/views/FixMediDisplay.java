@@ -226,7 +226,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 		} catch (NumberFormatException e) {
 			Status status = new Status(IStatus.INFO, Hub.PLUGIN_ID, e.getLocalizedMessage(), e);
 			StatusManager.getManager().handle(status, StatusManager.LOG);
-			return 5;
+			return 0;
 		}
 
 	}
