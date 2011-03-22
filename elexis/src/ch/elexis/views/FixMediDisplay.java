@@ -208,12 +208,12 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 		}
 	}
 	
-	private float getNum(String num){
+	static float getNum(String num){
 		try {
 			String n = num.trim();
-			if(n.equalsIgnoreCase("½")) return 1/2;
-			if(n.equalsIgnoreCase("¼")) return 1/4;
-			if(n.equalsIgnoreCase("1½")) return 3/2;
+			if(n.equalsIgnoreCase("½")) return 0.5F;
+			if(n.equalsIgnoreCase("¼")) return 0.25F;
+			if(n.equalsIgnoreCase("1½")) return 1.5F;
 			
 			if (n.indexOf('/') != -1) {
 				String[] bruch = n.split(StringConstants.SLASH);
@@ -226,7 +226,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 		} catch (NumberFormatException e) {
 			Status status = new Status(IStatus.INFO, Hub.PLUGIN_ID, e.getLocalizedMessage(), e);
 			StatusManager.getManager().handle(status, StatusManager.LOG);
-			return 0;
+			return 5;
 		}
 
 	}
