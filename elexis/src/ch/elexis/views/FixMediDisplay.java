@@ -15,7 +15,9 @@ package ch.elexis.views;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -23,6 +25,7 @@ import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Desk;
 import ch.elexis.ElexisConfigurationConstants;
@@ -205,15 +208,27 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 		}
 	}
 	
-	private float getNum(String n){
-		if (n.indexOf('/') != -1) {
-			String[] bruch = n.split(StringConstants.SLASH);
-			float zaehler = Float.parseFloat(bruch[0]);
-			float nenner = Float.parseFloat(bruch[1]);
-			return zaehler / nenner;
-		} else {
-			return Float.parseFloat(n);
+	private float getNum(String num){
+		try {
+			String n = num.trim();
+			if(n.equalsIgnoreCase("½")) return 1/2;
+			if(n.equalsIgnoreCase("¼")) return 1/4;
+			if(n.equalsIgnoreCase("1½")) return 3/2;
+			
+			if (n.indexOf('/') != -1) {
+				String[] bruch = n.split(StringConstants.SLASH);
+				float zaehler = Float.parseFloat(bruch[0]);
+				float nenner = Float.parseFloat(bruch[1]);
+				return zaehler / nenner;
+			} else {
+				return Float.parseFloat(n);
+			}
+		} catch (NumberFormatException e) {
+			Status status = new Status(IStatus.INFO, Hub.PLUGIN_ID, e.getLocalizedMessage(), e);
+			StatusManager.getManager().handle(status, StatusManager.LOG);
+			return 0;
 		}
+
 	}
 	
 	class DauerMediListener implements LDListener {
