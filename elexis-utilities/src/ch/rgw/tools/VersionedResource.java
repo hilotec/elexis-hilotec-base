@@ -118,10 +118,13 @@ public class VersionedResource {
      * Alle Einträge ausser dem Neuesten entfernen
      */
     public void purge(){
-    	ResourceItem head=items.get(items.size()-1);
-    	items.clear();
-    	items.add(head);
+    	if(items.size()>0) {
+    		ResourceItem head=items.get(items.size()-1);
+    		items.clear();
+    		items.add(head);
+    	}
     }
+    
     public static class ResourceItem implements Serializable{
         private static final long serialVersionUID = -7214215925169803335L;
         static final int REPLACE=0;
