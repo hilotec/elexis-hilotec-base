@@ -346,4 +346,40 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 		}
 		return mine.compareTo(others);
 	}
+	
+	/**
+	 * Loads all LabItems from the database and puts them in a java.util.List
+	 * @return list of LabItem
+	 */
+	@SuppressWarnings("unchecked")
+	public static List<LabItem> getLabItems() {
+		Query qbe = new Query(LabItem.class);
+		return qbe.execute();
+	}
+	
+	/**
+	 * Look for a LabItem with the specified parameters in the database
+	 * @return LabItem or null
+	 */
+	public static LabItem getLabItem(String laborId, String shortDesc, String refM, String refW, String unit) {
+		Query<LabItem> qbe = new Query<LabItem>(LabItem.class);
+		qbe.add("LaborID", "=", laborId); //$NON-NLS-1$ //$NON-NLS-2$
+		// none case sensitive matching for kuerzel
+		qbe.add("kuerzel", "=", shortDesc, true); //$NON-NLS-1$ //$NON-NLS-2$
+		if(refM != null) {
+			// none case sensitive matching for kuerzel
+			qbe.add("RefMann", "=", refM, true); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if(refW != null) {
+			// none case sensitive matching for kuerzel
+			qbe.add("RefFrauOrTx", "=", refW, true); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		// none case sensitive matching for kuerzel
+		qbe.add("Einheit", "=", unit, true); //$NON-NLS-1$ //$NON-NLS-2$
+		List<LabItem> list = qbe.execute();
+		if (list.size() == 1) {
+			return list.get(0);
+		}
+		return null;
+	}
 }
