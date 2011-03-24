@@ -127,6 +127,13 @@
                name="Termin">
          </Factory>
       </extension>
+      <extension
+            point="ch.elexis.DataAccess">
+         <DataAccess
+               class="ch.elexis.agenda.data.DataAccessor"
+               name="Termin">
+         </DataAccess>
+      </extension>
    
 
 </plugin>
