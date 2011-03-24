@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2010, G. Weirich and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *
+ * $Id$
+ *    
+ *******************************************************************************/
+
 package ch.elexis.preferences;
 
 import org.eclipse.osgi.util.NLS;
@@ -189,14 +203,6 @@ public class Messages extends NLS {
 
 	public static String LaborPrefs_53;
 
-	public static String LaborPrefs_54;
-
-	public static String LaborPrefs_55;
-
-	public static String LaborPrefs_56;
-
-	public static String LaborPrefs_57;
-
 	public static String LaborPrefs_58;
 
 	public static String LaborPrefs_59;
@@ -226,6 +232,8 @@ public class Messages extends NLS {
 	public static String LaborPrefs_deleteItem;
 
 	public static String LaborPrefs_deleteReallyAllItems;
+	
+	public static String LaborPrefs_document;
 
 	public static String LaborPrefs_enterNewLabParam;
 
