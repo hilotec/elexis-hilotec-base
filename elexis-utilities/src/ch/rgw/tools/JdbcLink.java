@@ -207,6 +207,7 @@ public class JdbcLink {
 			// "jdbc:mysql://<host>:<port>/<dbname>"
 			// "jdbc:odbc:<dsn>
 			log.log(Level.INFO, "Loading database driver " + sDrv);
+			log.log(Level.INFO, "Connecting with database " + sConn);
 			conn = getConnectionWithRetry(user, password);
 			statements = new Vector<Stm>();
 			lastErrorCode = CONNECT_SUCCESS;
