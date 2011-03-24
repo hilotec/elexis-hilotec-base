@@ -277,6 +277,8 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 					return Messages.LaborPrefs_numeric;
 				} else if (typ == LabItem.typ.TEXT) {
 					return Messages.LaborPrefs_alpha;
+				} else if (typ == LabItem.typ.DOCUMENT) {
+					return Messages.LaborPrefs_document;
 				}
 				return Messages.LaborPrefs_absolute;
 			case 4:
