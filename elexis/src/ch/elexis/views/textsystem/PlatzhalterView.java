@@ -256,13 +256,15 @@ public class PlatzhalterView extends ViewPart {
 		for (IDataAccess dataAccess : dataAccessList) {
 			PlatzhalterTreeData treeData = new PlatzhalterTreeData(dataAccess
 					.getName(), "", dataAccess.getDescription()); //$NON-NLS-1$
-			for (Element element : dataAccess.getList()) {
-				treeData.addChild(new PlatzhalterTreeData(element.getName(),
-						element.getPlaceholder(), element.getName()));
+			if (dataAccess.getList() != null) {
+				for (Element element : dataAccess.getList()) {
+					treeData.addChild(new PlatzhalterTreeData(element.getName(),
+							element.getPlaceholder(), element.getName()));
+				}
 			}
 			root.addChild(treeData);
 		}
-
+		
 		return root.getChildren();
 	}
 

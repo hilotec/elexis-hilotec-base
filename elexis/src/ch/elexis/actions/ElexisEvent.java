@@ -118,12 +118,12 @@ public final class ElexisEvent implements Comparable<ElexisEvent>{
 	 */
 	
 	boolean matches(final ElexisEvent event){
-		if (event.getObject() != null) {
+		if (getObject() != null && event.getObject() != null) {
 			if (!getObject().getId().equals(event.getObject().getId())) {
 				return false;
 			}
 		}
-		if (event.getObjectClass() != null) {
+		if (getObjectClass() != null && event.getObjectClass() != null) {
 			if (!getObjectClass().equals(event.getObjectClass())) {
 				return false;
 			}
