@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.Labor;
 import ch.elexis.data.Query;
@@ -277,5 +278,17 @@ public class EditLabItem extends TitleAreaDialog {
 	public void setUnitText(String string) {
 		if(string != null)
 			iUnit.setText(string);
+	}
+	
+	public void setSelectedLab(Kontakt lab) {
+		String[] items = labors.getItems();
+		String searchItem = lab.getLabel();
+		int idx = 0;
+		for(; idx < items.length; idx++) {
+			if(items[idx].equalsIgnoreCase(searchItem)) {
+				labors.setSelection(idx);
+				return;
+			}
+		}
 	}
 }
