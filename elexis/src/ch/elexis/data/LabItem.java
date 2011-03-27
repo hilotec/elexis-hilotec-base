@@ -119,6 +119,10 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 	public String getEinheit() {
 		return checkNull(get(UNIT));
 	}
+	
+	public void setEinheit(String unit) {
+		set(UNIT, unit);
+	}
 
 	public String getGroup() {
 		return checkNull(get(GROUP));
@@ -131,9 +135,17 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 	public String getKuerzel() {
 		return checkNull(get(SHORTNAME));
 	}
+	
+	public void setKuerzel(String shortname) {
+		set(SHORTNAME, shortname);
+	}
 
 	public String getName() {
 		return checkNull(get(TITLE));
+	}
+	
+	public void setName(String title) {
+		set(TITLE, title);
 	}
 
 	public Labor getLabor() {
@@ -348,8 +360,8 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 	}
 	
 	/**
-	 * Loads all LabItems from the database and puts them in a java.util.List
-	 * @return list of LabItem
+	 * Get a List of all LabItems from the database
+	 * @return List of {@link LabItem}
 	 */
 	@SuppressWarnings("unchecked")
 	public static List<LabItem> getLabItems() {
@@ -358,28 +370,30 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 	}
 	
 	/**
-	 * Look for a LabItem with the specified parameters in the database
-	 * @return LabItem or null
+	 * Get a List of LabItems matching the specified parameters in the database
+	 * @return List of {@link LabItem}
 	 */
-	public static LabItem getLabItem(String laborId, String shortDesc, String refM, String refW, String unit) {
+	public static List<LabItem> getLabItems(String laborId, String shortDesc, String refM, String refW, String unit) {
 		Query<LabItem> qbe = new Query<LabItem>(LabItem.class);
-		qbe.add("LaborID", "=", laborId); //$NON-NLS-1$ //$NON-NLS-2$
-		// none case sensitive matching for kuerzel
-		qbe.add("kuerzel", "=", shortDesc, true); //$NON-NLS-1$ //$NON-NLS-2$
-		if(refM != null) {
+		if(laborId != null) {
+			qbe.add("LaborID", "=", laborId); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if(shortDesc != null) {
 			// none case sensitive matching for kuerzel
+			qbe.add("kuerzel", "=", shortDesc, true); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+		if(refM != null) {
+			// none case sensitive matching for ref male
 			qbe.add("RefMann", "=", refM, true); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		if(refW != null) {
-			// none case sensitive matching for kuerzel
+			// none case sensitive matching for ref female
 			qbe.add("RefFrauOrTx", "=", refW, true); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		// none case sensitive matching for kuerzel
-		qbe.add("Einheit", "=", unit, true); //$NON-NLS-1$ //$NON-NLS-2$
-		List<LabItem> list = qbe.execute();
-		if (list.size() == 1) {
-			return list.get(0);
+		if(unit != null) {
+			// none case sensitive matching for unit
+			qbe.add("Einheit", "=", unit, true); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		return null;
+		return qbe.execute();
 	}
 }
