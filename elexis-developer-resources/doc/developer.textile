@@ -63,71 +63,13 @@ Then you should be able to start elexis with "Run".
 
 h1. Programming guidelines
 
-You are very welcome to provide any type of plugin for elexis. Please adhere to a few rules to avoid conflicts between different plugins.
+Have a look at the release-guidelines.textile to see what the formal requirements for submitting code and adding new plug-ins are.
 
-h2. 1) Name of your plugin
+h2. Becoming a committer
 
-You may name your plugin whatever you like but we recommend that you prefix it with your name or the name of your organization.  The prefix elexis- must not be used. this is reserved for our own plugins. We recommend, that you chose a name dervived from the Plugin ID (as described below).
-
-h2. 2) Plugin ID of your pugin
-
-Every plugin must have its unique ID. It is common use that such an id consists of an inversely written url of the provider. So, all Plugins of elexis.ch have a plugin ID starting with ch.elexis. We recommend, that you use a similar naming scheme. In any case, the prefix  ch.elexis must not be used.
-
-h2. 3) Packages of your plugin
-
-Again, it is common use to name the packages of a Java programm after its originating url. Therefore, all elexis classes reside in packages prefixed with ch.elexis. We recommend that you use a similar scheme. In any case, the prefix ch.elexis must not be used.
-
-h2. 4) Name of your Tables
-
-To avoid name clashes between the tables of different Plugins, it is mandatory that you prefix the names of the tables your plugin creates (if any) with the pluginID. For sql syntax reasons, every dot in the name must be replaced by an underscore. Thus the plugin ch.elexis.something will create a table like CH_ELEXIS_SOMETHING_TABLE1
-
-h2. 5) Coding conventions
-
-Adhering to our style guide is easy in eclipse:
-In _Window-Preferences-Java-Codestyle-Formatter_ select _import..._ and import the "elexis formatter profile":http://www.elexis.ch/files/ElexisFormatterProfile.xml.
-Then, anytime or at least before comitting your code, press CTRL-SHIFT-F to apply the style.
-(This is adapted closely to the java style guide recommended by Sun Microsystems(tm))
-
-
-h2. 6) Documentation
-
-It is recommended to document your work. Besides of the javadoc, we recommend that you include at least a 'readme.txt' or 'whatisit.textile' file in the root of your plugin that describes, what it does and what it depends on. If you want to give your users a more elaborate documentation, it should be included in a folder called doc at the root of your plugin, the main file named after the plugin. Our continuos integration tool provides you with the "latest Javadoc":http://ngiger.dyndns.org/hudson/job/Elexis-Full/lastSuccessfulBuild/artifact/dokumentation/javadoc/index.html. If you want to check whether the Javadocs for your changes are okay, go to BuildElexis/rsc/build, call ant javadoc and preview your changes "here":file:///../javadoc/index.html.
-
-For newer documentation, we use the simple Markup-Format 'Textile'. Eclipse's Mylyn plugin can manage these files out of the box and conversion to HTML and FOP/PDF is easy. Besides this, LaTeX is still supported. If you use other formats than Textile or LaTeX, your documentation can not be generated automatically during build. Hence if your plugin is called my-cool-plugin, there should be at least one file called my-cool-plugin.tex or my-cool-plugin.textile in a folder with the name 'doc'. If so, documentation can be generated automatically.
-
-More information on the wikitext editor and the textile format can be found here:
-"http://www.peterfriese.de/getting-started-with-wikitext/":http://www.peterfriese.de/getting-started-with-wikitext/
-and here:
-"http://wiki.eclipse.org/Mylyn/Incubator/WikiText":http://wiki.eclipse.org/Mylyn/Incubator/WikiText
-
-More information on TeX/LaTeX can be found here:
-"http://www.latex-project.org/":http://www.latex-project.org/
-
-h2. 7) Testing and writing JUnit test cases
-
-To guarantee that your non-UI, non trivial stuff is working, write UnitTests. UI-tests and ideas/experience in how to make them work  are welcome.
-
-At the moment we put all JUnit-tests into a separate eclipse-project TestElexis. This has the advantage, that the dependencies for JUnit, etc. don't get mixed up with the sources.
-
-We migthl switch to the TPTP. But its learning curve is a little bit steeper than with JUnit. The setup demands also some more thinking. TPTP has its main advantages if you want to parameterize your testcases, set up datapools, run tests on various targets (e.g. inside your eclipse, on a remote computer with a different OS).
-
-Write your JUnit tests using the checklist:
-
-* Select the class you want to test. Right-Click..New..Java JUnit test.
-* Select JUnit 4.x, select the desired setup/tearddown methods and the methods you want to create testcases for.
-* Move the newly generated MyClassTest.java file to TestElexis/ch.elexis.tests (or deeper)
-* Add a new target for it in the TestElexis/build.xml, and make the target "junit" depend on it.
-* Test and enjoy the feeling that you will deliver quality software!
-
-As with the Javadoc you will find the results of the "last build":http://ngiger.dyndns.org/hudson/job/Elexis-Full/lastSuccessfulBuild/artifact/junit/index.html. 
-
-To run your tests, please have a look at the "Ants Junit Task":http://ant.apache.org/manual/OptionalTasks/junit.html, as you have to install ant and make the junit.jar available to it. E.g. by copying it from the eclipse/plugins into the lib directory, where you installed ant. Go to BuildElexis/rsc/build, call "ant junit"  and you should find the results under elexis-developer-resources/junit.
-
-h2. 8) Becoming a committer
-
-If you feel that you'd like to offer your work to the community, we are happy to invite you as a commiter. Being a committer gives you write access to the elexis repository, but gives you also responsabilities:
+If you feel that you'd like to offer your work to the community, we are happy to invite you as a committer. Being a committer gives you write access to the elexis repository, but gives you also responsabilities:
 *  Most importantly,  you need to keep the Codebase clean. You need to understand Copyright Rules and avoid committing any stuff that you copied & pasted from somewhere. Additionally, you must ensure, that the code in the repository always compiles
-* Being a committer is understood as a long-term privilege / obligation. It means that you are willing to maintain and evolve some part of the code (typicaly yours :-) over time.  Commit Rights can be revoked after an extended period of inactivity, though we'd prefer to not do that and keep you being committer.
+* Being a committer is understood as a long-term privilege / obligation. It means that you are willing to maintain and evolve some part of the code (typically yours :-) over time.  Commit Rights can be revoked after an extended period of inactivity, though we'd prefer to not do that and keep you being committer.
 * Commit rights will be revoked if a committer repeatedly does not adhere to coding rules and quality standards. 
  
 If you do not want to take this responsability, but still would like to offer your work, please send it via e-mail, so we can integrate it  in the repository for you.
