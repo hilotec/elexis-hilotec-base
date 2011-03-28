@@ -189,7 +189,7 @@ public class Prescription extends PersistentObject {
 	}
 	
 	/**
-	 * A listing of all adinistration periods of this prescription. This is to retrieve later
+	 * A listing of all administration periods of this prescription. This is to retrieve later
 	 * when and how the article was prescribed
 	 * @return a Map of TimeTools and Doses (Sorted by date)
 	 */
@@ -201,6 +201,7 @@ public class Prescription extends PersistentObject {
 			String[] terms=raw.split(StringTool.flattenSeparator);
 			for(String term:terms){
 				String[] flds=term.split("::");
+				if(1>flds.length) continue;
 				TimeTool date=new TimeTool(flds[0]);
 				String dose="n/a";
 				if(flds.length>1){
