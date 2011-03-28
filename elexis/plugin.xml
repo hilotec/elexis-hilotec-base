@@ -696,9 +696,6 @@
       </Rechnung>
    </extension>
    <extension
-         point="org.eclipse.ui.menus">
-   </extension>
-   <extension
          point="org.eclipse.ui.contexts">
       <context
             description="%context.description.0"
@@ -725,6 +722,16 @@
             value="50"
             variant="markup">
       </Service>
+   </extension>
+   <extension
+         point="org.eclipse.ui.services">
+      <sourceProvider
+            provider="ch.elexis.commands.sourceprovider.PatientSelectionStatus">
+         <variable
+               name="ch.elexis.commands.sourceprovider.patientSelectionActive"
+               priorityLevel="workbench">
+         </variable>
+      </sourceProvider>
    </extension>
 
 </plugin>

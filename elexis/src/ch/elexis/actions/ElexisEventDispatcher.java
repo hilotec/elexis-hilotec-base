@@ -23,9 +23,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.services.ISourceProviderService;
 
 import ch.elexis.Desk;
 import ch.elexis.ElexisException;
+import ch.elexis.commands.sourceprovider.PatientSelectionStatus;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
@@ -61,6 +64,7 @@ public final class ElexisEventDispatcher extends Job {
 	private transient boolean bStop = false;
 	private final Log log = Log.get("EventDispatcher");
 	private int listenerCount = 0;
+	private static ISourceProviderService sps = null; 
 
 	public static ElexisEventDispatcher getInstance() {
 		if (theInstance == null) {
@@ -195,15 +199,21 @@ public final class ElexisEventDispatcher extends Job {
 	public void fire(final ElexisEvent... ees) {
 		for (ElexisEvent ee : ees) {
 			if (ee.getType() == ElexisEvent.EVENT_SELECTED) {
-
-				PersistentObject po = lastSelection.get(ee.getObjectClass());
+				Class<?> clazz = ee.getObjectClass();
+				
+				if(clazz.equals(Patient.class)) {
+					if(sps == null) sps = (ISourceProviderService) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getService(ISourceProviderService.class);
+					((PatientSelectionStatus) sps.getSourceProvider(PatientSelectionStatus.PATIENTACTIVE)).setState(true);
+				}
+				
+				PersistentObject po = lastSelection.get(clazz);
 				if (po != null) {
 					if (po.equals(ee.getObject())) {
 						continue;
 					}
 				}
 
-				lastSelection.put(ee.getObjectClass(), ee.getObject());
+				lastSelection.put(clazz, ee.getObject());
 			} else if (ee.getType() == ElexisEvent.EVENT_DESELECTED) {
 				lastSelection.remove(ee.getObjectClass());
 			}
@@ -268,6 +278,11 @@ public final class ElexisEventDispatcher extends Job {
 	 */
 	public static void clearSelection(Class<?> clazz) {
 		if (clazz != null) {
+			if(clazz.equals(Patient.class)) {
+				if(sps == null) sps = (ISourceProviderService) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getService(ISourceProviderService.class);
+				((PatientSelectionStatus) sps.getSourceProvider(PatientSelectionStatus.PATIENTACTIVE)).setState(false);
+			}
+			
 			getInstance().fire(
 					new ElexisEvent(null, clazz, ElexisEvent.EVENT_DESELECTED));
 		}
