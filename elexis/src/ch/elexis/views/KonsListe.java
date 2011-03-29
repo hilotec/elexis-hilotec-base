@@ -22,15 +22,14 @@ import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
-import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListener;
 import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEventDispatcher;
-import ch.elexis.actions.KonsFilter;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.actions.KonsFilter;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
@@ -44,7 +43,7 @@ public class KonsListe extends ViewPart implements IActivationListener,
 	HistoryDisplay liste;
 	Patient actPatient;
 	ViewMenus menus;
-	private Action newKonsAction, filterAction;
+	private Action filterAction;
 	private KonsFilter filter;
 	private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(
 			Patient.class) {
@@ -99,7 +98,7 @@ public class KonsListe extends ViewPart implements IActivationListener,
 		liste.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		makeActions();
 		menus = new ViewMenus(getViewSite());
-		menus.createToolbar(newKonsAction, filterAction);
+		menus.createToolbar(GlobalActions.neueKonsAction, filterAction);
 		GlobalEventDispatcher.addActivationListener(this, this);
 	}
 
@@ -139,48 +138,6 @@ public class KonsListe extends ViewPart implements IActivationListener,
 	}
 
 	private void makeActions() {
-		newKonsAction = new Action(Messages
-				.getString("KonsListe.NewConsultation")) { //$NON-NLS-1$
-			{
-				setToolTipText(Messages
-						.getString("KonsListe.CreateNewConsultation")); //$NON-NLS-1$
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
-			}
-
-			@Override
-			public void run() {
-				if (actPatient == null) {
-					return;
-				}
-				Fall fall = (Fall) ElexisEventDispatcher
-						.getSelected(Fall.class);
-				if (fall == null) {
-
-					Konsultation k = actPatient.getLetzteKons(false);
-					if (k != null) {
-						fall = k.getFall();
-					} else {
-						if (SWTHelper
-								.askYesNo(
-										Messages
-												.getString("KonsListe.NoCaseSelectedCaption"), //$NON-NLS-1$
-										Messages
-												.getString("KonsListe.NoCaseSelectedBody"))) { //$NON-NLS-1$
-							fall = actPatient
-									.neuerFall(
-											Messages
-													.getString("KonsListe.General"), Messages.getString("KonsListe.Illness"), "KVG"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						} else {
-							return;
-						}
-					}
-				}
-				Konsultation k = fall.neueKonsultation();
-				k.setMandant(Hub.actMandant);
-				restart();
-				ElexisEventDispatcher.fireSelectionEvent(k);
-			}
-		};
 		filterAction = new Action(Messages
 				.getString("KonsListe.FilterListAction"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
 			{
