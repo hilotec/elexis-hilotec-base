@@ -103,7 +103,9 @@ public abstract class ImporterPage implements IExecutableExtension{
 			try {
 				return doImport(monitor);
 			} catch (Exception e) {
-				return new Status(Status.ERROR,"ch.elexis",1,Messages.getString("ImporterPage.importError")+e.getMessage(),e); //$NON-NLS-1$ //$NON-NLS-2$
+				return new Status(Status.ERROR, Hub.PLUGIN_ID,
+						Messages.getString("ImporterPage.importError") + " " + e.getMessage(),
+						e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 	}

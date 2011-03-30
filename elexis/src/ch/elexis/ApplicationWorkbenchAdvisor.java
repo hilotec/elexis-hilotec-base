@@ -64,15 +64,11 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		loginshell = new Shell(Desk.getDisplay());
 		Log.setAlert(loginshell);
 		try {
-			PersistentObject.connect(Hub.localCfg, loginshell);
-		} catch (PersistenceException pex) {
-			StatusManager.getManager().handle(pex.getStatus(), StatusManager.SHOW);
-			PersistentObject.disconnect();
-			WizardDialog wd = new WizardDialog(loginshell, new DBConnectWizard());
-			wd.open();
-			Hub.localCfg.flush();
-			System.exit(-1);
-		}
+			if(PersistentObject.connect(Hub.localCfg, loginshell) == false)
+				handlePersistenceException();
+			} catch (PersistenceException pe) {
+			handlePersistenceException();
+			}
 		
 		//Hub.localCfg=new SqlSettings(PersistentObject.getConnection(), "CLIENTCONFIG", "param", "value", "Station='"+NetTool.hostname+"'");
 		// look whether we have do to some work before creating the workbench
@@ -163,5 +159,23 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	public void postShutdown(){
 		Hub.postShutdown();
 		super.postShutdown();
+	}
+	
+	private void handlePersistenceException() {
+		Log.setAlertLevel(Log.ERRORS);
+		Hub.log.log(
+				Messages.ApplicationWorkbenchAdvisor_0
+						+ PersistentObject.getConnection().lastErrorString,
+				Log.ERRORS);
+		MessageDialog.openError(
+				loginshell,
+				Messages.ApplicationWorkbenchAdvisor_1,
+				Messages.ApplicationWorkbenchAdvisor_2
+						+ PersistentObject.getConnection().lastErrorString);
+		PersistentObject.disconnect();
+		WizardDialog wd = new WizardDialog(loginshell, new DBConnectWizard());
+		wd.open();
+		Hub.localCfg.flush();
+		System.exit(-1);
 	}
 }
