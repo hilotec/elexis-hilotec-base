@@ -45,6 +45,15 @@ public class Prescription extends PersistentObject {
 			"DatumBis=S:D:DateUntil",DOSAGE,REMARK,COUNT,FLD_EXTINFO);
 	}
 	
+	/**
+	 * Eine neue Verordnung erstellen. Also ein Artikel zusammen mit einer Einnahmevorschrift
+	 * verknüpft mit dem angegeben Patienten.
+	 * 
+	 * @param a Artikel
+	 * @param p Patient
+	 * @param d Dosierung
+	 * @param b Anmerkungen
+	 */
 	public Prescription(Artikel a, Patient p, String d, String b){
 		create(null);
 		String article=a.storeToString();
