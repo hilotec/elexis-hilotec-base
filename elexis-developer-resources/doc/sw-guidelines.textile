@@ -103,7 +103,7 @@ You are very welcome to provide any type of plug-in for elexis. Please adhere to
 
 h2. 1) Name of your plug-in
 
-You may name your plug-in whatever you like but we recommend that you prefix it with your name or the name of your organization.  The prefix ch.elexis is reserved for open source plug-ins under the Eclipse Public License. The name must be same as the plug-in-ID. 
+You may name your plug-in whatever you like but we recommend that you prefix it with your name or the name of your organization.  The prefix ch.elexis is reserved by Gerry Weirich and must not be used. The name must be same as the plug-in-ID. 
 
 Nota bene: Older plug-ins don't respect this convention. It is planned to change all old names to this convention in a later release. This change will be announced at least 1 month ahead of the actual date or during an official developer meeting.
 
@@ -174,14 +174,14 @@ h3. For users
 The user documentation goes into a folder doc in your plug-in.  
 
 The allowed formats are:
-* Open/LibreOffice-Writer (the extension must be .odt)
 * LaTex (the extension must be .tex)
-* HTML (the extension must be .html)
 * Textile (the extension must be .textile)
 
 For newer documentation, we use the simple Markup-Format 'Textile'. Eclipse's Mylyn plug-in can manage these files out of the box and conversion to HTML and FOP/PDF is easy.
 
-Besides this, LaTeX is still supported. If you use other formats than Textile, HTML or LaTeX, your documentation can not be generated automatically during build. Hence if your plug-in is called my-cool-plug-in, there should be at least one file called my-cool-plug-in.tex or my-cool-plug-in.textile in a folder with the name 'doc'. If so, documentation can be generated automatically.
+Both formats make it easy to compare revisions, which is not the case with binary representations.
+
+Besides this, LaTeX is still supported. If you use other formats than Textile, LaTeX, your documentation can not be generated automatically during build. Hence if your plug-in is called my-cool-plug-in, there should be at least one file called my-cool-plug-in.tex or my-cool-plug-in.textile in a folder with the name 'doc'. If so, documentation can be generated automatically.
 
 More information on the wikitext editor and the textile format can be found here:
 "http://www.peterfriese.de/getting-started-with-wikitext/":http://www.peterfriese.de/getting-started-with-wikitext/
@@ -190,6 +190,8 @@ and here:
 
 More information on TeX/LaTeX can be found here:
 "http://www.latex-project.org/":http://www.latex-project.org/
+
+The existing *.html, *.doc, *.docx files must be converted to *.tex or *.textile files on a substantial rewrite of the code.
 
 h3. For developers (aka Javadoc)
 
