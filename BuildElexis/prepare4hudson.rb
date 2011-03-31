@@ -13,8 +13,14 @@
 require 'ftools'
 require 'fileutils'
 
-EclipseVers = "helios"
+EclipseVers = "helios-SR1"
 savedDir = File.expand_path(File.dirname(__FILE__))
+
+origin=File.dirname(File.dirname(savedDir))
+# if we are in a subRepo
+InSubRepo= /elexis-base/i.match(File.basename(File.dirname(savedDir))) != nil
+deploy2=File.expand_path(File.dirname(savedDir))
+deploy2=File.dirname(deploy2) if InSubRepo
 searchDir = Dir.pwd
 while true
   ld = "#{File.dirname(searchDir)}/downloads"
@@ -84,22 +90,30 @@ else
 	system(cmd)
 end
 
-origin=File.dirname(File.dirname(savedDir))
 to   = "#{savedDir}/local.properties"
 properties    = File.open(to, "w+")
 properties.puts("skipPlugins=archie-patientstatistik,Statistics,StatisticsFragmentExample,"+
 	"hilotec-pluginstatistiken,elexis-buchhaltung-basis,hilotec-messwerte,"+
 	"marlovits-addressSearch,marlovits-vornamen,marlovits-plz,"+
 	"elexis-notes,elexis-connect-cobasmira,ch.elexis.docmanager.couchdb,ch.elexis.docmanager.couchdb_test,"+
-	"elexis-regiomed-estudio,elexis-impfplan,elexis-haftnotizen,elexis-connect-mythic,elexis-order-medicom-pharma,global-inbox")
+	"elexis-regiomed-estudio,elexis-impfplan,elexis-haftnotizen,elexis-connect-mythic,elexis-order-medicom-pharma,global-inbox"+
+	",ch.elexis_test,ch.rgw.utility_test,at.medevit.medelexis.core.test.feature,medshare-licence-generator"+
+	",at.medevit.medelexis.ui.statushandler.binding,at.medevit.medelexis.ui.statushandler"+
+        ",ch.shenzi.arztleistung,medelexis-support-service")
 properties.puts("base=#{origin}")
 properties.puts("hg=hg")
 properties.puts("repositories=#{origin}")
 properties.puts("rsc=#{savedDir}/rsc")
 properties.puts("platform-runtime=#{platformRuntime}/eclipse")
-properties.puts("output=#{File.expand_path(File.dirname(savedDir))}/deploy")
-# properties.puts("unplugged=true")
+properties.puts("output=#{deploy2}/deploy")
+properties.puts('# unplugged=true')
+properties.puts('texify=texi2pdf')
+properties.puts('texifyArgs=--silent')
+properties.puts('')
+properties.puts('')
 Dir.chdir("#{savedDir}/..")
+Dir.chdir(deploy2)
+puts Dir.pwd
 if !File.directory?("archie")
-	system("svn --quiet checkout http://archie.googlecode.com/svn/archie/ch.unibe.iam.scg.archie/branches/elexis-2.1");
+	system("svn --quiet checkout http://archie.googlecode.com/svn/archie/ch.unibe.iam.scg.archie/branches/elexis-2.1 archie");
 end
