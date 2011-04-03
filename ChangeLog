@@ -1,0 +1,77 @@
+Offene Probleme, welche bis zum rc1 (29. April) gelöst werden sollten:
+- Galexis wird nicht unterstützt (Library-Problem)
+- Changeset 4571 by Tony PatientenListeView initalizing optimized. Works now also when View is visible at startup. 
+- UnitTest von trunk sind noch nicht migriert
+- WindowTester läuft noch nicht (runFromScratch)
+- SmokeTest nicht klar definiert
+- Feature #48: Laboritems zusammenfassen (Dokumentation muss ergänzt werden)
+
+Changelog für 2.1.5-rc0
+
+Diverses:
+Michael Imhof: "NullPointer abgefangen" from Trunk (Platzhalter/ElexisEvent)
+Tony Schaller: Agenda DataAccessor implementiert für Platzhalter Termin.BeiWem 
+Dani Lutz:     Changing consultation's date: notify listeners about change
+Michael Imhof: BugFix: Document-Typ fehlt in Laborprefs-Liste 
+Michael Imhof: Typ=DOCUMENT added to LaborPrefs
+Gerry Weirich: Article counter 
+
+Redmine Tickets:
+-  Fehler #2: Pendenzen SQL-Statement
+  (Optimierungen Reminders, da Suche mit der Zeit extrem langsam wurde)
+- Fehler #15: Adress-Suche geht nicht mehr
+  Korrigert die Adress-Suche (ch.medshare.elexis-adresssuche)
+- Fehler #32: Patientennummer in Patienten-View
+  In der Patientenview ist es möglich, sich bei der Auswahl der Patienten folgende vier Angaben 
+  des Patienten zeigen zu lassen:
+  - Name
+  - Vorname
+  - Geburtsdatum
+  - Patientennummer
+  Die Einstellungen können unter Datei => Einstellungen => Anwender => Ansicht eingestellt werden. 
+  Die View oder die Einstellungsseite wurde so anpasst, dass die gewünschten Änderungen 
+  beim Speichern übernommen werden.
+- Fehler #33: negativ Beträge in der Buchhaltung
+  In der Elexis-Buchhaltung ist es von Zeit zu Zeit, wenn Patienten aus Versehen zu viel Geld überweisen, 
+  der Fall, dass der zuviel bezahlte Betrag zurückerstattet werden muss, was dazu führt, dass 
+  in Elexis ein negativer Betrag erfasst werden muss.
+  Bis anhin hatte das funktioniert, seit dem 31.12.2010 ist dies nicht mehr der Fall.
+- Fehler #35: Konstexte verschwinden
+  Diverse Fehler korrigiert, v.a. bei Problemen mit der Datenbankverbindung.
+  (Sporadische Problem, schwierig einzugrenzen)
+- Fehler #37: Termine-View
+  Flickt Java Null-Pointer-Exception
+- Fehler #57: ICPC Codes einspielen
+  Fehler bei Misslingen eines elexis-updates abgefangen. Feld synonyms fehlte.
+- Fehler #62: Platzhalter Fall.BetriebsNummer
+  seit dem letzten Update wird der Platzhalter 'Fall.BetriebsNummer' welcher in der Vorlage 
+  'Tarmedrechnung_S1' benötigt wird, nicht mehr korrekt befüllt und das System meldet beim 
+  Rechnungsdruck einen Fehler und bricht denselben ab.
+- Fehler #63: TarmedLoader geht nicht mehr
+- Fehler #66: java.lang.NumberFormatException
+  Der Fehler entsteht, weil die Fixmedikationsanzeige für die Berechnung der Tageskosten
+  versucht, Brüche zu analysieren, indem bei einem Ausdruck wie 1/2 (drei Zeichen) Zähler
+  und Nenner separat mit Integer.parseInt geparsed werden. 
+  Das Zeichen 1/2 (Ein Zeichen) wird bisher nicht als Zahl erkannt.
+  Wenn ein Ausdruck nicht geparsed werden kann, zeigt die Fixmedikationsanzeige
+  die Tageskosten nicht genau an, sondern schreibt etwas wie ">2.50". Das ist also nicht besonders kritisch.
+  Man kann sowieso nicht alle Möglichkeiten abfangen, mit der Ärzte die Tagesdosis eintragen...
+
+- Fehler #68: java.lang.ArrayIndexOutOfBoundsException
+  Bei Verschreibungen
+- Fehler #75: Verschwindende Einträge
+  Problem kann mit folgenden Schritten nachvollzogen werden, die Views Konsultation und Konsultationen müssen offen sein.
+   1. Selektion eines Patienten
+   2. Erstellen einer Konsultation mittels Konsultation/grüner Button "Neue Konsultation erstellen"
+   3. Wechseln des selektierten Patienten
+   4. Erstellen einer Konsultation mittels Konsultationen/grüner Button "Neue Konsultation erstellen"
+  Konsultationseintrag wird nun bei vorherig selektiertem Patient erstellt.
+- Fehler #76: java.lang.ArrayIndexOutOfBoundsException: -1
+  Beim Löschen einer Konsultation
+- Feature #80: Einführung von sourceProvidern
+  Eingeführt, aber noch nicht überall umgesetzt.
+- Unterstützung #51: Release-Management
+  neu: sw-guidelines.textile, mercurial-how2.textile
+  entfernte: hsql-adapter
+- Unterstützung #74: Integrationstest
+  UnitTest für Elexis-Core laufen (siehe https://jenkins.medelexis.ch/jenkins/job/core.test_2.1.5.x)
