@@ -1,6 +1,7 @@
 package ch.elexis.data;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.util.List;
 
@@ -9,18 +10,23 @@ import org.junit.Before;
 import org.junit.Test;
 
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.TimeTool;
 
 public class Test_LabItem extends AbstractPersistentObjectTest {
 
 	private JdbcLink link;
 	private Organisation org;
 	
+	private Patient formulaPat;
+	private LabResult formulaResult;
+	private LabItem formulaItem;
+	
 	private static final String REF_ITEM_KUERZEL = "kuerzel"; 
 	private static final String REF_ITEM_NAME = "testname"; 
 	private static final String REF_ITEM_UNIT = "mg/dl";
 	private static final String REF_ITEM_REFM = "0-1";
 	private static final String REF_ITEM_REFW = "0-2";
-	private static final String REF_ITEM_GROUP = "gruppe";	
+	private static final String REF_ITEM_GROUP = "G gruppe";	
 	
 	
 	@Before
@@ -127,5 +133,64 @@ public class Test_LabItem extends AbstractPersistentObjectTest {
 		assertEquals(1, items.size());
 		LabItem loc = items.get(0);
 		assertEquals(org, loc.getLabor());
+	}
+	
+	@Test
+	public void testGetLabel() {
+		List<LabItem> items = LabItem.getLabItems();
+		assertEquals(1, items.size());
+		LabItem loc = items.get(0);
+		assertNotNull(loc.getLabel());
+	}
+	
+	@Test
+	public void testGetShortLabel() {
+		List<LabItem> items = LabItem.getLabItems();
+		assertEquals(1, items.size());
+		LabItem loc = items.get(0);
+		assertNotNull(loc.getShortLabel());
+	}
+	
+	@Test
+	public void testGetTyp() {
+		List<LabItem> items = LabItem.getLabItems();
+		assertEquals(1, items.size());
+		LabItem loc = items.get(0);
+		assertEquals(LabItem.typ.NUMERIC, loc.getTyp());
+	}
+	
+	@Test
+	public void testSetFormula() {
+		createFormulaEnv();
+		assertEquals("G_1*2", formulaItem.getFormula());
+	}
+	
+	@Test
+	public void testEvaluate() {
+		createFormulaEnv();
+		// a null pointer will be thrown when looking for the script interpreter
+		// TODO write a plugin test including the interpreter
+		try {
+			formulaItem.evaluate(formulaPat, new TimeTool("01.01.00"));
+		} catch (NullPointerException e) {
+			
+		}
+	}
+	
+	private void createFormulaEnv() {
+		// create a second lab item to select
+		LabItem item = new LabItem("kuerzel1", "testname1", org,
+				"0-1", "0-2", "mg/dl",
+				LabItem.typ.NUMERIC, "G gruppe", "1");
+		// create a lab item made up by a formula
+		formulaItem = new LabItem("formula", "formulatest", org,
+				"0-2", "0-4", "mg/dl",
+				LabItem.typ.FORMULA, "G gruppe", "2");
+
+		formulaPat = new Patient("testName", "testVorname", "01.01.79", "m");
+		
+		formulaResult = new LabResult(formulaPat, new TimeTool("01.01.00"), item, "0.5", "comment");
+		
+		formulaItem.setFormula("G_1*2");
 	}
 }
