@@ -21,6 +21,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	ch.elexis.data.Test_PersistentObject.class,
+	ch.elexis.data.Test_LabItem.class,
 	ch.elexis.data.Test_DBImage.class,
 	ch.elexis.data.Test_Query.class})
 public class AllTests {
