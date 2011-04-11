@@ -375,22 +375,22 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 	 */
 	public static List<LabItem> getLabItems(String laborId, String shortDesc, String refM, String refW, String unit) {
 		Query<LabItem> qbe = new Query<LabItem>(LabItem.class);
-		if(laborId != null) {
+		if(laborId != null && laborId.length() > 0) {
 			qbe.add("LaborID", "=", laborId); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if(shortDesc != null) {
+		if(shortDesc != null && shortDesc.length() > 0) {
 			// none case sensitive matching for kuerzel
 			qbe.add("kuerzel", "=", shortDesc, true); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if(refM != null) {
+		if(refM != null && refM.length() > 0) {
 			// none case sensitive matching for ref male
 			qbe.add("RefMann", "=", refM, true); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if(refW != null) {
+		if(refW != null && refW.length() > 0) {
 			// none case sensitive matching for ref female
 			qbe.add("RefFrauOrTx", "=", refW, true); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		if(unit != null) {
+		if(unit != null && unit.length() > 0) {
 			// none case sensitive matching for unit
 			qbe.add("Einheit", "=", unit, true); //$NON-NLS-1$ //$NON-NLS-2$
 		}
