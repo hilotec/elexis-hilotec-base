@@ -55,7 +55,8 @@ public class FallDetailView extends ViewPart implements ISaveablePart2, IActivat
 			if (selectedFall == null
 					|| !selectedFall.getPatient().equals(patient)) {
 				
-				Konsultation letzteKons = patient.getLetzteKons(false);
+				Konsultation letzteKons = null;
+				if(patient != null)  letzteKons = patient.getLetzteKons(false);
 				if (letzteKons != null) {
 					fdb.setFall(letzteKons.getFall());
 				} else {
