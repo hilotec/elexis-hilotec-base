@@ -13,6 +13,7 @@
 
 package ch.elexis.views;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -65,6 +66,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 	private Action briefNeuAction, briefLadenAction, editNameAction;
 	private Action deleteAction;
 	private ViewMenus menus;
+	private ArrayList<sPage> pages = new ArrayList<sPage>();
 	CTabFolder ctab;
 
 	// private ViewMenus menu;
@@ -106,6 +108,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 			CTabItem ct = new CTabItem(ctab, SWT.NONE);
 			ct.setText(cat);
 			sPage page = new sPage(ctab, cat);
+			pages.add(page);
 			menus.createViewerContextMenu(page.cv.getViewerWidget(),
 					editNameAction, deleteAction);
 			ct.setData(page.cv);
@@ -132,11 +135,9 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 	public void dispose() {
 		ElexisEventDispatcher.getInstance().removeListeners(this);
 		GlobalEventDispatcher.removeActivationListener(this, this);
-		for (CTabItem it : ctab.getItems()) {
-			CommonViewer cv = (CommonViewer) it.getData();
-			if (!cv.getViewerWidget().getControl().isDisposed()) {
-				cv.getConfigurer().getContentProvider().stopListening();
-			}
+
+		for(sPage page : pages) {
+			page.getCommonViewer().getConfigurer().getContentProvider().stopListening();
 		}
 	}
 
@@ -169,6 +170,10 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener,
 		private final CommonViewer cv;
 		private final ViewerConfigurer vc;
 
+		public CommonViewer getCommonViewer() {
+			return cv;
+		}
+		
 		sPage(final Composite parent, final String cat) {
 			super(parent, SWT.NONE);
 			setLayout(new GridLayout());
