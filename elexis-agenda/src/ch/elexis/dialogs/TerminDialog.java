@@ -365,8 +365,10 @@ public class TerminDialog extends TitleAreaDialog {
 						"Bitte suchen Sie aus, wer den Termin hat",Kontakt.DEFAULT_SORT);
 				if (ksl.open() == Dialog.OK) {
 					actKontakt = (Kontakt) ksl.getSelection();
-					tName.setText(actKontakt.getLabel());
-					tNr.setText(actKontakt.get(Kontakt.FLD_SHORT_LABEL)); 
+					if(actKontakt != null) {
+						tName.setText(actKontakt.getLabel());
+						tNr.setText(actKontakt.get(Kontakt.FLD_SHORT_LABEL)); 
+					}
 					/*
 					if (actPlannable == null) {
 						actPlannable = new Termin(agenda.getActDate()
