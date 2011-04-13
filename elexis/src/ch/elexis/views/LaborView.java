@@ -516,7 +516,7 @@ public class LaborView extends ViewPart implements IActivationListener,
 
 	private void cursorDown() {
 		int row = table.getSelectionIndex();
-		if (row >= rows.length) {
+		if (row == rows.length-1) {
 			return;
 		}
 		cursor.setSelection(row + 1, cursor.getColumn());
@@ -706,7 +706,9 @@ public class LaborView extends ViewPart implements IActivationListener,
 		hLabItems = new Hashtable<String, Integer>(50, 0.75f);
 		ArrayList<TableItem> lTI = new ArrayList<TableItem>(50);
 		int line = 0;
+		int iteration = 0;
 		for (String g : lGroupNames) {
+			iteration++;
 			List<LabItem> groupItems = hGroups.get(g);
 			if (groupItems == null) {
 				log.log("Fehler bei Laborgruppe " + g, Log.ERRORS); //$NON-NLS-1$
@@ -750,11 +752,13 @@ public class LaborView extends ViewPart implements IActivationListener,
 				}
 				hLabItems.put(it.getId(), line++);
 			}
-			TableItem tiSpace = new TableItem(table, SWT.NONE);
-			tiSpace.setText(" "); //$NON-NLS-1$
-			tiSpace.setData(KEY_TEXT, " "); //$NON-NLS-1$
-			lTI.add(tiSpace);
-			line += 1;
+			if(iteration < lGroupNames.size()) {
+				TableItem tiSpace = new TableItem(table, SWT.NONE);
+				tiSpace.setText(" "); //$NON-NLS-1$
+				tiSpace.setData(KEY_TEXT, " "); //$NON-NLS-1$
+				lTI.add(tiSpace);
+				line += 1;
+			}
 		}
 		rows = lTI.toArray(new TableItem[0]);
 	}
