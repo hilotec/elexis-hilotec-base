@@ -214,8 +214,15 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener,
 				int i = cbFall.getSelectionIndex();
 				if (i > -1 && i < faelle.length) {
 					Fall nFall = faelle[i];
-					Fall actFall = actKons.getFall();
-					if (!nFall.getId().equals(actFall.getId())) {
+
+					Fall actFall = null;
+					String fallId = "";
+					if(actKons != null) {
+						actFall = actKons.getFall();
+						fallId = actFall.getId();
+					}
+					
+					if (!nFall.getId().equals(fallId)) {
 						if (!nFall.isOpen()) {
 							SWTHelper.alert(
 									Messages.getString("KonsDetailView.CaseClosedCaption"), //$NON-NLS-1$
