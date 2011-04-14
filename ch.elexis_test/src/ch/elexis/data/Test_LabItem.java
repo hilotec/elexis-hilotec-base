@@ -1,7 +1,6 @@
 package ch.elexis.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 import java.util.List;
 
@@ -9,6 +8,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.elexis.ElexisException;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
 
@@ -174,6 +174,8 @@ public class Test_LabItem extends AbstractPersistentObjectTest {
 			formulaItem.evaluate(formulaPat, new TimeTool("01.01.00"));
 		} catch (NullPointerException e) {
 			
+		} catch (ElexisException e) {
+			fail();
 		}
 	}
 	
