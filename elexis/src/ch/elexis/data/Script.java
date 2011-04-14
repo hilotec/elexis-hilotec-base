@@ -51,11 +51,16 @@ public class Script extends NamedBlob2 {
 	public static final String SCRIPT_MARKER = "SCRIPT:";
 	private Interpreter interpreter = null;
 
+	/**
+	 * 
+	 * @param name
+	 * @return 
+	 * @throws ElexisException if the script interpreter can not successfully be loaded or is not available.
+	 */
 	private static Interpreter getInterpreter(String name)
 			throws ElexisException {
-		if (name == null) {
-			return getInterpreter(INTERPRETER_BEANSHELL);
-		}
+		if (name == null) name = INTERPRETER_BEANSHELL;
+
 		List<IConfigurationElement> scripters = Extensions
 				.getExtensions("ch.elexis.scripting");
 		for (IConfigurationElement scripter : scripters) {
@@ -71,8 +76,8 @@ public class Script extends NamedBlob2 {
 				}
 			}
 		}
-		throw new ElexisException(Script.class, "interpreter not installed "
-				+ name, ElexisException.EE_NOT_SUPPORTED);
+		throw new ElexisException(Script.class, name + " interpreter plug-in not available", 
+			ElexisException.EE_NOT_SUPPORTED);
 
 	}
 

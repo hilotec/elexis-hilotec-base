@@ -26,6 +26,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -61,12 +63,14 @@ import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.output.Format;
 import org.jdom.output.XMLOutputter;
 
 import ch.elexis.Desk;
+import ch.elexis.ElexisException;
 import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
@@ -97,19 +101,16 @@ import ch.rgw.tools.TimeTool;
 /**
  * Anzeige von Laboritems und Anzeige und Eingabemöglichkeit von Laborwerten.
  * 
- * Der Algorithmus geht so: Zuerst werden alle Laboritems eingesammelt und
- * gemäss ihren Gruppen und Prioritäten sortiert (nur beim create) Beim Einlesen
- * eines neuen Patienten werden zunächst alle Daten gesammelt, an denen für
- * diesen Patienten Laborwerte vorliegen. Diese werden nach Alter sortiert und
- * mit den jeweiligen Laborwerten zusammengefasst. Jeweils NUMCOLUMNS Daten
- * werden auf einer Anzeigeseite angezeigt. Der Anwender kann auf den Seiten
- * blättern, aber es werden alle Laborwerte des aktuellen Patienten im Speicher
- * gehalten.
+ * Der Algorithmus geht so: Zuerst werden alle Laboritems eingesammelt und gemäss ihren Gruppen und
+ * Prioritäten sortiert (nur beim create) Beim Einlesen eines neuen Patienten werden zunächst alle
+ * Daten gesammelt, an denen für diesen Patienten Laborwerte vorliegen. Diese werden nach Alter
+ * sortiert und mit den jeweiligen Laborwerten zusammengefasst. Jeweils NUMCOLUMNS Daten werden auf
+ * einer Anzeigeseite angezeigt. Der Anwender kann auf den Seiten blättern, aber es werden alle
+ * Laborwerte des aktuellen Patienten im Speicher gehalten.
  * 
  * @author gerry
  */
-public class LaborView extends ViewPart implements IActivationListener,
-		ISaveablePart2 {
+public class LaborView extends ViewPart implements IActivationListener, ISaveablePart2 {
 	private static final String KEY_TEXT = "Text"; //$NON-NLS-1$
 	private static final String PATTERN_DECIMAL = "[0-9\\.]+"; //$NON-NLS-1$
 	private static final String KEY_VALUES = "Values"; //$NON-NLS-1$
@@ -117,7 +118,7 @@ public class LaborView extends ViewPart implements IActivationListener,
 	public static final String ID = "ch.elexis.Labor"; //$NON-NLS-1$
 	private static final String ICON = "labor_view"; //$NON-NLS-1$
 	private static Log log = Log.get("LaborView"); //$NON-NLS-1$
-
+	
 	final static int NUMCOLUMNS = 7; // Pro Seite angezeigte Laborspalten
 	final static int COL_OFFSET = 2; // Für Information benötigte Spalten
 	final static Color COL_PATHOLOGIC = Desk.getColor(Desk.COL_RED);
@@ -127,14 +128,14 @@ public class LaborView extends ViewPart implements IActivationListener,
 	int firstColumn, lastColumn; // Erste und letzte Datumspalte der
 	// aktuellen Seite
 	Patient actPatient; // Aktuell ausgewählter Patient
-
+	
 	/* Tabelle */
 	Table table;
 	TableColumn[] columns;
 	TableItem[] rows;
 	TableCursor cursor;
 	ControlEditor editor;
-
+	
 	private Hashtable<String, List<LabItem>> hGroups; // Gruppen von
 	// Laboritems
 	private Hashtable<String, Integer> hLabItems; // Mapping von Laboritems
@@ -143,59 +144,57 @@ public class LaborView extends ViewPart implements IActivationListener,
 	// List<LabResult> lResults;
 	String[] sDaten; // Sortierte Liste aller Daten von Laborresultaten
 	Hashtable<String, Integer> hDaten; // Mapping von Datum auf Tabellenspalten
-
-	private Action fwdAction, backAction, printAction, importAction, xmlAction,
-			newAction, setStateAction, refreshAction;
+	
+	private Action fwdAction, backAction, printAction, importAction, xmlAction, newAction,
+			setStateAction, refreshAction;
 	private ViewMenus menu;
 	private final FormToolkit tk = Desk.getToolkit();
 	private Form form;
 	// Formula handling
-	private final static Pattern varsPattern = Pattern
-			.compile("[a-zA-Z0-9]+_[0-9]+"); //$NON-NLS-1$
-	private final HashMap<String, List<LabItem>> formulaRelations = new HashMap<String, List<LabItem>>();
-	private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(
-			Patient.class) {
-		public void runInUi(ElexisEvent ev) {
+	private final static Pattern varsPattern = Pattern.compile("[a-zA-Z0-9]+_[0-9]+"); //$NON-NLS-1$
+	private final HashMap<String, List<LabItem>> formulaRelations =
+		new HashMap<String, List<LabItem>>();
+	private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
+		public void runInUi(ElexisEvent ev){
 			selectPatient((Patient) ev.getObject());
 		}
 	};
-
+	
 	private ElexisEventListener eeli_labitem = new ElexisEventListener() {
 		private final ElexisEvent eetmpl = new ElexisEvent(null, LabItem.class,
-				ElexisEvent.EVENT_RELOAD);
-
-		public ElexisEvent getElexisEventFilter() {
+			ElexisEvent.EVENT_RELOAD);
+		
+		public ElexisEvent getElexisEventFilter(){
 			return eetmpl;
 		}
-
-		public void catchElexisEvent(ElexisEvent ev) {
+		
+		public void catchElexisEvent(ElexisEvent ev){
 			Desk.getDisplay().asyncExec(new Runnable() {
-				public void run() {
+				public void run(){
 					rebuild();
 				}
 			});
 		}
 	};
-
+	
 	@Override
-	public void createPartControl(final Composite parent) {
+	public void createPartControl(final Composite parent){
 		setTitleImage(Desk.getImage(ICON));
 		parent.setLayout(new GridLayout());
 		form = tk.createForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite body = form.getBody();
 		body.setLayout(new GridLayout());
-
-		table = new Table(body, SWT.FULL_SELECTION | SWT.LEFT | SWT.V_SCROLL
-				| SWT.H_SCROLL);
+		
+		table = new Table(body, SWT.FULL_SELECTION | SWT.LEFT | SWT.V_SCROLL | SWT.H_SCROLL);
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
-
+		
 		table.addListener(SWT.PaintItem, new Listener() {
-
-			private void paintCell(final String text, final Event event,
-					final Color foregnd, final Color backgnd) {
+			
+			private void paintCell(final String text, final Event event, final Color foregnd,
+				final Color backgnd){
 				Point size = event.gc.textExtent(text);
 				int offset1 = Math.max(0, (event.width - size.x) / 2);
 				int offset2 = Math.max(0, (event.height - size.y) / 2);
@@ -203,11 +202,10 @@ public class LaborView extends ViewPart implements IActivationListener,
 				gc.setForeground(backgnd);
 				gc.fillRectangle(event.x, event.y, event.width, event.height);
 				gc.setForeground(foregnd);
-				event.gc.drawText(text, event.x + offset1, event.y + offset2,
-						true);
+				event.gc.drawText(text, event.x + offset1, event.y + offset2, true);
 			}
-
-			public void handleEvent(final Event event) {
+			
+			public void handleEvent(final Event event){
 				TableItem item = (TableItem) event.item;
 				String text = item.getText(event.index);
 				LabItem it = (LabItem) item.getData(KEY_ITEM);
@@ -219,47 +217,45 @@ public class LaborView extends ViewPart implements IActivationListener,
 							LabResult lr = lrs[screenIdx];
 							if (lr != null) {
 								if (lr.isFlag(LabResult.PATHOLOGIC)) {
-									paintCell(text, event, COL_PATHOLOGIC,
-											COL_BACKGND);
+									paintCell(text, event, COL_PATHOLOGIC, COL_BACKGND);
 								}
 								if (lr.getComment().length() > 0) {
-									paintCell(text, event, COL_REMARK,
-											COL_BACKGND);
+									paintCell(text, event, COL_REMARK, COL_BACKGND);
 								}
 							}
 						}
 					}
 				}
 			}
-
+			
 		});
-
+		
 		cursor = new TableCursor(table, SWT.NONE);
 		editor = new ControlEditor(cursor);
 		editor.grabHorizontal = true;
 		editor.grabVertical = true;
-
+		
 		/*
-		 * Tastatursteuerung für die Tabelle: Druck auf Eingabetaste lässt die
-		 * Zelle editieren, sofern sie auf einem editierbaren Feld ist. Wenn sie
-		 * nicht auf einem editierbaren Feld ist, wird der stattdessen Cursor
-		 * eine Zeile nach unten bewegt. Druck auf irgendeine Zahl- oder
-		 * Buchstabentaste lässt die Zelle editieren, wenn sie editierbar ist.
-		 * Editierbar ist eine Zelle dann, wenn sie sich a) in einer Spalte mit
-		 * einem Datum im Kopf befindet, und b) sich in einer Zeile mit einem
-		 * LaborItem am Anfang befindet.
+		 * Tastatursteuerung für die Tabelle: Druck auf Eingabetaste lässt die Zelle editieren,
+		 * sofern sie auf einem editierbaren Feld ist. Wenn sie nicht auf einem editierbaren Feld
+		 * ist, wird der stattdessen Cursor eine Zeile nach unten bewegt. Druck auf irgendeine Zahl-
+		 * oder Buchstabentaste lässt die Zelle editieren, wenn sie editierbar ist. Editierbar ist
+		 * eine Zelle dann, wenn sie sich a) in einer Spalte mit einem Datum im Kopf befindet, und
+		 * b) sich in einer Zeile mit einem LaborItem am Anfang befindet.
 		 */
 		cursor.addSelectionListener(new SelectionAdapter() {
 			// Tabellenauswahl soll dem Cursor folgen
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				table.setSelection(new TableItem[] { cursor.getRow() });
+			public void widgetSelected(final SelectionEvent e){
+				table.setSelection(new TableItem[] {
+					cursor.getRow()
+				});
 			}
-
+			
 			// Eingabetaste
 			@Override
-			public void widgetDefaultSelected(final SelectionEvent e) {
-
+			public void widgetDefaultSelected(final SelectionEvent e){
+				
 				TableItem row = cursor.getRow();
 				LabItem li = (LabItem) row.getData(KEY_ITEM);
 				if (li == null) {
@@ -270,13 +266,13 @@ public class LaborView extends ViewPart implements IActivationListener,
 				if (columns[column].getText().matches(PATTERN_DECIMAL)) {
 					doEdit(row.getText(column));
 				}
-
+				
 			}
 		});
 		// Sonstige Taste
 		cursor.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyPressed(final KeyEvent e) {
+			public void keyPressed(final KeyEvent e){
 				if (e.character == SWT.DEL) {
 					return;
 				}
@@ -296,20 +292,18 @@ public class LaborView extends ViewPart implements IActivationListener,
 			}
 		});
 		cursor.addMouseListener(new MouseAdapter() {
-
+			
 			@Override
-			public void mouseDoubleClick(final MouseEvent e) {
+			public void mouseDoubleClick(final MouseEvent e){
 				LabResult lr = actResult();
 				if (lr != null) {
 					LabItem li = lr.getItem();
-					if (li.getTyp().equals(LabItem.typ.TEXT)
-							|| (lr.getComment().length() > 0)) {
-						new DisplayTextDialog(
-								getViewSite().getShell(),
-								Messages.getString("LaborView.textResultTitle"), li.getName(), lr.getComment()).open(); //$NON-NLS-1$
+					if (li.getTyp().equals(LabItem.typ.TEXT) || (lr.getComment().length() > 0)) {
+						new DisplayTextDialog(getViewSite().getShell(), Messages
+							.getString("LaborView.textResultTitle"), li.getName(), lr.getComment()).open(); //$NON-NLS-1$
 					} else if (li.getTyp().equals(LabItem.typ.DOCUMENT)) {
 						Patient patient = ElexisEventDispatcher.getSelectedPatient();
-						if (patient !=null) {
+						if (patient != null) {
 							Query<LabResult> labResultQuery = new Query<LabResult>(LabResult.class);
 							labResultQuery.add(LabResult.PATIENT_ID, Query.EQUALS, patient.getId());
 							labResultQuery.add(LabResult.DATE, Query.EQUALS, lr.getDate());
@@ -324,18 +318,18 @@ public class LaborView extends ViewPart implements IActivationListener,
 				}
 				super.mouseDoubleClick(e);
 			}
-
+			
 		});
-
+		
 		makeActions();
 		menu = new ViewMenus(getViewSite());
-		menu.createMenu(newAction, backAction, fwdAction, printAction,
-				importAction, xmlAction);
-		// Orders		
-		final LaborOrderPulldownMenuCreator menuCreator = new LaborOrderPulldownMenuCreator(parent.getShell());
+		menu.createMenu(newAction, backAction, fwdAction, printAction, importAction, xmlAction);
+		// Orders
+		final LaborOrderPulldownMenuCreator menuCreator =
+			new LaborOrderPulldownMenuCreator(parent.getShell());
 		if (menuCreator.getSelected() != null) {
 			IAction dropDownAction = menuCreator.getAction();
-				
+			
 			IActionBars actionBars = getViewSite().getActionBars();
 			IToolBarManager toolbar = actionBars.getToolBarManager();
 			
@@ -348,9 +342,10 @@ public class LaborView extends ViewPart implements IActivationListener,
 		}
 		// Importers
 		IToolBarManager tm = getViewSite().getActionBars().getToolBarManager();
-		List<IAction> importers = Extensions
-				.getClasses(Extensions.getExtensions("ch.elexis.LaborDatenImport"), "ToolbarAction", //$NON-NLS-1$ //$NON-NLS-2$
-						false);
+		List<IAction> importers =
+			Extensions.getClasses(
+				Extensions.getExtensions("ch.elexis.LaborDatenImport"), "ToolbarAction", //$NON-NLS-1$ //$NON-NLS-2$
+				false);
 		for (IAction ac : importers) {
 			tm.add(ac);
 		}
@@ -367,7 +362,7 @@ public class LaborView extends ViewPart implements IActivationListener,
 		Menu menu = mgr.createContextMenu(cursor);
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(final IMenuManager manager) {
+			public void menuAboutToShow(final IMenuManager manager){
 				LabResult lr = getSelectedResult();
 				if (lr != null) {
 					LabItem li = lr.getItem();
@@ -376,7 +371,7 @@ public class LaborView extends ViewPart implements IActivationListener,
 						setStateAction.setChecked(lr.isFlag(LabResult.PATHOLOGIC));
 					}
 				}
-
+				
 			}
 		});
 		cursor.setMenu(menu);
@@ -384,14 +379,14 @@ public class LaborView extends ViewPart implements IActivationListener,
 		rebuild();
 		GlobalEventDispatcher.addActivationListener(this, this);
 	}
-
+	
 	@Override
-	public void dispose() {
+	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		super.dispose();
 	}
-
-	public void rebuild() {
+	
+	public void rebuild(){
 		actPage = 0;
 		hDaten = new Hashtable<String, Integer>();
 		hGroups = new Hashtable<String, List<LabItem>>(50, 0.7f);
@@ -404,8 +399,8 @@ public class LaborView extends ViewPart implements IActivationListener,
 		loadValues();
 		showBusy(false);
 	}
-
-	LabResult actResult() {
+	
+	LabResult actResult(){
 		TableItem it = cursor.getRow();
 		int idx = cursor.getColumn();
 		LabItem lit = (LabItem) it.getData(KEY_ITEM);
@@ -422,19 +417,18 @@ public class LaborView extends ViewPart implements IActivationListener,
 		}
 		return null;
 	}
-
+	
 	/*
-	 * Tabellenzelle editieren. CR oder Pfeil unten verlässt die Zelle mit
-	 * Speichern und geht zur nächst unteren Zelle. Esc verlässt die Zelle ohne
-	 * speichern
+	 * Tabellenzelle editieren. CR oder Pfeil unten verlässt die Zelle mit Speichern und geht zur
+	 * nächst unteren Zelle. Esc verlässt die Zelle ohne speichern
 	 */
-	private void doEdit(final String inp) {
+	private void doEdit(final String inp){
 		final Text text = new Text(cursor, SWT.NONE);
 		text.setText(inp);
 		text.setSelection(inp.length());
 		text.addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyPressed(final KeyEvent e) {
+			public void keyPressed(final KeyEvent e){
 				if ((e.character == SWT.CR) || (e.keyCode == SWT.ARROW_DOWN)) {
 					TableItem it = cursor.getRow();
 					int idx = cursor.getColumn(); // Spalte der Anzeige
@@ -455,8 +449,7 @@ public class LaborView extends ViewPart implements IActivationListener,
 						String t = text.getText();
 						if (lr == null) {
 							if (t.length() > 0) {
-								lr = new LabResult(actPatient, ttDaten, lit,
-										text.getText(), ""); //$NON-NLS-1$
+								lr = new LabResult(actPatient, ttDaten, lit, text.getText(), ""); //$NON-NLS-1$
 								lrs[idx - COL_OFFSET] = lr;
 							}
 						} else {
@@ -467,36 +460,40 @@ public class LaborView extends ViewPart implements IActivationListener,
 							}
 						}
 						if (lr != null) {
-							List<LabItem> toCalc = formulaRelations.get(lr
-									.getItem().makeVarName());
+							List<LabItem> toCalc = formulaRelations.get(lr.getItem().makeVarName());
 							if (toCalc != null) {
 								for (LabItem litem : toCalc) {
-									String evaluated = litem.evaluate(
-											actPatient, ttDaten);
-									if (evaluated != null) {
-										LabResult artifact = LabResult
-												.getForDate(actPatient,
-														ttDaten, litem);
-										if (artifact == null) {
-											artifact = new LabResult(
-													actPatient, ttDaten, litem,
-													evaluated, ""); //$NON-NLS-1$
-										} else {
-											artifact.setResult(evaluated);
+									try {
+										String evaluated = litem.evaluate(actPatient, ttDaten);
+										if (evaluated != null) {
+											LabResult artifact =
+												LabResult.getForDate(actPatient, ttDaten, litem);
+											if (artifact == null) {
+												artifact =
+													new LabResult(actPatient, ttDaten, litem,
+														evaluated, ""); //$NON-NLS-1$
+											} else {
+												artifact.setResult(evaluated);
+											}
+											Integer row = hLabItems.get(litem.getId());
+											if (row == null) {
+												continue;
+											}
+											rows[row].setText(idx, evaluated);
+											
 										}
-										Integer row = hLabItems.get(litem
-												.getId());
-										if (row == null) {
-											continue;
-										}
-										rows[row].setText(idx, evaluated);
-
+									} catch (ElexisException ex) {
+										Status status =
+											new Status(IStatus.ERROR, Hub.PLUGIN_ID, ex
+												.getLocalizedMessage(), ex);
+										StatusManager.getManager().handle(status,
+											StatusManager.SHOW);
 									}
 								}
 							}
 						}
 					}
-
+					
 					it.setText(idx, text.getText());
 					text.dispose();
 					cursorDown();
@@ -513,10 +510,10 @@ public class LaborView extends ViewPart implements IActivationListener,
 		editor.setEditor(text);
 		text.setFocus();
 	}
-
-	private void cursorDown() {
+	
+	private void cursorDown(){
 		int row = table.getSelectionIndex();
-		if (row == rows.length-1) {
+		if (row == rows.length - 1) {
 			return;
 		}
 		cursor.setSelection(row + 1, cursor.getColumn());
@@ -526,14 +523,14 @@ public class LaborView extends ViewPart implements IActivationListener,
 			cursorDown();
 		}
 	}
-
+	
 	@Override
-	public void setFocus() {
+	public void setFocus(){
 		// TODO Automatisch erstellter Methoden-Stub
-
+		
 	}
-
-	public void selectionEvent(final PersistentObject obj) {
+	
+	public void selectionEvent(final PersistentObject obj){
 		if (obj instanceof Patient) {
 			actPatient = (Patient) obj;
 			loadValues();
@@ -544,18 +541,18 @@ public class LaborView extends ViewPart implements IActivationListener,
 				loadValues();
 			}
 		}
-
+		
 	}
-
-	private void selectPatient(Patient p) {
+	
+	private void selectPatient(Patient p){
 		actPatient = p;
 		loadValues();
 	}
-
+	
 	/*
 	 * Daten eines neuen Patienten einlesen
 	 */
-	private void loadValues() {
+	private void loadValues(){
 		hDaten.clear();
 		sDaten = null;
 		if (actPatient != null) {
@@ -564,10 +561,8 @@ public class LaborView extends ViewPart implements IActivationListener,
 			// Daten auf Index mappen
 			// Hier müssen wir ausnahmsweise direkt auf den JdbcLink zugreifen
 			Stm stm = PersistentObject.getConnection().getStatement();
-			ResultSet rs = stm
-					.query("SELECT DISTINCT Datum FROM LABORWERTE WHERE PatientID=" //$NON-NLS-1$
-							+ actPatient.getWrappedId()
-							+ " AND deleted='0' ORDER BY Datum"); //$NON-NLS-1$
+			ResultSet rs = stm.query("SELECT DISTINCT Datum FROM LABORWERTE WHERE PatientID=" //$NON-NLS-1$
+				+ actPatient.getWrappedId() + " AND deleted='0' ORDER BY Datum"); //$NON-NLS-1$
 			LinkedList<String> lDaten = new LinkedList<String>();
 			try {
 				int col = 0;
@@ -598,21 +593,21 @@ public class LaborView extends ViewPart implements IActivationListener,
 			form.setText(Messages.getString("LaborView.NoPatientSelected")); //$NON-NLS-1$
 		}
 	}
-
-	private int getLastPage() {
+	
+	private int getLastPage(){
 		return sDaten.length / NUMCOLUMNS;
 	}
-
+	
 	/*
 	 * Eine Seite mit Laborwerten (=NUMCOLUMNS Spalten) einlesen
 	 */
-	private void loadPage(final int p) {
+	private void loadPage(final int p){
 		// Zuerst prüfen, ob die angeforderte Seite gültig ist
 		if (p < 0) {
 			return;
 		}
 		actPage = p;
-
+		
 		// Dann alte Einträge löschen
 		String[] line = new String[NUMCOLUMNS + COL_OFFSET];
 		for (int i = COL_OFFSET; i < NUMCOLUMNS + COL_OFFSET; i++) {
@@ -627,21 +622,20 @@ public class LaborView extends ViewPart implements IActivationListener,
 		}
 		firstColumn = (p == 0) ? 0 : (p * (NUMCOLUMNS - 1));
 		lastColumn = firstColumn + NUMCOLUMNS - 1;
-
+		
 		// Keine Anzeigbaren Daten vorhanden?
-		if ((sDaten == null) || (sDaten.length == 0)
-				|| (sDaten.length < firstColumn)) {
+		if ((sDaten == null) || (sDaten.length == 0) || (sDaten.length < firstColumn)) {
 			loadPage(p - 1);
 			return;
 		}
-
+		
 		// Query für alle Laborwerte zwischen erstem und letztem Datum der
 		// aktuellen Seite
 		String sBegin = sDaten[firstColumn];
 		Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
 		qbe.add(LabResult.PATIENT_ID, Query.EQUALS, actPatient.getId());
 		qbe.add(LabResult.DATE, Query.GREATER_OR_EQUAL, sBegin);
-
+		
 		// int numvalid=NUMCOLUMNS; // Wieviele Spalten können tatsächlich
 		// angezeigt werden?
 		if (lastColumn < sDaten.length) {
@@ -651,7 +645,7 @@ public class LaborView extends ViewPart implements IActivationListener,
 		}
 		int numvalid = lastColumn - firstColumn + 1;
 		List<LabResult> list = qbe.execute();
-
+		
 		// Spaltenköpfe beschriften
 		TimeTool dats = new TimeTool();
 		for (int i = 0; i < numvalid; i++) {
@@ -659,7 +653,7 @@ public class LaborView extends ViewPart implements IActivationListener,
 			dats.set(dat);
 			columns[COL_OFFSET + i].setText(dats.toString(TimeTool.DATE_GER));
 		}
-
+		
 		// Laborresultate eintragen mithilfe der Mappings in hDaten und
 		// hLabItems
 		TimeTool tt = new TimeTool();
@@ -681,8 +675,8 @@ public class LaborView extends ViewPart implements IActivationListener,
 				continue;
 			}
 			if (LabItem.typ.DOCUMENT.equals(lit.getTyp())) {
-				rows[row].setText(col_display,  Messages.getString("LaborView.Open")); //$NON-NLS-1$
-			}  else {
+				rows[row].setText(col_display, Messages.getString("LaborView.Open")); //$NON-NLS-1$
+			} else {
 				rows[row].setText(col_display, lr.getResult()); // Spalte für die
 			}
 			// Anzeige
@@ -695,13 +689,12 @@ public class LaborView extends ViewPart implements IActivationListener,
 			lrs[col_values - firstColumn] = lr;
 		}
 	}
-
+	
 	/*
-	 * Zeilen erstellen und Mappings zwischen LabItem und Zeilennummer
-	 * erstellen. Jeder Gruppentitel in blauer Farbe, darunter die Gruppe, dann
-	 * eine Leerzeile.
+	 * Zeilen erstellen und Mappings zwischen LabItem und Zeilennummer erstellen. Jeder Gruppentitel
+	 * in blauer Farbe, darunter die Gruppe, dann eine Leerzeile.
 	 */
-	private void createRows() {
+	private void createRows(){
 		table.removeAll();
 		hLabItems = new Hashtable<String, Integer>(50, 0.75f);
 		ArrayList<TableItem> lTI = new ArrayList<TableItem>(50);
@@ -715,9 +708,8 @@ public class LaborView extends ViewPart implements IActivationListener,
 				continue;
 			}
 			TableItem ti = new TableItem(table, SWT.NONE);
-			ti.setForeground(Desk.getDisplay().getSystemColor(
-					SWT.COLOR_DARK_BLUE));
-
+			ti.setForeground(Desk.getDisplay().getSystemColor(SWT.COLOR_DARK_BLUE));
+			
 			// split group order token and group name
 			Matcher m = Pattern.compile("(\\S+)\\s+(.+)").matcher(g); //$NON-NLS-1$
 			if (m.matches()) {
@@ -728,7 +720,7 @@ public class LaborView extends ViewPart implements IActivationListener,
 				ti.setText("? " + g + " ?"); //$NON-NLS-1$ //$NON-NLS-2$
 				ti.setData(KEY_TEXT, "? " + g + " ?"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-
+			
 			lTI.add(ti);
 			line += 1;
 			for (LabItem it : groupItems) {
@@ -752,7 +744,7 @@ public class LaborView extends ViewPart implements IActivationListener,
 				}
 				hLabItems.put(it.getId(), line++);
 			}
-			if(iteration < lGroupNames.size()) {
+			if (iteration < lGroupNames.size()) {
 				TableItem tiSpace = new TableItem(table, SWT.NONE);
 				tiSpace.setText(" "); //$NON-NLS-1$
 				tiSpace.setData(KEY_TEXT, " "); //$NON-NLS-1$
@@ -762,16 +754,16 @@ public class LaborView extends ViewPart implements IActivationListener,
 		}
 		rows = lTI.toArray(new TableItem[0]);
 	}
-
+	
 	/**
 	 * Liste der Laboritems, Gruppiert nach groups und Sequenznummer aufbauen
 	 * 
 	 */
 	@SuppressWarnings("unchecked")
-	private void loadItems() {
+	private void loadItems(){
 		Query qbe = new Query(LabItem.class);
 		List lItems = qbe.execute();
-
+		
 		for (LabItem it : (List<LabItem>) lItems) {
 			String group = it.getGroup();
 			List<LabItem> lGroupItems = hGroups.get(group); // Existiert die
@@ -794,10 +786,10 @@ public class LaborView extends ViewPart implements IActivationListener,
 			lGroupItems.add(it); // Schliesslich den Item einfügen
 			Collections.sort(lGroupItems); // und die Itemliste neu sortieren
 		}
-
+		
 	}
-
-	public LabResult getSelectedResult() {
+	
+	public LabResult getSelectedResult(){
 		TableItem item = cursor.getRow();
 		LabItem it = (LabItem) item.getData(KEY_ITEM);
 		if (it != null) {
@@ -811,8 +803,8 @@ public class LaborView extends ViewPart implements IActivationListener,
 		}
 		return null;
 	}
-
-	private void createColumns() {
+	
+	private void createColumns(){
 		if (columns != null) {
 			for (int i = 0; i < columns.length; i++) {
 				columns[i].dispose();
@@ -824,22 +816,19 @@ public class LaborView extends ViewPart implements IActivationListener,
 			columns[i] = new TableColumn(table, SWT.LEFT);
 			columns[i].setWidth(75);
 			columns[i].addSelectionListener(new SelectionAdapter() {
-
+				
 				@Override
-				public void widgetSelected(final SelectionEvent e) {
+				public void widgetSelected(final SelectionEvent e){
 					TimeTool dOld = new TimeTool();
 					if (dOld.set(((TableColumn) e.getSource()).getText()) == true) {
-						DateSelectorDialog dsl = new DateSelectorDialog(
-								getViewSite().getShell());
+						DateSelectorDialog dsl = new DateSelectorDialog(getViewSite().getShell());
 						if (dsl.open() == Dialog.OK) {
 							TimeTool dat = dsl.getSelectedDate();
 							String nDat = dat.toString(TimeTool.DATE_COMPACT);
-							Query<LabResult> qbe = new Query<LabResult>(
-									LabResult.class);
-							qbe.add(LabResult.DATE, Query.EQUALS, dOld
-									.toString(TimeTool.DATE_COMPACT));
-							qbe.add(LabResult.PATIENT_ID, Query.EQUALS,
-									actPatient.getId());
+							Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
+							qbe.add(LabResult.DATE, Query.EQUALS,
+								dOld.toString(TimeTool.DATE_COMPACT));
+							qbe.add(LabResult.PATIENT_ID, Query.EQUALS, actPatient.getId());
 							for (LabResult lr : qbe.execute()) {
 								lr.set(LabResult.DATE, nDat);
 							}
@@ -848,164 +837,156 @@ public class LaborView extends ViewPart implements IActivationListener,
 						}
 					}
 				}
-
+				
 			});
-
+			
 		}
 		columns[0].setWidth(200);
 		columns[1].setWidth(70);
 		columns[0].setText(Messages.getString("LaborView.parameter")); //$NON-NLS-1$
 		columns[1].setText(Messages.getString("LaborView.reference")); //$NON-NLS-1$
 	}
-
-	private void makeActions() {
+	
+	private void makeActions(){
 		fwdAction = new Action(Messages.getString("LaborView.nextPage")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				loadPage(actPage + 1);
-			}
-		};
+				@Override
+				public void run(){
+					loadPage(actPage + 1);
+				}
+			};
 		backAction = new Action(Messages.getString("LaborView.prevPage")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				if (actPage > 0) {
-					loadPage(actPage - 1);
-				}
-			}
-		};
-		printAction = new Action(Messages.getString("LaborView.print")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				try {
-					LaborblattView lb = (LaborblattView) getViewSite()
-							.getPage().showView(LaborblattView.ID);
-					Patient pat = (Patient) ElexisEventDispatcher.getInstance()
-							.getSelected(Patient.class);
-					String[] headers = new String[columns.length];
-					for (int i = 0; i < headers.length; i++) {
-						headers[i] = columns[i].getText();
+				@Override
+				public void run(){
+					if (actPage > 0) {
+						loadPage(actPage - 1);
 					}
-					lb.createLaborblatt(pat, headers, rows);
-				} catch (Exception ex) {
-					ExHandler.handle(ex);
 				}
-			}
-		};
+			};
+		printAction = new Action(Messages.getString("LaborView.print")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					try {
+						LaborblattView lb =
+							(LaborblattView) getViewSite().getPage().showView(LaborblattView.ID);
+						Patient pat =
+							(Patient) ElexisEventDispatcher.getInstance()
+								.getSelected(Patient.class);
+						String[] headers = new String[columns.length];
+						for (int i = 0; i < headers.length; i++) {
+							headers[i] = columns[i].getText();
+						}
+						lb.createLaborblatt(pat, headers, rows);
+					} catch (Exception ex) {
+						ExHandler.handle(ex);
+					}
+				}
+			};
 		importAction = new Action(Messages.getString("LaborView.import")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
-				setToolTipText(Messages.getString("LaborView.importToolTip")); //$NON-NLS-1$
-			}
-
-			@Override
-			public void run() {
-				Importer imp = new Importer(getViewSite().getShell(),
-						"ch.elexis.LaborDatenImport"); //$NON-NLS-1$
-				imp.create();
-				imp
-						.setMessage(Messages
-								.getString("LaborView.selectDataSource")); //$NON-NLS-1$
-				imp.getShell().setText(
-						Messages.getString("LaborView.labImporterCaption")); //$NON-NLS-1$
-				imp.setTitle(Messages.getString("LaborView.labImporterText")); //$NON-NLS-1$
-				imp.open();
-			}
-		};
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
+					setToolTipText(Messages.getString("LaborView.importToolTip")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					Importer imp =
+						new Importer(getViewSite().getShell(), "ch.elexis.LaborDatenImport"); //$NON-NLS-1$
+					imp.create();
+					imp.setMessage(Messages.getString("LaborView.selectDataSource")); //$NON-NLS-1$
+					imp.getShell().setText(Messages.getString("LaborView.labImporterCaption")); //$NON-NLS-1$
+					imp.setTitle(Messages.getString("LaborView.labImporterText")); //$NON-NLS-1$
+					imp.open();
+				}
+			};
 		xmlAction = new Action(Messages.getString("LaborView.xmlExport")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				Document doc = makeXML();
-				if (doc != null) {
-					FileDialog fsel = new FileDialog(Hub.plugin.getWorkbench()
-							.getActiveWorkbenchWindow().getShell());
-					String fname = fsel.open();
-					if (fname != null) {
-						try {
-							FileOutputStream fout = new FileOutputStream(fname);
-							OutputStreamWriter cout = new OutputStreamWriter(
-									fout, "UTF-8"); //$NON-NLS-1$
-							XMLOutputter xout = new XMLOutputter(Format
-									.getPrettyFormat());
-							xout.output(doc, cout);
-							cout.close();
-							fout.close();
-						} catch (Exception ex) {
-							ExHandler.handle(ex);
-							SWTHelper
+				@Override
+				public void run(){
+					Document doc = makeXML();
+					if (doc != null) {
+						FileDialog fsel =
+							new FileDialog(Hub.plugin.getWorkbench().getActiveWorkbenchWindow()
+								.getShell());
+						String fname = fsel.open();
+						if (fname != null) {
+							try {
+								FileOutputStream fout = new FileOutputStream(fname);
+								OutputStreamWriter cout = new OutputStreamWriter(fout, "UTF-8"); //$NON-NLS-1$
+								XMLOutputter xout = new XMLOutputter(Format.getPrettyFormat());
+								xout.output(doc, cout);
+								cout.close();
+								fout.close();
+							} catch (Exception ex) {
+								ExHandler.handle(ex);
+								SWTHelper
 									.alert(
-											Messages
-													.getString("LaborView.ErrorCaption"), Messages.getString("LaborView.couldntwrite") + fname); //$NON-NLS-1$ //$NON-NLS-2$
-
+										Messages.getString("LaborView.ErrorCaption"), Messages.getString("LaborView.couldntwrite") + fname); //$NON-NLS-1$ //$NON-NLS-2$
+								
+							}
 						}
 					}
 				}
-			}
-		};
+			};
 		newAction = new Action(Messages.getString("LaborView.newDate")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				DateSelectorDialog dsd = new DateSelectorDialog(getViewSite()
-						.getShell());
-				dsd.create();
-				Point m = Desk.getDisplay().getCursorLocation();
-				dsd.getShell().setLocation(m.x, m.y);
-				if (dsd.open() == Dialog.OK) {
-					if (sDaten == null) {
-						return;
+				@Override
+				public void run(){
+					DateSelectorDialog dsd = new DateSelectorDialog(getViewSite().getShell());
+					dsd.create();
+					Point m = Desk.getDisplay().getCursorLocation();
+					dsd.getShell().setLocation(m.x, m.y);
+					if (dsd.open() == Dialog.OK) {
+						if (sDaten == null) {
+							return;
+						}
+						
+						String date = dsd.getSelectedDate().toString(TimeTool.DATE_COMPACT);
+						String[] nDates = new String[sDaten.length + 1];
+						System.arraycopy(sDaten, 0, nDates, 0, sDaten.length);
+						nDates[sDaten.length] = date;
+						hDaten.put(date, sDaten.length);
+						sDaten = nDates;
+						loadPage(getLastPage());
 					}
-
-					String date = dsd.getSelectedDate().toString(
-							TimeTool.DATE_COMPACT);
-					String[] nDates = new String[sDaten.length + 1];
-					System.arraycopy(sDaten, 0, nDates, 0, sDaten.length);
-					nDates[sDaten.length] = date;
-					hDaten.put(date, sDaten.length);
-					sDaten = nDates;
+					
+				}
+			};
+		setStateAction =
+			new Action(Messages.getString("LaborView.pathologic"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					LabResult lr = getSelectedResult();
+					lr.setFlag(LabResult.PATHOLOGIC, isChecked());
 					loadPage(getLastPage());
 				}
-
-			}
-		};
-		setStateAction = new Action(
-				Messages.getString("LaborView.pathologic"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				LabResult lr = getSelectedResult();
-				lr.setFlag(LabResult.PATHOLOGIC, isChecked());
-				loadPage(getLastPage());
-			}
-		};
+			};
 		refreshAction = new Action(Messages.getString("LaborView.Refresh")) { //$NON-NLS-1$
-			@Override
-			public void run(){
-				rebuild();
-			}
-		};
-
+				@Override
+				public void run(){
+					rebuild();
+				}
+			};
+		
 		newAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM)); // Hub.getImageDescriptor("rsc/add.gif"));
 		fwdAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEXT));
-		backAction.setImageDescriptor(Desk
-				.getImageDescriptor(Desk.IMG_PREVIOUS));
-		printAction.setImageDescriptor(Desk
-				.getImageDescriptor(Desk.IMG_PRINTER));
+		backAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PREVIOUS));
+		printAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
 		xmlAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EXPORT));
 		refreshAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REFRESH));
 	}
-
-	public Document makeXML() {
+	
+	public Document makeXML(){
 		Document doc = null;
 		try {
 			doc = new Document();
 			Element r = new Element("Laborblatt"); //$NON-NLS-1$
 			r.setAttribute("Erstellt", new TimeTool() //$NON-NLS-1$
-					.toString(TimeTool.FULL_GER));
-			Patient actpat = (Patient) ElexisEventDispatcher.getInstance()
-					.getSelected(Patient.class);
+				.toString(TimeTool.FULL_GER));
+			Patient actpat =
+				(Patient) ElexisEventDispatcher.getInstance().getSelected(Patient.class);
 			if (actpat != null) {
 				r.setAttribute("Patient", actpat.getLabel()); //$NON-NLS-1$
 			}
 			doc.setRootElement(r);
-
+			
 			Element Daten = new Element("Daten"); //$NON-NLS-1$
 			for (String d : sDaten) {
 				Element dat = new Element("Datum"); //$NON-NLS-1$
@@ -1039,7 +1020,7 @@ public class LaborView extends ViewPart implements IActivationListener,
 							if (lr.getItem().equals(it)) {
 								eResult.addContent(lr.getResult());
 								hasContent = true;
-
+								
 							}
 						}
 					}
@@ -1055,67 +1036,62 @@ public class LaborView extends ViewPart implements IActivationListener,
 					r.addContent(eGroup);
 				}
 			}
-
+			
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 		}
 		return doc;
 	}
-
-	public void visible(final boolean mode) {
+	
+	public void visible(final boolean mode){
 		if (mode == true) {
-			ElexisEventDispatcher.getInstance().addListeners(eeli_labitem,
-					eeli_pat);
-			Patient act = (Patient) ElexisEventDispatcher
-					.getSelected(Patient.class);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_labitem, eeli_pat);
+			Patient act = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 			if ((act != null)
-					&& ((actPatient == null) || (!act.getId().equals(
-							actPatient.getId())))) {
+				&& ((actPatient == null) || (!act.getId().equals(actPatient.getId())))) {
 				actPatient = act;
 				loadValues();
 			}
 		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_labitem,
-					eeli_pat);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_labitem, eeli_pat);
 		}
-
+		
 	}
-
-	public void activation(final boolean mode) {
-	}
-
+	
+	public void activation(final boolean mode){}
+	
 	/***********************************************************************************************
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir
-	 * benötigen das Interface nur, um das Schliessen einer View zu verhindern,
-	 * wenn die Perspektive fixiert ist. Gibt es da keine einfachere Methode?
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
+	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
+	 * Gibt es da keine einfachere Methode?
 	 */
-	public int promptToSaveOnClose() {
+	public int promptToSaveOnClose(){
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
 				: ISaveablePart2.NO;
 	}
-
-	public void doSave(final IProgressMonitor monitor) { /* leer */
+	
+	public void doSave(final IProgressMonitor monitor){ /* leer */
 	}
-
-	public void doSaveAs() { /* leer */
+	
+	public void doSaveAs(){ /* leer */
 	}
-
-	public boolean isDirty() {
+	
+	public boolean isDirty(){
 		return true;
 	}
-
-	public boolean isSaveAsAllowed() {
+	
+	public boolean isSaveAsAllowed(){
 		return false;
 	}
-
-	public boolean isSaveOnCloseNeeded() {
+	
+	public boolean isSaveOnCloseNeeded(){
 		return true;
 	}
-
-	public void reloadContents(final Class clazz) {
+	
+	public void reloadContents(final Class clazz){
 		if (clazz.equals(LabItem.class)) {
 
 		}
 	}
-
+	
 }

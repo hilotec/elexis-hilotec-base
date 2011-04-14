@@ -201,7 +201,7 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 	 *            The date to consider for calculating
 	 * @return the result or "?formel?" if no result could be calculated.
 	 */
-	public String evaluate(Patient pat, TimeTool date) {
+	public String evaluate(Patient pat, TimeTool date) throws ElexisException {
 		if (!getTyp().equals(typ.FORMULA)) {
 			return null;
 		}
@@ -242,14 +242,9 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 		if (!bMatched) {
 			return null;
 		}
-		try {
+
 			Interpreter scripter = Script.getInterpreterFor(formel);
 			return scripter.run(sb.toString(),false).toString();
-		} catch (ElexisException e) {
-			ExHandler.handle(e);
-			return "?formel?";
-		}
-
 	}
 
 	/**
