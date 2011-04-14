@@ -363,14 +363,26 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 	 * Get a List of all LabItems from the database
 	 * @return List of {@link LabItem}
 	 */
-	@SuppressWarnings("unchecked")
 	public static List<LabItem> getLabItems() {
-		Query qbe = new Query(LabItem.class);
+		Query<LabItem> qbe = new Query<LabItem>(LabItem.class);
 		return qbe.execute();
 	}
 	
 	/**
 	 * Get a List of LabItems matching the specified parameters in the database
+	 * By specifying null parameters the LabItem selection can be broadened.
+	 * 
+	 * @param laborId 
+	 * 			the Id of the lab the items belong to
+	 * @param shortDesc
+	 * 			the short description for the items
+	 * @param refM
+	 * 			the male reference value for the items
+	 * @param refW
+	 * 			the female reference value for the items
+	 * @param unit
+	 * 			the unit for the items
+	 * 
 	 * @return List of {@link LabItem}
 	 */
 	public static List<LabItem> getLabItems(String laborId, String shortDesc, String refM, String refW, String unit) {

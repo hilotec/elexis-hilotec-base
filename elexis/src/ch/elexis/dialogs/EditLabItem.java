@@ -287,6 +287,7 @@ public class EditLabItem extends TitleAreaDialog {
 		for(; idx < items.length; idx++) {
 			if(items[idx].equalsIgnoreCase(searchItem)) {
 				labors.setSelection(idx);
+				actLabor = lablist.get(labors.getItem(idx));
 				return;
 			}
 		}
