@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
+ * Copyright (c) 2006-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: XMLExporter.java 6332 2010-05-03 16:19:22Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -669,7 +669,7 @@ public class XMLExporter implements IRnOutputter {
 			boolean bRFE = false; // RFE already encoded
 			for (Verrechnet vv : lv) {
 				Element el;
-				int zahl = vv.getZahl();
+				double zahl = vv.getZahl();
 				IVerrechenbar v = vv.getVerrechenbar();
 				
 				if (v == null) {
@@ -801,8 +801,17 @@ public class XMLExporter implements IRnOutputter {
 					el = new Element(ELEMENT_RECORD_DRUG, ns);
 					Artikel art = (Artikel) v;
 					double mult = art.getFactor(tt, actFall);
-					Money preis = vv.getNettoPreis();
-					// Money preis = vv.getEffPreis(); // b.getEffPreis(v);
+					// Money preis = vv.getNettoPreis();
+					// new as of 3/2011: Correct handling of package fractions
+					Money preis = vv.getBruttoPreis();
+					preis.multiply(vv.getPrimaryScaleFactor());
+					
+					double cnt = vv.getSecondaryScaleFactor();
+					if (cnt != 1.0) {
+						zahl *= cnt;
+					}
+					
+					// end corrections
 					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
 					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2));
 					el.setAttribute(ATTR_TARIFF_TYPE, "400"); // Pharmacode-basiert //$NON-NLS-1$
@@ -873,7 +882,7 @@ public class XMLExporter implements IRnOutputter {
 				}
 				el.setAttribute(ATTR_RECORD_ID, Integer.toString(recordNumber++)); // 22010
 				el.setAttribute("number", Integer.toString(sessionNumber)); // 22030 //$NON-NLS-1$
-				el.setAttribute(ATTR_QUANTITY, Integer.toString(zahl)); // 22350
+				el.setAttribute(ATTR_QUANTITY, Double.toString(zahl)); // 22350
 				el.setAttribute(ATTR_DATE_BEGIN, dateForTarmed); // 22370
 				el.setText(vv.getText()); // 22340
 				// el.setAttribute("code",v.getCode()); // 22330
