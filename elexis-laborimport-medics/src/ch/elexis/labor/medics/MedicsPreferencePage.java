@@ -32,7 +32,8 @@ public class MedicsPreferencePage extends FieldEditorPreferencePage implements
 	private static final String DEFAULT_ARCHIV = ""; //$NON-NLS-1$
 	private static final String DEFAULT_MEDICS_URL = Messages.MedicsPreferencePage_defaultMedicsUrl;
 	private static final boolean DEFAULT_BROWSER_EXTERN = false;
-	private static final String DEFAULT_DOKUMENT_CATEGORY = Messages.MedicsPreferencePage_documentCategoryName;
+	private static final String DEFAULT_DOKUMENT_CATEGORY =
+		Messages.MedicsPreferencePage_documentCategoryName;
 	
 	public MedicsPreferencePage(){
 		super(GRID);
@@ -47,22 +48,24 @@ public class MedicsPreferencePage extends FieldEditorPreferencePage implements
 	
 	@Override
 	protected void createFieldEditors(){
-		addField(new DirectoryFieldEditor(DOWNLOAD_DIR, Messages.MedicsPreferencePage_labelDownloadDir,
+		addField(new DirectoryFieldEditor(DOWNLOAD_DIR,
+			Messages.MedicsPreferencePage_labelDownloadDir, getFieldEditorParent()));
+		addField(new DirectoryFieldEditor(UPLOAD_DIR, Messages.MedicsPreferencePage_labelUploadDir,
 			getFieldEditorParent()));
-		addField(new DirectoryFieldEditor(UPLOAD_DIR, Messages.MedicsPreferencePage_labelUploadDir, getFieldEditorParent()));
-		addField(new DirectoryFieldEditor(ARCHIV_DIR, Messages.MedicsPreferencePage_labelArchivDir, getFieldEditorParent()));
+		addField(new DirectoryFieldEditor(ARCHIV_DIR, Messages.MedicsPreferencePage_labelArchivDir,
+			getFieldEditorParent()));
 		/**
 		 * @deprecated Browser muss nicht mehr geöffnet werden<br>
 		 *             addField(new StringFieldEditor(I_MED_URL, "i/med URL",
 		 *             getFieldEditorParent())); addField(new BooleanFieldEditor(BROWSER_EXTERN,
 		 *             "i/med ausserhalb Elexis", getFieldEditorParent()));
 		 */
-		addField(new StringFieldEditor(DOKUMENT_CATEGORY, Messages.MedicsPreferencePage_labelDocumentCategory,
-			getFieldEditorParent()));
+		addField(new StringFieldEditor(DOKUMENT_CATEGORY,
+			Messages.MedicsPreferencePage_labelDocumentCategory, getFieldEditorParent()));
 	}
 	
 	public void init(IWorkbench workbench){
-		// TODO Auto-generated method stub
+	// TODO Auto-generated method stub
 	}
 	
 	public static String getUploadDir(){

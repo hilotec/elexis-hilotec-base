@@ -17,10 +17,14 @@ import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.admin.IACLContributor;
 
 public class ACLContributor implements IACLContributor {
-	public static final ACE ACE_BEFUNDE = new ACE(ACE.ACE_ROOT, "Messwert", Messages.getString("ACLContributor.messwertACLName")); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final ACE ACE_BEFUNDE =
+		new ACE(ACE.ACE_ROOT, "Messwert", Messages.getString("ACLContributor.messwertACLName")); //$NON-NLS-1$ //$NON-NLS-2$
 	public static final ACE DELETE_PARAM =
-		new ACE(AccessControlDefaults.DELETE, "Messwertrubrik", Messages.getString("ACLContributor.messwertRubrikACLName")); //$NON-NLS-1$ //$NON-NLS-2$
-	public static final ACE ADD_PARAM = new ACE(ACE_BEFUNDE, "Befund zufügen", Messages.getString("ACLContributor.addMesswertACLName")); //$NON-NLS-1$ //$NON-NLS-2$
+		new ACE(AccessControlDefaults.DELETE,
+			"Messwertrubrik", Messages.getString("ACLContributor.messwertRubrikACLName")); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final ACE ADD_PARAM =
+		new ACE(ACE_BEFUNDE,
+			"Befund zufügen", Messages.getString("ACLContributor.addMesswertACLName")); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	public ACE[] getACL(){
 		return new ACE[] {

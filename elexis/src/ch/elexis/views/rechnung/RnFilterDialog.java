@@ -84,19 +84,23 @@ public class RnFilterDialog extends TitleAreaDialog {
 		}
 		TimeTool tt = diRnVon.getDate();
 		if (tt != null) {
-			al.add("RnDatum >=" + PersistentObject.getConnection().wrapFlavored(tt.toString(TimeTool.DATE_COMPACT))); //$NON-NLS-1$
+			al
+				.add("RnDatum >=" + PersistentObject.getConnection().wrapFlavored(tt.toString(TimeTool.DATE_COMPACT))); //$NON-NLS-1$
 		}
 		tt = diRnBis.getDate();
 		if (tt != null) {
-			al.add("RnDatum <=" + PersistentObject.getConnection().wrapFlavored(tt.toString(TimeTool.DATE_COMPACT))); //$NON-NLS-1$
+			al
+				.add("RnDatum <=" + PersistentObject.getConnection().wrapFlavored(tt.toString(TimeTool.DATE_COMPACT))); //$NON-NLS-1$
 		}
 		tt = diStatVon.getDate();
 		if (tt != null) {
-			al.add("StatusDatum >=" + PersistentObject.getConnection().wrapFlavored(tt.toString(TimeTool.DATE_COMPACT))); //$NON-NLS-1$
+			al
+				.add("StatusDatum >=" + PersistentObject.getConnection().wrapFlavored(tt.toString(TimeTool.DATE_COMPACT))); //$NON-NLS-1$
 		}
 		tt = diStatBis.getDate();
 		if (tt != null) {
-			al.add("StatusDatum <=" + PersistentObject.getConnection().wrapFlavored(tt.toString(TimeTool.DATE_COMPACT))); //$NON-NLS-1$
+			al
+				.add("StatusDatum <=" + PersistentObject.getConnection().wrapFlavored(tt.toString(TimeTool.DATE_COMPACT))); //$NON-NLS-1$
 		}
 		if (al.size() > 0) {
 			ret = al.toArray(new String[0]);

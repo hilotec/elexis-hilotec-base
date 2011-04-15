@@ -46,7 +46,7 @@ public class LeistungenView extends ViewPart implements IActivationListener, ISa
 	CTabItem selected;
 	
 	public LeistungenView(){
-		
+
 	}
 	
 	@Override

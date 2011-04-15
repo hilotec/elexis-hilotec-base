@@ -178,9 +178,9 @@ public class KontaktImporterBlatt extends Composite {
 		exw.load(file, 0);
 		// Please keep in sync with doc/import.textile !!
 		List<String> row = exw.getRow(exw.getFirstRow()); // we load the first
-															// row to figure out
-															// whether we know
-															// the format
+		// row to figure out
+		// whether we know
+		// the format
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA1"); //$NON-NLS-1$
 			for (String field : row) {
@@ -188,8 +188,8 @@ public class KontaktImporterBlatt extends Composite {
 			}
 			byte[] dg = digest.digest();
 			String vgl = BinConverter.bytesToHexStr(dg);
-			log.log(Messages.KontaktImporterBlatt_Importing +" SHA1 war " + vgl + //$NON-NLS-1$
-					"\nFirst row was: " + row, Log.INFOS); //$NON-NLS-1$
+			log.log(Messages.KontaktImporterBlatt_Importing + " SHA1 war " + vgl + //$NON-NLS-1$
+				"\nFirst row was: " + row, Log.INFOS); //$NON-NLS-1$
 			
 			if (vgl.equals(PRESET_RUSSI)) {
 				return Presets.importRussi(exw, bKeepID, moni);

@@ -26,14 +26,14 @@ import com.hilotec.elexis.pluginstatistiken.Datensatz;
 import com.hilotec.elexis.pluginstatistiken.PluginstatistikException;
 
 /**
- * Where-Klausel fuer eine Abfrage. (Eigentlich allgemein Bedingungsklauseln,
- * wird beispielsweise auch fuer die Join-Bedingung benutzt). 
+ * Where-Klausel fuer eine Abfrage. (Eigentlich allgemein Bedingungsklauseln, wird beispielsweise
+ * auch fuer die Join-Bedingung benutzt).
  * 
  * @author Antoine Kaufmann
  */
 public class KonfigurationWhere {
 	private Element element;
-
+	
 	public static final String ELEM_OR = "or";
 	public static final String ELEM_AND = "and";
 	public static final String ELEM_NOT = "not";
@@ -46,30 +46,26 @@ public class KonfigurationWhere {
 	
 	enum ElementTyp {
 		E_INVALID,
-		
-		E_NOT,
-		E_AND,
-		E_OR,
-		
-		E_EQUAL,
-		E_GREATERTHAN,
-		E_LESSTHAN,
-	};
 
+		E_NOT, E_AND, E_OR,
+
+		E_EQUAL, E_GREATERTHAN, E_LESSTHAN,
+	};
+	
 	/**
 	 * Neue Where-Klausel erstellen
 	 * 
-	 * @param e DOM—Element der Klausel
+	 * @param e
+	 *            DOM—Element der Klausel
 	 */
-	public KonfigurationWhere(Element e) {
+	public KonfigurationWhere(Element e){
 		element = e;
 	}
 	
 	/**
-	 * Interne Repraesentation des Typs anhand des DOM-Elements ausfindig
-	 * machen.
+	 * Interne Repraesentation des Typs anhand des DOM-Elements ausfindig machen.
 	 */
-	private ElementTyp getTyp(Element e) {
+	private ElementTyp getTyp(Element e){
 		String n = e.getTagName();
 		if (n.equals(ELEM_AND)) {
 			return ElementTyp.E_AND;
@@ -89,10 +85,10 @@ public class KonfigurationWhere {
 	}
 	
 	/**
-	 * Hilfsfunktion um eine Liste aller Kindelemente eines DOM-Elements
-	 * abzurufen (Nimmt nur die ELEMENT_NODE aus get Childnodes).
+	 * Hilfsfunktion um eine Liste aller Kindelemente eines DOM-Elements abzurufen (Nimmt nur die
+	 * ELEMENT_NODE aus get Childnodes).
 	 */
-	private List<Element> getChildElements(Element parent) {
+	private List<Element> getChildElements(Element parent){
 		ArrayList<Element> l = new ArrayList<Element>();
 		
 		NodeList nl = parent.getChildNodes();
@@ -106,20 +102,20 @@ public class KonfigurationWhere {
 	}
 	
 	/**
-	 * Wert eines Attributs eines DOM-Elements auslesen. Wenn dabei Referenzen
-	 * auf Felder in eckigen Klammern enthalten sind, werden diese automatisch
-	 * ersetzt.
+	 * Wert eines Attributs eines DOM-Elements auslesen. Wenn dabei Referenzen auf Felder in eckigen
+	 * Klammern enthalten sind, werden diese automatisch ersetzt.
 	 * 
-	 * @param e    Element
-	 * @param name Name des Attributs
-	 * @param ds   Datensatz
+	 * @param e
+	 *            Element
+	 * @param name
+	 *            Name des Attributs
+	 * @param ds
+	 *            Datensatz
 	 * 
 	 * @return Wert des Attributs
-	 * @throws PluginstatistikException 
+	 * @throws PluginstatistikException
 	 */
-	private String attrValue(Element e, String name, Datensatz ds)
-		throws PluginstatistikException
-	{
+	private String attrValue(Element e, String name, Datensatz ds) throws PluginstatistikException{
 		String val = e.getAttribute(name);
 		// Wenn es sich um Verweise auf Feldnamen handelt, muessen wir
 		// die erst aufloesen
@@ -135,10 +131,9 @@ public class KonfigurationWhere {
 	}
 	
 	/**
-	 * Hilfsfunktion, die prueft ob es sich bei einem String um einen rein
-	 * numerischen Wert handelt.
+	 * Hilfsfunktion, die prueft ob es sich bei einem String um einen rein numerischen Wert handelt.
 	 */
-	private boolean isNum(String val) {
+	private boolean isNum(String val){
 		try {
 			Double.parseDouble(val);
 		} catch (NumberFormatException e) {
@@ -148,19 +143,17 @@ public class KonfigurationWhere {
 	}
 	
 	/**
-	 * Hilfsfunktion fuers Abarbeiten der XML-Repraesentation einer Where-
-	 * Klausel fuer einen bestimmten Datensatz. (Der ganze Kram wird rekursiv
-	 * geparst)
+	 * Hilfsfunktion fuers Abarbeiten der XML-Repraesentation einer Where- Klausel fuer einen
+	 * bestimmten Datensatz. (Der ganze Kram wird rekursiv geparst)
 	 * 
-	 * @param e Aktuelles DOM-Element das gerade verarbeitet wird. 
-	 * @throws PluginstatistikException 
+	 * @param e
+	 *            Aktuelles DOM-Element das gerade verarbeitet wird.
+	 * @throws PluginstatistikException
 	 */
-	private boolean matchesElement(Element e, Datensatz ds)
-		throws PluginstatistikException
-	{
+	private boolean matchesElement(Element e, Datensatz ds) throws PluginstatistikException{
 		ElementTyp typ = getTyp(e);
 		List<Element> children;
-		String a,b;
+		String a, b;
 		Double da, db;
 		
 		switch (typ) {
@@ -181,7 +174,7 @@ public class KonfigurationWhere {
 				}
 			}
 			return false;
-		
+			
 		case E_NOT:
 			return !matchesElement(getChildElements(e).get(0), ds);
 			
@@ -212,17 +205,18 @@ public class KonfigurationWhere {
 			
 		case E_INVALID:
 		default:
-			Log.get("Messwertstatistiken").log("Ungueltige Operation: " +
-				e.getTagName(), Log.ERRORS);
+			Log.get("Messwertstatistiken").log("Ungueltige Operation: " + e.getTagName(),
+				Log.ERRORS);
 			return false;
 		}
 	}
 	
 	/**
 	 * Prueft ob der Datensatz zur Where-Klausel passt
-	 * @throws PluginstatistikException 
+	 * 
+	 * @throws PluginstatistikException
 	 */
-	public boolean matches(Datensatz ds) throws PluginstatistikException {
+	public boolean matches(Datensatz ds) throws PluginstatistikException{
 		return matchesElement(element, ds);
 	}
 }

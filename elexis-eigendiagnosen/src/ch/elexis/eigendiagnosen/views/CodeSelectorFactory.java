@@ -25,51 +25,52 @@ import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.TreeContentProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 
-public class CodeSelectorFactory extends
-		ch.elexis.views.codesystems.CodeSelectorFactory {
+public class CodeSelectorFactory extends ch.elexis.views.codesystems.CodeSelectorFactory {
 	private LazyTreeLoader<Eigendiagnose> dataloader;
-	private static final String LOADER_NAME="Eigendiagnosen";
+	private static final String LOADER_NAME = "Eigendiagnosen";
 	
-
 	@SuppressWarnings("unchecked")
 	public CodeSelectorFactory(){
-		dataloader=(LazyTreeLoader<Eigendiagnose>) JobPool.getJobPool().getJob(LOADER_NAME); //$NON-NLS-1$
+		dataloader = (LazyTreeLoader<Eigendiagnose>) JobPool.getJobPool().getJob(LOADER_NAME); //$NON-NLS-1$
 		
-		if(dataloader==null){
-			dataloader=new LazyTreeLoader<Eigendiagnose>(LOADER_NAME,new Query<Eigendiagnose>(Eigendiagnose.class),"parent",new String[]{"Kuerzel","Text"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		if (dataloader == null) {
+			dataloader =
+				new LazyTreeLoader<Eigendiagnose>(LOADER_NAME, new Query<Eigendiagnose>(
+					Eigendiagnose.class), "parent", new String[] { "Kuerzel", "Text"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			dataloader.setParentField("Kuerzel");
 			JobPool.getJobPool().addJob(dataloader);
 		}
-		JobPool.getJobPool().activate(LOADER_NAME,Job.SHORT); //$NON-NLS-1$
-
-	}
-	@Override
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
-		ViewerConfigurer vc=new ViewerConfigurer(
-				new TreeContentProvider(cv,dataloader),
-				new ViewerConfigurer.TreeLabelProvider(),
-				new DefaultControlFieldProvider(cv, new String[]{"Kuerzel","Text"}), //$NON-NLS-1$
-				new ViewerConfigurer.DefaultButtonProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE, SWT.NONE,null)
-				);
-		return vc;
-
-	}
-
-	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
+		JobPool.getJobPool().activate(LOADER_NAME, Job.SHORT); //$NON-NLS-1$
 		
 	}
-
+	
 	@Override
-	public String getCodeSystemName() {
+	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+		ViewerConfigurer vc =
+			new ViewerConfigurer(new TreeContentProvider(cv, dataloader),
+				new ViewerConfigurer.TreeLabelProvider(), new DefaultControlFieldProvider(cv,
+					new String[] {
+						"Kuerzel", "Text"}), //$NON-NLS-1$
+				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
+					SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
+		return vc;
+		
+	}
+	
+	@Override
+	public void dispose(){
+	// TODO Auto-generated method stub
+	
+	}
+	
+	@Override
+	public String getCodeSystemName(){
 		return Eigendiagnose.CODESYSTEM_NAME;
 	}
-
+	
 	@Override
-	public Class getElementClass() {
+	public Class getElementClass(){
 		return Eigendiagnose.class;
 	}
-
+	
 }

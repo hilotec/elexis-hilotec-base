@@ -29,40 +29,37 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class KGImporter {
-	private static final String KONSID = AeskulapImporter.IMPORT_XID
-			+ "/KonsID";
+	private static final String KONSID = AeskulapImporter.IMPORT_XID + "/KonsID";
 	Mandant mandant;
-	int counter=0;
-	KGImporter(File xml, IProgressMonitor moni) throws Exception {
+	int counter = 0;
+	
+	KGImporter(File xml, IProgressMonitor moni) throws Exception{
 		moni.subTask("Importiere KG");
-		Xid.localRegisterXIDDomainIfNotExists(KONSID, "Alte KG-ID",
-				Xid.ASSIGNMENT_LOCAL);
-		String rnid = new Query<Rechnung>(Rechnung.class).findSingle(
-				"RnNummer", "=", "1");
+		Xid.localRegisterXIDDomainIfNotExists(KONSID, "Alte KG-ID", Xid.ASSIGNMENT_LOCAL);
+		String rnid = new Query<Rechnung>(Rechnung.class).findSingle("RnNummer", "=", "1");
 		Rechnung rn = Rechnung.load(rnid);
 		SAXBuilder builder = new SAXBuilder();
 		Document doc = builder.build(xml);
 		Element root = doc.getRootElement();
 		List<Element> patienten = root.getChildren("Patient");
-		int perPat = Math.round(AeskulapImporter.MONITOR_PERTASK
-				/ patienten.size());
-		boolean bSkip=true;
-		String last=Hub.localCfg.get("importaeskulap/lastimported",null);
-		if(last==null){
-			bSkip=false;
+		int perPat = Math.round(AeskulapImporter.MONITOR_PERTASK / patienten.size());
+		boolean bSkip = true;
+		String last = Hub.localCfg.get("importaeskulap/lastimported", null);
+		if (last == null) {
+			bSkip = false;
 		}
 		
 		for (Element ePat : patienten) {
-
+			
 			String id = ePat.getAttributeValue("PatID");
-			if(bSkip && (!last.equals(id))){
+			if (bSkip && (!last.equals(id))) {
 				moni.worked(perPat);
-				if(moni.isCanceled()){
+				if (moni.isCanceled()) {
 					break;
 				}
 				continue;
 			}
-			bSkip=false;
+			bSkip = false;
 			Patient pat = (Patient) Xid.findObject(AeskulapImporter.PATID, id);
 			if (pat != null) {
 				moni.subTask(pat.getLabel());
@@ -74,58 +71,48 @@ public class KGImporter {
 						if (Xid.findObject(KONSID, konsid) != null) {
 							continue;
 						}
-						mandant = AeskulapImporter.getMandant(eKons
-								.getAttributeValue("ArztID"));
+						mandant = AeskulapImporter.getMandant(eKons.getAttributeValue("ArztID"));
 						if (mandant != null) {
 							Desk.syncExec(new Runnable() {
-								public void run() {
+								public void run(){
 									Hub.setMandant(mandant);
 								}
-
+								
 							});
-
+							
 							Element eSubj = eKons.getChild("Subjektiv");
 							Element eProc = eKons.getChild("Procedere");
 							Element eTher = eKons.getChild("Therapie");
-							List<Element> lDiag = eKons
-									.getChildren("Diagnosen");
+							List<Element> lDiag = eKons.getChildren("Diagnosen");
 							List<Element> lProb = eKons.getChildren("Probleme");
-							List<Element> lMedi = eKons
-									.getChildren("Medikation");
-							TimeTool ttDate = new TimeTool(eKons
-									.getAttributeValue("Datum"));
+							List<Element> lMedi = eKons.getChildren("Medikation");
+							TimeTool ttDate = new TimeTool(eKons.getAttributeValue("Datum"));
 							Fall[] faelle = pat.getFaelle();
 							Fall actFall = null;
 							if (faelle.length == 0) {
-								actFall = pat.neuerFall(Fall
-										.getDefaultCaseLabel(), Fall
-										.getDefaultCaseReason(), Fall
-										.getDefaultCaseLaw());
+								actFall =
+									pat.neuerFall(Fall.getDefaultCaseLabel(), Fall
+										.getDefaultCaseReason(), Fall.getDefaultCaseLaw());
 							} else {
 								actFall = faelle[0];
 							}
 							Konsultation k = actFall.neueKonsultation();
 							k.setMandant(mandant);
-							k.setDatum(ttDate.toString(TimeTool.DATE_COMPACT),
-									true);
+							k.setDatum(ttDate.toString(TimeTool.DATE_COMPACT), true);
 							StringBuilder sb = new StringBuilder();
 							if (eSubj != null) {
-								sb.append("S: ").append(eSubj.getText())
-										.append("\n");
+								sb.append("S: ").append(eSubj.getText()).append("\n");
 							}
 							if (eProc != null) {
-								sb.append("P: ").append(eProc.getText())
-										.append("\n");
+								sb.append("P: ").append(eProc.getText()).append("\n");
 							}
 							if (eTher != null) {
-								sb.append("Therapie: ").append(eTher.getText())
-										.append("\n");
+								sb.append("Therapie: ").append(eTher.getText()).append("\n");
 							}
 							if (lMedi != null) {
 								sb.append("Medikation:\n");
 								for (Element eMedi : lMedi) {
-									String mText = eMedi
-											.getAttributeValue("Text");
+									String mText = eMedi.getAttributeValue("Text");
 									if (!StringTool.isNothing(mText)) {
 										sb.append(mText).append("\n");
 									}
@@ -133,23 +120,17 @@ public class KGImporter {
 							}
 							k.updateEintrag(sb.toString(), true);
 							for (Element eDiag : lDiag) {
-								String wichtig = eDiag
-										.getAttributeValue("Wichtige_Diagnose");
+								String wichtig = eDiag.getAttributeValue("Wichtige_Diagnose");
 								if ("Ja".equals(wichtig)) {
-									String date = eDiag
-											.getAttributeValue("Gueltig_von");
+									String date = eDiag.getAttributeValue("Gueltig_von");
 									if (StringTool.isNothing(date)) {
-										date = ttDate
-												.toString(TimeTool.DATE_GER);
+										date = ttDate.toString(TimeTool.DATE_GER);
 									} else {
-										date = new TimeTool(date)
-												.toString(TimeTool.DATE_GER);
+										date = new TimeTool(date).toString(TimeTool.DATE_GER);
 									}
-									Element eText = eDiag
-											.getChild("Diagnosetext");
+									Element eText = eDiag.getChild("Diagnosetext");
 									if (eText != null) {
-										String text = date + ": "
-												+ eText.getText();
+										String text = date + ": " + eText.getText();
 										String oldDiag = pat.get("Diagnosen");
 										if (!StringTool.isNothing(oldDiag)) {
 											oldDiag += "\n" + text;
@@ -161,11 +142,9 @@ public class KGImporter {
 								}
 							}
 							for (Element eProb : lProb) {
-								String title = eProb
-										.getAttributeValue("Problem");
+								String title = eProb.getAttributeValue("Problem");
 								Episode episode = null;
-								Query<Episode> qbe = new Query<Episode>(
-										Episode.class);
+								Query<Episode> qbe = new Query<Episode>(Episode.class);
 								qbe.add("Title", "=", title);
 								qbe.add("PatientID", "=", pat.getId());
 								List<Episode> lEpi = qbe.execute();
@@ -173,8 +152,7 @@ public class KGImporter {
 									episode = lEpi.get(0);
 								} else {
 									episode = new Episode(pat, title);
-									episode.setStartDate(ttDate
-											.toString(TimeTool.DATE_COMPACT));
+									episode.setStartDate(ttDate.toString(TimeTool.DATE_COMPACT));
 								}
 								new Encounter(k, episode);
 							}
@@ -185,7 +163,7 @@ public class KGImporter {
 				}
 				Element eAnamnese = ePat.getChild("Anamnese");
 				Element eImpfungen = ePat.getChild("Impfungen");
-
+				
 				if (eAnamnese != null) {
 					String anamnese = eAnamnese.getText();
 					pat.set("PersAnamnese", anamnese);
@@ -206,8 +184,7 @@ public class KGImporter {
 				if (eImpfungen != null) {
 					String eI = eImpfungen.getText();
 					if (!StringTool.isNothing(eI)) {
-						StringBuilder sb = new StringBuilder(StringTool
-								.unNull(pat.getBemerkung()));
+						StringBuilder sb = new StringBuilder(StringTool.unNull(pat.getBemerkung()));
 						if (sb.length() > 0) {
 							sb.append("\n");
 						}
@@ -215,16 +192,16 @@ public class KGImporter {
 						sb.append(eI);
 						pat.setBemerkung(sb.toString());
 					}
-
+					
 				}
-
+				
 			}
 			Hub.localCfg.set("importaeskulap/lastimported", id);
 			moni.worked(perPat);
-			if(++counter>100){
+			if (++counter > 100) {
 				System.gc();
 				Thread.sleep(100);
-				counter=0;
+				counter = 0;
 			}
 			if (moni.isCanceled()) {
 				break;

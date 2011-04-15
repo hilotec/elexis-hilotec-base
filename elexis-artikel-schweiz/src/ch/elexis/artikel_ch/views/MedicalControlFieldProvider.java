@@ -35,49 +35,52 @@ import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.views.KonsDetailView;
 
-public class MedicalControlFieldProvider extends DefaultControlFieldProvider implements IScannerListener {
+public class MedicalControlFieldProvider extends DefaultControlFieldProvider implements
+		IScannerListener {
 	
-	public MedicalControlFieldProvider(CommonViewer viewer, String[] flds) {
+	public MedicalControlFieldProvider(CommonViewer viewer, String[] flds){
 		super(viewer, flds);
 	}
 	
-	public Composite createControl(final Composite parent) {
+	public Composite createControl(final Composite parent){
 		Composite composite = super.createControl(parent);
-		for(final ElexisText selector: selectors){
+		for (final ElexisText selector : selectors) {
 			selector.addKeyListener(new KeyAdapter() {
 				@Override
-				public void keyPressed(KeyEvent e) {
+				public void keyPressed(KeyEvent e){
 					if (e.character == SWT.CR) {
 						String text = selector.getText();
 						text = text.replaceAll(new Character(SWT.CR).toString(), ""); //$NON-NLS-1$
 						text = text.replaceAll(new Character(SWT.LF).toString(), ""); //$NON-NLS-1$
-						text = text.replaceAll(new Character((char)0).toString(), ""); //$NON-NLS-1$
+						text = text.replaceAll(new Character((char) 0).toString(), ""); //$NON-NLS-1$
 						Event scannerEvent = new Event();
 						scannerEvent.text = selector.getText();
 						scannerEvent.widget = selector.getWidget();
 						scannerInput(scannerEvent);
 					}
 				}
-            });
+			});
 		}
 		return composite;
 	}
-
-	private KonsDetailView getKonsDetailView() {
-		IViewReference[] viewReferences = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getViewReferences();
-		for (IViewReference viewRef: viewReferences) {
+	
+	private KonsDetailView getKonsDetailView(){
+		IViewReference[] viewReferences =
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+				.getViewReferences();
+		for (IViewReference viewRef : viewReferences) {
 			if (KonsDetailView.ID.equals(viewRef.getId())) {
-				return (KonsDetailView)viewRef.getPart(false);
+				return (KonsDetailView) viewRef.getPart(false);
 			}
 		}
 		return null;
 	}
-
-	public void scannerInput(Event e) {
+	
+	public void scannerInput(Event e){
 		KonsDetailView detailView = getKonsDetailView();
 		Text text = null;
 		if (e.widget instanceof Text) {
-			text = (Text)e.widget;
+			text = (Text) e.widget;
 		}
 		if (text != null) {
 			Query<Medical> query = new Query<Medical>(Medical.class);
@@ -86,12 +89,12 @@ public class MedicalControlFieldProvider extends DefaultControlFieldProvider imp
 			if (medicalList.size() == 0) {
 				ScannerEvents.beep();
 			}
-			for (Medical medical: medicalList) {
-				Konsultation kons = (Konsultation) ElexisEventDispatcher
-						.getSelected(Konsultation.class);
-				if(kons!=null){
+			for (Medical medical : medicalList) {
+				Konsultation kons =
+					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+				if (kons != null) {
 					detailView.addToVerechnung(medical);
-				}else{
+				} else {
 					ScannerEvents.beep();
 				}
 			}
@@ -99,5 +102,5 @@ public class MedicalControlFieldProvider extends DefaultControlFieldProvider imp
 		} else {
 			ScannerEvents.beep();
 		}
-	}	
+	}
 }

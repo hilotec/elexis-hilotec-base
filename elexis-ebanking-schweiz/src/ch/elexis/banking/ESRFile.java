@@ -51,11 +51,11 @@ public class ESRFile {
 		
 		if (!file.exists()) {
 			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 1,
-					Messages.ESRFile_esrfile_not_founde, null, true);
+				Messages.ESRFile_esrfile_not_founde, null, true);
 		}
 		if (!file.canRead()) {
 			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 2,
-					Messages.ESRFile_cannot_read_esr, null, true);
+				Messages.ESRFile_cannot_read_esr, null, true);
 		}
 		byte[] md5 = FileTool.checksum(file);
 		name = file.getName();
@@ -69,7 +69,7 @@ public class ESRFile {
 		List<ESRRecord> list = qesr.execute();
 		if (list.size() > 0) {
 			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 4,
-					Messages.ESRFile_file_already_read, null, true);
+				Messages.ESRFile_file_already_read, null, true);
 		}
 		try {
 			InputStreamReader ir = new InputStreamReader(new FileInputStream(file));
@@ -95,8 +95,8 @@ public class ESRFile {
 			
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 3, Messages.ESRFile_ExceptionParsing,
-					list, true);
+			return new Result<List<ESRRecord>>(Result.SEVERITY.ERROR, 3,
+				Messages.ESRFile_ExceptionParsing, list, true);
 		}
 		
 	}

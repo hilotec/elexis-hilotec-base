@@ -59,7 +59,7 @@ public class Importer extends ImporterPage {
 	private static int maxRecordsToDisplay = 5;
 	static {
 		Fall.getAbrechnungsSysteme(); // make sure billing systems are
-										// initialized
+		// initialized
 		Xid.localRegisterXIDDomainIfNotExists(PATID, "Alte Patientennummer", Xid.ASSIGNMENT_LOCAL);
 		Xid.localRegisterXIDDomainIfNotExists(GARANTID, "Alte Garant-ID", Xid.ASSIGNMENT_LOCAL);
 		Xid.localRegisterXIDDomainIfNotExists(ARZTID, "Alte Arzt-ID", Xid.ASSIGNMENT_LOCAL);
@@ -71,7 +71,7 @@ public class Importer extends ImporterPage {
 	}
 	
 	public Importer(){
-		// TODO Auto-generated constructor stub
+	// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -236,7 +236,7 @@ public class Importer extends ImporterPage {
 				
 			}
 		}
-		System.out.println("Parsing :" + eingabe +" gives null");		
+		System.out.println("Parsing :" + eingabe + " gives null");
 		return null;
 	}
 	
@@ -252,12 +252,15 @@ public class Importer extends ImporterPage {
 		country2code.put("Espagne", "E");
 	}
 	
-// Patient_ID_Nr Patient_NrDossier Patient_Medecin_ID Patient_Titre Patient_Nom Patient_NomJFille
-// Patient_Prenom Patient_Adres_CO Patient_Adresse Patient_Localite_ID Patient_TelPriv Patient_Natel
-// Patient_Fax Patient_Email Patient_TelProf Patient_Profession Patient_Employeur Patient_DateNaiss
-// Patient_CodeSecuSocial Patient_Sexe Patient_Parente Patient_EtatCivil Patient_Origine
-// Patient_Comment Patient_Nationalite Patient_Garant Patient_Remise_% Patient_Medecin_Traitant
-// Patient_Medecin_Adresse Patient_Commentaire_ALARME_T074 Patient_Nr_Covercard Patient_Inactif
+	// Patient_ID_Nr Patient_NrDossier Patient_Medecin_ID Patient_Titre Patient_Nom
+	// Patient_NomJFille
+	// Patient_Prenom Patient_Adres_CO Patient_Adresse Patient_Localite_ID Patient_TelPriv
+	// Patient_Natel
+	// Patient_Fax Patient_Email Patient_TelProf Patient_Profession Patient_Employeur
+	// Patient_DateNaiss
+	// Patient_CodeSecuSocial Patient_Sexe Patient_Parente Patient_EtatCivil Patient_Origine
+	// Patient_Comment Patient_Nationalite Patient_Garant Patient_Remise_% Patient_Medecin_Traitant
+	// Patient_Medecin_Adresse Patient_Commentaire_ALARME_T074 Patient_Nr_Covercard Patient_Inactif
 	private boolean importPatients(IProgressMonitor monitor, String tableName){
 		monitor.subTask("Importations des patients");
 		int counter = 0, nr = 0, nrDone = 0;
@@ -272,8 +275,9 @@ public class Importer extends ImporterPage {
 				while (it.hasNext()) {
 					monitor.worked(1);
 					Map<String, Object> row = it.next();
-//					System.out.println("import " + tableName + " " + nr + "/" + num + " " + counter
-//						+ "/" + nrDone + " " + row);
+					// System.out.println("import " + tableName + " " + nr + "/" + num + " " +
+					// counter
+					// + "/" + nrDone + " " + row);
 					String ID = getCol(row, ("Patient_NrDossier"));
 					if (ID.equals(""))
 						continue; // wir können keine Schrott importieren
@@ -304,14 +308,15 @@ public class Importer extends ImporterPage {
 					String tel2 = getCol(row, "Patient_Fax"); // ou Patient_TelProf
 					String natel = getCol(row, "Patient_Natel");
 					String sexe = getCol(row, "Patient_Sexe");
-// if (sexe.equals(""))
-// continue; // wir können keine Schrott importieren
+					// if (sexe.equals(""))
+					// continue; // wir können keine Schrott importieren
 					sexe = sexe.toUpperCase().equals("M") ? Patient.MALE : Patient.FEMALE;
 					if (getCol(row, "Patient_DateNaiss").equals(""))
 						continue; // wir können keine Schrott importieren
 					Date birthDate = string2Date(getCol(row, "Patient_DateNaiss"));
-					if (birthDate == null) continue;			
-					SimpleDateFormat xx = new SimpleDateFormat("dd.MM.yyyy"); 
+					if (birthDate == null)
+						continue;
+					SimpleDateFormat xx = new SimpleDateFormat("dd.MM.yyyy");
 					String german = xx.format(birthDate);
 					String zusatz = getCol(row, "Patient_Adres_CO");
 					nr++;
@@ -342,8 +347,8 @@ public class Importer extends ImporterPage {
 						}
 					}
 					appendIfNotEmpty(sb, "employeur: ", getCol(row, "Patient_Employeur"));
-					appendIfNotEmpty(sb, "medecin traitant: ",
-						getCol(row, "Patient_Medecin_Traitant"));
+					appendIfNotEmpty(sb, "medecin traitant: ", getCol(row,
+						"Patient_Medecin_Traitant"));
 					if (sb.length() > 0) {
 						pat.setBemerkung(sb.toString());
 					}

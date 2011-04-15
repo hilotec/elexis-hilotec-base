@@ -5,7 +5,7 @@ import ch.elexis.data.PersistentObject;
 public abstract class DragSourceImpl {
 	
 	private DragSourceImpl(){
-		draggedObject=null;
+		draggedObject = null;
 	}
 	
 	private static PersistentObject draggedObject;

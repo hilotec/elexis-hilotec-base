@@ -34,72 +34,80 @@ import ch.rgw.tools.StringTool;
 /**
  * Diese View reichtet einen Browser aufs Arzneimittel-Kompendium ein.
  */
-public class ODDBView extends ViewPart implements ISaveablePart2{
-	public static final String ID="ch.elexis.ODDBView";
+public class ODDBView extends ViewPart implements ISaveablePart2 {
+	public static final String ID = "ch.elexis.ODDBView";
 	Browser browser;
+	
 	@Override
-	public void createPartControl(Composite parent) {
-		browser=new Browser(parent,SWT.NONE);
-		browser.addLocationListener(new LocationAdapter(){
-
+	public void createPartControl(Composite parent){
+		browser = new Browser(parent, SWT.NONE);
+		browser.addLocationListener(new LocationAdapter() {
+			
 			@Override
-			public void changed(LocationEvent arg0) {
-				String text=getText(arg0.location);
+			public void changed(LocationEvent arg0){
+				String text = getText(arg0.location);
 				System.out.println(text);
 			}
 			
 		});
-		//browser.setUrl("http://ch.oddb.org");
+		// browser.setUrl("http://ch.oddb.org");
 		browser.setUrl("http://santesuisse.oddb.org/");
 		
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
 	
 	public String getText(String loc){
-		 try {
-			 if(StringTool.isNothing(loc)){
-				 loc=browser.getUrl();
-			 }
-			 URLConnection url=new URL(loc).openConnection();
-			 url.setDoInput(true);
-			  BufferedReader in = new BufferedReader(new InputStreamReader(url.getInputStream()));
-		     StringBuilder ret=new StringBuilder();
-		     String line;;
-			 while ((line= in.readLine()) != null) {
-				 ret.append(line);
-			 }
-			 //Programm beenden
-			 in.close();
-			 return ret.toString();
-			} catch (IOException e) {
-				ExHandler.handle(e);
-				return "";
-			 }
+		try {
+			if (StringTool.isNothing(loc)) {
+				loc = browser.getUrl();
+			}
+			URLConnection url = new URL(loc).openConnection();
+			url.setDoInput(true);
+			BufferedReader in = new BufferedReader(new InputStreamReader(url.getInputStream()));
+			StringBuilder ret = new StringBuilder();
+			String line;
+			;
+			while ((line = in.readLine()) != null) {
+				ret.append(line);
+			}
+			// Programm beenden
+			in.close();
+			return ret.toString();
+		} catch (IOException e) {
+			ExHandler.handle(e);
+			return "";
+		}
 	}
+	
 	/* ******
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2
-	 * Wir benötigen das Interface nur, um das Schliessen einer View zu verhindern,
-	 * wenn die Perspektive fixiert ist.
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
+	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
 	 * Gibt es da keine einfachere Methode?
-	 */ 
-	public int promptToSaveOnClose() {
-		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL : ISaveablePart2.NO;
+	 */
+	public int promptToSaveOnClose(){
+		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
+				: ISaveablePart2.NO;
 	}
-	public void doSave(IProgressMonitor monitor) { /* leer */ }
-	public void doSaveAs() { /* leer */}
-	public boolean isDirty() {
+	
+	public void doSave(IProgressMonitor monitor){ /* leer */}
+	
+	public void doSaveAs(){ /* leer */}
+	
+	public boolean isDirty(){
 		return true;
 	}
-	public boolean isSaveAsAllowed() {
+	
+	public boolean isSaveAsAllowed(){
 		return false;
 	}
-	public boolean isSaveOnCloseNeeded() {
+	
+	public boolean isSaveOnCloseNeeded(){
 		return true;
 	}
-
+	
 }

@@ -53,7 +53,7 @@ public class Eigendiagnose extends PersistentObject implements IDiagnose {
 		} else { // found existing table, check version
 			VersionInfo v = new VersionInfo(check.get("Text"));
 			if (v.isOlder("0.1.1")) {
-				createOrModifyTable("ALTER TABLE "+TABLENAME+" ADD lastupdate BIGINT;");
+				createOrModifyTable("ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
 				check.set("Text", VERSION);
 				
 			}
@@ -114,15 +114,19 @@ public class Eigendiagnose extends PersistentObject implements IDiagnose {
 	public String getText(){
 		return get("Text");
 	}
+	
 	@Override
 	public boolean isDragOK(){
 		return !hasChildren();
 	}
+	
 	public boolean hasChildren(){
 		JdbcLink link = PersistentObject.getConnection();
 		String theText = get("Text");
-		int numOfChildren = link.queryInt("select count(*) from " + TABLENAME + " where deleted = 0 and parent = " +  JdbcLink.wrap(theText));
-		if(numOfChildren > 0){
+		int numOfChildren =
+			link.queryInt("select count(*) from " + TABLENAME + " where deleted = 0 and parent = "
+				+ JdbcLink.wrap(theText));
+		if (numOfChildren > 0) {
 			return true;
 		}
 		return false;

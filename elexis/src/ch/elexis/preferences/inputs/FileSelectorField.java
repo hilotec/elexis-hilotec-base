@@ -9,10 +9,9 @@ public class FileSelectorField extends Composite {
 	String result;
 	
 	public FileSelectorField(String title, Composite parent, int flags){
-		super(parent,flags);
-		setLayout(new GridLayout(3,false));
+		super(parent, flags);
+		setLayout(new GridLayout(3, false));
 		
 	}
-	
 	
 }

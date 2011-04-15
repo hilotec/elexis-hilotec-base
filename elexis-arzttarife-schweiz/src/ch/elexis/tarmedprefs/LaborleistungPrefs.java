@@ -21,16 +21,15 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 
 import ch.elexis.preferences.inputs.MultiplikatorEditor;
 
-public class LaborleistungPrefs extends PreferencePage implements
-		IWorkbenchPreferencePage {
-
+public class LaborleistungPrefs extends PreferencePage implements IWorkbenchPreferencePage {
+	
 	@Override
-	protected Control createContents(final Composite parent) {
-		return new MultiplikatorEditor(parent,"EAL");  //$NON-NLS-1$
+	protected Control createContents(final Composite parent){
+		return new MultiplikatorEditor(parent, "EAL"); //$NON-NLS-1$
 	}
+	
+	public void init(final IWorkbench workbench){
 
-	public void init(final IWorkbench workbench) {
-		
 	}
-
+	
 }

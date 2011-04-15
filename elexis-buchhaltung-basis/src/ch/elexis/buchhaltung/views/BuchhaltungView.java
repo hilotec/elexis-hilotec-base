@@ -18,18 +18,18 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 public class BuchhaltungView extends ViewPart {
-	public static final String ID="ch.elexis.buchhaltung.basis.view"; //$NON-NLS-1$
-
+	public static final String ID = "ch.elexis.buchhaltung.basis.view"; //$NON-NLS-1$
+	
 	@Override
-	public void createPartControl(Composite parent) {
-		new Composite(parent,SWT.BORDER);
+	public void createPartControl(Composite parent){
+		new Composite(parent, SWT.BORDER);
 		
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-		
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 }

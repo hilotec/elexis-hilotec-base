@@ -18,7 +18,7 @@ public class Medikament extends Artikel {
 	
 	@Override
 	protected String getConstraint(){
-		return "Typ='Medikament'";  //$NON-NLS-1$
+		return "Typ='Medikament'"; //$NON-NLS-1$
 	}
 	
 	protected void setConstraint(){

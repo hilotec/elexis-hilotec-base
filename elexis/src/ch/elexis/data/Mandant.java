@@ -16,7 +16,6 @@ package ch.elexis.data;
 import ch.elexis.StringConstants;
 import ch.rgw.tools.JdbcLink;
 
-
 /**
  * Ein Mandant ist ein Anwender (und damit eine Person und damit ein Kontakt), der zusätzlich eigene
  * Abrechnungen führt.
@@ -25,41 +24,40 @@ import ch.rgw.tools.JdbcLink;
  * 
  */
 public class Mandant extends Anwender {
-
+	
 	public static final String BILLER = "Rechnungssteller";
-
+	
 	static {
 		addMapping(Kontakt.TABLENAME, FLD_EXTINFO, FLD_IS_MANDATOR, "Label=Bezeichnung3");
 	}
-
+	
 	public boolean isValid(){
 		if (get(FLD_IS_MANDATOR).equals(StringConstants.ONE)) {
 			return super.isValid();
 		}
 		return false;
 	}
-
-
+	
 	public Rechnungssteller getRechnungssteller(){
 		Rechnungssteller ret = Rechnungssteller.load(getInfoString(BILLER));
 		return ret.isValid() ? ret : Rechnungssteller.load(getId());
 	}
-
+	
 	public void setRechnungssteller(Kontakt rs){
 		setInfoElement(BILLER, rs.getId());
 	}
-
+	
 	protected Mandant(String id){
 		super(id);
 	}
-
+	
 	public Mandant(final String Name, final String Vorname, final String Geburtsdatum,
-			final String s){
+		final String s){
 		super(Name, Vorname, Geburtsdatum, s);
 	}
-
+	
 	protected Mandant(){/* leer */}
-
+	
 	public static Mandant load(String id){
 		Mandant ret = new Mandant(id);
 		String ism = ret.get(FLD_IS_MANDATOR);
@@ -68,23 +66,24 @@ public class Mandant extends Anwender {
 		}
 		return null;
 	}
-
+	
 	public Mandant(String name, String pwd){
 		super(name, pwd);
 	}
-
+	
 	protected String getConstraint(){
-		return new StringBuilder(FLD_IS_MANDATOR)
-		.append(Query.EQUALS)
-		.append(JdbcLink.wrap(StringConstants.ONE))
-		.toString();
-
+		return new StringBuilder(FLD_IS_MANDATOR).append(Query.EQUALS).append(
+			JdbcLink.wrap(StringConstants.ONE)).toString();
+		
 	}
-
+	
 	@Override
 	protected void setConstraint(){
-		set(new String[]{FLD_IS_MANDATOR,FLD_IS_USER},new String[]{StringConstants.ONE,StringConstants.ONE});
+		set(new String[] {
+			FLD_IS_MANDATOR, FLD_IS_USER
+		}, new String[] {
+			StringConstants.ONE, StringConstants.ONE
+		});
 	}
-
-
+	
 }

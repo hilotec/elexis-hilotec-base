@@ -37,8 +37,8 @@ import ch.rgw.tools.JdbcLink.Stm;
 /**
  * Query manages all database queries of PersistentObjects and derived classes
  * 
- * Die Query-Klasse erledigt alle Datenbankabfragen auf PersistentObjects und
- * davon abgeleitete Klassen.
+ * Die Query-Klasse erledigt alle Datenbankabfragen auf PersistentObjects und davon abgeleitete
+ * Klassen.
  * 
  * @author Gerry
  */
@@ -63,32 +63,33 @@ public class Query<T> {
 	private final LinkedList<IFilter> postQueryFilters = new LinkedList<IFilter>();
 	private String ordering;
 	private final ArrayList<String> exttables = new ArrayList<String>(2);
-
+	
 	/**
 	 * Konstruktor
 	 * 
 	 * @param cl
-	 *            Die Klasse, auf die die Abfrage angewendet werden soll (z.B.
-	 *            Patient.class)
+	 *            Die Klasse, auf die die Abfrage angewendet werden soll (z.B. Patient.class)
 	 */
-	public Query(final Class<? extends PersistentObject> cl) {
-
+	public Query(final Class<? extends PersistentObject> cl){
+		
 		try {
 			template = Hub.poFactory.createTemplate(cl);
 			// template=cl.newInstance();
-			load = cl.getMethod("load", new Class[] { String.class });
+			load = cl.getMethod("load", new Class[] {
+				String.class
+			});
 			clear();
-
+			
 		} catch (Exception ex) {
-			ElexisStatus status = new ElexisStatus(IStatus.ERROR,
-					Hub.PLUGIN_ID, IStatus.ERROR,
-					"Query: Konnte Methode load auf " + cl.getName()
-							+ " nicht auflösen", ex, ElexisStatus.LOG_ERRORS);
+			ElexisStatus status =
+				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+					"Query: Konnte Methode load auf " + cl.getName() + " nicht auflösen", ex,
+					ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
-
+		
 	}
-
+	
 	/**
 	 * Bequemlichkeits-Konstruktor, der gleich eine Bedingung einträgt
 	 * 
@@ -99,30 +100,30 @@ public class Query<T> {
 	 * @param value
 	 *            Gesuchter Wert von Feldname
 	 */
-	public Query(final Class<? extends PersistentObject> cl,
-			final String field, final String value) {
+	public Query(final Class<? extends PersistentObject> cl, final String field, final String value){
 		try {
 			template = Hub.poFactory.createTemplate(cl);
 			// template=cl.newInstance();
-			load = cl.getMethod("load", new Class[] { String.class });
+			load = cl.getMethod("load", new Class[] {
+				String.class
+			});
 			clear();
 			add(field, "=", value);
-
+			
 		} catch (Exception ex) {
-			ElexisStatus status = new ElexisStatus(IStatus.ERROR,
-					Hub.PLUGIN_ID, IStatus.ERROR,
-					"Query: Konnte Methode load auf " + cl.getName()
-							+ " nicht auflösen", ex, ElexisStatus.LOG_ERRORS);
+			ElexisStatus status =
+				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+					"Query: Konnte Methode load auf " + cl.getName() + " nicht auflösen", ex,
+					ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
-
+		
 	}
-
+	
 	/**
-	 * Abfrage löschen, beispielsweise um dasselbe Query-Objekt für eine neue
-	 * Abfrage zu verwenden.
+	 * Abfrage löschen, beispielsweise um dasselbe Query-Objekt für eine neue Abfrage zu verwenden.
 	 */
-	public void clear() {
+	public void clear(){
 		sql = new StringBuilder(500);
 		String table = template.getTableName();
 		sql.append(left).append(table);
@@ -144,8 +145,8 @@ public class Query<T> {
 		ordering = null;
 		exttables.clear();
 	}
-
-	private void append(final String... s) {
+	
+	private void append(final String... s){
 		sql.append(link);
 		for (String a : s) {
 			sql.append(" ").append(a);
@@ -154,48 +155,48 @@ public class Query<T> {
 			link = " AND ";
 		}
 	}
-
+	
 	/**
 	 * Folgende Ausdrücke bis endGroup gruppieren
 	 */
-	public void startGroup() {
+	public void startGroup(){
 		append("(");
 		link = "";
 	}
-
+	
 	/**
 	 * Gruppierung ende
 	 */
-	public void endGroup() {
+	public void endGroup(){
 		sql.append(")");
 	}
-
+	
 	/** Bedingung einsetzen, die immer erfüllt ist */
-	public void insertTrue() {
+	public void insertTrue(){
 		append("1=1");
 	}
-
+	
 	/** Bedingung einsetzen, die nie erfüllt ist */
-	public void insertFalse() {
+	public void insertFalse(){
 		append("1=0");
 	}
-
+	
 	/**
 	 * AND-Verknüpfung anfügen.
 	 */
-	public void and() {
+	public void and(){
 		if (link.equals(" OR ")) {
 			link = " AND ";
 		}
 	}
-
+	
 	/**
 	 * OR-Verknüpfung anfügen
 	 */
-	public void or() {
+	public void or(){
 		link = " OR ";
 	}
-
+	
 /**
 	 * Bedingung zufügen. Mehrere Bedingungen können hinzugefügt werden, indem jeweils zwischen
 	 * zwei add() Aufrufen and() oder or() aufgerufen wird.
@@ -208,8 +209,7 @@ public class Query<T> {
 +     * Kleinschreibung umgewandelt, so dass die Gross-/Kleinschreibung egal ist.
 	 * @return false bei Fehler in der Syntax oder nichtexistenten Feldern
 	 */
-	public boolean add(final String feld, String operator, String wert,
-			final boolean toLower) {
+	public boolean add(final String feld, String operator, String wert, final boolean toLower){
 		String mapped;
 		mapped = template.map(feld);
 		// treat date parameter separately
@@ -217,8 +217,7 @@ public class Query<T> {
 		if (mapped.startsWith("S:D:")) {
 			mapped = mapped.substring(4);
 			// if a date should be matched partially
-			if (operator.equalsIgnoreCase("LIKE")
-					&& !wert.matches("[0-9]{8,8}")) {
+			if (operator.equalsIgnoreCase("LIKE") && !wert.matches("[0-9]{8,8}")) {
 				StringBuilder sb = null;
 				wert = wert.replaceAll("%", "");
 				final String filler = "%%%%%%%%";
@@ -236,8 +235,7 @@ public class Query<T> {
 					// String must consist of 8 or more digits (ddmmYYYY)
 					sb.append(filler);
 					// convert to YYYYmmdd format
-					wert = sb.substring(4, 8) + sb.substring(2, 4)
-							+ sb.substring(0, 2);
+					wert = sb.substring(4, 8) + sb.substring(2, 4) + sb.substring(0, 2);
 				}
 			} else {
 				TimeTool tm = new TimeTool();
@@ -262,19 +260,19 @@ public class Query<T> {
 					sql.insert(ix, firsttable);
 				}
 			}
-
+			
 			if (exttables.size() == 1) {
 				sql.insert(7, firsttable); // Select ID from
-											// firsttable,secondtable
+				// firsttable,secondtable
 			}
 			append(table + ".ID=" + firsttable + "ID");
 			// append(mapped,operator,wert);
-
+			
 		} else if (mapped.matches(".*:.*")) {
 			log.log("Ungültiges Feld " + feld, Log.ERRORS);
 			return false;
 		}
-
+		
 		if (wert == null) {
 			if (operator.equalsIgnoreCase("is") || operator.equals("=")) {
 				// let's be a bit fault tolerant
@@ -290,24 +288,22 @@ public class Query<T> {
 			}
 			append(mapped, operator, wert);
 		}
-
+		
 		return true;
 	}
-
-	public boolean add(final String feld, final String operator,
-			final String wert) {
+	
+	public boolean add(final String feld, final String operator, final String wert){
 		return add(feld, operator, wert, false);
 	}
-
+	
 	/** Unverändertes Token in den SQL-String einfügen */
-	public void addToken(final String token) {
+	public void addToken(final String token){
 		append(token);
 	}
-
+	
 	/**
-	 * Bequemlichkeitsmethode für eine Abfrage, die nur einen einzigen Treffer
-	 * liefern soll. Die Syntax ist wie bei der add() Methode, aber die Abfrage
-	 * wird gleich ausgeführt
+	 * Bequemlichkeitsmethode für eine Abfrage, die nur einen einzigen Treffer liefern soll. Die
+	 * Syntax ist wie bei der add() Methode, aber die Abfrage wird gleich ausgeführt
 	 * 
 	 * @param f
 	 *            Feld
@@ -317,34 +313,29 @@ public class Query<T> {
 	 *            Wert (@see Query#add() )
 	 * @return Die ID des gefundenen Objekts oder null, wenn nicht gefunden
 	 */
-	public String findSingle(final String f, final String op, final String v) {
+	public String findSingle(final String f, final String op, final String v){
 		clear();
-		sql.append(link).append(template.map(f)).append(op)
-				.append(JdbcLink.wrap(v));
-		String ret = PersistentObject.getConnection().queryString(
-				sql.toString());
+		sql.append(link).append(template.map(f)).append(op).append(JdbcLink.wrap(v));
+		String ret = PersistentObject.getConnection().queryString(sql.toString());
 		return ret;
 	}
-
+	
 	/**
-	 * Bequemlichkeitsmethode, um gleich mehrere Felder auf einmal anzugeben,
-	 * welche mit AND verknüpft werden. Dies ist dasselbe, wie mehrere Aufrufe
-	 * nacheinander von add() und and(), aber die Abfrage wird gleich ausgeführt
-	 * und die Resultate werden nach den übergebenen Feldern sortiert, in der
-	 * Reihenfolge, in der sie übergeben wurden.
+	 * Bequemlichkeitsmethode, um gleich mehrere Felder auf einmal anzugeben, welche mit AND
+	 * verknüpft werden. Dies ist dasselbe, wie mehrere Aufrufe nacheinander von add() und and(),
+	 * aber die Abfrage wird gleich ausgeführt und die Resultate werden nach den übergebenen Feldern
+	 * sortiert, in der Reihenfolge, in der sie übergeben wurden.
 	 * 
 	 * @param fields
 	 *            Die Felder, die in die abfrage eingesetzt werden sollen
 	 * @param values
-	 *            die Werte, nach denen gesucht werden soll. Wenn values für ein
-	 *            Feld leer ist (null oder ""), dann wird dieses Feld aus der
-	 *            Abfrage weggelassen
+	 *            die Werte, nach denen gesucht werden soll. Wenn values für ein Feld leer ist (null
+	 *            oder ""), dann wird dieses Feld aus der Abfrage weggelassen
 	 * @param exact
 	 *            false, wenn die Abfrage mit LIKE erfolgen soll, sonst mit =
 	 * @return eine Liste mit den gefundenen Objekten
 	 */
-	public List<T> queryFields(final String[] fields, final String[] values,
-			final boolean exact) {
+	public List<T> queryFields(final String[] fields, final String[] values, final boolean exact){
 		clear();
 		String op = "=";
 		if (exact == false) {
@@ -359,27 +350,25 @@ public class Query<T> {
 		}
 		return execute();
 	}
-
-	public PreparedStatement getPreparedStatement(
-			final PreparedStatement previous) {
+	
+	public PreparedStatement getPreparedStatement(final PreparedStatement previous){
 		try {
 			if (previous != null) {
 				previous.close();
 			}
-			PreparedStatement ps = PersistentObject.getConnection()
-					.prepareStatement(sql.toString());
+			PreparedStatement ps =
+				PersistentObject.getConnection().prepareStatement(sql.toString());
 			return ps;
 		} catch (Exception ex) {
-			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
-					"Fehler beim PreparedStatement ",
-					ex, ElexisStatus.LOG_ERRORS);
+			ElexisStatus status =
+				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+					"Fehler beim PreparedStatement ", ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
 	}
-
-	public ArrayList<String> execute(final PreparedStatement ps,
-			final String[] values) {
-
+	
+	public ArrayList<String> execute(final PreparedStatement ps, final String[] values){
+		
 		try {
 			for (int i = 0; i < values.length; i++) {
 				ps.setString(i + 1, values[i]);
@@ -393,25 +382,25 @@ public class Query<T> {
 				return ret;
 			}
 		} catch (Exception ex) {
-			ElexisStatus status = new ElexisStatus(IStatus.ERROR,
-					Hub.PLUGIN_ID, IStatus.ERROR, "Fehler beim Ausführen von "
-							+ sql.toString(), ex, ElexisStatus.LOG_ERRORS);
+			ElexisStatus status =
+				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+					"Fehler beim Ausführen von " + sql.toString(), ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
 		return null;
 	}
-
+	
 	/**
-	 * Sortierung angeben. Dies muss als letzter Befehl nach einer Reihe von
-	 * add() Sequenzen erfolgen.
+	 * Sortierung angeben. Dies muss als letzter Befehl nach einer Reihe von add() Sequenzen
+	 * erfolgen.
 	 * 
 	 * @param reverse
 	 *            true bei umgekehrter Sortierung
 	 * @param n1
-	 *            Beliebig viele Strings, die in absteigender Priorität die
-	 *            Felder angeben, nach denen sortiert werden soll.
+	 *            Beliebig viele Strings, die in absteigender Priorität die Felder angeben, nach
+	 *            denen sortiert werden soll.
 	 */
-	public void orderBy(final boolean reverse, final String... n1) {
+	public void orderBy(final boolean reverse, final String... n1){
 		if (n1 != null && n1.length > 0) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(" ORDER BY ");
@@ -434,31 +423,30 @@ public class Query<T> {
 			ordering = sb.toString();
 		}
 	}
-
+	
 	/**
 	 * execute query and include elements that are marked deleted
 	 * 
 	 * @return
 	 */
-	public List<T> executeWithDeleted() {
+	public List<T> executeWithDeleted(){
 		boolean bShowDeleted = PersistentObject.isShowDeleted();
 		PersistentObject.setShowDeleted(true);
 		List<T> ret = execute();
 		PersistentObject.setShowDeleted(bShowDeleted);
 		return ret;
 	}
-
+	
 	/**
-	 * Die zusammengestellte Abfrage ausführen Dies kann aufgerufen werden,
-	 * nachdem alle nötigen add(), AND(), or() und orderBy() Operationen
-	 * eingegeben wurden und liefert das Ergebnis dieser Abfrage. execute() kann
-	 * mit derselben Abfrage beliebig oft aufgerufen werden (und kann
-	 * unzterschiedliche Resultate liefern, wenn von anderer Stelle
-	 * zwischenzeitlich eine Änderung der Datenbank erfolgte)
+	 * Die zusammengestellte Abfrage ausführen Dies kann aufgerufen werden, nachdem alle nötigen
+	 * add(), AND(), or() und orderBy() Operationen eingegeben wurden und liefert das Ergebnis
+	 * dieser Abfrage. execute() kann mit derselben Abfrage beliebig oft aufgerufen werden (und kann
+	 * unzterschiedliche Resultate liefern, wenn von anderer Stelle zwischenzeitlich eine Änderung
+	 * der Datenbank erfolgte)
 	 * 
 	 * @return eine Liste aus Objekten, die das Resultat der Abfrage sind.
 	 */
-	public List<T> execute() {
+	public List<T> execute(){
 		if (ordering != null) {
 			sql.append(ordering);
 		}
@@ -467,32 +455,29 @@ public class Query<T> {
 		LinkedList<T> ret = new LinkedList<T>();
 		return (List<T>) queryExpression(lastQuery, ret);
 	}
-
-	public Collection<T> execute(final Collection<T> collection) {
+	
+	public Collection<T> execute(final Collection<T> collection){
 		if (ordering != null) {
 			sql.append(ordering);
 		}
 		lastQuery = sql.toString();
 		return queryExpression(lastQuery, collection);
 	}
-
+	
 	/**
-	 * Eine komplexe selbst zusammengestellte Abfrage ausführen. Die Methoden
-	 * von Query erlauben eine einfache Zusammenstellung einer SQL-Abfrage, Für
-	 * spezielle Fälle will man aber vielleicht die SQL-Abfrage doch selber
-	 * direkt angeben. Dies kann hier erfolgen.
+	 * Eine komplexe selbst zusammengestellte Abfrage ausführen. Die Methoden von Query erlauben
+	 * eine einfache Zusammenstellung einer SQL-Abfrage, Für spezielle Fälle will man aber
+	 * vielleicht die SQL-Abfrage doch selber direkt angeben. Dies kann hier erfolgen.
 	 * 
 	 * @param expr
-	 *            ein für die verwendete Datenbank akzeptabler SQL-String. Es
-	 *            soll nach Möglichkeit nur Standard-SQL verwendet werden, um
-	 *            sich nicht von einer bestimmten Datenbank abhängig zu machen.
-	 *            Die Abfrage muss nur nach dem Feld ID fragen; das Objekt wird
+	 *            ein für die verwendete Datenbank akzeptabler SQL-String. Es soll nach Möglichkeit
+	 *            nur Standard-SQL verwendet werden, um sich nicht von einer bestimmten Datenbank
+	 *            abhängig zu machen. Die Abfrage muss nur nach dem Feld ID fragen; das Objekt wird
 	 *            von query selbst hergestellt.
-	 * @return Eine Liste der Objekte, die als Antwort auf die Anfrage geliefert
-	 *         wurden.
+	 * @return Eine Liste der Objekte, die als Antwort auf die Anfrage geliefert wurden.
 	 */
 	@SuppressWarnings("unchecked")
-	public Collection<T> queryExpression(final String expr, Collection<T> ret) {
+	public Collection<T> queryExpression(final String expr, Collection<T> ret){
 		// LinkedList<T> ret=new LinkedList<T>();
 		if (ret == null) {
 			ret = new LinkedList<T>();
@@ -501,15 +486,16 @@ public class Query<T> {
 		try {
 			stm = PersistentObject.getConnection().getStatement();
 			/*
-			 * if(Hub.acl.request("Query"+template.getClass().getSimpleName())==
-			 * false){
+			 * if(Hub.acl.request("Query"+template.getClass().getSimpleName())== false){
 			 * log.log("Nicht genügend Rechte zum Lesen von "+template.getClass
 			 * ().getSimpleName(),Log.ERRORS); return null; }
 			 */
 			ResultSet res = stm.query(expr);
 			while ((res != null) && (res.next() == true)) {
 				String id = res.getString(1);
-				T o = (T) load.invoke(null, new Object[] { id });
+				T o = (T) load.invoke(null, new Object[] {
+					id
+				});
 				if (o == null) {
 					continue;
 				}
@@ -523,38 +509,36 @@ public class Query<T> {
 				if (bAdd == true) {
 					ret.add(o);
 				}
-
+				
 			}
 			return ret;
-
+			
 		} catch (Exception ex) {
-			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
-					"Fehler bei Datenbankabfrage ",
-					ex, ElexisStatus.LOG_ERRORS);
+			ElexisStatus status =
+				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+					"Fehler bei Datenbankabfrage ", ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		} finally {
 			PersistentObject.getConnection().releaseStatement(stm);
 		}
 	}
-
+	
 	/*
 	 * public PersistentObject createFromID(String id){ try{
-	 * return(PersistentObject)load.invoke(null,new Object[]{id});
-	 * }catch(Exception ex){ ExHandler.handle(ex);
-	 * log.log("Konnte Objekt nicht erzeugen",Log.ERRORS); return null; } }
+	 * return(PersistentObject)load.invoke(null,new Object[]{id}); }catch(Exception ex){
+	 * ExHandler.handle(ex); log.log("Konnte Objekt nicht erzeugen",Log.ERRORS); return null; } }
 	 */
 	/**
-	 * Die Grösse des zu erwartenden Resultats abfragen. Dieses Resultat stimmt
-	 * nur ungefähr, da es bis zur tatsächlichen Abfrage noch Änderungen geben
-	 * kann, und da allfällige postQueryFilter das Resultat verkleinern könnten.
+	 * Die Grösse des zu erwartenden Resultats abfragen. Dieses Resultat stimmt nur ungefähr, da es
+	 * bis zur tatsächlichen Abfrage noch Änderungen geben kann, und da allfällige postQueryFilter
+	 * das Resultat verkleinern könnten.
 	 * 
 	 * @return die ungefähre Zahl der erwarteten Objekte.
 	 */
-	public int size() {
+	public int size(){
 		try {
 			Stm stm = PersistentObject.getConnection().getStatement();
-			String res = stm.queryString("SELECT COUNT(*) FROM "
-					+ template.getTableName());
+			String res = stm.queryString("SELECT COUNT(*) FROM " + template.getTableName());
 			PersistentObject.getConnection().releaseStatement(stm);
 			return Integer.parseInt(res);
 		} catch (Exception ex) {
@@ -562,31 +546,30 @@ public class Query<T> {
 			return 10000;
 		}
 	}
-
-	public String getLastQuery() {
+	
+	public String getLastQuery(){
 		return lastQuery;
 	}
-
-	public String getActualQuery() {
+	
+	public String getActualQuery(){
 		return sql.toString();
 	}
-
+	
 	/**
-	 * PostQueryFilters sind Filter-Objeckte, die <i>nach</i> der
-	 * Datenbankanfrage auf das zurückgelieferte Resultat angewendet werden.
-	 * Diese sind weniger effizient, als Filter, die bereits im Query-String
-	 * enthalten sind, aber sie erlauben Datenbankunabhängig feinere
-	 * Filterungen. Sie sind auch die einzige Möglichkeit, auf komprimierte oder
-	 * codierte Felder zu filtern.
+	 * PostQueryFilters sind Filter-Objeckte, die <i>nach</i> der Datenbankanfrage auf das
+	 * zurückgelieferte Resultat angewendet werden. Diese sind weniger effizient, als Filter, die
+	 * bereits im Query-String enthalten sind, aber sie erlauben Datenbankunabhängig feinere
+	 * Filterungen. Sie sind auch die einzige Möglichkeit, auf komprimierte oder codierte Felder zu
+	 * filtern.
 	 * 
 	 * @param f
 	 *            ein Filter
 	 */
-	public void addPostQueryFilter(final IFilter f) {
+	public void addPostQueryFilter(final IFilter f){
 		postQueryFilters.add(f);
 	}
-
-	public void removePostQueryFilter(final IFilter f) {
+	
+	public void removePostQueryFilter(final IFilter f){
 		postQueryFilters.remove(f);
 	}
 }

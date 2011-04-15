@@ -16,14 +16,17 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Ach.elexis.exchange to output something
+ * 
  * @author gerry
- *
+ * 
  */
 public interface IOutputter {
 	/** unique ID */
 	public String getOutputterID();
+	
 	/** human readable description */
 	public String getOutputterDescription();
+	
 	/** Image to symbolize this outputter (should be 16x16 or 24x24 Pixel) */
 	public Image getSymbol();
 }

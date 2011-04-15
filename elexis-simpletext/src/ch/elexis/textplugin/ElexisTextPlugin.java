@@ -27,39 +27,39 @@ import ch.elexis.text.ReplaceCallback;
  * @author bogdan314
  */
 public class ElexisTextPlugin implements ITextPlugin {
-
+	
 	private ElexisEditor editor;
-
+	
 	private boolean showToolbar = true;
-
+	
 	private PageFormat pageFormat;
-
+	
 	private String font;
-
+	
 	private int style;
-
+	
 	private float size;
-
+	
 	public static ElexisTextPlugin tempInstance;
-
-	public ElexisTextPlugin() {
+	
+	public ElexisTextPlugin(){
 		tempInstance = this;
 	}
-
-	public boolean clear() {
+	
+	public boolean clear(){
 		if (editor != null) {
 			editor.page.clear();
 		}
 		return true;
 	}
-
-	public Composite createContainer(final Composite parent, final ICallback handler) {
+	
+	public Composite createContainer(final Composite parent, final ICallback handler){
 		if (editor == null) {
 			Composite composite = new Composite(parent, SWT.NONE);
 			GridLayout grid = new GridLayout();
 			grid.numColumns = 1;
 			composite.setLayout(grid);
-
+			
 			editor = new ElexisEditor(composite, handler);
 			GridData spec = new GridData();
 			spec.horizontalAlignment = GridData.FILL;
@@ -67,30 +67,30 @@ public class ElexisTextPlugin implements ITextPlugin {
 			spec.verticalAlignment = GridData.FILL;
 			spec.grabExcessVerticalSpace = true;
 			editor.setLayoutData(spec);
-
+			
 			showToolbar(showToolbar);
-
+			
 			return composite;
 		} else {
 			return editor.getParent();
 		}
 	}
-
-	public boolean createEmptyDocument() {
+	
+	public boolean createEmptyDocument(){
 		return clear();
 	}
-
-	public String getMimeType() {
+	
+	public String getMimeType(){
 		return "Mime-Type";
 	}
-
+	
 	public boolean insertTable(final String place, final int properties, final String[][] contents,
-			final int[] columnSizes) {
+		final int[] columnSizes){
 		
 		if (editor == null) {
 			return false;
 		}
-
+		
 		Pattern pattern = Pattern.compile(place);
 		String text = editor.page.getText();
 		Matcher matcher = pattern.matcher(text);
@@ -98,24 +98,25 @@ public class ElexisTextPlugin implements ITextPlugin {
 			return false;
 		}
 		
-		editor.insertTable(matcher.start(), matcher.end(), contents, 
-				(properties & FIRST_ROW_IS_HEADER) != 0, (properties & GRID_VISIBLE) != 0,
-				font, (int) size, style);
+		editor.insertTable(matcher.start(), matcher.end(), contents,
+			(properties & FIRST_ROW_IS_HEADER) != 0, (properties & GRID_VISIBLE) != 0, font,
+			(int) size, style);
 		
 		return false;
 	}
 	
-	public Object insertText(final String marke, final String text, final int adjust) {
+	public Object insertText(final String marke, final String text, final int adjust){
 		if (editor == null) {
 			return false;
 		}
 		return findOrReplace(marke, new ReplaceCallback() {
-			public String replace(final String in) {
+			public String replace(final String in){
 				return text;
-			}}, true);
+			}
+		}, true);
 	}
-
-	public Object insertText(final Object pos, final String text, final int adjust) {
+	
+	public Object insertText(final Object pos, final String text, final int adjust){
 		if ((editor == null) || !(pos instanceof Pos)) {
 			return false;
 		}
@@ -130,7 +131,8 @@ public class ElexisTextPlugin implements ITextPlugin {
 			StyleRange style = (StyleRange) original.clone();
 			style.start = pospos.caret;
 			style.length = text.length();
-			style.font = font != null ? new Font(editor.getDisplay(), font, (int) size, this.style) : null;
+			style.font =
+				font != null ? new Font(editor.getDisplay(), font, (int) size, this.style) : null;
 			style.fontStyle = this.style != 0 ? this.style : style.fontStyle;
 			pospos.text.setStyleRange(style);
 			
@@ -143,37 +145,38 @@ public class ElexisTextPlugin implements ITextPlugin {
 		}
 		return null;
 	}
-
-	public Object insertTextAt(final int x, final int y, final int w, final int h, final String text, final int adjust) {
+	
+	public Object insertTextAt(final int x, final int y, final int w, final int h,
+		final String text, final int adjust){
 		TextBox box = editor.insertBox(x, y, w, h);
 		box.setText(text);
 		return new Pos(box, text.length());
 	}
-
-	public boolean loadFromStream(final InputStream is, final boolean asTemplate) {
+	
+	public boolean loadFromStream(final InputStream is, final boolean asTemplate){
 		return false;
 	}
-
-	public boolean print(final String toPrinter, final String toTray, final boolean waitUntilFinished) {
+	
+	public boolean print(final String toPrinter, final String toTray,
+		final boolean waitUntilFinished){
 		return false;
 	}
-
-	public boolean setFont(final String name, final int style, final float size) {
+	
+	public boolean setFont(final String name, final int style, final float size){
 		this.font = name;
 		this.style = style;
 		this.size = size;
 		return true;
 	}
-
+	
 	public boolean setStyle(final int style){
 		this.style = style;
 		return true;
 	}
 	
-	public void showMenu(final boolean b) {
-	}
-
-	public void showToolbar(boolean b) {
+	public void showMenu(final boolean b){}
+	
+	public void showToolbar(boolean b){
 		if (editor != null) {
 			editor.toolBar.setVisible(b);
 			GridData data = (GridData) editor.toolBar.getLayoutData();
@@ -183,14 +186,14 @@ public class ElexisTextPlugin implements ITextPlugin {
 			showToolbar = b;
 		}
 	}
-
-	public byte[] storeToByteArray() {
+	
+	public byte[] storeToByteArray(){
 		try {
 			ByteArrayOutputStream bout = new ByteArrayOutputStream();
 			DataOutputStream out = new DataOutputStream(bout);
-
+			
 			editor.page.writeTo(out);
-
+			
 			bout.close();
 			out.close();
 			return bout.toByteArray();
@@ -199,13 +202,13 @@ public class ElexisTextPlugin implements ITextPlugin {
 			return new byte[0];
 		}
 	}
-
-	public boolean loadFromByteArray(final byte[] bs, final boolean asTemplate) {
+	
+	public boolean loadFromByteArray(final byte[] bs, final boolean asTemplate){
 		ByteArrayInputStream bin = new ByteArrayInputStream(bs);
 		DataInputStream in = new DataInputStream(bin);
 		try {
 			editor.page.readFrom(in);
-
+			
 			in.close();
 		} catch (IOException ex) {
 			ex.printStackTrace();
@@ -213,12 +216,13 @@ public class ElexisTextPlugin implements ITextPlugin {
 		}
 		return true;
 	}
-
-	public boolean findOrReplace(final String pattern, final ReplaceCallback cb) {
+	
+	public boolean findOrReplace(final String pattern, final ReplaceCallback cb){
 		return findOrReplace(pattern, cb, false) != null;
 	}
 	
-	private Pos findOrReplace(final String pattern, final ReplaceCallback cb, final boolean firstTimeOnly) {
+	private Pos findOrReplace(final String pattern, final ReplaceCallback cb,
+		final boolean firstTimeOnly){
 		// carefull, might throw: PatternSyntaxException
 		if (editor != null) {
 			Pattern regexp = Pattern.compile(pattern);
@@ -229,8 +233,8 @@ public class ElexisTextPlugin implements ITextPlugin {
 				// no reason to keep searching
 				return result;
 			}
-
-			for (Iterator<TextBox> it = editor.page.textBoxes.iterator(); it.hasNext(); ) {
+			
+			for (Iterator<TextBox> it = editor.page.textBoxes.iterator(); it.hasNext();) {
 				TextBox box = it.next();
 				result = findOrReplace(regexp, box, cb, firstTimeOnly);
 				if ((result != null) && ((cb == null) || firstTimeOnly)) {
@@ -239,11 +243,12 @@ public class ElexisTextPlugin implements ITextPlugin {
 				}
 			}
 			return result;
-		}	
+		}
 		return null;
 	}
 	
-	private Pos findOrReplace(final Pattern pattern, final StyledText styledText, final ReplaceCallback callback, final boolean firstTimeOnly) {
+	private Pos findOrReplace(final Pattern pattern, final StyledText styledText,
+		final ReplaceCallback callback, final boolean firstTimeOnly){
 		String text = styledText.getText();
 		Matcher matcher = pattern.matcher(text);
 		if (!matcher.find()) {
@@ -263,10 +268,11 @@ public class ElexisTextPlugin implements ITextPlugin {
 					style = (StyleRange) style.clone();
 					style.fontStyle = (this.style != 0 ? this.style : style.fontStyle);
 					if (font != null) {
-						style.font = new Font(editor.getDisplay(), this.font, (int) size, this.style);
+						style.font =
+							new Font(editor.getDisplay(), this.font, (int) size, this.style);
 					}
 				}
-				styledText.replaceTextRange(start + diff, end-start, replace);
+				styledText.replaceTextRange(start + diff, end - start, replace);
 				style.start = start + diff;
 				style.length = replace.length();
 				styledText.setStyleRange(style);
@@ -282,47 +288,50 @@ public class ElexisTextPlugin implements ITextPlugin {
 		} while (matcher.find());
 		return new Pos();
 	}
-
-	public PageFormat getFormat() {
+	
+	public PageFormat getFormat(){
 		return pageFormat;
 	}
-
-	public void setFocus() {
+	
+	public void setFocus(){
 		if (editor != null) {
 			editor.page.forceFocus();
 		}
 	}
-
-	public void setFormat(final PageFormat f) {
+	
+	public void setFormat(final PageFormat f){
 		this.pageFormat = f;
 	}
+	
+	public void dispose(){
 
-	public void dispose() {
-		
 	}
 	
 	static class Pos {
 		StyledText text;
 		int caret;
-		public Pos() {}
-		public Pos(final StyledText text, final int caret) {
+		
+		public Pos(){}
+		
+		public Pos(final StyledText text, final int caret){
 			this.text = text;
 			this.caret = caret;
 		}
 	}
-
-	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data) throws CoreException {
-		// TODO Auto-generated method stub
-		
+	
+	public void setInitializationData(final IConfigurationElement config,
+		final String propertyName, final Object data) throws CoreException{
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void setSaveOnFocusLost(final boolean bSave) {
-		// TODO Auto-generated method stub
-		
+	
+	public void setSaveOnFocusLost(final boolean bSave){
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 	@Override
-	public boolean isDirectOutput() {
+	public boolean isDirectOutput(){
 		return false;
 	}
 }

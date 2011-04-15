@@ -70,13 +70,13 @@ public class VersionInfo implements Comparable<VersionInfo> {
 	
 	public boolean matches(VersionInfo pattern){
 		for (int i = 0; i < 3; i++) {
-			if(i>=spl.length){
-				if(i>=pattern.spl.length){
+			if (i >= spl.length) {
+				if (i >= pattern.spl.length) {
 					return true;
 				}
 				return false;
 			}
-			if(i>=pattern.spl.length){
+			if (i >= pattern.spl.length) {
 				return false;
 			}
 			if (!matchElements(spl[0], pattern.spl[0])) {

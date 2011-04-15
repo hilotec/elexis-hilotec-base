@@ -48,20 +48,19 @@ public class NotesList extends Composite {
 	String filterExpr;
 	NotesFilter notesFilter = new NotesFilter();
 	HashMap<Note, String> matches = new HashMap<Note, String>();
-
-	NotesList(Composite parent) {
+	
+	NotesList(Composite parent){
 		super(parent, SWT.NONE);
 		setLayout(new GridLayout());
 		this.parent = parent;
 		Composite cFilter = new Composite(this, SWT.NONE);
 		cFilter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cFilter.setLayout(new GridLayout(3, false));
-		ImageHyperlink clearSearchFieldHyperlink = new ImageHyperlink(cFilter,
-				SWT.NONE);
+		ImageHyperlink clearSearchFieldHyperlink = new ImageHyperlink(cFilter, SWT.NONE);
 		clearSearchFieldHyperlink.setImage(Desk.getImage(Desk.IMG_CLEAR));
 		clearSearchFieldHyperlink.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
-			public void linkActivated(HyperlinkEvent e) {
+			public void linkActivated(HyperlinkEvent e){
 				tFilter.setText(""); //$NON-NLS-1$
 				filterExpr = ""; //$NON-NLS-1$
 				matches.clear();
@@ -74,7 +73,7 @@ public class NotesList extends Composite {
 		tFilter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tFilter.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
+			public void widgetDefaultSelected(SelectionEvent e){
 				filterExpr = tFilter.getText().toLowerCase();
 				matches.clear();
 				if (filterExpr.length() == 0) {
@@ -84,31 +83,27 @@ public class NotesList extends Composite {
 					tv.addFilter(notesFilter);
 					tv.expandAll();
 				}
-
+				
 			}
 		});
 		tv = new TreeViewer(this, SWT.NONE);
-		tv.getControl().setLayoutData(
-				SWTHelper.getFillGridData(1, true, 1, true));
+		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tv.setContentProvider(new NotesContentProvider());
 		tv.setLabelProvider(new DefaultLabelProvider());
 		tv.setUseHashlookup(true);
 		tv.setInput(parent);
-		tv.addSelectionChangedListener(GlobalEventDispatcher.getInstance()
-				.getDefaultListener());
+		tv.addSelectionChangedListener(GlobalEventDispatcher.getInstance().getDefaultListener());
 	}
-
-	public void dispose() {
-		tv.removeSelectionChangedListener(GlobalEventDispatcher.getInstance()
-				.getDefaultListener());
+	
+	public void dispose(){
+		tv.removeSelectionChangedListener(GlobalEventDispatcher.getInstance().getDefaultListener());
 	}
-
+	
 	class NotesFilter extends ViewerFilter {
-
+		
 		@Override
-		public boolean select(Viewer viewer, Object parentElement,
-				Object element) {
-
+		public boolean select(Viewer viewer, Object parentElement, Object element){
+			
 			if (filterExpr.length() == 0) {
 				return true;
 			}
@@ -121,19 +116,19 @@ public class NotesList extends Composite {
 			}
 			return bMatch;
 		}
-
-		private boolean isMatch(Note n, String t) {
+		
+		private boolean isMatch(Note n, String t){
 			if (matches.get(n) != null) {
 				return true;
 			}
-
+			
 			String lbl = n.getLabel().toLowerCase();
 			if (lbl.startsWith(t) || n.getKeywords().contains(t)) {
 				matches.put(n, t);
-
+				
 				return true;
 			}
-
+			
 			List<Note> l = n.getChildren();
 			for (Note note : l) {
 				if (isMatch(note, t)) {
@@ -143,7 +138,7 @@ public class NotesList extends Composite {
 			}
 			return false;
 		}
-
+		
 	}
-
+	
 }

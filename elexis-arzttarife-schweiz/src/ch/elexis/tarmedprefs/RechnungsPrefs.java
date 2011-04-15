@@ -76,12 +76,11 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	
 	static TarmedACL ta = TarmedACL.getInstance();
 	
-	static final String[] ExtFlds =
-		{
-			"Anrede", "Kanton", "EAN=" + Xid.DOMAIN_EAN, "NIF=" + TarmedRequirements.DOMAIN_NIF, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			"KSK=" + TarmedRequirements.DOMAIN_KSK, ta.ESR5OR9, ta.ESRPLUS, ta.TIERS, ta.SPEC, //$NON-NLS-1$
-			ta.KANTON, ta.LOCAL, ta.DIAGSYS
-		};
+	static final String[] ExtFlds = {
+		"Anrede", "Kanton", "EAN=" + Xid.DOMAIN_EAN, "NIF=" + TarmedRequirements.DOMAIN_NIF, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		"KSK=" + TarmedRequirements.DOMAIN_KSK, ta.ESR5OR9, ta.ESRPLUS, ta.TIERS, ta.SPEC, //$NON-NLS-1$
+		ta.KANTON, ta.LOCAL, ta.DIAGSYS
+	};
 	
 	public RechnungsPrefs(){
 		super(Messages.getString("RechnungsPrefs.BillPrefs")); //$NON-NLS-1$
@@ -262,13 +261,14 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		});
 		
 		// bills electronically
-		bBillsElec=new Button(ret,SWT.CHECK);
+		bBillsElec = new Button(ret, SWT.CHECK);
 		bBillsElec.setText("Bills electronically");
 		bBillsElec.setSelection(Hub.mandantCfg.get(PreferenceConstants.BILL_ELECTRONICALLY, false));
 		bBillsElec.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				Hub.mandantCfg.set(PreferenceConstants.BILL_ELECTRONICALLY, bBillsElec.getSelection());
+			public void widgetSelected(SelectionEvent e){
+				Hub.mandantCfg.set(PreferenceConstants.BILL_ELECTRONICALLY, bBillsElec
+					.getSelection());
 			}
 		});
 		/*
@@ -418,19 +418,18 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout(2, false));
 			Hyperlink hb =
-				Desk.getToolkit().createHyperlink(ret, Messages
-					.getString("RechnungsPrefs.FinanceInst"), SWT.NONE); //$NON-NLS-1$
+				Desk.getToolkit().createHyperlink(ret,
+					Messages.getString("RechnungsPrefs.FinanceInst"), SWT.NONE); //$NON-NLS-1$
 			hb.addHyperlinkListener(new HyperlinkAdapter() {
 				
 				@Override
 				public void linkActivated(HyperlinkEvent e){
 					KontaktSelektor ksl =
-						new KontaktSelektor(
-							getShell(),
-							Organisation.class,
-							Messages.getString("RechnungsPrefs.paymentinst"), 
-							Messages.getString("RechnungsPrefs.PleseChooseBank"),
-									new String[]{Organisation.FLD_NAME1,Organisation.FLD_NAME2}); //$NON-NLS-1$ //$NON-NLS-2$
+						new KontaktSelektor(getShell(), Organisation.class, Messages
+							.getString("RechnungsPrefs.paymentinst"), Messages
+							.getString("RechnungsPrefs.PleseChooseBank"), new String[] {
+							Organisation.FLD_NAME1, Organisation.FLD_NAME2
+						}); //$NON-NLS-1$ //$NON-NLS-2$
 					if (ksl.open() == Dialog.OK) {
 						actBank = (Kontakt) ksl.getSelection();
 						actMandant.setInfoElement(ta.RNBANK, actBank.getId());

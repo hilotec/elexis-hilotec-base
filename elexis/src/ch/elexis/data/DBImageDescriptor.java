@@ -17,21 +17,22 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
 
 public class DBImageDescriptor extends ImageDescriptor {
-
+	
 	DBImage mine;
 	
-	public DBImageDescriptor(String name) {
-		String id=new Query<DBImage>(DBImage.class).findSingle("Titel", "=", name);
-		if(id!=null){
-			mine=DBImage.load(id);
+	public DBImageDescriptor(String name){
+		String id = new Query<DBImage>(DBImage.class).findSingle("Titel", "=", name);
+		if (id != null) {
+			mine = DBImage.load(id);
 		}
 	}
+	
 	@Override
-	public ImageData getImageData() {
-		if(mine!=null){
+	public ImageData getImageData(){
+		if (mine != null) {
 			return mine.getImage().getImageData();
 		}
 		return null;
 	}
-
+	
 }

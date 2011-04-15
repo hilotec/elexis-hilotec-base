@@ -24,31 +24,30 @@ import ch.elexis.icpc.IcpcCode;
 import ch.elexis.util.SWTHelper;
 
 public class ICPCCodesView extends ViewPart {
-	public static final String ID="ch.elexis.icpc.codesView";
+	public static final String ID = "ch.elexis.icpc.codesView";
 	String mode;
 	ChapterDisplay[] chapters;
-	CTabFolder ctab;	
+	CTabFolder ctab;
 	
-	public ICPCCodesView(){
-	}
+	public ICPCCodesView(){}
 	
 	@Override
 	public void createPartControl(Composite parent){
-		ctab=new CTabFolder(parent,SWT.NONE);
+		ctab = new CTabFolder(parent, SWT.NONE);
 		ctab.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		chapters=new ChapterDisplay[IcpcCode.classes.length];
-		for(String chapter:IcpcCode.classes){
-			CTabItem item=new CTabItem(ctab,SWT.NONE);
-			item.setText(chapter.substring(0,1));
+		chapters = new ChapterDisplay[IcpcCode.classes.length];
+		for (String chapter : IcpcCode.classes) {
+			CTabItem item = new CTabItem(ctab, SWT.NONE);
+			item.setText(chapter.substring(0, 1));
 			item.setToolTipText(chapter.substring(3));
 		}
-		ctab.addSelectionListener(new SelectionAdapter(){
-
+		ctab.addSelectionListener(new SelectionAdapter() {
+			
 			@Override
 			public void widgetSelected(SelectionEvent e){
-				int idx=ctab.getSelectionIndex();
-				if(chapters[idx]==null){
-					chapters[idx]=new ChapterDisplay(ctab,IcpcCode.classes[idx]);
+				int idx = ctab.getSelectionIndex();
+				if (chapters[idx] == null) {
+					chapters[idx] = new ChapterDisplay(ctab, IcpcCode.classes[idx]);
 					ctab.getItem(idx).setControl(chapters[idx]);
 				}
 				chapters[idx].setComponent(mode);
@@ -62,12 +61,11 @@ public class ICPCCodesView extends ViewPart {
 	// TODO Auto-generated method stub
 	
 	}
-
-
+	
 	public void setComponent(String mode){
-		this.mode=mode;
-		int idx=ctab.getSelectionIndex();
-		if(idx>-1 && idx<chapters.length){
+		this.mode = mode;
+		int idx = ctab.getSelectionIndex();
+		if (idx > -1 && idx < chapters.length) {
 			chapters[ctab.getSelectionIndex()].setComponent(mode);
 		}
 	}

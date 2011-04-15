@@ -12,7 +12,6 @@
  *******************************************************************************/
 package ch.ngiger.comm.vpn;
 
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -33,7 +32,8 @@ public class OpenVPN {
 	
 	/*
 	 * Ping another host
-	 * @hostname	hostname/IP-address of host to ping
+	 * 
+	 * @hostname hostname/IP-address of host to ping
 	 */
 	public boolean ping(String hostname){
 		boolean result = false;
@@ -53,11 +53,9 @@ public class OpenVPN {
 	 * 
 	 * @hostName string, e.g. 172.25.144 or ftp.example.com
 	 * 
-	 * @ovpnIp IP of the server we will try to ping to verify that
-	 *         the connection is okay.
+	 * @ovpnIp IP of the server we will try to ping to verify that the connection is okay.
 	 * 
-	 * @timeout how long we will wait till the connection is okay
-	 *          20 seconds is a reasonable value
+	 * @timeout how long we will wait till the connection is okay 20 seconds is a reasonable value
 	 * 
 	 * @return OpenVPN connection is okay
 	 */
@@ -70,14 +68,15 @@ public class OpenVPN {
 			File myFile = new File(ovpnConfig);
 			File parent = new File(myFile.getParent());
 			String parentDir = parent.getParent();
-			String cmd ="";
+			String cmd = "";
 			String exe = "";
 			String os = System.getProperty("os.name").toLowerCase();
 			// Under Windows we start OpenVPN here
 			if (os.indexOf("win") >= 0) {
 				cmd = "cd " + parentDir + File.separator + "config && ";
 				cmd += " start /min ";
-				File ovpnExe = new File(parentDir + File.separator + "bin" + File.separator, "openvpn");
+				File ovpnExe =
+					new File(parentDir + File.separator + "bin" + File.separator, "openvpn");
 				exe = ovpnExe.getAbsolutePath();
 				cmd += " " + ovpnExe + " --config " + myFile.getName();
 				FileWriter fos = new FileWriter(temp);
@@ -87,22 +86,21 @@ public class OpenVPN {
 				boolean res = Program.launch(temp.getAbsolutePath());
 			}
 			// else we assume that it was launched by daemons
-			int j=0, maxWait=20;
-		    long startMs = Calendar.getInstance().getTimeInMillis();
-		   
-			while (true)
-			{
-				if (ping(ovpnIp) ) break;
-			    long actualMs = Calendar.getInstance().getTimeInMillis();
-
-				if ( (actualMs - startMs) >= timeout*1000) 
-				{
-					log.log("Could not ping to server: "+ovpnIp, Log.ERRORS);
+			int j = 0, maxWait = 20;
+			long startMs = Calendar.getInstance().getTimeInMillis();
+			
+			while (true) {
+				if (ping(ovpnIp))
+					break;
+				long actualMs = Calendar.getInstance().getTimeInMillis();
+				
+				if ((actualMs - startMs) >= timeout * 1000) {
+					log.log("Could not ping to server: " + ovpnIp, Log.ERRORS);
 					return false;
 				}
 				System.out.println("Pinging");
 			}
-			System.out.println("Ping was okay to server: "+ovpnIp);
+			System.out.println("Ping was okay to server: " + ovpnIp);
 			
 		} catch (Exception ex) {
 			log.log("Could not start program", Log.ERRORS);

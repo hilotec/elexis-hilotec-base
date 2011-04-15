@@ -19,8 +19,9 @@ import org.eclipse.ui.IPerspectiveFactory;
 /**
  * This is an example on how to create a perspective. In this sample plugin with only one view it is
  * no really necessary...
+ * 
  * @author gerry
- *
+ * 
  */
 public class SamplePerspective implements IPerspectiveFactory {
 	

@@ -28,7 +28,6 @@ import ch.elexis.selectors.ComboField;
 import ch.elexis.selectors.TextField;
 import ch.rgw.tools.StringTool;
 
-
 /**
  * @author Antoine Kaufmann
  */
@@ -41,16 +40,15 @@ public class MesswertTypEnum extends MesswertBase implements IMesswertTyp {
 	ArrayList<String> choices = new ArrayList<String>();
 	
 	/**
-	 * Werte fuer die Auswahlmoeglichkeiten. (notwendig, da die Combo nur
-	 * fortlaufende Werte nimmt.
+	 * Werte fuer die Auswahlmoeglichkeiten. (notwendig, da die Combo nur fortlaufende Werte nimmt.
 	 */
 	ArrayList<Integer> values = new ArrayList<Integer>();
 	
-	public MesswertTypEnum(String n, String t, String u) {
+	public MesswertTypEnum(String n, String t, String u){
 		super(n, t, u);
 	}
 	
-	public String erstelleDarstellungswert(Messwert messwert) {
+	public String erstelleDarstellungswert(Messwert messwert){
 		int wert = StringTool.parseSafeInt(messwert.getWert());
 		for (int i = 0; i < values.size(); i++) {
 			if (values.get(i) == wert) {
@@ -59,27 +57,29 @@ public class MesswertTypEnum extends MesswertBase implements IMesswertTyp {
 		}
 		return "";
 	}
-
-	public String getDefault() {
+	
+	public String getDefault(){
 		return Integer.toString(defVal);
 	}
-
-	public void setDefault(String str) {
+	
+	public void setDefault(String str){
 		defVal = StringTool.parseSafeInt(str);
 	}
 	
 	/**
 	 * Neue Auswahlmoeglichkeit fuer dieses Enum-Feld anfuegen
 	 * 
-	 * @param c Beschriftung dieser Auswahlmoeglichkeit
-	 * @param v Wert fuer diese Auswahlmoeglichkeit
+	 * @param c
+	 *            Beschriftung dieser Auswahlmoeglichkeit
+	 * @param v
+	 *            Wert fuer diese Auswahlmoeglichkeit
 	 */
-	public void addChoice(String c, int v) {
+	public void addChoice(String c, int v){
 		choices.add(c);
 		values.add(v);
 	}
 	
-	public Widget createWidget(Composite parent, Messwert messwert) {
+	public Widget createWidget(Composite parent, Messwert messwert){
 		Combo combo = new Combo(parent, SWT.DROP_DOWN);
 		for (int i = 0; i < choices.size(); i++) {
 			combo.add(choices.get(i), i);
@@ -97,24 +97,21 @@ public class MesswertTypEnum extends MesswertBase implements IMesswertTyp {
 	}
 	
 	@Override
-	public ActiveControl createControl(Composite parent, Messwert messwert,
-			boolean bEditable) {
+	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable){
 		int flags = 0;
 		if (!bEditable) {
 			flags |= TextField.READONLY;
 		}
 		IMesswertTyp dft = messwert.getTyp();
 		String labelText = dft.getTitle();
-		ComboField cf=new ComboField(parent, flags, labelText, choices.toArray(new String[0]));
+		ComboField cf = new ComboField(parent, flags, labelText, choices.toArray(new String[0]));
 		cf.setText(messwert.getDarstellungswert());
 		return cf;
 	}
 	
-	public void saveInput(Widget widget, Messwert messwert) {
+	public void saveInput(Widget widget, Messwert messwert){
 		Combo combo = (Combo) widget;
-		messwert.setWert(Integer.toString(values.get(
-			combo.getSelectionIndex())));
+		messwert.setWert(Integer.toString(values.get(combo.getSelectionIndex())));
 	}
-
 	
 }

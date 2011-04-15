@@ -30,7 +30,7 @@ public class CommonContentProviderAdapter implements ICommonViewerContentProvide
 	
 	}
 	
-	public void changed(HashMap<String,String> values){
+	public void changed(HashMap<String, String> values){
 	// TODO Automatisch erstellter Methoden-Stub
 	
 	}
@@ -43,10 +43,10 @@ public class CommonContentProviderAdapter implements ICommonViewerContentProvide
 	public void selected(){
 	// TODO Automatisch erstellter Methoden-Stub
 	}
-
+	
 	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-		
+	public void init(){
+	// TODO Auto-generated method stub
+	
 	}
 }

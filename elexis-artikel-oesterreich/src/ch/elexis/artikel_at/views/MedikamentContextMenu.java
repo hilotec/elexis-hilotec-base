@@ -24,14 +24,14 @@ public class MedikamentContextMenu {
 	ArtikelMenuListener menuListener = new ArtikelMenuListener();
 	MenuManager menu;
 	ArrayList<IAction> actions = new ArrayList<IAction>();
-
+	
 	public MedikamentContextMenu(final Medikament template, final CommonViewer cv,
-			final ArtikelDetailDisplay add) {
+		final ArtikelDetailDisplay add){
 		this(template, cv);
 		this.add = add;
 	}
 	
-	public MedikamentContextMenu(final Medikament template, final CommonViewer cv) {
+	public MedikamentContextMenu(final Medikament template, final CommonViewer cv){
 		this.cv = cv;
 		makeActions(template);
 		actions.add(propertiesAction);
@@ -40,20 +40,20 @@ public class MedikamentContextMenu {
 		cv.setContextMenu(menu);
 	}
 	
-	public void addAction(final IAction ac) {
+	public void addAction(final IAction ac){
 		actions.add(ac);
 	}
-
-	public void removeAction(final IAction ac) {
+	
+	public void removeAction(final IAction ac){
 		actions.remove(ac);
 	}
-
+	
 	public interface MedikamentDetailDisplay {
 		public boolean show(Medikament art);
 	}
-
+	
 	class ArtikelMenuListener implements IMenuListener {
-		public void menuAboutToShow(final IMenuManager manager) {
+		public void menuAboutToShow(final IMenuManager manager){
 			menu.removeAll();
 			for (IAction ac : actions) {
 				if (ac == null) {
@@ -65,20 +65,19 @@ public class MedikamentContextMenu {
 		}
 	}
 	
-	private void makeActions(final Artikel art) {
+	private void makeActions(final Artikel art){
 		propertiesAction = new Action(Messages.ArtikelContextMenu_propertiesAction) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
 				setToolTipText(Messages.ArtikelContextMenu_propertiesTooltip);
 			}
-
+			
 			@Override
-			public void run() {
-				Medikament n = (Medikament) ElexisEventDispatcher.getSelected(art
-						.getClass());
+			public void run(){
+				Medikament n = (Medikament) ElexisEventDispatcher.getSelected(art.getClass());
 				if (add == null) {
-					new MedikamentDetailDialog(cv.getViewerWidget().getControl()
-							.getShell(), n).open();
+					new MedikamentDetailDialog(cv.getViewerWidget().getControl().getShell(), n)
+						.open();
 				} else {
 					add.show(n);
 				}

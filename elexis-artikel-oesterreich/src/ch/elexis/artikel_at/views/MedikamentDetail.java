@@ -22,22 +22,22 @@ public class MedikamentDetail implements IDetailDisplay {
 	
 	MedikamentDetailBlatt detail;
 	
-	public Composite createDisplay(Composite parent, IViewSite site) {
-		detail=new MedikamentDetailBlatt(parent);
+	public Composite createDisplay(Composite parent, IViewSite site){
+		detail = new MedikamentDetailBlatt(parent);
 		return detail;
 		
 	}
-
-	public Class getElementClass() {
+	
+	public Class getElementClass(){
 		return Medikament.class;
 	}
-
-	public String getTitle() {
+	
+	public String getTitle(){
 		return "Medikamente (Vidal)";
 	}
-
-	public void display(Object obj) {
-		detail.display((Medikament)obj);
+	
+	public void display(Object obj){
+		detail.display((Medikament) obj);
 	}
-
+	
 }

@@ -49,11 +49,11 @@ public class TestElexisCore {
 	public void testSnapshots() throws Exception{
 		return;
 		/*
-		SWTbotUtils.takeScreenshot("FULL_SCREEN.png", SWTbotUtils.FULL_SCREEN);
-		SWTbotUtils.takeScreenshot("EDITOR.png", SWTbotUtils.EDITOR);
-		SWTbotUtils.takeScreenshot("VIEW.png", SWTbotUtils.VIEW);
-		SWTbotUtils.takeScreenshot("SHELL.png", SWTbotUtils.SHELL);
-		*/
+		 * SWTbotUtils.takeScreenshot("FULL_SCREEN.png", SWTbotUtils.FULL_SCREEN);
+		 * SWTbotUtils.takeScreenshot("EDITOR.png", SWTbotUtils.EDITOR);
+		 * SWTbotUtils.takeScreenshot("VIEW.png", SWTbotUtils.VIEW);
+		 * SWTbotUtils.takeScreenshot("SHELL.png", SWTbotUtils.SHELL);
+		 */
 	}
 	
 	@Test

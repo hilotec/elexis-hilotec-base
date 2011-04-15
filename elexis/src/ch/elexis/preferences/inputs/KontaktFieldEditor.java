@@ -105,8 +105,10 @@ public class KontaktFieldEditor extends FieldEditor {
 				@Override
 				public void mouseUp(MouseEvent e){
 					KontaktSelektor ksl =
-						new KontaktSelektor(parent.getShell(), Kontakt.class, Messages.getString("KontaktFieldEditor.SelectContact"), //$NON-NLS-1$
-							Messages.getString("KontaktFieldEditor.PleaseSelectContact"),Kontakt.DEFAULT_SORT); //$NON-NLS-1$
+						new KontaktSelektor(parent.getShell(),
+							Kontakt.class,
+							Messages.getString("KontaktFieldEditor.SelectContact"), //$NON-NLS-1$
+							Messages.getString("KontaktFieldEditor.PleaseSelectContact"), Kontakt.DEFAULT_SORT); //$NON-NLS-1$
 					if (ksl.open() == Dialog.OK) {
 						selected = (Kontakt) ksl.getSelection();
 						contactLabel.setText(selected.getLabel());

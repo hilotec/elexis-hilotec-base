@@ -34,9 +34,8 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
 /**
- * SimpleStructuredText is an XML format to define structured texts. To simplify
- * interpretation for different readers with different capabilities, text and
- * structure are strictly separated.
+ * SimpleStructuredText is an XML format to define structured texts. To simplify interpretation for
+ * different readers with different capabilities, text and structure are strictly separated.
  * 
  * @author gerry
  * 
@@ -44,7 +43,7 @@ import ch.rgw.tools.TimeTool;
 public class SimpleStructuredDocument {
 	// private static final String ATTR_TYPE = "type";
 	private static final String ELEM_RANGE = "range";
-
+	
 	private static final String ATTR_TYPE_STRIKETHRU = "strikethru";
 	private static final String ATTR_TYPE_UNDERLINED = "underlined";
 	private static final String ATTR_TYPE_ITALIC = "italic";
@@ -58,34 +57,32 @@ public class SimpleStructuredDocument {
 	public static final String ELEM_TEXT = "text"; //$NON-NLS-1$
 	public static final String ELEM_RECORD = "record"; //$NON-NLS-1$
 	private static final int EE_BASE = 100;
-	public static final Namespace ns = Namespace.getNamespace(
-			"SimpleStructuredText", "http://www.elexis.ch/XSD"); //$NON-NLS-1$ //$NON-NLS-2$
-	public static final Namespace nsxsi = Namespace.getNamespace(
-			"xsi", "http://www.w3.org/2001/XML Schema-instance"); //$NON-NLS-1$ //$NON-NLS-2$
-	public static final Namespace nsschema = Namespace.getNamespace(
-			"schemaLocation", "http://www.elexis.ch/XSD sst.xsd"); //$NON-NLS-1$ //$NON-NLS-2$
-
+	public static final Namespace ns =
+		Namespace.getNamespace("SimpleStructuredText", "http://www.elexis.ch/XSD"); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final Namespace nsxsi =
+		Namespace.getNamespace("xsi", "http://www.w3.org/2001/XML Schema-instance"); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final Namespace nsschema =
+		Namespace.getNamespace("schemaLocation", "http://www.elexis.ch/XSD sst.xsd"); //$NON-NLS-1$ //$NON-NLS-2$
+	
 	private final StringBuilder contents;
 	private final ArrayList<SSDRange> ranges;
 	private final List<SSDChangeListener> textChangeListeners = new ArrayList<SSDChangeListener>();
-
-	public SimpleStructuredDocument() {
+	
+	public SimpleStructuredDocument(){
 		contents = new StringBuilder();
 		ranges = new ArrayList<SSDRange>();
 	}
-
+	
 	/**
-	 * Parse an input String. Can parse plain text, Samdas or
-	 * SimpleStructuredDocument
+	 * Parse an input String. Can parse plain text, Samdas or SimpleStructuredDocument
 	 * 
 	 * @param input
 	 * @param bAppend
-	 *            if true, new input will appended. If false, current contents
-	 *            will be erased first.
+	 *            if true, new input will appended. If false, current contents will be erased first.
 	 * @throws ElexisException
 	 *             if an XML input could not be parsed
 	 */
-	public void loadText(String input, boolean bAppend) throws ElexisException {
+	public void loadText(String input, boolean bAppend) throws ElexisException{
 		if (!bAppend) {
 			contents.setLength(0);
 			ranges.clear();
@@ -103,40 +100,39 @@ public class SimpleStructuredDocument {
 				}
 			} catch (JDOMException jde) {
 				ExHandler.handle(jde);
-				throw new ElexisException(getClass(), "Cannot parse input "
-						+ jde.getMessage(), EE_BASE);
+				throw new ElexisException(getClass(), "Cannot parse input " + jde.getMessage(),
+					EE_BASE);
 			} catch (IOException e) {
 				ExHandler.handle(e);
-				throw new ElexisException(getClass(), "Read error "
-						+ e.getMessage(), EE_BASE + 1);
+				throw new ElexisException(getClass(), "Read error " + e.getMessage(), EE_BASE + 1);
 			}
 		} else {
 			contents.append(input);
 		}
 	}
-
-	public String getPlaintext() {
+	
+	public String getPlaintext(){
 		return contents.toString();
 	}
-
-	private void parseSamdas(Element eRoot) {
+	
+	private void parseSamdas(Element eRoot){
 		Samdas samdas = new Samdas();
 		eRoot.detach();
 		samdas.setRoot(eRoot);
 		Record record = samdas.getRecord();
 		List<Samdas.XRef> xrefs = record.getXrefs();
 		List<Samdas.Markup> markups = record.getMarkups();
-		String text=record.getText();
+		String text = record.getText();
 		contents.append(text);
 		for (Samdas.Markup m : markups) {
-			SSDRange range = new SSDRange(m.getPos(), m.getLength(),
-					SSDRange.TYPE_MARKUP, m.getType());
+			SSDRange range =
+				new SSDRange(m.getPos(), m.getLength(), SSDRange.TYPE_MARKUP, m.getType());
 			ranges.add(range);
 		}
-
+		
 	}
-
-	private void parseSSD(Element eRoot) {
+	
+	private void parseSSD(Element eRoot){
 		Element eText = eRoot.getChild(ELEM_TEXT, ns);
 		contents.append(eText.getText());
 		@SuppressWarnings("unchecked")
@@ -145,25 +141,22 @@ public class SimpleStructuredDocument {
 			SSDRange range = new SSDRange(el);
 			ranges.add(range);
 		}
-
+		
 	}
-
+	
 	/**
 	 * Convert the contents to a SimpleStructuredDocument file.
 	 * 
 	 * @param bCreateHeader
-	 *            if false, a representation without header information is
-	 *            created
+	 *            if false, a representation without header information is created
 	 * @return
 	 */
-	public String toXML(boolean bCreateHeader) {
+	public String toXML(boolean bCreateHeader){
 		Document doc = new Document();
 		Element eRoot = new Element(ELEM_ROOT, ns);
 		if (bCreateHeader) {
-			eRoot.setAttribute("created",
-					new TimeTool().toString(TimeTool.DATETIME_XML));
-			eRoot.setAttribute("lastEdit",
-					new TimeTool().toString(TimeTool.DATETIME_XML));
+			eRoot.setAttribute("created", new TimeTool().toString(TimeTool.DATETIME_XML));
+			eRoot.setAttribute("lastEdit", new TimeTool().toString(TimeTool.DATETIME_XML));
 			eRoot.setAttribute("createdBy", Hub.actMandant.getPersonalia());
 			eRoot.setAttribute("editedBy", Hub.actUser.getPersonalia());
 			eRoot.setAttribute("version", VERSION);
@@ -171,7 +164,7 @@ public class SimpleStructuredDocument {
 			eRoot.setAttribute("generatorVersion", Hub.Version);
 			eRoot.addNamespaceDeclaration(XChangeContainer.nsxsi);
 			eRoot.addNamespaceDeclaration(XChangeContainer.nsschema);
-
+			
 		}
 		Element eText = new Element(ELEM_TEXT, ns);
 		eText.setText(contents.toString());
@@ -180,23 +173,23 @@ public class SimpleStructuredDocument {
 		for (SSDRange r : ranges) {
 			Element el = r.toElement();
 			eRoot.addContent(el);
-
+			
 		}
 		XMLOutputter xout = new XMLOutputter(Format.getRawFormat());
 		return xout.outputString(doc);
 	}
-
+	
 	/**
 	 * Insert some text
 	 * 
 	 * @param ins
 	 *            the text to insert
 	 * @param pos
-	 *            start position for insert. If pos is larger than text length,
-	 *            it will be appended at the end. ig pos is negative, nothing
-	 *            will be inserted. If ins is null, nothing will be inserted.
+	 *            start position for insert. If pos is larger than text length, it will be appended
+	 *            at the end. ig pos is negative, nothing will be inserted. If ins is null, nothing
+	 *            will be inserted.
 	 */
-	public void insertText(String ins, int pos) {
+	public void insertText(String ins, int pos){
 		if (pos < 0 || ins == null) {
 			return;
 		}
@@ -224,7 +217,7 @@ public class SimpleStructuredDocument {
 			}
 		}
 	}
-
+	
 	/**
 	 * remove some text
 	 * 
@@ -234,7 +227,7 @@ public class SimpleStructuredDocument {
 	 *            length of text to remove
 	 * @return the removed String
 	 */
-	public String remove(int pos, int len) {
+	public String remove(int pos, int len){
 		if (pos > contents.length() || pos < 0) {
 			return "";
 		}
@@ -257,13 +250,13 @@ public class SimpleStructuredDocument {
 		}
 		return ret;
 	}
-
-	public void addRange(SSDRange r) {
+	
+	public void addRange(SSDRange r){
 		ranges.add(r);
 	}
-
-	public List<SSDRange> getRanges() {
+	
+	public List<SSDRange> getRanges(){
 		return Collections.unmodifiableList(ranges);
 	}
-
+	
 }

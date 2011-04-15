@@ -54,50 +54,51 @@ public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 	 */
 	private final ArrayList<CalcVar> variables = new ArrayList<CalcVar>();
 	
-	
-	public MesswertTypCalc(String n, String t, String u) {
+	public MesswertTypCalc(String n, String t, String u){
 		super(n, t, u);
 	}
 	
 	/**
-	 * Kontext des Interpreters vorbereiten um die Formel auswerten zu koennen.
-	 * Dabei werden die Variablen importiert.
+	 * Kontext des Interpreters vorbereiten um die Formel auswerten zu koennen. Dabei werden die
+	 * Variablen importiert.
 	 * 
 	 * TODO: Ist noch Beanshell-spezifisch
 	 * 
-	 * @param interpreter Interpreter
-	 * @param messung     Messung in der die Formel ausgewertet werden soll
+	 * @param interpreter
+	 *            Interpreter
+	 * @param messung
+	 *            Messung in der die Formel ausgewertet werden soll
 	 * @throws EvalError
 	 */
-	private void interpreterSetzeKontext(Interpreter interpreter,
-		Messung messung) throws ElexisException
-		{
-		for (CalcVar cv: variables) {
+	private void interpreterSetzeKontext(Interpreter interpreter, Messung messung)
+		throws ElexisException{
+		for (CalcVar cv : variables) {
 			Object wert = holeVariable(messung, cv.getName(), cv.getSource());
 			if (wert != null) {
 				interpreter.setValue(cv.getName(), wert);
 			}
 		}
-		}
+	}
 	
 	/**
 	 * Wert einer Variable fuer die Formel bestimmen
 	 * 
-	 * @param messung Messung in der die Formel ausgewertet werten soll
-	 * @param name    Name der Variable. Kann mit . getrennt sein, wenn sich
-	 *                links vom Punkt jeweils ein Data-Feld befindet, dabei
-	 *                bezieht sich der Teil rechts vom Punkt auf das Feld in
-	 *                dem referenzierten Objekt.
-	 * @param source  Quelle der Variable
+	 * @param messung
+	 *            Messung in der die Formel ausgewertet werten soll
+	 * @param name
+	 *            Name der Variable. Kann mit . getrennt sein, wenn sich links vom Punkt jeweils ein
+	 *            Data-Feld befindet, dabei bezieht sich der Teil rechts vom Punkt auf das Feld in
+	 *            dem referenzierten Objekt.
+	 * @param source
+	 *            Quelle der Variable
 	 * 
-	 * @return Wert der dem Interpreter uebergeben werden soll. Haengt vom typ
-	 *         der Variable ab.
+	 * @return Wert der dem Interpreter uebergeben werden soll. Haengt vom typ der Variable ab.
 	 */
-	private Object holeVariable(Messung messung, String name, String source) {
-		if(messung==null){
+	private Object holeVariable(Messung messung, String name, String source){
+		if (messung == null) {
 			return "messung?";
 		}
-		if(source==null){
+		if (source == null) {
 			return "source?";
 		}
 		String[] parts = source.split("\\.");
@@ -116,26 +117,24 @@ public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 			} else if (typ instanceof MesswertTypEnum) {
 				return Integer.parseInt(messwert.getWert());
 			} else if (typ instanceof MesswertTypData) {
-				log.log("Fehler beim Auswerten einer Variable(" + name +"): " +
-					"wertet auf ein Data-Feld aus.", Log.ERRORS);
+				log.log("Fehler beim Auswerten einer Variable(" + name + "): "
+					+ "wertet auf ein Data-Feld aus.", Log.ERRORS);
 				return null;
 			}
 		}
 		
 		if (!(typ instanceof MesswertTypData)) {
-			log.log("Fehler beim Auswerten einer Variable(" + name + "): "+
-				"Dereferenziertes Feld ist nicht vom Typ DATA", Log.ERRORS);
+			log.log("Fehler beim Auswerten einer Variable(" + name + "): "
+				+ "Dereferenziertes Feld ist nicht vom Typ DATA", Log.ERRORS);
 			return null;
 		}
 		MesswertTypData t = (MesswertTypData) typ;
 		Messung dm = t.getMessung(messwert);
-		return holeVariable(dm, name + "." +
-			parts[0],source.substring(source.indexOf(".") + 1));
+		return holeVariable(dm, name + "." + parts[0], source.substring(source.indexOf(".") + 1));
 	}
 	
 	/**
-	 * Interne Klasse die eine Variable fuer die Formel darstellt(nur
-	 * deklaration).
+	 * Interne Klasse die eine Variable fuer die Formel darstellt(nur deklaration).
 	 * 
 	 * @author Antoine Kaufmann
 	 */
@@ -150,16 +149,16 @@ public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 		 */
 		private final String source;
 		
-		CalcVar(String n, String s) {
+		CalcVar(String n, String s){
 			name = n;
 			source = s;
 		}
 		
-		String getName() {
+		String getName(){
 			return name;
 		}
 		
-		String getSource() {
+		String getSource(){
 			return source;
 		}
 	}
@@ -167,31 +166,34 @@ public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 	/**
 	 * Neue Variable hinzufuegen
 	 * 
-	 * @param name   Name der Variable
-	 * @param source Quelle fuer den Variableninhalt
+	 * @param name
+	 *            Name der Variable
+	 * @param source
+	 *            Quelle fuer den Variableninhalt
 	 */
-	public void addVariable(String name, String source) {
+	public void addVariable(String name, String source){
 		variables.add(new CalcVar(name, source));
 	}
 	
 	/**
 	 * Formel, die berechnet werden soll, setzen.
-	 *
-	 * @param f Formel
-	 * @param i Interpreter fuer die Formel
+	 * 
+	 * @param f
+	 *            Formel
+	 * @param i
+	 *            Interpreter fuer die Formel
 	 */
-	public void setFormula(String f, String i) {
+	public void setFormula(String f, String i){
 		formula = f;
 		interpreter = i;
 	}
 	
-	public String erstelleDarstellungswert(Messwert messwert) {
-		
+	public String erstelleDarstellungswert(Messwert messwert){
 		
 		try {
 			Interpreter interpreter = Script.getInterpreterFor(formula);
 			interpreterSetzeKontext(interpreter, messwert.getMessung());
-			Object wert = interpreter.run(formula,false);
+			Object wert = interpreter.run(formula, false);
 			return wert.toString();
 		} catch (ElexisException e) {
 			e.printStackTrace();
@@ -202,31 +204,28 @@ public class MesswertTypCalc extends MesswertBase implements IMesswertTyp {
 		return "";
 	}
 	
-	public String getDefault() {
+	public String getDefault(){
 		return "";
 	}
 	
-	public void setDefault(String str) {
-	}
+	public void setDefault(String str){}
 	
-	public Widget createWidget(Composite parent, Messwert messwert) {
+	public Widget createWidget(Composite parent, Messwert messwert){
 		Text text = SWTHelper.createText(parent, 1, SWT.NONE);
 		text.setText(messwert.getDarstellungswert());
 		text.setEditable(false);
 		return text;
 	}
 	
-	public void saveInput(Widget widget, Messwert messwert) {
-	}
-
+	public void saveInput(Widget widget, Messwert messwert){}
+	
 	@Override
-	public ActiveControl createControl(Composite parent, Messwert messwert,
-			boolean bEditable) {
+	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable){
 		IMesswertTyp dft = messwert.getTyp();
 		String labelText = dft.getTitle();
 		TextField tf = new TextField(parent, ActiveControl.READONLY, labelText);
 		tf.setText(messwert.getDarstellungswert());
 		return tf;
-	
+		
 	}
 }

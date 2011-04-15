@@ -4,42 +4,50 @@ package ch.elexis.data;
 import ch.rgw.tools.StringTool;
 
 public class Plz extends PersistentObject {
-
-	static{
-		addMapping("PLZ","Plz","Ort","Kanton");
+	
+	static {
+		addMapping("PLZ", "Plz", "Ort", "Kanton");
 	}
+	
 	public Plz(String plz, String Ort, String Kanton){
 		create(null);
-		set(new String[]{"Plz","Ort","Kanton"},new String[]{plz,Ort,Kanton});
+		set(new String[] {
+			"Plz", "Ort", "Kanton"
+		}, new String[] {
+			plz, Ort, Kanton
+		});
 	}
 	
 	public static Plz load(String id){
-		if(StringTool.isNothing(id)){
+		if (StringTool.isNothing(id)) {
 			return null;
 		}
 		return new Plz(id);
 	}
 	
-	public Plz(String id) {
+	public Plz(String id){
 		super(id);
 	}
+	
 	public String getLabel(){
-		String[] f=new String[3];
-		get(new String[]{"Plz","Ort","Kanton"},f);
-		StringBuilder ret=new StringBuilder();
+		String[] f = new String[3];
+		get(new String[] {
+			"Plz", "Ort", "Kanton"
+		}, f);
+		StringBuilder ret = new StringBuilder();
 		ret.append(f[0]).append(" ").append(f[1]).append(" ").append(f[2]);
 		return ret.toString();
 	}
-
-	protected Plz() { /* empty */}
-
+	
+	protected Plz(){ /* empty */}
+	
 	@Override
-	protected String getTableName() {
+	protected String getTableName(){
 		return "PLZ";
 	}
-
+	
 	@Override
-	public int getCacheTime() {
+	public int getCacheTime(){
 		return Integer.MAX_VALUE;
 	}
 	

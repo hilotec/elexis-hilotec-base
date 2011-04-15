@@ -27,23 +27,21 @@ import ch.rgw.tools.VersionInfo;
 public class Bild extends PersistentObject {
 	public static final String DBVERSION = "1.2.0"; //$NON-NLS-1$
 	public static final String TABLENAME = "BILDANZEIGE"; //$NON-NLS-1$
-	public static final String createDB=
-		"CREATE TABLE "+TABLENAME+" ("+ //$NON-NLS-1$ //$NON-NLS-2$
-		"ID				VARCHAR(25) primary key,"+ //$NON-NLS-1$
-		"lastupdate		BIGINT,"+	 //$NON-NLS-1$
-		"deleted		CHAR(1) default '0',"+ //$NON-NLS-1$
-		"PatID			VARCHAR(25),"+ //$NON-NLS-1$
-		"Datum			CHAR(8),"+ //$NON-NLS-1$
-		"Title 			VARCHAR(30),"+	 //$NON-NLS-1$
-		"Info			TEXT,"+ //$NON-NLS-1$
-		"Keywords		VARCHAR(80),"+ //$NON-NLS-1$
-		"isRef			char(2),"+ //$NON-NLS-1$
-		"Bild			BLOB);"+ //$NON-NLS-1$
-		"CREATE INDEX BANZ1 ON "+TABLENAME+" (PatID);"+ //$NON-NLS-1$ //$NON-NLS-2$
-		"CREATE INDEX BANZ2 ON "+TABLENAME+" (Keywords);" + //$NON-NLS-1$ //$NON-NLS-2$
-		"INSERT INTO "+TABLENAME+" (ID, TITLE) VALUES ('1','"+DBVERSION+"');"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		
-
+	public static final String createDB = "CREATE TABLE " + TABLENAME + " (" + //$NON-NLS-1$ //$NON-NLS-2$
+		"ID				VARCHAR(25) primary key," + //$NON-NLS-1$
+		"lastupdate		BIGINT," + //$NON-NLS-1$
+		"deleted		CHAR(1) default '0'," + //$NON-NLS-1$
+		"PatID			VARCHAR(25)," + //$NON-NLS-1$
+		"Datum			CHAR(8)," + //$NON-NLS-1$
+		"Title 			VARCHAR(30)," + //$NON-NLS-1$
+		"Info			TEXT," + //$NON-NLS-1$
+		"Keywords		VARCHAR(80)," + //$NON-NLS-1$
+		"isRef			char(2)," + //$NON-NLS-1$
+		"Bild			BLOB);" + //$NON-NLS-1$
+		"CREATE INDEX BANZ1 ON " + TABLENAME + " (PatID);" + //$NON-NLS-1$ //$NON-NLS-2$
+		"CREATE INDEX BANZ2 ON " + TABLENAME + " (Keywords);" + //$NON-NLS-1$ //$NON-NLS-2$
+		"INSERT INTO " + TABLENAME + " (ID, TITLE) VALUES ('1','" + DBVERSION + "');"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	
 	static {
 		addMapping(TABLENAME, "PatID", "Datum=S:D:Datum", "Titel=Title", "Keywords", "Bild", "Info"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		Bild start = load("1"); //$NON-NLS-1$
@@ -52,9 +50,8 @@ public class Bild extends PersistentObject {
 		} else {
 			VersionInfo vi = new VersionInfo(start.get("Titel")); //$NON-NLS-1$
 			if (vi.isOlder(DBVERSION)) {
-				if(vi.isOlder("1.2.0")){ //$NON-NLS-1$
-					getConnection().exec(
-						"ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;"); //$NON-NLS-1$ //$NON-NLS-2$
+				if (vi.isOlder("1.2.0")) { //$NON-NLS-1$
+					getConnection().exec("ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;"); //$NON-NLS-1$ //$NON-NLS-2$
 					start.set("Titel", DBVERSION); //$NON-NLS-1$
 				}
 				if (vi.isOlder("1.1.0")) { //$NON-NLS-1$
@@ -62,9 +59,8 @@ public class Bild extends PersistentObject {
 						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';"); //$NON-NLS-1$ //$NON-NLS-2$
 					start.set("Titel", DBVERSION); //$NON-NLS-1$
 				} else {
-					SWTHelper
-						.showError(Messages.Bild_VersionConflict,
-							Messages.Bild_BadVersionNUmber);
+					SWTHelper.showError(Messages.Bild_VersionConflict,
+						Messages.Bild_BadVersionNUmber);
 				}
 			}
 		}

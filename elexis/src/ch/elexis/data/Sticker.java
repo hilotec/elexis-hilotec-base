@@ -52,7 +52,7 @@ public class Sticker extends PersistentObject implements Comparable<Sticker> {
 	static {
 		addMapping(TABLENAME, DATE_COMPOUND, "BildID=Image", "vg=foreground", "bg=background",
 			NAME, "wert=importance"
-			
+
 		);
 	}
 	
@@ -173,7 +173,7 @@ public class Sticker extends PersistentObject implements Comparable<Sticker> {
 		Stm stm = getConnection().getStatement();
 		
 		sb.append("DELETE FROM ").append(Sticker.LINKTABLE).append(" WHERE ")
-		.append("etikette = '").append(getId()).append("'");
+			.append("etikette = '").append(getId()).append("'");
 		stm.exec(sb.toString());
 		getConnection().releaseStatement(stm);
 		return super.delete();
@@ -229,6 +229,7 @@ public class Sticker extends PersistentObject implements Comparable<Sticker> {
 	
 	/**
 	 * Find all Stickers applicable for a given class
+	 * 
 	 * @param clazz
 	 * @return
 	 */

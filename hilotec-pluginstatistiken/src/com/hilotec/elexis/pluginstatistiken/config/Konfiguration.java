@@ -56,13 +56,13 @@ public class Konfiguration {
 	
 	public static final String DATASOURCE_EXT = "com.hilotec.elexis.pluginstatistiken.Datenquelle";
 	
-	
 	Log log = Log.get("Messwertstatistiken");
 	ArrayList<KonfigurationQuery> queries;
 	HashMap<String, IDatenquelle> datenquellen;
 	
-	private static Konfiguration the_one_and_only_instance = null; 
-	public static Konfiguration getInstance() {
+	private static Konfiguration the_one_and_only_instance = null;
+	
+	public static Konfiguration getInstance(){
 		if (the_one_and_only_instance == null) {
 			the_one_and_only_instance = new Konfiguration();
 		}
@@ -72,23 +72,23 @@ public class Konfiguration {
 	/**
 	 * Das ist ein Singleton, also muss der Konstruktor privat sein
 	 */
-	private Konfiguration() {
+	private Konfiguration(){
 		queries = new ArrayList<KonfigurationQuery>();
 		datenquellen = new HashMap<String, IDatenquelle>();
 		datenquellenInitialisieren();
-		readFromXML(Hub.getWritableUserDir()+File.separator+STATISTIKEN_FILENAME);
+		readFromXML(Hub.getWritableUserDir() + File.separator + STATISTIKEN_FILENAME);
 	}
 	
 	/**
 	 * XML-Datei mit den Definitionen der Abfragen einlesen und parsen
 	 * 
-	 * @param path Pfad zur Datei
+	 * @param path
+	 *            Pfad zur Datei
 	 */
-	private void readFromXML(String path) {
+	private void readFromXML(String path){
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		Document doc;
-		
 		
 		try {
 			builder = factory.newDocumentBuilder();
@@ -112,20 +112,19 @@ public class Konfiguration {
 				NodeList jl = qe.getElementsByTagName(ELEM_JOIN);
 				for (int j = 0; j < jl.getLength(); j++) {
 					Element je = (Element) jl.item(j);
-
-						// Bedingunsoperation suchen
-						KonfigurationWhere where = null;
-						NodeList jchildren = je.getChildNodes();
-						for (int k = 0; k < jchildren.getLength(); k++) {
-							if (jchildren.item(k).getNodeType() == Node.ELEMENT_NODE) {
-								where = new KonfigurationWhere((Element) jchildren.item(k));
-								break;
-							}
+					
+					// Bedingunsoperation suchen
+					KonfigurationWhere where = null;
+					NodeList jchildren = je.getChildNodes();
+					for (int k = 0; k < jchildren.getLength(); k++) {
+						if (jchildren.item(k).getNodeType() == Node.ELEMENT_NODE) {
+							where = new KonfigurationWhere((Element) jchildren.item(k));
+							break;
 						}
-						
-						kq.addJoin(new KonfigurationQuery.Join(
-							je.getAttribute(ATTR_TABLE), je.getAttribute(ATTR_AS), where,
-							KonfigurationQuery.Join.JType.JOIN_INNER));
+					}
+					
+					kq.addJoin(new KonfigurationQuery.Join(je.getAttribute(ATTR_TABLE), je
+						.getAttribute(ATTR_AS), where, KonfigurationQuery.Join.JType.JOIN_INNER));
 				}
 				
 				// Spaltendefinitionen
@@ -149,7 +148,6 @@ public class Konfiguration {
 					kq.addCol(ce.getAttribute(ATTR_NAME), ce.getAttribute(ATTR_SOURCE));
 				}
 				
-				
 				// Where-Klausel
 				if (wheree != null) {
 					Element whereOp = null;
@@ -171,20 +169,16 @@ public class Konfiguration {
 		}
 	}
 	
-	private void datenquellenInitialisieren() {
-		for (IConfigurationElement ic :
-			Extensions.getExtensions(DATASOURCE_EXT))
-		{
+	private void datenquellenInitialisieren(){
+		for (IConfigurationElement ic : Extensions.getExtensions(DATASOURCE_EXT)) {
 			try {
 				IDatenquelle dq;
 				dq = (IDatenquelle) ic.createExecutableExtension("class");
 				datenquellen.put(dq.getName(), dq);
 			} catch (CoreException ce) {
-				log.log("Initialisieren der Datenquelle " +
-					ic.getAttribute("name") + " fehlgeschlagen: " +
-					ce.getMessage(), Log.ERRORS);
+				log.log("Initialisieren der Datenquelle " + ic.getAttribute("name")
+					+ " fehlgeschlagen: " + ce.getMessage(), Log.ERRORS);
 			}
-			
 			
 		}
 	}
@@ -192,14 +186,14 @@ public class Konfiguration {
 	/**
 	 * Alle Abfragen in dieser Konfiguration zurzueckgeben
 	 */
-	public List<KonfigurationQuery> getQueries() {
+	public List<KonfigurationQuery> getQueries(){
 		return queries;
 	}
 	
 	/**
 	 * Bestimmte Datenquelle holen
 	 */
-	public IDatenquelle getDatenquelle(String name) {
+	public IDatenquelle getDatenquelle(String name){
 		return datenquellen.get(name);
 	}
 }

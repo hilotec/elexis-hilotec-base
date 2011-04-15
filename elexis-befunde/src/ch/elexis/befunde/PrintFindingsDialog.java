@@ -30,15 +30,15 @@ public class PrintFindingsDialog extends TitleAreaDialog implements ICallback {
 	String[][] fields;
 	private TextContainer text;
 	
-	public PrintFindingsDialog(Shell parentShell, String[][] fields) {
+	public PrintFindingsDialog(Shell parentShell, String[][] fields){
 		super(parentShell);
-		this.fields=fields;
+		this.fields = fields;
 	}
-
-			@Override
-	protected Control createDialogArea(Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
-		text=new TextContainer(getShell());
+	
+	@Override
+	protected Control createDialogArea(Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
+		text = new TextContainer(getShell());
 		ret.setLayout(new FillLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		text.getPlugin().createContainer(ret, this);
@@ -49,27 +49,27 @@ public class PrintFindingsDialog extends TitleAreaDialog implements ICallback {
 		text.getPlugin().insertTable("[Tabelle]", ITextPlugin.FIRST_ROW_IS_HEADER, fields, null); //$NON-NLS-1$
 		return ret;
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		getShell().setText(Messages.getString("PrintFindingsDialog.messwerteCaption")); //$NON-NLS-1$
 		setTitle(Messages.getString("PrintFindingsDialog.printMesswerteTitle")); //$NON-NLS-1$
 		setMessage(Messages.getString("PrintFindingsDialog.printMesswerteMessage")); //$NON-NLS-1$
-		getShell().setSize(900,700);
+		getShell().setSize(900, 700);
 	}
-
+	
 	@Override
-	protected void okPressed() {
+	protected void okPressed(){
 		super.okPressed();
 	}
-
-	public void save() {
-		// TODO Auto-generated method stub
-		
+	
+	public void save(){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public boolean saveAs() {
+	
+	public boolean saveAs(){
 		// TODO Auto-generated method stub
 		return false;
 	}

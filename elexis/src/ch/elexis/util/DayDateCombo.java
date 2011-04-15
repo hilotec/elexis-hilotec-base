@@ -73,6 +73,7 @@ public class DayDateCombo extends Composite {
 		dp.setEnabled(bEnable);
 		spinner.setEnabled(bEnable);
 	}
+	
 	/**
 	 * Set the dates of the composite.
 	 * 
@@ -171,10 +172,10 @@ public class DayDateCombo extends Composite {
 		public void modifyText(ModifyEvent me){
 			removeListeners();
 			int d = spinner.getSelection();
-			if(ttBase.isBefore(ttNow)){
-				d*=-1;
+			if (ttBase.isBefore(ttNow)) {
+				d *= -1;
 			}
-			ttBase=new TimeTool(ttNow);
+			ttBase = new TimeTool(ttNow);
 			ttBase.addDays(d);
 			dp.setDate(ttBase.getTime());
 			Event e = new Event();
@@ -200,7 +201,7 @@ public class DayDateCombo extends Composite {
 		}
 		
 		public void modifyText(ModifyEvent me){
-			//String t = dp.getText();
+			// String t = dp.getText();
 			Event e = new Event();
 			e.time = me.time;
 			notifyListeners(SWT.Selection, e);

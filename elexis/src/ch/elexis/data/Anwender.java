@@ -55,7 +55,7 @@ public class Anwender extends Person {
 	
 	static {
 		addMapping(Kontakt.TABLENAME, FLD_EXTINFO, Kontakt.FLD_IS_USER, "Label=Bezeichnung3",
-		"Reminders=JOINT:ReminderID:ResponsibleID:REMINDERS_RESPONSIBLE_LINK");
+			"Reminders=JOINT:ReminderID:ResponsibleID:REMINDERS_RESPONSIBLE_LINK");
 	}
 	
 	public Anwender(final String Username, final String Password){
@@ -202,15 +202,15 @@ public class Anwender extends Person {
 		}, ADMINISTRATOR, ADMINISTRATOR, StringConstants.ONE);
 		Hub.actUser = admin;
 		Hub.acl.grant(admin, new ACE(ACE.ACE_IMPLICIT, "WriteInfoStore"), new ACE(ACE.ACE_IMPLICIT,
-		"LoadInfoStore"), new ACE(ACE.ACE_IMPLICIT, "WriteGroups"), new ACE(ACE.ACE_IMPLICIT,
-		"ReadGroups"));
+			"LoadInfoStore"), new ACE(ACE.ACE_IMPLICIT, "WriteGroups"), new ACE(ACE.ACE_IMPLICIT,
+			"ReadGroups"));
 		Hashtable hash = admin.getInfoStore();
 		hash.put("UsrPwd", "admin");
 		hash.put("Groups", "Admin,Anwender");
 		admin.flushInfoStore(hash);
 		Hub.acl.grant("Admin", new ACE(ACE.ACE_IMPLICIT, "ReadUsrPwd"), new ACE(ACE.ACE_IMPLICIT,
-		"WriteUsrPwd"), new ACE(ACE.ACE_IMPLICIT, "CreateAndDelete"), new ACE(ACE.ACE_IMPLICIT,
-		"WriteGroups"));
+			"WriteUsrPwd"), new ACE(ACE.ACE_IMPLICIT, "CreateAndDelete"), new ACE(ACE.ACE_IMPLICIT,
+			"WriteGroups"));
 		Hub.acl.grant("System", new ACE(ACE.ACE_IMPLICIT, "ReadUsrPwd"));
 		
 	}
@@ -271,8 +271,8 @@ public class Anwender extends Person {
 						
 					} else {
 						SWTHelper
-						.showError("Kein Mandant definiert",
-						"Sie können Elexis erst normal benutzen, wenn Sie mindestens einen Mandanten definiert haben");
+							.showError("Kein Mandant definiert",
+								"Sie können Elexis erst normal benutzen, wenn Sie mindestens einen Mandanten definiert haben");
 						// new
 						// ErrorDialog(Desk.theDisplay.getActiveShell(),"Kein
 						// Mandant definiert","Sie können Elexis erst benutzen,

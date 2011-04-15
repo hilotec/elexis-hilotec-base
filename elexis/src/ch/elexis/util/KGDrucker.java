@@ -47,28 +47,29 @@ public class KGDrucker {
 			kgp = (KGPrintView) kgPage.showView(KGPrintView.ID);
 			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
 				new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor){
-					monitor.beginTask(Messages.getString("KGDrucker.printEMR"), 1); //$NON-NLS-1$
-					// gw 23.7.2006 an neues Selectionmodell angepasst
-					Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
-					if (kgp.doPrint(actPatient, monitor) == false) {
-						ErrorDialog
-						.openError(
-							null,
-							Messages.getString("KGDrucker.errorPrinting"), Messages.getString("KGDrucker.couldntprint") + patient.getLabel() + Messages.getString("KGDrucker.emr"), null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					public void run(IProgressMonitor monitor){
+						monitor.beginTask(Messages.getString("KGDrucker.printEMR"), 1); //$NON-NLS-1$
+						// gw 23.7.2006 an neues Selectionmodell angepasst
+						Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
+						if (kgp.doPrint(actPatient, monitor) == false) {
+							ErrorDialog
+								.openError(
+									null,
+									Messages.getString("KGDrucker.errorPrinting"), Messages.getString("KGDrucker.couldntprint") + patient.getLabel() + Messages.getString("KGDrucker.emr"), null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							
+						}
 						
+						monitor.done();
 					}
-					
-					monitor.done();
-				}
-			}, null);
+				}, null);
 			
 			kgPage.hideView(kgp);
 			
 		} catch (Exception ex) {
-			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
-					Messages.getString("KGDrucker.errorPrinting") + ": " + Messages.getString("KGDrucker.couldntShow"),
-					ex);
+			ElexisStatus status =
+				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, Messages
+					.getString("KGDrucker.errorPrinting")
+					+ ": " + Messages.getString("KGDrucker.couldntShow"), ex);
 			StatusManager.getManager().handle(status);
 		}
 	}

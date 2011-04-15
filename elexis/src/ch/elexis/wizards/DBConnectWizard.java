@@ -45,70 +45,79 @@ import ch.rgw.tools.JdbcLinkException;
 import ch.rgw.tools.StringTool;
 
 public class DBConnectWizard extends Wizard {
-	DBConnectFirstPage first=new DBConnectFirstPage(Messages.getString("DBConnectWizard.typeOfDB")); //$NON-NLS-1$
-	DBConnectSecondPage sec=new DBConnectSecondPage(Messages.getString("DBConnectWizard.Credentials")); //$NON-NLS-1$
-	public DBConnectWizard() {
+	DBConnectFirstPage first =
+		new DBConnectFirstPage(Messages.getString("DBConnectWizard.typeOfDB")); //$NON-NLS-1$
+	DBConnectSecondPage sec =
+		new DBConnectSecondPage(Messages.getString("DBConnectWizard.Credentials")); //$NON-NLS-1$
+	
+	public DBConnectWizard(){
 		super();
 		setWindowTitle(Messages.getString("DBConnectWizard.connectDB")); //$NON-NLS-1$
 	}
-
 	
 	@Override
-	public void addPages() {
+	public void addPages(){
 		addPage(first);
 		addPage(sec);
 	}
-
-
+	
 	@Override
-	public boolean performFinish() {
-		int ti=first.dbTypes.getSelectionIndex();
-		String server=first.server.getText();
-		String db=first.dbName.getText();
-		String user=sec.name.getText();
-		String pwd=sec.pwd.getText();
-		JdbcLink j=null;
+	public boolean performFinish(){
+		int ti = first.dbTypes.getSelectionIndex();
+		String server = first.server.getText();
+		String db = first.dbName.getText();
+		String user = sec.name.getText();
+		String pwd = sec.pwd.getText();
+		JdbcLink j = null;
 		switch (ti) {
-		case 0: j=JdbcLink.createMySqlLink(server,db);	break;
-		case 1:	j=JdbcLink.createPostgreSQLLink(server,db); break;
-		case 2: j=JdbcLink.createH2Link(db); break;
+		case 0:
+			j = JdbcLink.createMySqlLink(server, db);
+			break;
+		case 1:
+			j = JdbcLink.createPostgreSQLLink(server, db);
+			break;
+		case 2:
+			j = JdbcLink.createH2Link(db);
+			break;
 		default:
-			j=null;
+			j = null;
 			return false;
 		}
 		try {
-			j.connect(user,pwd);
+			j.connect(user, pwd);
 		} catch (JdbcLinkException je) {
-			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, Messages.getString("DBConnectWizard.couldntConnect"), je);
+			ElexisStatus status =
+				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, Messages
+					.getString("DBConnectWizard.couldntConnect"), je);
 			StatusManager.getManager().handle(status, StatusManager.BLOCK);
 			return false;
 		}
-		//IPreferencesService service=Platform.getPreferencesService();
-		Hashtable<String,String> h=new Hashtable<String,String>();
+		// IPreferencesService service=Platform.getPreferencesService();
+		Hashtable<String, String> h = new Hashtable<String, String>();
 		h.put(PersistentObject.CFG_DRIVER, j.getDriverName());
 		h.put(PersistentObject.CFG_CONNECTSTRING, j.getConnectString());
 		h.put(PersistentObject.CFG_USER, user);
 		h.put(PersistentObject.CFG_PWD, pwd);
 		h.put(PersistentObject.CFG_TYPE, first.dbTypes.getItem(ti));
 		try {
-			String conn=StringTool.enPrintable(PersistentObject.flatten(h));
-			ConfigurationScope pref=new ConfigurationScope();
-			IEclipsePreferences node=pref.getNode("connection");
+			String conn = StringTool.enPrintable(PersistentObject.flatten(h));
+			ConfigurationScope pref = new ConfigurationScope();
+			IEclipsePreferences node = pref.getNode("connection");
 			node.put(Hub.getCfgVariant(), conn);
 			node.flush();
-		}catch(Exception ex){
+		} catch (Exception ex) {
 			ExHandler.handle(ex);
 		}
 		
 		/*
-		IPreferenceStore localstore = new SettingsPreferenceStore(Hub.localCfg);
-		localstore.setValue(PreferenceConstants.DB_CLASS,j.getDriverName());
-	    localstore.setValue(PreferenceConstants.DB_CONNECT,j.getConnectString());
-	    localstore.setValue(PreferenceConstants.DB_USERNAME,user);
-	    localstore.setValue(PreferenceConstants.DB_PWD,pwd);
-	    localstore.setValue(PreferenceConstants.DB_TYP,first.dbTypes.getItem(ti));
-	    Hub.localCfg.flush();
-	    */
+		 * IPreferenceStore localstore = new SettingsPreferenceStore(Hub.localCfg);
+		 * localstore.setValue(PreferenceConstants.DB_CLASS,j.getDriverName());
+		 * localstore.setValue(PreferenceConstants.DB_CONNECT,j.getConnectString());
+		 * localstore.setValue(PreferenceConstants.DB_USERNAME,user);
+		 * localstore.setValue(PreferenceConstants.DB_PWD,pwd);
+		 * localstore.setValue(PreferenceConstants.DB_TYP,first.dbTypes.getItem(ti));
+		 * Hub.localCfg.flush();
+		 */
 		return PersistentObject.connect(j);
 	}
 }

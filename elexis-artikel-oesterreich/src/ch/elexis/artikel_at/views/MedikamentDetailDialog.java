@@ -25,22 +25,20 @@ public class MedikamentDetailDialog extends Dialog {
 	
 	public MedikamentDetailDialog(Shell parent, Medikament medi){
 		super(parent);
-		med=medi;
+		med = medi;
 	}
-
 	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		getShell().setText("Medikament-Detail");
 		getShell().setSize(800, SWT.DEFAULT);
 		getShell().pack();
 	}
-
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		MedikamentDetailBlatt mdb=new MedikamentDetailBlatt(parent);
+	protected Control createDialogArea(Composite parent){
+		MedikamentDetailBlatt mdb = new MedikamentDetailBlatt(parent);
 		mdb.display(med);
 		return mdb;
 	}

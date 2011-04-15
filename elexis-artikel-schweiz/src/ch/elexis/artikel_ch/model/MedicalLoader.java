@@ -13,16 +13,17 @@
 
 package ch.elexis.artikel_ch.model;
 
-
 import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.artikel_ch.data.Medical;
 import ch.elexis.data.Query;
 import ch.elexis.util.viewers.CommonViewer;
 
 public class MedicalLoader extends FlatDataLoader {
-
+	
 	public MedicalLoader(CommonViewer cv){
-		super(cv,new Query<Medical>(Medical.class));
-		orderFields=new String[]{Medical.FLD_NAME};
+		super(cv, new Query<Medical>(Medical.class));
+		orderFields = new String[] {
+			Medical.FLD_NAME
+		};
 	}
 }

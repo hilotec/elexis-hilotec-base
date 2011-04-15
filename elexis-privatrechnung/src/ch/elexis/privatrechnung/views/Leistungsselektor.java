@@ -28,60 +28,64 @@ import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 /**
- * This is the Composite that lets the user select codes and drag them into the billing-field. It will be
- * lined up next to the CodeSelectorFactories of all other Billing-Plugins
+ * This is the Composite that lets the user select codes and drag them into the billing-field. It
+ * will be lined up next to the CodeSelectorFactories of all other Billing-Plugins
+ * 
  * @author Gerry
- *
+ * 
  */
-public class Leistungsselektor extends CodeSelectorFactory{
+public class Leistungsselektor extends CodeSelectorFactory {
 	private LazyTreeLoader<Leistung> dataloader;
-	private static final String LOADER_NAME="Privatcodes";
+	private static final String LOADER_NAME = "Privatcodes";
 	
 	/**
 	 * On Creation we initiate a dataloader. We can simply use the existing LazyXXXLoader framework.
 	 */
 	@SuppressWarnings("unchecked")
 	public Leistungsselektor(){
-		dataloader=(LazyTreeLoader<Leistung>) JobPool.getJobPool().getJob(LOADER_NAME); //$NON-NLS-1$
+		dataloader = (LazyTreeLoader<Leistung>) JobPool.getJobPool().getJob(LOADER_NAME); //$NON-NLS-1$
 		
-		if(dataloader==null){
-			dataloader=new LazyTreeLoader<Leistung>(LOADER_NAME,new Query<Leistung>(Leistung.class),"parent",new String[]{"Kuerzel","Name"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		if (dataloader == null) {
+			dataloader =
+				new LazyTreeLoader<Leistung>(LOADER_NAME, new Query<Leistung>(Leistung.class),
+					"parent", new String[] { "Kuerzel", "Name"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			dataloader.setParentField("Kuerzel");
 			JobPool.getJobPool().addJob(dataloader);
 		}
-		JobPool.getJobPool().activate(LOADER_NAME,Job.SHORT); //$NON-NLS-1$
+		JobPool.getJobPool().activate(LOADER_NAME, Job.SHORT); //$NON-NLS-1$
 	}
+	
 	/**
-	 * Here we create the populator for the CodeSelector. We must provide a viewer widget,
-	 * a content provider, a label provider, a ControlFieldProvider and a ButtonProvider
-	 * Again, we simply use existing classes to keep things easy.
+	 * Here we create the populator for the CodeSelector. We must provide a viewer widget, a content
+	 * provider, a label provider, a ControlFieldProvider and a ButtonProvider Again, we simply use
+	 * existing classes to keep things easy.
 	 */
 	@Override
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
-		ViewerConfigurer vc=new ViewerConfigurer(
-				new TreeContentProvider(cv,dataloader),
-				new ViewerConfigurer.TreeLabelProvider(),
-				new DefaultControlFieldProvider(cv, new String[]{"Kuerzel","Name"}), //$NON-NLS-1$
-				new ViewerConfigurer.DefaultButtonProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE, SWT.NONE,null)
-				);
+	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+		ViewerConfigurer vc =
+			new ViewerConfigurer(new TreeContentProvider(cv, dataloader),
+				new ViewerConfigurer.TreeLabelProvider(), new DefaultControlFieldProvider(cv,
+					new String[] {
+						"Kuerzel", "Name"}), //$NON-NLS-1$
+				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
+					SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
 		return vc;
 	}
-
+	
 	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		
+	public void dispose(){
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 	@Override
-	public String getCodeSystemName() {
+	public String getCodeSystemName(){
 		return Leistung.CODESYSTEM_NAME;
 	}
-
+	
 	@Override
-	public Class getElementClass() {
+	public Class getElementClass(){
 		return Leistung.class;
 	}
-
+	
 }

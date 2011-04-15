@@ -46,8 +46,8 @@ public class LabResult extends PersistentObject {
 	}
 	
 	static {
-		addMapping(TABLENAME, PATIENT_ID, DATE_COMPOUND, ITEM_ID, RESULT, COMMENT,
-			FLAGS, "Quelle=Origin");
+		addMapping(TABLENAME, PATIENT_ID, DATE_COMPOUND, ITEM_ID, RESULT, COMMENT, FLAGS,
+			"Quelle=Origin");
 		
 	}
 	

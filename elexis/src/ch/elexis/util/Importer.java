@@ -26,11 +26,11 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * This Dialog will open on the Global Action importAction (normally linked to File-Import
- * It will find all importer-Plugins that use the specified extension and display them in
- * a tabbed folder.
+ * This Dialog will open on the Global Action importAction (normally linked to File-Import It will
+ * find all importer-Plugins that use the specified extension and display them in a tabbed folder.
+ * 
  * @author gerry
- *
+ * 
  */
 public class Importer extends TitleAreaDialog {
 	private CTabFolder ctab;
@@ -38,39 +38,39 @@ public class Importer extends TitleAreaDialog {
 	
 	/**
 	 * Create an Importer environment for plugins at the specified point
- 	 * @param extension where to look for the plugins to load
+	 * 
+	 * @param extension
+	 *            where to look for the plugins to load
 	 */
-	public Importer(Shell parentShell, String extension) {
+	public Importer(Shell parentShell, String extension){
 		super(parentShell);
-		ext=extension;
+		ext = extension;
 	}
 	
-	
 	/**
-	 * Create the Dialog and the tabbed folder and let the plugins create their own
-	 * ImporterPages
+	 * Create the Dialog and the tabbed folder and let the plugins create their own ImporterPages
 	 */
-	@SuppressWarnings("unchecked") //$NON-NLS-1$
+	@SuppressWarnings("unchecked")//$NON-NLS-1$
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		ctab=new CTabFolder(parent,SWT.BOTTOM);
-		List<ImporterPage> importers=Extensions.getClasses(ext,"Class"); //$NON-NLS-1$
-		for(ImporterPage p:importers){
-			if(p!=null){
-				CTabItem item=new CTabItem(ctab,SWT.NONE);
+	protected Control createDialogArea(Composite parent){
+		ctab = new CTabFolder(parent, SWT.BOTTOM);
+		List<ImporterPage> importers = Extensions.getClasses(ext, "Class"); //$NON-NLS-1$
+		for (ImporterPage p : importers) {
+			if (p != null) {
+				CTabItem item = new CTabItem(ctab, SWT.NONE);
 				item.setText(p.getTitle());
 				item.setControl(p.createPage(ctab));
 				item.setData(p);
 			}
 		}
-		ctab.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
-		ctab.addSelectionListener(new SelectionAdapter(){
-
+		ctab.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		ctab.addSelectionListener(new SelectionAdapter() {
+			
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				CTabItem top=ctab.getSelection();
-				if(top!=null){
-					ImporterPage p=(ImporterPage)top.getData();
+			public void widgetSelected(SelectionEvent e){
+				CTabItem top = ctab.getSelection();
+				if (top != null) {
+					ImporterPage p = (ImporterPage) top.getData();
 					setMessage(p.getDescription());
 				}
 			}
@@ -78,15 +78,15 @@ public class Importer extends TitleAreaDialog {
 		});
 		return ctab;
 	}
-
+	
 	/**
 	 * Run the import method of the topmost plugin
 	 */
 	@Override
-	protected void okPressed() {
-		CTabItem top=ctab.getSelection();
-		if(top!=null){
-			ImporterPage page=(ImporterPage)top.getData();
+	protected void okPressed(){
+		CTabItem top = ctab.getSelection();
+		if (top != null) {
+			ImporterPage page = (ImporterPage) top.getData();
 			page.collect();
 			page.run(false);
 		}

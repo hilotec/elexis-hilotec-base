@@ -12,7 +12,8 @@ public class StringData implements IValueType {
 	String range;
 	Date date;
 	
-	public StringData(String name, String unit, String value, String range, String dateStr) throws ParseException {
+	public StringData(String name, String unit, String value, String range, String dateStr)
+		throws ParseException{
 		super();
 		this.name = name;
 		this.unit = unit;
@@ -26,19 +27,19 @@ public class StringData implements IValueType {
 	public String getName(){
 		return name;
 	}
-
+	
 	public String getUnit(){
 		return unit;
 	}
-
+	
 	public String getValue(){
 		return value;
 	}
-
+	
 	public String getRange(){
 		return range;
 	}
-
+	
 	public Date getDate(){
 		return date;
 	}

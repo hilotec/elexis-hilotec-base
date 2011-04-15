@@ -29,19 +29,19 @@ import ch.elexis.views.PatientenListeView;
 import ch.elexis.views.Patientenblatt2;
 import ch.rgw.tools.StringTool;
 
-public class UserSettings2 extends FieldEditorPreferencePage implements
-		IWorkbenchPreferencePage {
+public class UserSettings2 extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	public static final String REMEMBER_LAST_STATE = Messages.UserSettings2_RememberLastState;
 	public static final String ALWAYS_CLOSED = Messages.UserSettings2_AlwaysClosed;
 	public static final String ALWAYS_OPEN = Messages.UserSettings2_AlwaysOpen;
-	public static final String EXPANDABLE_COMPOSITES_BASE="view/expandableComposites"; //$NON-NLS-1$
-	public static final String EXPANDABLE_COMPOSITES=EXPANDABLE_COMPOSITES_BASE+"/setting"; //$NON-NLS-1$
-	public static final String STATES=EXPANDABLE_COMPOSITES_BASE+"/states/"; //$NON-NLS-1$
-	public static final String OPEN="1"; //$NON-NLS-1$
-	public static final String CLOSED="2"; //$NON-NLS-1$
-	public static final String REMEMBER_STATE="3"; //$NON-NLS-1$
+	public static final String EXPANDABLE_COMPOSITES_BASE = "view/expandableComposites"; //$NON-NLS-1$
+	public static final String EXPANDABLE_COMPOSITES = EXPANDABLE_COMPOSITES_BASE + "/setting"; //$NON-NLS-1$
+	public static final String STATES = EXPANDABLE_COMPOSITES_BASE + "/states/"; //$NON-NLS-1$
+	public static final String OPEN = "1"; //$NON-NLS-1$
+	public static final String CLOSED = "2"; //$NON-NLS-1$
+	public static final String REMEMBER_STATE = "3"; //$NON-NLS-1$
 	
-	private SettingsPreferenceStore prefs=new SettingsPreferenceStore(Hub.userCfg);
+	private SettingsPreferenceStore prefs = new SettingsPreferenceStore(Hub.userCfg);
+	
 	public UserSettings2(){
 		super(GRID);
 		setPreferenceStore(prefs);
@@ -51,34 +51,47 @@ public class UserSettings2 extends FieldEditorPreferencePage implements
 		prefs.setDefault(PreferenceConstants.USR_PATLIST_SHOWFIRSTNAME, true);
 		prefs.setDefault(PreferenceConstants.USR_PATLIST_SHOWDOB, true);
 	}
+	
 	@Override
-	protected void createFieldEditors() {
+	protected void createFieldEditors(){
 		addField(new RadioGroupFieldEditor(EXPANDABLE_COMPOSITES,
-				Messages.UserSettings2_ExtendableFields,1,new String[][]{
-				{ALWAYS_OPEN,OPEN},
-				{ALWAYS_CLOSED,CLOSED},
-				{REMEMBER_LAST_STATE,REMEMBER_STATE}	
-				
-		},getFieldEditorParent()));
-		new Label(getFieldEditorParent(),SWT.SEPARATOR|SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		new Label(getFieldEditorParent(),SWT.NONE).setText(Messages.UserSettings2_FieldsInList);
-		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWPATNR,Messages.UserSettings2_PatientNr, getFieldEditorParent()));
-		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWNAME,Messages.UserSettings2_PatientName,getFieldEditorParent()));
-		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWFIRSTNAME,Messages.UserSettings2_PatientFirstname,getFieldEditorParent()));
-		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWDOB,Messages.UserSettings2_Birthdate,getFieldEditorParent()));
-		new Label(getFieldEditorParent(),SWT.SEPARATOR|SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		new Label(getFieldEditorParent(),SWT.NONE).setText(Messages.UserSettings2_AddidtionalFields);
-		addField(new MultilineFieldEditor(Patientenblatt2.CFG_EXTRAFIELDS,StringTool.leer,5,SWT.NONE, 
-				true,getFieldEditorParent()));
+			Messages.UserSettings2_ExtendableFields, 1, new String[][] {
+				{
+					ALWAYS_OPEN, OPEN
+				}, {
+					ALWAYS_CLOSED, CLOSED
+				}, {
+					REMEMBER_LAST_STATE, REMEMBER_STATE
+				}
+			
+			}, getFieldEditorParent()));
+		new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper
+			.getFillGridData(2, true, 1, false));
+		new Label(getFieldEditorParent(), SWT.NONE).setText(Messages.UserSettings2_FieldsInList);
+		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWPATNR,
+			Messages.UserSettings2_PatientNr, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWNAME,
+			Messages.UserSettings2_PatientName, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWFIRSTNAME,
+			Messages.UserSettings2_PatientFirstname, getFieldEditorParent()));
+		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWDOB,
+			Messages.UserSettings2_Birthdate, getFieldEditorParent()));
+		new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper
+			.getFillGridData(2, true, 1, false));
+		new Label(getFieldEditorParent(), SWT.NONE)
+			.setText(Messages.UserSettings2_AddidtionalFields);
+		addField(new MultilineFieldEditor(Patientenblatt2.CFG_EXTRAFIELDS, StringTool.leer, 5,
+			SWT.NONE, true, getFieldEditorParent()));
 		
 	}
-
-	public void init(IWorkbench workbench) {
-		// TODO Auto-generated method stub
-		
+	
+	public void init(IWorkbench workbench){
+	// TODO Auto-generated method stub
+	
 	}
+	
 	@Override
-	public boolean performOk() {
+	public boolean performOk(){
 		prefs.flush();
 		Hub.userCfg.flush();
 		SWTHelper.reloadViewPart(PatientenListeView.ID);
@@ -87,32 +100,40 @@ public class UserSettings2 extends FieldEditorPreferencePage implements
 	
 	/**
 	 * save the state of an expandable composite
-	 * @param field name of the composite (any unique string, preferably derived from view name)
-	 * @param state the state to save
+	 * 
+	 * @param field
+	 *            name of the composite (any unique string, preferably derived from view name)
+	 * @param state
+	 *            the state to save
 	 */
 	public static void saveExpandedState(final String field, final boolean state){
-		if(state){
-			Hub.userCfg.set(UserSettings2.STATES+field, UserSettings2.OPEN);
-		}else{
-			Hub.userCfg.set(UserSettings2.STATES+field, UserSettings2.CLOSED);
+		if (state) {
+			Hub.userCfg.set(UserSettings2.STATES + field, UserSettings2.OPEN);
+		} else {
+			Hub.userCfg.set(UserSettings2.STATES + field, UserSettings2.CLOSED);
 		}
 	}
+	
 	/**
 	 * Set the state of an expandable Composite to the previously saved state.
-	 * @param ec the expandable Composite to expand or collapse
-	 * @param field the unique name
+	 * 
+	 * @param ec
+	 *            the expandable Composite to expand or collapse
+	 * @param field
+	 *            the unique name
 	 */
-	public static void setExpandedState(final ExpandableComposite ec,final String field){
-		String mode=Hub.userCfg.get(UserSettings2.EXPANDABLE_COMPOSITES,UserSettings2.REMEMBER_STATE);
-		if(mode.equals(UserSettings2.OPEN)){
+	public static void setExpandedState(final ExpandableComposite ec, final String field){
+		String mode =
+			Hub.userCfg.get(UserSettings2.EXPANDABLE_COMPOSITES, UserSettings2.REMEMBER_STATE);
+		if (mode.equals(UserSettings2.OPEN)) {
 			ec.setExpanded(true);
-		}else if(mode.equals(UserSettings2.CLOSED)){
+		} else if (mode.equals(UserSettings2.CLOSED)) {
 			ec.setExpanded(false);
-		}else{
-			String state=Hub.userCfg.get(UserSettings2.STATES+field,UserSettings2.CLOSED);
-			if(state.equals(UserSettings2.CLOSED)){
+		} else {
+			String state = Hub.userCfg.get(UserSettings2.STATES + field, UserSettings2.CLOSED);
+			if (state.equals(UserSettings2.CLOSED)) {
 				ec.setExpanded(false);
-			}else{
+			} else {
 				ec.setExpanded(true);
 			}
 		}

@@ -92,8 +92,8 @@ public class LabOrderImport extends ImporterPage {
 		}
 		
 		if (errorCount > 0) {
-			SWTHelper.showError(Messages.LabOrderImport_errorTitle,
-				MessageFormat.format(Messages.LabOrderImport_errorMsgVerarbeitung, errorCount));
+			SWTHelper.showError(Messages.LabOrderImport_errorTitle, MessageFormat.format(
+				Messages.LabOrderImport_errorMsgVerarbeitung, errorCount));
 		}
 		
 		MedicsLogger.getLogger().println(

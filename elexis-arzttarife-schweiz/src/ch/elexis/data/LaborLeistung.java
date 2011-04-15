@@ -25,14 +25,15 @@ public class LaborLeistung extends VerrechenbarAdapter {
 	public static final String XIDDOMAIN = "www.xid.ch/id/analysenliste_ch/"; //$NON-NLS-1$
 	
 	static {
-		addMapping(
-			TABLENAME, FLD_NAME, "Text=Name", "EK_Preis", "VK_Preis", "Typ", "Code=SubID", "ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+		addMapping(TABLENAME, FLD_NAME,
+			"Text=Name", "EK_Preis", "VK_Preis", "Typ", "Code=SubID", "ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
 		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Laborleistung", Xid.ASSIGNMENT_LOCAL); //$NON-NLS-1$
 	}
-
+	
 	public String getXidDomain(){
 		return XIDDOMAIN;
 	}
+	
 	public static void createTable(){
 		getConnection().exec("DELETE FROM ARTIKEL WHERE TYP='Laborleistung'"); //$NON-NLS-1$
 	}
@@ -56,11 +57,9 @@ public class LaborLeistung extends VerrechenbarAdapter {
 	}
 	
 	/*
-	public String[] getDisplayedFields(){
-		return new String[] {
-			"Code", "Text"}; //$NON-NLS-1$ //$NON-NLS-2$
-	}
-	*/
+	 * public String[] getDisplayedFields(){ return new String[] { "Code", "Text"}; //$NON-NLS-1$
+	 * //$NON-NLS-2$ }
+	 */
 	@Override
 	public String getCode(){
 		return get("Code"); //$NON-NLS-1$

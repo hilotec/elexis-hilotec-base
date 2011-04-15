@@ -29,8 +29,10 @@ public class Labor2009Selector extends CodeSelectorFactory {
 	SelectorPanelProvider slp;
 	FieldDescriptor<?>[] fields =
 		{
-			new FieldDescriptor<Labor2009Tarif>(Messages.Labor2009Selector_code, Labor2009Tarif.FLD_CODE, Typ.STRING, null),
-			new FieldDescriptor<Labor2009Tarif>(Messages.Labor2009Selector_text, Labor2009Tarif.FLD_NAME, Typ.STRING, null)
+			new FieldDescriptor<Labor2009Tarif>(Messages.Labor2009Selector_code,
+				Labor2009Tarif.FLD_CODE, Typ.STRING, null),
+			new FieldDescriptor<Labor2009Tarif>(Messages.Labor2009Selector_text,
+				Labor2009Tarif.FLD_NAME, Typ.STRING, null)
 		};
 	
 	@Override

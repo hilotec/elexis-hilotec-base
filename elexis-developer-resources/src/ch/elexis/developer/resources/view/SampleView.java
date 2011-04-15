@@ -51,7 +51,7 @@ import ch.rgw.tools.TimeTool;
 
 public class SampleView extends ViewPart implements IActivationListener {
 	/** We make a String constant for the ID to reference it from the perspective */
-	public static final String ID="ch.elexis.developer.resources.views.sample";
+	public static final String ID = "ch.elexis.developer.resources.views.sample";
 	
 	/**
 	 * CommonViewer is a "golden hammer". Use it for fast prototyping. In many cases you probably
@@ -109,30 +109,30 @@ public class SampleView extends ViewPart implements IActivationListener {
 		new ElexisEventListenerImpl(SampleDataType.class, ElexisEvent.EVENT_SELECTED
 			| ElexisEvent.EVENT_RELOAD | ElexisEvent.EVENT_UPDATE | ElexisEvent.EVENT_CREATE
 			| ElexisEvent.EVENT_DELETE) {
-		
-		@Override
-		public void runInUi(ElexisEvent ev){
-			// do something that must run in the UI thread
-			switch (ev.getType()) {
-			case ElexisEvent.EVENT_SELECTED:
-				// do somenthing great with selection;
-				deleteSDTAction.setEnabled(true);
-				break;
-			case ElexisEvent.EVENT_UPDATE:
-				SampleDataType sdt = (SampleDataType) ev.getObject();
-				// sdt has been modified. We do react on this action here
-				break;
-			case ElexisEvent.EVENT_RELOAD:
-			case ElexisEvent.EVENT_CREATE:
-			case ElexisEvent.EVENT_DELETE:
-				// We keep things simple: On all these events, just reload the
-				// viewer
-				fdl.changed(null);
+			
+			@Override
+			public void runInUi(ElexisEvent ev){
+				// do something that must run in the UI thread
+				switch (ev.getType()) {
+				case ElexisEvent.EVENT_SELECTED:
+					// do somenthing great with selection;
+					deleteSDTAction.setEnabled(true);
+					break;
+				case ElexisEvent.EVENT_UPDATE:
+					SampleDataType sdt = (SampleDataType) ev.getObject();
+					// sdt has been modified. We do react on this action here
+					break;
+				case ElexisEvent.EVENT_RELOAD:
+				case ElexisEvent.EVENT_CREATE:
+				case ElexisEvent.EVENT_DELETE:
+					// We keep things simple: On all these events, just reload the
+					// viewer
+					fdl.changed(null);
+				}
+				
 			}
 			
-		}
-		
-	};
+		};
 	
 	/**
 	 * As the Elexis User changes, he or she has propably different righs to see and modify our
@@ -140,13 +140,13 @@ public class SampleView extends ViewPart implements IActivationListener {
 	 */
 	private final ElexisEventListenerImpl eeli_user =
 		new ElexisEventListenerImpl(Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
-		@Override
-		public void runInUi(ElexisEvent ev){
-			newSDTAction.reflectRight();
-			deleteSDTAction.reflectRight();
-			cv.getViewerWidget().refresh(true);
-		}
-	};
+			@Override
+			public void runInUi(ElexisEvent ev){
+				newSDTAction.reflectRight();
+				deleteSDTAction.reflectRight();
+				cv.getViewerWidget().refresh(true);
+			}
+		};
 	
 	/**
 	 * This is the right place to create all UI elements. The parent composite already has a
@@ -204,8 +204,8 @@ public class SampleView extends ViewPart implements IActivationListener {
 	
 	@Override
 	public void setFocus(){
-		// Don't mind
-		
+	// Don't mind
+	
 	}
 	
 	/**
@@ -214,8 +214,8 @@ public class SampleView extends ViewPart implements IActivationListener {
 	 * @param mode
 	 */
 	public void activation(boolean mode){
-		// don't mind
-		
+	// don't mind
+	
 	}
 	
 	/**
@@ -246,40 +246,40 @@ public class SampleView extends ViewPart implements IActivationListener {
 		 */
 		newSDTAction =
 			new RestrictedAction(ACLContributor.CreateSDT, Messages.SampleView_newSampleDataType) {
-			
-			@Override
-			public void doRun(){
-				Patient p = ElexisEventDispatcher.getSelectedPatient();
-				if (p == null) {
-					SWTHelper.showError(Messages.SampleView_PleaseSelectPatient,
-						Messages.SampleView_OnlyCreateObjectsIfPatIsSelected);
-				} else {
-					int fun = (int) Math.round(100000 * Math.random());
-					int bore = (int) Math.round(100000 * Math.random());
-					/* SampleDataType sdt= */new SampleDataType(p,
-						Messages.SampleView_SDTCreated
-						+ new TimeTool().toString(TimeTool.FULL_GER), fun, bore);
+				
+				@Override
+				public void doRun(){
+					Patient p = ElexisEventDispatcher.getSelectedPatient();
+					if (p == null) {
+						SWTHelper.showError(Messages.SampleView_PleaseSelectPatient,
+							Messages.SampleView_OnlyCreateObjectsIfPatIsSelected);
+					} else {
+						int fun = (int) Math.round(100000 * Math.random());
+						int bore = (int) Math.round(100000 * Math.random());
+						/* SampleDataType sdt= */new SampleDataType(p,
+							Messages.SampleView_SDTCreated
+								+ new TimeTool().toString(TimeTool.FULL_GER), fun, bore);
+					}
+					
 				}
 				
-			}
-			
-		};
+			};
 		newSDTAction.enableAutoAdapt();
 		/**
 		 * The delete Action will be placed in the contextMenu and in the View Menu.
 		 */
 		deleteSDTAction =
 			new RestrictedAction(ACLContributor.DeleteSDT, Messages.SampleView_deleteItem) {
-			
-			@Override
-			public void doRun(){
-				Object[] ob = cv.getSelection();
-				if (ob != null && ob.length > 0) {
-					SampleDataType sdt = (SampleDataType) ob[0];
-					sdt.delete();
+				
+				@Override
+				public void doRun(){
+					Object[] ob = cv.getSelection();
+					if (ob != null && ob.length > 0) {
+						SampleDataType sdt = (SampleDataType) ob[0];
+						sdt.delete();
+					}
 				}
-			}
-		};
+			};
 		deleteSDTAction.enableAutoAdapt();
 		contextMenu = new MenuManager();
 		contextMenu.add(deleteSDTAction);

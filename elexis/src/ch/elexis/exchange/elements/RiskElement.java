@@ -28,7 +28,6 @@ public class RiskElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	
 	public RiskElement asExporter(XChangeExporter parent, String name){
 		asExporter(parent);
 		setAttribute(ATTR_SUBSTANCE, name);

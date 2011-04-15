@@ -178,17 +178,17 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 		exi.put("Kassentyp", "1");
 		try {
 			setEKPreis(new Money(Double.parseDouble(row[8])));
-		}catch(NumberFormatException nex){
+		} catch (NumberFormatException nex) {
 			setEKPreis(new Money());
-			log.log("Parse error preis " + row[7]+": "+row[8]+"/"+row[9], Log.WARNINGS);
-
+			log.log("Parse error preis " + row[7] + ": " + row[8] + "/" + row[9], Log.WARNINGS);
+			
 		}
-		try{
+		try {
 			setVKPreis(new Money(Double.parseDouble(row[9])));
 		} catch (NumberFormatException ex) {
 			setVKPreis(new Money());
-			log.log("Parse error preis " + row[7]+": "+row[8]+"/"+row[9], Log.WARNINGS);
-
+			log.log("Parse error preis " + row[7] + ": " + row[8] + "/" + row[9], Log.WARNINGS);
+			
 		}
 		
 		if (row[10].equals("Y")) {

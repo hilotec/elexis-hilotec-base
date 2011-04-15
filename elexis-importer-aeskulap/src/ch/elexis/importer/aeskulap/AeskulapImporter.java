@@ -48,85 +48,91 @@ import ch.rgw.tools.TimeTool;
 
 /**
  * Importer for Data from the practice program "Aeskulap" by Kern AG
- *
+ * 
  * @author Gerry
- *
+ * 
  */
 public class AeskulapImporter extends ImporterPage {
-
+	
 	/**
 	 * Mapping as Aeskulap-ArztNr, Agenda-Kürzel, Anwender-Kürzel
 	 */
-	final static String[][] MANDANT_MAPPING={
-		{"1","Henzen","sh"},
-		{"2","Henzen","sh"},
-		{"3","Henzen","sh"},
-		{"4","Henzen","sh"},
-		{"5","Henzen","sh"},
-		{"6","Müntener","cm"},
-		{"7","MPA","MPA"}
-
+	final static String[][] MANDANT_MAPPING = {
+		{
+			"1", "Henzen", "sh"
+		}, {
+			"2", "Henzen", "sh"
+		}, {
+			"3", "Henzen", "sh"
+		}, {
+			"4", "Henzen", "sh"
+		}, {
+			"5", "Henzen", "sh"
+		}, {
+			"6", "Müntener", "cm"
+		}, {
+			"7", "MPA", "MPA"
+		}
+	
 	};
 	// we'll use these local XID's to reference the external data
 	final static String IMPORT_XID = "elexis.ch/aeskulap_import";
 	final static String PATID = IMPORT_XID + "/PatID";
 	final static String GARANTID = IMPORT_XID + "/garantID";
-
+	
 	static final int MONITOR_TOTAL = 10000000;
 	static float numtasks = 0;
 	static float MONITOR_PERTASK = MONITOR_TOTAL;
-
+	
 	Button bFile, bDir, bOnlyF, bOnlyM, bGuess, bAgenda, bTexte, bKG, bStamm;
 	FileBasedImporter fbi;
 	DirectoryBasedImporter dbi;
 	String fname;
 	String[] actLine;
-
+	
 	int assumeGender;
-
+	
 	boolean bType, bImportAgenda, bImportDocs, bImportKG, bImportStamm;
-
+	
 	static {
-		Xid.localRegisterXIDDomainIfNotExists(PATID, "Alte KG-ID",
-				Xid.ASSIGNMENT_LOCAL);
-		Xid.localRegisterXIDDomainIfNotExists(GARANTID, "Alte Garant-ID",
-				Xid.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(PATID, "Alte KG-ID", Xid.ASSIGNMENT_LOCAL);
+		Xid.localRegisterXIDDomainIfNotExists(GARANTID, "Alte Garant-ID", Xid.ASSIGNMENT_LOCAL);
 	}
-
-	public AeskulapImporter() {
-		// TODO Auto-generated constructor stub
+	
+	public AeskulapImporter(){
+	// TODO Auto-generated constructor stub
 	}
-
+	
 	static Mandant getMandant(String aeskulapNr){
-		for(String[] l:MANDANT_MAPPING){
-			if(l[0].equals(aeskulapNr)){
-				String id=new Query<Mandant>(Mandant.class).findSingle("Label", "=", l[2]);
-				if(id!=null){
+		for (String[] l : MANDANT_MAPPING) {
+			if (l[0].equals(aeskulapNr)) {
+				String id = new Query<Mandant>(Mandant.class).findSingle("Label", "=", l[2]);
+				if (id != null) {
 					return Mandant.load(id);
 				}
 			}
 		}
 		return null;
 	}
-
+	
 	static String getLabel(String aeskulapNr){
-		for(String[] l:MANDANT_MAPPING){
-			if(l[0].equals(aeskulapNr)){
+		for (String[] l : MANDANT_MAPPING) {
+			if (l[0].equals(aeskulapNr)) {
 				return l[1];
 			}
 		}
 		return "?";
 	}
+	
 	/**
-	 * We accept two possible sources for data: a ';' delimited file (*.csv)
-	 * containing only basic personal patient data, or a more elaborate source
-	 * consisting of five microsoft(tm) excel(tm) files containing personal data
-	 * and insurance data.
-	 *
+	 * We accept two possible sources for data: a ';' delimited file (*.csv) containing only basic
+	 * personal patient data, or a more elaborate source consisting of five microsoft(tm) excel(tm)
+	 * files containing personal data and insurance data.
+	 * 
 	 * This method creates the contents of one tab in the import dialog.
 	 */
 	@Override
-	public Composite createPage(final Composite parent) {
+	public Composite createPage(final Composite parent){
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
@@ -149,8 +155,8 @@ public class AeskulapImporter extends ImporterPage {
 		bOnlyM.setText("Alles Männer");
 		bGuess = new Button(gSex, SWT.RADIO);
 		bGuess.setText("Gemischt");
-		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper
-				.getFillGridData(1, true, 1, false));
+		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(1,
+			true, 1, false));
 		bDir = new Button(gStamm, SWT.RADIO);
 		bDir.setText("Import aus Excel-Dateien in einem Verzeichnis");
 		dbi = new DirectoryBasedImporter(gStamm, this);
@@ -163,15 +169,15 @@ public class AeskulapImporter extends ImporterPage {
 		bKG.setText("d) KG-Einträge");
 		return ret;
 	}
-
+	
 	/**
-	 * Because the doImport method is called after the dialog containing this
-	 * importer has been closed, we cannot read the input fields directrly. The
-	 * collect method is called after the user pressed ok but before the dialog
-	 * is closed. So this is the right place to collect data the user entered.
+	 * Because the doImport method is called after the dialog containing this importer has been
+	 * closed, we cannot read the input fields directrly. The collect method is called after the
+	 * user pressed ok but before the dialog is closed. So this is the right place to collect data
+	 * the user entered.
 	 */
 	@Override
-	public void collect() {
+	public void collect(){
 		if (bStamm.getSelection()) {
 			bImportStamm = true;
 			numtasks += 5;
@@ -189,14 +195,14 @@ public class AeskulapImporter extends ImporterPage {
 		} else {
 			assumeGender = 2;
 		}
-
+		
 		if (bAgenda.getSelection()) {
 			bImportAgenda = true;
 			numtasks++;
 		}
 		if (bTexte.getSelection()) {
 			bImportDocs = true;
-			numtasks+=3;
+			numtasks += 3;
 		}
 		if (bKG.getSelection()) {
 			bImportKG = true;
@@ -205,21 +211,19 @@ public class AeskulapImporter extends ImporterPage {
 		MONITOR_PERTASK = MONITOR_TOTAL / numtasks;
 		super.collect();
 	}
-
+	
 	/**
-	 * This method is called after the user has pressed ok and the dialog has
-	 * been closed.
-	 *
+	 * This method is called after the user has pressed ok and the dialog has been closed.
+	 * 
 	 */
 	@Override
-	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
+	public IStatus doImport(final IProgressMonitor monitor) throws Exception{
 		File dir = new File(fname);
 		if (!dir.exists()) {
-			SWTHelper.alert("Import Fehler",
-					"Datei oder Verzeichnis nicht gefunden");
+			SWTHelper.alert("Import Fehler", "Datei oder Verzeichnis nicht gefunden");
 			return Status.CANCEL_STATUS;
 		}
-
+		
 		monitor.beginTask("Importiere Aeskulap Daten", MONITOR_TOTAL);
 		if (bImportStamm) {
 			if (bType) {
@@ -245,7 +249,7 @@ public class AeskulapImporter extends ImporterPage {
 						// patient's gender.
 						s = StringTool.isFemale(line[2]) ? "w" : "m";
 					}
-
+					
 					Patient pat = new Patient(line[1], line[2], line[6], s);
 					pat.set("PatientNr", line[0]);
 					monitor.subTask(line[1]);
@@ -260,7 +264,7 @@ public class AeskulapImporter extends ImporterPage {
 			} else {
 				monitor.subTask("Importiere Adressen");
 				ExcelWrapper hofs;
-
+				
 				hofs = checkImport(dir + File.separator + "adressen.xls");
 				if (hofs != null) {
 					importAdressen(hofs, monitor);
@@ -300,54 +304,55 @@ public class AeskulapImporter extends ImporterPage {
 			new BriefeImporter(dir, monitor);
 			System.gc();
 			Thread.sleep(100);
-			new DateienImporter(dir,monitor);
+			new DateienImporter(dir, monitor);
 		}
-		if(bImportAgenda){
+		if (bImportAgenda) {
 			System.gc();
 			Thread.sleep(100);
 			new AgendaImporter(dir, monitor);
 		}
-		if(bImportKG){
+		if (bImportKG) {
 			System.gc();
 			Thread.sleep(100);
-			new KGImporter(new File(dir,"KG_DATA.xml"),monitor);
+			new KGImporter(new File(dir, "KG_DATA.xml"), monitor);
 		}
 		monitor.done();
 		return Status.OK_STATUS;
 	}
-
-	String getField(final int i) {
+	
+	String getField(final int i){
 		if (actLine.length > i) {
 			return actLine[i];
 		}
 		return "";
 	}
-
-	private boolean importPatienten(final ExcelWrapper hofs,
-			final IProgressMonitor moni) {
-		hofs.setFieldTypes(new Class[] { Integer.class, String.class,
-				String.class, String.class, // pat_no, anrede, name, vorname
-				String.class, String.class, String.class, String.class, // ledig_name,
-				// strasse,
-				// plz,
-				// ort
-				Integer.class, Integer.class, TimeTool.class, String.class, // arzt-no,
-				// sprach_no,
-				// auf_dat,
-				// beruf
-				TimeTool.class, Integer.class, String.class, String.class, // gebdat,
-				// geschlecht,
-				// kommentar,
-				// warnung
-				Integer.class, String.class, String.class, String.class, // roent_no,
-				// tel_gesch,
-				// tel_priv,
-				// natel
-				String.class, TimeTool.class, String.class, String.class, // email,
-				// todesdat,
-				// ahv,
-				// archiv
-				Integer.class }); // firma_no
+	
+	private boolean importPatienten(final ExcelWrapper hofs, final IProgressMonitor moni){
+		hofs.setFieldTypes(new Class[] {
+			Integer.class, String.class, String.class, String.class, // pat_no, anrede, name,
+																		// vorname
+			String.class, String.class, String.class, String.class, // ledig_name,
+			// strasse,
+			// plz,
+			// ort
+			Integer.class, Integer.class, TimeTool.class, String.class, // arzt-no,
+			// sprach_no,
+			// auf_dat,
+			// beruf
+			TimeTool.class, Integer.class, String.class, String.class, // gebdat,
+			// geschlecht,
+			// kommentar,
+			// warnung
+			Integer.class, String.class, String.class, String.class, // roent_no,
+			// tel_gesch,
+			// tel_priv,
+			// natel
+			String.class, TimeTool.class, String.class, String.class, // email,
+			// todesdat,
+			// ahv,
+			// archiv
+			Integer.class
+		}); // firma_no
 		float last = hofs.getLastRow();
 		float first = hofs.getFirstRow();
 		int perLine = Math.round(MONITOR_PERTASK / (last - first));
@@ -358,14 +363,15 @@ public class AeskulapImporter extends ImporterPage {
 				// import
 				continue;
 			}
-
+			
 			TimeTool tt = new TimeTool(getField(12));
 			String s = getField(13).equals("1") ? "m" : "w";
-			Patient p = new Patient(StringTool.normalizeCase(getField(2)),
-					getField(3), tt.toString(TimeTool.DATE_GER), s);
+			Patient p =
+				new Patient(StringTool.normalizeCase(getField(2)), getField(3), tt
+					.toString(TimeTool.DATE_GER), s);
 			p.set("PatientNr", getField(0));
 			moni.subTask(new StringBuilder().append(p.getLabel()).append(" ")
-					.append(p.getPatCode()).toString());
+				.append(p.getPatCode()).toString());
 			Anschrift an = p.getAnschrift();
 			an.setStrasse(getField(5));
 			an.setPlz(getField(6));
@@ -381,7 +387,7 @@ public class AeskulapImporter extends ImporterPage {
 			String gestorben = getField(21);
 			if (!StringTool.isNothing(gestorben)) {
 				sb.append("Verstorben: ").append(gestorben).append("\n");
-
+				
 			}
 			// In elexis, we have a multi purpose comment field "Bemerkung".
 			// We'll collect several fields there
@@ -398,7 +404,7 @@ public class AeskulapImporter extends ImporterPage {
 				sb.append("Beruf: ").append(beruf).append("\n");
 			}
 			p.setBemerkung(sb.toString());
-
+			
 			// If the patient has the ahv field set, this is a good opportunity
 			// to
 			// create a standard XID of national validity
@@ -419,11 +425,11 @@ public class AeskulapImporter extends ImporterPage {
 		}
 		return true;
 	}
-
-	private boolean importPatGaranten(final ExcelWrapper hofs,
-			final IProgressMonitor moni) {
-		hofs.setFieldTypes(new Class[] { String.class, String.class,
-				String.class });
+	
+	private boolean importPatGaranten(final ExcelWrapper hofs, final IProgressMonitor moni){
+		hofs.setFieldTypes(new Class[] {
+			String.class, String.class, String.class
+		});
 		float last = hofs.getLastRow();
 		float first = hofs.getFirstRow();
 		int perLine = Math.round(MONITOR_PERTASK / (last - first));
@@ -438,22 +444,20 @@ public class AeskulapImporter extends ImporterPage {
 			if (pat != null) {
 				Kontakt garant = (Kontakt) Xid.findObject(GARANTID, garantBez);
 				if (garant != null) {
-					Fall fall = pat.neuerFall(Fall.getDefaultCaseLabel(), Fall
-							.getDefaultCaseReason(), "KVG");
+					Fall fall =
+						pat.neuerFall(Fall.getDefaultCaseLabel(), Fall.getDefaultCaseReason(),
+							"KVG");
 					fall.setGarant(pat);
-					fall.setRequiredContact(TarmedRequirements.INSURANCE,
-							garant);
-					fall.setRequiredString(TarmedRequirements.INSURANCE_NUMBER,
-							kknr);
+					fall.setRequiredContact(TarmedRequirements.INSURANCE, garant);
+					fall.setRequiredString(TarmedRequirements.INSURANCE_NUMBER, kknr);
 				}
 			}
 			moni.worked(perLine);
 		}
 		return true;
 	}
-
-	private boolean importGaranten(final ExcelWrapper hofs,
-			final IProgressMonitor moni) {
+	
+	private boolean importGaranten(final ExcelWrapper hofs, final IProgressMonitor moni){
 		float last = hofs.getLastRow();
 		float first = hofs.getFirstRow();
 		int perLine = Math.round(MONITOR_PERTASK / (last - first));
@@ -475,9 +479,8 @@ public class AeskulapImporter extends ImporterPage {
 		}
 		return true;
 	}
-
-	private boolean importFirmen(final ExcelWrapper hofs,
-			final IProgressMonitor moni) {
+	
+	private boolean importFirmen(final ExcelWrapper hofs, final IProgressMonitor moni){
 		float last = hofs.getLastRow();
 		float first = hofs.getFirstRow();
 		int perLine = Math.round(MONITOR_PERTASK / (last - first));
@@ -497,13 +500,12 @@ public class AeskulapImporter extends ImporterPage {
 		}
 		return true;
 	}
-
-	private boolean importAdressen(final ExcelWrapper hofs,
-			final IProgressMonitor moni) {
+	
+	private boolean importAdressen(final ExcelWrapper hofs, final IProgressMonitor moni){
 		float last = hofs.getLastRow();
 		float first = hofs.getFirstRow();
 		int perLine = Math.round(MONITOR_PERTASK / (last - first));
-
+		
 		for (int line = Math.round(first + 1); line <= last; line++) {
 			Kontakt k;
 			actLine = hofs.getRow(line).toArray(new String[0]);
@@ -524,8 +526,7 @@ public class AeskulapImporter extends ImporterPage {
 				bez += name;
 				k = new Organisation(bez, abteilung);
 			} else {
-				k = new Person(name, vorname, "",
-						StringTool.isFemale(vorname) ? "w" : "m");
+				k = new Person(name, vorname, "", StringTool.isFemale(vorname) ? "w" : "m");
 			}
 			Anschrift an = k.getAnschrift();
 			an.setStrasse(getField(4));
@@ -547,25 +548,24 @@ public class AeskulapImporter extends ImporterPage {
 		}
 		return true;
 	}
-
-	static ExcelWrapper checkImport(final String file) {
+	
+	static ExcelWrapper checkImport(final String file){
 		ExcelWrapper hofs = new ExcelWrapper();
 		if (hofs.load(file, 0)) {
 			return hofs;
 		} else {
-			SWTHelper.showError("Fehler beim Import", "Konnte " + file
-					+ " nicht lesen");
+			SWTHelper.showError("Fehler beim Import", "Konnte " + file + " nicht lesen");
 		}
 		return null;
 	}
-
-	static File findFile(File dir, final String basename) {
+	
+	static File findFile(File dir, final String basename){
 		if (!dir.exists()) {
 			return null;
 		}
 		File[] r = dir.listFiles(new FileFilter() {
-
-			public boolean accept(File pathname) {
+			
+			public boolean accept(File pathname){
 				String pn = pathname.getName();
 				if (pn.matches(basename + ".+")) {
 					return true;
@@ -578,15 +578,15 @@ public class AeskulapImporter extends ImporterPage {
 		}
 		return null;
 	}
-
+	
 	@Override
-	public String getDescription() {
+	public String getDescription(){
 		return "Stammdatenimport Aeskulap";
 	}
-
+	
 	@Override
-	public String getTitle() {
+	public String getTitle(){
 		return "Aeskulap";
 	}
-
+	
 }

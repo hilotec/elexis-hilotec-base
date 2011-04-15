@@ -30,15 +30,16 @@ import ch.rgw.tools.TimeTool;
 public class DataAccessor implements IDataAccess {
 	MessungKonfiguration config;
 	
-	public DataAccessor() {
+	public DataAccessor(){
 		config = MessungKonfiguration.getInstance();
 	}
 	
 	/**
 	 * Retourniert Platzhalter für die Integration im Textsystem.
+	 * 
 	 * @return
 	 */
-	private String getPlatzhalter(final MessungTyp typ) {
+	private String getPlatzhalter(final MessungTyp typ){
 		return typ.getName();
 	}
 	
@@ -48,8 +49,8 @@ public class DataAccessor implements IDataAccess {
 	public List<Element> getList(){
 		ArrayList<Element> ret = new ArrayList<Element>();
 		for (MessungTyp typ : config.getTypes()) {
-			ret.add(new IDataAccess.Element(IDataAccess.TYPE.STRING,
-				typ.getName(), getPlatzhalter(typ), Patient.class, 1));
+			ret.add(new IDataAccess.Element(IDataAccess.TYPE.STRING, typ.getName(),
+				getPlatzhalter(typ), Patient.class, 1));
 		}
 		return ret;
 	}
@@ -57,10 +58,10 @@ public class DataAccessor implements IDataAccess {
 	/**
 	 * Spaltentitel fuer Tabelle mit bestimmten Messtyp in Array eintragen
 	 */
-	private void spaltentitelEintragen(MessungTyp typ, String[] ziel) {
+	private void spaltentitelEintragen(MessungTyp typ, String[] ziel){
 		List<IMesswertTyp> feldtypen = typ.getMesswertTypen();
 		int i = 0;
-		for (IMesswertTyp dft: feldtypen) {
+		for (IMesswertTyp dft : feldtypen) {
 			ziel[i++] = dft.getTitle();
 		}
 	}
@@ -68,19 +69,18 @@ public class DataAccessor implements IDataAccess {
 	/**
 	 * Aus Liste von Messungen Result-Objekt(Tabelle) erstellen
 	 */
-	private Result<Object> erstelleResultTabelle(MessungTyp typ, List<Messung> messungen) {
-		String values[][] =
-			new String[messungen.size() + 1][typ.getMesswertTypen().size() + 1];
+	private Result<Object> erstelleResultTabelle(MessungTyp typ, List<Messung> messungen){
+		String values[][] = new String[messungen.size() + 1][typ.getMesswertTypen().size() + 1];
 		
 		// Spaltenueberschriften in erste Zeile eintragen
 		spaltentitelEintragen(typ, values[0]);
 		
 		// Messwerte in Array einfuellen
 		int i = 1;
-		for (Messung messung: messungen) {
+		for (Messung messung : messungen) {
 			int j = 0;
 			values[i][j++] = messung.getDatum();
-			for (Messwert wert: messung.getMesswerte()) {
+			for (Messwert wert : messung.getMesswerte()) {
 				values[i][j++] = wert.getDarstellungswert();
 			}
 			i++;
@@ -92,19 +92,17 @@ public class DataAccessor implements IDataAccess {
 	/**
 	 * Bestimmte Messung in Liste finden
 	 * 
-	 * @param suchbegriff Entweder ein Datum, "first" fuer die aelteste Messung
-	 *                    oder "last" fuer die Neuste.
+	 * @param suchbegriff
+	 *            Entweder ein Datum, "first" fuer die aelteste Messung oder "last" fuer die Neuste.
 	 */
-	private Messung sucheMessung(List<Messung> messungen, String suchbegriff) {
+	private Messung sucheMessung(List<Messung> messungen, String suchbegriff){
 		Messung messung = null;
 		
 		if (messungen.size() == 0) {
 			return null;
 		}
-
-		if (suchbegriff.matches("last.*") ||
-			suchbegriff.matches("first.*"))
-		{
+		
+		if (suchbegriff.matches("last.*") || suchbegriff.matches("first.*")) {
 			TimeTool lowerbound = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
 			TimeTool upperbound = new TimeTool(TimeTool.END_OF_UNIX_EPOCH);
 			int factor = 1;
@@ -121,12 +119,10 @@ public class DataAccessor implements IDataAccess {
 			}
 			
 			TimeTool cur = null;
-			for (Messung m: messungen) {
+			for (Messung m : messungen) {
 				TimeTool vgl = new TimeTool(m.getDatum());
-				if ((vgl.compareTo(lowerbound) >= 0) &&
-						(vgl.compareTo(upperbound) <= 0) &&
-					((cur == null) || (cur.compareTo(vgl) * factor <= 0)))
-				{
+				if ((vgl.compareTo(lowerbound) >= 0) && (vgl.compareTo(upperbound) <= 0)
+					&& ((cur == null) || (cur.compareTo(vgl) * factor <= 0))) {
 					messung = m;
 					cur = vgl;
 				}
@@ -138,7 +134,7 @@ public class DataAccessor implements IDataAccess {
 				return null;
 			}
 			
-			for (Messung m: messungen) {
+			for (Messung m : messungen) {
 				TimeTool vgl = new TimeTool(m.getDatum());
 				if (vgl.isEqual(find)) {
 					messung = m;
@@ -154,12 +150,10 @@ public class DataAccessor implements IDataAccess {
 	 * Bestimmten Messwert, oder eine ganze Messung holen
 	 */
 	public Result<Object> getObject(final String descriptor,
-		final PersistentObject dependentObject, final String dates, final String[] params)
-	{
+		final PersistentObject dependentObject, final String dates, final String[] params){
 		if (!(dependentObject instanceof Patient)) {
-			return new Result<Object>(Result.SEVERITY.ERROR,
-				IDataAccess.INVALID_PARAMETERS, "Ungültiger Parameter",
-				dependentObject, true);
+			return new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
+				"Ungültiger Parameter", dependentObject, true);
 			
 		}
 		
@@ -177,18 +171,16 @@ public class DataAccessor implements IDataAccess {
 		
 		MessungTyp typ = config.getTypeByName(messungsname);
 		if (typ == null) {
-			return new Result<Object>(Result.SEVERITY.ERROR,
-				IDataAccess.OBJECT_NOT_FOUND, "Ungültiger Messungstyp" + messungsname,
-				messungsname, true);
-				
+			return new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
+				"Ungültiger Messungstyp" + messungsname, messungsname, true);
+			
 		}
-	
+		
 		// Spaltenueberschriften fuer Tabelle holen
-
 		
 		// Alle Messungen dieses Patienten und Typs holen
 		List<Messung> messungen = Messung.getPatientMessungen(patient, typ);
-	
+		
 		Messung messung = null;
 		if (dates.equals("all")) {
 			// Tabelle mit allen Messungen zurueckgeben
@@ -199,11 +191,9 @@ public class DataAccessor implements IDataAccess {
 		
 		// Schade, war wohl nichts...
 		if (messung == null) {
-			return new Result<Object>(Result.SEVERITY.ERROR,
-				IDataAccess.OBJECT_NOT_FOUND, "Nicht gefunden", params, true);
+			return new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
+				"Nicht gefunden", params, true);
 		}
-		
-		
 		
 		// Wir haben eine passende Messung gefunden. Jetzt gibt es zwei
 		// verschiedene Moeglichkeiten, entweder ein bestimmtes Feld wird
@@ -214,16 +204,15 @@ public class DataAccessor implements IDataAccess {
 			liste.add(messung);
 			return erstelleResultTabelle(typ, liste);
 		}
-
+		
 		// TODO: Im Moment kommen nur "einstellige" Feldnamen in Frage, sobald
-		//       aber Referenzen eingefuehrt werden, wird sowas durchaus
-		//       notwendig sein.
+		// aber Referenzen eingefuehrt werden, wird sowas durchaus
+		// notwendig sein.
 		Messwert messwert = messung.getMesswert(feldnamen[0]);
 		for (int i = 1; (i < feldnamen.length) && (messwert != null); i++) {
 			if (!(messwert.getTyp() instanceof MesswertTypData)) {
-				return new Result<Object>(Result.SEVERITY.ERROR,
-					IDataAccess.OBJECT_NOT_FOUND, "Dereferenziertes Feid "+
-					"ist kein Data-Feld.", params, true);
+				return new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
+					"Dereferenziertes Feid " + "ist kein Data-Feld.", params, true);
 			}
 			MesswertTypData t = (MesswertTypData) messwert.getTyp();
 			Messung m = t.getMessung(messwert);
@@ -231,20 +220,19 @@ public class DataAccessor implements IDataAccess {
 		}
 		
 		if (messwert == null) {
-			return new Result<Object>(Result.SEVERITY.ERROR,
-				IDataAccess.OBJECT_NOT_FOUND, "Ungueltiger Feldname", params,
-				true);
+			return new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
+				"Ungueltiger Feldname", params, true);
 		}
 		return new Result<Object>(messwert.getDarstellungswert());
 	}
-
+	
 	@Override
-	public String getDescription() {
+	public String getDescription(){
 		return "Daten aus dem Hilotec-Messwerte Plugin";
 	}
-
+	
 	@Override
-	public String getName() {
+	public String getName(){
 		return "Hilotec-Messwerte";
 	}
 }

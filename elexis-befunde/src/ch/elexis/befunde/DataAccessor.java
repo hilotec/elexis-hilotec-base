@@ -38,9 +38,9 @@ public class DataAccessor implements IDataAccess {
 	Hashtable<String, String> hash;
 	Hashtable<String, String[]> columns;
 	ArrayList<String> parameters;
-
+	
 	@SuppressWarnings("unchecked")
-	public DataAccessor() {
+	public DataAccessor(){
 		Messwert setup = Messwert.getSetup();
 		columns = new Hashtable<String, String[]>();
 		parameters = new ArrayList<String>();
@@ -55,37 +55,37 @@ public class DataAccessor implements IDataAccess {
 					parameters.add(n);
 					columns.put(n, flds);
 				}
-
+				
 			}
 		}
 	}
 	
-	public String getDescription() {
+	public String getDescription(){
 		return Messages.getString("DataAccessor.dataInBefundePlugin"); //$NON-NLS-1$
 	}
-
-	public String getName() {
+	
+	public String getName(){
 		return Messages.getString("DataAccessor.data"); //$NON-NLS-1$
 	}
-
+	
 	/**
 	 * Retourniert Platzhalter für die Integration im Textsystem.
+	 * 
 	 * @return
 	 */
-	private String getPlatzhalter(final String befund) {
+	private String getPlatzhalter(final String befund){
 		return "[Befunde-Data:Patient:" + befund + "]"; //$NON-NLS-1$ //$NON-NLS-2$
 	}
-
-
-	public List<Element> getList() {
+	
+	public List<Element> getList(){
 		ArrayList<Element> ret = new ArrayList<Element>(parameters.size());
 		for (String n : parameters) {
 			ret.add(new IDataAccess.Element(IDataAccess.TYPE.STRING, n, getPlatzhalter(n),
-					Patient.class, 1));
+				Patient.class, 1));
 		}
 		return ret;
 	}
-
+	
 	/**
 	 * return the Object denoted by the given description
 	 * 
@@ -98,20 +98,20 @@ public class DataAccessor implements IDataAccess {
 	 * @param params
 	 *            not used
 	 */
-
+	
 	public Result<Object> getObject(final String descriptor,
-			final PersistentObject dependentObject, final String dates,
-			final String[] params) {
+		final PersistentObject dependentObject, final String dates, final String[] params){
 		Result<Object> ret = null;
 		if (!(dependentObject instanceof Patient)) {
-			ret = new Result<Object>(Result.SEVERITY.ERROR,
-					IDataAccess.INVALID_PARAMETERS, Messages.getString("DataAccessor.invalidParameter"), //$NON-NLS-1$
+			ret =
+				new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS, Messages
+					.getString("DataAccessor.invalidParameter"), //$NON-NLS-1$
 					dependentObject, true);
 		} else {
 			Patient pat = (Patient) dependentObject;
 			String[] data = descriptor.split("\\."); //$NON-NLS-1$
 			Query<Messwert> qbe = new Query<Messwert>(Messwert.class);
-			qbe.add(Messwert.FLD_PATIENT_ID, Query.EQUALS, pat.getId()); 
+			qbe.add(Messwert.FLD_PATIENT_ID, Query.EQUALS, pat.getId());
 			qbe.add(Messwert.FLD_NAME, Query.EQUALS, data[0]); //$NON-NLS-1$ //$NON-NLS-2$
 			List<Messwert> list = qbe.execute();
 			String[][] values;
@@ -131,8 +131,7 @@ public class DataAccessor implements IDataAccess {
 			if (dates.equals(ALL)) {
 				for (Messwert m : list) {
 					String date = m.get(Messwert.FLD_DATE);
-					values[i][0] = new TimeTool(date)
-							.toString(TimeTool.DATE_GER);
+					values[i][0] = new TimeTool(date).toString(TimeTool.DATE_GER);
 					Hashtable befs = m.getHashtable(Messages.getString("DataAccessor.0")); //$NON-NLS-1$
 					for (int j = 1; j < cols.length; j++) {
 						String vv = (String) befs.get(keys[j]);
@@ -157,14 +156,15 @@ public class DataAccessor implements IDataAccess {
 					}
 				}
 				if (mwrt == null) {
-					ret = new Result<Object>(Result.SEVERITY.ERROR,
-							IDataAccess.OBJECT_NOT_FOUND, Messages.getString("DataAccessor.notFound"), //$NON-NLS-1$
+					ret =
+						new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
+							Messages.getString("DataAccessor.notFound"), //$NON-NLS-1$
 							params, true);
 				}
-
+				
 			} else if (dates.equals("first")) { //$NON-NLS-1$
 				TimeTool firstdate = null;
-
+				
 				if (list.size() > 0) {
 					mwrt = list.get(0);
 					firstdate = new TimeTool(mwrt.get(Messwert.FLD_DATE));
@@ -177,17 +177,19 @@ public class DataAccessor implements IDataAccess {
 						}
 					}
 				}
-
+				
 				if (mwrt == null) {
-					ret = new Result<Object>(Result.SEVERITY.ERROR,
-							IDataAccess.OBJECT_NOT_FOUND, Messages.getString("DataAccessor.notFound"), //$NON-NLS-1$
+					ret =
+						new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
+							Messages.getString("DataAccessor.notFound"), //$NON-NLS-1$
 							params, true);
 				}
 			} else { // bestimmtes Datum
 				TimeTool find = new TimeTool();
 				if (find.set(params[0]) == false) {
-					ret = new Result<Object>(Result.SEVERITY.ERROR,
-							IDataAccess.INVALID_PARAMETERS, Messages.getString("DataAccessor.dateExpected"), //$NON-NLS-1$
+					ret =
+						new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
+							Messages.getString("DataAccessor.dateExpected"), //$NON-NLS-1$
 							params, true);
 				} else {
 					for (Messwert m : list) {
@@ -213,15 +215,16 @@ public class DataAccessor implements IDataAccess {
 					// Bei Feldnamen in der Form Fn benutzen wir n als Index
 					// sonst wird einfach die Spaltenueberschrift benutzt.
 					// F0 entspricht dabei dem Datum
-
+					
 					if (fname.matches("F[0-9]*")) { //$NON-NLS-1$
 						int index = Integer.parseInt(num);
 						if (index < values[1].length) {
 							ret = new Result<Object>(values[1][index]);
 						} else {
-							ret = new Result<Object>(Result.SEVERITY.ERROR,
-									IDataAccess.INVALID_PARAMETERS,
-									Messages.getString("DataAccessor.invalidFieldIndex"), fname, true); //$NON-NLS-1$
+							ret =
+								new Result<Object>(Result.SEVERITY.ERROR,
+									IDataAccess.INVALID_PARAMETERS, Messages
+										.getString("DataAccessor.invalidFieldIndex"), fname, true); //$NON-NLS-1$
 						}
 					} else {
 						for (int j = 0; (j < keys.length) && (ret == null); j++) {
@@ -230,9 +233,10 @@ public class DataAccessor implements IDataAccess {
 							}
 						}
 						if (ret == null) {
-							ret = new Result<Object>(Result.SEVERITY.ERROR,
-									IDataAccess.INVALID_PARAMETERS,
-									Messages.getString("DataAccessor.invalidFieldName"), fname, true); //$NON-NLS-1$
+							ret =
+								new Result<Object>(Result.SEVERITY.ERROR,
+									IDataAccess.INVALID_PARAMETERS, Messages
+										.getString("DataAccessor.invalidFieldName"), fname, true); //$NON-NLS-1$
 						}
 					}
 				} else {
@@ -240,8 +244,8 @@ public class DataAccessor implements IDataAccess {
 				}
 			}
 		}
-
+		
 		return ret;
 	}
-
+	
 }

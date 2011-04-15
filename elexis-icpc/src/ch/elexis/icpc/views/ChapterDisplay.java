@@ -51,8 +51,8 @@ public class ChapterDisplay extends Composite {
 	String chapter;
 	ExpandableComposite[] ec;
 	Text tCrit, tIncl, tExcl, tNote;
-
-	public ChapterDisplay(Composite parent, final String chapter) {
+	
+	public ChapterDisplay(Composite parent, final String chapter){
 		super(parent, SWT.NONE);
 		this.chapter = chapter;
 		setLayout(new GridLayout(2, false));
@@ -66,72 +66,65 @@ public class ChapterDisplay extends Composite {
 		cRight.setLayout(new GridLayout());
 		cRight.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ec = new ExpandableComposite[IcpcCode.components.length];
-
+		
 		for (int i = 0; i < ec.length; i++) {
 			String c = IcpcCode.components[i];
-			ec[i] = tk.createExpandableComposite(cLeft,
-					ExpandableComposite.TWISTIE);
+			ec[i] = tk.createExpandableComposite(cLeft, ExpandableComposite.TWISTIE);
 			ec[i].setText(c);
-			UserSettings2.setExpandedState(ec[i], UC2_HEADING
-					+ c.substring(0, 1));
+			UserSettings2.setExpandedState(ec[i], UC2_HEADING + c.substring(0, 1));
 			Composite inlay = new Composite(ec[i], SWT.NONE);
 			inlay.setLayout(new FillLayout());
 			CommonViewer cv = new CommonViewer();
-			ViewerConfigurer vc = new ViewerConfigurer(
-					new ComponentContentProvider(c),
-					new DefaultLabelProvider(), new SimpleWidgetProvider(
-							SimpleWidgetProvider.TYPE_TABLE, SWT.SINGLE, cv));
+			ViewerConfigurer vc =
+				new ViewerConfigurer(new ComponentContentProvider(c), new DefaultLabelProvider(),
+					new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TABLE, SWT.SINGLE, cv));
 			ec[i].setData(cv);
 			cv.create(vc, inlay, SWT.NONE, this);
 			cv.addDoubleClickListener(new CommonViewer.DoubleClickListener() {
-				public void doubleClicked(PersistentObject obj, CommonViewer cv) {
-					ICodeSelectorTarget target = CodeSelectorHandler
-							.getInstance().getCodeSelectorTarget();
+				public void doubleClicked(PersistentObject obj, CommonViewer cv){
+					ICodeSelectorTarget target =
+						CodeSelectorHandler.getInstance().getCodeSelectorTarget();
 					if (target != null) {
 						target.codeSelected(obj);
 					}
 				}
 			});
-			cv.getViewerWidget().addSelectionChangedListener(
-					new ISelectionChangedListener() {
-
-						public void selectionChanged(SelectionChangedEvent event) {
-							IStructuredSelection sel = (IStructuredSelection) event
-									.getSelection();
-							if (!sel.isEmpty()) {
-								IcpcCode code = (IcpcCode) sel
-										.getFirstElement();
-								tCrit.setText(code.get("criteria"));
-								tIncl.setText(code.get("inclusion"));
-								tExcl.setText(code.get("exclusion"));
-								tNote.setText(code.get("note"));
-								cRight.layout();
-							}
-
-						}
-					});
+			cv.getViewerWidget().addSelectionChangedListener(new ISelectionChangedListener() {
+				
+				public void selectionChanged(SelectionChangedEvent event){
+					IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+					if (!sel.isEmpty()) {
+						IcpcCode code = (IcpcCode) sel.getFirstElement();
+						tCrit.setText(code.get("criteria"));
+						tIncl.setText(code.get("inclusion"));
+						tExcl.setText(code.get("exclusion"));
+						tNote.setText(code.get("note"));
+						cRight.layout();
+					}
+					
+				}
+			});
 			ec[i].addExpansionListener(new ExpansionAdapter() {
 				@Override
-				public void expansionStateChanging(final ExpansionEvent e) {
-					ExpandableComposite src = (ExpandableComposite) e
-							.getSource();
-
+				public void expansionStateChanging(final ExpansionEvent e){
+					ExpandableComposite src = (ExpandableComposite) e.getSource();
+					
 					if (e.getState() == true) {
 						CommonViewer cv = (CommonViewer) src.getData();
 						cv.notify(CommonViewer.Message.update);
 					}
-					UserSettings2.saveExpandedState(UC2_HEADING
-							+ src.getText().substring(0, 1), e.getState());
+					UserSettings2.saveExpandedState(UC2_HEADING + src.getText().substring(0, 1), e
+						.getState());
 				}
-
-				public void expansionStateChanged(ExpansionEvent e) {
+				
+				public void expansionStateChanged(ExpansionEvent e){
 					fLeft.reflow(true);
 				}
-
+				
 			});
 			ec[i].setClient(inlay);
 		}
-
+		
 		Section sCrit = tk.createSection(cRight, Section.EXPANDED);
 		sCrit.setText("Kriterien");
 		tCrit = tk.createText(sCrit, "\n", SWT.BORDER | SWT.MULTI);
@@ -146,17 +139,17 @@ public class ChapterDisplay extends Composite {
 		Section sNote = tk.createSection(cRight, Section.EXPANDED);
 		tNote = tk.createText(cRight, "\n", SWT.BORDER | SWT.MULTI);
 		sNote.setText("Anmerkung");
-
+		
 	}
-
+	
 	class ComponentContentProvider extends CommonContentProviderAdapter {
 		private String component;
-
-		public ComponentContentProvider(String component) {
+		
+		public ComponentContentProvider(String component){
 			this.component = component;
 		}
-
-		public Object[] getElements(Object inputElement) {
+		
+		public Object[] getElements(Object inputElement){
 			Query<IcpcCode> qbe = new Query<IcpcCode>(IcpcCode.class);
 			qbe.startGroup();
 			qbe.add("ID", "Like", chapter.substring(0, 1) + "%");
@@ -165,20 +158,22 @@ public class ChapterDisplay extends Composite {
 			qbe.endGroup();
 			qbe.and();
 			qbe.add("component", StringTool.equals, component.substring(0, 1));
-			qbe.orderBy(false, new String[] {"ID"});
+			qbe.orderBy(false, new String[] {
+				"ID"
+			});
 			List<IcpcCode> codes = qbe.execute();
 			return codes.toArray();
 		}
-
+		
 	}
-
-	public void setComponent(String mode) {
+	
+	public void setComponent(String mode){
 		for (int i = 0; i < ec.length; i++) {
 			ec[i].setEnabled(true);
 		}
 		if ("RFE".equals(mode)) {
 			// all components enabled
-
+			
 		} else if ("DG".equals(mode)) {
 			// only 1 and 7 enabled
 			for (int i = 1; i < 6; i++) {

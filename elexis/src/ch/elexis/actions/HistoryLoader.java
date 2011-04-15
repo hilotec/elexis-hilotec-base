@@ -96,7 +96,7 @@ public class HistoryLoader extends BackgroundJob {
 			monitor.worked(50);
 			Iterator<Konsultation> it = lKons.iterator();
 			sb.append("<form>"); //$NON-NLS-1$
-			globalFilter=ObjectFilterRegistry.getInstance().getFilterFor(Konsultation.class);
+			globalFilter = ObjectFilterRegistry.getInstance().getFilterFor(Konsultation.class);
 			while (!monitor.isCanceled()) {
 				if (!it.hasNext()) {
 					sb.append("</form>"); //$NON-NLS-1$
@@ -123,7 +123,7 @@ public class HistoryLoader extends BackgroundJob {
 						Samdas samdas = new Samdas(s);
 						s = samdas.getRecordText();
 					}
-					s=maskHTML(s);
+					s = maskHTML(s);
 					if (multiline) {
 						// TODO use system line separator
 						// replace Windows line separator
@@ -153,9 +153,9 @@ public class HistoryLoader extends BackgroundJob {
 	}
 	
 	private String maskHTML(String input){
-		String s=input.replaceAll("<","&lt;"); //$NON-NLS-1$ //$NON-NLS-2$
-		s=s.replaceAll(">","&gt;"); //$NON-NLS-1$ //$NON-NLS-2$
-		s=s.replaceAll("&","&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
+		String s = input.replaceAll("<", "&lt;"); //$NON-NLS-1$ //$NON-NLS-2$
+		s = s.replaceAll(">", "&gt;"); //$NON-NLS-1$ //$NON-NLS-2$
+		s = s.replaceAll("&", "&amp;"); //$NON-NLS-1$ //$NON-NLS-2$
 		return s;
 	}
 	

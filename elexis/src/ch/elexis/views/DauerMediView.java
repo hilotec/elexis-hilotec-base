@@ -33,80 +33,78 @@ import ch.elexis.util.SWTHelper;
  * @author gerry
  * 
  */
-public class DauerMediView extends ViewPart implements IActivationListener,
-		ElexisEventListener {
+public class DauerMediView extends ViewPart implements IActivationListener, ElexisEventListener {
 	public final static String ID = "ch.elexis.dauermedikationview"; //$NON-NLS-1$
 	private IAction toClipBoardAction;
 	FixMediDisplay dmd;
-
-	public DauerMediView() {
+	
+	public DauerMediView(){
 
 	}
-
+	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		parent.setLayout(new GridLayout());
 		dmd = new FixMediDisplay(parent, getViewSite());
 		dmd.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		makeActions();
-		getViewSite().getActionBars().getToolBarManager()
-				.add(toClipBoardAction);
+		getViewSite().getActionBars().getToolBarManager().add(toClipBoardAction);
 		GlobalEventDispatcher.addActivationListener(this, this);
 	}
-
-	public void dispose() {
+	
+	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void activation(boolean mode) { /* leer */
+	
+	public void activation(boolean mode){ /* leer */
 	}
-
-	public void visible(boolean mode) {
+	
+	public void visible(boolean mode){
 		if (mode) {
 			ElexisEventDispatcher.getInstance().addListeners(this);
 			catchElexisEvent(template);
 		} else {
 			ElexisEventDispatcher.getInstance().removeListeners(this);
 		}
-
+		
 	}
-
-	private void makeActions() {
+	
+	private void makeActions(){
 		toClipBoardAction = new Action(Messages.getString("DauerMediView.copy")) { //$NON-NLS-1$
-			{
-				setToolTipText(Messages
-						.getString("DauerMediView.copyToClipboard")); //$NON-NLS-1$
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_CLIPBOARD));
-			}
-
-			@Override
-			public void run() {
-				dmd.toClipBoard(true);
-			}
-
-		};
-
+				{
+					setToolTipText(Messages.getString("DauerMediView.copyToClipboard")); //$NON-NLS-1$
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_CLIPBOARD));
+				}
+				
+				@Override
+				public void run(){
+					dmd.toClipBoard(true);
+				}
+				
+			};
+		
 	}
-
-	public void catchElexisEvent(ElexisEvent ev) {
+	
+	public void catchElexisEvent(ElexisEvent ev){
 		Desk.asyncExec(new Runnable() {
-
-			public void run() {
+			
+			public void run(){
 				dmd.reload();
 			}
 		});
 	}
-
-	private final ElexisEvent template = new ElexisEvent(null, Patient.class,
-			ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
-
-	public ElexisEvent getElexisEventFilter() {
+	
+	private final ElexisEvent template =
+		new ElexisEvent(null, Patient.class, ElexisEvent.EVENT_SELECTED
+			| ElexisEvent.EVENT_DESELECTED);
+	
+	public ElexisEvent getElexisEventFilter(){
 		return template;
 	}
 }

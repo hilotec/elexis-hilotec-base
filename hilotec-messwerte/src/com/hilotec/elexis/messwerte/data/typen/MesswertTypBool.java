@@ -13,7 +13,6 @@
 
 package com.hilotec.elexis.messwerte.data.typen;
 
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.swt.widgets.Button;
@@ -32,46 +31,45 @@ import com.hilotec.elexis.messwerte.data.MesswertBase;
 public class MesswertTypBool extends MesswertBase implements IMesswertTyp {
 	boolean defVal;
 	
-	public MesswertTypBool(String n, String t, String u) {
+	public MesswertTypBool(String n, String t, String u){
 		super(n, t, u);
 		defVal = false;
 	}
 	
-	public String erstelleDarstellungswert(Messwert messwert) {
-		if(messwert.getWert().equals("1")){
+	public String erstelleDarstellungswert(Messwert messwert){
+		if (messwert.getWert().equals("1")) {
 			return "Ja";
 		}
 		return (Boolean.parseBoolean(messwert.getWert()) ? "Ja" : "Nein");
 	}
-
-	public String getDefault() {
+	
+	public String getDefault(){
 		return Boolean.toString(defVal);
 	}
 	
-	public void setDefault(String def) {
+	public void setDefault(String def){
 		defVal = Boolean.parseBoolean(def);
 	}
 	
-	public Widget createWidget(Composite parent, Messwert messwert) {
+	public Widget createWidget(Composite parent, Messwert messwert){
 		Button button = new Button(parent, SWT.CHECK);
 		button.setSelection(Boolean.parseBoolean(messwert.getWert()));
 		return button;
 	}
-
-	public ActiveControl createControl(Composite parent, Messwert messwert,
-			boolean bEditable) {
+	
+	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable){
 		int flags = 0;
 		if (!bEditable) {
 			flags |= TextField.READONLY;
 		}
 		IMesswertTyp dft = messwert.getTyp();
 		String labelText = dft.getTitle();
-		BooleanField bf=new BooleanField(parent, flags, labelText);
+		BooleanField bf = new BooleanField(parent, flags, labelText);
 		bf.setText(messwert.getDarstellungswert());
 		return bf;
 	}
-
-	public void saveInput(Widget widget, Messwert messwert) {
+	
+	public void saveInput(Widget widget, Messwert messwert){
 		Button button = (Button) widget;
 		messwert.setWert(Boolean.toString(button.getSelection()));
 	}

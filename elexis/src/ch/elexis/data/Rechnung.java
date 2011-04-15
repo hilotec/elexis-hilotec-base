@@ -55,8 +55,8 @@ public class Rechnung extends PersistentObject {
 	public static final String REMARKS = "Bemerkungen";
 	
 	static {
-		addMapping(TABLENAME, BILL_NUMBER, CASE_ID, MANDATOR_ID, "RnDatum=S:D:RnDatum",
-			BILL_STATE, "StatusDatum=S:D:StatusDatum", "RnDatumVon=S:D:RnDatumVon",
+		addMapping(TABLENAME, BILL_NUMBER, CASE_ID, MANDATOR_ID, "RnDatum=S:D:RnDatum", BILL_STATE,
+			"StatusDatum=S:D:StatusDatum", "RnDatumVon=S:D:RnDatumVon",
 			"RnDatumBis=S:D:RnDatumBis", "Betragx100=Betrag", FLD_EXTINFO,
 			"Zahlungen=LIST:RechnungsID:ZAHLUNGEN:Datum");
 	}
@@ -285,7 +285,7 @@ public class Rechnung extends PersistentObject {
 	 */
 	public void storno(final boolean reopen){
 		Money betrag = getBetrag();
-		new Zahlung(this, betrag, "Storno",null);
+		new Zahlung(this, betrag, "Storno", null);
 		if (reopen == true) {
 			Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
 			qbe.add(Konsultation.FLD_BILL_ID, Query.EQUALS, getId());

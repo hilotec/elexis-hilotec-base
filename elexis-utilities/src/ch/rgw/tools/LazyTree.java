@@ -72,7 +72,8 @@ public class LazyTree<T> extends Tree<T> {
 	
 	public interface LazyTreeListener {
 		/**
-		 * fetch children of this node. 
+		 * fetch children of this node.
+		 * 
 		 * @param l
 		 * @return true if children were added
 		 */
@@ -80,6 +81,7 @@ public class LazyTree<T> extends Tree<T> {
 		
 		/**
 		 * return true if this node has children
+		 * 
 		 * @param l
 		 * @return
 		 */

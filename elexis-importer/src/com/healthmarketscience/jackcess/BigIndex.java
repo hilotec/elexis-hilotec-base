@@ -23,65 +23,57 @@ Health Market Science
 2700 Horizon Drive
 Suite 200
 King of Prussia, PA 19406
-*/
+ */
 
 package com.healthmarketscience.jackcess;
 
 import java.io.IOException;
 
-
 /**
  * Implementation of an Access table index which supports large indexes.
+ * 
  * @author James Ahlborn
  */
 public class BigIndex extends Index {
-
-
-  /** Cache which manages the index pages */
-  private final IndexPageCache _pageCache;
-  
-  public BigIndex(Table table, int uniqueEntryCount,
-                  int uniqueEntryCountOffset) {
-    super(table, uniqueEntryCount, uniqueEntryCountOffset);
-    _pageCache = new IndexPageCache(this);
-  }
-
-  @Override
-  protected void updateImpl() throws IOException {
-    _pageCache.write();
-  }
-
-  @Override
-  protected void readIndexEntries()
-    throws IOException
-  {
-    _pageCache.setRootPageNumber(getRootPageNumber());
-  }
-
-  @Override
-  protected DataPage findDataPage(Entry entry)
-    throws IOException
-  {
-    return _pageCache.findCacheDataPage(entry);
-  }
-
-  @Override
-  protected DataPage getDataPage(int pageNumber)
-    throws IOException
-  {
-    return _pageCache.getCacheDataPage(pageNumber);
-  }
-
-  @Override
-  public String toString() {
-    return super.toString() + "\n" + _pageCache.toString();
-  }
-
-  /**
-   * Used by unit tests to validate the internal status of the index.
-   */
-  void validate() throws IOException {
-    _pageCache.validate();
-  }
-  
+	
+	/** Cache which manages the index pages */
+	private final IndexPageCache _pageCache;
+	
+	public BigIndex(Table table, int uniqueEntryCount, int uniqueEntryCountOffset){
+		super(table, uniqueEntryCount, uniqueEntryCountOffset);
+		_pageCache = new IndexPageCache(this);
+	}
+	
+	@Override
+	protected void updateImpl() throws IOException{
+		_pageCache.write();
+	}
+	
+	@Override
+	protected void readIndexEntries() throws IOException{
+		_pageCache.setRootPageNumber(getRootPageNumber());
+	}
+	
+	@Override
+	protected DataPage findDataPage(Entry entry) throws IOException{
+		return _pageCache.findCacheDataPage(entry);
+	}
+	
+	@Override
+	protected DataPage getDataPage(int pageNumber) throws IOException{
+		return _pageCache.getCacheDataPage(pageNumber);
+	}
+	
+	@Override
+	public String toString(){
+		return super.toString() + "\n" + _pageCache.toString();
+	}
+	
+	/**
+	 * Used by unit tests to validate the internal status of the index.
+	 */
+	void validate() throws IOException{
+		_pageCache.validate();
+	}
+	
 }

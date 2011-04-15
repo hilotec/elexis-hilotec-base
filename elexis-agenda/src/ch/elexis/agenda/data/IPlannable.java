@@ -14,21 +14,29 @@
 package ch.elexis.agenda.data;
 
 /**
- * Ein Plannable ist ein planbarer Zeitraum. Also entweder ein Termin oder eine
- * Sperrzeit oder ein Freiraum
+ * Ein Plannable ist ein planbarer Zeitraum. Also entweder ein Termin oder eine Sperrzeit oder ein
+ * Freiraum
+ * 
  * @author Gerry
- *
+ * 
  */
 public interface IPlannable {
 	public String getDay();
-	public int getStartMinute();
-	public int getDurationInMinutes();
-	public String getType();
-	public String getStatus();
-	public String getTitle();
-	public String getText();
-	public void setStartMinute(int min);
-	public void setDurationInMinutes(int min);
 	
+	public int getStartMinute();
+	
+	public int getDurationInMinutes();
+	
+	public String getType();
+	
+	public String getStatus();
+	
+	public String getTitle();
+	
+	public String getText();
+	
+	public void setStartMinute(int min);
+	
+	public void setDurationInMinutes(int min);
 	
 }

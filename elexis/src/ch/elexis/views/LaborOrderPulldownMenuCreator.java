@@ -47,8 +47,8 @@ public class LaborOrderPulldownMenuCreator implements IMenuCreator {
 				this.actions.add(action);
 			} else {
 				log.log(MessageFormat.format(
-					"Missing #id, #imagedescriptor or #text for LaborOrder action: {0}",
-					action.getText()), Log.WARNINGS);
+					"Missing #id, #imagedescriptor or #text for LaborOrder action: {0}", action
+						.getText()), Log.WARNINGS);
 			}
 		}
 		if (this.actions != null && this.actions.size() > 0) {
@@ -131,9 +131,10 @@ public class LaborOrderPulldownMenuCreator implements IMenuCreator {
 	
 	/**
 	 * Returns action to the pulldown button
+	 * 
 	 * @return
 	 */
-	public IAction getAction() {
+	public IAction getAction(){
 		int buttonStyle = IAction.AS_DROP_DOWN_MENU;
 		if (actions.size() == 1) {
 			buttonStyle = IAction.AS_PUSH_BUTTON;

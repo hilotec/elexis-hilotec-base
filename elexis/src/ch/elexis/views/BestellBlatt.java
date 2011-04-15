@@ -35,8 +35,10 @@ public class BestellBlatt extends ViewPart implements ICallback {
 	TextContainer text;
 	Brief actBest;
 	private final static String TEMPLATENAME = Messages.getString("BestellBlatt.TemplateName"); //$NON-NLS-1$
-	private static final String ERRMSG_CAPTION=Messages.getString("BestellBlatt.CouldNotCreateOrder"); //$NON-NLS-1$
-	private static final String ERRMSG_BODY=Messages.getString("BestellBlatt.CouldNotCreateOrderBody"); //$NON-NLS-1$
+	private static final String ERRMSG_CAPTION =
+		Messages.getString("BestellBlatt.CouldNotCreateOrder"); //$NON-NLS-1$
+	private static final String ERRMSG_BODY =
+		Messages.getString("BestellBlatt.CouldNotCreateOrderBody"); //$NON-NLS-1$
 	
 	@Override
 	public void createPartControl(final Composite parent){
@@ -49,9 +51,10 @@ public class BestellBlatt extends ViewPart implements ICallback {
 		String[][] tbl = new String[items.size() + 2][];
 		int i = 1;
 		Money sum = new Money();
-		tbl[0] = new String[] {
-			Messages.getString("BestellBlatt.Number"), Messages.getString("BestellBlatt.Pharmacode"), Messages.getString("BestellBlatt.Name"), Messages.getString("BestellBlatt.UnitPrice"), Messages.getString("BestellBlatt.LinePrice") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-		};
+		tbl[0] =
+			new String[] {
+				Messages.getString("BestellBlatt.Number"), Messages.getString("BestellBlatt.Pharmacode"), Messages.getString("BestellBlatt.Name"), Messages.getString("BestellBlatt.UnitPrice"), Messages.getString("BestellBlatt.LinePrice") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			};
 		// DecimalFormat df=new DecimalFormat("\u00a4\u00a4  #.00");
 		for (Item it : items) {
 			String[] row = new String[5];
@@ -65,17 +68,18 @@ public class BestellBlatt extends ViewPart implements ICallback {
 			sum.addMoney(amount);
 			tbl[i++] = row;
 		}
-		tbl[i] = new String[] {
-			Messages.getString("BestellBlatt.Sum"), StringTool.leer, StringTool.leer, StringTool.leer, sum.getAmountAsString() //$NON-NLS-1$
-		};
+		tbl[i] =
+			new String[] {
+				Messages.getString("BestellBlatt.Sum"), StringTool.leer, StringTool.leer, StringTool.leer, sum.getAmountAsString() //$NON-NLS-1$
+			};
 		actBest = text.createFromTemplateName(null, TEMPLATENAME, Brief.BESTELLUNG, adressat, null);
 		if (actBest == null) {
-			SWTHelper.showError(ERRMSG_CAPTION, ERRMSG_BODY+"'"+TEMPLATENAME+"'"); //$NON-NLS-1$ //$NON-NLS-2$
+			SWTHelper.showError(ERRMSG_CAPTION, ERRMSG_BODY + "'" + TEMPLATENAME + "'"); //$NON-NLS-1$ //$NON-NLS-2$
 		} else {
 			actBest.setPatient(Hub.actUser);
 			text.getPlugin().insertTable("[" + TEMPLATENAME + "]", //$NON-NLS-1$ //$NON-NLS-2$
 				ITextPlugin.FIRST_ROW_IS_HEADER | ITextPlugin.GRID_VISIBLE, tbl, null);
-			if(text.getPlugin().isDirectOutput()){
+			if (text.getPlugin().isDirectOutput()) {
 				text.getPlugin().print(null, null, true);
 				getSite().getPage().hideView(this);
 			}

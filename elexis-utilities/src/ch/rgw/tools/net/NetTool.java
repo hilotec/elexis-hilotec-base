@@ -46,7 +46,7 @@ public class NetTool {
 		}
 	}
 	
-// Windows only
+	// Windows only
 	public static String getMacAddress() throws IOException{
 		Process proc = Runtime.getRuntime().exec("cmd /c ipconfig /all");
 		Scanner s = new Scanner(proc.getInputStream());

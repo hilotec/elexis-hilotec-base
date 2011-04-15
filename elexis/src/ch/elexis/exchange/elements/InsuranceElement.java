@@ -19,7 +19,6 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.exchange.XChangeExporter;
 import ch.rgw.tools.TimeTool;
 
-
 public class InsuranceElement extends XChangeElement {
 	public static final String XMLNAME = "insurance";
 	public static final String ATTR_COMPANYREF = "companyref";
@@ -33,7 +32,6 @@ public class InsuranceElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	
 	public InsuranceElement asExporter(XChangeExporter p, Konsultation k){
 		asExporter(p);
 		Fall fall = k.getFall();
@@ -41,7 +39,7 @@ public class InsuranceElement extends XChangeElement {
 		setAttribute(ATTR_DATEFROM, new TimeTool(fall.getBeginnDatum()).toString(TimeTool.DATE_ISO));
 		if (!fall.isOpen()) {
 			setAttribute(ATTR_DATEUNTIL, new TimeTool(fall.getEndDatum())
-			.toString(TimeTool.DATE_ISO));
+				.toString(TimeTool.DATE_ISO));
 		}
 		setAttribute(ATTR_REASON, translateReason(fall.getGrund()));
 		ContactElement eGarant = p.addContact(garant);
@@ -76,7 +74,6 @@ public class InsuranceElement extends XChangeElement {
 		public String getXMLName(){
 			return XMLNAME;
 		}
-		
 		
 		public ContractElement asExporter(XChangeExporter p, Fall fall){
 			asExporter(p);

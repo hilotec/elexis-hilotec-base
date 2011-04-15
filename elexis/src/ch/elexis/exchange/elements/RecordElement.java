@@ -81,8 +81,9 @@ public class RecordElement extends XChangeElement {
 	@SuppressWarnings("unchecked")
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append(Messages.getString("RecordElement.EntryDate")).append(getAttr(ATTR_DATE)).append(Messages.getString("RecordElement.CreatedBy")).append( //$NON-NLS-1$ //$NON-NLS-2$
-			getAttr(ATTR_AUTHOR)).append("\n");
+		sb
+			.append(Messages.getString("RecordElement.EntryDate")).append(getAttr(ATTR_DATE)).append(Messages.getString("RecordElement.CreatedBy")).append( //$NON-NLS-1$ //$NON-NLS-2$
+				getAttr(ATTR_AUTHOR)).append("\n");
 		List<Element> children = getElement().getChildren();
 		if (children != null) {
 			for (Element child : children) {

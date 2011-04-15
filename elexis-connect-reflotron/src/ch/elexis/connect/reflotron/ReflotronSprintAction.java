@@ -54,8 +54,8 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 		}
 		_ctrl =
 			new ReflotronConnection(Messages.getString("ReflotronSprintAction.ConnectionName"), //$NON-NLS-1$
-				Hub.localCfg.get(Preferences.PORT,
-					Messages.getString("ReflotronSprintAction.DefaultPort")), Hub.localCfg.get( //$NON-NLS-1$
+				Hub.localCfg.get(Preferences.PORT, Messages
+					.getString("ReflotronSprintAction.DefaultPort")), Hub.localCfg.get( //$NON-NLS-1$
 					Preferences.PARAMS, Messages.getString("ReflotronSprintAction.DefaultParams")), //$NON-NLS-1$
 				this);
 		
@@ -83,8 +83,8 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 			String msg = _ctrl.connect();
 			if (msg == null) {
 				String timeoutStr =
-					Hub.localCfg.get(Preferences.TIMEOUT,
-						Messages.getString("ReflotronSprintAction.DefaultTimeout")); //$NON-NLS-1$
+					Hub.localCfg.get(Preferences.TIMEOUT, Messages
+						.getString("ReflotronSprintAction.DefaultTimeout")); //$NON-NLS-1$
 				int timeout = 20;
 				try {
 					timeout = Integer.parseInt(timeoutStr);
@@ -231,8 +231,8 @@ public class ReflotronSprintAction extends Action implements ComPortListener {
 						probe.getResultat(), warning);
 				
 				boolean ok =
-					MessageDialog.openConfirm(Desk.getTopShell(),
-						Messages.getString("ReflotronSprintAction.DeviceName"), text); //$NON-NLS-1$
+					MessageDialog.openConfirm(Desk.getTopShell(), Messages
+						.getString("ReflotronSprintAction.DeviceName"), text); //$NON-NLS-1$
 				if (ok) {
 					boolean showSelectionDialog = false;
 					if (probePat != null) {

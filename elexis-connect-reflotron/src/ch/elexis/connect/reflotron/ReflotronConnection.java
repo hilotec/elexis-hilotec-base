@@ -25,7 +25,7 @@ public class ReflotronConnection extends AbstractConnection {
 		throws IOException{
 		int data = inputStream.read();
 		if (data == STX) {
-			_elexislog.log("Start of stream: " + data +  " (STX)", Log.DEBUGMSG);
+			_elexislog.log("Start of stream: " + data + " (STX)", Log.DEBUGMSG);
 			textBuf = new StringBuffer();
 			data = inputStream.read();
 		} else {

@@ -56,13 +56,15 @@ public class Presets {
 	public static final boolean importUniversal(final ExcelWrapper exw, final boolean bKeepID,
 		final IProgressMonitor moni){
 		exw.setFieldTypes(new Class[] {
-			Integer.class, Integer.class, Integer.class, String.class, // ID, IstPerson, IstPatient,  Titel
-			String.class, String.class, String.class, // Bezeichnung1,  Bezeichnung2,  Zusatz
-			TimeTool.class, String.class, String.class, // Geburtsdatum,  Geschlecht,  E-Mail
+			Integer.class, Integer.class, Integer.class, String.class, // ID, IstPerson, IstPatient,
+																		// Titel
+			String.class, String.class, String.class, // Bezeichnung1, Bezeichnung2, Zusatz
+			TimeTool.class, String.class, String.class, // Geburtsdatum, Geschlecht, E-Mail
 			String.class, String.class, String.class, // Website, Telefon 1, Telefon 2
 			String.class, String.class, String.class, // Mobil, Strasse, Plz
-			String.class, String.class, Integer.class// Ort,  Postanschrift, 
-		}); 
+			String.class, String.class, Integer.class
+		// Ort, Postanschrift,
+			});
 		int first = exw.getFirstRow();
 		int last = exw.getLastRow();
 		moni.beginTask(Messages.Presets_ImportingContacts, last - first);
@@ -124,12 +126,13 @@ public class Presets {
 				k.set("Zusatz", zusatz); //$NON-NLS-1$
 			}
 			moni.subTask(k.getLabel());
-			k.set(
-				new String[] {
-					"E-Mail", "Website", "Telefon1", "Telefon2", "Natel", "Strasse", "Plz", "Ort", "Anschrift"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
-				StringTool.getSafe(row, 9), StringTool.getSafe(row, 10),
-				StringTool.getSafe(row, 11), StringTool.getSafe(row, 12), natel, strasse, plz, ort,
-				StringTool.getSafe(row, 17));
+			k
+				.set(
+					new String[] {
+						"E-Mail", "Website", "Telefon1", "Telefon2", "Natel", "Strasse", "Plz", "Ort", "Anschrift"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
+					StringTool.getSafe(row, 9), StringTool.getSafe(row, 10), StringTool.getSafe(
+						row, 11), StringTool.getSafe(row, 12), natel, strasse, plz, ort, StringTool
+						.getSafe(row, 17));
 			if (EAN.matches("[0-9]{13,13}")) { //$NON-NLS-1$
 				k.addXid(Xid.DOMAIN_EAN, EAN, true);
 			}
@@ -152,19 +155,28 @@ public class Presets {
 		return true;
 	}
 	
-	public static boolean importHertel(final ExcelWrapper exw, final boolean bKeepID, final IProgressMonitor moni){
-		exw.setFieldTypes(new Class[]{
-				Integer.class, String.class, String.class, String.class,	// Nr, Name, Vorname, Sex
-				String.class, String.class, String.class, TimeTool.class,	// Anrede, Zivilstand, Titel, Geburtsdatum
-				String.class, String.class, String.class, String.class,		// Arzt, Strasse, Tel Platz 1, Tel. Platz 2
-				String.class, String.class, String.class, String.class,		// Tel 3, Tel 4, E-Mail, Zusatz
-				String.class, String.class, TimeTool.class, String.class,	// Pat-select, Briefanrede, Letzter Kontakt, Freies Feld 1
-				String.class, String.class, String.class, String.class,		// Freies Feld 2, Freies Feld 3, Reiter, Ort
-				String.class, String.class, String.class, String.class,		// Plz, Land, UnfallNr, KK-Nr
-				String.class,String.class,String.class,String.class,		// IV-Nr, Zusatz-Nr, AHV-Nr, Covercard-Nr
-				String.class, TimeTool.class, String.class, String.class,	// Covercard-Zusatz, Erfasst am, Arzt, Unfallvers
-				String.class,String.class									// Krankenkasse, IV
-		});
+	public static boolean importHertel(final ExcelWrapper exw, final boolean bKeepID,
+		final IProgressMonitor moni){
+		exw.setFieldTypes(new Class[] {
+			Integer.class, String.class, String.class, String.class, // Nr, Name, Vorname, Sex
+			String.class, String.class, String.class, TimeTool.class, // Anrede, Zivilstand, Titel,
+																		// Geburtsdatum
+			String.class, String.class, String.class, String.class, // Arzt, Strasse, Tel Platz 1,
+																	// Tel. Platz 2
+			String.class, String.class, String.class, String.class, // Tel 3, Tel 4, E-Mail, Zusatz
+			String.class, String.class, TimeTool.class, String.class, // Pat-select, Briefanrede,
+																		// Letzter Kontakt, Freies
+																		// Feld 1
+			String.class, String.class, String.class, String.class, // Freies Feld 2, Freies Feld 3,
+																	// Reiter, Ort
+			String.class, String.class, String.class, String.class, // Plz, Land, UnfallNr, KK-Nr
+			String.class, String.class, String.class, String.class, // IV-Nr, Zusatz-Nr, AHV-Nr,
+																	// Covercard-Nr
+			String.class, TimeTool.class, String.class, String.class, // Covercard-Zusatz, Erfasst
+																		// am, Arzt, Unfallvers
+			String.class, String.class
+		// Krankenkasse, IV
+			});
 		int first = exw.getFirstRow();
 		int last = exw.getLastRow();
 		moni.beginTask("Import Patientendaten Hertel", last - first); //$NON-NLS-1$
@@ -219,8 +231,8 @@ public class Presets {
 			String kk = StringTool.getSafe(row, 36);
 			String iv = StringTool.getSafe(row, 37);
 			Patient pat = (Patient) Xid.findObject(KONTAKTID, row[0]); // avoid
-																		// duplicate
-																		// import
+			// duplicate
+			// import
 			if (pat == null) {
 				pat =
 					new Patient(name, vorname, gebdat,
@@ -232,7 +244,7 @@ public class Presets {
 			pat.set(new String[] {
 				"Strasse", "Plz", "Ort", "Land", "Telefon1", "Telefon2", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 				"Natel", "E-Mail", "Titel", "Gruppe", "Zusatz"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-				strasse, plz, ort, land.equalsIgnoreCase(Messages.Presets_Switzerland) ? "CH" : "",  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+				strasse, plz, ort, land.equalsIgnoreCase(Messages.Presets_Switzerland) ? "CH" : "", //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 				telp1, telp2, tel3, email, titel, arztn, zusatz);
 			if (!StringTool.isNothing(ahvnr)) {
 				pat.addXid(Xid.DOMAIN_AHV, ahvnr, true);
@@ -292,7 +304,7 @@ public class Presets {
 		for (int i = first + 1; i < last; i++) {
 			String[] row = exw.getRow(i).toArray(new String[0]);
 			if (Xid.findObject(KONTAKTID, row[0]) != null) { // avoid duplicate
-																// import
+				// import
 				continue;
 			}
 			// Please keep this list in sync with doc/import.textile !!

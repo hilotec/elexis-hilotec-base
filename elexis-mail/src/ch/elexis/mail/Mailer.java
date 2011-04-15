@@ -36,18 +36,17 @@ import ch.rgw.tools.Result;
 
 public class Mailer {
 	static Properties props;
-
+	
 	static {
 		props = new Properties();
-		props
-				.put(
-						"mail.smtp.host", Hub.localCfg.get(PreferenceConstants.MAIL_SMTP, Messages.Mailer_1)); //$NON-NLS-1$
+		props.put(
+			"mail.smtp.host", Hub.localCfg.get(PreferenceConstants.MAIL_SMTP, Messages.Mailer_1)); //$NON-NLS-1$
 		props.put("mail.smtp.auth", Hub.localCfg.get( //$NON-NLS-1$
-				PreferenceConstants.MAIL_AUTH, Messages.Mailer_1));
+			PreferenceConstants.MAIL_AUTH, Messages.Mailer_1));
 		props.put("mail.smtp.port", Hub.localCfg.get( //$NON-NLS-1$
-				PreferenceConstants.MAIL_SMTPPORT, Messages.Mailer_1));
+			PreferenceConstants.MAIL_SMTPPORT, Messages.Mailer_1));
 	}
-
+	
 	/**
 	 * Convenience-Methode um einfach schnell eine simple Text-Mail zu versenden
 	 * 
@@ -61,8 +60,8 @@ public class Mailer {
 	 *            Absender
 	 * @return Result.OK oder eine Feghlermeldung
 	 */
-	public static Result<String> postMail(String recipient, String subject,
-			String message, String from) {
+	public static Result<String> postMail(String recipient, String subject, String message,
+		String from){
 		try {
 			Session session = null;
 			Authenticator auth = new SMTPAuthenticator();
@@ -83,14 +82,13 @@ public class Mailer {
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			return new Result<String>(Result.SEVERITY.ERROR, 1, ex.getMessage(),
-					Messages.Mailer_Error, true);
+				Messages.Mailer_Error, true);
 		}
 	}
-
+	
 	/**
-	 * Eine vorerst leere Mime/Multipart Nachricht erstellen. Danach kann
-	 * beliebig oft unt gemischt addTextPart(), addBinaryPart() und
-	 * addFilePart() aufgerufen werden, und am Schluss send()
+	 * Eine vorerst leere Mime/Multipart Nachricht erstellen. Danach kann beliebig oft unt gemischt
+	 * addTextPart(), addBinaryPart() und addFilePart() aufgerufen werden, und am Schluss send()
 	 * 
 	 * @param subject
 	 *            Titel
@@ -98,7 +96,7 @@ public class Mailer {
 	 *            Absender
 	 * @return die Message
 	 */
-	public Message createMultipartMessage(String subject, String from) {
+	public Message createMultipartMessage(String subject, String from){
 		try {
 			Session session = null;
 			Authenticator auth = new SMTPAuthenticator();
@@ -118,10 +116,9 @@ public class Mailer {
 			return null;
 		}
 	}
-
+	
 	/**
-	 * Einen TextPart an eine vorher mit createMultipartMessage erstellte
-	 * Nachricht anhängen
+	 * Einen TextPart an eine vorher mit createMultipartMessage erstellte Nachricht anhängen
 	 * 
 	 * @param msg
 	 *            die Nachricht
@@ -129,7 +126,7 @@ public class Mailer {
 	 *            der Text für den Part
 	 * @return true bei Erfolg
 	 */
-	public boolean addTextPart(Message msg, String text) {
+	public boolean addTextPart(Message msg, String text){
 		try {
 			MimeMultipart content = (MimeMultipart) msg.getContent();
 			MimeBodyPart textPart = new MimeBodyPart();
@@ -141,8 +138,8 @@ public class Mailer {
 		}
 		return false;
 	}
-
-	public boolean addTextPart(Message msg, String text, String name) {
+	
+	public boolean addTextPart(Message msg, String text, String name){
 		try {
 			MimeMultipart content = (MimeMultipart) msg.getContent();
 			MimeBodyPart textPart = new MimeBodyPart();
@@ -155,8 +152,8 @@ public class Mailer {
 		}
 		return false;
 	}
-
-	public boolean addFilePart(Message msg, File file) {
+	
+	public boolean addFilePart(Message msg, File file){
 		if (!file.canRead()) {
 			return false;
 		}
@@ -170,13 +167,12 @@ public class Mailer {
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 		}
-
+		
 		return false;
 	}
-
+	
 	/**
-	 * Eine binäre Part an eine vorher mit createMultipatrtMessage erstellte
-	 * Nachricht anhängen.
+	 * Eine binäre Part an eine vorher mit createMultipatrtMessage erstellte Nachricht anhängen.
 	 * 
 	 * @param msg
 	 *            die Nachricht
@@ -186,10 +182,9 @@ public class Mailer {
 	 *            die Daten, die angehängt werden sollen
 	 * @return true bei Erfolg
 	 */
-	public boolean addBinaryPart(Message msg, String name, byte[] part) {
+	public boolean addBinaryPart(Message msg, String name, byte[] part){
 		try {
-			DataSource ds = new ByteArrayDataSource(part,
-					"application/octet-stream"); //$NON-NLS-1$
+			DataSource ds = new ByteArrayDataSource(part, "application/octet-stream"); //$NON-NLS-1$
 			MimeMultipart content = (MimeMultipart) msg.getContent();
 			MimeBodyPart binaryPart = new MimeBodyPart();
 			binaryPart.setDataHandler(new DataHandler(ds));
@@ -201,7 +196,7 @@ public class Mailer {
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Die vorher mit createMultipartMessage etc. erstellte Nachricht versenden
 	 * 
@@ -211,7 +206,7 @@ public class Mailer {
 	 *            Empfänger-Email
 	 * @return Result.OK oder eine Fehlermeldung
 	 */
-	public Result<String> send(Message msg, String to) {
+	public Result<String> send(Message msg, String to){
 		try {
 			InternetAddress addressTo = new InternetAddress(to);
 			msg.setRecipient(Message.RecipientType.TO, addressTo);
@@ -219,9 +214,10 @@ public class Mailer {
 			return new Result<String>("Ok"); //$NON-NLS-1$
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return new Result<String>(Result.SEVERITY.ERROR, 1, ex.getClass().getName()+" "+ex.getMessage(), //$NON-NLS-1$
-					Messages.Mailer_Error, true);
-
+			return new Result<String>(Result.SEVERITY.ERROR, 1, ex.getClass().getName()
+				+ " " + ex.getMessage(), //$NON-NLS-1$
+				Messages.Mailer_Error, true);
+			
 		}
 	}
 }

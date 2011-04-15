@@ -171,7 +171,7 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 					}
 					if (result == IPatFilter.FILTER_FAULT) {
 						Desk.asyncExec(new Runnable() {
-							public void run() {
+							public void run(){
 								remove(cond);
 							}
 						});
@@ -310,16 +310,16 @@ public class PatListFilterBox extends ListDisplay<PersistentObject> implements I
 	
 	private void makeActions(){
 		removeFilterAction = new Action(Messages.getString("PatListFilterBox.removeAction")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
-				setToolTipText(Messages.getString("PatListFilterBox.removeToolTip")); //$NON-NLS-1$
-			}
-			
-			@Override
-			public void run(){
-				PersistentObject sel = getSelection();
-				remove(sel);
-			}
-		};
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
+					setToolTipText(Messages.getString("PatListFilterBox.removeToolTip")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					PersistentObject sel = getSelection();
+					remove(sel);
+				}
+			};
 	}
 }

@@ -34,7 +34,7 @@ public class Rezept extends PersistentObject {
 	public static final String DATE = "Datum";
 	public static final String MANDATOR_ID = "MandantID";
 	public static final String PATIENT_ID = "PatientID";
-
+	
 	@Override
 	protected String getTableName(){
 		return "REZEPTE";
@@ -122,7 +122,7 @@ public class Rezept extends PersistentObject {
 		return ret;
 	}
 	
-		/**
+	/**
 	 * Eine Rezeptzeile entfernen
 	 */
 	public void removePrescription(final Prescription p){
@@ -239,5 +239,4 @@ public class Rezept extends PersistentObject {
 		
 	}
 	
-
 }

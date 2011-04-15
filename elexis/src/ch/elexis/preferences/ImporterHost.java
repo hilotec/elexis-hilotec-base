@@ -22,28 +22,27 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-public class ImporterHost extends PreferencePage implements
-		IWorkbenchPreferencePage {
-
+public class ImporterHost extends PreferencePage implements IWorkbenchPreferencePage {
+	
 	public ImporterHost(){
 		noDefaultAndApplyButton();
 	}
+	
 	@Override
-	protected Control createContents(Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
+	protected Control createContents(Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new FillLayout());
-		StyledText text=new StyledText(ret,SWT.NONE);
+		StyledText text = new StyledText(ret, SWT.NONE);
 		text.setWordWrap(true);
-		text.setText(Messages.ImporterHost_ExplanationLine1+
-				Messages.ImporterHost_ExplanationLine2
-				+Messages.ImporterHost_ExplanationLine3+
-				Messages.ImporterHost_ExplanationLine4);
+		text.setText(Messages.ImporterHost_ExplanationLine1
+			+ Messages.ImporterHost_ExplanationLine2 + Messages.ImporterHost_ExplanationLine3
+			+ Messages.ImporterHost_ExplanationLine4);
 		return ret;
 	}
-
-	public void init(IWorkbench workbench) {
-		// TODO Automatisch erstellter Methoden-Stub
-
+	
+	public void init(IWorkbench workbench){
+	// TODO Automatisch erstellter Methoden-Stub
+	
 	}
-
+	
 }

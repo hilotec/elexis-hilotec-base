@@ -4,7 +4,7 @@ import java.util.Calendar;
 
 import ch.rgw.tools.TimeTool;
 
-public class DateTool extends TimeTool{
+public class DateTool extends TimeTool {
 	
 	public DateTool(){
 		super();
@@ -25,8 +25,9 @@ public class DateTool extends TimeTool{
 	
 	@Override
 	public int compareTo(Calendar c){
-		long diff=(getTimeInMillis()-c.getTimeInMillis())/86400000L;	// consider only day-differences
-		return (int)diff;
+		long diff = (getTimeInMillis() - c.getTimeInMillis()) / 86400000L; // consider only
+																			// day-differences
+		return (int) diff;
 	}
 	
 }

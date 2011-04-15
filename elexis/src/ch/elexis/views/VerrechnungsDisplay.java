@@ -65,44 +65,35 @@ public class VerrechnungsDisplay extends Composite {
 	private final Hyperlink hVer;
 	private final PersistentObjectDropTarget dropTarget;
 	private final Log log = Log.get("VerrechnungsDisplay"); //$NON-NLS-1$
-	private IAction chPriceAction, chCountAction, chTextAction, removeAction,
-	removeAllAction;
-	private static final String CHPRICE = Messages
-	.getString("VerrechnungsDisplay.changePrice"); //$NON-NLS-1$
-	private static final String CHCOUNT = Messages
-	.getString("VerrechnungsDisplay.changeNumber"); //$NON-NLS-1$
-	private static final String REMOVE = Messages
-	.getString("VerrechnungsDisplay.removeElement"); //$NON-NLS-1$
-	private static final String CHTEXT = Messages
-	.getString("VerrechnungsDisplay.changeText"); //$NON-NLS-1$
-	private static final String REMOVEALL = Messages
-	.getString("VerrechnungsDisplay.removeAll"); //$NON-NLS-1$
+	private IAction chPriceAction, chCountAction, chTextAction, removeAction, removeAllAction;
+	private static final String CHPRICE = Messages.getString("VerrechnungsDisplay.changePrice"); //$NON-NLS-1$
+	private static final String CHCOUNT = Messages.getString("VerrechnungsDisplay.changeNumber"); //$NON-NLS-1$
+	private static final String REMOVE = Messages.getString("VerrechnungsDisplay.removeElement"); //$NON-NLS-1$
+	private static final String CHTEXT = Messages.getString("VerrechnungsDisplay.changeText"); //$NON-NLS-1$
+	private static final String REMOVEALL = Messages.getString("VerrechnungsDisplay.removeAll"); //$NON-NLS-1$
 	
-	public VerrechnungsDisplay(final IWorkbenchPage page, Composite parent, int style) {
+	public VerrechnungsDisplay(final IWorkbenchPage page, Composite parent, int style){
 		super(parent, style);
 		setLayout(new GridLayout());
-		hVer = Desk.getToolkit().createHyperlink(this,
-			Messages.getString("VerrechnungsDisplay.billing"), SWT.NONE); //$NON-NLS-1$
-		hVer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
-			| GridData.GRAB_HORIZONTAL));
+		hVer =
+			Desk.getToolkit().createHyperlink(this,
+				Messages.getString("VerrechnungsDisplay.billing"), SWT.NONE); //$NON-NLS-1$
+		hVer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 		hVer.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
-			public void linkActivated(HyperlinkEvent e) {
+			public void linkActivated(HyperlinkEvent e){
 				try {
 					if (StringTool.isNothing(LeistungenView.ID)) {
-						SWTHelper
-						.alert(
-							Messages
-							.getString("VerrechnungsDisplay.error"), "LeistungenView.ID"); //$NON-NLS-1$ //$NON-NLS-2$
+						SWTHelper.alert(
+							Messages.getString("VerrechnungsDisplay.error"), "LeistungenView.ID"); //$NON-NLS-1$ //$NON-NLS-2$
 					}
 					page.showView(LeistungenView.ID);
-					CodeSelectorHandler.getInstance().setCodeSelectorTarget(
-						dropTarget);
+					CodeSelectorHandler.getInstance().setCodeSelectorTarget(dropTarget);
 				} catch (Exception ex) {
-					ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
-							Messages.getString("VerrechnungsDisplay.errorStartingCodeWindow") +
-							ex.getMessage(),
-							ex, ElexisStatus.LOG_ERRORS);
+					ElexisStatus status =
+						new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, Messages
+							.getString("VerrechnungsDisplay.errorStartingCodeWindow")
+							+ ex.getMessage(), ex, ElexisStatus.LOG_ERRORS);
 					StatusManager.getManager().handle(status, StatusManager.SHOW);
 				}
 			}
@@ -111,39 +102,33 @@ public class VerrechnungsDisplay extends Composite {
 		tVerr = Desk.getToolkit().createTable(this, SWT.SINGLE);
 		tVerr.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tVerr.setMenu(createVerrMenu());
-		dropTarget = new PersistentObjectDropTarget(
-			Messages.getString("VerrechnungsDisplay.doBill"), tVerr, new DropReceiver()); //$NON-NLS-1$
+		dropTarget =
+			new PersistentObjectDropTarget(
+				Messages.getString("VerrechnungsDisplay.doBill"), tVerr, new DropReceiver()); //$NON-NLS-1$
 	}
 	
-	public void clear() {
+	public void clear(){
 		tVerr.removeAll();
 	}
 	
-	public void addPersistentObject(PersistentObject o) {
-		Konsultation actKons = (Konsultation) ElexisEventDispatcher
-		.getSelected(Konsultation.class);
+	public void addPersistentObject(PersistentObject o){
+		Konsultation actKons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 		if (actKons != null) {
-			//System.out.println(actKons.getLabel());
+			// System.out.println(actKons.getLabel());
 			if (o instanceof Prescription) {
 				o = ((Prescription) o).getArtikel();
 			}
 			if (o instanceof IVerrechenbar) {
 				if (Hub.acl.request(AccessControlDefaults.LSTG_VERRECHNEN) == false) {
-					SWTHelper
-					.alert(
-						Messages
-						.getString("VerrechnungsDisplay.missingRightsCaption"), //$NON-NLS-1$
-						Messages
-						.getString("VerrechnungsDisplay.missingRightsBody")); //$NON-NLS-1$
+					SWTHelper.alert(Messages.getString("VerrechnungsDisplay.missingRightsCaption"), //$NON-NLS-1$
+						Messages.getString("VerrechnungsDisplay.missingRightsBody")); //$NON-NLS-1$
 				} else {
-					Result<IVerrechenbar> result = actKons
-					.addLeistung((IVerrechenbar) o);
+					Result<IVerrechenbar> result = actKons.addLeistung((IVerrechenbar) o);
 					
 					if (!result.isOK()) {
 						SWTHelper
-						.alert(
-							Messages
-							.getString("VerrechnungsDisplay.imvalidBilling"), result.toString()); //$NON-NLS-1$
+							.alert(
+								Messages.getString("VerrechnungsDisplay.imvalidBilling"), result.toString()); //$NON-NLS-1$
 					}
 					setLeistungen(actKons);
 				}
@@ -151,13 +136,12 @@ public class VerrechnungsDisplay extends Composite {
 		}
 	}
 	
-	private final class DropReceiver implements
-	PersistentObjectDropTarget.IReceiver {
-		public void dropped(PersistentObject o, DropTargetEvent ev) {
+	private final class DropReceiver implements PersistentObjectDropTarget.IReceiver {
+		public void dropped(PersistentObject o, DropTargetEvent ev){
 			addPersistentObject(o);
 		}
 		
-		public boolean accept(PersistentObject o) {
+		public boolean accept(PersistentObject o){
 			if (ElexisEventDispatcher.getSelectedPatient() != null) {
 				if (o instanceof IVerrechenbar) {
 					return true;
@@ -173,7 +157,7 @@ public class VerrechnungsDisplay extends Composite {
 		}
 	}
 	
-	public void setLeistungen(Konsultation b) {
+	public void setLeistungen(Konsultation b){
 		List<Verrechnet> lgl = b.getLeistungen();
 		tVerr.setRedraw(false);
 		tVerr.removeAll();
@@ -184,10 +168,8 @@ public class VerrechnungsDisplay extends Composite {
 			int z = lst.getZahl();
 			Money preis = lst.getNettoPreis().multiply(z);
 			sum.addMoney(preis);
-			sdg
-			.append(z)
-			.append(" ").append(lst.getCode()).append(" ").append(lst.getText()) //$NON-NLS-1$ //$NON-NLS-2$
-			.append(" (").append(preis.getAmountAsString()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+			sdg.append(z).append(" ").append(lst.getCode()).append(" ").append(lst.getText()) //$NON-NLS-1$ //$NON-NLS-2$
+				.append(" (").append(preis.getAmountAsString()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 			TableItem ti = new TableItem(tVerr, SWT.WRAP);
 			ti.setText(sdg.toString());
 			ti.setData(lst);
@@ -195,15 +177,15 @@ public class VerrechnungsDisplay extends Composite {
 		tVerr.setRedraw(true);
 		sdg.setLength(0);
 		sdg
-		.append(Messages.getString("VerrechnungsDisplay.billed")).append(sum.getAmountAsString()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+			.append(Messages.getString("VerrechnungsDisplay.billed")).append(sum.getAmountAsString()).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
 		hVer.setText(sdg.toString());
 	}
 	
-	private Menu createVerrMenu() {
+	private Menu createVerrMenu(){
 		MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new IMenuListener() {
-			public void menuAboutToShow(IMenuManager manager) {
+			public void menuAboutToShow(IMenuManager manager){
 				int sel = tVerr.getSelectionIndex();
 				TableItem ti = tVerr.getItem(sel);
 				Verrechnet v = (Verrechnet) ti.getData();
@@ -228,61 +210,54 @@ public class VerrechnungsDisplay extends Composite {
 		return mgr.createContextMenu(tVerr);
 	}
 	
-	private void makeActions() {
+	private void makeActions(){
 		removeAction = new Action(REMOVE) {
 			@Override
-			public void run() {
+			public void run(){
 				int sel = tVerr.getSelectionIndex();
 				TableItem ti = tVerr.getItem(sel);
-				Result<Verrechnet> result = ((Konsultation) ElexisEventDispatcher
-						.getSelected(Konsultation.class))
+				Result<Verrechnet> result =
+					((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class))
 						.removeLeistung((Verrechnet) ti.getData());
 				if (!result.isOK()) {
-					SWTHelper
-					.alert(
-						Messages
+					SWTHelper.alert(Messages
 						.getString("VerrechnungsDisplay.PositionCanootBeRemoved"), result //$NON-NLS-1$
 						.toString());
 				}
-				setLeistungen((Konsultation) ElexisEventDispatcher
-					.getSelected(Konsultation.class));
+				setLeistungen((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class));
 			}
 		};
 		removeAllAction = new Action(REMOVEALL) {
 			@Override
-			public void run() {
+			public void run(){
 				TableItem[] items = tVerr.getItems();
 				for (TableItem ti : items) {
-					Result<Verrechnet> result = ((Konsultation) ElexisEventDispatcher
-							.getSelected(Konsultation.class))
+					Result<Verrechnet> result =
+						((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class))
 							.removeLeistung((Verrechnet) ti.getData());
 					if (!result.isOK()) {
-						SWTHelper
-						.alert(
-							Messages
+						SWTHelper.alert(Messages
 							.getString("VerrechnungsDisplay.PositionCanootBeRemoved"), result //$NON-NLS-1$
 							.toString());
 					}
 				}
-				setLeistungen((Konsultation) ElexisEventDispatcher
-					.getSelected(Konsultation.class));
+				setLeistungen((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class));
 			}
 		};
 		chPriceAction = new Action(CHPRICE) {
 			
 			@Override
-			public void run() {
+			public void run(){
 				int sel = tVerr.getSelectionIndex();
 				TableItem ti = tVerr.getItem(sel);
 				Verrechnet v = (Verrechnet) ti.getData();
 				Money oldPrice = v.getBruttoPreis();
 				String p = oldPrice.getAmountAsString();
-				InputDialog dlg = new InputDialog(
-					Desk.getTopShell(),
-					Messages
-					.getString("VerrechnungsDisplay.changePriceForService"), //$NON-NLS-1$
-					Messages.getString("VerrechnungsDisplay.enterNewPrice"), p, //$NON-NLS-1$
-					null);
+				InputDialog dlg =
+					new InputDialog(Desk.getTopShell(), Messages
+						.getString("VerrechnungsDisplay.changePriceForService"), //$NON-NLS-1$
+						Messages.getString("VerrechnungsDisplay.enterNewPrice"), p, //$NON-NLS-1$
+						null);
 				if (dlg.open() == Dialog.OK) {
 					try {
 						String val = dlg.getValue().trim();
@@ -301,12 +276,9 @@ public class VerrechnungsDisplay extends Composite {
 						setLeistungen((Konsultation) ElexisEventDispatcher
 							.getSelected(Konsultation.class));
 					} catch (ParseException ex) {
-						SWTHelper
-						.showError(
-							Messages
+						SWTHelper.showError(Messages
 							.getString("VerrechnungsDisplay.badAmountCaption"), //$NON-NLS-1$
-							Messages
-							.getString("VerrechnungsDisplay.badAmountBody")); //$NON-NLS-1$
+							Messages.getString("VerrechnungsDisplay.badAmountBody")); //$NON-NLS-1$
 					}
 				}
 			}
@@ -314,18 +286,16 @@ public class VerrechnungsDisplay extends Composite {
 		};
 		chCountAction = new Action(CHCOUNT) {
 			@Override
-			public void run() {
+			public void run(){
 				int sel = tVerr.getSelectionIndex();
 				TableItem ti = tVerr.getItem(sel);
 				Verrechnet v = (Verrechnet) ti.getData();
 				String p = Integer.toString(v.getZahl());
-				InputDialog dlg = new InputDialog(
-					Desk.getTopShell(),
-					Messages
-					.getString("VerrechnungsDisplay.changeNumberCaption"), //$NON-NLS-1$
-					Messages
-					.getString("VerrechnungsDisplay.changeNumberBody"), //$NON-NLS-1$
-					p, null);
+				InputDialog dlg =
+					new InputDialog(Desk.getTopShell(), Messages
+						.getString("VerrechnungsDisplay.changeNumberCaption"), //$NON-NLS-1$
+						Messages.getString("VerrechnungsDisplay.changeNumberBody"), //$NON-NLS-1$
+						p, null);
 				if (dlg.open() == Dialog.OK) {
 					try {
 						String val = dlg.getValue();
@@ -333,18 +303,17 @@ public class VerrechnungsDisplay extends Composite {
 							if (val.indexOf('/') > 0) {
 								String[] frac = val.split("/"); //$NON-NLS-1$
 								v.changeAnzahl(1);
-								double scale = Double.parseDouble(frac[0])
-								/ Double.parseDouble(frac[1]);
+								double scale =
+									Double.parseDouble(frac[0]) / Double.parseDouble(frac[1]);
 								v.setSecondaryScaleFactor(scale);
 								v
-								.setText(v.getText()
-									+ " (" + val + Messages.getString("VerrechnungsDisplay.Orininalpackungen")); //$NON-NLS-1$ //$NON-NLS-2$
+									.setText(v.getText()
+										+ " (" + val + Messages.getString("VerrechnungsDisplay.Orininalpackungen")); //$NON-NLS-1$ //$NON-NLS-2$
 							} else if (val.indexOf('.') > 0) {
 								double scale = Double.parseDouble(val);
 								v.changeAnzahl(1);
 								v.setSecondaryScaleFactor(scale);
-								v.setText(v.getText() + " ("
-									+ Double.toString(scale) + ")");
+								v.setText(v.getText() + " (" + Double.toString(scale) + ")");
 							} else {
 								int neu = Integer.parseInt(dlg.getValue());
 								v.changeAnzahl(neu);
@@ -355,15 +324,11 @@ public class VerrechnungsDisplay extends Composite {
 						setLeistungen((Konsultation) ElexisEventDispatcher
 							.getSelected(Konsultation.class));
 						v.getVerrechenbar().getOptifier().optify(
-							(Konsultation) ElexisEventDispatcher
-							.getSelected(Konsultation.class));
+							(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class));
 					} catch (NumberFormatException ne) {
-						SWTHelper
-						.showError(
-							Messages
+						SWTHelper.showError(Messages
 							.getString("VerrechnungsDisplay.invalidEntryCaption"), //$NON-NLS-1$
-							Messages
-							.getString("VerrechnungsDisplay.invalidEntryBody")); //$NON-NLS-1$
+							Messages.getString("VerrechnungsDisplay.invalidEntryBody")); //$NON-NLS-1$
 					}
 				}
 			}
@@ -371,27 +336,22 @@ public class VerrechnungsDisplay extends Composite {
 		
 		chTextAction = new Action(CHTEXT) {
 			@Override
-			public void run() {
+			public void run(){
 				int sel = tVerr.getSelectionIndex();
 				TableItem ti = tVerr.getItem(sel);
 				Verrechnet v = (Verrechnet) ti.getData();
 				String oldText = v.getText();
-				InputDialog dlg = new InputDialog(
-					Desk.getTopShell(),
-					Messages
-					.getString("VerrechnungsDisplay.changeTextCaption"), //$NON-NLS-1$
-					Messages
-					.getString("VerrechnungsDisplay.changeTextBody"), //$NON-NLS-1$
-					oldText, null);
+				InputDialog dlg =
+					new InputDialog(Desk.getTopShell(), Messages
+						.getString("VerrechnungsDisplay.changeTextCaption"), //$NON-NLS-1$
+						Messages.getString("VerrechnungsDisplay.changeTextBody"), //$NON-NLS-1$
+						oldText, null);
 				if (dlg.open() == Dialog.OK) {
 					String input = dlg.getValue();
 					if (input.matches("[0-9\\.,]+")) { //$NON-NLS-1$
-						if (!SWTHelper
-								.askYesNo(
-									Messages
-									.getString("VerrechnungsDisplay.confirmChangeTextCaption"), //$NON-NLS-1$
-									Messages
-									.getString("VerrechnungsDisplay.confirmChangeTextBody"))) { //$NON-NLS-1$
+						if (!SWTHelper.askYesNo(Messages
+							.getString("VerrechnungsDisplay.confirmChangeTextCaption"), //$NON-NLS-1$
+							Messages.getString("VerrechnungsDisplay.confirmChangeTextBody"))) { //$NON-NLS-1$
 							return;
 						}
 					}

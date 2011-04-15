@@ -37,8 +37,8 @@ public class FontPreference extends FieldEditorPreferencePage implements IWorkbe
 	}
 	
 	public void init(IWorkbench workbench){
-		// TODO Auto-generated method stub
-		
+	// TODO Auto-generated method stub
+	
 	}
 	
 	@Override

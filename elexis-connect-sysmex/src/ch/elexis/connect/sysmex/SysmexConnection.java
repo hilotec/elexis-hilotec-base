@@ -25,7 +25,7 @@ public class SysmexConnection extends AbstractConnection {
 		throws IOException{
 		int data = inputStream.read();
 		if (data == STX) {
-			_elexislog.log("Start of stream: " + data +  " (STX)", Log.DEBUGMSG); //$NON-NLS-1$ //$NON-NLS-2$
+			_elexislog.log("Start of stream: " + data + " (STX)", Log.DEBUGMSG); //$NON-NLS-1$ //$NON-NLS-2$
 			textBuf = new StringBuffer();
 			data = inputStream.read();
 		} else {

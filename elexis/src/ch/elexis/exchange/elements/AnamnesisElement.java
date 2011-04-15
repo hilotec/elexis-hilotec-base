@@ -36,6 +36,7 @@ public class AnamnesisElement extends XChangeElement {
 	public AnamnesisElement(XChangeExporter sender){
 		setWriter(sender);
 	}
+	
 	public String getXMLName(){
 		return XMLNAME;
 	}

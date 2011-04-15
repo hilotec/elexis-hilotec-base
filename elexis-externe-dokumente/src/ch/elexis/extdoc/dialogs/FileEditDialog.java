@@ -43,15 +43,15 @@ public class FileEditDialog extends TitleAreaDialog {
 	private DatePickerCombo dp;
 	
 	private File file;
-
-	public FileEditDialog(Shell parent, File file) {
+	
+	public FileEditDialog(Shell parent, File file){
 		super(parent);
 		
 		this.file = file;
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(Composite parent){
 		String fileName = file.getName();
 		String fileExtension = "";
 		
@@ -74,18 +74,19 @@ public class FileEditDialog extends TitleAreaDialog {
 		
 		// filename text (without extension)
 		
-		label = new Label(area,SWT.NONE);
+		label = new Label(area, SWT.NONE);
 		label.setText("Dateiname");
 		label.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
-		tDateiname=new Text(area,SWT.BORDER);
+		tDateiname = new Text(area, SWT.BORDER);
 		tDateiname.setText(fileName);
 		tDateiname.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		SWTHelper.setSelectOnFocus(tDateiname);
 		
 		// date label
 		label = new Label(area, SWT.NONE);
-		label.setText("Datum" + " (" + new TimeTool(file.lastModified()).toString(TimeTool.DATE_GER) +  ")");
+		label.setText("Datum" + " ("
+			+ new TimeTool(file.lastModified()).toString(TimeTool.DATE_GER) + ")");
 		gd = SWTHelper.getFillGridData(1, true, 1, false);
 		gd.verticalIndent = WIDGET_SPACE;
 		label.setLayoutData(gd);
@@ -102,13 +103,13 @@ public class FileEditDialog extends TitleAreaDialog {
 		dp = new DatePickerCombo(area, SWT.NONE);
 		// current date of file
 		/*
-		 * doesn't work, because you can't decide if user has changed date
-		 * or just only set cursor into date edit field
+		 * doesn't work, because you can't decide if user has changed date or just only set cursor
+		 * into date edit field
 		 */
-		//dp.setDate(new Date(file.lastModified()));
+		// dp.setDate(new Date(file.lastModified()));
 		// TODO DEBUG
-		//System.out.println("old time: " + file.lastModified());
-
+		// System.out.println("old time: " + file.lastModified());
+		
 		// extension text
 		tExtension = new Text(area, SWT.BORDER);
 		tExtension.setText(fileExtension);
@@ -117,16 +118,18 @@ public class FileEditDialog extends TitleAreaDialog {
 		
 		return area;
 	}
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		setMessage("Datei umbenennen oder Datum der letzten Änderung setzen");
 		setTitle("Datei-Eigenschaften");
 		getShell().setText("Datei-Eigenschaften");
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
+	
 	@Override
-	protected void okPressed() {
+	protected void okPressed(){
 		String fileName = tDateiname.getText();
 		String fileExtension = tExtension.getText();
 		
@@ -137,7 +140,7 @@ public class FileEditDialog extends TitleAreaDialog {
 			// re-assemble prefix and suffix
 			dateiname = fileName + "." + fileExtension;
 		}
-
+		
 		Date datum = dp.getDate();
 		
 		if (datum != null && datum.getTime() != file.lastModified()) {
@@ -148,24 +151,24 @@ public class FileEditDialog extends TitleAreaDialog {
 			cal.set(Calendar.MINUTE, 0);
 			cal.set(Calendar.SECOND, 0);
 			Long newTime = cal.getTimeInMillis();
-
-			System.out.println("new time: " + newTime + " ("
-					+ file.lastModified() + ")");
+			
+			System.out.println("new time: " + newTime + " (" + file.lastModified() + ")");
 			file.setLastModified(newTime);
 		}
-
+		
 		if (!file.getName().equals(dateiname)) {
 			File newFile = new File(file.getParent(), dateiname);
-			System.out.println("new filiename: " + newFile.getAbsolutePath() + " ( " + file.getAbsolutePath() + ")");
+			System.out.println("new filiename: " + newFile.getAbsolutePath() + " ( "
+				+ file.getAbsolutePath() + ")");
 			if (file.renameTo(newFile)) {
 				// seems to be required on Windows
-				//newFile.setLastModified(file.lastModified());
+				// newFile.setLastModified(file.lastModified());
 			} else {
-				MessageDialog.openError(
-						getShell(), "Datei-Eigenschaften: Fehler", "Die Datei konnte nicht umbenannt werden.");
+				MessageDialog.openError(getShell(), "Datei-Eigenschaften: Fehler",
+					"Die Datei konnte nicht umbenannt werden.");
 			}
 		}
-
+		
 		super.okPressed();
 	}
 	

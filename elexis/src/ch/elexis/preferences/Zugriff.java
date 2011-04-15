@@ -33,18 +33,18 @@ import ch.elexis.util.Extensions;
 
 public class Zugriff extends PreferencePage implements IWorkbenchPreferencePage {
 	ACLPreferenceTree apt;
-
-	public Zugriff() {
+	
+	public Zugriff(){
 		super(Messages.Zugriff_AccessRights);
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected Control createContents(Composite parent) {
+	protected Control createContents(Composite parent){
 		Hub.acl.load();
 		if (Hub.acl.request(AccessControlDefaults.ACL_USERS)) {
-			List<IACLContributor> acls = Extensions.getClasses(
-					"ch.elexis.ACLContribution", "ACLContributor"); //$NON-NLS-1$ //$NON-NLS-2$
+			List<IACLContributor> acls =
+				Extensions.getClasses("ch.elexis.ACLContribution", "ACLContributor"); //$NON-NLS-1$ //$NON-NLS-2$
 			ArrayList<ACE> lAcls = new ArrayList<ACE>(100);
 			for (IACLContributor acl : acls) {
 				for (ACE s : acl.getACL()) {
@@ -52,33 +52,32 @@ public class Zugriff extends PreferencePage implements IWorkbenchPreferencePage 
 					// TODO collision detection
 				}
 			}
-
-			apt = new ACLPreferenceTree(parent, (ACE[]) lAcls
-					.toArray(new ACE[0]));
+			
+			apt = new ACLPreferenceTree(parent, (ACE[]) lAcls.toArray(new ACE[0]));
 			return apt;
 		} else {
 			return new PrefAccessDenied(parent);
 		}
 	}
-
-	public void init(IWorkbench workbench) {
-		// TODO Auto-generated method stub
-
+	
+	public void init(IWorkbench workbench){
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 	@Override
-	public boolean performOk() {
+	public boolean performOk(){
 		if (apt != null) {
 			apt.flush();
 		}
 		return super.performOk();
 	}
-
+	
 	@Override
-	protected void performDefaults() {
+	protected void performDefaults(){
 		if (apt != null) {
 			apt.reload();
 		}
 	}
-
+	
 }

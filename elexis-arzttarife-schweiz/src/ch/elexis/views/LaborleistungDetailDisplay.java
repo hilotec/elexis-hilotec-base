@@ -25,41 +25,41 @@ import ch.elexis.util.LabeledInputField.InputData;
 
 public class LaborleistungDetailDisplay implements IDetailDisplay {
 	Form form;
-	FormToolkit tk=Desk.getToolkit();
+	FormToolkit tk = Desk.getToolkit();
 	LabeledInputField.AutoForm tblLab;
 	
-	InputData[] data=new InputData[]{
-			new InputData("Code"), //$NON-NLS-1$
-			new InputData("TP","VK_Preis",InputData.Typ.STRING,null) //$NON-NLS-1$ //$NON-NLS-2$
-	};
+	InputData[] data = new InputData[] {
+		new InputData("Code"), //$NON-NLS-1$
+		new InputData("TP", "VK_Preis", InputData.Typ.STRING, null) //$NON-NLS-1$ //$NON-NLS-2$
+		};
 	
-	public Composite createDisplay(Composite parent, IViewSite site) {
-		form=tk.createForm(parent);
-        TableWrapLayout twl=new TableWrapLayout();
+	public Composite createDisplay(Composite parent, IViewSite site){
+		form = tk.createForm(parent);
+		TableWrapLayout twl = new TableWrapLayout();
 		form.getBody().setLayout(twl);
 		
-		tblLab=new LabeledInputField.AutoForm(form.getBody(),data);
-        
-        TableWrapData twd=new TableWrapData(TableWrapData.FILL_GRAB);
-        twd.grabHorizontal=true;
-        tblLab.setLayoutData(twd);
-        // GlobalEvents.getInstance().addActivationListener(this,this);
-        return form.getBody();
+		tblLab = new LabeledInputField.AutoForm(form.getBody(), data);
+		
+		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
+		twd.grabHorizontal = true;
+		tblLab.setLayoutData(twd);
+		// GlobalEvents.getInstance().addActivationListener(this,this);
+		return form.getBody();
 	}
-
-	public Class getElementClass() {
+	
+	public Class getElementClass(){
 		return LaborLeistung.class;
 	}
-
-	public void display(Object obj) {
-		LaborLeistung ll=(LaborLeistung)obj;
+	
+	public void display(Object obj){
+		LaborLeistung ll = (LaborLeistung) obj;
 		form.setText(ll.getLabel());
 		tblLab.reload(ll);
-
+		
 	}
-
-	public String getTitle() {
+	
+	public String getTitle(){
 		return Messages.LaborleistungDetailDisplay_analyse;
 	}
-
+	
 }

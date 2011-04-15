@@ -79,16 +79,15 @@ public class ICalTransfer {
 	Combo cbTypes, cbStates;
 	Button bAll;
 	Label lFilename;
-
-	public ICalTransfer() {
-		bereiche = Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE,
-				Messages.TagesView_14).split(","); //$NON-NLS-1$
+	
+	public ICalTransfer(){
+		bereiche =
+			Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
 	}
-
+	
 	/**
-	 * Export a range of appointments to ICal. The Method ends with a Call to an
-	 * ICalExportDialog to let the user decide where to store the resulting
-	 * file.
+	 * Export a range of appointments to ICal. The Method ends with a Call to an ICalExportDialog to
+	 * let the user decide where to store the resulting file.
 	 * 
 	 * @param von
 	 *            Begin of the range to export (null: today)
@@ -97,7 +96,7 @@ public class ICalTransfer {
 	 * @param bereich
 	 *            agenda mandator whose appointments should be exported
 	 */
-	public void doExport(TimeTool von, TimeTool bis, String bereich) {
+	public void doExport(TimeTool von, TimeTool bis, String bereich){
 		if (von == null) {
 			von = new TimeTool();
 		}
@@ -109,49 +108,50 @@ public class ICalTransfer {
 		}
 		new ICalExportDlg(von, bis, bereich).open();
 	}
-
+	
 	/**
 	 * Import an ICal-File
 	 * 
 	 * @param bereich
 	 *            agenda mandator to whom the ical should be imported
 	 */
-	public void doImport(String bereich) {
+	public void doImport(String bereich){
 		if (bereich == null) {
 			bereich = bereiche[0];
 		}
 		new ICalImportDlg(bereich).open();
 	}
-
+	
 	class ICalImportDlg extends TitleAreaDialog {
 		String m;
 		FileDialog fileDialog;
-
-		public ICalImportDlg(String bereich) {
+		
+		public ICalImportDlg(String bereich){
 			super(Desk.getTopShell());
 			m = bereich;
 		}
-
+		
 		@Override
-		protected Control createDialogArea(Composite parent) {
+		protected Control createDialogArea(Composite parent){
 			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout(2, false));
 			bFile = new Button(ret, SWT.PUSH);
 			lFilename = new Label(ret, SWT.NONE);
-			lFilename.setLayoutData(SWTHelper
-					.getFillGridData(1, true, 1, false));
+			lFilename.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			lFilename.setText(NOFILESELECTED);
 			bFile.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			bFile.setText(Messages.ICalTransfer_fileToImport);
 			bFile.addSelectionListener(new SelectionAdapter() {
-
+				
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(SelectionEvent e){
 					fileDialog = new FileDialog(getShell(), SWT.OPEN);
-					fileDialog.setFilterExtensions(new String[] { "*.ics" }); //$NON-NLS-1$
-					fileDialog
-							.setFilterNames(new String[] { Messages.ICalTransfer_iCalFiles });
+					fileDialog.setFilterExtensions(new String[] {
+						"*.ics"}); //$NON-NLS-1$
+					fileDialog.setFilterNames(new String[] {
+						Messages.ICalTransfer_iCalFiles
+					});
 					String file = fileDialog.open();
 					if (file == null) {
 						lFilename.setText(NOFILESELECTED);
@@ -161,13 +161,11 @@ public class ICalTransfer {
 						getButton(IDialogConstants.OK_ID).setEnabled(true);
 					}
 				}
-
+				
 			});
-			new Label(ret, SWT.NONE)
-					.setText(Messages.ICalTransfer_preselectType);
+			new Label(ret, SWT.NONE).setText(Messages.ICalTransfer_preselectType);
 			cbTypes = new Combo(ret, SWT.SINGLE | SWT.READ_ONLY);
-			new Label(ret, SWT.NONE)
-					.setText(Messages.ICalTransfer_preselectState);
+			new Label(ret, SWT.NONE).setText(Messages.ICalTransfer_preselectState);
 			cbStates = new Combo(ret, SWT.SINGLE | SWT.READ_ONLY);
 			bAll = new Button(ret, SWT.CHECK);
 			bAll.setText(Messages.ICalTransfer_newAppForAllMandators);
@@ -177,23 +175,22 @@ public class ICalTransfer {
 			cbTypes.setText(Termin.typStandard());
 			cbStates.setText(Termin.statusStandard());
 			cbTypes.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			cbStates
-					.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			cbStates.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			return ret;
 		}
-
+		
 		@Override
-		public void create() {
+		public void create(){
 			super.create();
 			getShell().setText(Messages.ICalTransfer_importAppointments);
 			setTitle(Messages.ICalTransfer_ICalToAgenda);
 			setMessage(Messages.ICalTransfer_pleaseSelectIcalFile);
 			getButton(IDialogConstants.OK_ID).setEnabled(false);
 		}
-
+		
 		@SuppressWarnings("unchecked")
 		@Override
-		protected void okPressed() {
+		protected void okPressed(){
 			if (!lFilename.getText().equals(NOFILESELECTED)) {
 				CalendarBuilder cb = new CalendarBuilder();
 				String[] b = new String[1];
@@ -201,10 +198,9 @@ public class ICalTransfer {
 				if (bAll.getSelection()) {
 					b = bereiche;
 				}
-
+				
 				try {
-					Calendar cal = cb.build(new FileInputStream(lFilename
-							.getText()));
+					Calendar cal = cb.build(new FileInputStream(lFilename.getText()));
 					TimeTool ttFrom = new TimeTool();
 					TimeTool ttUntil = new TimeTool();
 					Date dt = null;
@@ -236,35 +232,23 @@ public class ICalTransfer {
 							}
 							if (termin == null || (!termin.exists())) {
 								for (String ber : b) {
-									termin = new Termin(uuid, ber, ttFrom
-											.toString(TimeTool.DATE_COMPACT),
-											Termin.TimeInMinutes(ttFrom),
-											Termin.TimeInMinutes(ttUntil), typ,
-											status);
+									termin =
+										new Termin(uuid, ber, ttFrom
+											.toString(TimeTool.DATE_COMPACT), Termin
+											.TimeInMinutes(ttFrom), Termin.TimeInMinutes(ttUntil),
+											typ, status);
 									uuid = StringTool.unique("agendaimport"); //$NON-NLS-1$
 								}
 							} else {
-								termin
-										.set(
-												new String[] {
-														Termin.FLD_BEREICH,
-														Termin.FLD_TAG,
-														Termin.FLD_BEGINN,
-														Termin.FLD_DAUER,
-														Termin.FLD_TERMINTYP,
-														Termin.FLD_TERMINSTATUS },
-												new String[] {
-														m,
-														ttFrom
-																.toString(TimeTool.DATE_COMPACT),
-														Integer
-																.toString(Termin
-																		.TimeInMinutes(ttFrom)),
-														Integer
-																.toString(ttFrom
-																		.secondsTo(ttUntil) / 60),
-														typ, status });
-
+								termin.set(new String[] {
+									Termin.FLD_BEREICH, Termin.FLD_TAG, Termin.FLD_BEGINN,
+									Termin.FLD_DAUER, Termin.FLD_TERMINTYP, Termin.FLD_TERMINSTATUS
+								}, new String[] {
+									m, ttFrom.toString(TimeTool.DATE_COMPACT),
+									Integer.toString(Termin.TimeInMinutes(ttFrom)),
+									Integer.toString(ttFrom.secondsTo(ttUntil) / 60), typ, status
+								});
+								
 							}
 							Summary summary = event.getSummary();
 							if (summary != null) {
@@ -279,39 +263,37 @@ public class ICalTransfer {
 				} catch (ParserException e) {
 					ExHandler.handle(e);
 					SWTHelper.showError(Messages.ICalTransfer_badFileFormat,
-							Messages.ICalTransfer_noValidICal);
+						Messages.ICalTransfer_noValidICal);
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
-					SWTHelper.showError(Messages.ICalTransfer_readError,
-							MessageFormat.format(
-									Messages.ICalTransfer_couldNotReadFile, bFile
-											.getText()));
+					SWTHelper.showError(Messages.ICalTransfer_readError, MessageFormat.format(
+						Messages.ICalTransfer_couldNotReadFile, bFile.getText()));
 				}
 			}
 			super.okPressed();
 		}
-
+		
 	}
-
+	
 	class ICalExportDlg extends TitleAreaDialog {
-
+		
 		TimeTool von, bis;
 		String m;
 		DatePickerCombo dpVon, dpBis;
 		Combo cbBereiche;
 		FileDialog fileDialog;
 		Label lFile;
-
-		public ICalExportDlg(TimeTool from, TimeTool until, String bereich) {
+		
+		public ICalExportDlg(TimeTool from, TimeTool until, String bereich){
 			super(Desk.getTopShell());
 			von = new TimeTool(from);
 			bis = new TimeTool(until);
 			m = bereich;
-
+			
 		}
-
+		
 		@Override
-		protected Control createDialogArea(Composite parent) {
+		protected Control createDialogArea(Composite parent){
 			Composite ret = new Composite(parent, SWT.NONE);
 			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			ret.setLayout(new GridLayout(3, false));
@@ -327,13 +309,14 @@ public class ICalTransfer {
 			bChose.setText(Messages.ICalTransfer_file);
 			bChose.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(SelectionEvent e){
 					fileDialog = new FileDialog(getShell(), SWT.SAVE);
-					fileDialog.setFilterExtensions(new String[] { "*.ics", //$NON-NLS-1$
-							"*.csv" }); //$NON-NLS-1$
+					fileDialog.setFilterExtensions(new String[] {
+						"*.ics", //$NON-NLS-1$
+						"*.csv"}); //$NON-NLS-1$
 					fileDialog.setFilterNames(new String[] {
-							Messages.ICalTransfer_iCalFiles2,
-							Messages.ICalTransfer_csvFIles });
+						Messages.ICalTransfer_iCalFiles2, Messages.ICalTransfer_csvFIles
+					});
 					String fileName = fileDialog.open();
 					if (fileName == null) {
 						lFile.setText(NOFILESELECTED);
@@ -343,7 +326,7 @@ public class ICalTransfer {
 						getButton(IDialogConstants.OK_ID).setEnabled(true);
 					}
 				}
-
+				
 			});
 			lFile = new Label(ret, SWT.NONE);
 			lFile.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
@@ -351,20 +334,20 @@ public class ICalTransfer {
 			dpVon.setDate(von.getTime());
 			dpBis.setDate(bis.getTime());
 			return ret;
-
+			
 		}
-
+		
 		@Override
-		public void create() {
+		public void create(){
 			super.create();
 			getShell().setText(Messages.ICalTransfer_exportAgenda);
 			setTitle(Messages.ICalTransfer_exportAgendaMandator);
 			setMessage(Messages.ICalTransfer_pleaseSelectDateAndMandator);
 			getButton(IDialogConstants.OK_ID).setEnabled(false);
 		}
-
+		
 		@Override
-		protected void okPressed() {
+		protected void okPressed(){
 			von.setTimeInMillis(dpVon.getDate().getTime());
 			bis.setTimeInMillis(dpBis.getDate().getTime());
 			Query<Termin> qbe = new Query<Termin>(Termin.class);
@@ -376,22 +359,19 @@ public class ICalTransfer {
 			if (fname.toLowerCase().endsWith(".csv")) { //$NON-NLS-1$
 				new CSVExporter().doExport(fname, termine);
 			} else {
-				TimeZoneRegistry registry = TimeZoneRegistryFactory
-						.getInstance().createRegistry();
+				TimeZoneRegistry registry = TimeZoneRegistryFactory.getInstance().createRegistry();
 				TimeZone timezone = registry.getTimeZone("Europe/Zurich"); //$NON-NLS-1$
 				VTimeZone tz = timezone.getVTimeZone();
 				Calendar calendar = new Calendar();
-				calendar.getProperties().add(
-						new ProdId("-//ch.elexis//Elexis v" + Hub.Version)); //$NON-NLS-1$
+				calendar.getProperties().add(new ProdId("-//ch.elexis//Elexis v" + Hub.Version)); //$NON-NLS-1$
 				calendar.getProperties().add(Version.VERSION_2_0);
 				calendar.getProperties().add(CalScale.GREGORIAN);
 				for (Termin t : termine) {
-					if ((t.getStartMinute() == 0)
-							&& (t.getType().equals(Termin.typReserviert()))) {
+					if ((t.getStartMinute() == 0) && (t.getType().equals(Termin.typReserviert()))) {
 						continue;
 					}
 					if ((t.getStartMinute() + t.getDurationInMinutes() == (23 * 60) + 59)
-							&& (t.getType().equals(Termin.typReserviert()))) {
+						&& (t.getType().equals(Termin.typReserviert()))) {
 						continue;
 					}
 					TimeTool tt = new TimeTool(t.getStartTime());
@@ -407,21 +387,18 @@ public class ICalTransfer {
 					calendar.getComponents().add(vTermin);
 				}
 				try {
-					FileOutputStream fout = new FileOutputStream(lFile
-							.getText());
+					FileOutputStream fout = new FileOutputStream(lFile.getText());
 					CalendarOutputter outputter = new CalendarOutputter();
 					outputter.output(calendar, fout);
-
+					
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
-					SWTHelper.alert(Messages.ICalTransfer_iOError,
-							MessageFormat.format(
-									Messages.ICalTransfer_couldNotWriteFile, lFile
-											.getText()));
+					SWTHelper.alert(Messages.ICalTransfer_iOError, MessageFormat.format(
+						Messages.ICalTransfer_couldNotWriteFile, lFile.getText()));
 				}
 			}
 			super.okPressed();
 		}
-
+		
 	}
 }

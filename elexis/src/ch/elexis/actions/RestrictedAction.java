@@ -41,7 +41,7 @@ import ch.elexis.data.Anwender;
 abstract public class RestrictedAction extends Action {
 	protected ACE necessaryRight;
 	private final List<RestrictionListener> listeners = new ArrayList<RestrictionListener>();
-	private static Pool pool=new Pool();
+	private static Pool pool = new Pool();
 	
 	/**
 	 * If AutoAdapt is enabled, the Action will reflect is visual representation according to the
@@ -83,7 +83,7 @@ abstract public class RestrictedAction extends Action {
 			setEnabled(true);
 		} else {
 			setEnabled(false);
-			//setChecked(false);
+			// setChecked(false);
 		}
 	}
 	
@@ -163,17 +163,19 @@ abstract public class RestrictedAction extends Action {
 		}
 	}
 	
-	static class Pool extends ArrayList<RestrictedAction> implements ElexisEventListener{
-		private final ElexisEvent eetmpl=new ElexisEvent(null,Anwender.class,ElexisEvent.EVENT_USER_CHANGED);
+	static class Pool extends ArrayList<RestrictedAction> implements ElexisEventListener {
+		private final ElexisEvent eetmpl =
+			new ElexisEvent(null, Anwender.class, ElexisEvent.EVENT_USER_CHANGED);
+		
 		Pool(){
 			ElexisEventDispatcher.getInstance().addListeners(this);
 		}
 		
 		public void catchElexisEvent(ElexisEvent ev){
-			final ArrayList<RestrictedAction> copy=new ArrayList<RestrictedAction>(this);
+			final ArrayList<RestrictedAction> copy = new ArrayList<RestrictedAction>(this);
 			Desk.asyncExec(new Runnable() {
 				public void run(){
-					for(RestrictedAction ra:copy){
+					for (RestrictedAction ra : copy) {
 						ra.reflectRight();
 					}
 				}

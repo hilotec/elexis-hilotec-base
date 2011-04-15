@@ -35,11 +35,11 @@ public class DirectoriesHelper {
 		text = text.replace("<b class=\"searchWords\">", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		text = text.replace("</b>", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		text = text.replace((char) 160, ' '); // Spezielles Blank Zeichen wird
-												// ersetzt
+		// ersetzt
 		return text;
 	}
 	
-	private static String cleanupUmlaute(String text) {
+	private static String cleanupUmlaute(String text){
 		text = text.replace("&#xE4;", "ä");//$NON-NLS-1$ //$NON-NLS-2$
 		text = text.replace("&#xC4;", "Ä");//$NON-NLS-1$ //$NON-NLS-2$
 		text = text.replace("&#xF6;", "ö");//$NON-NLS-1$ //$NON-NLS-2$
@@ -56,37 +56,36 @@ public class DirectoriesHelper {
 		text = text.replace("&#xA0;", " ");//$NON-NLS-1$ //$NON-NLS-2$
 		
 		return text;
-    }
+	}
 	
 	/**
-     * 20101213js added comments:
-     * 
+	 * 20101213js added comments:
+	 * 
 	 * @parameter: name, geo - name and location of the person/institution/... to be searched for
 	 * @return: a URL with a search request to tel.local.ch constructed from name and geo
 	 * 
-	 * Die hier enthaltene URL ist auch am 2010-12-12 noch funktional,
-	 * i.e. die Eingabe von http://tel.local.ch/de/q/?what=meier&where=bern
-	 * im WWW-Browser liefert die gewünschte Antwort.
-     *
-	 * Ich ergänze aber: &mode=text
-	 * Das blendet die Karte und hoffentlich noch einigen anderen krimskrams aus;
-	 * somit muss man weniger wirren HTML Code verarbeiten, ausserdem spart das Bandbreite. 
+	 *          Die hier enthaltene URL ist auch am 2010-12-12 noch funktional, i.e. die Eingabe von
+	 *          http://tel.local.ch/de/q/?what=meier&where=bern im WWW-Browser liefert die
+	 *          gewünschte Antwort.
 	 * 
-	 * Derzeit werden wohl nur bis 10 results pro Seite zurückgeliefert und ausgewertet,
-	 * falls jemand Ergebnisse auswerten möchte, die sich über mehrere Seiten erstrecken:
-	 * ein &start=n würde die Anzeige bei Eintrag n beginnen lassen,
-	 * damit könnte man (theoretisch) ein Schleife programmieren, die alle Ergebnisse in
-	 * mehreren Schritten abruft. 
+	 *          Ich ergänze aber: &mode=text Das blendet die Karte und hoffentlich noch einigen
+	 *          anderen krimskrams aus; somit muss man weniger wirren HTML Code verarbeiten,
+	 *          ausserdem spart das Bandbreite.
+	 * 
+	 *          Derzeit werden wohl nur bis 10 results pro Seite zurückgeliefert und ausgewertet,
+	 *          falls jemand Ergebnisse auswerten möchte, die sich über mehrere Seiten erstrecken:
+	 *          ein &start=n würde die Anzeige bei Eintrag n beginnen lassen, damit könnte man
+	 *          (theoretisch) ein Schleife programmieren, die alle Ergebnisse in mehreren Schritten
+	 *          abruft.
 	 */
-	private static URL getURL(String name, String geo)
-		throws MalformedURLException{
+	private static URL getURL(String name, String geo) throws MalformedURLException{
 		name = name.replace(' ', '+');
 		geo = geo.replace(' ', '+');
 		
 		String urlPattern = "http://tel.local.ch/{0}/q/?what={1}&where={2}&mode=text"; //$NON-NLS-1$
-
-		//System.out.print("jsdebug: DirectoriesHelper.java: "+urlPattern+"\n");
-		//System.out.print("jsdebug: DirectoriesHelper.java: language: "+Locale.getDefault().getLanguage()+"  name: "+name+"  geo: "+geo+"\n");
+		
+		// System.out.print("jsdebug: DirectoriesHelper.java: "+urlPattern+"\n");
+		// System.out.print("jsdebug: DirectoriesHelper.java: language: "+Locale.getDefault().getLanguage()+"  name: "+name+"  geo: "+geo+"\n");
 		
 		return new URL(MessageFormat.format(urlPattern, new Object[] {
 			Locale.getDefault().getLanguage(), name, geo
@@ -94,15 +93,12 @@ public class DirectoriesHelper {
 	}
 	
 	/**
-	 * Schreibt binäre Datei
-	 * 20101213js:
-	 * Ich bin nicht sicher, ob das überhaupt verwendet wird?
-	 * Ggf. allenfalls ein Hilfsmittel für's Debugging?
+	 * Schreibt binäre Datei 20101213js: Ich bin nicht sicher, ob das überhaupt verwendet wird? Ggf.
+	 * allenfalls ein Hilfsmittel für's Debugging?
 	 */
-	public static void writeFile(String filenamePath, final String text)
-		throws IOException{
+	public static void writeFile(String filenamePath, final String text) throws IOException{
 		
-		//System.out.print("jsdebug: DirectoriesHelper.java writeFile("+filenamePath+",text) running...\n");
+		// System.out.print("jsdebug: DirectoriesHelper.java writeFile("+filenamePath+",text) running...\n");
 		
 		FileOutputStream output = null;
 		try {
@@ -118,16 +114,17 @@ public class DirectoriesHelper {
 	/**
 	 * Liest Inhalt einer Web-Abfrage auf www.directories.ch/weisseseiten
 	 * 
-     * 20101213js added comments:
-     * 
+	 * 20101213js added comments:
+	 * 
 	 * @parameter: name, geo - name and location of the person/institution/... to be searched for
-	 * @return: One string containing the complete response (i.e. the complete html page returned) for a search request to tel.local.ch constructed from name and geo
+	 * @return: One string containing the complete response (i.e. the complete html page returned)
+	 *          for a search request to tel.local.ch constructed from name and geo
 	 * 
 	 */
-	public static String readContent(final String name, final String geo)
-		throws IOException, MalformedURLException{
+	public static String readContent(final String name, final String geo) throws IOException,
+		MalformedURLException{
 		
-		//System.out.print("jsdebug: DirectoriesHelper.java readContent() running...\n");
+		// System.out.print("jsdebug: DirectoriesHelper.java readContent() running...\n");
 		
 		URL content = getURL(name, geo);
 		InputStream input = content.openStream();
@@ -146,9 +143,9 @@ public class DirectoriesHelper {
 			}
 		}
 		
-		//System.out.print("jsdebug: DirectoriesHelper.java readContent().sb.toString():\n --------(html text begin)--------\n"+sb.toString()+"\njsdebug: --------(html text end)--------\n");
-		//System.out.print("jsdebug: DirectoriesHelper.java cleanup...(readContent().sb.toString()):\n --------(html text begin)--------\n"+cleanupUmlaute(cleanupText(sb.toString()))+"\njsdebug: --------(html text end)--------\n");
-				
+		// System.out.print("jsdebug: DirectoriesHelper.java readContent().sb.toString():\n --------(html text begin)--------\n"+sb.toString()+"\njsdebug: --------(html text end)--------\n");
+		// System.out.print("jsdebug: DirectoriesHelper.java cleanup...(readContent().sb.toString()):\n --------(html text begin)--------\n"+cleanupUmlaute(cleanupText(sb.toString()))+"\njsdebug: --------(html text end)--------\n");
+		
 		return cleanupUmlaute(cleanupText(sb.toString()));
 	}
 }

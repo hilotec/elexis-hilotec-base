@@ -19,7 +19,8 @@ import java.util.ArrayList;
 import com.hilotec.elexis.messwerte.data.typen.IMesswertTyp;
 
 /**
- * Typ einer Messung 
+ * Typ einer Messung
+ * 
  * @author Antoine Kaufmann
  */
 public class MessungTyp {
@@ -28,28 +29,28 @@ public class MessungTyp {
 	ArrayList<IMesswertTyp> fields;
 	Panel panel;
 	
-	public MessungTyp(String n, String t) {
+	public MessungTyp(String n, String t){
 		name = n;
 		title = t;
 		fields = new ArrayList<IMesswertTyp>();
 	}
 	
 	public MessungTyp(String n, String t, Panel p){
-		this(n,t);
-		panel=p;
+		this(n, t);
+		panel = p;
 	}
 	
 	/**
 	 * Neuen Messwerttyp hinzufügen
 	 */
-	public void addField(IMesswertTyp f) {
+	public void addField(IMesswertTyp f){
 		fields.add(f);
 	}
 	
 	/**
 	 * @return Interner Name dieses Messungstyps
 	 */
-	public String getName() {
+	public String getName(){
 		return name;
 	}
 	
@@ -60,25 +61,27 @@ public class MessungTyp {
 	/**
 	 * @return Beschriftung die dem Benutzer angezeigt werden kann
 	 */
-	public String getTitle() {
+	public String getTitle(){
 		return title;
 	}
 	
 	/**
 	 * Typen saemtlicher Messwerte in dieser Messung holen
+	 * 
 	 * @return Liste aller Messwert-Typen
 	 */
-	public ArrayList<IMesswertTyp> getMesswertTypen() {
+	public ArrayList<IMesswertTyp> getMesswertTypen(){
 		return fields;
 	}
 	
 	/**
 	 * Bestimmten Messwert-Typ dieser Messung anhand seines Namens heraussuchen
+	 * 
 	 * @param name
 	 * @return
 	 */
-	public IMesswertTyp getMesswertTyp(String name) {
-		for (IMesswertTyp f: fields) {
+	public IMesswertTyp getMesswertTyp(String name){
+		for (IMesswertTyp f : fields) {
 			if (f.getName().equals(name)) {
 				return f;
 			}

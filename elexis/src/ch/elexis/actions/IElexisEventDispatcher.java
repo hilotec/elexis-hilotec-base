@@ -14,17 +14,19 @@
 package ch.elexis.actions;
 
 /**
- * An IElexisEventDispatcher can be authoritative for a specific kind of originating Object
- * and/or for a specific EventType. It does so by registering with
- * ElexisEventDistpatcher#registerDispatcher
- * in that case, Events of the given Object/type will always be sent to the dispatcher instead
- * of sent directly to the listeners. Also, ElexisEvent#addListener and removeListener is
- * forwarded to the custom dispatcher.
+ * An IElexisEventDispatcher can be authoritative for a specific kind of originating Object and/or
+ * for a specific EventType. It does so by registering with
+ * ElexisEventDistpatcher#registerDispatcher in that case, Events of the given Object/type will
+ * always be sent to the dispatcher instead of sent directly to the listeners. Also,
+ * ElexisEvent#addListener and removeListener is forwarded to the custom dispatcher.
+ * 
  * @author gerry
- *
+ * 
  */
 public interface IElexisEventDispatcher {
 	public void addListener(ElexisEventListener el);
+	
 	public void removeListener(ElexisEventListener el);
+	
 	public void fire(ElexisEvent ev);
 }

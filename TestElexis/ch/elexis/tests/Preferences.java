@@ -75,7 +75,7 @@ public class Preferences {
 	static String getOvpnFtp(){
 		return testProperties.getProperty("elexis.test.ovpn.ftp", "173.23.45.1");
 	}
-		
+	
 	/*
 	 * Server which offers Ftp to elexis-test users
 	 */

@@ -35,46 +35,45 @@ import ch.elexis.views.codesystems.CodeSelectorFactory;
 public class ICDCodeSelectorFactory extends CodeSelectorFactory {
 	LazyTreeLoader dataloader;
 	
-	
 	public ICDCodeSelectorFactory(){
-		dataloader=(LazyTreeLoader)JobPool.getJobPool().getJob("ICD"); //$NON-NLS-1$
-		if(dataloader==null){
+		dataloader = (LazyTreeLoader) JobPool.getJobPool().getJob("ICD"); //$NON-NLS-1$
+		if (dataloader == null) {
 			
-			Query<ICD10> check=new Query<ICD10>(ICD10.class);
+			Query<ICD10> check = new Query<ICD10>(ICD10.class);
 			/*
-			check.add("Code","=","xyz"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			List l=check.execute();
-			if(l==null){
-				if(ICD10.createTable()==false){
-					MessageDialog.openError(Desk.theDisplay.getActiveShell(),Messages.ICDCodeSelectorFactory_errorLoading,Messages.ICDCodeSelectorFactory_couldntCreate);
-				}
-				check.clear();
-			}
-			*/
-			dataloader=new LazyTreeLoader<ICD10>("ICD",check,"parent",new String[]{"Code","Text"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		    JobPool.getJobPool().addJob(dataloader);
+			 * check.add("Code","=","xyz"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ List
+			 * l=check.execute(); if(l==null){ if(ICD10.createTable()==false){
+			 * MessageDialog.openError
+			 * (Desk.theDisplay.getActiveShell(),Messages.ICDCodeSelectorFactory_errorLoading
+			 * ,Messages.ICDCodeSelectorFactory_couldntCreate); } check.clear(); }
+			 */
+			dataloader =
+				new LazyTreeLoader<ICD10>("ICD", check, "parent", new String[] { "Code", "Text"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			JobPool.getJobPool().addJob(dataloader);
 		}
-		JobPool.getJobPool().activate("ICD",Job.SHORT); //$NON-NLS-1$
+		JobPool.getJobPool().activate("ICD", Job.SHORT); //$NON-NLS-1$
 	}
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
-		return new ViewerConfigurer(
-				new TreeContentProvider(cv,dataloader),
-				new ViewerConfigurer.TreeLabelProvider(),
-				new DefaultControlFieldProvider(cv, new String[]{"Code","Text"}), //$NON-NLS-1$ //$NON-NLS-2$
-				new ViewerConfigurer.DefaultButtonProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE, SWT.NONE,null)
-		);
+	
+	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+		return new ViewerConfigurer(new TreeContentProvider(cv, dataloader),
+			new ViewerConfigurer.TreeLabelProvider(), new DefaultControlFieldProvider(cv,
+				new String[] {
+					"Code", "Text"}), //$NON-NLS-1$ //$NON-NLS-2$
+			new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
+				SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
 	}
+	
 	@Override
-	public Class getElementClass() {
+	public Class getElementClass(){
 		return ICD10.class;
 	}
+	
 	@Override
-	public void dispose() {
-	}
+	public void dispose(){}
+	
 	@Override
-	public String getCodeSystemName() {
+	public String getCodeSystemName(){
 		return "ICD-10"; //$NON-NLS-1$
 	}
-
+	
 }

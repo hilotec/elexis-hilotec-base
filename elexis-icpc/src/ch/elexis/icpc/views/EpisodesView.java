@@ -42,126 +42,125 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 	KonsFilter episodesFilter = new KonsFilter(this);
 	private IAction addEpisodeAction, removeEpisodeAction, editEpisodeAction,
 			activateEpisodeAction, konsFilterAction, removeDiagnosesAction;
-
-	private ElexisEventListenerImpl eeli_kons = new ElexisEventListenerImpl(
-			Konsultation.class, ElexisEvent.EVENT_CREATE) {
-
-		@Override
-		public void catchElexisEvent(ElexisEvent ev) {
-			switch (ev.getType()) {
-			case ElexisEvent.EVENT_CREATE:
-				/*
-				 * Konsultation k = (Konsultation) ev.getObject(); Samdas entry
-				 * = k.getEntryRaw(); Record record = entry.getRecord(); break;
-				 */
+	
+	private ElexisEventListenerImpl eeli_kons =
+		new ElexisEventListenerImpl(Konsultation.class, ElexisEvent.EVENT_CREATE) {
+			
+			@Override
+			public void catchElexisEvent(ElexisEvent ev){
+				switch (ev.getType()) {
+				case ElexisEvent.EVENT_CREATE:
+					/*
+					 * Konsultation k = (Konsultation) ev.getObject(); Samdas entry =
+					 * k.getEntryRaw(); Record record = entry.getRecord(); break;
+					 */
+				}
 			}
-		}
-
-	};
-
-	private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(
-			Patient.class, ElexisEvent.EVENT_SELECTED) {
-
-		@Override
-		public void runInUi(ElexisEvent ev) {
-			display.setPatient((Patient) ev.getObject());
-		}
-
-	};
-
-	private ElexisEventListenerImpl eeli_episode = new ElexisEventListenerImpl(
-			Episode.class, ElexisEvent.EVENT_DESELECTED|ElexisEvent.EVENT_SELECTED|ElexisEvent.EVENT_UPDATE) {
-		@Override
-		public void runInUi(ElexisEvent ev) {
-			Episode ep = (Episode) ev.getObject();
-			switch(ev.getType()){
-			case ElexisEvent.EVENT_SELECTED:
-				if (ep.getStatus() == Episode.ACTIVE) {
-					activateEpisodeAction.setChecked(true);
-				} else {
-					activateEpisodeAction.setChecked(false);
+			
+		};
+	
+	private ElexisEventListenerImpl eeli_pat =
+		new ElexisEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED) {
+			
+			@Override
+			public void runInUi(ElexisEvent ev){
+				display.setPatient((Patient) ev.getObject());
+			}
+			
+		};
+	
+	private ElexisEventListenerImpl eeli_episode =
+		new ElexisEventListenerImpl(Episode.class, ElexisEvent.EVENT_DESELECTED
+			| ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_UPDATE) {
+			@Override
+			public void runInUi(ElexisEvent ev){
+				Episode ep = (Episode) ev.getObject();
+				switch (ev.getType()) {
+				case ElexisEvent.EVENT_SELECTED:
+					if (ep.getStatus() == Episode.ACTIVE) {
+						activateEpisodeAction.setChecked(true);
+					} else {
+						activateEpisodeAction.setChecked(false);
+					}
+					if (konsFilterAction.isChecked()) {
+						episodesFilter.setProblem(ep);
+					}
+					break;
+				case ElexisEvent.EVENT_DESELECTED:
+					episodesFilter.setProblem(null);
+					break;
+				case ElexisEvent.EVENT_UPDATE:
+					display.tvEpisodes.refresh();
+					break;
+				
 				}
-				if (konsFilterAction.isChecked()) {
-					episodesFilter.setProblem(ep);
-				}
-				break;
-			case ElexisEvent.EVENT_DESELECTED:
-				episodesFilter.setProblem(null);
-				break;
-			case ElexisEvent.EVENT_UPDATE:
-				display.tvEpisodes.refresh();
-				break;
 				
 			}
-
-		}
-	};
-
+		};
+	
 	@Override
-	public void createPartControl(final Composite parent) {
+	public void createPartControl(final Composite parent){
 		parent.setLayout(new GridLayout());
 		display = new EpisodesDisplay(parent);
 		display.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		makeActions();
 		ViewMenus menu = new ViewMenus(getViewSite());
-
+		
 		/*
-		menu.createViewerContextMenu(display.tvEpisodes, activateEpisodeAction,
-				editEpisodeAction, null, removeEpisodeAction);
-		*/
-		menu.createControlContextMenu(display.tvEpisodes.getControl(), new IMenuPopulator(){
+		 * menu.createViewerContextMenu(display.tvEpisodes, activateEpisodeAction,
+		 * editEpisodeAction, null, removeEpisodeAction);
+		 */
+		menu.createControlContextMenu(display.tvEpisodes.getControl(), new IMenuPopulator() {
 			@Override
-			public IAction[] fillMenu() {
-				return new IAction[]{activateEpisodeAction,
-						editEpisodeAction, null, removeEpisodeAction,removeDiagnosesAction};
-
-			}});
+			public IAction[] fillMenu(){
+				return new IAction[] {
+					activateEpisodeAction, editEpisodeAction, null, removeEpisodeAction,
+					removeDiagnosesAction
+				};
+				
+			}
+		});
+		
+		menu.createToolbar(konsFilterAction, addEpisodeAction, editEpisodeAction);
+		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
+	}
 	
-		menu.createToolbar(konsFilterAction, addEpisodeAction,
-				editEpisodeAction);
-		GlobalEventDispatcher.addActivationListener(this, getViewSite()
-				.getPart());
-	}
-
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void clearEvent(final Class<? extends PersistentObject> template) {
-		// TODO Auto-generated method stub
-
+	
+	public void clearEvent(final Class<? extends PersistentObject> template){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void activation(final boolean mode) {
-		// TODO Auto-generated method stub
-
+	
+	public void activation(final boolean mode){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void visible(final boolean mode) {
+	
+	public void visible(final boolean mode){
 		if (mode) {
 			display.setPatient(ElexisEventDispatcher.getSelectedPatient());
-			ElexisEventDispatcher.getInstance().addListeners(eeli_episode,
-					eeli_kons, eeli_pat);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_episode, eeli_kons, eeli_pat);
 		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_episode,
-					eeli_kons, eeli_pat);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_episode, eeli_kons, eeli_pat);
 		}
-
+		
 	}
-
-	private void makeActions() {
+	
+	private void makeActions(){
 		addEpisodeAction = new Action("Neues Problem") {
 			{
 				setToolTipText("Eine neues Problem erstellen");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 			}
-
+			
 			@Override
-			public void run() {
-				EditEpisodeDialog dlg = new EditEpisodeDialog(getViewSite()
-						.getShell(), null);
+			public void run(){
+				EditEpisodeDialog dlg = new EditEpisodeDialog(getViewSite().getShell(), null);
 				if (dlg.open() == Dialog.OK) {
 					display.tvEpisodes.refresh();
 				}
@@ -172,9 +171,9 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 				setToolTipText("Das gewählte Problem unwiderruflich löschen");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
 			}
-
+			
 			@Override
-			public void run() {
+			public void run(){
 				Episode act = display.getSelectedEpisode();
 				if (act != null) {
 					act.delete();
@@ -183,11 +182,12 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 			}
 		};
 		
-		removeDiagnosesAction=new Action("Diagnosen entfernen"){
+		removeDiagnosesAction = new Action("Diagnosen entfernen") {
 			{
 				setToolTipText("Entfernt die Verknüpfungen mit Diagnosen");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
 			}
+			
 			@Override
 			public void run(){
 				Episode act = display.getSelectedEpisode();
@@ -203,13 +203,12 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 				setToolTipText("Titel des Problems ändern");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
 			}
-
+			
 			@Override
-			public void run() {
+			public void run(){
 				Episode ep = display.getSelectedEpisode();
 				if (ep != null) {
-					EditEpisodeDialog dlg = new EditEpisodeDialog(getViewSite()
-							.getShell(), ep);
+					EditEpisodeDialog dlg = new EditEpisodeDialog(getViewSite().getShell(), ep);
 					if (dlg.open() == Dialog.OK) {
 						display.tvEpisodes.refresh();
 					}
@@ -220,9 +219,9 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 			{
 				setToolTipText("Problem aktivieren oder deaktivieren");
 			}
-
+			
 			@Override
-			public void run() {
+			public void run(){
 				Episode ep = display.getSelectedEpisode();
 				if (ep != null) {
 					ep.setStatus(activateEpisodeAction.isChecked() ? Episode.ACTIVE
@@ -230,24 +229,23 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 					display.tvEpisodes.refresh();
 				}
 			}
-
+			
 		};
-
-		konsFilterAction = new Action("Konsultationen filtern",
-				Action.AS_CHECK_BOX) {
+		
+		konsFilterAction = new Action("Konsultationen filtern", Action.AS_CHECK_BOX) {
 			{
 				setToolTipText("Konsultationslisten auf markiertes Problem begrenzen");
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
 			}
-
+			
 			@Override
-			public void run() {
+			public void run(){
 				if (!isChecked()) {
-					ObjectFilterRegistry.getInstance().unregisterObjectFilter(
-							Konsultation.class, episodesFilter);
+					ObjectFilterRegistry.getInstance().unregisterObjectFilter(Konsultation.class,
+						episodesFilter);
 				} else {
-					ObjectFilterRegistry.getInstance().registerObjectFilter(
-							Konsultation.class, episodesFilter);
+					ObjectFilterRegistry.getInstance().registerObjectFilter(Konsultation.class,
+						episodesFilter);
 					Episode ep = display.getSelectedEpisode();
 					episodesFilter.setProblem(ep);
 				}
@@ -255,9 +253,9 @@ public class EpisodesView extends ViewPart implements IActivationListener {
 		};
 		
 	}
-
-	public void activateKonsFilterAction(final boolean bActivate) {
+	
+	public void activateKonsFilterAction(final boolean bActivate){
 		konsFilterAction.setChecked(bActivate);
 	}
-
+	
 }

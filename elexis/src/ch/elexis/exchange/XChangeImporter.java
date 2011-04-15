@@ -81,9 +81,10 @@ public class XChangeImporter implements IDataReceiver {
 								}
 							}
 						} catch (JDOMException e) {
-							ElexisStatus status = new ElexisStatus(IStatus.WARNING, Hub.PLUGIN_ID, IStatus.WARNING, 
-									"Parse error JDOM: " + e.getMessage(),
-									e, ElexisStatus.LOG_WARNINGS);
+							ElexisStatus status =
+								new ElexisStatus(IStatus.WARNING, Hub.PLUGIN_ID, IStatus.WARNING,
+									"Parse error JDOM: " + e.getMessage(), e,
+									ElexisStatus.LOG_WARNINGS);
 							throw new ExchangeException(status);
 						}
 					}

@@ -31,29 +31,26 @@ import ch.rgw.io.Settings;
 import ch.rgw.tools.StringTool;
 
 /**
- * Diese Klasse realisiert das Zugriffskontroll- und Rechteverwaltungskonzept
- * von Elexis.
+ * Diese Klasse realisiert das Zugriffskontroll- und Rechteverwaltungskonzept von Elexis.
  * <ul>
  * <li>Es gibt Gruppen und Anwender.</li>
  * <li>Jeder Anwender gehört zu mindestens einer Gruppe.</li>
  * <li>Es existiert von Anfang an eine Gruppe "Alle" und ein Anwender "Jeder"</li>
- * <li>Jedes Recht kann einer oder mehreren Gruppen und/oder einer onder
- * mehreren Anwendern gewährt werden.</li>
- * <li>Ein Anwender erhält alle Rechte, die ihm entweder individuell gewährt
- * wurden, oder die einer der Gruppen gewährt wurden, zu denen er gehört.</li>
+ * <li>Jedes Recht kann einer oder mehreren Gruppen und/oder einer onder mehreren Anwendern gewährt
+ * werden.</li>
+ * <li>Ein Anwender erhält alle Rechte, die ihm entweder individuell gewährt wurden, oder die einer
+ * der Gruppen gewährt wurden, zu denen er gehört.</li>
  * </ul>
- * Eine Ressource, die ein Zugriffsrecht realisieren will, muss für dieses Recht
- * ein ACE erstellen, Zugriffsrechte können hierarchisch aufgebaut sein.
- * Beispielsweise kann ein Recht foo/bar/baz definiert sein. Wenn keine Regel
- * für baz existiert, dann wird nach einer Regel für bar gesucht und diese
- * Angewandt. Wenn auch die nicht gefunden wird, wird nach einer Regel für foo
- * gesucht. Wenn auch dies fehlschlägt, wird das Recht in jedem Fall verweigert.
- * Das Zugriffsrecht kann dann mit grant(gruppe,recht) oder
- * grant(Anwender,recht) gewährt resp. mit revoke(gruppe,Name) oder
- * revoke(Anwender,name) entzogen werden. Um herauszufinden, ob ein Anwender bw.
- * einer seiner Gruppen das Recht hat, auf eine ressource zuzugreifen, muss man
- * request(anwedner,recht) fragen. Eine Abkürzung ist request(recht). Dies
- * fragt, ob der aktuell eingeloggte Anwender das betreffende Recht hat.
+ * Eine Ressource, die ein Zugriffsrecht realisieren will, muss für dieses Recht ein ACE erstellen,
+ * Zugriffsrechte können hierarchisch aufgebaut sein. Beispielsweise kann ein Recht foo/bar/baz
+ * definiert sein. Wenn keine Regel für baz existiert, dann wird nach einer Regel für bar gesucht
+ * und diese Angewandt. Wenn auch die nicht gefunden wird, wird nach einer Regel für foo gesucht.
+ * Wenn auch dies fehlschlägt, wird das Recht in jedem Fall verweigert. Das Zugriffsrecht kann dann
+ * mit grant(gruppe,recht) oder grant(Anwender,recht) gewährt resp. mit revoke(gruppe,Name) oder
+ * revoke(Anwender,name) entzogen werden. Um herauszufinden, ob ein Anwender bw. einer seiner
+ * Gruppen das Recht hat, auf eine ressource zuzugreifen, muss man request(anwedner,recht) fragen.
+ * Eine Abkürzung ist request(recht). Dies fragt, ob der aktuell eingeloggte Anwender das
+ * betreffende Recht hat.
  * 
  * @author Gerry
  * @see ACE
@@ -84,7 +81,7 @@ public class AccessControl {
 	 * Die Zugriffsrechte aus den globalen Settings laden.
 	 */
 	@SuppressWarnings("unchecked")
-	public void load() {
+	public void load(){
 		NamedBlob rset = NamedBlob.load(BLOBNAME);
 		if (rset == null) {
 			log.log("Warnung: ACEs nicht gefunden, erstelle neu ", Log.ERRORS); //$NON-NLS-1$
@@ -109,10 +106,10 @@ public class AccessControl {
 	}
 	
 	/**
-	 * Zugriffsrechte zurücksichern. Alle Rechte, die seit dem letzten flush
-	 * geändert wurden, sind nur temporär bis zum nächsten flush()!
+	 * Zugriffsrechte zurücksichern. Alle Rechte, die seit dem letzten flush geändert wurden, sind
+	 * nur temporär bis zum nächsten flush()!
 	 */
-	public void flush() {
+	public void flush(){
 		NamedBlob.load(BLOBNAME).put(rights);
 		NamedBlob.load(ACLNAME).put(acls);
 	}
@@ -122,10 +119,10 @@ public class AccessControl {
 	 * 
 	 * @param right
 	 *            Das erfragte Recht
-	 * @return true, wenn der Anwender (oder eine der Gruppen, zu denen der
-	 *         Anwender gehört) das Recht hat.
+	 * @return true, wenn der Anwender (oder eine der Gruppen, zu denen der Anwender gehört) das
+	 *         Recht hat.
 	 */
-	public boolean request(ACE right) {
+	public boolean request(ACE right){
 		return (request(Hub.actUser, right));
 	}
 	
@@ -136,13 +133,12 @@ public class AccessControl {
 	 *            Der Anwender
 	 * @param right
 	 *            Das Recht, das erfragt werden soll
-	 * @return true, wenn der Anwender (oder eine der Gruppen, zu der dieser
-	 *         Anwender gehört) dieses Recht hat. Immer true, wenn der Anwender
-	 *         zur Gruppe "Admin" gehört. Immer false, wenn kein Anwender
-	 *         angemeldet ist
+	 * @return true, wenn der Anwender (oder eine der Gruppen, zu der dieser Anwender gehört) dieses
+	 *         Recht hat. Immer true, wenn der Anwender zur Gruppe "Admin" gehört. Immer false, wenn
+	 *         kein Anwender angemeldet ist
 	 */
 	@SuppressWarnings("unchecked")
-	public boolean request(Anwender user, ACE rightACE) {
+	public boolean request(Anwender user, ACE rightACE){
 		if (FORCE_ADMIN) {
 			return true;
 		} else {
@@ -154,8 +150,7 @@ public class AccessControl {
 				return false;
 			}
 			// Wenn alle dieses Recht haben-> ok
-			if (rights
-					.get(Messages.getString("AccessControl.GroupAll") + right) != null) { //$NON-NLS-1$
+			if (rights.get(Messages.getString("AccessControl.GroupAll") + right) != null) { //$NON-NLS-1$
 				return true;
 			}
 			// Wenn gar kein user angegeben ist -> verweigern
@@ -223,7 +218,7 @@ public class AccessControl {
 	 * @param elements
 	 *            ein oder mehrere Rechte
 	 */
-	public void grant(Anwender user, ACE... elements) {
+	public void grant(Anwender user, ACE... elements){
 		for (ACE right : elements) {
 			rights.put(user.getId() + right.getCanonicalName(), right);
 			acls.put(right.getCanonicalName(), right);
@@ -238,7 +233,7 @@ public class AccessControl {
 	 * @param elements
 	 *            ein oder mehrere Rechte
 	 */
-	public void revoke(Anwender user, ACE... elements) {
+	public void revoke(Anwender user, ACE... elements){
 		for (ACE right : elements) {
 			rights.remove(user.getId() + right.getCanonicalName());
 		}
@@ -252,7 +247,7 @@ public class AccessControl {
 	 * @param elements
 	 *            ein oder mehrere Rechte
 	 */
-	public void grant(String group, ACE... elements) {
+	public void grant(String group, ACE... elements){
 		for (ACE right : elements) {
 			rights.put(group + right.getCanonicalName(), right);
 			acls.put(right.getCanonicalName(), right);
@@ -267,7 +262,7 @@ public class AccessControl {
 	 * @param elements
 	 *            ein oder mehrere Rechte
 	 */
-	public void revoke(String group, ACE... elements) {
+	public void revoke(String group, ACE... elements){
 		for (ACE right : elements) {
 			rights.remove(group + right.getCanonicalName());
 		}
@@ -277,14 +272,14 @@ public class AccessControl {
 	 * Zugriffsrecht für "self" erteilen
 	 * 
 	 */
-	public void grantForSelf(ACE... elements) {
+	public void grantForSelf(ACE... elements){
 		for (ACE r : elements) {
 			rights.put("Self" + r.getCanonicalName(), r); //$NON-NLS-1$
 			acls.put(r.getCanonicalName(), r);
 		}
 	}
 	
-	public void revokeFromSelf(ACE... strings) {
+	public void revokeFromSelf(ACE... strings){
 		for (ACE e : strings) {
 			rights.remove("Self" + e.getCanonicalName()); //$NON-NLS-1$
 		}
@@ -298,7 +293,7 @@ public class AccessControl {
 	 * @param user
 	 *            der Anwender
 	 */
-	public void addToGroup(String group, Anwender user) {
+	public void addToGroup(String group, Anwender user){
 		String g = remove(group, user);
 		g = g + "," + group; //$NON-NLS-1$
 		user.setInfoElement(KEY_GROUPS, g);
@@ -312,12 +307,12 @@ public class AccessControl {
 	 * @param user
 	 *            der Anwender
 	 */
-	public void removeFromGroup(String group, Anwender user) {
+	public void removeFromGroup(String group, Anwender user){
 		String g = remove(group, user);
 		user.setInfoElement(KEY_GROUPS, g);
 	}
 	
-	private String remove(String group, Anwender user) {
+	private String remove(String group, Anwender user){
 		String g = (String) user.getInfoElement(KEY_GROUPS);
 		if (g != null) {
 			g = g.replaceAll(user.getId(), ""); //$NON-NLS-1$
@@ -332,10 +327,9 @@ public class AccessControl {
 	 * 
 	 * @return eine Liste aller definierten Gruppen
 	 */
-	public List<String> getGroups() {
+	public List<String> getGroups(){
 		ArrayList<String> ret = new ArrayList<String>();
-		String grp = Hub.globalCfg.get(PreferenceConstants.ACC_GROUPS,
-			ADMIN_GROUP);
+		String grp = Hub.globalCfg.get(PreferenceConstants.ACC_GROUPS, ADMIN_GROUP);
 		for (String s : grp.split(",")) { //$NON-NLS-1$
 			ret.add(s);
 		}
@@ -349,7 +343,7 @@ public class AccessControl {
 	 *            das zu erfragende Recht
 	 * @return Alle Gruppen, deren Mitglieder dieses Recht haben
 	 */
-	public List<String> groupsForGrant(ACE rightACE) {
+	public List<String> groupsForGrant(ACE rightACE){
 		ArrayList<String> ret = new ArrayList<String>();
 		String right = rightACE.getCanonicalName();
 		Pattern p = Pattern.compile("([a-zA-Z0-9]+)" + right); //$NON-NLS-1$
@@ -374,10 +368,10 @@ public class AccessControl {
 	 * 
 	 * @param right
 	 *            das zu erfragende Recht
-	 * @return eine Liste aller Anwender, die das gesuchte Recht direkt (nicht
-	 *         über Gruppenmitgliedschaft) haben.
+	 * @return eine Liste aller Anwender, die das gesuchte Recht direkt (nicht über
+	 *         Gruppenmitgliedschaft) haben.
 	 */
-	public List<Anwender> usersForGrant(ACE rightACE) {
+	public List<Anwender> usersForGrant(ACE rightACE){
 		ArrayList<Anwender> ret = new ArrayList<Anwender>();
 		String right = rightACE.getCanonicalName();
 		Pattern p = Pattern.compile("([a-zA-Z0-9]+)" + right); //$NON-NLS-1$
@@ -397,7 +391,7 @@ public class AccessControl {
 		return ret;
 	}
 	
-	public void deleteGrant(ACE grantACE) {
+	public void deleteGrant(ACE grantACE){
 		String grant = grantACE.getCanonicalName();
 		
 		Pattern p = Pattern.compile("([a-zA-Z0-9]+)" + grant); //$NON-NLS-1$
@@ -413,17 +407,16 @@ public class AccessControl {
 		acls.remove(grantACE);
 	}
 	
-	public Settings asSettings() {
+	public Settings asSettings(){
 		return new InMemorySettings(rights);
 	}
 	
 	/** Alles auf Standard zurücksetzen und dbUID generieren */
-	public void reset() {
+	public void reset(){
 		rights.clear();
 		grant(ALL_GROUP, AccessControlDefaults.getAlle());
 		grant(USER_GROUP, AccessControlDefaults.getAnwender());
-		acls.put(DB_UID, new ACE(ACE.ACE_ROOT, DB_UID, StringTool
-			.unique("db%id")));
+		acls.put(DB_UID, new ACE(ACE.ACE_ROOT, DB_UID, StringTool.unique("db%id")));
 		flush();
 	}
 	
@@ -431,14 +424,14 @@ public class AccessControl {
 		if (request(AccessControlDefaults.ADMIN_ACE)) {
 			ACE dbuid = acls.get(DB_UID);
 			if (bCreate || dbuid == null) {
-				dbuid = new ACE(ACE.ACE_ROOT, DB_UID, StringTool
-					.unique("db%id"));
+				dbuid = new ACE(ACE.ACE_ROOT, DB_UID, StringTool.unique("db%id"));
 				rights.put(DB_UID, dbuid);
 				flush();
 			}
 			return dbuid.getLocalizedName();
-		}else{
-			throw new InsufficientRightsException("You don't have sufficient rights for the requested operation");
+		} else {
+			throw new InsufficientRightsException(
+				"You don't have sufficient rights for the requested operation");
 		}
 	}
 }

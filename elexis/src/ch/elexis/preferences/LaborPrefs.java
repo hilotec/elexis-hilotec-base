@@ -56,19 +56,20 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 	private TableViewer tv;
 	private Table table;
 	int sortC = 1;
-	private String[] headers = {
-		Messages.LaborPrefs_lab, Messages.LaborPrefs_name, Messages.LaborPrefs_short,
-		Messages.LaborPrefs_type, Messages.LaborPrefs_unit, Messages.LaborPrefs_refM,
-		Messages.LaborPrefs_refF, Messages.LaborPrefs_sortmode
-	};
+	private String[] headers =
+		{
+			Messages.LaborPrefs_lab, Messages.LaborPrefs_name, Messages.LaborPrefs_short,
+			Messages.LaborPrefs_type, Messages.LaborPrefs_unit, Messages.LaborPrefs_refM,
+			Messages.LaborPrefs_refF, Messages.LaborPrefs_sortmode
+		};
 	private int[] colwidth = {
 		100, 100, 50, 50, 50, 100, 100, 100
 	};
-
-	public LaborPrefs() {
+	
+	public LaborPrefs(){
 		super(Messages.LaborPrefs_labTitle);
 	}
-
+	
 	protected Control createContents(Composite parn){
 		// parn.setLayout(new FillLayout());
 		noDefaultAndApplyButton();
@@ -84,11 +85,11 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 			tc.setData(i);
 			tc.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(SelectionEvent e){
 					sortC = (Integer) ((TableColumn) e.getSource()).getData();
 					tv.refresh(true);
 				}
-
+				
 			});
 		}
 		table.setHeaderVisible(true);
@@ -96,25 +97,21 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tv = new TableViewer(table);
 		tv.setContentProvider(new IStructuredContentProvider() {
-
-			public Object[] getElements(Object inputElement) {
+			
+			public Object[] getElements(Object inputElement){
 				return LabItem.getLabItems().toArray();
 			}
-
-			public void dispose() {
-			}
-
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
-			}
-
+			
+			public void dispose(){}
+			
+			public void inputChanged(Viewer viewer, Object oldInput, Object newInput){}
+			
 		});
 		tv.setLabelProvider(new LabListLabelProvider());
 		tv.addDoubleClickListener(new IDoubleClickListener() {
-
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection sel = (IStructuredSelection) tv
-						.getSelection();
+			
+			public void doubleClick(DoubleClickEvent event){
+				IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
 				Object o = sel.getFirstElement();
 				if (o instanceof LabItem) {
 					LabItem li = (LabItem) o;
@@ -125,12 +122,12 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 					}
 				}
 			}
-
+			
 		});
 		tv.setSorter(new ViewerSorter() {
-
+			
 			@Override
-			public int compare(Viewer viewer, Object e1, Object e2) {
+			public int compare(Viewer viewer, Object e1, Object e2){
 				LabItem li1 = (LabItem) e1;
 				LabItem li2 = (LabItem) e2;
 				String s1 = "", s2 = ""; //$NON-NLS-1$ //$NON-NLS-2$
@@ -161,7 +158,7 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 				}
 				return res;
 			}
-
+			
 		});
 		tv.setInput(this);
 		Composite buttons = new Composite(ret, SWT.BORDER);
@@ -172,21 +169,20 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 		bNewItem.setText(Messages.LaborPrefs_labValue);
 		bNewItem.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				EditLabItem eli = new EditLabItem(getShell(), null);
 				eli.create();
 				if (eli.open() == Dialog.OK) {
 					tv.refresh();
 				}
 			}
-
+			
 		});
 		Button bDelItem = new Button(buttons, SWT.PUSH);
 		bDelItem.setText(Messages.LaborPrefs_deleteItem);
 		bDelItem.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				IStructuredSelection sel = (IStructuredSelection) tv
-						.getSelection();
+			public void widgetSelected(SelectionEvent e){
+				IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
 				Object o = sel.getFirstElement();
 				if (o instanceof LabItem) {
 					LabItem li = (LabItem) o;
@@ -204,15 +200,13 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 		Button bDelAllItems = new Button(buttons, SWT.PUSH);
 		bDelAllItems.setText(Messages.LaborPrefs_deleteAllItems);
 		bDelAllItems.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				if (SWTHelper.askYesNo(
-						Messages.LaborPrefs_deleteReallyAllItems,
-						Messages.LaborPrefs_deleteAllExplain)) {
+			public void widgetSelected(SelectionEvent e){
+				if (SWTHelper.askYesNo(Messages.LaborPrefs_deleteReallyAllItems,
+					Messages.LaborPrefs_deleteAllExplain)) {
 					Query<LabItem> qbli = new Query<LabItem>(LabItem.class);
 					List<LabItem> items = qbli.execute();
 					for (LabItem li : items) {
-						Query<LabResult> qbe = new Query<LabResult>(
-								LabResult.class);
+						Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
 						qbe.add("ItemID", "=", li.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 						List<LabResult> list = qbe.execute();
 						for (LabResult po : list) {
@@ -229,21 +223,20 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 		}
 		return ret;
 	}
-
-	static class LabListLabelProvider extends LabelProvider implements
-			ITableLabelProvider {
-
-		public Image getColumnImage(Object element, int columnIndex) {
+	
+	static class LabListLabelProvider extends LabelProvider implements ITableLabelProvider {
+		
+		public Image getColumnImage(Object element, int columnIndex){
 			// TODO Automatisch erstellter Methoden-Stub
 			return null;
 		}
-
-		public String getColumnText(Object element, int columnIndex) {
+		
+		public String getColumnText(Object element, int columnIndex){
 			LabItem li = (LabItem) element;
 			switch (columnIndex) {
 			case 0:
-				return li.getLabor() == null ? Messages.LaborPrefs_unkown : li
-						.getLabor().getLabel();
+				return li.getLabor() == null ? Messages.LaborPrefs_unkown : li.getLabor()
+					.getLabel();
 			case 1:
 				return li.getName();
 			case 2:
@@ -270,11 +263,11 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 				return "?col?"; //$NON-NLS-1$
 			}
 		}
-
+		
 	};
 	
 	public void init(IWorkbench workbench){
-		// Nothing to initialize
+	// Nothing to initialize
 	}
-
+	
 }

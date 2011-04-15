@@ -80,7 +80,8 @@ public class Rechnungslauf implements IRunnableWithProgress {
 		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
 		qbe.add(Konsultation.FLD_BILL_ID, StringConstants.EMPTY, null);
 		qbe.add(Konsultation.FLD_MANDATOR_ID, Query.EQUALS, kMandantID);
-		monitor.beginTask(Messages.getString("Rechnungslauf.analyzingConsultations"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+		monitor.beginTask(
+			Messages.getString("Rechnungslauf.analyzingConsultations"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		monitor.subTask(Messages.getString("Rechnungslauf.readingConsultations")); //$NON-NLS-1$
 		List<Konsultation> list = qbe.execute();
 		ArrayList<Konsultation> listbasic = new ArrayList<Konsultation>(list);

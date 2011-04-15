@@ -17,7 +17,6 @@ import ch.elexis.exchange.XChangeContainer;
 
 public class RisksElement extends XChangeElement {
 	
-	
 	@Override
 	public String getXMLName(){
 		return XChangeContainer.ENCLOSE_RISKS;

@@ -72,11 +72,11 @@ public class Logger {
 		_log.println("<-- \"" + s + "\""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-// public void logTX(String s)
-// {
-//		
-//		_log.println("--> \"" + replaceBinaryChar(s) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-// }
+	// public void logTX(String s)
+	// {
+	//		
+	//		_log.println("--> \"" + replaceBinaryChar(s) + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+	// }
 	
 	public void logRaw(String s){
 		_log.println(s);

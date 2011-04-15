@@ -43,10 +43,10 @@ public class Medikament extends Artikel {
 		};
 	
 	// Kassenzeichen und Texte der Sozialversicherung
-	public static final String[] SSIGNS =
-		{ //"CH14", "KF14", "KF2", "NE", "PS" // Not existant anymore
-			"Box", "A", "AU", "B", "D", "DS", "F", "F14", "F2J", "GF", "F6J", "IND", "K", "L", "L3",
-			"L6", "L9", "L12", "N", "P", "R", "RE1", "RE2", "U"
+	public static final String[] SSIGNS = { // "CH14", "KF14", "KF2", "NE", "PS" // Not existant
+											// anymore
+			"Box", "A", "AU", "B", "D", "DS", "F", "F14", "F2J", "GF", "F6J", "IND", "K", "L",
+			"L3", "L6", "L9", "L12", "N", "P", "R", "RE1", "RE2", "U"
 		};
 	
 	static final String extDB =
@@ -77,7 +77,8 @@ public class Medikament extends Artikel {
 	 * 
 	 * @param name
 	 * @param typ
-	 * @param subid Die Pharmazentralnummer PhZNr
+	 * @param subid
+	 *            Die Pharmazentralnummer PhZNr
 	 */
 	public Medikament(String name, String typ, String subid){
 		super(name, typ, subid);
@@ -87,7 +88,7 @@ public class Medikament extends Artikel {
 	@Override
 	protected String getConstraint(){
 		return new StringBuilder(Artikel.FLD_TYP).append(Query.EQUALS).append(
-				JdbcLink.wrap(TYPNAME)).toString();
+			JdbcLink.wrap(TYPNAME)).toString();
 	}
 	
 	protected void setConstraint(){
@@ -106,8 +107,8 @@ public class Medikament extends Artikel {
 	
 	@Override
 	public String getLabel(){
-		String ret=getInternalName();
-		if(StringTool.isNothing(ret)){
+		String ret = getInternalName();
+		if (StringTool.isNothing(ret)) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(getInternalName()).append(" (").append(getExt("Quantity")).append(")");
 			ret = sb.toString();
@@ -118,12 +119,12 @@ public class Medikament extends Artikel {
 	/**
 	 * Liefert die freie Verschreibbarkeit der Arzneispezialität.
 	 * 
-	 * 0 = Arzneimittel ist nicht auf Rechnung der Krankenversicherungsträger zugelassen.
-	 * 1 = Als frei verschreibbar gilt nur eine Packungsgröße.
-	 * 2..9 = Als frei verschreibbar gilt das Doppelte, Dreifache, .. der angegebenen Menge.
-	 * Die angegebene Menge entspricht dem Inhalt einer Originalpackung.
+	 * 0 = Arzneimittel ist nicht auf Rechnung der Krankenversicherungsträger zugelassen. 1 = Als
+	 * frei verschreibbar gilt nur eine Packungsgröße. 2..9 = Als frei verschreibbar gilt das
+	 * Doppelte, Dreifache, .. der angegebenen Menge. Die angegebene Menge entspricht dem Inhalt
+	 * einer Originalpackung.
 	 * 
-	 * @return String im Bereich [0..9] 
+	 * @return String im Bereich [0..9]
 	 */
 	public String getRemb(){
 		String r = getExt("Remb");

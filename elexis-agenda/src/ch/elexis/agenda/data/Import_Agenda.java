@@ -45,106 +45,116 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.JdbcLink.Stm;
 
 @Deprecated
-public class Import_Agenda extends ImporterPage{
-	public static final String drop=
-	"DROP INDEX it ON AGNTERMINE;"+ //$NON-NLS-1$
-	"DROP INDEX pattern ON AGNTERMINE;"+ //$NON-NLS-1$
-	"DROP INDEX mandterm ON AGNTERMINE;"+ //$NON-NLS-1$
-	"DROP TABLE AGNTERMINE;"; //$NON-NLS-1$
-	ImporterPage.DBBasedImporter importer=null;
+public class Import_Agenda extends ImporterPage {
+	public static final String drop = "DROP INDEX it ON AGNTERMINE;" + //$NON-NLS-1$
+		"DROP INDEX pattern ON AGNTERMINE;" + //$NON-NLS-1$
+		"DROP INDEX mandterm ON AGNTERMINE;" + //$NON-NLS-1$
+		"DROP TABLE AGNTERMINE;"; //$NON-NLS-1$
+	ImporterPage.DBBasedImporter importer = null;
 	Combo cbBereich;
-	Button bSyncEnable,bDoDelete;
+	Button bSyncEnable, bDoDelete;
 	Text tMandant;
 	String orig_mandant;
 	String dest_bereich;
-	boolean bDelete=false;
-	Hashtable<String,String> map;
-	public Import_Agenda() {
-		map=Synchronizer.getBereichMapping();
+	boolean bDelete = false;
+	Hashtable<String, String> map;
+	
+	public Import_Agenda(){
+		map = Synchronizer.getBereichMapping();
 	}
 	
 	@Override
-	public String getTitle() {
+	public String getTitle(){
 		return "JavaAgenda"; //$NON-NLS-1$
 	}
-
+	
 	@Override
-	public IStatus doImport(IProgressMonitor monitor) throws Exception {
-		Result<JdbcLink> res=importer.getConnection();
-		if(!res.isOK()){
+	public IStatus doImport(IProgressMonitor monitor) throws Exception{
+		Result<JdbcLink> res = importer.getConnection();
+		if (!res.isOK()) {
 			return ResultAdapter.getResultAsStatus(res);
 		}
-		JdbcLink j=res.get();
-		int size=j.queryInt("SELECT COUNT(0) FROM agnTermine WHERE BEIWEM='"+orig_mandant+"' AND deleted<>'1'"); //$NON-NLS-1$ //$NON-NLS-2$
-		monitor.beginTask(Messages.Import_Agenda_importingAgenda, size+100);
-		Stm stm=j.getStatement();
-		//Activator.getDefault().pinger.pause(true);
+		JdbcLink j = res.get();
+		int size =
+			j
+				.queryInt("SELECT COUNT(0) FROM agnTermine WHERE BEIWEM='" + orig_mandant + "' AND deleted<>'1'"); //$NON-NLS-1$ //$NON-NLS-2$
+		monitor.beginTask(Messages.Import_Agenda_importingAgenda, size + 100);
+		Stm stm = j.getStatement();
+		// Activator.getDefault().pinger.pause(true);
 		Synchronizer.pause(true);
-		if(bDelete){
+		if (bDelete) {
 			monitor.subTask(Messages.Import_Agenda_creatingTables);
-			Termin.getConnection().execScript(new ByteArrayInputStream(drop.getBytes("UTF-8")), true, false); //$NON-NLS-1$
+			Termin.getConnection().execScript(
+				new ByteArrayInputStream(drop.getBytes("UTF-8")), true, false); //$NON-NLS-1$
 			Termin.init();
 		}
 		monitor.worked(10);
 		
-		try{
+		try {
 			monitor.subTask(Messages.Import_Agenda_importingApps);
-			ResultSet rs=stm.query("SELECT * FROM agnTermine WHERE BEIWEM='"+orig_mandant+"' AND deleted<>'1'"); //$NON-NLS-1$ //$NON-NLS-2$
-			Query<Patient> qPat=new Query<Patient>(Patient.class);
-			int loop=0;
-			while(rs.next()){
-				if(++loop>100){
-					loop=0;
+			ResultSet rs =
+				stm
+					.query("SELECT * FROM agnTermine WHERE BEIWEM='" + orig_mandant + "' AND deleted<>'1'"); //$NON-NLS-1$ //$NON-NLS-2$
+			Query<Patient> qPat = new Query<Patient>(Patient.class);
+			int loop = 0;
+			while (rs.next()) {
+				if (++loop > 100) {
+					loop = 0;
 					PersistentObject.clearCache();
 					Thread.sleep(10);
 				}
-				int von=rs.getInt("Beginn"); //$NON-NLS-1$
-				int dauer=rs.getInt("Dauer"); //$NON-NLS-1$
-				int bis=von+dauer;
-				Termin t=new Termin(rs.getString("ID"),dest_bereich,rs.getString("Tag"),von,bis,rs.getString("TerminTyp"),rs.getString("TerminStatus")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				t.set(new String[]{"Grund","ErstelltWann","ErstelltVon"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						rs.getString("Grund"), rs.getString("Angelegt"),  //$NON-NLS-1$ //$NON-NLS-2$
-						rs.getString("ErstelltVon")); //$NON-NLS-1$
+				int von = rs.getInt("Beginn"); //$NON-NLS-1$
+				int dauer = rs.getInt("Dauer"); //$NON-NLS-1$
+				int bis = von + dauer;
+				Termin t =
+					new Termin(
+						rs.getString("ID"), dest_bereich, rs.getString("Tag"), von, bis, rs.getString("TerminTyp"), rs.getString("TerminStatus")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				t.set(new String[] {
+					"Grund", "ErstelltWann", "ErstelltVon"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					rs.getString("Grund"), rs.getString("Angelegt"), //$NON-NLS-1$ //$NON-NLS-2$
+					rs.getString("ErstelltVon")); //$NON-NLS-1$
 				
-				String pers=rs.getString("Personalien"); //$NON-NLS-1$
-				String[] px=Termin.findID(pers);
-				List<Patient> list=qPat.queryFields(new String[]{"Name","Vorname","Geburtsdatum"}, px, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				if((list==null) || (list.size()!=1)){
+				String pers = rs.getString("Personalien"); //$NON-NLS-1$
+				String[] px = Termin.findID(pers);
+				List<Patient> list = qPat.queryFields(new String[] {
+					"Name", "Vorname", "Geburtsdatum"}, px, true); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if ((list == null) || (list.size() != 1)) {
 					t.set("Wer", pers); //$NON-NLS-1$
-				}else{
-					t.set("Wer", ((PersistentObject)list.get(0)).getId()); //$NON-NLS-1$
+				} else {
+					t.set("Wer", ((PersistentObject) list.get(0)).getId()); //$NON-NLS-1$
 				}
-				if(monitor.isCanceled()){
+				if (monitor.isCanceled()) {
 					monitor.done();
-					Termin.getConnection().execScript(new ByteArrayInputStream(drop.getBytes("UTF-8")), true, false); //$NON-NLS-1$
-					SWTHelper.showError(Messages.Import_Agenda_cancelled, Messages.Import_Agenda_importWasCancelled);
+					Termin.getConnection().execScript(
+						new ByteArrayInputStream(drop.getBytes("UTF-8")), true, false); //$NON-NLS-1$
+					SWTHelper.showError(Messages.Import_Agenda_cancelled,
+						Messages.Import_Agenda_importWasCancelled);
 					return Status.CANCEL_STATUS;
 				}
 				monitor.worked(1);
 			}
 			return Status.OK_STATUS;
-		}catch(Exception ex){
+		} catch (Exception ex) {
 			SWTHelper.showError(Messages.Import_Agenda_errorsDuringImport, ex.getMessage());
 			ExHandler.handle(ex);
-		}finally{
+		} finally {
 			j.releaseStatement(stm);
 			monitor.done();
-			//Activator.getDefault().pinger.pause(false);
+			// Activator.getDefault().pinger.pause(false);
 			Synchronizer.pause(false);
 		}
 		return Status.CANCEL_STATUS;
 	}
-
+	
 	@Override
-	public String getDescription() {
+	public String getDescription(){
 		return Messages.Import_Agenda_importFromJavaAgenda;
 	}
 	
-
 	@Override
-	public void collect() {
-		orig_mandant=tMandant.getText();
-		dest_bereich=cbBereich.getText();
+	public void collect(){
+		orig_mandant = tMandant.getText();
+		dest_bereich = cbBereich.getText();
 		map.put(dest_bereich, orig_mandant);
 		Synchronizer.setBereichMapping(map);
 		Hub.globalCfg.set(PreferenceConstants.AG_SYNC_ENABLED, bSyncEnable.getSelection());
@@ -153,54 +163,53 @@ public class Import_Agenda extends ImporterPage{
 		Hub.globalCfg.set(PreferenceConstants.AG_SYNC_CONNECTOR, results[2]);
 		Hub.globalCfg.set(PreferenceConstants.AG_SYNC_DBUSER, results[3]);
 		Hub.globalCfg.set(PreferenceConstants.AG_SYNC_DBPWD, results[4]);
-		bDelete=bDoDelete.getSelection();
+		bDelete = bDoDelete.getSelection();
 	}
-
+	
 	@Override
-	public Composite createPage(Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
+	public Composite createPage(Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
-		importer=new ImporterPage.DBBasedImporter(ret,this);
+		importer = new ImporterPage.DBBasedImporter(ret, this);
 		importer.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		Composite cMandant=new Composite(ret,SWT.BORDER);
+		Composite cMandant = new Composite(ret, SWT.BORDER);
 		cMandant.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		cMandant.setLayout(new GridLayout(3,false));
-		Composite cl=new Composite(cMandant,SWT.NONE);
+		cMandant.setLayout(new GridLayout(3, false));
+		Composite cl = new Composite(cMandant, SWT.NONE);
 		cl.setLayout(new GridLayout());
-		new Label(cl,SWT.NONE).setText("Bereich in Elexis"); //$NON-NLS-1$
-		cbBereich=new Combo(cl,SWT.SINGLE|SWT.READ_ONLY);
+		new Label(cl, SWT.NONE).setText("Bereich in Elexis"); //$NON-NLS-1$
+		cbBereich = new Combo(cl, SWT.SINGLE | SWT.READ_ONLY);
 		cbBereich.setItems(Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, "Praxis").split(",")); //$NON-NLS-1$ //$NON-NLS-2$
-		dest_bereich=cbBereich.getItem(0);
-		cbBereich.addSelectionListener(new SelectionAdapter(){
+		dest_bereich = cbBereich.getItem(0);
+		cbBereich.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				map.put(dest_bereich, tMandant.getText());
-				dest_bereich=cbBereich.getText();
-				orig_mandant=map.get(dest_bereich);
-				tMandant.setText(orig_mandant==null ? "" : orig_mandant); //$NON-NLS-1$
+				dest_bereich = cbBereich.getText();
+				orig_mandant = map.get(dest_bereich);
+				tMandant.setText(orig_mandant == null ? "" : orig_mandant); //$NON-NLS-1$
 			}
 			
 		});
 		cbBereich.select(0);
-		orig_mandant=map.get(dest_bereich);
-		if(orig_mandant==null){
-			orig_mandant=""; //$NON-NLS-1$
+		orig_mandant = map.get(dest_bereich);
+		if (orig_mandant == null) {
+			orig_mandant = ""; //$NON-NLS-1$
 		}
-		new Label(cMandant,SWT.NONE).setText("Entspricht"); //$NON-NLS-1$
-		Composite cr=new Composite(cMandant,SWT.NONE);
+		new Label(cMandant, SWT.NONE).setText("Entspricht"); //$NON-NLS-1$
+		Composite cr = new Composite(cMandant, SWT.NONE);
 		cr.setLayout(new GridLayout());
-		new Label(cr,SWT.NONE).setText("Name in Agenda"); //$NON-NLS-1$
-		tMandant=new Text(cr,SWT.BORDER);
+		new Label(cr, SWT.NONE).setText("Name in Agenda"); //$NON-NLS-1$
+		tMandant = new Text(cr, SWT.BORDER);
 		tMandant.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tMandant.setText(orig_mandant);
-		bDoDelete=new Button(ret,SWT.CHECK);
+		bDoDelete = new Button(ret, SWT.CHECK);
 		bDoDelete.setText("Agenda-Daten löschen und neu anlegen"); //$NON-NLS-1$
-		bSyncEnable=new Button(ret,SWT.CHECK);
+		bSyncEnable = new Button(ret, SWT.CHECK);
 		bSyncEnable.setText("Kontinuierlich synchronisieren"); //$NON-NLS-1$
 		bSyncEnable.setSelection(Hub.globalCfg.get(PreferenceConstants.AG_SYNC_ENABLED, false));
 		return ret;
 	}
-
-
+	
 }

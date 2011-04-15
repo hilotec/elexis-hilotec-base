@@ -30,23 +30,21 @@ import ch.rgw.tools.Tree;
 public class GlobalEventDispatcher implements IPartListener2 {
 	private static GlobalEventDispatcher theInstance;
 	private final HashMap<IWorkbenchPart, LinkedList<IActivationListener>> activationListeners;
-	private final GlobalListener globalListener=new GlobalListener();
-
+	private final GlobalListener globalListener = new GlobalListener();
 	
-	private GlobalEventDispatcher() {
+	private GlobalEventDispatcher(){
 		activationListeners = new HashMap<IWorkbenchPart, LinkedList<IActivationListener>>();
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService()
-				.addPartListener(this);
-
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getPartService().addPartListener(this);
+		
 	}
-
-	public static GlobalEventDispatcher getInstance() {
+	
+	public static GlobalEventDispatcher getInstance(){
 		if (theInstance == null) {
 			theInstance = new GlobalEventDispatcher();
 		}
 		return theInstance;
 	}
-
+	
 	/**
 	 * Einen Standardlistener holen, der ISelectionEvents von StructuredViewers der Workbench holt
 	 * und an GlobalEvents weiterleitet.
@@ -58,17 +56,15 @@ public class GlobalEventDispatcher implements IPartListener2 {
 	}
 	
 	/**
-	 * Add a listener that will be informed as a View gets activated or
-	 * deactivated, and becomes visible or invisible.
+	 * Add a listener that will be informed as a View gets activated or deactivated, and becomes
+	 * visible or invisible.
 	 * 
 	 * @param l
-	 *            the Activationlistener. If a listener is added twice, it will
-	 *            be called twice.
+	 *            the Activationlistener. If a listener is added twice, it will be called twice.
 	 * @param part
 	 *            The workbench part to observe
 	 */
-	public static void addActivationListener(final IActivationListener l,
-			final IWorkbenchPart part) {
+	public static void addActivationListener(final IActivationListener l, final IWorkbenchPart part){
 		LinkedList<IActivationListener> list = getInstance().activationListeners.get(part);
 		if (list == null) {
 			list = new LinkedList<IActivationListener>();
@@ -76,95 +72,90 @@ public class GlobalEventDispatcher implements IPartListener2 {
 		}
 		list.add(l);
 	}
-
+	
 	/**
-	 * Remove an activationlistener. If the same listener has been added more
-	 * than once, only one call will be removed.
+	 * Remove an activationlistener. If the same listener has been added more than once, only one
+	 * call will be removed.
 	 * 
 	 * @param l
-	 *            The listener to remove. If no such listener was added, nothing
-	 *            happens
+	 *            The listener to remove. If no such listener was added, nothing happens
 	 * @param part
-	 *            the worbench part this listener was attached to. If no such
-	 *            par exists, nothing happens
+	 *            the worbench part this listener was attached to. If no such par exists, nothing
+	 *            happens
 	 */
 	public static void removeActivationListener(final IActivationListener l,
-			final IWorkbenchPart part) {
+		final IWorkbenchPart part){
 		LinkedList<IActivationListener> list = getInstance().activationListeners.get(part);
 		if (list != null) {
 			list.remove(l);
 		}
 	}
-
-	public void partActivated(final IWorkbenchPartReference partRef) {
-		LinkedList<IActivationListener> list = activationListeners.get(partRef
-				.getPart(false));
+	
+	public void partActivated(final IWorkbenchPartReference partRef){
+		LinkedList<IActivationListener> list = activationListeners.get(partRef.getPart(false));
 		if (list != null) {
 			for (IActivationListener l : list) {
 				l.activation(true);
 			}
 		}
 	}
-
-	public void partBroughtToTop(final IWorkbenchPartReference partRef) {
-		// partActivated(partRef);
-
+	
+	public void partBroughtToTop(final IWorkbenchPartReference partRef){
+	// partActivated(partRef);
+	
 	}
-
-	public void partClosed(final IWorkbenchPartReference partRef) {
-		// TODO Auto-generated method stub
-
+	
+	public void partClosed(final IWorkbenchPartReference partRef){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void partDeactivated(final IWorkbenchPartReference partRef) {
-		LinkedList<IActivationListener> list = activationListeners.get(partRef
-				.getPart(false));
+	
+	public void partDeactivated(final IWorkbenchPartReference partRef){
+		LinkedList<IActivationListener> list = activationListeners.get(partRef.getPart(false));
 		if (list != null) {
 			for (IActivationListener l : list) {
 				l.activation(false);
 			}
 		}
-
+		
 	}
-
-	public void partOpened(final IWorkbenchPartReference partRef) {
-		// TODO Auto-generated method stub
-
+	
+	public void partOpened(final IWorkbenchPartReference partRef){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void partHidden(final IWorkbenchPartReference partRef) {
-		LinkedList<IActivationListener> list = activationListeners.get(partRef
-				.getPart(false));
+	
+	public void partHidden(final IWorkbenchPartReference partRef){
+		LinkedList<IActivationListener> list = activationListeners.get(partRef.getPart(false));
 		if (list != null) {
 			for (IActivationListener l : list) {
 				l.visible(false);
 			}
 		}
-
+		
 	}
-
-	public void partVisible(final IWorkbenchPartReference partRef) {
-		LinkedList<IActivationListener> list = activationListeners.get(partRef
-				.getPart(false));
+	
+	public void partVisible(final IWorkbenchPartReference partRef){
+		LinkedList<IActivationListener> list = activationListeners.get(partRef.getPart(false));
 		if (list != null) {
 			for (IActivationListener l : list) {
 				l.visible(true);
 			}
 		}
-
+		
 	}
-
-	public void partInputChanged(final IWorkbenchPartReference partRef) {
-		// TODO Auto-generated method stub
-
+	
+	public void partInputChanged(final IWorkbenchPartReference partRef){
+	// TODO Auto-generated method stub
+	
 	};
-
+	
 	public interface IActivationListener {
 		public void activation(boolean mode);
-
+		
 		public void visible(boolean mode);
 	}
-
+	
 	private static class GlobalListener implements ISelectionChangedListener {
 		boolean daempfung;
 		
@@ -182,8 +173,7 @@ public class GlobalEventDispatcher implements IPartListener2 {
 				} else if (obj[0] instanceof Tree) {
 					Tree t = (Tree) obj[0];
 					if (t.contents instanceof PersistentObject) {
-						ElexisEventDispatcher
-						.fireSelectionEvent((PersistentObject) t.contents);
+						ElexisEventDispatcher.fireSelectionEvent((PersistentObject) t.contents);
 					}
 				}
 			}
@@ -192,5 +182,4 @@ public class GlobalEventDispatcher implements IPartListener2 {
 		
 	}
 	
-
 }

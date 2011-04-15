@@ -35,86 +35,90 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 
 /**
- * Hier kann der Anwender Einstellungen (Preferences) für das Befunde-Plugin vornehmen.
- * Diese Einstellungsseite wird bei den gemeinsamen Einstellungen (Datei-Einstellungen) eingebaut.
- * Jedes Plugin kann keine bis beliebig viele Einstellungsseiten unter keiner bis beliebig vielen
+ * Hier kann der Anwender Einstellungen (Preferences) für das Befunde-Plugin vornehmen. Diese
+ * Einstellungsseite wird bei den gemeinsamen Einstellungen (Datei-Einstellungen) eingebaut. Jedes
+ * Plugin kann keine bis beliebig viele Einstellungsseiten unter keiner bis beliebig vielen
  * Unterkategorien erstellen.
+ * 
  * @author Gerry
  * 
- * Here can the user define some Preferences for the "Befunde-Plugin" (Findings)
- * This adjustment page will be added to the general adjustments (Datei-Einstellung i.e. "Data-Adjustements").
- * Each plugin is able to have, or not, as many as wanted adjustment pages with none or as many as desired subcategories
- *
+ *         Here can the user define some Preferences for the "Befunde-Plugin" (Findings) This
+ *         adjustment page will be added to the general adjustments (Datei-Einstellung i.e.
+ *         "Data-Adjustements"). Each plugin is able to have, or not, as many as wanted adjustment
+ *         pages with none or as many as desired subcategories
+ * 
  */
-public class BefundePrefs extends PreferencePage implements
-		IWorkbenchPreferencePage {
+public class BefundePrefs extends PreferencePage implements IWorkbenchPreferencePage {
 	
-	Hashtable<String,String> fields;
-	//Combo cbNames;
-	//Text vals;
-	//String sel;
+	Hashtable<String, String> fields;
+	// Combo cbNames;
+	// Text vals;
+	// String sel;
 	Messwert setup;
 	String names;
 	CTabFolder ctabs;
 	int lastIDX;
 	
-	public BefundePrefs() {
+	public BefundePrefs(){
 		super("Befunde"); //$NON-NLS-1$
 	}
-
+	
 	/**
-	 * Diese Methode erledigt den eigentlichen Aufbau der Seite.
-	 * Here we create the contents of the preference page
-	 */	
-	@SuppressWarnings("unchecked") 
+	 * Diese Methode erledigt den eigentlichen Aufbau der Seite. Here we create the contents of the
+	 * preference page
+	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	protected Control createContents(final Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
+	protected Control createContents(final Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
-		ctabs =new CTabFolder(ret,SWT.NONE);
+		ctabs = new CTabFolder(ret, SWT.NONE);
 		ctabs.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ctabs.setLayout(new FillLayout());
-		setup=Messwert.getSetup();
-		fields=setup.getHashtable("Befunde"); //$NON-NLS-1$
-		names=fields.get("names"); //$NON-NLS-1$
-		if(!StringTool.isNothing(names)){
-			for(String f:names.split(Messwert.SETUP_SEPARATOR)){
-				CTabItem ci=new CTabItem(ctabs,SWT.NONE);
+		setup = Messwert.getSetup();
+		fields = setup.getHashtable("Befunde"); //$NON-NLS-1$
+		names = fields.get("names"); //$NON-NLS-1$
+		if (!StringTool.isNothing(names)) {
+			for (String f : names.split(Messwert.SETUP_SEPARATOR)) {
+				CTabItem ci = new CTabItem(ctabs, SWT.NONE);
 				ci.setText(f);
-				PrefsPage fp=new PrefsPage(ctabs,fields,f);
+				PrefsPage fp = new PrefsPage(ctabs, fields, f);
 				ci.setControl(fp);
 			}
 		}
 		ctabs.setSelection(0);
-		lastIDX=0;
-		ctabs.addSelectionListener(new SelectionAdapter(){
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				if(lastIDX!=-1){
-					flush(lastIDX);
-					lastIDX=ctabs.getSelectionIndex();
-				}
-			}});
-		
-
-		Composite cButtons=new Composite(ret,SWT.NONE);
-		cButtons.setLayout(new FillLayout());
-		Button bAdd=new Button(cButtons,SWT.PUSH);
-		bAdd.addSelectionListener(new SelectionAdapter(){
+		lastIDX = 0;
+		ctabs.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e){
-				InputDialog id=new InputDialog(getShell(),Messages.getString("BefundePrefs.enterNameCaption"),Messages.getString("BefundePrefs.enterNameMessage"),"",null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				if(id.open()==Dialog.OK){
-					String name=id.getValue();
-					if(StringTool.isNothing(names)){
-						names=name;
-					}else{
-						names+=Messwert.SETUP_SEPARATOR+name;
+				if (lastIDX != -1) {
+					flush(lastIDX);
+					lastIDX = ctabs.getSelectionIndex();
+				}
+			}
+		});
+		
+		Composite cButtons = new Composite(ret, SWT.NONE);
+		cButtons.setLayout(new FillLayout());
+		Button bAdd = new Button(cButtons, SWT.PUSH);
+		bAdd.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e){
+				InputDialog id =
+					new InputDialog(
+						getShell(),
+						Messages.getString("BefundePrefs.enterNameCaption"), Messages.getString("BefundePrefs.enterNameMessage"), "", null); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				if (id.open() == Dialog.OK) {
+					String name = id.getValue();
+					if (StringTool.isNothing(names)) {
+						names = name;
+					} else {
+						names += Messwert.SETUP_SEPARATOR + name;
 					}
 					fields.put("names", names); //$NON-NLS-1$
-					CTabItem ci=new CTabItem(ctabs,SWT.NONE);
+					CTabItem ci = new CTabItem(ctabs, SWT.NONE);
 					ci.setText(name);
-					PrefsPage fp=new PrefsPage(ctabs,fields,name);
+					PrefsPage fp = new PrefsPage(ctabs, fields, name);
 					ci.setControl(fp);
 					ctabs.setSelection(ci);
 				}
@@ -122,76 +126,75 @@ public class BefundePrefs extends PreferencePage implements
 			
 		});
 		bAdd.setText(Messages.getString("BefundePrefs.add")); //$NON-NLS-1$
-
-		Button bRemove=new Button(cButtons,SWT.PUSH);
-		bRemove.addSelectionListener(new SelectionAdapter(){
-
+		
+		Button bRemove = new Button(cButtons, SWT.PUSH);
+		bRemove.addSelectionListener(new SelectionAdapter() {
+			
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				CTabItem ci=ctabs.getSelection();
-				if(ci!=null){
-					PrefsPage pp=(PrefsPage)ci.getControl();
-					if(pp.remove()){
-						names=names.replaceFirst(ci.getText(), ""); //$NON-NLS-1$
-						names=names.replaceAll(Messwert.SETUP_SEPARATOR+Messwert.SETUP_SEPARATOR, Messwert.SETUP_SEPARATOR);
-						names.replaceFirst(Messwert.SETUP_SEPARATOR+"$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-						names=names.replaceFirst("^"+Messwert.SETUP_SEPARATOR, ""); //$NON-NLS-1$ //$NON-NLS-2$
+			public void widgetSelected(final SelectionEvent e){
+				CTabItem ci = ctabs.getSelection();
+				if (ci != null) {
+					PrefsPage pp = (PrefsPage) ci.getControl();
+					if (pp.remove()) {
+						names = names.replaceFirst(ci.getText(), ""); //$NON-NLS-1$
+						names =
+							names.replaceAll(Messwert.SETUP_SEPARATOR + Messwert.SETUP_SEPARATOR,
+								Messwert.SETUP_SEPARATOR);
+						names.replaceFirst(Messwert.SETUP_SEPARATOR + "$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+						names = names.replaceFirst("^" + Messwert.SETUP_SEPARATOR, ""); //$NON-NLS-1$ //$NON-NLS-2$
 						fields.put("names", names); //$NON-NLS-1$
-						lastIDX=-1;
+						lastIDX = -1;
 						ci.dispose();
 						ctabs.setSelection(0);
 					}
 				}
-			}});
+			}
+		});
 		bRemove.setText(Messages.getString("BefundePrefs.deleteText")); //$NON-NLS-1$
-		if(!Hub.acl.request(ACLContributor.DELETE_PARAM)){
+		if (!Hub.acl.request(ACLContributor.DELETE_PARAM)) {
 			bRemove.setEnabled(false);
 		}
 		return ret;
 	}
-
+	
 	/**
-	 * Hier könnte man Dinge erledigen, die noch vor createContents gemacht
-	 * werden müssen.
+	 * Hier könnte man Dinge erledigen, die noch vor createContents gemacht werden müssen.
 	 * 
 	 * Here we are able to solve things that needs to be made before createContents
 	 */
-	public void init(final IWorkbench workbench) {
-		// TODO Auto-generated method stub
-
+	public void init(final IWorkbench workbench){
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 	private void flush(final int idx){
-		CTabItem it=ctabs.getItem(idx);
-		PrefsPage pp=(PrefsPage)it.getControl();
+		CTabItem it = ctabs.getItem(idx);
+		PrefsPage pp = (PrefsPage) it.getControl();
 		pp.flush();
 	}
-
 	
 	@Override
-	protected void performApply() {
+	protected void performApply(){
 		performOk();
-		int idx=ctabs.getSelectionIndex();
-		CTabItem it=ctabs.getItem(idx);
-		PrefsPage pp=(PrefsPage)it.getControl();
+		int idx = ctabs.getSelectionIndex();
+		CTabItem it = ctabs.getItem(idx);
+		PrefsPage pp = (PrefsPage) it.getControl();
 		pp.load();
 	}
-
+	
 	/**
-	 * Dies wird ausgeführt, wenn der Anwender auf den "Apply"- bzw,
-	 * "Übernehmen" - Knopf klickt.
+	 * Dies wird ausgeführt, wenn der Anwender auf den "Apply"- bzw, "Übernehmen" - Knopf klickt.
 	 * 
 	 * This will be executed when the user clicks on the "Apply" or OKButton
 	 */
 	@Override
-	public boolean performOk() {
-		int idx=ctabs.getSelectionIndex();
-		if(idx!=-1){
+	public boolean performOk(){
+		int idx = ctabs.getSelectionIndex();
+		if (idx != -1) {
 			flush(idx);
 		}
-		setup.setHashtable("Befunde",fields); //$NON-NLS-1$
+		setup.setHashtable("Befunde", fields); //$NON-NLS-1$
 		return super.performOk();
 	}
 	
-
 }

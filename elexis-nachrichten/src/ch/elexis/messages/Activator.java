@@ -8,55 +8,56 @@ import ch.elexis.Hub;
 /**
  * The activator class controls the plug-in life cycle
  */
-public class Activator extends AbstractUIPlugin implements org.eclipse.ui.IStartup{
+public class Activator extends AbstractUIPlugin implements org.eclipse.ui.IStartup {
 	MsgHeartListener heartListener;
 	
 	// The plug-in ID
 	public static final String PLUGIN_ID = "ch.elexis.messages"; //$NON-NLS-1$
-
+	
 	// The shared instance
 	private static Activator plugin;
 	
 	/**
 	 * The constructor
 	 */
-	public Activator() {
-	}
-
+	public Activator(){}
+	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
 	 */
 	@Override
-	public void start(final BundleContext context) throws Exception {
+	public void start(final BundleContext context) throws Exception{
 		super.start(context);
-		heartListener=new MsgHeartListener();
+		heartListener = new MsgHeartListener();
 		Hub.heart.addListener(heartListener);
 		plugin = this;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#stop(org.osgi.framework.BundleContext)
 	 */
 	@Override
-	public void stop(final BundleContext context) throws Exception {
+	public void stop(final BundleContext context) throws Exception{
 		plugin = null;
 		Hub.heart.removeListener(heartListener);
 		super.stop(context);
 	}
-
+	
 	/**
 	 * Returns the shared instance
-	 *
+	 * 
 	 * @return the shared instance
 	 */
-	public static Activator getDefault() {
+	public static Activator getDefault(){
 		return plugin;
 	}
-
-	public void earlyStartup() {
 	
-	}
+	public void earlyStartup(){
 
+	}
+	
 }

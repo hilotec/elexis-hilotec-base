@@ -30,45 +30,44 @@ import ch.elexis.util.SWTHelper;
  */
 public class MesswertTypNum extends MesswertBase implements IMesswertTyp {
 	double defVal = 0.0;
-
-	public MesswertTypNum(String n, String t, String u) {
+	
+	public MesswertTypNum(String n, String t, String u){
 		super(n, t, u);
 	}
-
-	public String erstelleDarstellungswert(Messwert messwert) {
+	
+	public String erstelleDarstellungswert(Messwert messwert){
 		return messwert.getWert();
 	}
-
-	public String getDefault() {
+	
+	public String getDefault(){
 		return Double.toString(defVal);
 	}
-
-	public void setDefault(String str) {
+	
+	public void setDefault(String str){
 		defVal = Double.parseDouble(str);
 	}
-
-	public Widget createWidget(Composite parent, Messwert messwert) {
+	
+	public Widget createWidget(Composite parent, Messwert messwert){
 		Text text = SWTHelper.createText(parent, 1, SWT.NONE);
 		text.setText(messwert.getWert());
 		return text;
 	}
-
-	public void saveInput(Widget widget, Messwert messwert) {
+	
+	public void saveInput(Widget widget, Messwert messwert){
 		Text text = (Text) widget;
 		messwert.setWert(text.getText());
 	}
-
+	
 	@Override
-	public ActiveControl createControl(Composite parent, Messwert messwert,
-			boolean bEditable) {
+	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable){
 		int flags = 0;
 		if (!bEditable) {
 			flags |= TextField.READONLY;
 		}
 		IMesswertTyp dft = messwert.getTyp();
 		String labelText = dft.getTitle();
-		if(labelText.length()==0){
-			flags|=TextField.HIDE_LABEL;
+		if (labelText.length() == 0) {
+			flags |= TextField.HIDE_LABEL;
 		}
 		TextField tf = new TextField(parent, flags, labelText);
 		tf.setText(messwert.getDarstellungswert());

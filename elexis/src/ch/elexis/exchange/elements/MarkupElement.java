@@ -30,7 +30,6 @@ public class MarkupElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	
 	public MarkupElement asExporter(XChangeExporter home, XRef xref){
 		asExporter(home);
 		setAttribute(ATTR_POS, Integer.toString(xref.getPos()));

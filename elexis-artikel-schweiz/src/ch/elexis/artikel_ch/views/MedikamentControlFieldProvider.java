@@ -90,8 +90,8 @@ public class MedikamentControlFieldProvider extends DefaultControlFieldProvider 
 				ScannerEvents.beep();
 			}
 			for (Medikament medikament : medikamentList) {
-				Konsultation kons = (Konsultation) ElexisEventDispatcher
-						.getSelected(Konsultation.class);
+				Konsultation kons =
+					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 				if (kons != null) {
 					detailView.addToVerechnung(medikament);
 				} else {

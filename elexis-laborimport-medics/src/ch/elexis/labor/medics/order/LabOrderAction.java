@@ -64,7 +64,8 @@ public class LabOrderAction extends Action {
 		String plan = ""; //$NON-NLS-1$
 		// Patient und Kostentraeger bestimmen
 		if (patient == null) {
-			MessageDialog.openError(new Shell(), Messages.LabOrderAction_errorTitleNoPatientSelected,
+			MessageDialog.openError(new Shell(),
+				Messages.LabOrderAction_errorTitleNoPatientSelected,
 				Messages.LabOrderAction_errorMessageNoPatientSelected);
 		} else {
 			Fall fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
@@ -86,7 +87,8 @@ public class LabOrderAction extends Action {
 				}
 			}
 			if (fall == null) {
-				MessageDialog.openError(new Shell(), Messages.LabOrderAction_errorTitleNoFallSelected,
+				MessageDialog.openError(new Shell(),
+					Messages.LabOrderAction_errorTitleNoFallSelected,
 					Messages.LabOrderAction_errorMessageNoFallSelected);
 			} else {
 				kostentraeger = fall.getRequiredContact("Kostenträger"); //$NON-NLS-1$
@@ -128,9 +130,10 @@ public class LabOrderAction extends Action {
 			if (orderNr >= 0) {
 				orderNrText = new Long(orderNr).toString();
 			}
-			MessageDialog.openInformation(Hub.getActiveShell(), Messages.LabOrderAction_infoTitleLabOrderFinshed,
-				MessageFormat.format(Messages.LabOrderAction_infoMessageLabOrderFinshed,
-					orderNrText, patLabel, filenamePath));
+			MessageDialog.openInformation(Hub.getActiveShell(),
+				Messages.LabOrderAction_infoTitleLabOrderFinshed, MessageFormat.format(
+					Messages.LabOrderAction_infoMessageLabOrderFinshed, orderNrText, patLabel,
+					filenamePath));
 		}
 	}
 	
@@ -163,11 +166,11 @@ public class LabOrderAction extends Action {
 		if (nummer == null) {
 			// Zweiter Algorithmus (von Tony)
 			nummer = fall.getInfoString(TarmedRequirements.CASE_NUMBER);
-			if ("".equals(nummer)){ //$NON-NLS-1$
-				nummer=fall.getInfoString(TarmedRequirements.ACCIDENT_NUMBER);
+			if ("".equals(nummer)) { //$NON-NLS-1$
+				nummer = fall.getInfoString(TarmedRequirements.ACCIDENT_NUMBER);
 			}
-			if ("".equals(nummer)){ //$NON-NLS-1$
-				nummer=fall.getInfoString(TarmedRequirements.INSURANCE_NUMBER);
+			if ("".equals(nummer)) { //$NON-NLS-1$
+				nummer = fall.getInfoString(TarmedRequirements.INSURANCE_NUMBER);
 			}
 		}
 		
@@ -182,7 +185,9 @@ public class LabOrderAction extends Action {
 	private String writeHL7File(final Patient patient, final Kontakt rechnungsempfaenger,
 		final Kontakt kostentraeger, final String plan, final Date beginDate, final String vnr,
 		final long orderNr){
-		HL7ParserV26 hl7Parser = new HL7ParserV26(Messages.LabOrderAction_receivingApplication, Messages.LabOrderAction_receivingFacility);
+		HL7ParserV26 hl7Parser =
+			new HL7ParserV26(Messages.LabOrderAction_receivingApplication,
+				Messages.LabOrderAction_receivingFacility);
 		try {
 			String encodedMessage =
 				hl7Parser.createOML_O21(patient, rechnungsempfaenger, kostentraeger, plan,
@@ -197,9 +202,9 @@ public class LabOrderAction extends Action {
 			
 			return hl7File.getPath();
 		} catch (Exception e) {
-			SWTHelper.showError(
-				MessageFormat.format(Messages.LabOrderAction_errorTitleCannotCreateHL7,
-					hl7Parser.getVersion()), e.getMessage());
+			SWTHelper.showError(MessageFormat.format(
+				Messages.LabOrderAction_errorTitleCannotCreateHL7, hl7Parser.getVersion()), e
+				.getMessage());
 		}
 		return null;
 	}
@@ -209,7 +214,7 @@ public class LabOrderAction extends Action {
 	 * 
 	 * @return
 	 */
-	private long getNextOrderNr(final Patient patient) throws NumberFormatException{		
+	private long getNextOrderNr(final Patient patient) throws NumberFormatException{
 		// Next order number
 		long nextOrderNr = 0;
 		JdbcLink connection = PersistentObject.getConnection();
@@ -242,8 +247,8 @@ public class LabOrderAction extends Action {
 		try {
 			URL url = MedicsPreferencePage.getIMedUrl();
 			if (!MedicsPreferencePage.showExtern()) {
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-					.showView(MedicsBrowserView.ID);
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(
+					MedicsBrowserView.ID);
 			} else {
 				IWorkbenchBrowserSupport browserSupport =
 					PlatformUI.getWorkbench().getBrowserSupport();

@@ -15,6 +15,7 @@ package com.hilotec.elexis.messwerte.data;
 
 /**
  * Abstrakte Basisklasse fuer die einzelnen Messwerttypen
+ * 
  * @author Antoine Kaufmann
  */
 public abstract class MesswertBase {
@@ -22,21 +23,21 @@ public abstract class MesswertBase {
 	private String title;
 	private String unit;
 	
-	public MesswertBase(String n, String t, String u) {
+	public MesswertBase(String n, String t, String u){
 		name = n;
 		title = t;
 		unit = u;
 	}
 	
-	public String getName() {
+	public String getName(){
 		return name;
 	}
 	
-	public String getTitle() {
+	public String getTitle(){
 		return title;
 	}
 	
-	public String getUnit() {
+	public String getUnit(){
 		return unit;
 	}
 }

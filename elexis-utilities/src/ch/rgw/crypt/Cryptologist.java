@@ -30,7 +30,8 @@ public interface Cryptologist {
 	 */
 	public byte[] encrypt(byte[] source, String receiverKeyName);
 	
-	public void encrypt(InputStream source, OutputStream dest, String receiverKeyName) throws CryptologistException;
+	public void encrypt(InputStream source, OutputStream dest, String receiverKeyName)
+		throws CryptologistException;
 	
 	/**
 	 * Sign a byte array (create and sign a MAC)
@@ -49,9 +50,13 @@ public interface Cryptologist {
 	 * @return the plain array or null of decryption failed
 	 */
 	public Result<byte[]> decrypt(byte[] encrypted);
+	
 	public void decrypt(InputStream source, OutputStream dest) throws CryptologistException;
 	
-	public enum VERIFY_RESULT{OK,SIGNER_UNKNOWN,BAD_SIGNATURE,INTERNAL_ERROR}
+	public enum VERIFY_RESULT {
+		OK, SIGNER_UNKNOWN, BAD_SIGNATURE, INTERNAL_ERROR
+	}
+	
 	/**
 	 * Verify a MAC
 	 * 
@@ -86,6 +91,5 @@ public interface Cryptologist {
 	
 	public boolean isFunctional();
 	
-	public byte[] getCertificateEncoded(String alias)
-	throws CryptologistException;
+	public byte[] getCertificateEncoded(String alias) throws CryptologistException;
 }

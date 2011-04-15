@@ -11,21 +11,21 @@ public class ResourceManager {
 	
 	private static ResourceManager instance;
 	
-	private ResourceManager() {
-		
+	private ResourceManager(){
+
 	}
 	
-	public static ResourceManager getInstance() {
-		if(instance == null)
+	public static ResourceManager getInstance(){
+		if (instance == null)
 			return new ResourceManager();
 		return instance;
 	}
 	
-	public URI getResourceURIByName(String name) {
+	public URI getResourceURIByName(String name){
 		try {
 			// try to load the resource directly
 			URL url = getClass().getResource(name);
-			if(url == null) {
+			if (url == null) {
 				// we are probably in a test fragment respective bundle
 				url = getClass().getResource("/rsc/" + name);
 				url = FileLocator.toFileURL(url);
@@ -41,9 +41,9 @@ public class ResourceManager {
 		}
 	}
 	
-	public String getResourceLocationByName(String name) {
+	public String getResourceLocationByName(String name){
 		URI resourceURI = getResourceURIByName(name);
-		if(resourceURI == null)
+		if (resourceURI == null)
 			return null;
 		// remove file:/ header from string
 		String uri = resourceURI.toString();

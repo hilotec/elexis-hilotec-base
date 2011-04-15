@@ -25,36 +25,36 @@ public class ComboField extends ActiveControl {
 	
 	public ComboField(Composite parent, int displayBits, String displayName, String... values){
 		super(parent, displayBits, displayName);
-		int swtflag=SWT.READ_ONLY|SWT.SINGLE;
-		if(isReadonly()){
-			swtflag|=SWT.READ_ONLY;
+		int swtflag = SWT.READ_ONLY | SWT.SINGLE;
+		if (isReadonly()) {
+			swtflag |= SWT.READ_ONLY;
 		}
-		combo=new Combo(parent,swtflag);
+		combo = new Combo(parent, swtflag);
 		combo.setItems(values);
 		combo.addSelectionListener(new SelectionAdapter() {
-
+			
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				textContents=combo.getText();
+			public void widgetSelected(SelectionEvent e){
+				textContents = combo.getText();
 			}
 			
 		});
 		setControl(combo);
 	}
-
+	
 	@Override
 	public boolean isValid(){
-		int idx=combo.getSelectionIndex();
-		return idx!=-1;
+		int idx = combo.getSelectionIndex();
+		return idx != -1;
 	}
-
+	
 	@Override
 	public void push(){
-		Desk.syncExec(new Runnable(){
+		Desk.syncExec(new Runnable() {
 			public void run(){
 				combo.setText(textContents);
 			}
 		});
 	}
-
+	
 }

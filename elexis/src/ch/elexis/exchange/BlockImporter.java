@@ -29,8 +29,8 @@ public class BlockImporter extends XChangeImporter {
 	public Result<?> finalizeImport(){
 		if (getContainer().getRoot() != null) {
 			ServiceBlocksElement eBlocks = new ServiceBlocksElement();
-			eBlocks.asImporter(this, getContainer().getRoot().getChild(ServiceBlockElement.ENCLOSING,
-				XChangeContainer.ns));
+			eBlocks.asImporter(this, getContainer().getRoot().getChild(
+				ServiceBlockElement.ENCLOSING, XChangeContainer.ns));
 			if (eBlocks != null) {
 				List<ServiceBlockElement> lBlocks =
 					(List<ServiceBlockElement>) eBlocks.getChildren(ServiceBlockElement.XMLNAME,

@@ -29,13 +29,12 @@ import ch.elexis.views.codesystems.CodeSelectorFactory;
 public class MedikamentSelector2 extends CodeSelectorFactory {
 	SelectorPanelProvider slp;
 	public static final String SELECT_NAME = "Name";
-	//public static final String SELECT_SUBSTANCE = "Substanz";
-	//public static final String SELECT_NOTE = "Notiz";
-	FieldDescriptor<?>[] fields =
-		{
-			new FieldDescriptor<Medikament>(SELECT_NAME),
-			//new FieldDescriptor<Medikament>(SELECT_SUBSTANCE),
-			//new FieldDescriptor<Medikament>(SELECT_NOTE),
+	// public static final String SELECT_SUBSTANCE = "Substanz";
+	// public static final String SELECT_NOTE = "Notiz";
+	FieldDescriptor<?>[] fields = {
+		new FieldDescriptor<Medikament>(SELECT_NAME),
+	// new FieldDescriptor<Medikament>(SELECT_SUBSTANCE),
+		// new FieldDescriptor<Medikament>(SELECT_NOTE),
 		};
 	private CommonViewer cv;
 	

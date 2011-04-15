@@ -72,15 +72,15 @@ public class BBSView extends ViewPart implements ISelectionChangedListener, ISav
 		SashForm sash = new SashForm(parent, SWT.NONE);
 		qbe = new Query<BBSEntry>(BBSEntry.class);
 		loader = new LazyTreeLoader<BBSEntry>("BBS", qbe, "reference", new String[] { //$NON-NLS-1$ //$NON-NLS-2$
-			"datum", "time", "Thema" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		});
+				"datum", "time", "Thema" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			});
 		headlines = new CommonViewer();
 		vc =
 			new ViewerConfigurer(new TreeContentProvider(headlines, loader),
 				new ViewerConfigurer.TreeLabelProvider(), new DefaultControlFieldProvider(
 					headlines, new String[] {
 						"Thema" //$NON-NLS-1$
-					}), new NewThread(), new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE,
+				}), new NewThread(), new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE,
 					SWT.NONE, null));
 		headlines.create(vc, sash, SWT.NONE, getViewSite());
 		
@@ -102,7 +102,8 @@ public class BBSView extends ViewPart implements ISelectionChangedListener, ISav
 		input = tk.createText(form.getBody(), "", SWT.WRAP | SWT.MULTI | SWT.BORDER); //$NON-NLS-1$
 		gd = new GridData(GridData.FILL_HORIZONTAL | GridData.FILL_VERTICAL);
 		input.setLayoutData(gd);
-		Button send = tk.createButton(form.getBody(), Messages.getString("BBSView.DoSend"), SWT.PUSH); //$NON-NLS-1$
+		Button send =
+			tk.createButton(form.getBody(), Messages.getString("BBSView.DoSend"), SWT.PUSH); //$NON-NLS-1$
 		send.addSelectionListener(new SelectionAdapter() {
 			@SuppressWarnings("unchecked")
 			@Override
@@ -154,14 +155,18 @@ public class BBSView extends ViewPart implements ISelectionChangedListener, ISav
 		BBSEntry en = ((Tree<BBSEntry>) sel[0]).contents;
 		form.setText(en.getTopic());
 		StringBuilder sb = new StringBuilder();
-		sb.append(en.getAuthor().getLabel()).append(Messages.getString("BBSView.15")).append(en.getDate()).append( //$NON-NLS-1$
-			Messages.getString("BBSView.16")).append(en.getTime()).append(Messages.getString("BBSView.17")); //$NON-NLS-1$ //$NON-NLS-2$
+		sb
+			.append(en.getAuthor().getLabel())
+			.append(Messages.getString("BBSView.15")).append(en.getDate()).append( //$NON-NLS-1$
+				Messages.getString("BBSView.16")).append(en.getTime()).append(Messages.getString("BBSView.17")); //$NON-NLS-1$ //$NON-NLS-2$
 		origin.setText(sb.toString());
-		try{
-			msg.setText(Messages.getString("BBSView.18") + en.getText() + Messages.getString("BBSView.19"), true, true); //$NON-NLS-1$ //$NON-NLS-2$
-		}catch(Exception ex){
+		try {
+			msg
+				.setText(
+					Messages.getString("BBSView.18") + en.getText() + Messages.getString("BBSView.19"), true, true); //$NON-NLS-1$ //$NON-NLS-2$
+		} catch (Exception ex) {
 			ExHandler.handle(ex);
-
+			
 		}
 		input.setText(Messages.getString("BBSView.20")); //$NON-NLS-1$
 	}

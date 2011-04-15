@@ -15,38 +15,36 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Composite;
 
-
 /**
  * @author bogdan314
  */
 public class EStyledText extends StyledText implements FocusListener {
-
+	
 	protected ElexisEditor editor;
 	
-	public EStyledText(Composite parent, ElexisEditor editor, int style) {
+	public EStyledText(Composite parent, ElexisEditor editor, int style){
 		super(parent, style);
 		this.editor = editor;
 		addFocusListener(this);
 	}
-
-	public void cut() {
+	
+	public void cut(){
 		editor.handleCutCopy(this);
 		super.cut();
 	}
-
-	public void copy() {
+	
+	public void copy(){
 		editor.handleCutCopy(this);
 		super.copy();
 	}
-
-	public void focusGained(FocusEvent e) {
+	
+	public void focusGained(FocusEvent e){
 		editor.setSelectedText(this);
 	}
-
-	public void focusLost(FocusEvent e) {
-	}
 	
-	public  void readFrom(DataInputStream in) throws IOException {
+	public void focusLost(FocusEvent e){}
+	
+	public void readFrom(DataInputStream in) throws IOException{
 		setText(in.readUTF());
 		int stylesCount = in.readInt();
 		for (int i = 0; i < stylesCount; i++) {
@@ -64,11 +62,11 @@ public class EStyledText extends StyledText implements FocusListener {
 		}
 	}
 	
-	public void writeTo(DataOutputStream out) throws IOException {
+	public void writeTo(DataOutputStream out) throws IOException{
 		out.writeUTF(getText());
 		List<StyleRange> styles = getStyles();
 		out.writeInt(styles.size());
-		for (Iterator<StyleRange> it = styles.iterator(); it.hasNext(); ) {
+		for (Iterator<StyleRange> it = styles.iterator(); it.hasNext();) {
 			StyleRange style = it.next();
 			out.writeInt(style.start);
 			out.writeInt(style.length);
@@ -86,8 +84,8 @@ public class EStyledText extends StyledText implements FocusListener {
 		}
 		
 	}
-
-	protected List<StyleRange> getStyles() {
+	
+	protected List<StyleRange> getStyles(){
 		List<StyleRange> result = new ArrayList<StyleRange>();
 		StyleRange[] styles = getStyleRanges();
 		
@@ -98,7 +96,7 @@ public class EStyledText extends StyledText implements FocusListener {
 		StyleRange current = styles.length > 0 ? styles[0] : null;
 		
 		while (index < styles.length) {
-			index ++;
+			index++;
 			if (index < styles.length) {
 				StyleRange style = styles[index];
 				if (sameStyle(current, style)) {
@@ -115,7 +113,7 @@ public class EStyledText extends StyledText implements FocusListener {
 		return result;
 	}
 	
-	protected boolean sameStyle(StyleRange s1, StyleRange s2) {
+	protected boolean sameStyle(StyleRange s1, StyleRange s2){
 		if (s1.fontStyle != s2.fontStyle || s1.underline != s2.underline) {
 			return false;
 		}

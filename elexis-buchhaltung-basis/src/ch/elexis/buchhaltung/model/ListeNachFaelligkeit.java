@@ -40,12 +40,13 @@ import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
  * 
  */
 public class ListeNachFaelligkeit extends AbstractDataProvider {
-	private static final String ANALYSIERE_RECHNUNGEN = Messages.ListeNachFaelligkeit_AnalyzingBills;
+	private static final String ANALYSIERE_RECHNUNGEN =
+		Messages.ListeNachFaelligkeit_AnalyzingBills;
 	private static final String DATENBANKABFRAGE = Messages.ListeNachFaelligkeit_DatabaseQuery;
 	private static final String NAME = Messages.ListeNachFaelligkeit_BillsAfterDaysDue;
 	private static final String DUE_AFTER_TEXT = "Fällig nach Tagen"; //$NON-NLS-1$
 	private static final String DUE_DATE_TEXT = "Stichtag"; //$NON-NLS-1$
-	private static final String FIELD_ACTMANDATOR="Nur aktueller Mandant";
+	private static final String FIELD_ACTMANDATOR = "Nur aktueller Mandant";
 	private int dueAfter;
 	private DateTool stichTag = new DateTool();
 	private boolean bOnlyActiveMandator;
@@ -75,14 +76,14 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		dueAfter = date;
 	}
 	
-	@GetProperty(name= FIELD_ACTMANDATOR, widgetType= WidgetTypes.BUTTON_CHECKBOX, index=2)
+	@GetProperty(name = FIELD_ACTMANDATOR, widgetType = WidgetTypes.BUTTON_CHECKBOX, index = 2)
 	public boolean getOnlyActiveMandator(){
 		return bOnlyActiveMandator;
 	}
 	
-	@SetProperty(name = FIELD_ACTMANDATOR, index=1)
+	@SetProperty(name = FIELD_ACTMANDATOR, index = 1)
 	public void setOnlyActiveMandator(boolean val){
-		bOnlyActiveMandator=val;
+		bOnlyActiveMandator = val;
 	}
 	
 	@Override
@@ -94,21 +95,21 @@ public class ListeNachFaelligkeit extends AbstractDataProvider {
 		qbe.add("RnStatus", "<>", Integer.toString(RnStatus.BEZAHLT)); //$NON-NLS-1$ //$NON-NLS-2$
 		List<Rechnung> rnn = qbe.execute();
 		monitor.worked(1000);
-		int size=rnn.size();
-		if(size==0){
+		int size = rnn.size();
+		if (size == 0) {
 			monitor.done();
 			return Status.OK_STATUS;
 		}
 		int step = totalwork / rnn.size();
 		monitor.subTask(ANALYSIERE_RECHNUNGEN);
 		ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
-		PatientIdFormatter pif=new PatientIdFormatter(8);
-		String actMnId=Hub.actMandant.getId();
+		PatientIdFormatter pif = new PatientIdFormatter(8);
+		String actMnId = Hub.actMandant.getId();
 		for (Rechnung rn : rnn) {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
-			if(bOnlyActiveMandator && (!actMnId.equals(rn.get("MandantID")))){ //$NON-NLS-1$
+			if (bOnlyActiveMandator && (!actMnId.equals(rn.get("MandantID")))) { //$NON-NLS-1$
 				continue;
 			}
 			if (RnStatus.isActive(rn.getStatus())) {

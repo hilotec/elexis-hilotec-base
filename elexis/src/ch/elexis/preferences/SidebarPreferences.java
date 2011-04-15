@@ -52,16 +52,16 @@ public class SidebarPreferences extends FieldEditorPreferencePage implements
 	@Override
 	protected void createFieldEditors(){
 		sb =
-			new BooleanFieldEditor(PreferenceConstants.SHOWSIDEBAR, Messages.SidebarPreferences_ShowStartBar,
-				getFieldEditorParent());
+			new BooleanFieldEditor(PreferenceConstants.SHOWSIDEBAR,
+				Messages.SidebarPreferences_ShowStartBar, getFieldEditorParent());
 		
 		addField(sb);
 		addField(new BooleanFieldEditor(PreferenceConstants.SHOWPERSPECTIVESELECTOR,
 			Messages.SidebarPreferences_SchowPerspectives, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.SHOWTOOLBARITEMS,
 			Messages.SidebarPreferences_PerspectivesInToolbar, getFieldEditorParent()));
-		addField(new Perspektivenliste(PreferenceConstants.SIDEBAR, Messages.SidebarPreferences_Perspectives,
-			getFieldEditorParent()));
+		addField(new Perspektivenliste(PreferenceConstants.SIDEBAR,
+			Messages.SidebarPreferences_Perspectives, getFieldEditorParent()));
 	}
 	
 	public void init(IWorkbench workbench){

@@ -21,8 +21,9 @@ import ch.elexis.util.SWTHelper;
 
 /**
  * A preference just saying "access denied"
+ * 
  * @author Gerry
- *
+ * 
  */
 public class PrefAccessDenied extends Composite {
 	public PrefAccessDenied(Composite parent){

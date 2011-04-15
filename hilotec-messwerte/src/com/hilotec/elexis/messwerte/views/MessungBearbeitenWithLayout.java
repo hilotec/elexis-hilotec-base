@@ -51,29 +51,29 @@ public class MessungBearbeitenWithLayout extends TitleAreaDialog {
 	private DatePickerCombo dateWidget;
 	private List<Messwert> messwerte;
 	private List<ActiveControl> calcFields = new ArrayList<ActiveControl>();
-
-	public MessungBearbeitenWithLayout(Shell shell, Messung m) {
+	
+	public MessungBearbeitenWithLayout(Shell shell, Messung m){
 		super(shell);
 		messung = m;
 	}
-
+	
 	@Override
-	protected void createButtonsForButtonBar(Composite parent) {
+	protected void createButtonsForButtonBar(Composite parent){
 		createButton(parent, IDialogConstants.OK_ID, "Schliessen", true);
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(Composite parent){
 		MessungTyp typ = messung.getTyp();
-		ScrolledComposite scroll = new ScrolledComposite(parent, SWT.BORDER
-				| SWT.V_SCROLL | SWT.H_SCROLL);
+		ScrolledComposite scroll =
+			new ScrolledComposite(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		scroll.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite comp = new Composite(scroll, SWT.NONE);
 		scroll.setContent(comp);
-
+		
 		comp.setLayout(new GridLayout());
 		comp.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-
+		
 		dateWidget = new DatePickerCombo(comp, SWT.NONE);
 		dateWidget.setDate(new TimeTool(messung.getDatum()).getTime());
 		dateWidget.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -82,8 +82,8 @@ public class MessungBearbeitenWithLayout extends TitleAreaDialog {
 		comp.setSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		return scroll;
 	}
-
-	public Composite createComposite(Panel p, Composite parent) {
+	
+	public Composite createComposite(Panel p, Composite parent){
 		Composite ret = new Composite(parent, SWT.NONE);
 		// ret.setBackground(Desk.getColor(Desk.COL_BLUE));
 		if (p.getType().equals("plain")) {
@@ -98,8 +98,7 @@ public class MessungBearbeitenWithLayout extends TitleAreaDialog {
 			if (bounds != null) {
 				String[] coord = bounds.trim().split("\\s*,\\s*");
 				if (coord.length == 2) {
-					gd = new GridData(Integer.parseInt(coord[0]),
-							Integer.parseInt(coord[1]));
+					gd = new GridData(Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
 					gd.grabExcessHorizontalSpace = true;
 					gd.grabExcessVerticalSpace = true;
 				}
@@ -109,7 +108,7 @@ public class MessungBearbeitenWithLayout extends TitleAreaDialog {
 			ret.setLayout(new FillLayout());
 			Label l = new Label(ret, SWT.WRAP);
 			l.setText(p.getAttribute("text"));
-
+			
 		} else if (p.getType().equals("grid")) {
 			String cols = p.getAttribute("columns");
 			if (cols == null) {
@@ -122,7 +121,7 @@ public class MessungBearbeitenWithLayout extends TitleAreaDialog {
 			Messwert mw = getMesswert(fieldref);
 			if (mw != null) {
 				IMesswertTyp dft = mw.getTyp();
-
+				
 				boolean bEditable = true;
 				String iattr = p.getAttribute("editable");
 				if (iattr != null && iattr.equals("false")) {
@@ -136,52 +135,49 @@ public class MessungBearbeitenWithLayout extends TitleAreaDialog {
 				String validPattern = p.getAttribute("validpattern");
 				if (validPattern != null) {
 					String invalidMsg = p.getAttribute("invalidmessage");
-					ac.setValidPattern(validPattern,
-							invalidMsg == null ? "ungültige Eingabe"
-									: invalidMsg);
+					ac.setValidPattern(validPattern, invalidMsg == null ? "ungültige Eingabe"
+							: invalidMsg);
 				}
 				String bounds = p.getAttribute("size");
 				if (bounds != null) {
 					String[] coord = bounds.trim().split("\\s*,\\s*");
 					if (coord.length == 2) {
-						ac.setBounds(0, 0, Integer.parseInt(coord[0]),
-								Integer.parseInt(coord[1]));
+						ac.setBounds(0, 0, Integer.parseInt(coord[0]), Integer.parseInt(coord[1]));
 					}
 				}
 				ac.addListener(new ActiveControlListener() {
-
+					
 					@Override
-					public void titleClicked(ActiveControl field) {
+					public void titleClicked(ActiveControl field){
 
 					}
-
+					
 					@Override
-					public void invalidContents(ActiveControl field) {
+					public void invalidContents(ActiveControl field){
 
 					}
-
+					
 					@Override
-					public void contentsChanged(ActiveControl ac) {
+					public void contentsChanged(ActiveControl ac){
 						if (ac.isValid() && !ac.isReadonly()) {
-							Messwert messwert = (Messwert) ac
-									.getData("messwert");
+							Messwert messwert = (Messwert) ac.getData("messwert");
 							messwert.setWert(ac.getText());
 							setErrorMessage(null);
 							for (ActiveControl cc : calcFields) {
 								Messwert mc = (Messwert) cc.getData("messwert");
 								cc.setText(((MesswertTypCalc) mc.getTyp())
-										.erstelleDarstellungswert(mc));
+									.erstelleDarstellungswert(mc));
 							}
 							getButton(OK).setEnabled(true);
 						} else {
 							setErrorMessage(ac.getErrMsg());
 							getButton(OK).setEnabled(false);
 						}
-
+						
 					}
 				});
 				setLayoutData(ac);
-
+				
 			}
 		}
 		for (Panel panel : p.getPanels()) {
@@ -189,8 +185,8 @@ public class MessungBearbeitenWithLayout extends TitleAreaDialog {
 		}
 		return ret;
 	}
-
-	public Messwert getMesswert(String name) {
+	
+	public Messwert getMesswert(String name){
 		for (Messwert m : messwerte) {
 			if (m.getName().equals(name)) {
 				return m;
@@ -198,25 +194,25 @@ public class MessungBearbeitenWithLayout extends TitleAreaDialog {
 		}
 		return null;
 	}
-
-	private void setLayoutData(Control c) {
+	
+	private void setLayoutData(Control c){
 		if (c.getParent().getLayout() instanceof GridLayout) {
 			c.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		}
 		c.pack();
 	}
-
+	
 	@Override
-	protected void okPressed() {
+	protected void okPressed(){
 		// TODO Auto-generated method stub
 		super.okPressed();
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		getShell().setText("Messung bearbeiten");
 		setTitle(messung.getTyp().getTitle());
 	}
-
+	
 }

@@ -24,8 +24,8 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 /**
- * Eine Verordnung. Also ein Artikel zusmamen mit einer Einnahmevorschrift,
- * verknüpft mit einem Patienten.
+ * Eine Verordnung. Also ein Artikel zusmamen mit einer Einnahmevorschrift, verknüpft mit einem
+ * Patienten.
  */
 public class Prescription extends PersistentObject {
 	
@@ -37,53 +37,65 @@ public class Prescription extends PersistentObject {
 	public static final String DOSAGE = "Dosis";
 	public static final String REZEPT_ID = "RezeptID";
 	private static final String ARTICLE_ID = "ArtikelID";
-	public static final String ARTICLE="Artikel";
+	public static final String ARTICLE = "Artikel";
 	public static final String PATIENT_ID = "PatientID";
 	private static final String TABLENAME = "PATIENT_ARTIKEL_JOINT";
-	static{
-		addMapping(TABLENAME,PATIENT_ID,ARTICLE,ARTICLE_ID,REZEPT_ID,"DatumVon=S:D:DateFrom",
-			"DatumBis=S:D:DateUntil",DOSAGE,REMARK,COUNT,FLD_EXTINFO);
+	static {
+		addMapping(TABLENAME, PATIENT_ID, ARTICLE, ARTICLE_ID, REZEPT_ID, "DatumVon=S:D:DateFrom",
+			"DatumBis=S:D:DateUntil", DOSAGE, REMARK, COUNT, FLD_EXTINFO);
 	}
 	
 	/**
 	 * Eine neue Verordnung erstellen. Also ein Artikel zusammen mit einer Einnahmevorschrift
 	 * verknüpft mit dem angegeben Patienten.
 	 * 
-	 * @param a Artikel
-	 * @param p Patient
-	 * @param d Dosierung
-	 * @param b Anmerkungen
+	 * @param a
+	 *            Artikel
+	 * @param p
+	 *            Patient
+	 * @param d
+	 *            Dosierung
+	 * @param b
+	 *            Anmerkungen
 	 */
 	public Prescription(Artikel a, Patient p, String d, String b){
 		create(null);
-		String article=a.storeToString();
-		set(new String[]{ARTICLE,PATIENT_ID,DOSAGE,REMARK,DATE_FROM},article,p.getId(),d,b,new TimeTool().toString(TimeTool.DATE_GER));
+		String article = a.storeToString();
+		set(new String[] {
+			ARTICLE, PATIENT_ID, DOSAGE, REMARK, DATE_FROM
+		}, article, p.getId(), d, b, new TimeTool().toString(TimeTool.DATE_GER));
 	}
+	
 	public Prescription(Prescription other){
-		String[] fields=new String[]{ARTICLE,PATIENT_ID,DOSAGE,REMARK,ARTICLE_ID};
-		String[] vals=new String[fields.length];
-		if(other.get(fields, vals)){
+		String[] fields = new String[] {
+			ARTICLE, PATIENT_ID, DOSAGE, REMARK, ARTICLE_ID
+		};
+		String[] vals = new String[fields.length];
+		if (other.get(fields, vals)) {
 			create(null);
-			set(fields,vals);
+			set(fields, vals);
 			addTerm(new TimeTool(), vals[2]);
 		}
 	}
+	
 	public static Prescription load(String id){
 		return new Prescription(id);
 	}
-	protected Prescription() {
-	}
 	
-	protected Prescription(String id) {
+	protected Prescription(){}
+	
+	protected Prescription(String id){
 		super(id);
 	}
 	
 	/**
 	 * Set the begin date of this prescription
-	 * @param date may be null to set it as today
+	 * 
+	 * @param date
+	 *            may be null to set it as today
 	 */
 	public void setBeginDate(String date){
-		set(DATE_FROM,date==null ? new TimeTool().toString(TimeTool.DATE_GER) : date);
+		set(DATE_FROM, date == null ? new TimeTool().toString(TimeTool.DATE_GER) : date);
 	}
 	
 	public String getBeginDate(){
@@ -91,7 +103,7 @@ public class Prescription extends PersistentObject {
 	}
 	
 	public void setEndDate(String date){
-		set(DATE_UNTIL,date==null ? new TimeTool().toString(TimeTool.DATE_GER) : date);
+		set(DATE_UNTIL, date == null ? new TimeTool().toString(TimeTool.DATE_GER) : date);
 	}
 	
 	public String getEndDate(){
@@ -100,60 +112,64 @@ public class Prescription extends PersistentObject {
 	
 	@Override
 	public String getLabel(){
-		return getSimpleLabel()+" "+getDosis();
+		return getSimpleLabel() + " " + getDosis();
 	}
-	public String getSimpleLabel() {
-		Artikel art=getArtikel();
-		if(art!=null){
+	
+	public String getSimpleLabel(){
+		Artikel art = getArtikel();
+		if (art != null) {
 			return getArtikel().getLabel();
-		}else{
+		} else {
 			return "Fehler";
 		}
 	}
 	
 	/**
-	 * return the article contained in this prescription. In earlier versions of elexis, this was the Article ID, now it is
-	 * a String representation of the Article itself (which allows for reconstruction of the subclass used). For compatibility reasons
-	 * we use the old technique for old prescriptions.
+	 * return the article contained in this prescription. In earlier versions of elexis, this was
+	 * the Article ID, now it is a String representation of the Article itself (which allows for
+	 * reconstruction of the subclass used). For compatibility reasons we use the old technique for
+	 * old prescriptions.
+	 * 
 	 * @return
 	 */
 	public Artikel getArtikel(){
 		// compatibility layer
-		String art=get(ARTICLE);
-		if(StringTool.isNothing(art)){
+		String art = get(ARTICLE);
+		if (StringTool.isNothing(art)) {
 			return Artikel.load(get(ARTICLE_ID));
 		}
-		return (Artikel)Hub.poFactory.createFromString(art);
+		return (Artikel) Hub.poFactory.createFromString(art);
 		
 	}
+	
 	public String getDosis(){
 		return checkNull(get(DOSAGE));
 	}
 	
 	public void setDosis(String newDose){
-		String oldDose=getDosis();
-		if(!oldDose.equals(newDose)){
-			addTerm(new TimeTool(),newDose);
+		String oldDose = getDosis();
+		if (!oldDose.equals(newDose)) {
+			addTerm(new TimeTool(), newDose);
 		}
 	}
 	
 	public String getBemerkung(){
-		return checkNull(get(REMARK));	
-	}
-	public void setBemerkung(String value) {
-		set(REMARK, checkNull(value));
+		return checkNull(get(REMARK));
 	}
 	
+	public void setBemerkung(String value){
+		set(REMARK, checkNull(value));
+	}
 	
 	/**
 	 * Ein Medikament stoppen
 	 */
 	@Override
-	public boolean delete() {
-		if(Hub.acl.request(AccessControlDefaults.MEDICATION_MODIFY)){
-			TimeTool today=new TimeTool();
+	public boolean delete(){
+		if (Hub.acl.request(AccessControlDefaults.MEDICATION_MODIFY)) {
+			TimeTool today = new TimeTool();
 			today.addHours(-24);
-			addTerm(today,StringConstants.ZERO);
+			addTerm(today, StringConstants.ZERO);
 			return true;
 		}
 		return false;
@@ -161,60 +177,64 @@ public class Prescription extends PersistentObject {
 	
 	/**
 	 * Ein Medikament aus der Datenbank löschen
+	 * 
 	 * @return
 	 */
 	public boolean remove(){
-		if(Hub.acl.request(AccessControlDefaults.DELETE_MEDICATION)){
+		if (Hub.acl.request(AccessControlDefaults.DELETE_MEDICATION)) {
 			return super.delete();
 		}
 		return false;
 	}
+	
 	/**
-	 * Insert a new dosage term, defined by a beginning date and a dose
-	 * We store the old dose and its beginning date in the field "terms".
-	 * @param dose a dosage definition of the form "1-0-0-0" or "0" to stop the article
+	 * Insert a new dosage term, defined by a beginning date and a dose We store the old dose and
+	 * its beginning date in the field "terms".
+	 * 
+	 * @param dose
+	 *            a dosage definition of the form "1-0-0-0" or "0" to stop the article
 	 */
 	@SuppressWarnings("unchecked")
 	public void addTerm(TimeTool begin, String dose){
-		Hashtable<String, Object> extInfo=getHashtable(FLD_EXTINFO);
-		String raw=(String)extInfo.get(TERMS);
-		if(raw==null){
-			raw="";
+		Hashtable<String, Object> extInfo = getHashtable(FLD_EXTINFO);
+		String raw = (String) extInfo.get(TERMS);
+		if (raw == null) {
+			raw = "";
 		}
-		String lastBegin=get(DATE_FROM);
-		String lastDose=get(DOSAGE);
-		StringBuilder line=new StringBuilder();
-		line.append(StringTool.flattenSeparator)
-		.append(lastBegin)
-		.append("::").append(lastDose);
-		raw+=line.toString();
+		String lastBegin = get(DATE_FROM);
+		String lastDose = get(DOSAGE);
+		StringBuilder line = new StringBuilder();
+		line.append(StringTool.flattenSeparator).append(lastBegin).append("::").append(lastDose);
+		raw += line.toString();
 		extInfo.put(TERMS, raw);
-		setHashtable(FLD_EXTINFO,extInfo);
-		set(DATE_FROM,begin.toString(TimeTool.DATE_GER));
-		set(DOSAGE,dose);
-		if(dose.equals("0")){
-			set(DATE_UNTIL,begin.toString(TimeTool.DATE_GER));
+		setHashtable(FLD_EXTINFO, extInfo);
+		set(DATE_FROM, begin.toString(TimeTool.DATE_GER));
+		set(DOSAGE, dose);
+		if (dose.equals("0")) {
+			set(DATE_UNTIL, begin.toString(TimeTool.DATE_GER));
 		}
 	}
 	
 	/**
-	 * A listing of all administration periods of this prescription. This is to retrieve later
-	 * when and how the article was prescribed
+	 * A listing of all administration periods of this prescription. This is to retrieve later when
+	 * and how the article was prescribed
+	 * 
 	 * @return a Map of TimeTools and Doses (Sorted by date)
 	 */
 	public SortedMap<TimeTool, String> getTerms(){
-		TreeMap<TimeTool, String> ret=new TreeMap<TimeTool,String>();
-		Hashtable extInfo=getHashtable(FLD_EXTINFO);
-		String raw=(String)extInfo.get(TERMS);
-		if(raw!=null){
-			String[] terms=raw.split(StringTool.flattenSeparator);
-			for(String term:terms){
-				String[] flds=term.split("::");
-				if(1>flds.length) continue;
-				TimeTool date=new TimeTool(flds[0]);
-				String dose="n/a";
-				if(flds.length>1){
-					dose=flds[1];
+		TreeMap<TimeTool, String> ret = new TreeMap<TimeTool, String>();
+		Hashtable extInfo = getHashtable(FLD_EXTINFO);
+		String raw = (String) extInfo.get(TERMS);
+		if (raw != null) {
+			String[] terms = raw.split(StringTool.flattenSeparator);
+			for (String term : terms) {
+				String[] flds = term.split("::");
+				if (1 > flds.length)
+					continue;
+				TimeTool date = new TimeTool(flds[0]);
+				String dose = "n/a";
+				if (flds.length > 1) {
+					dose = flds[1];
 				}
 				ret.put(date, dose);
 			}
@@ -223,14 +243,14 @@ public class Prescription extends PersistentObject {
 		return ret;
 	}
 	
-	
 	@Override
-	protected String getTableName() {
+	protected String getTableName(){
 		return TABLENAME;
 	}
+	
 	@Override
-	public boolean isDragOK() {
+	public boolean isDragOK(){
 		return true;
 	}
-
+	
 }

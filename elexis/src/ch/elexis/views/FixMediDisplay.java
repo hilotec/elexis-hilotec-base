@@ -104,10 +104,10 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 						
 						if (o instanceof Artikel) {
 							Prescription pre =
-								new Prescription((Artikel) o, (Patient)ElexisEventDispatcher.getSelected(Patient.class),
-									StringTool.leer, StringTool.leer);
+								new Prescription((Artikel) o, (Patient) ElexisEventDispatcher
+									.getSelected(Patient.class), StringTool.leer, StringTool.leer);
 							pre.set(Prescription.DATE_FROM, new TimeTool()
-							.toString(TimeTool.DATE_GER));
+								.toString(TimeTool.DATE_GER));
 							MediDetailDialog dlg = new MediDetailDialog(getShell(), pre);
 							if (dlg.open() == Window.OK) {
 								// self.add(pre);
@@ -115,10 +115,12 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 							}
 							
 						} else if (o instanceof Prescription) {
-							Prescription[] existing=((Patient)ElexisEventDispatcher.getSelected(Patient.class)).getFixmedikation();
+							Prescription[] existing =
+								((Patient) ElexisEventDispatcher.getSelected(Patient.class))
+									.getFixmedikation();
 							Prescription pre = (Prescription) o;
-							for(Prescription pe:existing){
-								if(pe.equals(pre)){
+							for (Prescription pe : existing) {
+								if (pe.equals(pre)) {
 									return;
 								}
 							}
@@ -126,7 +128,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 								new Prescription(pre.getArtikel(), ElexisEventDispatcher
 									.getSelectedPatient(), pre.getDosis(), pre.getBemerkung());
 							now.set(Prescription.DATE_FROM, new TimeTool()
-							.toString(TimeTool.DATE_GER));
+								.toString(TimeTool.DATE_GER));
 							// self.add(now);
 							reload();
 						}
@@ -174,8 +176,8 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 						} else {
 							canCalculate = false;
 						}
-					}else{
-						canCalculate=false;
+					} else {
+						canCalculate = false;
 					}
 					Artikel art = pr.getArtikel();
 					if (art != null) {
@@ -186,8 +188,8 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 						} else {
 							canCalculate = false;
 						}
-					}else{
-						canCalculate=false;
+					} else {
+						canCalculate = false;
 					}
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
@@ -211,9 +213,12 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 	static float getNum(String num){
 		try {
 			String n = num.trim();
-			if(n.equalsIgnoreCase("½")) return 0.5F;
-			if(n.equalsIgnoreCase("¼")) return 0.25F;
-			if(n.equalsIgnoreCase("1½")) return 1.5F;
+			if (n.equalsIgnoreCase("½"))
+				return 0.5F;
+			if (n.equalsIgnoreCase("¼"))
+				return 0.25F;
+			if (n.equalsIgnoreCase("1½"))
+				return 1.5F;
 			
 			if (n.indexOf('/') != -1) {
 				String[] bruch = n.split(StringConstants.SLASH);
@@ -228,7 +233,7 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 			StatusManager.getManager().handle(status, StatusManager.LOG);
 			return 0.0F;
 		}
-
+		
 	}
 	
 	class DauerMediListener implements LDListener {
@@ -246,8 +251,8 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 				} else if (l.equals(LISTE)) {
 					
 					RezeptBlatt rpb = (RezeptBlatt) site.getPage().showView(RezeptBlatt.ID);
-					rpb.createEinnahmeliste(ElexisEventDispatcher.getSelectedPatient(), getAll().toArray(
-						new Prescription[0]));
+					rpb.createEinnahmeliste(ElexisEventDispatcher.getSelectedPatient(), getAll()
+						.toArray(new Prescription[0]));
 				} else if (l.equals(REZEPT)) {
 					Rezept rp = new Rezept(ElexisEventDispatcher.getSelectedPatient());
 					for (Prescription p : getAll().toArray(new Prescription[0])) {
@@ -258,9 +263,11 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 						rp.addPrescription(new Prescription(p));
 					}
 					
-					//PMDI - Dependency Injection through ElexisConfigurationConstants
-					RezeptBlatt rpb = (RezeptBlatt) site.getPage().showView(ElexisConfigurationConstants.rezeptausgabe);
-					//PMDI - Dependency Injection through ElexisConfigurationConstants
+					// PMDI - Dependency Injection through ElexisConfigurationConstants
+					RezeptBlatt rpb =
+						(RezeptBlatt) site.getPage().showView(
+							ElexisConfigurationConstants.rezeptausgabe);
+					// PMDI - Dependency Injection through ElexisConfigurationConstants
 					rpb.createRezept(rp);
 				} else if (l.equals(KOPIEREN)) {
 					toClipBoard(true);
@@ -284,58 +291,58 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 		changeMedicationAction =
 			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages
 				.getString("FixMediDisplay.Change")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-				setToolTipText(Messages.getString("FixMediDisplay.Modify")); //$NON-NLS-1$
-			}
-			
-			public void doRun(){
-				Prescription pr = getSelection();
-				if (pr != null) {
-					new MediDetailDialog(getShell(), pr).open();
-					reload();
-					redraw();
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
+					setToolTipText(Messages.getString("FixMediDisplay.Modify")); //$NON-NLS-1$
 				}
-			}
-		};
+				
+				public void doRun(){
+					Prescription pr = getSelection();
+					if (pr != null) {
+						new MediDetailDialog(getShell(), pr).open();
+						reload();
+						redraw();
+					}
+				}
+			};
 		
 		stopMedicationAction =
 			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages
 				.getString("FixMediDisplay.Stop")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
-				setToolTipText(Messages.getString("FixMediDisplay.StopThisMedicament")); //$NON-NLS-1$
-			}
-			
-			public void doRun(){
-				Prescription pr = getSelection();
-				if (pr != null) {
-					remove(pr);
-					pr.delete(); // this does not delete but stop the Medication. Sorry for
-					// that
-					reload();
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
+					setToolTipText(Messages.getString("FixMediDisplay.StopThisMedicament")); //$NON-NLS-1$
 				}
-			}
-		};
+				
+				public void doRun(){
+					Prescription pr = getSelection();
+					if (pr != null) {
+						remove(pr);
+						pr.delete(); // this does not delete but stop the Medication. Sorry for
+						// that
+						reload();
+					}
+				}
+			};
 		
 		removeMedicationAction =
 			new RestrictedAction(AccessControlDefaults.DELETE_MEDICATION, Messages
 				.getString("FixMediDisplay.Delete")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
-				setToolTipText(Messages.getString("FixMediDisplay.DeleteUnrecoverable")); //$NON-NLS-1$
-			}
-			
-			public void doRun(){
-				Prescription pr = getSelection();
-				if (pr != null) {
-					remove(pr);
-					pr.remove(); // this does, in fact, remove the medication from the
-					// database
-					reload();
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
+					setToolTipText(Messages.getString("FixMediDisplay.DeleteUnrecoverable")); //$NON-NLS-1$
 				}
-			}
-		};
+				
+				public void doRun(){
+					Prescription pr = getSelection();
+					if (pr != null) {
+						remove(pr);
+						pr.remove(); // this does, in fact, remove the medication from the
+						// database
+						reload();
+					}
+				}
+			};
 		
 	}
 	

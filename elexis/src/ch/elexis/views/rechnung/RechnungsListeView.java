@@ -51,38 +51,35 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.Tree;
 
 /**
- * Display a listing of all bills selected after several user selectable
- * criteria. The selected bills can be modified or exported.
+ * Display a listing of all bills selected after several user selectable criteria. The selected
+ * bills can be modified or exported.
  * 
  * @author gerry
  * 
  */
 public class RechnungsListeView extends ViewPart implements ElexisEventListener {
-	private static final String REMINDER_3 = Messages
-			.getString("RechnungsListeView.reminder3"); //$NON-NLS-1$
-
-	private static final String REMINDER_2 = Messages
-			.getString("RechnungsListeView.reminder2"); //$NON-NLS-1$
-
-	private static final String REMINDER_1 = Messages
-			.getString("RechnungsListeView.reminder1"); //$NON-NLS-1$
-
+	private static final String REMINDER_3 = Messages.getString("RechnungsListeView.reminder3"); //$NON-NLS-1$
+	
+	private static final String REMINDER_2 = Messages.getString("RechnungsListeView.reminder2"); //$NON-NLS-1$
+	
+	private static final String REMINDER_1 = Messages.getString("RechnungsListeView.reminder1"); //$NON-NLS-1$
+	
 	public final static String ID = "ch.elexis.RechnungsListeView"; //$NON-NLS-1$
-
+	
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	RnActions actions;
 	RnContentProvider cntp;
 	RnControlFieldProvider cfp;
-
+	
 	Text tPat, tRn, tSum, tOpen;
 	NumberInput niDaysTo1st, niDaysTo2nd, niDaysTo3rd;
 	MoneyInput mi1st, mi2nd, mi3rd;
 	SelectionListener mahnWizardListener;
 	FormToolkit tk = Desk.getToolkit();
-
+	
 	@Override
-	public void createPartControl(final Composite p) {
+	public void createPartControl(final Composite p){
 		p.setLayout(new GridLayout());
 		// SashForm sash=new SashForm(p,SWT.VERTICAL);
 		Composite comp = new Composite(p, SWT.NONE);
@@ -91,17 +88,16 @@ public class RechnungsListeView extends ViewPart implements ElexisEventListener 
 		cv = new CommonViewer();
 		cntp = new RnContentProvider(this, cv);
 		cfp = new RnControlFieldProvider();
-		vc = new ViewerConfigurer(cntp,
-				new ViewerConfigurer.TreeLabelProvider(), cfp,
-				new ViewerConfigurer.DefaultButtonProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_TREE,
-						SWT.V_SCROLL | SWT.MULTI, cv));
+		vc =
+			new ViewerConfigurer(cntp, new ViewerConfigurer.TreeLabelProvider(), cfp,
+				new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
+					SimpleWidgetProvider.TYPE_TREE, SWT.V_SCROLL | SWT.MULTI, cv));
 		// rnFilter=FilterFactory.createFilter(Rechnung.class,"Rn
 		// Nummer","Name","Vorname","Betrag");
 		cv.create(vc, comp, SWT.BORDER, getViewSite());
-
+		
 		Composite bottom = new Composite(comp, SWT.NONE);
-
+		
 		RowLayout rowLayout = new RowLayout();
 		rowLayout.wrap = false;
 		rowLayout.pack = true;
@@ -113,121 +109,105 @@ public class RechnungsListeView extends ViewPart implements ElexisEventListener 
 		rowLayout.marginRight = 0;
 		rowLayout.marginBottom = 0;
 		rowLayout.spacing = 5;
-
+		
 		mahnWizardListener = new SelectionAdapter() {
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				Hub.mandantCfg.set(PreferenceConstants.RNN_DAYSUNTIL1ST,
-						niDaysTo1st.getValue());
-				Hub.mandantCfg.set(PreferenceConstants.RNN_DAYSUNTIL2ND,
-						niDaysTo2nd.getValue());
-				Hub.mandantCfg.set(PreferenceConstants.RNN_DAYSUNTIL3RD,
-						niDaysTo3rd.getValue());
-				Hub.mandantCfg.set(PreferenceConstants.RNN_AMOUNT1ST, mi1st
-						.getMoney(false).getAmountAsString());
-				Hub.mandantCfg.set(PreferenceConstants.RNN_AMOUNT2ND, mi2nd
-						.getMoney(false).getAmountAsString());
-				Hub.mandantCfg.set(PreferenceConstants.RNN_AMOUNT3RD, mi3rd
-						.getMoney(false).getAmountAsString());
+			public void widgetSelected(final SelectionEvent e){
+				Hub.mandantCfg.set(PreferenceConstants.RNN_DAYSUNTIL1ST, niDaysTo1st.getValue());
+				Hub.mandantCfg.set(PreferenceConstants.RNN_DAYSUNTIL2ND, niDaysTo2nd.getValue());
+				Hub.mandantCfg.set(PreferenceConstants.RNN_DAYSUNTIL3RD, niDaysTo3rd.getValue());
+				Hub.mandantCfg.set(PreferenceConstants.RNN_AMOUNT1ST, mi1st.getMoney(false)
+					.getAmountAsString());
+				Hub.mandantCfg.set(PreferenceConstants.RNN_AMOUNT2ND, mi2nd.getMoney(false)
+					.getAmountAsString());
+				Hub.mandantCfg.set(PreferenceConstants.RNN_AMOUNT3RD, mi3rd.getMoney(false)
+					.getAmountAsString());
 			}
-
+			
 		};
-
+		
 		bottom.setLayout(rowLayout);
 		Form fSum = tk.createForm(bottom);
 		Form fWizard = tk.createForm(bottom);
 		fSum.setText(Messages.getString("RechnungsListeView.sum")); //$NON-NLS-1$
-		fWizard.setText(Messages
-				.getString("RechnungsListeView.dunningAutomatics")); //$NON-NLS-1$
+		fWizard.setText(Messages.getString("RechnungsListeView.dunningAutomatics")); //$NON-NLS-1$
 		Composite cSum = fSum.getBody();
 		cSum.setLayout(new GridLayout(2, false));
-		tk
-				.createLabel(cSum, Messages
-						.getString("RechnungsListeView.patInList")); //$NON-NLS-1$
+		tk.createLabel(cSum, Messages.getString("RechnungsListeView.patInList")); //$NON-NLS-1$
 		tPat = tk.createText(cSum, "", SWT.BORDER | SWT.READ_ONLY); //$NON-NLS-1$
 		tPat.setLayoutData(new GridData(100, SWT.DEFAULT));
-		tk.createLabel(cSum, Messages
-				.getString("RechnungsListeView.accountsInList")); //$NON-NLS-1$
+		tk.createLabel(cSum, Messages.getString("RechnungsListeView.accountsInList")); //$NON-NLS-1$
 		tRn = tk.createText(cSum, "", SWT.BORDER | SWT.READ_ONLY); //$NON-NLS-1$
 		tRn.setLayoutData(new GridData(100, SWT.DEFAULT));
-		tk
-				.createLabel(cSum, Messages
-						.getString("RechnungsListeView.sumInList")); //$NON-NLS-1$
+		tk.createLabel(cSum, Messages.getString("RechnungsListeView.sumInList")); //$NON-NLS-1$
 		tSum = SWTHelper.createText(tk, cSum, 1, SWT.BORDER | SWT.READ_ONLY);
 		tSum.setLayoutData(new GridData(100, SWT.DEFAULT));
-		tk.createLabel(cSum, Messages
-				.getString("RechnungsListeView.paidInList")); //$NON-NLS-1$
+		tk.createLabel(cSum, Messages.getString("RechnungsListeView.paidInList")); //$NON-NLS-1$
 		tOpen = SWTHelper.createText(tk, cSum, 1, SWT.BORDER | SWT.READ_ONLY);
 		tOpen.setLayoutData(new GridData(100, SWT.DEFAULT));
 		Composite cW = fWizard.getBody();
 		cW.setLayout(new GridLayout(4, true));
-
-		tk
-				.createLabel(cW, Messages
-						.getString("RechnungsListeView.delayInDays")); //$NON-NLS-1$
-
+		
+		tk.createLabel(cW, Messages.getString("RechnungsListeView.delayInDays")); //$NON-NLS-1$
+		
 		niDaysTo1st = new NumberInput(cW, REMINDER_1);
 		niDaysTo1st.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		niDaysTo1st.getControl().addSelectionListener(mahnWizardListener);
-		niDaysTo1st.setValue(Hub.mandantCfg.get(
-				PreferenceConstants.RNN_DAYSUNTIL1ST, 30));
+		niDaysTo1st.setValue(Hub.mandantCfg.get(PreferenceConstants.RNN_DAYSUNTIL1ST, 30));
 		niDaysTo2nd = new NumberInput(cW, REMINDER_2);
 		niDaysTo2nd.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		niDaysTo2nd.getControl().addSelectionListener(mahnWizardListener);
-		niDaysTo2nd.setValue(Hub.mandantCfg.get(
-				PreferenceConstants.RNN_DAYSUNTIL2ND, 10));
+		niDaysTo2nd.setValue(Hub.mandantCfg.get(PreferenceConstants.RNN_DAYSUNTIL2ND, 10));
 		niDaysTo3rd = new NumberInput(cW, REMINDER_3);
 		niDaysTo3rd.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		niDaysTo3rd.getControl().addSelectionListener(mahnWizardListener);
-		niDaysTo3rd.setValue(Hub.mandantCfg.get(
-				PreferenceConstants.RNN_DAYSUNTIL3RD, 5));
+		niDaysTo3rd.setValue(Hub.mandantCfg.get(PreferenceConstants.RNN_DAYSUNTIL3RD, 5));
 		tk.createLabel(cW, Messages.getString("RechnungsListeView.fine")); //$NON-NLS-1$
 		mi1st = new MoneyInput(cW, REMINDER_1);
 		mi1st.addSelectionListener(mahnWizardListener);
-		mi1st.setMoney(Hub.mandantCfg.get(PreferenceConstants.RNN_AMOUNT1ST,
-				new Money().getAmountAsString()));
+		mi1st.setMoney(Hub.mandantCfg.get(PreferenceConstants.RNN_AMOUNT1ST, new Money()
+			.getAmountAsString()));
 		mi2nd = new MoneyInput(cW, REMINDER_2);
 		mi2nd.addSelectionListener(mahnWizardListener);
-		mi2nd.setMoney(Hub.mandantCfg.get(PreferenceConstants.RNN_AMOUNT2ND,
-				new Money().getAmountAsString()));
+		mi2nd.setMoney(Hub.mandantCfg.get(PreferenceConstants.RNN_AMOUNT2ND, new Money()
+			.getAmountAsString()));
 		mi3rd = new MoneyInput(cW, REMINDER_3);
 		mi3rd.addSelectionListener(mahnWizardListener);
-		mi3rd.setMoney(Hub.mandantCfg.get(PreferenceConstants.RNN_AMOUNT3RD,
-				new Money().getAmountAsString()));
-
+		mi3rd.setMoney(Hub.mandantCfg.get(PreferenceConstants.RNN_AMOUNT3RD, new Money()
+			.getAmountAsString()));
+		
 		ElexisEventDispatcher.getInstance().addListeners(this);
-		cv.getViewerWidget().getControl().setLayoutData(
-				SWTHelper.getFillGridData(1, true, 1, true));
+		cv.getViewerWidget().getControl()
+			.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ViewMenus menu = new ViewMenus(getViewSite());
 		actions = new RnActions(this);
-		menu.createToolbar(actions.reloadAction, actions.mahnWizardAction,
-				actions.rnFilterAction, null, actions.rnExportAction);
+		menu.createToolbar(actions.reloadAction, actions.mahnWizardAction, actions.rnFilterAction,
+			null, actions.rnExportAction);
 		menu.createMenu(actions.expandAllAction, actions.collapseAllAction,
-				actions.printListeAction, actions.addAccountExcessAction);
+			actions.printListeAction, actions.addAccountExcessAction);
 		MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);
 		mgr.addMenuListener(new RnMenuListener(this));
 		cv.setContextMenu(mgr);
 		cntp.startListening();
 	}
-
+	
 	@Override
-	public void dispose() {
+	public void dispose(){
 		ElexisEventDispatcher.getInstance().removeListeners(this);
 		cntp.stopListening();
 		super.dispose();
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	List<Rechnung> createList() {
-		IStructuredSelection sel = (IStructuredSelection) cv.getViewerWidget()
-				.getSelection();
+	List<Rechnung> createList(){
+		IStructuredSelection sel = (IStructuredSelection) cv.getViewerWidget().getSelection();
 		List<Tree> at = sel.toList();
 		List<Rechnung> ret = new LinkedList<Rechnung>();
 		for (Tree<PersistentObject> t : at) {
@@ -248,15 +228,15 @@ public class RechnungsListeView extends ViewPart implements ElexisEventListener 
 		}
 		return ret;
 	}
-
-	public void catchElexisEvent(ElexisEvent ev) {
+	
+	public void catchElexisEvent(ElexisEvent ev){
 		cv.notify(CommonViewer.Message.update);
 	}
-
-	private final ElexisEvent eetmpl = new ElexisEvent(null, Rechnung.class,
-			ElexisEvent.EVENT_RELOAD);
-
-	public ElexisEvent getElexisEventFilter() {
+	
+	private final ElexisEvent eetmpl =
+		new ElexisEvent(null, Rechnung.class, ElexisEvent.EVENT_RELOAD);
+	
+	public ElexisEvent getElexisEventFilter(){
 		return eetmpl;
 	}
 }

@@ -7,10 +7,10 @@ import java.util.Properties;
 import ch.elexis.views.RezeptBlatt;
 
 /**
- * <b>Poor mans dependency injection.</b> This file allows for the injection of an external configuration.
- * There are certain parts in code which are "hard-wired" for the application of certain tasks. 
- * These may however be necessary to be overriden, if e.g. someone wants to select a specific
- * output plugin. <br>
+ * <b>Poor mans dependency injection.</b> This file allows for the injection of an external
+ * configuration. There are certain parts in code which are "hard-wired" for the application of
+ * certain tasks. These may however be necessary to be overriden, if e.g. someone wants to select a
+ * specific output plugin. <br>
  * <br>
  * If a certain code part is modified for external configuration it is marked with<br>
  * <code>//PMDI - Dependency Injection through {@link ElexisConfigurationConstants}</code><br>
@@ -23,7 +23,7 @@ import ch.elexis.views.RezeptBlatt;
  * <b>Why?</b> We need to find a separation for instantiation of country specific implementations!
  * 
  * @author MEDEVIT - office AT medevit DOT at
- *
+ * 
  */
 public class ElexisConfigurationConstants {
 	public static String CONFIG_FILE_NAME = "ElexisConfigurationConstants.properties";
@@ -35,24 +35,26 @@ public class ElexisConfigurationConstants {
 	 */
 	public static String rezeptausgabe = RezeptBlatt.ID;
 	
-	public static boolean init() {
-		InputStream istream = ElexisConfigurationConstants.class.getClassLoader().getResourceAsStream(CONFIG_FILE_NAME);
+	public static boolean init(){
+		InputStream istream =
+			ElexisConfigurationConstants.class.getClassLoader().getResourceAsStream(
+				CONFIG_FILE_NAME);
 		if (istream != null) {
-				properties = new Properties();
-				try {
-					properties.load(istream);
-					istream.close();
-					extConfigFile = true;
-					rezeptausgabe = properties.getProperty("rezeptausgabe");
-					System.out.println("ATTENTION: External configuration file injected, overriding defaults!");
-					
-				} catch (IOException e) {
-					extConfigFile = false;
-					return extConfigFile;
-				}
+			properties = new Properties();
+			try {
+				properties.load(istream);
+				istream.close();
+				extConfigFile = true;
+				rezeptausgabe = properties.getProperty("rezeptausgabe");
+				System.out
+					.println("ATTENTION: External configuration file injected, overriding defaults!");
+				
+			} catch (IOException e) {
+				extConfigFile = false;
+				return extConfigFile;
+			}
 		}
 		return extConfigFile;
 	}
 	
-
 }

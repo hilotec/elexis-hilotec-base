@@ -54,15 +54,13 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.XMLTool;
 
 /**
- * This is a pop-in replacement for RnPrintView. To avoid several problems
- * around OpenOffice based bills we keep things easier here. Thus this approach
- * does not optimize printer access but rather waits for each page to be printed
- * before starting the next.
+ * This is a pop-in replacement for RnPrintView. To avoid several problems around OpenOffice based
+ * bills we keep things easier here. Thus this approach does not optimize printer access but rather
+ * waits for each page to be printed before starting the next.
  * 
- * We also corrected several problems around the TrustCenter-system. Tokens are
- * printed only on TG bills and only if the mandator has a TC contract. Tokens
- * are computed correctly now with the TC number as identifier in TG bills and
- * left as ESR in TP bills.
+ * We also corrected several problems around the TrustCenter-system. Tokens are printed only on TG
+ * bills and only if the mandator has a TC contract. Tokens are computed correctly now with the TC
+ * number as identifier in TG bills and left as ESR in TP bills.
  * 
  * @author Gerry
  * 
@@ -82,33 +80,34 @@ public class RnPrintView2 extends ViewPart {
 	TextContainer text;
 	TarmedACL ta = TarmedACL.getInstance();
 	
-	public RnPrintView2() {
-		
+	public RnPrintView2(){
+
 	}
 	
 	@Override
-	public void createPartControl(final Composite parent) {
+	public void createPartControl(final Composite parent){
 		text = new TextContainer(getViewSite());
 		text.getPlugin().createContainer(parent, new ITextPlugin.ICallback() {
 			
-			public void save() {
-				// TODO Auto-generated method stub
-				
+			public void save(){
+			// TODO Auto-generated method stub
+			
 			}
 			
-			public boolean saveAs() {
+			public boolean saveAs(){
 				// TODO Auto-generated method stub
 				return false;
 			}
 		});
 	}
 	
-	private void createBrief(final String template, final Kontakt adressat) {
-		actBrief = text.createFromTemplateName(null, template, Brief.RECHNUNG,
-			adressat, Messages.RnPrintView_tarmedBill);
+	private void createBrief(final String template, final Kontakt adressat){
+		actBrief =
+			text.createFromTemplateName(null, template, Brief.RECHNUNG, adressat,
+				Messages.RnPrintView_tarmedBill);
 	}
 	
-	private boolean deleteBrief() {
+	private boolean deleteBrief(){
 		if (actBrief != null) {
 			return actBrief.delete();
 		}
@@ -116,54 +115,51 @@ public class RnPrintView2 extends ViewPart {
 	}
 	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-		
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
 	
 	/**
-	 * Druckt die Rechnung auf eine Vorlage, deren Ränder alle auf 0.5cm
-	 * eingestellt sein müssen, und die unterhalb von 170 mm leer ist. (Papier
-	 * mit EZ-Schein wird erwartet) Zweite und Folgeseiten müssen gem
-	 * Tarmedrechnung formatiert sein.
+	 * Druckt die Rechnung auf eine Vorlage, deren Ränder alle auf 0.5cm eingestellt sein müssen,
+	 * und die unterhalb von 170 mm leer ist. (Papier mit EZ-Schein wird erwartet) Zweite und
+	 * Folgeseiten müssen gem Tarmedrechnung formatiert sein.
 	 * 
 	 * @param rn
 	 *            die Rechnung
 	 * @param saveFile
-	 *            Filename für eine XML-Kopie der Rechnung oder null: Keine
-	 *            Kopie
+	 *            Filename für eine XML-Kopie der Rechnung oder null: Keine Kopie
 	 * @param withForms
 	 * @param monitor
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
 	public boolean doPrint(final Rechnung rn, final IRnOutputter.TYPE rnType,
-		final String saveFile, final boolean withESR,
-		final boolean withForms, final boolean doVerify,
-		final IProgressMonitor monitor) {
+		final String saveFile, final boolean withESR, final boolean withForms,
+		final boolean doVerify, final IProgressMonitor monitor){
 		Mandant mSave = Hub.actMandant;
 		monitor.subTask(rn.getLabel());
 		Fall fall = rn.getFall();
 		Mandant mnd = rn.getMandant();
-		if(fall==null || mnd==null){
+		if (fall == null || mnd == null) {
 			return false;
 		}
 		Patient pat = fall.getPatient();
 		Hub.setMandant(mnd);
 		Rechnungssteller rs = mnd.getRechnungssteller();
-		if(pat==null || rs==null){
+		if (pat == null || rs == null) {
 			return false;
 		}
 		
 		String printer = null;
 		XMLExporter xmlex = new XMLExporter();
-		DecimalFormat df = new DecimalFormat(StringConstants.DOUBLE_ZERO); 
+		DecimalFormat df = new DecimalFormat(StringConstants.DOUBLE_ZERO);
 		Document xmlRn = xmlex.doExport(rn, saveFile, rnType, doVerify);
 		if (rn.getStatus() == RnStatus.FEHLERHAFT) {
 			return false;
 		}
-		Element invoice = xmlRn.getRootElement().getChild(XMLExporter.ELEMENT_INVOICE,
-			XMLExporter.ns);
+		Element invoice =
+			xmlRn.getRootElement().getChild(XMLExporter.ELEMENT_INVOICE, XMLExporter.ns);
 		Element balance = invoice.getChild(XMLExporter.ELEMENT_BALANCE, XMLExporter.ns);
 		paymentMode = XMLExporter.TIERS_GARANT; // fall.getPaymentMode();
 		Element eTiers = invoice.getChild(XMLExporter.ELEMENT_TIERS_GARANT, XMLExporter.ns);
@@ -178,7 +174,7 @@ public class RnPrintView2 extends ViewPart {
 		} else if (paymentMode.equals(XMLExporter.TIERS_PAYANT)) {
 			tcCode = "01";
 		}
-		ElexisEventDispatcher.fireSelectionEvents(rn,fall,pat,rs);
+		ElexisEventDispatcher.fireSelectionEvents(rn, fall, pat, rs);
 		
 		// make sure the Textplugin can replace all fields
 		fall.setInfoString("payment", paymentMode);
@@ -205,12 +201,13 @@ public class RnPrintView2 extends ViewPart {
 		}
 		adressat.getPostAnschrift(true); // damit sicher eine existiert
 		String userdata = rn.getRnId();
-		ESR esr = new ESR(rs.getInfoString(ta.ESRNUMBER), rs
-			.getInfoString(ta.ESRSUB), userdata, ESR.ESR27);
-		Money mDue = XMLTool.xmlDoubleToMoney(balance
-			.getAttributeValue(XMLExporter.ATTR_AMOUNT_DUE));
-		Money mPaid = XMLTool.xmlDoubleToMoney(balance
-			.getAttributeValue(XMLExporter.ATTR_AMOUNT_PREPAID));
+		ESR esr =
+			new ESR(rs.getInfoString(ta.ESRNUMBER), rs.getInfoString(ta.ESRSUB), userdata,
+				ESR.ESR27);
+		Money mDue =
+			XMLTool.xmlDoubleToMoney(balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_DUE));
+		Money mPaid =
+			XMLTool.xmlDoubleToMoney(balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_PREPAID));
 		String offenRp = mDue.getCentsAsString();
 		// Money mEZDue=new Money(xmlex.mTotal);
 		Money mEZDue = new Money(mDue); // XMLTool.xmlDoubleToMoney(balance.getAttributeValue("amount_obligations"));
@@ -219,13 +216,13 @@ public class RnPrintView2 extends ViewPart {
 		if (withESR == true) {
 			String tmpl = "Tarmedrechnung_EZ"; //$NON-NLS-1$
 			if ((rn.getStatus() == RnStatus.MAHNUNG_1)
-					|| (rn.getStatus() == RnStatus.MAHNUNG_1_GEDRUCKT)) {
+				|| (rn.getStatus() == RnStatus.MAHNUNG_1_GEDRUCKT)) {
 				tmpl = "Tarmedrechnung_M1"; //$NON-NLS-1$
 			} else if ((rn.getStatus() == RnStatus.MAHNUNG_2)
-					|| (rn.getStatus() == RnStatus.MAHNUNG_2_GEDRUCKT)) {
+				|| (rn.getStatus() == RnStatus.MAHNUNG_2_GEDRUCKT)) {
 				tmpl = "Tarmedrechnung_M2"; //$NON-NLS-1$
 			} else if ((rn.getStatus() == RnStatus.MAHNUNG_3)
-					|| (rn.getStatus() == RnStatus.MAHNUNG_3_GEDRUCKT)) {
+				|| (rn.getStatus() == RnStatus.MAHNUNG_3_GEDRUCKT)) {
 				tmpl = "Tarmedrechnung_M3"; //$NON-NLS-1$
 			}
 			createBrief(tmpl, adressat);
@@ -239,25 +236,20 @@ public class RnPrintView2 extends ViewPart {
 			String sMigel = balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_MIGEL);
 			String sPhysio = balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_PHYSIO);
 			String sOther = balance.getAttributeValue(XMLExporter.ATTR_AMOUNT_UNCLASSIFIED);
-			sb.append(Messages.RnPrintView_tarmedPoints).append(sTarmed)
-			.append(StringConstants.LF);
-			sb.append(Messages.RnPrintView_medicaments).append(sMedikament)
-			.append(StringConstants.LF);
-			sb.append(Messages.RnPrintView_labpoints).append(sAnalysen).append(
-					StringConstants.LF);
-			sb.append(Messages.RnPrintView_migelpoints).append(sMigel).append(
-					StringConstants.LF);
-			sb.append(Messages.RnPrintView_physiopoints).append(sPhysio)
-			.append(StringConstants.LF);
-			sb.append(Messages.RnPrintView_otherpoints).append(sOther).append(
-					StringConstants.LF);
+			sb.append(Messages.RnPrintView_tarmedPoints).append(sTarmed).append(StringConstants.LF);
+			sb.append(Messages.RnPrintView_medicaments).append(sMedikament).append(
+				StringConstants.LF);
+			sb.append(Messages.RnPrintView_labpoints).append(sAnalysen).append(StringConstants.LF);
+			sb.append(Messages.RnPrintView_migelpoints).append(sMigel).append(StringConstants.LF);
+			sb.append(Messages.RnPrintView_physiopoints).append(sPhysio).append(StringConstants.LF);
+			sb.append(Messages.RnPrintView_otherpoints).append(sOther).append(StringConstants.LF);
 			
 			for (Zahlung z : extra) {
 				Money betrag = new Money(z.getBetrag()).multiply(-1.0);
 				if (!betrag.isNegative()) {
 					sb
-					.append(z.getBemerkung())
-					.append(":\t").append(betrag.getAmountAsString()).append(StringConstants.LF); //$NON-NLS-1$ 
+						.append(z.getBemerkung())
+						.append(":\t").append(betrag.getAmountAsString()).append(StringConstants.LF); //$NON-NLS-1$ 
 					mEZDue.addMoney(betrag);
 				}
 			}
@@ -266,19 +258,18 @@ public class RnPrintView2 extends ViewPart {
 			sb.append(Messages.RnPrintView_sum).append(mEZDue);
 			
 			if (!mPaid.isZero()) {
-				sb.append(Messages.RnPrintView_prepaid).append(
-					mPaid.getAmountAsString()).append(StringConstants.LF);
+				sb.append(Messages.RnPrintView_prepaid).append(mPaid.getAmountAsString()).append(
+					StringConstants.LF);
 				// sb.append("Noch zu zahlen:\t").append(xmlex.mDue.getAmountAsString()).append("\n");
 				sb.append(Messages.RnPrintView_topay).append(
-					mEZDue.subtractMoney(mPaid).roundTo5()
-					.getAmountAsString()).append(StringConstants.LF);
+					mEZDue.subtractMoney(mPaid).roundTo5().getAmountAsString()).append(
+					StringConstants.LF);
 			}
 			
 			text.getPlugin().setFont("Serif", SWT.NORMAL, 9); //$NON-NLS-1$
 			text.replace("\\[Leistungen\\]", sb.toString());
 			
-			if (esr.printBESR(bank, adressat, rs, mEZDue.roundTo5()
-				.getCentsAsString(), text) == false) {
+			if (esr.printBESR(bank, adressat, rs, mEZDue.roundTo5().getCentsAsString(), text) == false) {
 				// avoid dead letters
 				deleteBrief();
 				;
@@ -299,8 +290,7 @@ public class RnPrintView2 extends ViewPart {
 			// Dies scheint je nach Druckertreiber unterschiedlich zu
 			// funktionieren.
 			if (text.getPlugin().print(printer, esrTray, false) == false) {
-				SWTHelper.showError("Fehler beim Drucken",
-				"Konnte den Drucker nicht starten");
+				SWTHelper.showError("Fehler beim Drucken", "Konnte den Drucker nicht starten");
 				rn.addTrace(Rechnung.REJECTED, "Druckerfehler");
 				// avoid dead letters
 				deleteBrief();
@@ -370,23 +360,20 @@ public class RnPrintView2 extends ViewPart {
 		}
 		
 		Element services = detail.getChild(XMLExporter.ELEMENT_SERVICES, ns); //$NON-NLS-1$
-		SortedList<Element> ls = new SortedList(services.getChildren(),
-			new RnComparator());
+		SortedList<Element> ls = new SortedList(services.getChildren(), new RnComparator());
 		
 		Element remark = invoice.getChild(XMLExporter.ELEMENT_REMARK); //$NON-NLS-1$
 		if (remark != null) {
 			final String rem = remark.getText();
-			text.getPlugin().findOrReplace(Messages.RnPrintView_remark,
-				new ReplaceCallback() {
-				public String replace(final String in) {
+			text.getPlugin().findOrReplace(Messages.RnPrintView_remark, new ReplaceCallback() {
+				public String replace(final String in){
 					return Messages.RnPrintView_remarksp + rem;
 				}
 			});
 		}
 		replaceHeaderFields(text, rn);
 		text.replace("\\[F.+\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
-		Object cursor = text.getPlugin().insertText(
-			"[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
+		Object cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
 		TimeTool r = new TimeTool();
 		int page = 1;
 		double seitentotal = 0.0;
@@ -447,8 +434,7 @@ public class RnPrintView2 extends ViewPart {
 				// avoid dead letters
 				deleteBrief();
 				;
-				log.log("Fehlerhaftes Format für amount bei " + sb.toString(),
-					Log.ERRORS);
+				log.log("Fehlerhaftes Format für amount bei " + sb.toString(), Log.ERRORS);
 				Hub.setMandant(mSave);
 				return false;
 			}
@@ -480,8 +466,7 @@ public class RnPrintView2 extends ViewPart {
 				StringBuilder footer = new StringBuilder();
 				cursor = tp.insertText(cursor, "\n\n", SWT.LEFT); //$NON-NLS-1$
 				footer
-				.append(
-				"■ Zwischentotal\t\tCHF\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t").append(df.format(seitentotal)); //$NON-NLS-1$
+					.append("■ Zwischentotal\t\tCHF\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t").append(df.format(seitentotal)); //$NON-NLS-1$
 				tp.setFont("Helvetica", SWT.BOLD, 7); //$NON-NLS-1$
 				cursor = tp.insertText(cursor, footer.toString(), SWT.LEFT);
 				seitentotal = 0.0;
@@ -498,8 +483,7 @@ public class RnPrintView2 extends ViewPart {
 				}
 				
 				insertPage(++page, adressat, rn);
-				cursor = text.getPlugin().insertText(
-					"[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
+				cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
 				cmAvail = cmMiddlePage;
 				monitor.worked(2);
 			}
@@ -518,8 +502,7 @@ public class RnPrintView2 extends ViewPart {
 				return false;
 			}
 			insertPage(++page, adressat, rn);
-			cursor = text.getPlugin().insertText(
-				"[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
+			cursor = text.getPlugin().insertText("[Rechnungszeilen]", "\n", SWT.LEFT); //$NON-NLS-1$ //$NON-NLS-2$
 			monitor.worked(2);
 		}
 		StringBuilder footer = new StringBuilder(100);
@@ -527,22 +510,19 @@ public class RnPrintView2 extends ViewPart {
 		
 		cursor = text.getPlugin().insertTextAt(0, 220, 190, 45, " ", SWT.LEFT); //$NON-NLS-1$
 		cursor = print(cursor, tp, true, "\tTARMED AL \t"); //$NON-NLS-1$
-		footer
-		.append(balance.getAttributeValue("amount_tarmed.mt")) //$NON-NLS-1$
-		.append("  (").append(balance.getAttributeValue("unit_tarmed.mt")).append(")\t"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		footer.append(balance.getAttributeValue("amount_tarmed.mt")) //$NON-NLS-1$
+			.append("  (").append(balance.getAttributeValue("unit_tarmed.mt")).append(")\t"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		cursor = print(cursor, tp, false, footer.toString());
 		cursor = print(cursor, tp, true, "Physio \t"); //$NON-NLS-1$
 		cursor = print(cursor, tp, false, getValue(balance, "amount_physio")); //$NON-NLS-1$
 		cursor = print(cursor, tp, true, "\tMiGeL \t"); //$NON-NLS-1$
 		cursor = print(cursor, tp, false, getValue(balance, "amount_migel")); //$NON-NLS-1$
 		cursor = print(cursor, tp, true, "\tÜbrige \t"); //$NON-NLS-1$
-		cursor = print(cursor, tp, false, getValue(balance,
-		"amount_unclassified")); //$NON-NLS-1$
+		cursor = print(cursor, tp, false, getValue(balance, "amount_unclassified")); //$NON-NLS-1$
 		cursor = print(cursor, tp, true, "\n\tTARMED TL \t"); //$NON-NLS-1$
 		footer.setLength(0);
-		footer
-		.append(balance.getAttributeValue("amount_tarmed.tt")) //$NON-NLS-1$
-		.append("  (").append(balance.getAttributeValue("unit_tarmed.tt")).append(")\t"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		footer.append(balance.getAttributeValue("amount_tarmed.tt")) //$NON-NLS-1$
+			.append("  (").append(balance.getAttributeValue("unit_tarmed.tt")).append(")\t"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		cursor = print(cursor, tp, false, footer.toString());
 		cursor = print(cursor, tp, true, "Labor \t"); //$NON-NLS-1$
 		cursor = print(cursor, tp, false, getValue(balance, "amount_lab")); //$NON-NLS-1$
@@ -552,26 +532,24 @@ public class RnPrintView2 extends ViewPart {
 		cursor = print(cursor, tp, false, getValue(balance, "amount_cantonal")); //$NON-NLS-1$
 		
 		footer.setLength(0);
-		footer
-		.append("\n\n").append("■ Gesamtbetrag\t\tCHF\t\t").append(df.format(sumTotal)) //$NON-NLS-1$ //$NON-NLS-2$
-		.append("\tdavon PFL \t").append(df.format(sumPfl)).append("\tAnzahlung \t") //$NON-NLS-1$ //$NON-NLS-2$
-		.append(mPaid.getAmountAsString())
-		.append("\tFälliger Betrag \t").append(mDue.getAmountAsString()) //$NON-NLS-1$
-		.append("\n\n■ MwSt.Nr. \t\t"); //$NON-NLS-1$
+		footer.append("\n\n").append("■ Gesamtbetrag\t\tCHF\t\t").append(df.format(sumTotal)) //$NON-NLS-1$ //$NON-NLS-2$
+			.append("\tdavon PFL \t").append(df.format(sumPfl)).append("\tAnzahlung \t") //$NON-NLS-1$ //$NON-NLS-2$
+			.append(mPaid.getAmountAsString())
+			.append("\tFälliger Betrag \t").append(mDue.getAmountAsString()) //$NON-NLS-1$
+			.append("\n\n■ MwSt.Nr. \t\t"); //$NON-NLS-1$
 		cursor = print(cursor, tp, true, footer.toString());
 		cursor = print(cursor, tp, false, "keine\n\n"); //$NON-NLS-1$
 		cursor = print(cursor, tp, true, "  Code\tSatz\t\tBetrag\tMwSt\n"); //$NON-NLS-1$
 		tp.setFont("Helvetica", SWT.NORMAL, 9); //$NON-NLS-1$
 		footer.setLength(0);
 		footer
-		.append("■ 0\t0\t\t").append(df.format(mwst0)).append("\t 0.00\n") //$NON-NLS-1$ //$NON-NLS-2$
-		.append("■ 1\t7.6\t\t").append(df.format(mwst1)).append("\t").append(df.format(0.074 * mwst1)).append("\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		.append("■ 2\t2.4\t\t").append(df.format(mwst2)).append("\t").append(df.format(0.024 * mwst2)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			.append("■ 0\t0\t\t").append(df.format(mwst0)).append("\t 0.00\n") //$NON-NLS-1$ //$NON-NLS-2$
+			.append("■ 1\t7.6\t\t").append(df.format(mwst1)).append("\t").append(df.format(0.074 * mwst1)).append("\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			.append("■ 2\t2.4\t\t").append(df.format(mwst2)).append("\t").append(df.format(0.024 * mwst2)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		cursor = print(cursor, tp, false, footer.toString());
 		cursor = print(cursor, tp, true, "\n Total\t\t\t"); //$NON-NLS-1$
 		footer.setLength(0);
-		footer.append(mDue.getAmountAsString())
-		.append("\t").append(df.format(sumMwst)); //$NON-NLS-1$
+		footer.append(mDue.getAmountAsString()).append("\t").append(df.format(sumMwst)); //$NON-NLS-1$
 		tp.setFont("Helvetica", SWT.BOLD, 9); //$NON-NLS-1$
 		tp.insertText(cursor, footer.toString(), SWT.LEFT);
 		if (tcCode != null) {
@@ -598,32 +576,27 @@ public class RnPrintView2 extends ViewPart {
 		return true;
 	}
 	
-	private void insertPage(final int page, final Kontakt adressat,
-		final Rechnung rn) {
+	private void insertPage(final int page, final Kontakt adressat, final Rechnung rn){
 		createBrief("Tarmedrechnung_S2", adressat);
 		replaceHeaderFields(text, rn);
 		text
-		.replace(
-			"\\[Seite\\]", StringTool.pad(StringTool.LEFT, '0', Integer.toString(page), 2)); //$NON-NLS-1$
+			.replace("\\[Seite\\]", StringTool.pad(StringTool.LEFT, '0', Integer.toString(page), 2)); //$NON-NLS-1$
 	}
 	
 	/*
-	 * private TextContainer insertPage(final int page, final Kontakt adressat,
-	 * TextContainer text, final Rechnung rn){
+	 * private TextContainer insertPage(final int page, final Kontakt adressat, TextContainer text,
+	 * final Rechnung rn){
 	 * 
-	 * if(--existing<0){
-	 * ctF=addItem("Tarmedrechnung_S2",Messages.RnPrintView_page+page,adressat);
-	 * //$NON-NLS-1$ }else{ ctF=ctab.getItem(page);
-	 * useItem(page,"Tarmedrechnung_S2", adressat); //$NON-NLS-1$ }
-	 * text=(TextContainer) ctF.getData("text"); //$NON-NLS-1$
-	 * replaceHeaderFields(text, rn);
-	 * text.replace("\\[Seite\\]",StringTool.pad(SWT
+	 * if(--existing<0){ ctF=addItem("Tarmedrechnung_S2",Messages.RnPrintView_page+page,adressat);
+	 * //$NON-NLS-1$ }else{ ctF=ctab.getItem(page); useItem(page,"Tarmedrechnung_S2", adressat);
+	 * //$NON-NLS-1$ } text=(TextContainer) ctF.getData("text"); //$NON-NLS-1$
+	 * replaceHeaderFields(text, rn); text.replace("\\[Seite\\]",StringTool.pad(SWT
 	 * .LEFT,'0',Integer.toString(page),2)); //$NON-NLS-1$ return text;
 	 * 
 	 * }
 	 */
-	private Object print(final Object cur, final ITextPlugin p,
-		final boolean small, final String text) {
+	private Object print(final Object cur, final ITextPlugin p, final boolean small,
+		final String text){
 		if (small) {
 			p.setFont("Helvetica", SWT.BOLD, 7); //$NON-NLS-1$
 		} else {
@@ -632,7 +605,7 @@ public class RnPrintView2 extends ViewPart {
 		return p.insertText(cur, text, SWT.LEFT);
 	}
 	
-	private String getValue(final Element s, final String field) {
+	private String getValue(final Element s, final String field){
 		String ret = s.getAttributeValue(field);
 		if (StringTool.isNothing(ret)) {
 			return " "; //$NON-NLS-1$
@@ -640,7 +613,7 @@ public class RnPrintView2 extends ViewPart {
 		return ret;
 	}
 	
-	private void replaceHeaderFields(final TextContainer text, final Rechnung rn) {
+	private void replaceHeaderFields(final TextContainer text, final Rechnung rn){
 		Fall fall = rn.getFall();
 		Mandant m = rn.getMandant();
 		text.replace("\\[F1\\]", rn.getRnId()); //$NON-NLS-1$
@@ -698,7 +671,7 @@ public class RnPrintView2 extends ViewPart {
 		TimeTool tt0 = new TimeTool();
 		TimeTool tt1 = new TimeTool();
 		
-		public int compare(Element e0, Element e1) {
+		public int compare(Element e0, Element e1){
 			if (!tt0.set(e0.getAttributeValue("date_begin"))) {
 				return 1;
 			}

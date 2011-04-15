@@ -27,48 +27,48 @@ public class KonsFilter implements IObjectFilterProvider, IFilter {
 	Episode mine;
 	EpisodesView home;
 	boolean bDaemfung;
-
-	public KonsFilter(final EpisodesView home) {
+	
+	public KonsFilter(final EpisodesView home){
 		this.home = home;
 	}
-
-	public void setProblem(final Episode problem) {
+	
+	public void setProblem(final Episode problem){
 		mine = problem;
 		ElexisEventDispatcher.reload(Konsultation.class); // TODO why?
 	}
-
-	public void activate() {
+	
+	public void activate(){
 		bDaemfung = true;
 		home.activateKonsFilterAction(true);
 		bDaemfung = false;
 	}
-
-	public void changed() {
-		// should we mind?
+	
+	public void changed(){
+	// should we mind?
 	}
-
-	public void deactivate() {
+	
+	public void deactivate(){
 		bDaemfung = true;
 		home.activateKonsFilterAction(false);
 		bDaemfung = false;
 	}
-
-	public IFilter getFilter() {
+	
+	public IFilter getFilter(){
 		return this;
 	}
-
-	public String getId() {
+	
+	public String getId(){
 		return "ch.elexis.icpc.konsfilter";
 	}
-
-	public boolean select(final Object toTest) {
+	
+	public boolean select(final Object toTest){
 		if (mine == null) {
 			return true;
 		}
 		if (toTest instanceof Konsultation) {
 			Konsultation k = (Konsultation) toTest;
-			List<Encounter> list = new Query<Encounter>(Encounter.class,
-					"EpisodeID", mine.getId()).execute();
+			List<Encounter> list =
+				new Query<Encounter>(Encounter.class, "EpisodeID", mine.getId()).execute();
 			for (Encounter enc : list) {
 				if (enc.get("KonsID").equals(k.getId())) {
 					return true;

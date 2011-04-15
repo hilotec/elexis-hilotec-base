@@ -38,33 +38,32 @@ public class Analyzer {
 	private final Konsultation mine;
 	private final XChangeContributor xc = new XChangeContributor();
 	private final Patient pat;
-	private String bdSystTab, bdDiastTab, pulseTab, heightTab, weightTab,
-	waistTab;
+	private String bdSystTab, bdDiastTab, pulseTab, heightTab, weightTab, waistTab;
 	
-	public void addVitalElement(Element eKons) {
+	public void addVitalElement(Element eKons){
 		Element elVital = new Element("vital");
 		readVital(elVital);
 		eKons.addContent(elVital);
 	}
 	
 	public void addMediElements(Element eKons){
-		Query<Prescription> qbe=new Query<Prescription>(Prescription.class);
+		Query<Prescription> qbe = new Query<Prescription>(Prescription.class);
 		qbe.add("DatumVon", "=", mine.getDatum());
-		for(Prescription p:qbe.execute()){
-			Element eMedi=new Element("medi");
-			Artikel art=p.getArtikel();
-			String pk=art.getPharmaCode();
+		for (Prescription p : qbe.execute()) {
+			Element eMedi = new Element("medi");
+			Artikel art = p.getArtikel();
+			String pk = art.getPharmaCode();
 			addElement(eMedi, "pharmacode", pk);
-			String dose=p.getDosis();
-			if(!StringTool.isNothing(dose)){
-				String[] ds=dose.split("\\s*\\-\\s*");
-				addElement(eMedi,"dosismo",ds[0]);
-				if(ds.length>1){
-					addElement(eMedi,"dosismi",ds[1]);
-					if(ds.length>2){
-						addElement(eMedi,"dosisab",ds[2]);
-						if(ds.length>3){
-							addElement(eMedi,"dosisna",ds[3]);
+			String dose = p.getDosis();
+			if (!StringTool.isNothing(dose)) {
+				String[] ds = dose.split("\\s*\\-\\s*");
+				addElement(eMedi, "dosismo", ds[0]);
+				if (ds.length > 1) {
+					addElement(eMedi, "dosismi", ds[1]);
+					if (ds.length > 2) {
+						addElement(eMedi, "dosisab", ds[2]);
+						if (ds.length > 3) {
+							addElement(eMedi, "dosisna", ds[3]);
 						}
 					}
 				}
@@ -72,24 +71,26 @@ public class Analyzer {
 			eKons.addContent(eMedi);
 		}
 	}
+	
 	public void addDiagnoseElement(Element eKons){
-		Element eDiag=null;
-		Query<Encounter> qbe=new Query<Encounter>(Encounter.class);
+		Element eDiag = null;
+		Query<Encounter> qbe = new Query<Encounter>(Encounter.class);
 		qbe.add("KonsID", "=", mine.getId());
-		for(Encounter enc:qbe.execute()){
-			IcpcCode diag=enc.getDiag();
-			if(diag!=null){
-				if(eDiag==null){
-					eDiag=new Element("diagnose");
+		for (Encounter enc : qbe.execute()) {
+			IcpcCode diag = enc.getDiag();
+			if (diag != null) {
+				if (eDiag == null) {
+					eDiag = new Element("diagnose");
 				}
 				addElement(eDiag, "icpc", diag.getCode());
 			}
 		}
-		if(eDiag!=null){
+		if (eDiag != null) {
 			eKons.addContent(eDiag);
 		}
 	}
-	public void addLaborElements(Element eKons) {
+	
+	public void addLaborElements(Element eKons){
 		TimeTool ttDate = new TimeTool(mine.getDatum());
 		Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
 		qbe.add("PatientID", "=", pat.getId());
@@ -114,7 +115,7 @@ public class Analyzer {
 		}
 	}
 	
-	public Analyzer(Konsultation k) {
+	public Analyzer(Konsultation k){
 		mine = k;
 		pat = k.getFall().getPatient();
 		if (pat != null) {
@@ -141,12 +142,11 @@ public class Analyzer {
 		}
 	}
 	
-	private void readVital(Element el) {
+	private void readVital(Element el){
 		String[] split = bdSystTab.split("\\s*\\:\\s*");
 		String bdsyst = null, bddiast = null;
 		if (split.length > 1) {
-			HashMap<String, String> vals = xc.getResult(split[0].trim(), mine
-				.getDatum());
+			HashMap<String, String> vals = xc.getResult(split[0].trim(), mine.getDatum());
 			
 			if (bdSystTab.equals(bdDiastTab)) {
 				String bd = vals.get(split[1].trim());
@@ -184,11 +184,10 @@ public class Analyzer {
 		addVitalParm(el, "bauchumfang", waistTab);
 	}
 	
-	private String addVitalParm(Element el, String elName, String p) {
+	private String addVitalParm(Element el, String elName, String p){
 		String[] split = p.split("\\s*\\:\\s*");
 		if (split.length > 1) {
-			HashMap<String, String> vals = xc.getResult(split[0].trim(), mine
-				.getDatum());
+			HashMap<String, String> vals = xc.getResult(split[0].trim(), mine.getDatum());
 			if (vals != null) {
 				String res = vals.get(split[1].trim());
 				if (res != null) {
@@ -201,17 +200,16 @@ public class Analyzer {
 		return null;
 	}
 	
-	private String getOrFail(String prefs) {
+	private String getOrFail(String prefs){
 		String ret = Hub.globalCfg.get(prefs, null);
 		if (ret == null) {
-			SWTHelper
-			.showError("ICPC/Fire",
-			"Bitte konfigurieren Sie das Fire Plugin (Datei-Einstellungen)");
+			SWTHelper.showError("ICPC/Fire",
+				"Bitte konfigurieren Sie das Fire Plugin (Datei-Einstellungen)");
 		}
 		return ret;
 	}
 	
-	private void addElement(Element parent, String title, String value) {
+	private void addElement(Element parent, String title, String value){
 		Element child = new Element(title);
 		child.setText(value);
 		parent.addContent(child);

@@ -29,7 +29,7 @@ public class PatientLabor {
 	private static String LABOR_NAME = Messages.PatientLabor_nameMedicsLabor;
 	
 	private Labor myLab = null;
-
+	
 	private final Patient patient;
 	
 	private IDocumentManager docManager;
@@ -75,13 +75,13 @@ public class PatientLabor {
 	 * @throws ElexisException
 	 * @throws IOException
 	 */
-	private boolean addDocument(final String title, final String category, final String dateStr, final File file)
-		throws IOException, ElexisException{
+	private boolean addDocument(final String title, final String category, final String dateStr,
+		final File file) throws IOException, ElexisException{
 		checkCreateCategory(category);
 		
 		List<IOpaqueDocument> documentList =
-			this.docManager.listDocuments(this.patient, category, title, null,
-				new TimeSpan(dateStr + "-" + dateStr), null);
+			this.docManager.listDocuments(this.patient, category, title, null, new TimeSpan(dateStr
+				+ "-" + dateStr), null);
 		
 		if (documentList == null || documentList.size() == 0) {
 			this.docManager.addDocument(new GenericDocument(this.patient, title, category, file,
@@ -160,11 +160,9 @@ public class PatientLabor {
 	 */
 	public void addDocument(EncapsulatedData data) throws IOException{
 		if (this.docManager == null) {
-			throw new IOException(
-				MessageFormat
-					.format(
-						Messages.PatientLabor_errorKeineDokumentablage,
-						data.getName(), this.patient.getLabel()));
+			throw new IOException(MessageFormat.format(
+				Messages.PatientLabor_errorKeineDokumentablage, data.getName(), this.patient
+					.getLabel()));
 		}
 		
 		// Kategorie überprüfen/ erstellen
@@ -200,7 +198,8 @@ public class PatientLabor {
 			LabItem labItem = getLabItem(kuerzel, LabItem.typ.DOCUMENT);
 			if (labItem == null) {
 				labItem =
-					new LabItem(kuerzel, Messages.PatientLabor_nameDokumentLaborParameter, myLab, "", "",  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+					new LabItem(kuerzel, Messages.PatientLabor_nameDokumentLaborParameter, myLab,
+						"", "", //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						FileTool.getExtension(filename), LabItem.typ.DOCUMENT, LABOR_NAME, "50"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			

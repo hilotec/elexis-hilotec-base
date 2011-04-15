@@ -16,35 +16,39 @@ package ch.elexis.data;
 import java.lang.reflect.Method;
 
 public class DiagnoseCodeFactory extends PersistentObjectFactory {
-
-	public DiagnoseCodeFactory() {}
-
+	
+	public DiagnoseCodeFactory(){}
+	
 	public PersistentObject createFromString(String code){
-		 try{
-		        String[] ci=code.split("::"); //$NON-NLS-1$
-		        Class clazz=Class.forName(ci[0]);
-		        Method load=clazz.getMethod("load",new Class[]{String.class}); //$NON-NLS-1$
-		        PersistentObject ret=  (PersistentObject)(load.invoke(null,new Object[]{ci[1]}));
-		        if(ret instanceof TICode){
-		        	return ret;
-		        }
-		        if(!ret.exists()){
-		        	if(clazz.getName().equals(ICD10.class.getName())){
-		        		String id=new Query<ICD10>(ICD10.class).findSingle("Code", "=", ci[1]); //$NON-NLS-1$ //$NON-NLS-2$
-		        		if(id!=null){
-		        			return (PersistentObject)(load.invoke(null,new Object[]{id}));
-		        		}
-		        	}
-		        }
-		        return ret;
-		    }catch(Exception ex){
-		    	// ExHandler.handle(ex);
-		    	return null;
-		    }
+		try {
+			String[] ci = code.split("::"); //$NON-NLS-1$
+			Class clazz = Class.forName(ci[0]);
+			Method load = clazz.getMethod("load", new Class[] { String.class}); //$NON-NLS-1$
+			PersistentObject ret = (PersistentObject) (load.invoke(null, new Object[] {
+				ci[1]
+			}));
+			if (ret instanceof TICode) {
+				return ret;
+			}
+			if (!ret.exists()) {
+				if (clazz.getName().equals(ICD10.class.getName())) {
+					String id = new Query<ICD10>(ICD10.class).findSingle("Code", "=", ci[1]); //$NON-NLS-1$ //$NON-NLS-2$
+					if (id != null) {
+						return (PersistentObject) (load.invoke(null, new Object[] {
+							id
+						}));
+					}
+				}
+			}
+			return ret;
+		} catch (Exception ex) {
+			// ExHandler.handle(ex);
+			return null;
 		}
-
+	}
+	
 	@Override
-	protected PersistentObject doCreateTemplate(Class typ) {
+	protected PersistentObject doCreateTemplate(Class typ){
 		try {
 			return (PersistentObject) typ.newInstance();
 		} catch (Exception e) {
@@ -52,6 +56,5 @@ public class DiagnoseCodeFactory extends PersistentObjectFactory {
 			return null;
 		}
 	}
-	
 	
 }

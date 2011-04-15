@@ -49,7 +49,7 @@ public class RnPrintView extends ViewPart {
 		tc.getPlugin().createContainer(parent, new ITextPlugin.ICallback() {
 			
 			public void save(){
-				// we don't save
+			// we don't save
 			}
 			
 			public boolean saveAs(){
@@ -61,8 +61,8 @@ public class RnPrintView extends ViewPart {
 	
 	@Override
 	public void setFocus(){
-		// TODO Auto-generated method stub
-		
+	// TODO Auto-generated method stub
+	
 	}
 	
 	/**
@@ -125,7 +125,7 @@ public class RnPrintView extends ViewPart {
 			tc.getPlugin().insertText(
 				pos,
 				"____________________________________________________________________\nTotal:\t\t"
-				+ sum.getAmountAsString(), SWT.LEFT);
+					+ sum.getAmountAsString(), SWT.LEFT);
 		String toPrinter = Hub.localCfg.get("Drucker/A4/Name", null);
 		tc.getPlugin().print(toPrinter, null, false);
 		tc.createFromTemplateName(null, templateESR, Brief.RECHNUNG, adressat, rn.getNr());

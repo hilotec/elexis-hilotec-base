@@ -11,30 +11,23 @@ import ch.rgw.tools.TimeTool;
 public class Logger {
 	PrintStream _log;
 	
-	public Logger()
-	{
+	public Logger(){
 		_log = System.out;
 	}
 	
-	public Logger(String filename) throws FileNotFoundException
-	{
+	public Logger(String filename) throws FileNotFoundException{
 		_log = new PrintStream(new FileOutputStream(filename, true));
 	}
 	
-	public Logger(boolean enable)
-	{
-		if (enable)
-		{
+	public Logger(boolean enable){
+		if (enable) {
 			_log = System.out;
-		}
-		else
-		{
+		} else {
 			_log = new PrintStream(new DummyPrintStream());
 		}
 	}
 	
-	public void logRX(String s)
-	{
+	public void logRX(String s){
 		String debug = s.replace("<", "<LT>").replace(">", "<GT>");
 		debug = debug.replace("\001", "<SOH>");
 		debug = debug.replace("\002", "<STX>");
@@ -51,8 +44,7 @@ public class Logger {
 		_log.println("<-- \"" + debug + "\"");
 	}
 	
-	public void logTX(String s)
-	{
+	public void logTX(String s){
 		String debug = s.replace("<", "<LT>").replace(">", "<GT>");
 		debug = debug.replace("\001", "<SOH>");
 		debug = debug.replace("\002", "<STX>");
@@ -69,29 +61,24 @@ public class Logger {
 		_log.println("--> \"" + debug + "\"");
 	}
 	
-	public void log(String s)
-	{
+	public void log(String s){
 		String debug = s.replace("<", "<LT>").replace(">", "<GT>");
 		debug = debug.replace("\"", "<QUOTE>");
 		_log.println("-*- \"" + debug + "\"");
 	}
 	
-	public void logStart()
-	{
+	public void logStart(){
 		_log.println("-S- \"" + new TimeTool().toDBString(true) + "\"");
 	}
 	
-	public void logEnd()
-	{
+	public void logEnd(){
 		_log.println("-E- \"" + new TimeTool().toDBString(true) + "\"");
 	}
 	
-	
-	class DummyPrintStream extends OutputStream
-	{
+	class DummyPrintStream extends OutputStream {
 		@Override
-		public void write(int b) throws IOException {
-			// Do nothing			
-		}		
+		public void write(int b) throws IOException{
+		// Do nothing
+		}
 	}
 }

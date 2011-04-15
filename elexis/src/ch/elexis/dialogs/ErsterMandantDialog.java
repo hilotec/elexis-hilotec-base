@@ -32,100 +32,110 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 
 public class ErsterMandantDialog extends TitleAreaDialog {
-	Text tUsername,tPwd1,tPwd2,tTitle,tFirstname,tLastname,tEmail,tStreet,tZip,tPlace,tPhone, tFax;
-	String[] anreden={Messages.getString("ErsterMandantDialog.Herr"),Messages.getString("ErsterMandantDialog.Frau"),Messages.getString("ErsterMandantDialog.Firma")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	Text tUsername, tPwd1, tPwd2, tTitle, tFirstname, tLastname, tEmail, tStreet, tZip, tPlace,
+			tPhone, tFax;
+	String[] anreden =
+		{
+			Messages.getString("ErsterMandantDialog.Herr"), Messages.getString("ErsterMandantDialog.Frau"), Messages.getString("ErsterMandantDialog.Firma")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	Combo cbAnrede;
 	
 	public ErsterMandantDialog(Shell parent){
 		super(parent);
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		Composite rx=(Composite)super.createDialogArea(parent);
-		Composite ret=new Composite(rx,SWT.NONE);
+	protected Control createDialogArea(Composite parent){
+		Composite rx = (Composite) super.createDialogArea(parent);
+		Composite ret = new Composite(rx, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		ret.setLayout(new GridLayout(2,false));
-		new Label(ret,SWT.NONE).setText(Messages.getString("ErsterMandantDialog.Username")); //$NON-NLS-1$
-		tUsername=new Text(ret,SWT.BORDER);
+		ret.setLayout(new GridLayout(2, false));
+		new Label(ret, SWT.NONE).setText(Messages.getString("ErsterMandantDialog.Username")); //$NON-NLS-1$
+		tUsername = new Text(ret, SWT.BORDER);
 		tUsername.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new Label(ret,SWT.NONE).setText(Messages.getString("ErsterMandantDialog.Password")); //$NON-NLS-1$
-		tPwd1=new Text(ret,SWT.BORDER|SWT.PASSWORD);
+		new Label(ret, SWT.NONE).setText(Messages.getString("ErsterMandantDialog.Password")); //$NON-NLS-1$
+		tPwd1 = new Text(ret, SWT.BORDER | SWT.PASSWORD);
 		tPwd1.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new Label(ret,SWT.NONE).setText(Messages.getString("ErsterMandantDialog.PasswordRepeat")); //$NON-NLS-1$
-		tPwd2=new Text(ret,SWT.BORDER|SWT.PASSWORD);
+		new Label(ret, SWT.NONE).setText(Messages.getString("ErsterMandantDialog.PasswordRepeat")); //$NON-NLS-1$
+		tPwd2 = new Text(ret, SWT.BORDER | SWT.PASSWORD);
 		tPwd2.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new Label(ret,SWT.NONE).setText(Messages.getString("ErsterMandantDialog.Anrede")); //$NON-NLS-1$
-		cbAnrede=new Combo(ret,SWT.SIMPLE|SWT.SINGLE);
+		new Label(ret, SWT.NONE).setText(Messages.getString("ErsterMandantDialog.Anrede")); //$NON-NLS-1$
+		cbAnrede = new Combo(ret, SWT.SIMPLE | SWT.SINGLE);
 		cbAnrede.setItems(anreden);
-
-		new Label(ret,SWT.NONE).setText(Messages.getString("ErsterMandantDialog.Title")); //$NON-NLS-1$
-		tTitle=new Text(ret,SWT.BORDER);
+		
+		new Label(ret, SWT.NONE).setText(Messages.getString("ErsterMandantDialog.Title")); //$NON-NLS-1$
+		tTitle = new Text(ret, SWT.BORDER);
 		tTitle.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new Label(ret,SWT.NONE).setText(Messages.getString("ErsterMandantDialog.Firstname")); //$NON-NLS-1$
-		tFirstname=new Text(ret,SWT.BORDER);
+		new Label(ret, SWT.NONE).setText(Messages.getString("ErsterMandantDialog.Firstname")); //$NON-NLS-1$
+		tFirstname = new Text(ret, SWT.BORDER);
 		tFirstname.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new Label(ret,SWT.NONE).setText(Messages.getString("ErsterMandantDialog.Lastname")); //$NON-NLS-1$
-		tLastname=new Text(ret,SWT.BORDER);
+		new Label(ret, SWT.NONE).setText(Messages.getString("ErsterMandantDialog.Lastname")); //$NON-NLS-1$
+		tLastname = new Text(ret, SWT.BORDER);
 		tLastname.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new Label(ret,SWT.NONE).setText(Messages.getString("ErsterMandantDialog.EMail")); //$NON-NLS-1$
-		tEmail=new Text(ret,SWT.BORDER);
+		new Label(ret, SWT.NONE).setText(Messages.getString("ErsterMandantDialog.EMail")); //$NON-NLS-1$
+		tEmail = new Text(ret, SWT.BORDER);
 		tEmail.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new Label(ret,SWT.NONE).setText(Messages.getString("ErsterMandantDialog.Street")); //$NON-NLS-1$
-		tStreet=new Text(ret,SWT.BORDER);
+		new Label(ret, SWT.NONE).setText(Messages.getString("ErsterMandantDialog.Street")); //$NON-NLS-1$
+		tStreet = new Text(ret, SWT.BORDER);
 		tStreet.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new Label(ret,SWT.NONE).setText(Messages.getString("ErsterMandantDialog.zip")); //$NON-NLS-1$
-		tZip=new Text(ret,SWT.BORDER);
+		new Label(ret, SWT.NONE).setText(Messages.getString("ErsterMandantDialog.zip")); //$NON-NLS-1$
+		tZip = new Text(ret, SWT.BORDER);
 		tZip.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new Label(ret,SWT.NONE).setText(Messages.getString("ErsterMandantDialog.place")); //$NON-NLS-1$
-		tPlace=new Text(ret,SWT.BORDER);
+		new Label(ret, SWT.NONE).setText(Messages.getString("ErsterMandantDialog.place")); //$NON-NLS-1$
+		tPlace = new Text(ret, SWT.BORDER);
 		tPlace.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new Label(ret,SWT.NONE).setText(Messages.getString("ErsterMandantDialog.phone")); //$NON-NLS-1$
-		tPhone=new Text(ret,SWT.BORDER);
+		new Label(ret, SWT.NONE).setText(Messages.getString("ErsterMandantDialog.phone")); //$NON-NLS-1$
+		tPhone = new Text(ret, SWT.BORDER);
 		tPhone.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		new Label(ret,SWT.NONE).setText(Messages.getString("ErsterMandantDialog.fax")); //$NON-NLS-1$
-		tFax=new Text(ret,SWT.BORDER);
+		new Label(ret, SWT.NONE).setText(Messages.getString("ErsterMandantDialog.fax")); //$NON-NLS-1$
+		tFax = new Text(ret, SWT.BORDER);
 		tFax.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		return rx;
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		getShell().setText(Messages.getString("ErsterMandantDialog.createFirstMandatorCaption")); //$NON-NLS-1$
 		setMessage(Messages.getString("ErsterMandantDialog.createFirstMandatorMessage")); //$NON-NLS-1$
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
-
+	
 	@Override
-	protected void okPressed() {
-		String pwd=tPwd1.getText();
-		if(!pwd.equals(tPwd2.getText())){
-			SWTHelper.showError(Messages.getString("ErsterMandantDialog.passwordErrorCaption"), Messages.getString("ErsterMandantDialog.passwordErrorBody")); //$NON-NLS-1$ //$NON-NLS-2$
+	protected void okPressed(){
+		String pwd = tPwd1.getText();
+		if (!pwd.equals(tPwd2.getText())) {
+			SWTHelper
+				.showError(
+					Messages.getString("ErsterMandantDialog.passwordErrorCaption"), Messages.getString("ErsterMandantDialog.passwordErrorBody")); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		String email=tEmail.getText();
-		if(!StringTool.isMailAddress(email)){
-			SWTHelper.showError(Messages.getString("ErsterMandantDialog.mailnvalidCaption"), Messages.getString("ErsterMandantDialog.mailInvaildBody")); //$NON-NLS-1$ //$NON-NLS-2$
+		String email = tEmail.getText();
+		if (!StringTool.isMailAddress(email)) {
+			SWTHelper
+				.showError(
+					Messages.getString("ErsterMandantDialog.mailnvalidCaption"), Messages.getString("ErsterMandantDialog.mailInvaildBody")); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		String username=tUsername.getText();
-		if(username.equals("")){ //$NON-NLS-1$
-			SWTHelper.showError(Messages.getString("ErsterMandantDialog.noUsernameCaption"), Messages.getString("ErsterMandantDialog.noUsernameBody")); //$NON-NLS-1$ //$NON-NLS-2$
+		String username = tUsername.getText();
+		if (username.equals("")) { //$NON-NLS-1$
+			SWTHelper
+				.showError(
+					Messages.getString("ErsterMandantDialog.noUsernameCaption"), Messages.getString("ErsterMandantDialog.noUsernameBody")); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
-		Mandant m=new Mandant(username,pwd);
-		String g=Person.MALE;
-		if(cbAnrede.getText().startsWith("F")){ //$NON-NLS-1$
-			g=Person.FEMALE;
+		Mandant m = new Mandant(username, pwd);
+		String g = Person.MALE;
+		if (cbAnrede.getText().startsWith("F")) { //$NON-NLS-1$
+			g = Person.FEMALE;
 		}
-		m.set(new String[]{Person.NAME,Person.FIRSTNAME,Person.TITLE,Person.SEX,
-				Person.FLD_E_MAIL,Person.FLD_PHONE1,Person.FLD_FAX,Kontakt.FLD_STREET,Kontakt.FLD_ZIP,Kontakt.FLD_PLACE}, 
-				tLastname.getText(),tFirstname.getText(), tTitle.getText(),g,
-				email,tPhone.getText(),tFax.getText(),tStreet.getText(),tZip.getText(),
-				tStreet.getText());
-		String gprs=m.getInfoString(AccessControl.KEY_GROUPS); //$NON-NLS-1$
-		gprs=StringConstants.ROLE_ADMIN+","+StringConstants.ROLE_USERS;
+		m.set(new String[] {
+			Person.NAME, Person.FIRSTNAME, Person.TITLE, Person.SEX, Person.FLD_E_MAIL,
+			Person.FLD_PHONE1, Person.FLD_FAX, Kontakt.FLD_STREET, Kontakt.FLD_ZIP,
+			Kontakt.FLD_PLACE
+		}, tLastname.getText(), tFirstname.getText(), tTitle.getText(), g, email, tPhone.getText(),
+			tFax.getText(), tStreet.getText(), tZip.getText(), tStreet.getText());
+		String gprs = m.getInfoString(AccessControl.KEY_GROUPS); //$NON-NLS-1$
+		gprs = StringConstants.ROLE_ADMIN + "," + StringConstants.ROLE_USERS;
 		m.setInfoElement(AccessControl.KEY_GROUPS, gprs);
 		super.okPressed();
 	}

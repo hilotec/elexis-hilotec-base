@@ -48,8 +48,8 @@ public class EpisodesDisplay extends Composite {
 	ScrolledForm form;
 	Patient actPatient;
 	TreeViewer tvEpisodes;
-
-	public EpisodesDisplay(final Composite parent) {
+	
+	public EpisodesDisplay(final Composite parent){
 		super(parent, SWT.NONE);
 		setLayout(new GridLayout());
 		form = Desk.getToolkit().createScrolledForm(this);
@@ -57,30 +57,28 @@ public class EpisodesDisplay extends Composite {
 		Composite body = form.getBody();
 		body.setLayout(new GridLayout());
 		tvEpisodes = new TreeViewer(body);
-		tvEpisodes.getControl().setLayoutData(
-				SWTHelper.getFillGridData(1, true, 1, true));
+		tvEpisodes.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tvEpisodes.setLabelProvider(new EpisodesLabelProvider());
 		tvEpisodes.setContentProvider(new EpisodecontentProvider());
-		tvEpisodes.addSelectionChangedListener(GlobalEventDispatcher
-				.getInstance().getDefaultListener());
-		/* PersistentObjectDragSource pods= */new PersistentObjectDragSource(
-				tvEpisodes);
+		tvEpisodes.addSelectionChangedListener(GlobalEventDispatcher.getInstance()
+			.getDefaultListener());
+		/* PersistentObjectDragSource pods= */new PersistentObjectDragSource(tvEpisodes);
 		// lvEpisodes.addDragSupport(DND.DROP_COPY, new Transfer[]
 		// {TextTransfer.getInstance()},
 		// pods);
 		new PersistentObjectDropTarget(tvEpisodes.getControl(), new Receiver());
 		setPatient(ElexisEventDispatcher.getSelectedPatient());
 	}
-
-	public void setPatient(final Patient pat) {
+	
+	public void setPatient(final Patient pat){
 		actPatient = pat;
 		if (pat != null) {
 			tvEpisodes.setInput(pat);
 		}
 		tvEpisodes.refresh();
 	}
-
-	public Episode getSelectedEpisode() {
+	
+	public Episode getSelectedEpisode(){
 		Tree widget = tvEpisodes.getTree();
 		TreeItem[] sel = widget.getSelection();
 		if ((sel == null) || (sel.length == 0)) {
@@ -94,11 +92,11 @@ public class EpisodesDisplay extends Composite {
 		} while (p != null);
 		return getEpisodeFromItem(f);
 	}
-
-	private Episode getEpisodeFromItem(final TreeItem t) {
+	
+	private Episode getEpisodeFromItem(final TreeItem t){
 		String etext = t.getText();
 		for (Object o : ((ITreeContentProvider) tvEpisodes.getContentProvider())
-				.getElements(actPatient)) {
+			.getElements(actPatient)) {
 			if (o instanceof Episode) {
 				Episode ep = (Episode) o;
 				if (ep.getLabel().equals(etext)) {
@@ -108,10 +106,10 @@ public class EpisodesDisplay extends Composite {
 		}
 		return null;
 	}
-
+	
 	class EpisodecontentProvider implements ITreeContentProvider {
-
-		public Object[] getChildren(final Object parentElement) {
+		
+		public Object[] getChildren(final Object parentElement){
 			if (parentElement instanceof Episode) {
 				Episode ep = (Episode) parentElement;
 				ArrayList<String> ret = new ArrayList<String>();
@@ -125,20 +123,20 @@ public class EpisodesDisplay extends Composite {
 			}
 			return null;
 		}
-
-		public Object getParent(final Object element) {
+		
+		public Object getParent(final Object element){
 			// TODO Auto-generated method stub
 			return null;
 		}
-
-		public boolean hasChildren(final Object element) {
+		
+		public boolean hasChildren(final Object element){
 			if (element instanceof Episode) {
 				return true;
 			}
 			return false;
 		}
-
-		public Object[] getElements(final Object inputElement) {
+		
+		public Object[] getElements(final Object inputElement){
 			if (actPatient != null) {
 				Query<Episode> qbe = new Query<Episode>(Episode.class);
 				qbe.add("PatientID", "=", actPatient.getId());
@@ -147,25 +145,24 @@ public class EpisodesDisplay extends Composite {
 				return list.toArray();
 			}
 			return new Object[0];
-
+			
 		}
-
-		public void dispose() {
-			// TODO Auto-generated method stub
-
+		
+		public void dispose(){
+		// TODO Auto-generated method stub
+		
 		}
-
-		public void inputChanged(final Viewer viewer, final Object oldInput,
-				final Object newInput) {
-			// TODO Auto-generated method stub
-
+		
+		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput){
+		// TODO Auto-generated method stub
+		
 		}
-
+		
 	}
-
+	
 	class EpisodesLabelProvider extends LabelProvider implements IColorProvider {
 		@Override
-		public String getText(final Object element) {
+		public String getText(final Object element){
 			if (element instanceof Episode) {
 				return ((Episode) element).getLabel();
 			} else if (element instanceof String) {
@@ -173,13 +170,13 @@ public class EpisodesDisplay extends Composite {
 			}
 			return super.getText(element);
 		}
-
-		public Color getBackground(final Object element) {
+		
+		public Color getBackground(final Object element){
 			// TODO Auto-generated method stub
 			return null;
 		}
-
-		public Color getForeground(final Object element) {
+		
+		public Color getForeground(final Object element){
 			if (element instanceof Episode) {
 				Episode e = (Episode) element;
 				if (e.getStatus() == Episode.INACTIVE) {
@@ -188,19 +185,19 @@ public class EpisodesDisplay extends Composite {
 			}
 			return Desk.getColor(Desk.COL_BLACK);
 		}
-
+		
 	}
-
+	
 	class Receiver implements PersistentObjectDropTarget.IReceiver {
-
-		public boolean accept(final PersistentObject o) {
+		
+		public boolean accept(final PersistentObject o){
 			if (o instanceof IDiagnose) {
 				return true;
 			}
 			return false;
 		}
-
-		public void dropped(final PersistentObject o, final DropTargetEvent e) {
+		
+		public void dropped(final PersistentObject o, final DropTargetEvent e){
 			Tree tree = tvEpisodes.getTree();
 			Point point = tree.toControl(e.x, e.y);
 			TreeItem item = tree.getItem(point);
@@ -215,6 +212,6 @@ public class EpisodesDisplay extends Composite {
 				}
 			}
 		}
-
+		
 	}
 }

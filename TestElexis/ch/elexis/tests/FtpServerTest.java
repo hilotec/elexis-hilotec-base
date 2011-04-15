@@ -23,11 +23,12 @@ public class FtpServerTest extends TestCase {
 	String ftpUser = Preferences.getElexisUsername(1);
 	String ftpPwd = Preferences.getElexisPwd(1);
 	String ftpPwdInvalid = "NoSuchPassword";
-	String downloadDir = System.getProperty("java.io.tmpdir")
-			+ System.getProperty("file.separator") + "FtpServerTest";
-
+	String downloadDir =
+		System.getProperty("java.io.tmpdir") + System.getProperty("file.separator")
+			+ "FtpServerTest";
+	
 	@Before
-	public void setUp() throws Exception {
+	public void setUp() throws Exception{
 		boolean res = new File(downloadDir).mkdir();
 		assert (res);
 		File f = new File(downloadDir);
@@ -40,15 +41,15 @@ public class FtpServerTest extends TestCase {
 		if (ftp != null && ftp.isConnected())
 			ftp.disconnect();
 	}
-
+	
 	@After
-	public void tearDown() throws Exception {
+	public void tearDown() throws Exception{
 		if (ftp != null)
 			ftp.disconnect();
 	}
-
+	
 	@Test
-	public void testConnection() {
+	public void testConnection(){
 		ftp = new FtpServer();
 		int step = 0;
 		try {
@@ -88,9 +89,9 @@ public class FtpServerTest extends TestCase {
 			assert (step == 40);
 		}
 	}
-
+	
 	@Test
-	public void testListFiles() {
+	public void testListFiles(){
 		int step = -1;
 		System.out.println("My passwd is " + ftpPwd);
 		ftp = new FtpServer();
@@ -115,15 +116,14 @@ public class FtpServerTest extends TestCase {
 		}
 		assertEquals(step, 50);
 	}
-
+	
 	@Test
-	public void testGetFile() {
+	public void testGetFile(){
 		String PRAXIS_SEMAPHORE = "Praxis.Sema";
 		String LABO_SEMAPHORE = "Labo.Sema";
 		String RemoteName = "remoteName";
 		String Content = "First and \nsecond line\n";
-		String localName = downloadDir + System.getProperty("file.separator")
-				+ "TestDatei.txt";
+		String localName = downloadDir + System.getProperty("file.separator") + "TestDatei.txt";
 		String rcvName = localName + ".rcv";
 		int step = -1;
 		ftp = new FtpServer();
@@ -137,7 +137,7 @@ public class FtpServerTest extends TestCase {
 			File f = new File(localName);
 			assert (f.exists());
 			step = 1;
-
+			
 			ftp.uploadFile("RemoteName", localName);
 			step = 10;
 			ftp.addSemaphore(downloadDir, PRAXIS_SEMAPHORE, LABO_SEMAPHORE);
@@ -147,7 +147,7 @@ public class FtpServerTest extends TestCase {
 			assert (res);
 			assertFalse(f.exists());
 			step = 30;
-
+			
 			String[] filenameList = ftp.listNames();
 			assert (filenameList.length > 0);
 			for (String filename : filenameList) {
@@ -157,7 +157,7 @@ public class FtpServerTest extends TestCase {
 			step = 40;
 			assert (ftp.isConnected());
 			step = 50;
-
+			
 		} catch (IOException e) {
 			fail();
 		} catch (FtpSemaException e) {
@@ -167,5 +167,5 @@ public class FtpServerTest extends TestCase {
 		}
 		assertEquals(step, 50);
 	}
-
+	
 }

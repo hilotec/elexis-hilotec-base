@@ -53,26 +53,28 @@ public class Artikel extends VerrechenbarAdapter {
 	public static Pattern NAME_VE_PATTERN = Pattern.compile(".+ ([0-9]+) Stk.*");
 	
 	@Override
-	protected String getTableName() {
+	protected String getTableName(){
 		return TABLENAME;
 	}
 	
-	public String getXidDomain() {
+	public String getXidDomain(){
 		return XID_PHARMACODE;
 	}
 	
 	static {
-		addMapping(TABLENAME, FLD_LIEFERANT_ID, FLD_NAME, MAXBESTAND, MINBESTAND,
-			ISTBESTAND, FLD_EK_PREIS, FLD_VK_PREIS, FLD_TYP, FLD_EXTINFO, FLD_EAN, FLD_SUB_ID,
+		addMapping(TABLENAME, FLD_LIEFERANT_ID, FLD_NAME, MAXBESTAND, MINBESTAND, ISTBESTAND,
+			FLD_EK_PREIS, FLD_VK_PREIS, FLD_TYP, FLD_EXTINFO, FLD_EAN, FLD_SUB_ID,
 			"Eigenname=Name_intern", FLD_CODECLASS, "Klasse");
-		Xid.localRegisterXIDDomainIfNotExists(XID_PHARMACODE, "Pharmacode", Xid.ASSIGNMENT_REGIONAL);
+		Xid
+			.localRegisterXIDDomainIfNotExists(XID_PHARMACODE, "Pharmacode",
+				Xid.ASSIGNMENT_REGIONAL);
 	}
 	
 	/**
 	 * This implementation of PersistentObject#load is special in that it tries to load the actual
 	 * appropriate subclass
 	 */
-	public static Artikel load(final String id) {
+	public static Artikel load(final String id){
 		if (id == null) {
 			return null;
 		}
@@ -83,8 +85,7 @@ public class Artikel extends VerrechenbarAdapter {
 		String clazz = ret.get("Klasse");
 		if (!StringTool.isNothing(clazz)) {
 			try {
-				ret = (Artikel) Hub.poFactory.createFromString(clazz + "::"
-					+ id);
+				ret = (Artikel) Hub.poFactory.createFromString(clazz + "::" + id);
 			} catch (Exception ex) {
 				log.log("Fehlerhafter Leistungscode " + clazz + "::" + id, Log.ERRORS);
 			}
@@ -98,26 +99,34 @@ public class Artikel extends VerrechenbarAdapter {
 	 * @param Name
 	 * @param Typ
 	 */
-	public Artikel(final String Name, final String Typ) {
+	public Artikel(final String Name, final String Typ){
 		create(null);
-		set(new String[] { FLD_NAME, FLD_TYP }, new String[] { Name, Typ });
+		set(new String[] {
+			FLD_NAME, FLD_TYP
+		}, new String[] {
+			Name, Typ
+		});
 	}
 	
-	public Artikel(final String Name, final String Typ, final String subid) {
+	public Artikel(final String Name, final String Typ, final String subid){
 		create(null);
-		set(new String[] { FLD_NAME, FLD_TYP, FLD_SUB_ID }, Name, Typ, subid);
+		set(new String[] {
+			FLD_NAME, FLD_TYP, FLD_SUB_ID
+		}, Name, Typ, subid);
 	}
 	
 	@Override
-	public String getLabel() {
+	public String getLabel(){
 		if (!exists()) {
 			return "(" + getName() + ")";
 		}
 		return getInternalName();
 	}
 	
-	public String[] getDisplayedFields() {
-		return new String[] { FLD_TYP, FLD_NAME };
+	public String[] getDisplayedFields(){
+		return new String[] {
+			FLD_TYP, FLD_NAME
+		};
 	}
 	
 	/**
@@ -127,7 +136,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * @param nick
 	 *            Der "Spitzname"
 	 */
-	public void setInternalName(final String nick) {
+	public void setInternalName(final String nick){
 		set(EIGENNAME, nick);
 	}
 	
@@ -136,7 +145,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * 
 	 * @return
 	 */
-	public String getInternalName() {
+	public String getInternalName(){
 		String ret = get(EIGENNAME);
 		if (StringTool.isNothing(ret)) {
 			ret = getName();
@@ -149,7 +158,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * 
 	 * @return
 	 */
-	public String getName() {
+	public String getName(){
 		return checkNull(get(FLD_NAME));
 	}
 	
@@ -160,7 +169,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * @param name
 	 *            der neue "echte" Name
 	 */
-	public void setName(final String name) {
+	public void setName(final String name){
 		set(FLD_NAME, name);
 	}
 	
@@ -169,7 +178,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * 
 	 * @return
 	 */
-	public Money getEKPreis() {
+	public Money getEKPreis(){
 		try {
 			return new Money(checkZero(get(FLD_EK_PREIS)));
 		} catch (Throwable ex) {
@@ -184,7 +193,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * 
 	 * @return
 	 */
-	public Money getVKPreis() {
+	public Money getVKPreis(){
 		try {
 			return new Money(checkZero(get(FLD_VK_PREIS)));
 		} catch (Throwable ex) {
@@ -199,7 +208,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * 
 	 * @param preis
 	 */
-	public void setEKPreis(final Money preis) {
+	public void setEKPreis(final Money preis){
 		set(FLD_EK_PREIS, preis.getCentsAsString());
 	}
 	
@@ -209,7 +218,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * 
 	 * @param preis
 	 */
-	public void setVKPreis(final Money preis) {
+	public void setVKPreis(final Money preis){
 		set(FLD_VK_PREIS, preis.getCentsAsString());
 	}
 	
@@ -218,7 +227,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * 
 	 * @return den Istbestand
 	 */
-	public int getIstbestand() {
+	public int getIstbestand(){
 		try {
 			return checkZero(get(ISTBESTAND));
 		} catch (Throwable ex) {
@@ -233,7 +242,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * 
 	 * @return einen educated guess oder 0 (unknown)
 	 */
-	public int guessVE() {
+	public int guessVE(){
 		int ret = getVerpackungsEinheit();
 		if (ret == 0) {
 			String name = getName();
@@ -243,7 +252,7 @@ public class Artikel extends VerrechenbarAdapter {
 				try {
 					return Integer.parseInt(num);
 				} catch (Exception ex) {
-					
+
 				}
 			}
 		}
@@ -255,7 +264,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * 
 	 * @return Zahl der Einzelabgaben, die noch gemacht werden können
 	 */
-	public int getTotalCount() {
+	public int getTotalCount(){
 		int pack = getIstbestand();
 		int VE = getPackungsGroesse();
 		if (VE == 0) {
@@ -273,7 +282,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * 
 	 * @return Wieviele Packungen der Anwender maximal auf Lager haben will
 	 */
-	public int getMaxbestand() {
+	public int getMaxbestand(){
 		try {
 			return checkZero(get(MAXBESTAND));
 		} catch (Throwable ex) {
@@ -287,7 +296,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * 
 	 * @return Wieviele Packungen der Anwender mindestens auf Lager haben will.
 	 */
-	public int getMinbestand() {
+	public int getMinbestand(){
 		try {
 			return checkZero(get(MINBESTAND));
 		} catch (Throwable ex) {
@@ -302,7 +311,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * @param s
 	 *            Wieviele Packungen der Anwender höchstens auf Lager haben will
 	 */
-	public void setMaxbestand(final int s) {
+	public void setMaxbestand(final int s){
 		String sl = checkLimit(s);
 		if (sl != null) {
 			set(MAXBESTAND, sl);
@@ -315,7 +324,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * @param s
 	 *            Wieviele Packungen der Anwender mindestens auf Lager haben will
 	 */
-	public void setMinbestand(final int s) {
+	public void setMinbestand(final int s){
 		String sl = checkLimit(s);
 		if (sl != null) {
 			set(MINBESTAND, sl);
@@ -329,7 +338,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * @param s
 	 *            Wieviele Packungen tatsächlich auf Lager sind
 	 */
-	public void setIstbestand(final int s) {
+	public void setIstbestand(final int s){
 		String sl = null;
 		if (Hub.globalCfg.get(PreferenceConstants.INVENTORY_CHECK_ILLEGAL_VALUES, true)) {
 			sl = checkLimit(s);
@@ -346,7 +355,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * 
 	 * @return Zahl der Abgabeheinheiten aus der angebrochenen Packung
 	 */
-	public int getBruchteile() {
+	public int getBruchteile(){
 		return checkZero(getExt(ANBRUCH));
 	}
 	
@@ -356,14 +365,14 @@ public class Artikel extends VerrechenbarAdapter {
 	 * @param s
 	 * @return
 	 */
-	private String checkLimit(final int s) {
+	private String checkLimit(final int s){
 		String str = Integer.toString(s);
 		if (s > -1 && s < 1001) {
 			return str;
 		}
 		if (isLagerartikel()) {
-			SWTHelper.showError("Ungültiger Lagerbestand", "Der Lagerbestand ist auf "
-				+ str + ". Bitte einen Wert zwischen 0 und 1000 eingeben.");
+			SWTHelper.showError("Ungültiger Lagerbestand", "Der Lagerbestand ist auf " + str
+				+ ". Bitte einen Wert zwischen 0 und 1000 eingeben.");
 		}
 		return null;
 	}
@@ -373,7 +382,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * 
 	 * @return true wenn ja
 	 */
-	public boolean isLagerartikel() {
+	public boolean isLagerartikel(){
 		if ((getMinbestand() > 0) || (getMaxbestand() > 0)) {
 			return true;
 		} else {
@@ -386,12 +395,14 @@ public class Artikel extends VerrechenbarAdapter {
 	 * 
 	 * @return
 	 */
-	public static List<Artikel> getLagerartikel() {
+	public static List<Artikel> getLagerartikel(){
 		Query<Artikel> qbe = new Query<Artikel>(Artikel.class);
 		qbe.add(MINBESTAND, ">", "0");
 		qbe.or();
 		qbe.add(MAXBESTAND, ">", "0");
-		qbe.orderBy(false, new String[] { FLD_NAME });
+		qbe.orderBy(false, new String[] {
+			FLD_NAME
+		});
 		List<Artikel> l = qbe.execute();
 		return l == null ? new ArrayList<Artikel>(0) : l;
 	}
@@ -403,7 +414,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * @param n
 	 */
 	@SuppressWarnings("unchecked")
-	public void einzelAbgabe(final int n) {
+	public void einzelAbgabe(final int n){
 		Hashtable<String, String> ext = getHashtable(FLD_EXTINFO);
 		int anbruch = checkZero(ext.get(ANBRUCH));
 		int ve = checkZero(ext.get(VERKAUFSEINHEIT));
@@ -442,7 +453,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 * @param n
 	 */
 	@SuppressWarnings("unchecked")
-	public void einzelRuecknahme(final int n) {
+	public void einzelRuecknahme(final int n){
 		Hashtable<String, String> ext = getHashtable(FLD_EXTINFO);
 		int anbruch = checkZero(ext.get(ANBRUCH));
 		int ve = checkZero(ext.get(VERKAUFSEINHEIT));
@@ -461,51 +472,51 @@ public class Artikel extends VerrechenbarAdapter {
 		}
 	}
 	
-	public String getEAN() {
+	public String getEAN(){
 		String ean = get(FLD_EAN);
 		return ean;
 	}
 	
-	public void setEAN(String ean) {
+	public void setEAN(String ean){
 		set(FLD_EAN, ean);
 	}
 	
 	@SuppressWarnings("unchecked")
-	public String getPharmaCode() {
+	public String getPharmaCode(){
 		Hashtable ext = getHashtable(FLD_EXTINFO);
 		return checkNull((String) ext.get(FLD_PHARMACODE));
 	}
 	
-	public Kontakt getLieferant() {
+	public Kontakt getLieferant(){
 		return Kontakt.load(get(FLD_LIEFERANT_ID));
 	}
 	
-	public void setLieferant(final Kontakt l) {
+	public void setLieferant(final Kontakt l){
 		set(FLD_LIEFERANT_ID, l.getId());
 	}
 	
 	@SuppressWarnings("unchecked")
-	public int getVerpackungsEinheit() {
+	public int getVerpackungsEinheit(){
 		Hashtable ext = getHashtable(FLD_EXTINFO);
 		return checkZero((String) ext.get(VERPACKUNGSEINHEIT));
 	}
 	
 	@SuppressWarnings("unchecked")
-	public int getVerkaufseinheit() {
+	public int getVerkaufseinheit(){
 		Hashtable ext = getHashtable(FLD_EXTINFO);
 		return checkZero((String) ext.get(VERKAUFSEINHEIT));
 	}
 	
-	public int getPackungsGroesse() {
+	public int getPackungsGroesse(){
 		return checkZero(getExt(VERPACKUNGSEINHEIT));
 	}
 	
-	public int getAbgabeEinheit() {
+	public int getAbgabeEinheit(){
 		return checkZero(getExt(VERKAUFSEINHEIT));
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void setExt(final String name, final String value) {
+	public void setExt(final String name, final String value){
 		Hashtable h = getHashtable(FLD_EXTINFO);
 		if (value == null) {
 			h.remove(name);
@@ -516,36 +527,35 @@ public class Artikel extends VerrechenbarAdapter {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public String getExt(final String name) {
+	public String getExt(final String name){
 		Hashtable h = getHashtable(FLD_EXTINFO);
 		return checkNull((String) h.get(name));
 	}
 	
-	protected Artikel(final String id) {
+	protected Artikel(final String id){
 		super(id);
 	}
 	
-	protected Artikel() {
-	}
+	protected Artikel(){}
 	
 	/************************ Verrechenbar ************************/
 	@Override
-	public String getCode() {
+	public String getCode(){
 		return getId();
 	}
 	
 	@Override
-	public String getText() {
+	public String getText(){
 		return getInternalName();
 	}
 	
 	@Override
-	public String getCodeSystemName() {
+	public String getCodeSystemName(){
 		return ARTIKEL;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public int getPreis(final TimeTool dat, final Fall fall) {
+	public int getPreis(final TimeTool dat, final Fall fall){
 		double vkt = checkZeroDouble(get(FLD_VK_PREIS));
 		Hashtable ext = getHashtable(FLD_EXTINFO);
 		double vpe = checkZeroDouble((String) ext.get(VERPACKUNGSEINHEIT));
@@ -559,7 +569,7 @@ public class Artikel extends VerrechenbarAdapter {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public Money getKosten(final TimeTool dat) {
+	public Money getKosten(final TimeTool dat){
 		double vkt = checkZeroDouble(get(FLD_EK_PREIS));
 		Hashtable ext = getHashtable(FLD_EXTINFO);
 		double vpe = checkZeroDouble((String) ext.get(VERPACKUNGSEINHEIT));
@@ -571,23 +581,24 @@ public class Artikel extends VerrechenbarAdapter {
 		}
 	}
 	
-	public int getTP(final TimeTool date, final Fall fall) {
+	public int getTP(final TimeTool date, final Fall fall){
 		return getPreis(date, fall);
 	}
 	
-	public double getFactor(final TimeTool date, final Fall fall) {
+	public double getFactor(final TimeTool date, final Fall fall){
 		return 1.0;
 	}
 	
 	@Override
-	protected String[] getExportFields() {
-		return new String[] { FLD_EAN, FLD_SUB_ID, FLD_LIEFERANT_ID, "Klasse",
-			FLD_NAME, MAXBESTAND, MINBESTAND, ISTBESTAND, FLD_EK_PREIS, FLD_VK_PREIS,
-			FLD_TYP, FLD_CODECLASS, FLD_EXTINFO };
+	protected String[] getExportFields(){
+		return new String[] {
+			FLD_EAN, FLD_SUB_ID, FLD_LIEFERANT_ID, "Klasse", FLD_NAME, MAXBESTAND, MINBESTAND,
+			ISTBESTAND, FLD_EK_PREIS, FLD_VK_PREIS, FLD_TYP, FLD_CODECLASS, FLD_EXTINFO
+		};
 	}
 	
 	@Override
-	protected String getExportUIDValue() {
+	protected String getExportUIDValue(){
 		String pharmacode = getExt(FLD_PHARMACODE);
 		String ean = get(FLD_EAN);
 		return ean + "_" + pharmacode;

@@ -42,7 +42,7 @@ public class ContentProvider implements ICommonViewerContentProvider {
 		msl.getConfigurer().getControlFieldProvider().removeChangeListener(this);
 	}
 	
-	public Object[] getElements(Object inputElement){	
+	public Object[] getElements(Object inputElement){
 		SelectorPanelProvider slp =
 			(SelectorPanelProvider) msl.getConfigurer().getControlFieldProvider();
 		SelectorPanel panel = slp.getPanel();
@@ -51,13 +51,13 @@ public class ContentProvider implements ICommonViewerContentProvider {
 		qMedi.clear();
 		
 		if (m.length() > 0) {
-			qMedi.add("Name", "LIKE", m+"%", true);
+			qMedi.add("Name", "LIKE", m + "%", true);
 		}
 		qMedi.orderBy(false, "Name");
 		List<Medikament> list = qMedi.execute();
 		for (Medikament medikament : list) {
 			Medikament.load(medikament.getId());
-		}	
+		}
 		return list.toArray();
 	}
 	
@@ -83,10 +83,10 @@ public class ContentProvider implements ICommonViewerContentProvider {
 	// TODO Auto-generated method stub
 	
 	}
-
+	
 	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-		
+	public void init(){
+	// TODO Auto-generated method stub
+	
 	}
 }

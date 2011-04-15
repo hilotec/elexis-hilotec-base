@@ -241,13 +241,12 @@ public class SWTHelper {
 		
 		public void run(){
 			Shell shell = Desk.getTopShell();
-			MessageDialog dialog =
-				new MessageDialog(shell, title, null, // accept
-					// the
-					// default
-					// window
-					// icon
-					message, MessageDialog.QUESTION, new String[] {
+			MessageDialog dialog = new MessageDialog(shell, title, null, // accept
+				// the
+				// default
+				// window
+				// icon
+				message, MessageDialog.QUESTION, new String[] {
 					Messages.getString("SWTHelper.yes"), Messages.getString("SWTHelper.no"), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					Messages.getString("SWTHelper.cancel") //$NON-NLS-1$ 
 				}, 0);
@@ -261,11 +260,13 @@ public class SWTHelper {
 	
 	/**
 	 * Shortcut for getFillGridData(1,true,1,true);
+	 * 
 	 * @return
 	 */
 	public static GridData getFillGridData(){
-		return getFillGridData(1,true,1,true);
+		return getFillGridData(1, true, 1, true);
 	}
+	
 	/**
 	 * Ein GridData-Objekt erzeugen, das den horizontalen und/oder vertikalen Freiraum ausfüllt.
 	 * 
@@ -546,16 +547,16 @@ public class SWTHelper {
 	 * Convenience method to add a separator bar to the composite.
 	 * <p>
 	 * The parent composite must have a <code>GridLayout</code>. The separator bar will span all
-	 * columns of the parent grid layout.
-	 * <br><br>
-	 * Code from: http://www.softwarerevolution.com/blueprints/ 
-	 * The Software Revolution Inc. by Thomas Holland under GPLv3
+	 * columns of the parent grid layout. <br>
+	 * <br>
+	 * Code from: http://www.softwarerevolution.com/blueprints/ The Software Revolution Inc. by
+	 * Thomas Holland under GPLv3
 	 * </p>
 	 * 
 	 * @param parent
 	 *            <code>Composite</code>
 	 */
-	public static void addSeparator(Composite parent) {
+	public static void addSeparator(Composite parent){
 		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
 		Layout parentlayout = parent.getLayout();
 		if (parentlayout instanceof GridLayout) {
@@ -569,18 +570,20 @@ public class SWTHelper {
 	 * This method "reloads" a view, by closing and opening it. It is the programmatical equivalent
 	 * to closing a view and then select Open/View/and the view ID.
 	 * 
-	 * This method should NOT be used, as it identifies an architectural problem. The UI itself should
-	 * support the respective update.
+	 * This method should NOT be used, as it identifies an architectural problem. The UI itself
+	 * should support the respective update.
 	 * 
 	 * @param viewID
 	 */
-	public static void reloadViewPart(String viewID) {
-		IViewPart page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(viewID);
+	public static void reloadViewPart(String viewID){
+		IViewPart page =
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(viewID);
 		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().hideView(page);
 		try {
 			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(viewID);
 		} catch (PartInitException e) {
-			Status status = new Status(IStatus.ERROR, Hub.PLUGIN_ID, "Error reopening viewPart "+viewID, e);
+			Status status =
+				new Status(IStatus.ERROR, Hub.PLUGIN_ID, "Error reopening viewPart " + viewID, e);
 			StatusManager.getManager().handle(status, StatusManager.SHOW);
 		}
 	}

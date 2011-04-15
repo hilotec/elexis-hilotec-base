@@ -21,11 +21,9 @@ import ch.rgw.tools.VersionInfo;
 public class TagesNachricht extends PersistentObject {
 	private static final String TABLENAME = "CH_ELEXIS_AGENDA_DAYMSG"; //$NON-NLS-1$
 	private static final String VERSION = "0.4.0"; //$NON-NLS-1$
-	private static final String createDB =
-		"CREATE TABLE " + TABLENAME + "("  //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String createDB = "CREATE TABLE " + TABLENAME + "(" //$NON-NLS-1$ //$NON-NLS-2$
 		+ "ID		VARCHAR(8) primary key," //$NON-NLS-1$
-		+ "deleted	CHAR(1) default '0'," 
-		+ "Kurz		VARCHAR(80),"  //$NON-NLS-1$
+		+ "deleted	CHAR(1) default '0'," + "Kurz		VARCHAR(80)," //$NON-NLS-1$
 		+ "Msg		TEXT," //$NON-NLS-1$
 		+ "lastupdate BIGINT default '0'" //$NON-NLS-1$
 		+ ");" //$NON-NLS-1$
@@ -33,13 +31,13 @@ public class TagesNachricht extends PersistentObject {
 	
 	private static final String update020 =
 		"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';" + "UPDATE " + TABLENAME //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		+ " SET Kurz='0.2.0' WHERE ID='1';"; //$NON-NLS-1$
-	private static final String update030=
-		"ALTER TABLE "+TABLENAME+ " ADD lastupdate BIGINT default 0;" //$NON-NLS-1$ //$NON-NLS-2$
-		+ "UPDATE "+TABLENAME+" SET Kurz='0.3.0' WHERE ID='1';"; //$NON-NLS-1$ //$NON-NLS-2$
-	private static final String update040=
+			+ " SET Kurz='0.2.0' WHERE ID='1';"; //$NON-NLS-1$
+	private static final String update030 =
+		"ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT default 0;" //$NON-NLS-1$ //$NON-NLS-2$
+			+ "UPDATE " + TABLENAME + " SET Kurz='0.3.0' WHERE ID='1';"; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String update040 =
 		"ALTER TABLE " + TABLENAME + " MODIFY ID VARCHAR(8) primary key;" //$NON-NLS-1$ //$NON-NLS-2$
-		+ "UPDATE "+TABLENAME+" SET Kurz='0.4.0' WHERE ID='1';"; //$NON-NLS-1$ //$NON-NLS-2$
+			+ "UPDATE " + TABLENAME + " SET Kurz='0.4.0' WHERE ID='1';"; //$NON-NLS-1$ //$NON-NLS-2$
 	
 	static {
 		addMapping(TABLENAME, "Zeile=Kurz", "Text=Msg"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -47,19 +45,20 @@ public class TagesNachricht extends PersistentObject {
 		if (start.state() < PersistentObject.DELETED) {
 			try {
 				createOrModifyTable(createDB);
-				//ByteArrayInputStream bais = new ByteArrayInputStream(createDB.getBytes("UTF-8"));
-				//getConnection().execScript(bais, true, false);
+				// ByteArrayInputStream bais = new ByteArrayInputStream(createDB.getBytes("UTF-8"));
+				// getConnection().execScript(bais, true, false);
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 			}
 		} else {
-			VersionInfo vi = new VersionInfo(TagesNachricht.load("1").get(Messages.TagesNachricht_29)); //$NON-NLS-1$
+			VersionInfo vi =
+				new VersionInfo(TagesNachricht.load("1").get(Messages.TagesNachricht_29)); //$NON-NLS-1$
 			if (vi.isOlder(VERSION)) {
 				if (vi.isOlder("0.2.0")) { //$NON-NLS-1$
 					createOrModifyTable(update020);
-				} else if (vi.isOlder("0.3.0")){ //$NON-NLS-1$
+				} else if (vi.isOlder("0.3.0")) { //$NON-NLS-1$
 					createOrModifyTable(update030);
-				} else if (vi.isOlder("0.4.0")){ //$NON-NLS-1$
+				} else if (vi.isOlder("0.4.0")) { //$NON-NLS-1$
 					createOrModifyTable(update040);
 				}
 			}

@@ -5,8 +5,9 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Activator for percentile plugin
+ * 
  * @author immi
- *
+ * 
  */
 public class MedicsActivator extends AbstractUIPlugin {
 	

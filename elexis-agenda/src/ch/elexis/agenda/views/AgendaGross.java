@@ -77,14 +77,17 @@ public class AgendaGross extends BaseAgendaView {
 	Text terminDetail;
 	Label lbDetails;
 	Label lbDayString;
-	private static final String[] columnTitles = { "von", "bis", "Typ",
-			"Status", "Personalien", "Grund" };
-	private static final int[] columnWidths = { 30, 30, 50, 70, 300, 200 };
-
+	private static final String[] columnTitles = {
+		"von", "bis", "Typ", "Status", "Personalien", "Grund"
+	};
+	private static final int[] columnWidths = {
+		30, 30, 50, 70, 300, 200
+	};
+	
 	@Override
-	public void create(Composite parent) {
+	public void create(Composite parent){
 		parent.setLayout(new FillLayout());
-
+		
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new FormLayout());
 		// Button tv=new Button(ret,SWT.PUSH);
@@ -101,8 +104,8 @@ public class AgendaGross extends BaseAgendaView {
 		fdRight.top = new FormAttachment(cButtons, 0);
 		fdRight.bottom = new FormAttachment(100, -5);
 		right.setLayoutData(fdRight);
-		String[] bereiche = Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE,
-				Messages.TagesView_14).split(","); //$NON-NLS-1$
+		String[] bereiche =
+			Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
 		ChangeBereichAdapter chb = new ChangeBereichAdapter();
 		for (String bereich : bereiche) {
 			Button bChange = new Button(cButtons, SWT.RADIO);
@@ -120,10 +123,10 @@ public class AgendaGross extends BaseAgendaView {
 		fdTV.bottom = new FormAttachment(100, -4);
 		// fdTV.bottom=new FormAttachment(0,0);
 		tv.getControl().setLayoutData(fdTV);
-
+		
 		// fdRight.left=new FormAttachment(tv,5);
 		// fdRight.bottom=new FormAttachment(0,0);
-
+		
 		right.setLayout(new GridLayout());
 		cal = new DatePicker(right, SWT.NONE);
 		cal.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -133,24 +136,24 @@ public class AgendaGross extends BaseAgendaView {
 		bToday.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		bToday.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
+			public void widgetSelected(SelectionEvent arg0){
 				TimeTool dat = new TimeTool();
 				agenda.setActDate(dat);
 				cal.setDate(agenda.getActDate().getTime());
 				updateDate();
 			}
-
+			
 		});
 		dayMessage = SWTHelper.createText(right, 4, SWT.V_SCROLL);
-
+		
 		// set text field's maximum width to the width of the calendar
 		GridData gd = (GridData) dayMessage.getLayoutData();
 		gd.widthHint = cal.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-
+		
 		dayMessage.addFocusListener(new FocusAdapter() {
-
+			
 			@Override
-			public void focusLost(FocusEvent arg0) {
+			public void focusLost(FocusEvent arg0){
 				String tx = dayMessage.getText();
 				TagesNachricht tn = TagesNachricht.load(agenda.getActDate());
 				if (tn.exists()) {
@@ -159,7 +162,7 @@ public class AgendaGross extends BaseAgendaView {
 					tn = new TagesNachricht(agenda.getActDate(), " - ", tx); //$NON-NLS-1$
 				}
 			}
-
+			
 		});
 		terminDetail = SWTHelper.createText(right, 5, SWT.NONE);
 		terminDetail.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -171,10 +174,10 @@ public class AgendaGross extends BaseAgendaView {
 		fdBottom.left = new FormAttachment(0, 0);
 		fdBottom.bottom = new FormAttachment(100, 0);
 		fdBottom.right = new FormAttachment(100, 0);
-
+		
 		tv.setLabelProvider(new AgendaLabelProvider());
 		Table table = tv.getTable();
-
+		
 		GC gc = new GC(table);
 		FontMetrics fm = gc.getFontMetrics();
 		int average = fm.getAverageCharWidth();
@@ -204,27 +207,27 @@ public class AgendaGross extends BaseAgendaView {
 		table.setHeaderVisible(true);
 		makePrivateActions();
 		cal.addSelectionListener(new SelectionAdapter() {
-
+			
 			@Override
-			public void widgetSelected(SelectionEvent arg0) {
+			public void widgetSelected(SelectionEvent arg0){
 				agenda.setActDate(new TimeTool(cal.getDate().getTime()));
 				updateDate();
 			}
-
+			
 		});
-
+		
 		// set initial widget values
 		initialize();
 	}
-
+	
 	/*
 	 * Intialize dayMessage field
 	 */
-	protected void initialize() {
+	protected void initialize(){
 		setDayMessage();
 	}
-
-	protected void setDayMessage() {
+	
+	protected void setDayMessage(){
 		TagesNachricht tn = TagesNachricht.load(agenda.getActDate());
 		lbDayString.setText(""); //$NON-NLS-1$
 		dayMessage.setText(""); //$NON-NLS-1$
@@ -233,24 +236,24 @@ public class AgendaGross extends BaseAgendaView {
 			dayMessage.setText(tn.getLangtext());
 		}
 	}
-
-	protected void updateDate() {
+	
+	protected void updateDate(){
 		setDayMessage();
 		/*
 		 * if (pinger != null) { pinger.doSync(); }
 		 */
 		tv.refresh();
 	}
-
+	
 	@Override
-	public void setFocus() {
+	public void setFocus(){
 		tv.getControl().setFocus();
 	}
-
-	private class AgendaLabelProvider extends LabelProvider implements
-			ITableColorProvider, ITableLabelProvider {
-
-		public Color getBackground(Object element, int columnIndex) {
+	
+	private class AgendaLabelProvider extends LabelProvider implements ITableColorProvider,
+			ITableLabelProvider {
+		
+		public Color getBackground(Object element, int columnIndex){
 			if (element instanceof IPlannable) {
 				IPlannable p = (IPlannable) element;
 				if (columnIndex == 3) {
@@ -261,8 +264,8 @@ public class AgendaGross extends BaseAgendaView {
 			}
 			return null;
 		}
-
-		public Color getForeground(Object element, int columnIndex) {
+		
+		public Color getForeground(Object element, int columnIndex){
 			if (element instanceof IPlannable) {
 				IPlannable p = (IPlannable) element;
 				if (columnIndex == 3) {
@@ -273,16 +276,16 @@ public class AgendaGross extends BaseAgendaView {
 			}
 			return null;
 		}
-
-		public Image getColumnImage(Object element, int columnIndex) {
+		
+		public Image getColumnImage(Object element, int columnIndex){
 			/*
-			 * if(element instanceof IPlannable){ IPlannable
-			 * p=(IPlannable)element; return Plannables.getTypImage(p); }
+			 * if(element instanceof IPlannable){ IPlannable p=(IPlannable)element; return
+			 * Plannables.getTypImage(p); }
 			 */
 			return null;
 		}
-
-		public String getColumnText(Object element, int columnIndex) {
+		
+		public String getColumnText(Object element, int columnIndex){
 			if (element instanceof IPlannable) {
 				IPlannable ip = (IPlannable) element;
 				switch (columnIndex) {
@@ -314,13 +317,13 @@ public class AgendaGross extends BaseAgendaView {
 			}
 			return "?"; //$NON-NLS-1$
 		}
-
+		
 	}
-
+	
 	private class ChangeBereichAdapter extends SelectionAdapter {
-
+		
 		@Override
-		public void widgetSelected(SelectionEvent ev) {
+		public void widgetSelected(SelectionEvent ev){
 			Button source = (Button) ev.getSource();
 			String bereich = source.getText();
 			setBereich(bereich);
@@ -329,74 +332,71 @@ public class AgendaGross extends BaseAgendaView {
 			 */
 			tv.refresh();
 		}
-
+		
 	}
-
+	
 	@Override
-	public void setTermin(Termin t) {
+	public void setTermin(Termin t){
 		Kontakt pat = t.getKontakt();
 		StringBuilder sb = new StringBuilder(200);
 		TimeSpan ts = t.getTimeSpan();
-		sb.append(ts.from.toString(TimeTool.TIME_SMALL))
-				.append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
-				.append(" ").append(t.getPersonalia()).append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
-				.append(t.getType())
-				.append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
+		sb
+			.append(ts.from.toString(TimeTool.TIME_SMALL))
+			.append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
+			.append(" ").append(t.getPersonalia()).append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
+			.append(t.getType())
+			.append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
 		terminDetail.setText(sb.toString());
 		sb.setLength(0);
 		sb.append(StringTool.unNull(t.get("ErstelltVon"))).append("/").append( //$NON-NLS-2$
-				t.getCreateTime().toString(TimeTool.FULL_GER));
+			t.getCreateTime().toString(TimeTool.FULL_GER));
 		lbDetails.setText(sb.toString());
 		ElexisEventDispatcher.fireSelectionEvent(t);
 		if (pat != null) {
 			ElexisEventDispatcher.fireSelectionEvent(pat);
 			if (pat instanceof Patient) {
-				Konsultation kons = (Konsultation) ElexisEventDispatcher
-						.getSelected(Konsultation.class);
-
-				String sVgl = agenda.getActDate().toString(
-						TimeTool.DATE_COMPACT);
-				if ((kons == null) || // Falls nicht die richtige Kons
-										// selektiert ist, passende
-										// Kons für heute suchen
-						!(kons.getFall().getPatient().getId().equals(pat
-								.getId()))
-						|| !(new TimeTool(kons.getDatum())
-								.toString(TimeTool.DATE_COMPACT).equals(sVgl))) {
-					Fall[] faelle = ((Patient)pat).getFaelle();
+				Konsultation kons =
+					(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+				
+				String sVgl = agenda.getActDate().toString(TimeTool.DATE_COMPACT);
+				if ((kons == null)
+					|| // Falls nicht die richtige Kons
+					// selektiert ist, passende
+					// Kons für heute suchen
+					!(kons.getFall().getPatient().getId().equals(pat.getId()))
+					|| !(new TimeTool(kons.getDatum()).toString(TimeTool.DATE_COMPACT).equals(sVgl))) {
+					Fall[] faelle = ((Patient) pat).getFaelle();
 					TimeTool ttVgl = new TimeTool();
 					for (Fall f : faelle) {
 						Konsultation[] konsen = f.getBehandlungen(true);
 						for (Konsultation k : konsen) {
 							ttVgl.set(k.getDatum());
-							if (ttVgl.toString(TimeTool.DATE_COMPACT).equals(
-									sVgl)) {
+							if (ttVgl.toString(TimeTool.DATE_COMPACT).equals(sVgl)) {
 								ElexisEventDispatcher.fireSelectionEvent(k);
 								return;
 							}
 						}
 					}
-
+					
 				}
 			}
-
+			
 		}
-
+		
 	}
-
-	private void makePrivateActions() {
+	
+	private void makePrivateActions(){
 		newViewAction = new Action(Messages.AgendaGross_newWindow) {
 			@Override
-			public void run() {
+			public void run(){
 				try {
-					getViewSite().getPage().showView(ID,
-							StringTool.unique("Agenda"), //$NON-NLS-1$
-							IWorkbenchPage.VIEW_VISIBLE);
+					getViewSite().getPage().showView(ID, StringTool.unique("Agenda"), //$NON-NLS-1$
+						IWorkbenchPage.VIEW_VISIBLE);
 				} catch (PartInitException e) {
 					ExHandler.handle(e);
 				}
 			}
 		};
 	}
-
+	
 }

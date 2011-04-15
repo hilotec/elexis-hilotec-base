@@ -42,6 +42,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 	boolean background;
 	int debugRecord = 0; // test only!! for production must be 0!
 	String simulate = null; // "C:\\Temp\\Afinion\\afinion.log"; // declare filename to the log for
+	
 	// test only!! for production must be null!
 	
 	// "c:/temp/afinion/test.log"; oder null
@@ -64,7 +65,7 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 		super(Messages.getString("AfinionAS100Action.ButtonName"), AS_CHECK_BOX); //$NON-NLS-1$
 		setToolTipText(Messages.getString("AfinionAS100Action.ToolTip")); //$NON-NLS-1$
 		setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.connect.afinion", //$NON-NLS-1$
-		"icons/afinion.png")); //$NON-NLS-1$
+			"icons/afinion.png")); //$NON-NLS-1$
 	}
 	
 	private void initConnection(){
@@ -75,8 +76,8 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 			new AfinionConnection(Messages.getString("AfinionAS100Action.ConnectionName"), //$NON-NLS-1$
 				Hub.localCfg.get(Preferences.PORT, Messages
 					.getString("AfinionAS100Action.DefaultPort")), Hub.localCfg.get( //$NON-NLS-1$
-						Preferences.PARAMS, Messages.getString("AfinionAS100Action.DefaultParams")), //$NON-NLS-1$
-						this);
+					Preferences.PARAMS, Messages.getString("AfinionAS100Action.DefaultParams")), //$NON-NLS-1$
+				this);
 		
 		Calendar cal = new GregorianCalendar();
 		if (debugRecord != 0) {
@@ -123,9 +124,9 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 						// Do nothing. Use default value
 					}
 					_ctrl
-					.awaitFrame(
-						Desk.getTopShell(),
-						Messages.getString("AfinionAS100Action.WaitMsg"), 1, 4, 0, timeout, background, false); //$NON-NLS-1$
+						.awaitFrame(
+							Desk.getTopShell(),
+							Messages.getString("AfinionAS100Action.WaitMsg"), 1, 4, 0, timeout, background, false); //$NON-NLS-1$
 					return;
 				} else {
 					_rs232log.log("Error"); //$NON-NLS-1$
@@ -262,17 +263,18 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 					patientDeviceStr = Messages.getString("AfinionAS100Action.NoPatientInfo");
 				}
 				String warning = "";
-// Gemäss Mail von Frau Rytz (Axis-Shield) vom 3.8.09: Anstelle der Warnung soll der Wert als <min
+				// Gemäss Mail von Frau Rytz (Axis-Shield) vom 3.8.09: Anstelle der Warnung soll der
+				// Wert als <min
 				// oder >max angezeigt werden
-// Wurde in SubRecordPart.getResultStr implementiert
-// if (record.isOutOfRange()) {
-// warning = Messages.getString("AfinionAS100Action.ValueOutOfRangeWarning");
-// }
+				// Wurde in SubRecordPart.getResultStr implementiert
+				// if (record.isOutOfRange()) {
+				// warning = Messages.getString("AfinionAS100Action.ValueOutOfRangeWarning");
+				// }
 				String text =
 					MessageFormat
-					.format(
-						Messages.getString("AfinionAS100Action.ValueInfoMsg"), patientDeviceStr, patientElexisStr, record.getRunNr(), record //$NON-NLS-1$
-						.getText(), warning);
+						.format(
+							Messages.getString("AfinionAS100Action.ValueInfoMsg"), patientDeviceStr, patientElexisStr, record.getRunNr(), record //$NON-NLS-1$
+								.getText(), warning);
 				
 				boolean ok =
 					MessageDialog.openConfirm(Desk.getTopShell(), Messages
@@ -290,9 +292,11 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 							public void run(){
 								// TODO: Filter vorname/name in KontaktSelektor einbauen
 								KontaktSelektor ksl =
-									new KontaktSelektor(Hub.getActiveShell(), Patient.class,
+									new KontaktSelektor(
+										Hub.getActiveShell(),
+										Patient.class,
 										Messages.getString("AfinionAS100Action.Patient.Title"), //$NON-NLS-1$
-										Messages.getString("AfinionAS100Action.Patient.Text"),Patient.DEFAULT_SORT); //$NON-NLS-1$
+										Messages.getString("AfinionAS100Action.Patient.Text"), Patient.DEFAULT_SORT); //$NON-NLS-1$
 								ksl.create();
 								ksl.getShell().setText(
 									Messages.getString("AfinionAS100Action.Patient.Title")); //$NON-NLS-1$
@@ -381,8 +385,8 @@ public class AfinionAS100Action extends Action implements ComPortListener {
 				processRecord(lastRecord);
 			} else {
 				SWTHelper
-				.showInfo(
-					Messages.getString("AfinionAS100Action.DeviceName"), Messages.getString("AfinionAS100Action.NoValuesMsg")); //$NON-NLS-2$
+					.showInfo(
+						Messages.getString("AfinionAS100Action.DeviceName"), Messages.getString("AfinionAS100Action.NoValuesMsg")); //$NON-NLS-2$
 			}
 			
 			_rs232log.log("Saved"); //$NON-NLS-1$

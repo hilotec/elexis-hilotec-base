@@ -33,47 +33,43 @@ import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 public class MedicalSelector extends CodeSelectorFactory {
 	/*
-	AbstractDataLoaderJob dataloader;
-	
-	public MedicalSelector() {	
-		dataloader=(AbstractDataLoaderJob) JobPool.getJobPool().getJob("Medicals");
-		if(dataloader==null){
-			dataloader=new ListLoader("Medicals",new Query<Medical>(Medical.class),new String[]{"Name"});
-			JobPool.getJobPool().addJob(dataloader);
-		}
-		JobPool.getJobPool().activate("Medicals",Job.SHORT);
-	}
-*/
+	 * AbstractDataLoaderJob dataloader;
+	 * 
+	 * public MedicalSelector() { dataloader=(AbstractDataLoaderJob)
+	 * JobPool.getJobPool().getJob("Medicals"); if(dataloader==null){ dataloader=new
+	 * ListLoader("Medicals",new Query<Medical>(Medical.class),new String[]{"Name"});
+	 * JobPool.getJobPool().addJob(dataloader); }
+	 * JobPool.getJobPool().activate("Medicals",Job.SHORT); }
+	 */
 	@Override
-	public ViewerConfigurer createViewerConfigurer(CommonViewer cv) {
-		new ArtikelContextMenu((Medical)new ArtikelFactory().createTemplate(Medical.class),cv);
-		ViewerConfigurer vc= new ViewerConfigurer(
-				//new LazyContentProvider(cv,dataloader,null),
-			new MedicalLoader(cv),
-				new ArtikelLabelProvider(),
-				new MedicalControlFieldProvider(cv, new String[]{"Name"}),
-				new ViewerConfigurer.DefaultButtonProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE,null)
-		);
+	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+		new ArtikelContextMenu((Medical) new ArtikelFactory().createTemplate(Medical.class), cv);
+		ViewerConfigurer vc =
+			new ViewerConfigurer(
+			// new LazyContentProvider(cv,dataloader,null),
+				new MedicalLoader(cv), new ArtikelLabelProvider(), new MedicalControlFieldProvider(
+					cv, new String[] {
+						"Name"
+					}), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
+					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
 		
 		return vc;
 	}
-
+	
 	@Override
-	public Class getElementClass() {
+	public Class getElementClass(){
 		return Medical.class;
 	}
-
+	
 	@Override
-	public void dispose() {
-		// TODO Automatisch erstellter Methoden-Stub
-		
-	}
-
-	@Override
-	public String getCodeSystemName() {
-		return "Medicals";
+	public void dispose(){
+	// TODO Automatisch erstellter Methoden-Stub
+	
 	}
 	
+	@Override
+	public String getCodeSystemName(){
+		return "Medicals";
+	}
 	
 }

@@ -32,7 +32,7 @@ public class Value {
 	
 	String warning = "";
 	
-	public String getWarning() {
+	public String getWarning(){
 		return this.warning;
 	}
 	
@@ -44,13 +44,12 @@ public class Value {
 		return _longName;
 	}
 	
-	Value(final String paramName, final String unit) throws PackageException {
+	Value(final String paramName, final String unit) throws PackageException{
 		_shortName = getString(paramName, "kuerzel");
 		_longName = getString(paramName, "text");
 		String valueTextUnit = getString(paramName, "unit");
 		if (unit != null && !unit.equals(valueTextUnit)) {
-			this.warning = "Einheit ist verschieden: " + unit
-					+ " - " + valueTextUnit;
+			this.warning = "Einheit ist verschieden: " + unit + " - " + valueTextUnit;
 		}
 		_unit = unit;
 		_refMann = getString(paramName, "refM");
@@ -66,8 +65,8 @@ public class Value {
 		
 		if (list.size() < 1) {
 			myLab =
-				new Labor(Messages.getString("Value.LabKuerzel"),
-					Messages.getString("Value.LabName"));
+				new Labor(Messages.getString("Value.LabKuerzel"), Messages
+					.getString("Value.LabName"));
 		} else {
 			myLab = list.get(0);
 		}

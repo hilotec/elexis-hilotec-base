@@ -37,8 +37,8 @@ import ch.rgw.tools.ExHandler;
  * der Anwender wartet</li>
  * <li>Job.LONG: Mittlere Priorität für Jobs, die mehrere Sekunden lang laufen, und die deshalb die
  * Benutzeroberfläche nicht beeinträchtigen sollen</li>
- * <li>Job.DECORATE; Niedrigste Priorität für allgemeine Hintergrundjobs, die nur laufen, wenn
- * sonst nichts zu tun ist</li>
+ * <li>Job.DECORATE; Niedrigste Priorität für allgemeine Hintergrundjobs, die nur laufen, wenn sonst
+ * nichts zu tun ist</li>
  * </ul>
  * 
  * @see BackgroundJob

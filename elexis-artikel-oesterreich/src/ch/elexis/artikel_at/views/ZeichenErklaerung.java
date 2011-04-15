@@ -18,23 +18,24 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
 
 public class ZeichenErklaerung extends ViewPart {
-	public static final String ID="elexis-artikel-oesterreich.zeichenerklaerung";
+	public static final String ID = "elexis-artikel-oesterreich.zeichenerklaerung";
 	Browser browser;
-	public ZeichenErklaerung() {
-		// TODO Auto-generated constructor stub
+	
+	public ZeichenErklaerung(){
+	// TODO Auto-generated constructor stub
 	}
-
+	
 	@Override
-	public void createPartControl(Composite parent) {
-		browser=new Browser(parent,SWT.NONE);
+	public void createPartControl(Composite parent){
+		browser = new Browser(parent, SWT.NONE);
 		browser.setUrl("http://root.ami-info.at/company/ami-info/html/ZEICHEN.HTM");
 		
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 }

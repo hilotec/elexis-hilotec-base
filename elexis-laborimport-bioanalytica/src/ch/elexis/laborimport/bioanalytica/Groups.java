@@ -36,10 +36,11 @@ import ch.rgw.tools.TimeTool;
  * This class provides the groups and codes used by the lab Bioanalytica.
  * 
  * Important: Each public method must run init() to make sure data is loaded.
+ * 
  * @author Daniel Lutz
  */
 public class Groups {
-	public static void main(String[] args) {
+	public static void main(String[] args){
 		System.out.println("Groups");
 	}
 	
@@ -57,13 +58,11 @@ public class Groups {
 	private static HashMap<String, Group> groups = null;
 	private static HashMap<String, Code> codes = null;
 	
-	
-	
 	static {
 		init();
 	}
 	
-	private static final InputStreamReader getFileAsSreamReader(String path) {
+	private static final InputStreamReader getFileAsSreamReader(String path){
 		String basePath = PlatformHelper.getBasePath(Importer.PLUGIN_ID);
 		File file = new File(basePath + path);
 		if (file.exists() && file.isFile()) {
@@ -84,7 +83,7 @@ public class Groups {
 	/**
 	 * Initialize data
 	 */
-	private static void init() {
+	private static void init(){
 		if (groups == null || codes == null) {
 			loadData();
 		}
@@ -93,10 +92,10 @@ public class Groups {
 	/**
 	 * Load data from GROUPS_FILE and CODES_FILE
 	 */
-	private static void loadData() {
+	private static void loadData(){
 		groups = new HashMap<String, Group>();
 		codes = new HashMap<String, Code>();
-
+		
 		InputStreamReader isr;
 		BufferedReader in;
 		String line;
@@ -125,7 +124,7 @@ public class Groups {
 		}
 	}
 	
-	private static void parseGroup(String line) {
+	private static void parseGroup(String line){
 		if (!isCommentLine(line)) {
 			// pattern: <Key>;<Name>
 			Pattern p = Pattern.compile("^([^;]+);([^;]+)$");
@@ -139,7 +138,7 @@ public class Groups {
 		}
 	}
 	
-	private static void parseCode(String line) {
+	private static void parseCode(String line){
 		if (!isCommentLine(line)) {
 			// pattern: <Order>;<Code>;<Group Key>[;<Name>]
 			Pattern p = Pattern.compile("^([0-9]+);([^;]+);([^;]+)(;([^;]*))?");
@@ -154,14 +153,14 @@ public class Groups {
 				}
 				Group group = groups.get(groupKey);
 				if (group != null) {
-					Code code = new Code(group, key, name, order); 
+					Code code = new Code(group, key, name, order);
 					codes.put(key, code);
 				}
 			}
 		}
 	}
 	
-	private static boolean isCommentLine(String line) {
+	private static boolean isCommentLine(String line){
 		if (line.matches("^\\s*#.*$") || line.matches("^\\s*$")) {
 			return true;
 		} else {
@@ -171,10 +170,11 @@ public class Groups {
 	
 	/**
 	 * Get the group's name of a given code
+	 * 
 	 * @param code
 	 * @return
 	 */
-	public static String getGroupNameOfCode(String key) {
+	public static String getGroupNameOfCode(String key){
 		String name;
 		
 		init();
@@ -187,16 +187,18 @@ public class Groups {
 			String dat = new TimeTool().toString(TimeTool.DATE_GER);
 			name = UNKNOWN_PREFIX;
 		}
-
+		
 		return name;
 	}
 	
 	/**
 	 * Get the code's name
-	 * @param key the code
+	 * 
+	 * @param key
+	 *            the code
 	 * @return the name of the code
 	 */
-	public static String getCodeName(String key) {
+	public static String getCodeName(String key){
 		init();
 		
 		Code code = codes.get(key);
@@ -211,38 +213,32 @@ public class Groups {
 		}
 		
 	}
-
+	
 	/**
 	 * Get the code's order number
-	 * @param key the code
+	 * 
+	 * @param key
+	 *            the code
 	 * @return the order of the code
 	 */
 	/*
-	public static String getCodeOrder(String key) {
-		init();
-		
-		Code code = codes.get(key);
-		if (code != null) {
-			if (!StringTool.isNothing(code.order)) {
-				return code.order;
-			} else {
-				return DEFAULT_ORDER;
-			}
-		} else {
-			return DEFAULT_ORDER;
-		}
-	}
-	*/
+	 * public static String getCodeOrder(String key) { init();
+	 * 
+	 * Code code = codes.get(key); if (code != null) { if (!StringTool.isNothing(code.order)) {
+	 * return code.order; } else { return DEFAULT_ORDER; } } else { return DEFAULT_ORDER; } }
+	 */
 
 	/**
-	 * Determine a priority by consulting the existing prios of the group.
-	 * We don't consider prios with string length < 3 (to make things easier).
-	 * We start at prio 001. 
-	 * @param groupName the gorup's name this labitem is part of
-	 * @param labor the labor this labitem is part of
+	 * Determine a priority by consulting the existing prios of the group. We don't consider prios
+	 * with string length < 3 (to make things easier). We start at prio 001.
+	 * 
+	 * @param groupName
+	 *            the gorup's name this labitem is part of
+	 * @param labor
+	 *            the labor this labitem is part of
 	 * @return the next free priority
 	 */
-	public static String getCodeOrderByGroupName(String groupName, Kontakt labor) {
+	public static String getCodeOrderByGroupName(String groupName, Kontakt labor){
 		String order;
 		
 		Query<LabItem> query = new Query<LabItem>(LabItem.class);
@@ -250,7 +246,7 @@ public class Groups {
 		query.add("LaborID", "=", labor.getId());
 		List<LabItem> labItems = query.execute();
 		if (labItems != null) {
-			int lastPrioValue = 0; 
+			int lastPrioValue = 0;
 			
 			for (LabItem labItem : labItems) {
 				String currentPrio = labItem.getPrio().trim();
@@ -273,12 +269,12 @@ public class Groups {
 		
 		return order;
 	}
-
+	
 	static class Group {
 		String key;
 		String name;
 		
-		Group(String key, String name) {
+		Group(String key, String name){
 			this.key = key;
 			this.name = name;
 		}
@@ -286,6 +282,7 @@ public class Groups {
 	
 	/**
 	 * Representation of a Bioanlaytica code
+	 * 
 	 * @author danlutz
 	 */
 	static class Code {
@@ -297,7 +294,7 @@ public class Groups {
 		 */
 		String order;
 		
-		Code(Group group, String key, String name, String order) {
+		Code(Group group, String key, String name, String order){
 			this.group = group;
 			this.key = key;
 			this.name = name;

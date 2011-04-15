@@ -85,13 +85,13 @@ public class RechnungsBlatt extends Composite implements IActivationListener {
 	private final ExpandableComposite ecKons;
 	
 	static final InputData[] rndata =
-	{
-		new InputData(
-			Messages.getString("RechnungsBlatt.billNumber"), Rechnung.BILL_NUMBER, Typ.STRING, null), //$NON-NLS-1$
+		{
+			new InputData(
+				Messages.getString("RechnungsBlatt.billNumber"), Rechnung.BILL_NUMBER, Typ.STRING, null), //$NON-NLS-1$
 			new InputData(
 				Messages.getString("RechnungsBlatt.billDate"), Rechnung.BILL_DATE, Typ.STRING, null), //$NON-NLS-1$
-				new InputData(Messages.getString("RechnungsBlatt.billState"), Rechnung.BILL_STATE, //$NON-NLS-1$
-					new LabeledInputField.IContentProvider() {
+			new InputData(Messages.getString("RechnungsBlatt.billState"), Rechnung.BILL_STATE, //$NON-NLS-1$
+				new LabeledInputField.IContentProvider() {
 					
 					public void displayContent(PersistentObject po, InputData ltf){
 						Rechnung r = (Rechnung) po;
@@ -107,69 +107,69 @@ public class RechnungsBlatt extends Composite implements IActivationListener {
 					}
 					
 				}),
-				new InputData(
-					Messages.getString("RechnungsBlatt.treatmentsFrom"), Rechnung.BILL_DATE_FROM, Typ.STRING, null), //$NON-NLS-1$
-					new InputData(
-						Messages.getString("RechnungsBlatt.treatmentsUntil"), Rechnung.BILL_DATE_UNTIL, Typ.STRING, null), //$NON-NLS-1$
-						new InputData(
-							Messages.getString("RechnungsBlatt.amountTotal"), Rechnung.BILL_AMOUNT_CENTS, Typ.CURRENCY, null), //$NON-NLS-1$
-							new InputData(
-								Messages.getString("RechnungsBlatt.amountOpen"), Rechnung.BILL_AMOUNT_CENTS, //$NON-NLS-1$
-								new LabeledInputField.IContentProvider() {
-									
-									public void displayContent(PersistentObject po, InputData ltf){
-										Rechnung rn = (Rechnung) po;
-										Money offen = rn.getOffenerBetrag();
-										ltf.setText(offen.getAmountAsString());
-									}
-									
-									public void reloadContent(PersistentObject po, InputData ltf){
-										try {
-											if (new RnDialogs.BuchungHinzuDialog(Hub.plugin.getWorkbench()
-												.getActiveWorkbenchWindow().getShell(), (Rechnung) po).open() == Dialog.OK) {
-												ElexisEventDispatcher.update(po);
-											}
-										} catch (ElexisException e) {
-											SWTHelper.showError("Buchung kann nicht hinzugefügt werden", e
-												.getLocalizedMessage());
-										}
-									}
-									
-								})
-	};
+			new InputData(
+				Messages.getString("RechnungsBlatt.treatmentsFrom"), Rechnung.BILL_DATE_FROM, Typ.STRING, null), //$NON-NLS-1$
+			new InputData(
+				Messages.getString("RechnungsBlatt.treatmentsUntil"), Rechnung.BILL_DATE_UNTIL, Typ.STRING, null), //$NON-NLS-1$
+			new InputData(
+				Messages.getString("RechnungsBlatt.amountTotal"), Rechnung.BILL_AMOUNT_CENTS, Typ.CURRENCY, null), //$NON-NLS-1$
+			new InputData(
+				Messages.getString("RechnungsBlatt.amountOpen"), Rechnung.BILL_AMOUNT_CENTS, //$NON-NLS-1$
+				new LabeledInputField.IContentProvider() {
+					
+					public void displayContent(PersistentObject po, InputData ltf){
+						Rechnung rn = (Rechnung) po;
+						Money offen = rn.getOffenerBetrag();
+						ltf.setText(offen.getAmountAsString());
+					}
+					
+					public void reloadContent(PersistentObject po, InputData ltf){
+						try {
+							if (new RnDialogs.BuchungHinzuDialog(Hub.plugin.getWorkbench()
+								.getActiveWorkbenchWindow().getShell(), (Rechnung) po).open() == Dialog.OK) {
+								ElexisEventDispatcher.update(po);
+							}
+						} catch (ElexisException e) {
+							SWTHelper.showError("Buchung kann nicht hinzugefügt werden", e
+								.getLocalizedMessage());
+						}
+					}
+					
+				})
+		};
 	LabeledInputField.AutoForm rnform;
 	
 	private final ElexisEventListenerImpl eeli_rn =
 		new ElexisEventListenerImpl(Rechnung.class, ElexisEvent.EVENT_CREATE
 			| ElexisEvent.EVENT_DELETE | ElexisEvent.EVENT_UPDATE | ElexisEvent.EVENT_SELECTED) {
-		
-		public void runInUi(ElexisEvent ev){
-			switch (ev.getType()) {
-			case ElexisEvent.EVENT_UPDATE:
-				doSelect((Rechnung) ev.getObject());
-				break;
-			case ElexisEvent.EVENT_DESELECTED: // fall thru
-			case ElexisEvent.EVENT_DELETE:
-				if (actRn != null && actRn.getId().equals(ev.getObject().getId())) {
-					actRn = null;
-					display();
-				}
-				break;
-			case ElexisEvent.EVENT_SELECTED:
-				doSelect((Rechnung) ev.getObject());
-				break;
-			}
 			
-		}
-	};
+			public void runInUi(ElexisEvent ev){
+				switch (ev.getType()) {
+				case ElexisEvent.EVENT_UPDATE:
+					doSelect((Rechnung) ev.getObject());
+					break;
+				case ElexisEvent.EVENT_DESELECTED: // fall thru
+				case ElexisEvent.EVENT_DELETE:
+					if (actRn != null && actRn.getId().equals(ev.getObject().getId())) {
+						actRn = null;
+						display();
+					}
+					break;
+				case ElexisEvent.EVENT_SELECTED:
+					doSelect((Rechnung) ev.getObject());
+					break;
+				}
+				
+			}
+		};
 	
 	private final ElexisEventListenerImpl eeli_user =
 		new ElexisEventListenerImpl(Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
-		
-		public void runInUi(ElexisEvent ev){
-			display();
-		}
-	};
+			
+			public void runInUi(ElexisEvent ev){
+				display();
+			}
+		};
 	
 	public RechnungsBlatt(Composite parent, IViewSite site){
 		super(parent, SWT.NONE);
@@ -327,11 +327,11 @@ public class RechnungsBlatt extends Composite implements IActivationListener {
 			}
 			
 			public void dispose(){
-				// nothing to do
+			// nothing to do
 			}
 			
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
-				// nothing to do
+			// nothing to do
 			}
 		});
 		konsultationenViewer.setLabelProvider(new LabelProvider() {
@@ -359,7 +359,7 @@ public class RechnungsBlatt extends Composite implements IActivationListener {
 					Money preis = verrechnet.getNettoPreis();
 					preis.multiply(zahl);
 					return "  - " + zahl + " " + verrechnet.getLabel() + " (" + preis.toString() //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					+ ")"; //$NON-NLS-1$
+						+ ")"; //$NON-NLS-1$
 				} else {
 					return element.toString();
 				}
@@ -403,14 +403,14 @@ public class RechnungsBlatt extends Composite implements IActivationListener {
 	}
 	
 	public void activation(boolean mode){
-		/* egal */
+	/* egal */
 	}
 	
 	public void visible(boolean mode){
 		if (mode) {
 			ElexisEventDispatcher.getInstance().addListeners(eeli_rn, eeli_user);
-			Rechnung selected=(Rechnung) ElexisEventDispatcher.getSelected(Rechnung.class);
-			if(selected!=null){
+			Rechnung selected = (Rechnung) ElexisEventDispatcher.getSelected(Rechnung.class);
+			if (selected != null) {
 				doSelect(selected);
 			}
 		} else {
@@ -437,7 +437,7 @@ public class RechnungsBlatt extends Composite implements IActivationListener {
 		lbOutputs.removeAll();
 		if (actRn != null) {
 			rnAdressat
-			.setText(Messages.getString("RechnungsBlatt.adressee") + actRn.getFall().getGarant().getLabel()); //$NON-NLS-1$
+				.setText(Messages.getString("RechnungsBlatt.adressee") + actRn.getFall().getGarant().getLabel()); //$NON-NLS-1$
 			form.setText(actRn.getLabel());
 			List<String> trace = actRn.getTrace(Rechnung.STATUS_CHANGED);
 			for (String s : trace) {

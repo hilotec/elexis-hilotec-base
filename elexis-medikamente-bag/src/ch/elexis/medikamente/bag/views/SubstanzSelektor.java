@@ -30,37 +30,38 @@ import ch.elexis.util.viewers.ViewerConfigurer;
 public class SubstanzSelektor extends Dialog {
 	CommonViewer cv;
 	Substance result;
+	
 	public SubstanzSelektor(Shell shell){
 		super(shell);
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		cv=new CommonViewer();
-		ViewerConfigurer vc=new ViewerConfigurer(
-				new DefaultContentProvider(cv,Substance.class,new String[]{"name"},false),
-				new DefaultLabelProvider(),
-				new DefaultControlFieldProvider(cv,new String[]{"name=Name"}),
-				new ViewerConfigurer.DefaultButtonProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LIST, SWT.V_SCROLL,null)
-				);
+	protected Control createDialogArea(Composite parent){
+		cv = new CommonViewer();
+		ViewerConfigurer vc =
+			new ViewerConfigurer(new DefaultContentProvider(cv, Substance.class, new String[] {
+				"name"
+			}, false), new DefaultLabelProvider(), new DefaultControlFieldProvider(cv,
+				new String[] {
+					"name=Name"
+				}), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
+				SimpleWidgetProvider.TYPE_LIST, SWT.V_SCROLL, null));
 		cv.create(vc, parent, SWT.NONE, parent);
 		vc.getContentProvider().startListening();
 		return cv.getViewerWidget().getControl();
 	}
-
+	
 	@Override
-	public boolean close() {
+	public boolean close(){
 		cv.getConfigurer().getContentProvider().stopListening();
-		result=(Substance)cv.getSelection()[0];
+		result = (Substance) cv.getSelection()[0];
 		return super.close();
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		getShell().setText("Bitte Substanz auswählen");
 	}
-	
 	
 }

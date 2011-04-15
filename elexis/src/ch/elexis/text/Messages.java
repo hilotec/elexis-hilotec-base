@@ -54,7 +54,6 @@ public class Messages extends NLS {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}
-
-	private Messages() {
-	}
+	
+	private Messages(){}
 }

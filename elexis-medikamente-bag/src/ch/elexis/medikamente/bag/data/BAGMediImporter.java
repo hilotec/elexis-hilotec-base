@@ -35,49 +35,52 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
 public class BAGMediImporter extends ImporterPage {
-	static Query<Artikel> qbe=new Query<Artikel>(Artikel.class);
-	static Logger log=Logger.getLogger(BAGMediImporter.class.getName());
+	static Query<Artikel> qbe = new Query<Artikel>(Artikel.class);
+	static Logger log = Logger.getLogger(BAGMediImporter.class.getName());
 	
-	public BAGMediImporter() {
-		// TODO Auto-generated constructor stub
+	public BAGMediImporter(){
+	// TODO Auto-generated constructor stub
 	}
 	
 	@Override
-	public Composite createPage(final Composite parent) {
-		FileBasedImporter fbi=new FileBasedImporter(parent,this);
+	public Composite createPage(final Composite parent){
+		FileBasedImporter fbi = new FileBasedImporter(parent, this);
 		fbi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return fbi;
 	}
 	
 	@Override
-	public IStatus doImport(final IProgressMonitor monitor) throws Exception {
+	public IStatus doImport(final IProgressMonitor monitor) throws Exception{
 		FileInputStream is = new FileInputStream(results[0]);
 		return doImport(is, monitor);
 	}
 	
-	public IStatus doImport(final InputStream inputStream, final IProgressMonitor monitor) throws ElexisException {
-		ExcelWrapper ew=new ExcelWrapper();
-		if(ew.load(inputStream, 0)){
-			int f=ew.getFirstRow()+1;
-			int l=ew.getLastRow();
-			monitor.beginTask("Import BAG-Medikamente", l-f);
-			int counter=0;
-			ew.setFieldTypes(new Class[]{String.class,Character.class,Integer.class,Integer.class,Integer.class,
-				Character.class,String.class,String.class,Double.class,Double.class,String.class,Integer.class,
-				Integer.class,String.class,Integer.class});
-			for(int i=f;i<l;i++){
-				List<String> row=ew.getRow(i);
+	public IStatus doImport(final InputStream inputStream, final IProgressMonitor monitor)
+		throws ElexisException{
+		ExcelWrapper ew = new ExcelWrapper();
+		if (ew.load(inputStream, 0)) {
+			int f = ew.getFirstRow() + 1;
+			int l = ew.getLastRow();
+			monitor.beginTask("Import BAG-Medikamente", l - f);
+			int counter = 0;
+			ew.setFieldTypes(new Class[] {
+				String.class, Character.class, Integer.class, Integer.class, Integer.class,
+				Character.class, String.class, String.class, Double.class, Double.class,
+				String.class, Integer.class, Integer.class, String.class, Integer.class
+			});
+			for (int i = f; i < l; i++) {
+				List<String> row = ew.getRow(i);
 				monitor.subTask(row.get(7));
 				importUpdate(row.toArray(new String[0]));
-				if(counter++>200){
+				if (counter++ > 200) {
 					PersistentObject.clearCache();
-					counter=0;
+					counter = 0;
 				}
-				if(monitor.isCanceled()){
+				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
 				monitor.worked(1);
-				row=null;
+				row = null;
 			}
 			monitor.done();
 			return Status.OK_STATUS;
@@ -87,8 +90,9 @@ public class BAGMediImporter extends ImporterPage {
 	
 	/**
 	 * Import a medicament from one row of the BAG-Medi file
+	 * 
 	 * @param row
-	 * <pre>
+	 *            <pre>
 	 * 		row[0] = ID,bzw Name
 	 * 		row[1] = Generikum
 	 * 		row[2] = Pharmacode
@@ -106,75 +110,79 @@ public class BAGMediImporter extends ImporterPage {
 	 * </pre>
 	 * @return
 	 */
-	public static boolean importUpdate(final String[] row) throws ElexisException {
-		String pharmacode="0";
-		BAGMedi imp=null;
+	public static boolean importUpdate(final String[] row) throws ElexisException{
+		String pharmacode = "0";
+		BAGMedi imp = null;
 		// Kein Pharmacode, dann nach Name suchen
-		if(StringTool.isNothing(row[2].trim())){
-			String mid=qbe.findSingle(Artikel.FLD_NAME, "=", row[7]);
-			if(mid!=null){
-				imp=BAGMedi.load(mid);
+		if (StringTool.isNothing(row[2].trim())) {
+			String mid = qbe.findSingle(Artikel.FLD_NAME, "=", row[7]);
+			if (mid != null) {
+				imp = BAGMedi.load(mid);
 			}
-		}else{
-			try{
+		} else {
+			try {
 				// strip leading zeroes
-				int pcode=Integer.parseInt(row[2].trim());
-				pharmacode=Integer.toString(pcode);
+				int pcode = Integer.parseInt(row[2].trim());
+				pharmacode = Integer.toString(pcode);
 				
-			}catch(Exception ex){
+			} catch (Exception ex) {
 				ExHandler.handle(ex);
-				log.log(Level.WARNING, "Pharmacode falsch: "+row[2]);
+				log.log(Level.WARNING, "Pharmacode falsch: " + row[2]);
 			}
 			
 			qbe.clear();
 			qbe.add(Artikel.FLD_SUB_ID, "=", pharmacode);
-			List<Artikel> lArt=qbe.executeWithDeleted();
-			if(lArt==null){
-				throw new ElexisException(BAGMediImporter.class, "Article list was null while scanning for "+pharmacode, ElexisException.EE_UNEXPECTED_RESPONSE,true);
+			List<Artikel> lArt = qbe.executeWithDeleted();
+			if (lArt == null) {
+				throw new ElexisException(BAGMediImporter.class,
+					"Article list was null while scanning for " + pharmacode,
+					ElexisException.EE_UNEXPECTED_RESPONSE, true);
 			}
-			if(lArt.size()>1){
+			if (lArt.size() > 1) {
 				// Duplikate entfernen, genau einen gültigen und existierenden Artikel behalten
-				Iterator<Artikel> it=lArt.iterator();
-				boolean hasValid=false;
-				Artikel res=null;
-				while(it.hasNext()){
-					Artikel ax=it.next();
-					if(hasValid || (!ax.isValid())){
-						if(res==null){
-							res=ax;
+				Iterator<Artikel> it = lArt.iterator();
+				boolean hasValid = false;
+				Artikel res = null;
+				while (it.hasNext()) {
+					Artikel ax = it.next();
+					if (hasValid || (!ax.isValid())) {
+						if (res == null) {
+							res = ax;
 						}
 						it.remove();
-					}else{
-						hasValid=true;
+					} else {
+						hasValid = true;
 					}
 				}
-				if(!hasValid){
-					if(res!=null){
-						if(res.isDeleted()){
+				if (!hasValid) {
+					if (res != null) {
+						if (res.isDeleted()) {
 							res.undelete();
 							lArt.add(res);
 						}
 					}
 				}
 			}
-			imp=lArt.size()>0 ? BAGMedi.load(lArt.get(0).getId()) : null;
+			imp = lArt.size() > 0 ? BAGMedi.load(lArt.get(0).getId()) : null;
 		}
-		if(imp==null || (!imp.isValid())){
-			imp=new BAGMedi(row[7],pharmacode);
+		if (imp == null || (!imp.isValid())) {
+			imp = new BAGMedi(row[7], pharmacode);
 			
-			String sql=new StringBuilder().append("INSERT INTO ").append(BAGMedi.EXTTABLE)
-			.append(" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
+			String sql =
+				new StringBuilder().append("INSERT INTO ").append(BAGMedi.EXTTABLE).append(
+					" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
 			PersistentObject.getConnection().exec(sql);
 			
-		}else{
+		} else {
 			
-			String sql=new StringBuilder().append("SELECT ID FROM ")
-			.append(BAGMedi.EXTTABLE).append(" WHERE ID=")
-			.append(imp.getWrappedId()).toString();
-			String extid=PersistentObject.getConnection().queryString(sql);
-			if(extid==null){
-				sql=new StringBuilder().append("INSERT INTO ").append(BAGMedi.EXTTABLE)
-				.append(" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
+			String sql =
+				new StringBuilder().append("SELECT ID FROM ").append(BAGMedi.EXTTABLE).append(
+					" WHERE ID=").append(imp.getWrappedId()).toString();
+			String extid = PersistentObject.getConnection().queryString(sql);
+			if (extid == null) {
+				sql =
+					new StringBuilder().append("INSERT INTO ").append(BAGMedi.EXTTABLE).append(
+						" (ID) VALUES (").append(imp.getWrappedId()).append(");").toString();
 				PersistentObject.getConnection().exec(sql);
 			}
 			
@@ -184,12 +192,12 @@ public class BAGMediImporter extends ImporterPage {
 	}
 	
 	@Override
-	public String getDescription() {
+	public String getDescription(){
 		return "Import Medikamentenliste BAG";
 	}
 	
 	@Override
-	public String getTitle() {
+	public String getTitle(){
 		return "Medi-BAG";
 	}
 	

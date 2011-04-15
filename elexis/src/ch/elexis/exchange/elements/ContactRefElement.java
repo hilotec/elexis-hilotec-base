@@ -26,7 +26,6 @@ public class ContactRefElement extends XChangeElement {
 		return "contactref";
 	}
 	
-	
 	public ContactRefElement asExporter(XChangeExporter parent, BezugsKontakt bk){
 		asExporter(parent);
 		Kontakt bezug = bk.getBezugsKontakt();

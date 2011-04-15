@@ -32,15 +32,14 @@ public class ResultElement extends XChangeElement {
 	public static final String ELEMENT_DOCRESULT = "documentRef";
 	
 	@Override
-	public String getXMLName() {
+	public String getXMLName(){
 		return XMLNAME;
 	}
 	
-	public static ResultElement addResult(MedicalElement me, LabResult lr) {
+	public static ResultElement addResult(MedicalElement me, LabResult lr){
 		List<FindingElement> findings = me.getAnalyses();
 		for (FindingElement fe : findings) {
-			if (fe.getXid().getID().equals(
-				XMLTool.idToXMLID(lr.getItem().getId()))) {
+			if (fe.getXid().getID().equals(XMLTool.idToXMLID(lr.getItem().getId()))) {
 				ResultElement re = new ResultElement().asExporter(me.sender, lr);
 				me.addAnalyse(re);
 				return re;
@@ -53,11 +52,10 @@ public class ResultElement extends XChangeElement {
 		return re;
 	}
 	
-	private ResultElement asExporter(XChangeExporter home, LabResult lr) {
+	private ResultElement asExporter(XChangeExporter home, LabResult lr){
 		asExporter(home);
 		setAttribute("id", XMLTool.idToXMLID(lr.getId()));
-		setAttribute(ATTR_DATE, new TimeTool(lr.getDate())
-		.toString(TimeTool.DATETIME_XML));
+		setAttribute(ATTR_DATE, new TimeTool(lr.getDate()).toString(TimeTool.DATETIME_XML));
 		setAttribute(ATTR_LABITEM, XMLTool.idToXMLID(lr.getItem().getId()));
 		ResultElement eResult = new ResultElement();
 		eResult.setText(lr.getResult());
@@ -67,7 +65,7 @@ public class ResultElement extends XChangeElement {
 		return this;
 	}
 	
-	public void setText(String text) {
-		
+	public void setText(String text){
+
 	}
 }

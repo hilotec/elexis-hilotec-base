@@ -30,8 +30,7 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 		"DROP TABLE ICD10;" + //$NON-NLS-1$
 		"CREATE TABLE ICD10 (" + //$NON-NLS-1$
 		"ID       VARCHAR(25) primary key, " + //$NON-NLS-1$
-		"lastupdate BIGINT,"+
-		"deleted  CHAR(1) default '0'," + //$NON-NLS-1$
+		"lastupdate BIGINT," + "deleted  CHAR(1) default '0'," + //$NON-NLS-1$
 		"parent   VARCHAR(25)," + //$NON-NLS-1$
 		"ICDCode  VARCHAR(10)," + //$NON-NLS-1$
 		"encoded  TEXT," + //$NON-NLS-1$
@@ -63,9 +62,8 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';");
 					version.set("Text", VERSION);
 				}
-				if(vi.isOlder("1.0.2")){
-					getConnection().exec(
-						"ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
+				if (vi.isOlder("1.0.2")) {
+					getConnection().exec("ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
 					version.set("Text", VERSION);
 				}
 			}

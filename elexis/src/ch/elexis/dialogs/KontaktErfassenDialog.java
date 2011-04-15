@@ -55,7 +55,7 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 	private static final int KED_NAME = 0;
 	private static final int KED_FIRSTNAME = 1;
 	private static final int KED_ADDITIONAL = 7;
-
+	
 	private Button bOrganisation, bLabor, bPerson, bPatient, bAnwender, bMandant;
 	
 	Kontakt newKontakt = null;
@@ -155,7 +155,8 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 		lVorname = new Label(ret, SWT.NONE);
 		lVorname.setText(Messages.getString("KontaktErfassenDialog.firstName")); //$NON-NLS-1$
 		tVorname = new Text(ret, SWT.BORDER);
-		tVorname.setText(fld[KontaktSelektor.HINT_FIRSTNAME] == null ? "" : fld[KontaktSelektor.HINT_FIRSTNAME]); //$NON-NLS-1$
+		tVorname
+			.setText(fld[KontaktSelektor.HINT_FIRSTNAME] == null ? "" : fld[KontaktSelektor.HINT_FIRSTNAME]); //$NON-NLS-1$
 		tVorname.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
 		lZusatz = new Label(ret, SWT.NONE);
@@ -167,8 +168,8 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 		new Label(ret, SWT.NONE).setText(Messages.getString("PatientErfassenDialog.sex"));//$NON-NLS-1$
 		cbSex = new Combo(ret, SWT.SINGLE);
 		cbSex
-		.setItems(new String[] {
-			Messages.getString("KontaktErfassenDialog.male"), Messages.getString("KontaktErfassenDialog.female")}); //$NON-NLS-1$ //$NON-NLS-2$
+			.setItems(new String[] {
+				Messages.getString("KontaktErfassenDialog.male"), Messages.getString("KontaktErfassenDialog.female")}); //$NON-NLS-1$ //$NON-NLS-2$
 		
 		if (fld.length <= KontaktSelektor.HINT_SEX || fld[KontaktSelektor.HINT_SEX].length() == 0) {
 			if (StringTool.isNothing(fld[KontaktSelektor.HINT_FIRSTNAME])) {
@@ -182,12 +183,15 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 		
 		new Label(ret, SWT.NONE).setText(Messages.getString("KontaktErfassenDialog.birthDate")); //$NON-NLS-1$
 		tGebDat = new Text(ret, SWT.BORDER);
-		tGebDat.setText(fld[KontaktSelektor.HINT_BIRTHDATE] == null ? "" : fld[KontaktSelektor.HINT_BIRTHDATE]); //$NON-NLS-1$
+		tGebDat
+			.setText(fld[KontaktSelektor.HINT_BIRTHDATE] == null ? "" : fld[KontaktSelektor.HINT_BIRTHDATE]); //$NON-NLS-1$
 		tGebDat.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
 		new Label(ret, SWT.NONE).setText(Messages.getString("PatientErfassenDialog.street")); //$NON-NLS-1$
 		tStrasse = new Text(ret, SWT.BORDER);
-		tStrasse.setText(fld.length > KontaktSelektor.HINT_STREET ? fld[KontaktSelektor.HINT_STREET] : ""); //$NON-NLS-1$
+		tStrasse
+			.setText(fld.length > KontaktSelektor.HINT_STREET ? fld[KontaktSelektor.HINT_STREET]
+					: ""); //$NON-NLS-1$
 		tStrasse.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
 		new Label(ret, SWT.NONE).setText(Messages.getString("PatientErfassenDialog.zip")); //$NON-NLS-1$
@@ -197,7 +201,8 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 		
 		new Label(ret, SWT.NONE).setText(Messages.getString("PatientErfassenDialog.city")); //$NON-NLS-1$
 		tOrt = new Text(ret, SWT.BORDER);
-		tOrt.setText(fld.length > KontaktSelektor.HINT_PLACE ? fld[KontaktSelektor.HINT_PLACE] : ""); //$NON-NLS-1$
+		tOrt
+			.setText(fld.length > KontaktSelektor.HINT_PLACE ? fld[KontaktSelektor.HINT_PLACE] : ""); //$NON-NLS-1$
 		tOrt.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		
 		new Label(ret, SWT.NONE).setText(Messages.getString("PatientErfassenDialog.phone")); //$NON-NLS-1$
@@ -399,8 +404,8 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 			newKontakt.set(new String[] {
 				"Strasse", "Plz", "Ort", "Telefon1", "Fax", "E-Mail"}, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				new String[] {
-				ret[4], ret[5], ret[6], ret[7], tFax.getText(), tEmail.getText()
-			});
+					ret[4], ret[5], ret[6], ret[7], tFax.getText(), tEmail.getText()
+				});
 			
 			ElexisEventDispatcher.fireSelectionEvent(newKontakt);
 			

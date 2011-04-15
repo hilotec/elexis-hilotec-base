@@ -51,8 +51,8 @@ public class ViewerConfigurer {
 	/**
 	 * Standard Konstruktor. Erstellt einen Viewer mit Kontrollfeld und Button
 	 */
-	public ViewerConfigurer(ICommonViewerContentProvider cnp, LabelProvider lp, ControlFieldProvider cfp,
-		ButtonProvider bp, WidgetProvider wp){
+	public ViewerConfigurer(ICommonViewerContentProvider cnp, LabelProvider lp,
+		ControlFieldProvider cfp, ButtonProvider bp, WidgetProvider wp){
 		
 		contentProvider = cnp;
 		labelProvider = (lp == null) ? new DefaultLabelProvider() : lp;
@@ -77,18 +77,22 @@ public class ViewerConfigurer {
 	
 	/**
 	 * A ContentProvider vor a CommonViewer. Has Methods to connect to a ControlField
+	 * 
 	 * @author gerry
-	 *
+	 * 
 	 */
-	public interface ICommonViewerContentProvider extends IStructuredContentProvider, ControlFieldListener {
+	public interface ICommonViewerContentProvider extends IStructuredContentProvider,
+			ControlFieldListener {
 		/**
 		 * Called after all elements of the CommonViewer are created but before setting input
 		 */
 		public void init();
+		
 		/**
 		 * Called when the ContentProvider is supposed to start listening fpr the Control fields.
 		 */
 		public void startListening();
+		
 		public void stopListening();
 	}
 	
@@ -141,8 +145,9 @@ public class ViewerConfigurer {
 	
 	/** Listener für Änderungen des Kontrollfelds */
 	public interface ControlFieldListener {
-		//public void changed(final String[] fields, final String[] values);
+		// public void changed(final String[] fields, final String[] values);
 		public void changed(HashMap<String, String> values);
+		
 		public void reorder(final String field);
 		
 		/**

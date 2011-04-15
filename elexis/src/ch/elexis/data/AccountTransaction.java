@@ -24,39 +24,40 @@ public class AccountTransaction extends PersistentObject {
 	public static final String FLD_PAYMENT_ID = "ZahlungsID"; //$NON-NLS-1$
 	public static final String FLD_PATIENT_ID = "PatientID"; //$NON-NLS-1$
 	private static final String TABLENAME = "KONTO"; //$NON-NLS-1$
-
+	
 	static {
 		addMapping(TABLENAME, FLD_PATIENT_ID, FLD_PAYMENT_ID, FLD_BILL_ID, FLD_AMOUNT,
-				DATE_COMPOUND, FLD_REMARK);
+			DATE_COMPOUND, FLD_REMARK);
 	}
-
-	public AccountTransaction(Patient pat, Rechnung r, Money betrag,
-			String date, String bemerkung) {
+	
+	public AccountTransaction(Patient pat, Rechnung r, Money betrag, String date, String bemerkung){
 		create(null);
 		if (date == null) {
 			date = new TimeTool().toString(TimeTool.DATE_GER);
 		}
-		set(new String[] { FLD_PATIENT_ID, FLD_AMOUNT, FLD_DATE, FLD_REMARK }, pat.getId(),
-				betrag.getCentsAsString(), date, bemerkung);
+		set(new String[] {
+			FLD_PATIENT_ID, FLD_AMOUNT, FLD_DATE, FLD_REMARK
+		}, pat.getId(), betrag.getCentsAsString(), date, bemerkung);
 		if (r != null) {
 			set(FLD_BILL_ID, r.getId());
 		}
 	}
-
-	public AccountTransaction(Zahlung z) {
+	
+	public AccountTransaction(Zahlung z){
 		create(null);
 		Rechnung r = z.getRechnung();
 		Patient p = r.getFall().getPatient();
-		set(new String[] { FLD_PATIENT_ID, FLD_AMOUNT, FLD_DATE, FLD_REMARK, FLD_BILL_ID,
-				FLD_PAYMENT_ID }, p.getId(), z.getBetrag().getCentsAsString(), z
-				.getDatum(), z.getBemerkung(), r.getId(), z.getId());
+		set(new String[] {
+			FLD_PATIENT_ID, FLD_AMOUNT, FLD_DATE, FLD_REMARK, FLD_BILL_ID, FLD_PAYMENT_ID
+		}, p.getId(), z.getBetrag().getCentsAsString(), z.getDatum(), z.getBemerkung(), r.getId(),
+			z.getId());
 	}
-
-	public String getDate() {
+	
+	public String getDate(){
 		return get(FLD_DATE);
 	}
-
-	public Money getAmount() {
+	
+	public Money getAmount(){
 		try {
 			return new Money(checkZero(get(FLD_AMOUNT)));
 		} catch (Exception ex) {
@@ -64,58 +65,57 @@ public class AccountTransaction extends PersistentObject {
 			return new Money();
 		}
 	}
-
-	public String getRemark() {
+	
+	public String getRemark(){
 		return checkNull(get(FLD_REMARK));
 	}
-
-	public Patient getPatient() {
+	
+	public Patient getPatient(){
 		return Patient.load(get(FLD_PATIENT_ID));
 	}
-
-	public Rechnung getRechnung() {
+	
+	public Rechnung getRechnung(){
 		return Rechnung.load(get(FLD_BILL_ID));
 	}
-
-	public Zahlung getZahlung() {
+	
+	public Zahlung getZahlung(){
 		String zi = get(FLD_PAYMENT_ID);
 		if (StringTool.isNothing(zi)) {
 			return null;
 		}
 		return Zahlung.load(zi);
 	}
-
+	
 	@Override
-	public boolean delete() {
+	public boolean delete(){
 		Zahlung z = getZahlung();
 		if (z != null) {
 			z.delete();
 		}
 		return super.delete();
 	}
-
+	
 	@Override
-	public String getLabel() {
+	public String getLabel(){
 		StringBuilder sb = new StringBuilder();
-		sb.append(get(FLD_DATE)).append(StringTool.space).append(get(FLD_AMOUNT))
-				.append(StringTool.space).append(get(FLD_REMARK));
+		sb.append(get(FLD_DATE)).append(StringTool.space).append(get(FLD_AMOUNT)).append(
+			StringTool.space).append(get(FLD_REMARK));
 		return sb.toString();
 	}
-
+	
 	@Override
-	protected String getTableName() {
+	protected String getTableName(){
 		return TABLENAME;
 	}
-
-	public static AccountTransaction load(String id) {
+	
+	public static AccountTransaction load(String id){
 		return new AccountTransaction(id);
 	}
-
-	protected AccountTransaction(String id) {
+	
+	protected AccountTransaction(String id){
 		super(id);
 	}
-
-	protected AccountTransaction() {
-	}
-
+	
+	protected AccountTransaction(){}
+	
 }

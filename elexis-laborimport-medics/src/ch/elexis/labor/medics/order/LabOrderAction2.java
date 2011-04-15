@@ -22,6 +22,7 @@ public class LabOrderAction2 extends Action {
 	
 	@Override
 	public void run(){
-		MessageDialog.openInformation(Hub.getActiveShell(), "Info", "Zweiter Labor Auftrag (nur Test)"); //$NON-NLS-1$ //$NON-NLS-2$
+		MessageDialog.openInformation(Hub.getActiveShell(),
+			"Info", "Zweiter Labor Auftrag (nur Test)"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 }

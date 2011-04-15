@@ -26,19 +26,18 @@ import ch.elexis.util.viewers.ViewerConfigurer.ICommonViewerContentProvider;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldProvider;
 
 /**
- * This is a replacement for the former BackgroundJob-System. Since it became
- * clear that the database access takes less than 10% of the total time needed
- * for reload of a CommonViewer, the BackgroundJobs were not adequate for this
- * task. Furthermore, there were several issues with those widely used jobs.
+ * This is a replacement for the former BackgroundJob-System. Since it became clear that the
+ * database access takes less than 10% of the total time needed for reload of a CommonViewer, the
+ * BackgroundJobs were not adequate for this task. Furthermore, there were several issues with those
+ * widely used jobs.
  * 
- * PersistentObjectLoader is a much simpler replacement and does not load in
- * background. Instead it uses a @see DelayableJob to perform loading.
+ * PersistentObjectLoader is a much simpler replacement and does not load in background. Instead it
+ * uses a @see DelayableJob to perform loading.
  * 
  * @author Gerry
  * 
  */
-public abstract class PersistentObjectLoader implements ICommonViewerContentProvider,
-IWorker {
+public abstract class PersistentObjectLoader implements ICommonViewerContentProvider, IWorker {
 	public final static String PARAM_FIELDNAMES = "fieldnames"; //$NON-NLS-1$
 	public final static String PARAM_VALUES = "fieldvalues"; //$NON-NLS-1$
 	protected CommonViewer cv;
@@ -49,24 +48,21 @@ IWorker {
 	protected String[] orderFields;
 	private boolean bSuspended;
 	
-	public PersistentObjectLoader(CommonViewer cv,
-		Query<? extends PersistentObject> qbe) {
+	public PersistentObjectLoader(CommonViewer cv, Query<? extends PersistentObject> qbe){
 		this.cv = cv;
 		this.qbe = qbe;
-		dj = new DelayableJob(
-			Messages.getString("PersistentObjectLoader.2"), this); //$NON-NLS-1$
+		dj = new DelayableJob(Messages.getString("PersistentObjectLoader.2"), this); //$NON-NLS-1$
 	}
 	
-	public Query<? extends PersistentObject> getQuery() {
+	public Query<? extends PersistentObject> getQuery(){
 		return qbe;
 	}
 	
 	/**
-	 * start listening the selector fields of the ControlField of the loader's
-	 * CommonViewer. If the user enters text or clicks the headings, a changed()
-	 * or reorder() event will be fired
+	 * start listening the selector fields of the ControlField of the loader's CommonViewer. If the
+	 * user enters text or clicks the headings, a changed() or reorder() event will be fired
 	 */
-	public void startListening() {
+	public void startListening(){
 		// viewerFilter =
 		// cv.getConfigurer().getControlFieldProvider().createFilter();
 		cv.getConfigurer().getControlFieldProvider().addChangeListener(this);
@@ -75,18 +71,18 @@ IWorker {
 	/**
 	 * stop listening the selector fields
 	 */
-	public void stopListening() {
+	public void stopListening(){
 		cv.getConfigurer().getControlFieldProvider().removeChangeListener(this);
 	}
 	
-	public Object[] getElements(Object inputElement) {
+	public Object[] getElements(Object inputElement){
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	public void dispose() {
+	public void dispose(){
 		stopListening();
-		if(dj!=null){
+		if (dj != null) {
 			dj.cancel();
 		}
 	}
@@ -94,19 +90,19 @@ IWorker {
 	/**
 	 * This will be called by the CommonViewer on construction
 	 */
-	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
 		dj.launch(0);
 	}
 	
 	/**
-	 * One or more of the ControlField's selectors habe been changed. We'll wait
-	 * a moment for more changes before we launch the loader.
-	 * Use this method also to force a restart of the loader programatically (values can be null)
-
+	 * One or more of the ControlField's selectors habe been changed. We'll wait a moment for more
+	 * changes before we launch the loader. Use this method also to force a restart of the loader
+	 * programatically (values can be null)
+	 * 
 	 * @param values
 	 *            the new values
 	 */
-	public void changed(HashMap<String, String> values) {
+	public void changed(HashMap<String, String> values){
 		ControlFieldProvider cfp = cv.getConfigurer().getControlFieldProvider();
 		if (cfp != null) {
 			if (cfp.isEmpty()) {
@@ -125,28 +121,30 @@ IWorker {
 	 * @param field
 	 *            the field name after which the table should e reordered
 	 */
-	public void reorder(String field) {
-		setOrderFields(new String[]{field});
+	public void reorder(String field){
+		setOrderFields(new String[] {
+			field
+		});
 		dj.launch(20);
 	}
 	
-	public void selected() {
-		
+	public void selected(){
+
 	}
 	
-	public void addQueryFilter(QueryFilter fp) {
+	public void addQueryFilter(QueryFilter fp){
 		synchronized (queryFilters) {
 			queryFilters.add(fp);
 		}
 	}
 	
-	public void removeQueryFilter(QueryFilter fp) {
+	public void removeQueryFilter(QueryFilter fp){
 		synchronized (queryFilters) {
 			queryFilters.remove(fp);
 		}
 	}
 	
-	public void applyQueryFilters() {
+	public void applyQueryFilters(){
 		synchronized (queryFilters) {
 			for (QueryFilter fp : queryFilters) {
 				fp.apply(qbe);
@@ -154,13 +152,12 @@ IWorker {
 		}
 	}
 	
-	public void setOrderFields(String... name) {
+	public void setOrderFields(String... name){
 		orderFields = name;
 	}
 	
 	/**
-	 * a QueryFilter can modify the Query of this Loader. It will be called
-	 * before each reload.
+	 * a QueryFilter can modify the Query of this Loader. It will be called before each reload.
 	 * 
 	 * @author Gerry
 	 * 
@@ -170,11 +167,12 @@ IWorker {
 	}
 	
 	public void setSuspended(boolean bSuspend){
-		bSuspended=bSuspend;
+		bSuspended = bSuspend;
 	}
 	
 	public boolean isSuspended(){
 		return bSuspended;
 	}
+	
 	public void init(){}
 }

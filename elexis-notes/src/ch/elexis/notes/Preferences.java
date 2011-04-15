@@ -36,7 +36,8 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	
 	@Override
 	protected void createFieldEditors(){
-		addField(new DirectoryFieldEditor(CFGTREE, Messages.Preferences_basedir, getFieldEditorParent()));
+		addField(new DirectoryFieldEditor(CFGTREE, Messages.Preferences_basedir,
+			getFieldEditorParent()));
 	}
 	
 	public void init(IWorkbench workbench){

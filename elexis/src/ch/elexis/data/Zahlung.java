@@ -21,69 +21,72 @@ public class Zahlung extends PersistentObject {
 	public static final String REMARK = "Bemerkung";
 	public static final String BILL_ID = "RechnungsID";
 	static final String TABLENAME = "ZAHLUNGEN";
-
-	static{
-		addMapping(TABLENAME,BILL_ID,"Betragx100=Betrag","Datum=S:D:Datum",REMARK);
+	
+	static {
+		addMapping(TABLENAME, BILL_ID, "Betragx100=Betrag", "Datum=S:D:Datum", REMARK);
 	}
 	
-	public Zahlung(Rechnung rn,Money Betrag, String text, TimeTool date){
+	public Zahlung(Rechnung rn, Money Betrag, String text, TimeTool date){
 		create(null);
-		if(date==null){
-			date=new TimeTool();
+		if (date == null) {
+			date = new TimeTool();
 		}
-		String Datum=date.toString(TimeTool.DATE_GER);
-		set(new String[]{BILL_ID,AMMOUNT_CENTS,DATE,REMARK},
-				rn.getId(),Betrag.getCentsAsString(),Datum,text);
+		String Datum = date.toString(TimeTool.DATE_GER);
+		set(new String[] {
+			BILL_ID, AMMOUNT_CENTS, DATE, REMARK
+		}, rn.getId(), Betrag.getCentsAsString(), Datum, text);
 		new AccountTransaction(this);
 		rn.addTrace(Rechnung.PAYMENT, Betrag.getAmountAsString());
 	}
 	
-	
 	@Override
-	public boolean delete() {
-		StringBuilder sb=new StringBuilder();
-		sb.append("DELETE FROM KONTO WHERE ID=")
-			.append(getWrappedId());
+	public boolean delete(){
+		StringBuilder sb = new StringBuilder();
+		sb.append("DELETE FROM KONTO WHERE ID=").append(getWrappedId());
 		getConnection().exec(sb.toString());
-		Rechnung rn=getRechnung();
-		if(rn!=null){
+		Rechnung rn = getRechnung();
+		if (rn != null) {
 			rn.addTrace(Rechnung.CORRECTION, "Zahlung gelöscht");
 		}
 		return super.delete();
 	}
-
+	
 	public String getBemerkung(){
 		return get(REMARK);
 	}
-
+	
 	public Rechnung getRechnung(){
 		return Rechnung.load(get(BILL_ID));
 	}
+	
 	public Money getBetrag(){
 		return new Money(checkZero(get(AMMOUNT_CENTS)));
 	}
+	
 	public String getDatum(){
 		return get(DATE);
 	}
+	
 	public static Zahlung load(String id){
 		return new Zahlung(id);
 	}
-	protected Zahlung() {/* leer */	}
-
-	protected Zahlung(String id) {
+	
+	protected Zahlung(){/* leer */}
+	
+	protected Zahlung(String id){
 		super(id);
 	}
-
+	
 	@Override
-	public String getLabel() {
-		StringBuilder sb=new StringBuilder();
+	public String getLabel(){
+		StringBuilder sb = new StringBuilder();
 		sb.append(getDatum()).append(": ").append(getBetrag().getAmountAsString());
 		return sb.toString();
 	}
-
+	
 	@Override
-	protected String getTableName() {
+	protected String getTableName(){
 		return TABLENAME;
 	}
-
+	
 }

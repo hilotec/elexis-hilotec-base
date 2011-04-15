@@ -22,7 +22,8 @@ public interface IDatensatz {
 	/**
 	 * Spalte anhand des Spaltennamens auslesen
 	 * 
-	 * @param name Spaltenname
+	 * @param name
+	 *            Spaltenname
 	 * 
 	 * @return Spaltenwert oder null falls die Spalte nicht existiert
 	 */

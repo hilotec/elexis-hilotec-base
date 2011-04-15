@@ -23,24 +23,23 @@ import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
 
 /**
- * Heartbeat is an event source, that fires events at user-definable intervals to all HeartListeners.
- * All actions that must be repeated regularly should be registered as HeartListener. They will all be 
- * called at about the specified rate, but not in a guaranteed particular order and not necessarily at
- * exactly identical intervals. 
+ * Heartbeat is an event source, that fires events at user-definable intervals to all
+ * HeartListeners. All actions that must be repeated regularly should be registered as
+ * HeartListener. They will all be called at about the specified rate, but not in a guaranteed
+ * particular order and not necessarily at exactly identical intervals.
  * 
- * Heartbeat löst das Pinger-Konzept ab. Der Heartbeat ist ein Singleton, das 
- * alle Hub.localCfg.get(heartbeatrate,30) Sekunden einen Event feuert. Wer reglmässige Aktionen
- * durchführen will, kann sich als HeartbeatListener registrieren.
- * Dieses Konzept hat gegenüber individuellen update-Threads den Vorteil, dass die Netzwerk- und
- * Datenbankbelastung, sowie die Zahl der gleichzeitig laufenden Threads limitiert wird.
- * Der Heartbeat sorgt dafür, dass die listener der Reihe nach (aber ncht in einer definierten Reihenfolge)
- * aufgerufen werden.
+ * Heartbeat löst das Pinger-Konzept ab. Der Heartbeat ist ein Singleton, das alle
+ * Hub.localCfg.get(heartbeatrate,30) Sekunden einen Event feuert. Wer reglmässige Aktionen
+ * durchführen will, kann sich als HeartbeatListener registrieren. Dieses Konzept hat gegenüber
+ * individuellen update-Threads den Vorteil, dass die Netzwerk- und Datenbankbelastung, sowie die
+ * Zahl der gleichzeitig laufenden Threads limitiert wird. Der Heartbeat sorgt dafür, dass die
+ * listener der Reihe nach (aber ncht in einer definierten Reihenfolge) aufgerufen werden.
  * 
- * The client registering a listener can define the frequency, whether the listener
- * should be called at every single heart beat or at a lower frequency.
- *  
+ * The client registering a listener can define the frequency, whether the listener should be called
+ * at every single heart beat or at a lower frequency.
+ * 
  * @author gerry
- *
+ * 
  */
 public class Heartbeat {
 	/**
@@ -63,48 +62,51 @@ public class Heartbeat {
 	private LinkedList<HeartListener> highFrequencyListeners;
 	private LinkedList<HeartListener> mediumFrequencyListeners;
 	private LinkedList<HeartListener> lowFrequencyListeners;
-	private static Log log=Log.get("Heartbeat"); //$NON-NLS-1$
+	private static Log log = Log.get("Heartbeat"); //$NON-NLS-1$
 	
 	private Heartbeat(){
-		theBeat=new beat();
-		highFrequencyListeners=new LinkedList<HeartListener>();
-		mediumFrequencyListeners=new LinkedList<HeartListener>();
-		lowFrequencyListeners=new LinkedList<HeartListener>();
-		pacer=new Timer(true);
-		int interval=Hub.localCfg.get(PreferenceConstants.ABL_HEARTRATE, 30); //$NON-NLS-1$
-		isSuspended=true;
-		pacer.schedule(theBeat, 0, interval*1000L);
+		theBeat = new beat();
+		highFrequencyListeners = new LinkedList<HeartListener>();
+		mediumFrequencyListeners = new LinkedList<HeartListener>();
+		lowFrequencyListeners = new LinkedList<HeartListener>();
+		pacer = new Timer(true);
+		int interval = Hub.localCfg.get(PreferenceConstants.ABL_HEARTRATE, 30); //$NON-NLS-1$
+		isSuspended = true;
+		pacer.schedule(theBeat, 0, interval * 1000L);
 	}
 	
 	/**
 	 * Das Singleton holen
+	 * 
 	 * @return den Heartbeat der Anwendung
 	 */
 	public static Heartbeat getInstance(){
-		if(theHeartbeat==null){
-			theHeartbeat=new Heartbeat();		
+		if (theHeartbeat == null) {
+			theHeartbeat = new Heartbeat();
 		}
 		return theHeartbeat;
 	}
 	
 	/**
 	 * Heartbeat (wieder) laufen lassen.
-	 * @param immediately true: Sofort einen ersten beat losschicken, false: im normalen 
-	 * Rhythmus bleiben.
+	 * 
+	 * @param immediately
+	 *            true: Sofort einen ersten beat losschicken, false: im normalen Rhythmus bleiben.
 	 */
 	public void resume(boolean immediately){
-		isSuspended=false;
+		isSuspended = false;
 		log.log("resume", Log.DEBUGMSG); //$NON-NLS-1$
-		if(immediately){
+		if (immediately) {
 			theBeat.run();
 		}
 	}
+	
 	/**
 	 * Heartbeat aussetzen (geht im Hintergrund weiter, wird aber nicht mehr weitergeleitet)
 	 */
 	public void suspend(){
 		log.log("suspending", Log.DEBUGMSG); //$NON-NLS-1$
-		isSuspended=true;
+		isSuspended = true;
 	}
 	
 	/**
@@ -114,26 +116,29 @@ public class Heartbeat {
 		log.log("stopping", Log.DEBUGMSG); //$NON-NLS-1$
 		pacer.cancel();
 	}
+	
 	/**
-	 * Einen Listener registrieren. Achtung: Muss unbedingt mit removeListener deregistriert
-	 * werden
+	 * Einen Listener registrieren. Achtung: Muss unbedingt mit removeListener deregistriert werden
 	 * Calls addListener(listen, FREQUENCY_HIGH)
-	 * @param listen der Listener
+	 * 
+	 * @param listen
+	 *            der Listener
 	 */
 	public void addListener(HeartListener listen){
 		addListener(listen, FREQUENCY_HIGH);
 	}
 	
 	/**
-	 * Add listener using the specified frequency.
-	 * Must be de-regsitered again using removeListener
+	 * Add listener using the specified frequency. Must be de-regsitered again using removeListener
+	 * 
 	 * @param listener
-	 * @param frequency the frequency to call this listener. One of FREQUENCY_HIGH, FREQUENCY_MEDIUM, FREQUENCY_LOW
+	 * @param frequency
+	 *            the frequency to call this listener. One of FREQUENCY_HIGH, FREQUENCY_MEDIUM,
+	 *            FREQUENCY_LOW
 	 */
-	public void addListener(HeartListener listen, int frequency) {
-		if (!highFrequencyListeners.contains(listen)
-				&& !mediumFrequencyListeners.contains(listen)
-				&& !lowFrequencyListeners.contains(listen)) {
+	public void addListener(HeartListener listen, int frequency){
+		if (!highFrequencyListeners.contains(listen) && !mediumFrequencyListeners.contains(listen)
+			&& !lowFrequencyListeners.contains(listen)) {
 			
 			switch (frequency) {
 			case FREQUENCY_HIGH:
@@ -151,6 +156,7 @@ public class Heartbeat {
 	
 	/**
 	 * Einen Listener wieder austragen
+	 * 
 	 * @param listen
 	 */
 	public void removeListener(HeartListener listen){
@@ -160,13 +166,14 @@ public class Heartbeat {
 		mediumFrequencyListeners.remove(listen);
 		lowFrequencyListeners.remove(listen);
 	}
-	/** 
-	 * we beat asynchronously, because most listeners will update their
-	 * views 
+	
+	/**
+	 * we beat asynchronously, because most listeners will update their views
+	 * 
 	 * @author Gerry
-	 *
+	 * 
 	 */
-	private class beat extends TimerTask{
+	private class beat extends TimerTask {
 		private static final int FREQUENCY_HIGH_MULTIPLIER = 1;
 		private static final int FREQUENCY_MEDIUM_MULTIPLIER = 4;
 		private static final int FREQUENCY_LOW_MULTIPLIER = 16;
@@ -177,9 +184,9 @@ public class Heartbeat {
 		private int counter = 0;
 		
 		@Override
-		public void run() {
-			if(!isSuspended){
-				Desk.getDisplay().asyncExec(new Runnable(){
+		public void run(){
+			if (!isSuspended) {
+				Desk.getDisplay().asyncExec(new Runnable() {
 					public void run(){
 						// low frequency
 						if (counter % FREQUENCY_LOW_MULTIPLIER == 0) {
@@ -189,34 +196,35 @@ public class Heartbeat {
 							}
 							
 						}
-							// medium frequency
+						// medium frequency
 						if (counter % FREQUENCY_MEDIUM_MULTIPLIER == 0) {
 							log.log("Heartbeat medium", Log.DEBUGMSG); //$NON-NLS-1$
 							for (HeartListener l : mediumFrequencyListeners) {
 								l.heartbeat();
-							}		
+							}
 						}
-								// high frequency
+						// high frequency
 						if (counter % FREQUENCY_HIGH_MULTIPLIER == 0) {
 							log.log("Heartbeat high", Log.DEBUGMSG); //$NON-NLS-1$
 							for (HeartListener l : highFrequencyListeners) {
 								l.heartbeat();
-							}		
+							}
 						}
-
+						
 					}
 				});
 			}
 			counter++;
-			counter %= RESET_MULTIPLIER; 
+			counter %= RESET_MULTIPLIER;
 		}
 		
 	}
-	public interface HeartListener{
+	
+	public interface HeartListener {
 		/**
-		 * Die Methode heartbeat wird in "einigermassen" regelmässigen 
-		 * (aber nicht garantiert immer genau identischen) Abständen aufgerufen 
-		 *
+		 * Die Methode heartbeat wird in "einigermassen" regelmässigen (aber nicht garantiert immer
+		 * genau identischen) Abständen aufgerufen
+		 * 
 		 */
 		public void heartbeat();
 	}

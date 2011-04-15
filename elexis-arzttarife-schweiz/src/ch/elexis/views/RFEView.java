@@ -34,19 +34,18 @@ public class RFEView extends ViewPart {
 	boolean bDaempfung = false;
 	HashMap<String, Integer> mapCodeToIndex = new HashMap<String, Integer>();
 	HashMap<Integer, String> mapIndexToCode = new HashMap<Integer, String>();
-
-	ElexisEventListenerImpl eeli_kons = new ElexisEventListenerImpl(
-			Konsultation.class) {
-
+	
+	ElexisEventListenerImpl eeli_kons = new ElexisEventListenerImpl(Konsultation.class) {
+		
 		@Override
-		public void runInUi(ElexisEvent ev) {
+		public void runInUi(ElexisEvent ev){
 			Konsultation k = (Konsultation) ev.getObject();
 			adjustTable(k);
 		}
-
+		
 	};
-
-	private void adjustTable(Konsultation k) {
+	
+	private void adjustTable(Konsultation k){
 		List<RFE> rfeForKOns = RFE.getRfeForKons(k.getId());
 		CTabItem top = tabs.getSelection();
 		if (top != null) {
@@ -70,9 +69,9 @@ public class RFEView extends ViewPart {
 			}
 		}
 	}
-
+	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		tabs = new CTabFolder(parent, SWT.BOTTOM);
 		tabs.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		CTabItem ctLong = new CTabItem(tabs, SWT.NONE);
@@ -83,7 +82,7 @@ public class RFEView extends ViewPart {
 		ctMedium.setText("kurz");
 		mediumTable = new Table(tabs, SWT.MULTI | SWT.FULL_SELECTION);
 		ctMedium.setControl(mediumTable);
-
+		
 		CTabItem ctStat = new CTabItem(tabs, SWT.NONE);
 		ctStat.setText("Statistik");
 		Composite cStat = new Composite(tabs, SWT.NONE);
@@ -97,7 +96,7 @@ public class RFEView extends ViewPart {
 		cCalc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		bRecalc.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				for (Control c : cCalc.getChildren()) {
 					c.dispose();
 				}
@@ -119,13 +118,12 @@ public class RFEView extends ViewPart {
 					float percent = num * 100f / all;
 					int pc = Math.round(percent);
 					Label lbl = new Label(cCalc, SWT.NONE);
-					lbl.setLayoutData(SWTHelper.getFillGridData(1, true, 1,
-							false));
+					lbl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 					lbl.setText(code + ": " + num + " (=" + pc + "%)");
 				}
 				cCalc.layout(true);
 			}
-
+			
 		});
 		// table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		int i = 0;
@@ -142,29 +140,28 @@ public class RFEView extends ViewPart {
 		mediumTable.addSelectionListener(new ClickListener(mediumTable));
 		ElexisEventDispatcher.getInstance().addListeners(eeli_kons);
 	}
-
+	
 	@Override
-	public void dispose() {
+	public void dispose(){
 		ElexisEventDispatcher.getInstance().removeListeners(eeli_kons);
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 	class ClickListener extends SelectionAdapter {
 		Table table;
-
-		ClickListener(Table table) {
+		
+		ClickListener(Table table){
 			this.table = table;
 		}
-
+		
 		@Override
-		public void widgetSelected(SelectionEvent e) {
-			Konsultation k = (Konsultation) ElexisEventDispatcher
-					.getSelected(Konsultation.class);
+		public void widgetSelected(SelectionEvent e){
+			Konsultation k = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 			if (k != null) {
 				int[] sel = table.getSelectionIndices();
 				if (sel.length > 0) {
@@ -178,6 +175,6 @@ public class RFEView extends ViewPart {
 				}
 			}
 		}
-
+		
 	}
 }

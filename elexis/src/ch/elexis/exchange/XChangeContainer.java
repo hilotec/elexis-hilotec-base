@@ -113,14 +113,11 @@ public class XChangeContainer {
 		eRoot = new Element(XChangeContainer.ROOT_ELEMENT, XChangeContainer.ns);
 		eRoot.addNamespaceDeclaration(XChangeContainer.nsxsi);
 		eRoot.addNamespaceDeclaration(XChangeContainer.nsschema);
-		eRoot.setAttribute(ATTR_TIMESTAMP, new TimeTool()
-		.toString(TimeTool.DATETIME_XML));
-		eRoot.setAttribute(ATTR_ID, XMLTool
-			.idToXMLID(StringTool.unique(XCHANGE_MAGIC)));
+		eRoot.setAttribute(ATTR_TIMESTAMP, new TimeTool().toString(TimeTool.DATETIME_XML));
+		eRoot.setAttribute(ATTR_ID, XMLTool.idToXMLID(StringTool.unique(XCHANGE_MAGIC)));
 		eRoot.setAttribute(ATTR_ORIGIN, XMLTool.idToXMLID(Hub.actMandant.getId()));
 		eRoot.setAttribute(ATTR_DESTINATION, "undefined");
-		eRoot.setAttribute(ATTR_RESPONSIBLE, XMLTool.idToXMLID(Hub.actMandant
-			.getId()));
+		eRoot.setAttribute(ATTR_RESPONSIBLE, XMLTool.idToXMLID(Hub.actMandant.getId()));
 		doc.setRootElement(eRoot);
 		
 		eHeader.setAttribute(ATTR_CREATOR_NAME, Hub.APPLICATION_NAME);
@@ -133,8 +130,8 @@ public class XChangeContainer {
 	}
 	
 	public void setDocument(Document doc){
-		this.doc=doc;
-		eRoot=doc.getRootElement();
+		this.doc = doc;
+		eRoot = doc.getRootElement();
 	}
 	
 	public String toString(){
@@ -144,6 +141,7 @@ public class XChangeContainer {
 		String xmlAspect = xmlo.outputString(doc);
 		return xmlAspect;
 	}
+	
 	public Document getDocument(){
 		return doc;
 	}
@@ -153,12 +151,13 @@ public class XChangeContainer {
 	}
 	
 	public void setValid(boolean bValid){
-		this.bValid=bValid;
+		this.bValid = bValid;
 	}
 	
 	public List<IConfigurationElement> getXChangeContributors(){
 		return lex;
 	}
+	
 	/**
 	 * Map a database object to an xChange container element and vice versa
 	 * 
@@ -234,7 +233,6 @@ public class XChangeContainer {
 		return getElements(ROOTPATH + ENCLOSE_CONTACTS + StringTool.slash + ContactElement.XMLNAME);
 	}
 	
-	
 	/**
 	 * get a binary content from the Container
 	 * 
@@ -306,7 +304,7 @@ public class XChangeContainer {
 	 * LinkedList<Object>(); for(Tree<UserChoice> runner:tSelection.getChildren()){ UserChoice
 	 * choice=runner.contents; if(choice.isSelected()){ ret.add(choice.object); } } return ret; }
 	 */
-	
+
 	/**
 	 * Set any implementation-spezific configuration
 	 * 

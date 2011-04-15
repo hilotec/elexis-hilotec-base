@@ -10,7 +10,6 @@ import org.apache.commons.net.ftp.FTPFile;
 
 import ch.elexis.util.FileUtility;
 
-
 /**
  * This is a basic wrapper around the sun.net.ftp.FtpClient class, which is included with Sun Java
  * that allows you to make FTP connections and file transfers.
@@ -53,16 +52,16 @@ public class FtpServer extends FTPClient {
 			}
 		}
 	}
+	
 	/*
 	 * Delete file on the FTP server
 	 * 
-	 * @name	of the file to delet
+	 * @name of the file to delet
 	 */
-	public boolean deleteFile(String name)
-	throws IOException{
+	public boolean deleteFile(String name) throws IOException{
 		return super.deleteFile(name);
 	}
-
+	
 	/**
 	 * Upload a file to the server
 	 */

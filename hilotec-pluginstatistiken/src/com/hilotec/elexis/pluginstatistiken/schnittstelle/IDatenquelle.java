@@ -16,13 +16,11 @@ package com.hilotec.elexis.pluginstatistiken.schnittstelle;
 import java.util.List;
 
 /**
- * Interface fuer eine Datenquelle fuer das Statistik-Plugin. Eine Datenquelle
- * stellt mehrere Tabellen zur Verfuegung. Dieses Interface ist dafuer gedacht
- * an den Erweiterungspunkt com.hilotec.elexis.pluginstatistiken.Datenquelle
- * angehaengt zu werden.
+ * Interface fuer eine Datenquelle fuer das Statistik-Plugin. Eine Datenquelle stellt mehrere
+ * Tabellen zur Verfuegung. Dieses Interface ist dafuer gedacht an den Erweiterungspunkt
+ * com.hilotec.elexis.pluginstatistiken.Datenquelle angehaengt zu werden.
  * 
- * Als Beispiel sei hier auf die Datenquelle des hilotec-messwerte Plugins
- * verwiesen.
+ * Als Beispiel sei hier auf die Datenquelle des hilotec-messwerte Plugins verwiesen.
  * 
  * @author Antoine Kaufmann
  */
@@ -44,7 +42,8 @@ public interface IDatenquelle {
 	/**
 	 * Bestimmte Tabelle anhand des Namens auslesen
 	 * 
-	 * @param name Tabellenname
+	 * @param name
+	 *            Tabellenname
 	 * 
 	 * @return Tabelle oder null falls diese nicht existiert.
 	 */

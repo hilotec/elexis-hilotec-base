@@ -28,12 +28,13 @@ import ch.elexis.data.PersistentObject;
 
 /**
  * Universelles DropTarget für PersistentObjects
+ * 
  * @author gerry
- *
+ * 
  */
 public class PersistentObjectDropTarget implements DropTargetListener, ICodeSelectorTarget {
 	IReceiver rc;
-	String name="";
+	String name = "";
 	private final Color normalColor;
 	private final Color highlightColor;
 	private final Control mine;
@@ -41,87 +42,93 @@ public class PersistentObjectDropTarget implements DropTargetListener, ICodeSele
 	public PersistentObjectDropTarget(Control target, IReceiver r){
 		normalColor = target.getBackground();
 		highlightColor = target.getDisplay().getSystemColor(SWT.COLOR_RED);
-		mine=target;
-		rc=r;
-		DropTarget dtarget=new DropTarget(target,DND.DROP_COPY);
+		mine = target;
+		rc = r;
+		DropTarget dtarget = new DropTarget(target, DND.DROP_COPY);
 		final TextTransfer textTransfer = TextTransfer.getInstance();
-		Transfer[] types = new Transfer[] {textTransfer};
+		Transfer[] types = new Transfer[] {
+			textTransfer
+		};
 		dtarget.setTransfer(types);
 		dtarget.addDropListener(this);
 	}
 	
 	public PersistentObjectDropTarget(String name, Control target, IReceiver r){
-		this(target,r);
-		this.name=name;
+		this(target, r);
+		this.name = name;
 	}
-	public void dragEnter(DropTargetEvent event) {
+	
+	public void dragEnter(DropTargetEvent event){
 		
-		boolean bOk=false;
-		PersistentObject dropped=PersistentObjectDragSource.getDraggedObject();;
-		if(rc.accept(dropped)){
-			bOk=true;
+		boolean bOk = false;
+		PersistentObject dropped = PersistentObjectDragSource.getDraggedObject();
+		;
+		if (rc.accept(dropped)) {
+			bOk = true;
 		}
 		
-		if(bOk){
-			event.detail=DND.DROP_COPY;
-		}else{
-			event.detail=DND.DROP_NONE;
+		if (bOk) {
+			event.detail = DND.DROP_COPY;
+		} else {
+			event.detail = DND.DROP_NONE;
 		}
 		
-		//event.detail=DND.DROP_COPY;
+		// event.detail=DND.DROP_COPY;
 		
 	}
 	
-	public void dragLeave(DropTargetEvent event) {
-		// TODO Auto-generated method stub
-		
+	public void dragLeave(DropTargetEvent event){
+	// TODO Auto-generated method stub
+	
 	}
 	
-	public void dragOperationChanged(DropTargetEvent event) {
-		// TODO Auto-generated method stub
-		
+	public void dragOperationChanged(DropTargetEvent event){
+	// TODO Auto-generated method stub
+	
 	}
 	
-	public void dragOver(DropTargetEvent event) {
-		// TODO Auto-generated method stub
-		
+	public void dragOver(DropTargetEvent event){
+	// TODO Auto-generated method stub
+	
 	}
 	
-	public void drop(DropTargetEvent event) {
-		String drp=(String)event.data;
-		String[] dl=drp.split(","); //$NON-NLS-1$
-		for(String obj:dl){
-			PersistentObject dropped=Hub.poFactory.createFromString(obj);
-			rc.dropped(dropped,event);
-		}
-		
-	}
-	
-	public void dropAccept(DropTargetEvent event) {
-		if(!rc.accept(PersistentObjectDragSource.getDraggedObject())){
-			event.detail=DND.DROP_NONE;
+	public void drop(DropTargetEvent event){
+		String drp = (String) event.data;
+		String[] dl = drp.split(","); //$NON-NLS-1$
+		for (String obj : dl) {
+			PersistentObject dropped = Hub.poFactory.createFromString(obj);
+			rc.dropped(dropped, event);
 		}
 		
 	}
 	
-	public interface IReceiver{
+	public void dropAccept(DropTargetEvent event){
+		if (!rc.accept(PersistentObjectDragSource.getDraggedObject())) {
+			event.detail = DND.DROP_NONE;
+		}
+		
+	}
+	
+	public interface IReceiver {
 		public void dropped(PersistentObject o, DropTargetEvent e);
+		
 		public boolean accept(PersistentObject o);
 	}
 	
-	public void codeSelected(PersistentObject obj) {
+	public void codeSelected(PersistentObject obj){
 		rc.dropped(obj, null);
 	}
 	
-	public String getName() {
+	public String getName(){
 		return name;
 	}
-	public void registered(boolean bIsRegistered) {
+	
+	public void registered(boolean bIsRegistered){
 		highlight(bIsRegistered);
 		
 	}
 	
-	private void highlight(boolean bOn) {
+	private void highlight(boolean bOn){
 		if (bOn) {
 			mine.setBackground(highlightColor);
 		} else {

@@ -81,11 +81,11 @@ public class LaborLink implements IKonsExtension {
 		// update LaborView and show it
 		LaborView laborView =
 			(LaborView) Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-			.findView(LaborView.ID);
+				.findView(LaborView.ID);
 		if (laborView != null) {
 			laborView.rebuild();
 			Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-			.activate(laborView);
+				.activate(laborView);
 		}
 		
 		return true;
@@ -114,18 +114,18 @@ public class LaborLink implements IKonsExtension {
 	}
 	
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-	throws CoreException{
-		// TODO Auto-generated method stub
-		
+		throws CoreException{
+	// TODO Auto-generated method stub
+	
 	}
 	
 	public void removeXRef(String refProvider, String refID){
-		// nothing to do
+	// nothing to do
 	}
 	
 	public void insert(Object o, int pos){
-		// TODO Auto-generated method stub
-		
+	// TODO Auto-generated method stub
+	
 	}
 	
 	static class LaborVerordnungDialog extends TitleAreaDialog {
@@ -335,11 +335,11 @@ public class LaborLink implements IKonsExtension {
 				}
 				
 				public void dispose(){
-					// nothing to do
+				// nothing to do
 				}
 				
 				public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
-					// nothing to do
+				// nothing to do
 				}
 			});
 			
@@ -360,11 +360,11 @@ public class LaborLink implements IKonsExtension {
 				}
 				
 				public void dispose(){
-					// nothing to do
+				// nothing to do
 				}
 				
 				public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
-					// nothing to do
+				// nothing to do
 				}
 			});
 			

@@ -37,7 +37,6 @@ public class MedicationElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	
 	public MedicationElement asExporter(XChangeExporter parent, Prescription pr){
 		asExporter(parent);
 		Artikel art = pr.getArtikel();

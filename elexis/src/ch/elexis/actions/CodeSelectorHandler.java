@@ -13,7 +13,6 @@
 
 package ch.elexis.actions;
 
-
 public class CodeSelectorHandler {
 	private static CodeSelectorHandler theInstance;
 	private ICodeSelectorTarget codeSelectorTarget;
@@ -21,11 +20,12 @@ public class CodeSelectorHandler {
 	private CodeSelectorHandler(){}
 	
 	public static CodeSelectorHandler getInstance(){
-		if(theInstance==null){
-			theInstance=new CodeSelectorHandler();
+		if (theInstance == null) {
+			theInstance = new CodeSelectorHandler();
 		}
 		return theInstance;
 	}
+	
 	/**
 	 * Register a ICodeSelectorTarget. This is informed when an alement is chosen in a CodeSelector.
 	 * 

@@ -24,38 +24,44 @@ import ch.elexis.views.IDetailDisplay;
 public class DetailDisplay implements IDetailDisplay {
 	Form form;
 	DisplayPanel panel;
-	FieldDescriptor<?>[] fields=
-	{
-		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_chapter,Labor2009Tarif.FLD_CHAPTER,Typ.STRING,null),
-		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_code,Labor2009Tarif.FLD_CODE,Typ.STRING,null),
-		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_fachbereich,Labor2009Tarif.FLD_FACHBEREICH,Typ.STRING,null),
-		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_name,Labor2009Tarif.FLD_NAME,Typ.STRING,null),
-		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_limitation,Labor2009Tarif.FLD_LIMITATIO,Typ.STRING,null),
-		new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_taxpoints,Labor2009Tarif.FLD_TP,Typ.STRING,null)
-	};
+	FieldDescriptor<?>[] fields =
+		{
+			new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_chapter,
+				Labor2009Tarif.FLD_CHAPTER, Typ.STRING, null),
+			new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_code,
+				Labor2009Tarif.FLD_CODE, Typ.STRING, null),
+			new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_fachbereich,
+				Labor2009Tarif.FLD_FACHBEREICH, Typ.STRING, null),
+			new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_name,
+				Labor2009Tarif.FLD_NAME, Typ.STRING, null),
+			new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_limitation,
+				Labor2009Tarif.FLD_LIMITATIO, Typ.STRING, null),
+			new FieldDescriptor<Labor2009Tarif>(Messages.DetailDisplay_taxpoints,
+				Labor2009Tarif.FLD_TP, Typ.STRING, null)
+		};
 	
-	public void display(Object obj) {
-		if(obj instanceof Labor2009Tarif){
-			form.setText(((PersistentObject)obj).getLabel());
-			panel.setObject((PersistentObject)obj);
+	public void display(Object obj){
+		if (obj instanceof Labor2009Tarif) {
+			form.setText(((PersistentObject) obj).getLabel());
+			panel.setObject((PersistentObject) obj);
 		}
 	}
-
-	public Class<? extends PersistentObject> getElementClass() {
+	
+	public Class<? extends PersistentObject> getElementClass(){
 		return Labor2009Tarif.class;
 	}
-
-	public String getTitle() {
+	
+	public String getTitle(){
 		return "EAL 2009"; //$NON-NLS-1$
 	}
-
-	public Composite createDisplay(Composite parent, IViewSite site) {
-		form=Desk.getToolkit().createForm(parent);
+	
+	public Composite createDisplay(Composite parent, IViewSite site){
+		form = Desk.getToolkit().createForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		form.getBody().setLayout(new GridLayout());
-		panel=new DisplayPanel(form.getBody(),fields,1,1);
+		panel = new DisplayPanel(form.getBody(), fields, 1, 1);
 		panel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return panel;
 	}
-
+	
 }

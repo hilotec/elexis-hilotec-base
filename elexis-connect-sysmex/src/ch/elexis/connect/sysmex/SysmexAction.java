@@ -96,8 +96,8 @@ public class SysmexAction extends Action implements ComPortListener {
 			new SysmexConnection(
 				Messages.getString("SysmexAction.ConnectionName"), //$NON-NLS-1$
 				Hub.localCfg.get(Preferences.PORT, Messages.getString("SysmexAction.DefaultPort")), Hub.localCfg.get( //$NON-NLS-1$
-					Preferences.PARAMS, Messages.getString("SysmexAction.DefaultParams")), //$NON-NLS-1$
-					this);
+						Preferences.PARAMS, Messages.getString("SysmexAction.DefaultParams")), //$NON-NLS-1$
+				this);
 	}
 	
 	private void initPreferences(){
@@ -114,7 +114,7 @@ public class SysmexAction extends Action implements ComPortListener {
 			_rs232log = new Logger(false);
 		}
 		background = Hub.localCfg.get(Preferences.BACKGROUND, "n") //$NON-NLS-1$
-		.equalsIgnoreCase("y"); //$NON-NLS-1$
+			.equalsIgnoreCase("y"); //$NON-NLS-1$
 	}
 	
 	@Override
@@ -135,9 +135,9 @@ public class SysmexAction extends Action implements ComPortListener {
 						// Do nothing. Use default value
 					}
 					_ctrl
-					.awaitFrame(
-						Desk.getTopShell(),
-						Messages.getString("SysmexAction.WaitMsg"), 1, 4, 0, timeout, background, true); //$NON-NLS-1$
+						.awaitFrame(
+							Desk.getTopShell(),
+							Messages.getString("SysmexAction.WaitMsg"), 1, 4, 0, timeout, background, true); //$NON-NLS-1$
 					return;
 				} else {
 					_rs232log.log("Error"); //$NON-NLS-1$
@@ -230,7 +230,7 @@ public class SysmexAction extends Action implements ComPortListener {
 						KontaktSelektor ksl =
 							new KontaktSelektor(Hub.getActiveShell(), Patient.class, Messages
 								.getString("SysmexAction.Patient.Title"), Messages //$NON-NLS-1$
-								.getString("SysmexAction.Patient.Text"),Patient.DEFAULT_SORT); //$NON-NLS-1$
+								.getString("SysmexAction.Patient.Text"), Patient.DEFAULT_SORT); //$NON-NLS-1$
 						ksl.create();
 						ksl.getShell().setText(Messages.getString("SysmexAction.Patient.Title")); //$NON-NLS-1$
 						if (ksl.open() == org.eclipse.jface.dialogs.Dialog.OK) {

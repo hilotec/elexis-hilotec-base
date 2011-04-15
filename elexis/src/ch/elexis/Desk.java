@@ -45,13 +45,13 @@ import ch.rgw.tools.StringTool;
 
 public class Desk implements IApplication {
 	private static FormToolkit theToolkit = null;
-
+	
 	private static Display theDisplay = null;
 	private static ImageRegistry theImageRegistry = null;
 	private static ColorRegistry theColorRegistry = null;
 	private static HashMap<String, Cursor> cursors = null;
 	private static Map<String, String> args = null;
-
+	
 	public static final String COL_RED = "rot"; //$NON-NLS-1$
 	public static final String COL_GREEN = "gruen"; //$NON-NLS-1$
 	public static final String COL_BLUE = "blau"; //$NON-NLS-1$
@@ -64,7 +64,7 @@ public class Desk implements IApplication {
 	public static final String COL_LIGHTGREY = "hellgrau"; //$NON-NLS-1$
 	public static final String COL_GREY60 = "grau60"; //$NON-NLS-1$
 	public static final String COL_GREY20 = "grau20"; //$NON-NLS-1$
-
+	
 	/** Returning to some home place */
 	public static final String IMG_HOME = "home"; //$NON-NLS-1$
 	/** An Address label */
@@ -81,11 +81,11 @@ public class Desk implements IApplication {
 	public static final String IMG_FRAU = "frau"; //$NON-NLS-1$
 	/** a Very Important Person/Patient */
 	public static final String IMG_VIP = "vip"; //$NON-NLS-1$
-
+	
 	/** a printer */
 	public static final String IMG_PRINTER = "printer"; //$NON-NLS-1$
 	// public static final String IMG_PRINT="print"; //$NON-NLS-1$
-
+	
 	/** a filter */
 	public static final String IMG_FILTER = "filter"; //$NON-NLS-1$
 	/** creating a new Object */
@@ -94,9 +94,9 @@ public class Desk implements IApplication {
 	public static final String IMG_IMPORT = "import"; //$NON-NLS-1$
 	/** exporting items */
 	public static final String IMG_EXPORT = "export"; //$NON-NLS-1$
-
+	
 	public static final String IMG_GOFURTHER = "gofurther"; //$NON-NLS-1$
-
+	
 	/** the 48x48 pixel version of the elexis(tm) logo */
 	public static final String IMG_LOGO48 = "elexislogo48"; //$NON-NLS-1$
 	/** editing an item */
@@ -151,14 +151,13 @@ public class Desk implements IApplication {
 	public static final String IMG_MOVETOLOWERLIST = "movetolowerlist"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** clear input field */
 	public static final String IMG_CLEAR = "cross_small"; // $NON_NLS-1$ //$NON-NLS-1$
-
+	
 	public static final String CUR_HYPERLINK = "cursor_hyperlink"; //$NON-NLS-1$
-
-	public Desk() {
-	}
-
+	
+	public Desk(){}
+	
 	@SuppressWarnings("unchecked")
-	public Object start(IApplicationContext context) throws Exception {
+	public Object start(IApplicationContext context) throws Exception{
 		args = context.getArguments();
 		if (args.containsKey("--clean-all")) { //$NON-NLS-1$
 			String p = PreferenceInitializer.getDefaultDBPath();
@@ -166,11 +165,11 @@ public class Desk implements IApplication {
 			Hub.localCfg.clear();
 			Hub.localCfg.flush();
 		}
-
+		
 		try {
-
-			int returnCode = PlatformUI.createAndRunWorkbench(getDisplay(),
-					new ApplicationWorkbenchAdvisor());
+			
+			int returnCode =
+				PlatformUI.createAndRunWorkbench(getDisplay(), new ApplicationWorkbenchAdvisor());
 			// Die Funktion kehrt erst beim Programmende zurück.
 			Hub.heart.suspend();
 			System.out.println(Messages.Desk_37);
@@ -194,18 +193,17 @@ public class Desk implements IApplication {
 				theImageRegistry.dispose();
 			}
 			/*
-			 * if ((theDisplay != null) && (!theDisplay.isDisposed())) {
-			 * theDisplay.dispose(); }
+			 * if ((theDisplay != null) && (!theDisplay.isDisposed())) { theDisplay.dispose(); }
 			 */
 		}
-
+		
 	}
-
-	public void stop() {
-		// TODO Auto-generated method stub
-
+	
+	public void stop(){
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 	/**
 	 * return a command line argument/launch parameter
 	 * 
@@ -213,21 +211,20 @@ public class Desk implements IApplication {
 	 *            name of the argument
 	 * @return
 	 */
-	public static String getCommandLineArgument(String name) {
+	public static String getCommandLineArgument(String name){
 		if (args == null) {
 			return null;
 		}
 		return args.get(name);
 	}
-
+	
 	/**
-	 * get the base directory for images. This is dependend from the plaf
-	 * chosen. If no plaf was chosen, "modern" will be assumed.
+	 * get the base directory for images. This is dependend from the plaf chosen. If no plaf was
+	 * chosen, "modern" will be assumed.
 	 * 
-	 * @return a string denoting the directory with the images for the current
-	 *         plaf
+	 * @return a string denoting the directory with the images for the current plaf
 	 */
-	static String getImageBase() {
+	static String getImageBase(){
 		String imageBase = Hub.localCfg.get(PreferenceConstants.USR_PLAF, null);
 		if (imageBase == null) {
 			imageBase = "/rsc/plaf/modern/icons/"; //$NON-NLS-1$
@@ -236,108 +233,77 @@ public class Desk implements IApplication {
 		}
 		return imageBase;
 	}
-
-	public static ImageRegistry getImageRegistry() {
+	
+	public static ImageRegistry getImageRegistry(){
 		if (theImageRegistry == null) {
 			theImageRegistry = new ImageRegistry(getDisplay());
 			synchronized (theImageRegistry) {
 				theImageRegistry.put(IMG_HOME, getImageDescriptor(IMG_HOME));
-				theImageRegistry.put(IMG_ADRESSETIKETTE,
-						getImageDescriptor(IMG_ADRESSETIKETTE));
-				theImageRegistry.put(IMG_PATIENTETIKETTE,
-						getImageDescriptor(IMG_PATIENTETIKETTE));
+				theImageRegistry.put(IMG_ADRESSETIKETTE, getImageDescriptor(IMG_ADRESSETIKETTE));
+				theImageRegistry.put(IMG_PATIENTETIKETTE, getImageDescriptor(IMG_PATIENTETIKETTE));
 				theImageRegistry.put(IMG_VERSIONEDETIKETTE,
-						getImageDescriptor(IMG_VERSIONEDETIKETTE));
-				theImageRegistry
-						.put(IMG_DELETE, getImageDescriptor(IMG_DELETE));
+					getImageDescriptor(IMG_VERSIONEDETIKETTE));
+				theImageRegistry.put(IMG_DELETE, getImageDescriptor(IMG_DELETE));
 				theImageRegistry.put(IMG_MANN, getImageDescriptor(IMG_MANN));
 				theImageRegistry.put(IMG_FRAU, getImageDescriptor(IMG_FRAU));
 				theImageRegistry.put(IMG_VIP, getImageDescriptor(IMG_VIP));
-				theImageRegistry.put(IMG_PRINTER,
-						getImageDescriptor(IMG_PRINTER));
-				theImageRegistry
-						.put(IMG_FILTER, getImageDescriptor(IMG_FILTER));
+				theImageRegistry.put(IMG_PRINTER, getImageDescriptor(IMG_PRINTER));
+				theImageRegistry.put(IMG_FILTER, getImageDescriptor(IMG_FILTER));
 				theImageRegistry.put(IMG_NEW, getImageDescriptor(IMG_NEW));
-				theImageRegistry
-						.put(IMG_LOGO48, getImageDescriptor(IMG_LOGO48));
-				theImageRegistry
-						.put(IMG_IMPORT, getImageDescriptor(IMG_IMPORT));
+				theImageRegistry.put(IMG_LOGO48, getImageDescriptor(IMG_LOGO48));
+				theImageRegistry.put(IMG_IMPORT, getImageDescriptor(IMG_IMPORT));
 				theImageRegistry.put(IMG_EDIT, getImageDescriptor(IMG_EDIT));
-				theImageRegistry.put(IMG_ACHTUNG,
-						getImageDescriptor(IMG_ACHTUNG));
+				theImageRegistry.put(IMG_ACHTUNG, getImageDescriptor(IMG_ACHTUNG));
 				theImageRegistry.put(IMG_OK, getImageDescriptor(IMG_OK));
 				theImageRegistry.put(IMG_TICK, getImageDescriptor(IMG_TICK));
-				theImageRegistry
-						.put(IMG_FEHLER, getImageDescriptor(IMG_FEHLER));
-				theImageRegistry.put(IMG_REFRESH,
-						getImageDescriptor(IMG_REFRESH));
-				theImageRegistry
-						.put(IMG_WIZARD, getImageDescriptor(IMG_WIZARD));
-				theImageRegistry.put(IMG_ADDITEM,
-						getImageDescriptor(IMG_ADDITEM));
-				theImageRegistry
-						.put(IMG_EXPORT, getImageDescriptor(IMG_EXPORT));
-				theImageRegistry.put(IMG_GOFURTHER,
-						getImageDescriptor(IMG_GOFURTHER));
-				theImageRegistry.put(IMG_AUSRUFEZ,
-						getImageDescriptor(IMG_AUSRUFEZ));
-				theImageRegistry.put(IMG_AUSRUFEZ_ROT,
-						getImageDescriptor(IMG_AUSRUFEZ_ROT));
-				theImageRegistry.put(IMG_REMOVEITEM,
-						getImageDescriptor(IMG_REMOVEITEM));
-				theImageRegistry.put(IMG_NETWORK,
-						getImageDescriptor(IMG_NETWORK));
+				theImageRegistry.put(IMG_FEHLER, getImageDescriptor(IMG_FEHLER));
+				theImageRegistry.put(IMG_REFRESH, getImageDescriptor(IMG_REFRESH));
+				theImageRegistry.put(IMG_WIZARD, getImageDescriptor(IMG_WIZARD));
+				theImageRegistry.put(IMG_ADDITEM, getImageDescriptor(IMG_ADDITEM));
+				theImageRegistry.put(IMG_EXPORT, getImageDescriptor(IMG_EXPORT));
+				theImageRegistry.put(IMG_GOFURTHER, getImageDescriptor(IMG_GOFURTHER));
+				theImageRegistry.put(IMG_AUSRUFEZ, getImageDescriptor(IMG_AUSRUFEZ));
+				theImageRegistry.put(IMG_AUSRUFEZ_ROT, getImageDescriptor(IMG_AUSRUFEZ_ROT));
+				theImageRegistry.put(IMG_REMOVEITEM, getImageDescriptor(IMG_REMOVEITEM));
+				theImageRegistry.put(IMG_NETWORK, getImageDescriptor(IMG_NETWORK));
 				theImageRegistry.put(IMG_BOOK, getImageDescriptor(IMG_BOOK));
-				theImageRegistry
-						.put(IMG_PERSON, getImageDescriptor(IMG_PERSON));
-				theImageRegistry.put(IMG_PERSON_OK,
-						getImageDescriptor(IMG_PERSON_OK));
+				theImageRegistry.put(IMG_PERSON, getImageDescriptor(IMG_PERSON));
+				theImageRegistry.put(IMG_PERSON_OK, getImageDescriptor(IMG_PERSON_OK));
 				theImageRegistry.put(IMG_DISK, getImageDescriptor(IMG_DISK));
-				theImageRegistry.put(IMG_LOCK_CLOSED,
-						getImageDescriptor(IMG_LOCK_CLOSED));
-				theImageRegistry.put(IMG_LOCK_OPEN,
-						getImageDescriptor(IMG_LOCK_OPEN));
-				theImageRegistry.put(IMG_CLIPBOARD,
-						getImageDescriptor(IMG_CLIPBOARD));
+				theImageRegistry.put(IMG_LOCK_CLOSED, getImageDescriptor(IMG_LOCK_CLOSED));
+				theImageRegistry.put(IMG_LOCK_OPEN, getImageDescriptor(IMG_LOCK_OPEN));
+				theImageRegistry.put(IMG_CLIPBOARD, getImageDescriptor(IMG_CLIPBOARD));
 				theImageRegistry.put(IMG_NEXT, getImageDescriptor(IMG_NEXT));
-				theImageRegistry.put(IMG_PREVIOUS,
-						getImageDescriptor(IMG_PREVIOUS));
-				theImageRegistry.put(IMG_ARROWUP,
-						getImageDescriptor(IMG_ARROWUP));
-				theImageRegistry.put(IMG_ARROWDOWN,
-						getImageDescriptor(IMG_ARROWDOWN));
-				theImageRegistry.put(IMG_MOVETOUPPERLIST,
-						getImageDescriptor(IMG_MOVETOUPPERLIST));
-				theImageRegistry.put(IMG_MOVETOLOWERLIST,
-						getImageDescriptor(IMG_MOVETOLOWERLIST));
+				theImageRegistry.put(IMG_PREVIOUS, getImageDescriptor(IMG_PREVIOUS));
+				theImageRegistry.put(IMG_ARROWUP, getImageDescriptor(IMG_ARROWUP));
+				theImageRegistry.put(IMG_ARROWDOWN, getImageDescriptor(IMG_ARROWDOWN));
+				theImageRegistry.put(IMG_MOVETOUPPERLIST, getImageDescriptor(IMG_MOVETOUPPERLIST));
+				theImageRegistry.put(IMG_MOVETOLOWERLIST, getImageDescriptor(IMG_MOVETOLOWERLIST));
 				theImageRegistry.put(IMG_CLEAR, getImageDescriptor(IMG_CLEAR));
 			}
 		}
 		return theImageRegistry;
 	}
-
+	
 	/**
-	 * Return an ImageDescriptor. The Descriptor will be searched in the
-	 * ImageRegistry first. If not found, it will be searched as image file in
-	 * the directory denoted by the current plaf. Images with the extensions of
-	 * png, gif and ico will be searched in this given order. If still no image
-	 * is found, it will be searched in rsc/
+	 * Return an ImageDescriptor. The Descriptor will be searched in the ImageRegistry first. If not
+	 * found, it will be searched as image file in the directory denoted by the current plaf. Images
+	 * with the extensions of png, gif and ico will be searched in this given order. If still no
+	 * image is found, it will be searched in rsc/
 	 * 
 	 * @param imagename
 	 *            the name of the image or the imagefile (without extension)
 	 * @return
 	 */
-	public static ImageDescriptor getImageDescriptor(String imagename) {
+	public static ImageDescriptor getImageDescriptor(String imagename){
 		ImageDescriptor ret = getImageRegistry().getDescriptor(imagename);
 		if (ret == null) {
 			ret = Hub.getImageDescriptor(getImageBase() + imagename + ".png"); //$NON-NLS-1$
 			if (ret == null) {
-				ret = Hub.getImageDescriptor(getImageBase() + imagename
-						+ Messages.Desk_32);
+				ret = Hub.getImageDescriptor(getImageBase() + imagename + Messages.Desk_32);
 			}
 			if (ret == null) {
-				ret = Hub.getImageDescriptor(getImageBase() + imagename
-						+ Messages.Desk_33);
+				ret = Hub.getImageDescriptor(getImageBase() + imagename + Messages.Desk_33);
 			}
 			if (ret == null) {
 				ret = Hub.getImageDescriptor("rsc/" + imagename); //$NON-NLS-1$
@@ -348,7 +314,7 @@ public class Desk implements IApplication {
 		}
 		return ret;
 	}
-
+	
 	/**
 	 * Return an image with a specified name.
 	 * 
@@ -357,7 +323,7 @@ public class Desk implements IApplication {
 	 *            the name of the image to retrieve
 	 * @return the Image or null if no such image was found
 	 */
-	public static Image getImage(String name) {
+	public static Image getImage(String name){
 		Image ret = getImageRegistry().get(name);
 		if (ret == null) {
 			ImageDescriptor id = getImageDescriptor(name);
@@ -369,28 +335,28 @@ public class Desk implements IApplication {
 		}
 		return ret;
 	}
-
+	
 	/** shortcut for getColorRegistry().get(String col) */
-	public static Color getColor(String desc) {
+	public static Color getColor(String desc){
 		return getColorRegistry().get(desc);
 	}
-
-	public static ColorRegistry getColorRegistry() {
-
+	
+	public static ColorRegistry getColorRegistry(){
+		
 		if (theColorRegistry == null) {
 			theColorRegistry = new ColorRegistry(getDisplay(), true);
 		}
 		return theColorRegistry;
 	}
-
-	public static FormToolkit getToolkit() {
+	
+	public static FormToolkit getToolkit(){
 		if (theToolkit == null) {
 			theToolkit = new FormToolkit(getDisplay());
 		}
 		return theToolkit;
 	}
-
-	public static Display getDisplay() {
+	
+	public static Display getDisplay(){
 		if (theDisplay == null) {
 			if (PlatformUI.isWorkbenchRunning()) {
 				theDisplay = PlatformUI.getWorkbench().getDisplay();
@@ -402,36 +368,38 @@ public class Desk implements IApplication {
 		}
 		return theDisplay;
 	}
-
-	public static void updateFont(String cfgName) {
+	
+	public static void updateFont(String cfgName){
 		FontRegistry fr = JFaceResources.getFontRegistry();
-		FontData[] fd = PreferenceConverter.getFontDataArray(
-				new SettingsPreferenceStore(Hub.userCfg), cfgName);
+		FontData[] fd =
+			PreferenceConverter.getFontDataArray(new SettingsPreferenceStore(Hub.userCfg), cfgName);
 		fr.put(cfgName, fd);
 	}
-
-	public static Font getFont(String cfgName) {
+	
+	public static Font getFont(String cfgName){
 		FontRegistry fr = JFaceResources.getFontRegistry();
 		if (!fr.hasValueFor(cfgName)) {
-			FontData[] fd = PreferenceConverter.getFontDataArray(
-					new SettingsPreferenceStore(Hub.userCfg), cfgName);
+			FontData[] fd =
+				PreferenceConverter.getFontDataArray(new SettingsPreferenceStore(Hub.userCfg),
+					cfgName);
 			fr.put(cfgName, fd);
 		}
 		return fr.get(cfgName);
 	}
-
-	public static Font getFont(String name, int height, int style) {
-		String key = name
-				+ ":" + Integer.toString(height) + ":" + Integer.toString(style); //$NON-NLS-1$ //$NON-NLS-2$
+	
+	public static Font getFont(String name, int height, int style){
+		String key = name + ":" + Integer.toString(height) + ":" + Integer.toString(style); //$NON-NLS-1$ //$NON-NLS-2$
 		FontRegistry fr = JFaceResources.getFontRegistry();
 		if (!fr.hasValueFor(key)) {
-			FontData[] fd = new FontData[] { new FontData(name, height, style) };
+			FontData[] fd = new FontData[] {
+				new FontData(name, height, style)
+			};
 			fr.put(key, fd);
 		}
 		return fr.get(key);
 	}
-
-	public static Cursor getCursor(String name) {
+	
+	public static Cursor getCursor(String name){
 		if (cursors == null) {
 			cursors = new HashMap<String, Cursor>();
 		}
@@ -444,7 +412,7 @@ public class Desk implements IApplication {
 		}
 		return ret;
 	}
-
+	
 	/**
 	 * Eine Color aus einer RGB-Beschreibung als Hex-String herstellen
 	 * 
@@ -452,14 +420,14 @@ public class Desk implements IApplication {
 	 *            Die Farbe als Beschreibung in Hex-Form
 	 * @return die Farbe als Color, ist in Regisry gespeichert
 	 */
-	public static Color getColorFromRGB(final String coldesc) {
+	public static Color getColorFromRGB(final String coldesc){
 		String col = StringTool.pad(StringTool.LEFT, '0', coldesc, 6);
 		if (!getColorRegistry().hasValueFor(col)) {
 			RGB rgb;
 			try {
-				rgb = new RGB(Integer.parseInt(col.substring(0, 2), 16),
-						Integer.parseInt(col.substring(2, 4), 16),
-						Integer.parseInt(col.substring(4, 6), 16));
+				rgb =
+					new RGB(Integer.parseInt(col.substring(0, 2), 16), Integer.parseInt(col
+						.substring(2, 4), 16), Integer.parseInt(col.substring(4, 6), 16));
 			} catch (NumberFormatException nex) {
 				ExHandler.handle(nex);
 				rgb = new RGB(100, 100, 100);
@@ -468,7 +436,7 @@ public class Desk implements IApplication {
 		}
 		return getColorRegistry().get(col);
 	}
-
+	
 	/**
 	 * Eine Hex-String Beschreibung einer Farbe liefern
 	 * 
@@ -476,16 +444,12 @@ public class Desk implements IApplication {
 	 *            Die Farbe in RGB-Form
 	 * @return
 	 */
-	public static String createColor(final RGB rgb) {
+	public static String createColor(final RGB rgb){
 		try {
 			StringBuilder sb = new StringBuilder();
-			sb.append(
-					StringTool.pad(StringTool.LEFT, '0',
-							Integer.toHexString(rgb.red), 2))
-					.append(StringTool.pad(StringTool.LEFT, '0',
-							Integer.toHexString(rgb.green), 2))
-					.append(StringTool.pad(StringTool.LEFT, '0',
-							Integer.toHexString(rgb.blue), 2));
+			sb.append(StringTool.pad(StringTool.LEFT, '0', Integer.toHexString(rgb.red), 2))
+				.append(StringTool.pad(StringTool.LEFT, '0', Integer.toHexString(rgb.green), 2))
+				.append(StringTool.pad(StringTool.LEFT, '0', Integer.toHexString(rgb.blue), 2));
 			String srgb = sb.toString();
 			getColorRegistry().put(srgb, rgb);
 			return srgb;
@@ -494,26 +458,26 @@ public class Desk implements IApplication {
 			return "A0A0A0";
 		}
 	}
-
-	public static Shell getTopShell() {
+	
+	public static Shell getTopShell(){
 		return getDisplay().getActiveShell();
 	}
-
+	
 	/**
-	 * Run a runnable asynchroneously in the UI Thread The method will
-	 * immediately return (not wait for the runnable to exit)
+	 * Run a runnable asynchroneously in the UI Thread The method will immediately return (not wait
+	 * for the runnable to exit)
 	 */
-	public static void asyncExec(Runnable runnable) {
+	public static void asyncExec(Runnable runnable){
 		getDisplay().asyncExec(runnable);
 	}
-
+	
 	/**
-	 * Run a runnable synchroneously in the UI Thread. The method will not
-	 * return until the runnable exited
+	 * Run a runnable synchroneously in the UI Thread. The method will not return until the runnable
+	 * exited
 	 * 
 	 * @param runnable
 	 */
-	public static void syncExec(Runnable runnable) {
+	public static void syncExec(Runnable runnable){
 		getDisplay().syncExec(runnable);
 		// BusyIndicator.showWhile(getDisplay(), runnable);
 	}

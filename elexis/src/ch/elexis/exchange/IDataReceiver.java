@@ -17,24 +17,28 @@ import org.jdom.Element;
 
 import ch.rgw.tools.Result;
 
-
 /**
  * A generic mediator between XML-Sources and Elexis objects
+ * 
  * @author Gerry
- *
+ * 
  */
 public interface IDataReceiver {
 	/**
 	 * load an Object from an XML stream
-	 * @param input the Element to load
-	 * @param context the context to put the element
+	 * 
+	 * @param input
+	 *            the Element to load
+	 * @param context
+	 *            the context to put the element
 	 * @return the created object on success or an error message
 	 */
 	public Result<Object> load(Element input, Object context);
 	
 	/**
-	 * end of the input operation. can be used for cleanup. The IDataReceiver
-	 * becomes invalid after finalize
+	 * end of the input operation. can be used for cleanup. The IDataReceiver becomes invalid after
+	 * finalize
+	 * 
 	 * @return ok on success.
 	 */
 	public Result finalizeImport();

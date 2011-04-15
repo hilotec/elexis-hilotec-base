@@ -93,12 +93,10 @@ public class ErstelleRnnCommand extends AbstractHandler {
 				}
 			}
 			if (rejected != 0) {
-				SWTHelper
-					.showError(
-						Messages.getString("ErstelleRnnCommand.BadCaseDefinition"), //$NON-NLS-1$
-						Integer.toString(rejected)
-							+ Messages.getString("ErstelleRnnCommand.BillsNotCreatedMissingData") //$NON-NLS-1$
-							+ Messages.getString("ErstelleRnnCommand.ErstelleRnnCheckCaseDetails")); //$NON-NLS-1$
+				SWTHelper.showError(Messages.getString("ErstelleRnnCommand.BadCaseDefinition"), //$NON-NLS-1$
+					Integer.toString(rejected)
+						+ Messages.getString("ErstelleRnnCommand.BillsNotCreatedMissingData") //$NON-NLS-1$
+						+ Messages.getString("ErstelleRnnCommand.ErstelleRnnCheckCaseDetails")); //$NON-NLS-1$
 			} else {
 				tSelection.remove(tPat);
 			}

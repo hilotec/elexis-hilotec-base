@@ -26,52 +26,49 @@ import ch.rgw.io.InMemorySettings;
  */
 public class UserCasePreferences extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
-
+	
 	public static final String ID = "ch.elexis.preferences.UserCasePreferences"; //$NON-NLS-1$
-
-	public UserCasePreferences() {
+	
+	public UserCasePreferences(){
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(new InMemorySettings()));
 		setDescription(Messages.UserCasePreferences_Cases);
 	}
-
+	
 	@Override
-	protected void createFieldEditors() {
+	protected void createFieldEditors(){
 		addField(new StringFieldEditor(PreferenceConstants.USR_DEFCASELABEL,
-				Messages.UserCasePreferences_DefaultName, getFieldEditorParent()));
+			Messages.UserCasePreferences_DefaultName, getFieldEditorParent()));
 		addField(new StringFieldEditor(PreferenceConstants.USR_DEFCASEREASON,
-				Messages.UserCasePreferences_DefaultReason, getFieldEditorParent()));
+			Messages.UserCasePreferences_DefaultReason, getFieldEditorParent()));
 		addField(new StringFieldEditor(PreferenceConstants.USR_DEFLAW,
-				Messages.UserCasePreferences_DefaultBillingSystem, getFieldEditorParent()));
+			Messages.UserCasePreferences_DefaultBillingSystem, getFieldEditorParent()));
 	}
-
-	public void init(IWorkbench workbench) {
+	
+	public void init(IWorkbench workbench){
 		getPreferenceStore().setValue(PreferenceConstants.USR_DEFCASELABEL,
-				Fall.getDefaultCaseLabel());
+			Fall.getDefaultCaseLabel());
 		getPreferenceStore().setValue(PreferenceConstants.USR_DEFCASEREASON,
-				Fall.getDefaultCaseReason());
-		getPreferenceStore().setValue(PreferenceConstants.USR_DEFLAW,
-				Fall.getDefaultCaseLaw());
+			Fall.getDefaultCaseReason());
+		getPreferenceStore().setValue(PreferenceConstants.USR_DEFLAW, Fall.getDefaultCaseLaw());
 	}
-
+	
 	@Override
-	public boolean performOk() {
+	public boolean performOk(){
 		super.performOk();
-
-		Hub.userCfg.set(PreferenceConstants.USR_DEFCASELABEL,
-				getPreferenceStore().getString(
-						PreferenceConstants.USR_DEFCASELABEL));
-		Hub.userCfg.set(PreferenceConstants.USR_DEFCASEREASON,
-				getPreferenceStore().getString(
-						PreferenceConstants.USR_DEFCASEREASON));
-		Hub.userCfg.set(PreferenceConstants.USR_DEFLAW, getPreferenceStore()
-				.getString(PreferenceConstants.USR_DEFLAW));
-
+		
+		Hub.userCfg.set(PreferenceConstants.USR_DEFCASELABEL, getPreferenceStore().getString(
+			PreferenceConstants.USR_DEFCASELABEL));
+		Hub.userCfg.set(PreferenceConstants.USR_DEFCASEREASON, getPreferenceStore().getString(
+			PreferenceConstants.USR_DEFCASEREASON));
+		Hub.userCfg.set(PreferenceConstants.USR_DEFLAW, getPreferenceStore().getString(
+			PreferenceConstants.USR_DEFLAW));
+		
 		return true;
 	}
-
+	
 	@Override
-	protected void performDefaults() {
+	protected void performDefaults(){
 		this.initialize();
 	}
 }

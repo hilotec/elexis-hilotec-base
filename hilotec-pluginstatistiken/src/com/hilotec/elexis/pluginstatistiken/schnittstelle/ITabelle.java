@@ -31,9 +31,9 @@ public interface ITabelle {
 	/**
 	 * Liste aller Datensaetze in dieser Tabelle holen
 	 * 
-	 * TODO: Vielleicht waere es nicht die duemmste Idee hier ueber etwas
-	 *       iteratoraehnliches nachzudenken, vorallem bei grossen Daten-
-	 *       bestaenden (grosse Tabellen oder noch schlimmer: Joins).
+	 * TODO: Vielleicht waere es nicht die duemmste Idee hier ueber etwas iteratoraehnliches
+	 * nachzudenken, vorallem bei grossen Daten- bestaenden (grosse Tabellen oder noch schlimmer:
+	 * Joins).
 	 * 
 	 * @return Datensatzliste
 	 */

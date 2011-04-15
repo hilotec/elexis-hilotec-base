@@ -53,15 +53,15 @@ public class TagesView extends BaseAgendaView {
 	public static final String ID = "ch.elexis.agenda.tagesview"; //$NON-NLS-1$
 	Button bDay, bToday, bPrint;
 	Text tDetail;
-
+	
 	Label lCreator;
-
-	public TagesView() {
+	
+	public TagesView(){
 		self = this;
 	}
-
+	
 	@Override
-	public void create(Composite parent) {
+	public void create(Composite parent){
 		parent.setLayout(new GridLayout());
 		Composite top = new Composite(parent, SWT.NONE);
 		top.setLayout(new GridLayout(5, false));
@@ -70,37 +70,37 @@ public class TagesView extends BaseAgendaView {
 		bToday.setImage(Desk.getImage(Activator.IMG_HOME));
 		bToday.setToolTipText(Messages.TagesView_showToday);
 		bToday.addSelectionListener(new SelectionAdapter() {
-
+			
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				TimeTool dat = new TimeTool();
 				agenda.setActDate(dat);
 				updateDate();
 			}
-
+			
 		});
-
+		
 		Button bMinus = new Button(top, SWT.PUSH);
 		bMinus.setToolTipText(Messages.TagesView_previousDay);
 		bMinus.setText("<"); //$NON-NLS-1$
 		bMinus.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				// TimeTool dat=Activator.getDefault().theDay;
 				agenda.addDays(-1);
 				updateDate();
 			}
 		});
-
+		
 		bDay = new Button(top, SWT.CENTER | SWT.PUSH | SWT.FLAT);
 		bDay.setToolTipText(Messages.TagesView_selectDay);
 		bDay.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		bDay.addSelectionListener(new SelectionAdapter() {
-
+			
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				DateSelectorDialog dsl = new DateSelectorDialog(
-						bDay.getShell(), agenda.getActDate());
+			public void widgetSelected(SelectionEvent e){
+				DateSelectorDialog dsl =
+					new DateSelectorDialog(bDay.getShell(), agenda.getActDate());
 				// Point pt=bDay.getLocation();
 				// dsl.getShell().setLocation(pt.x, pt.y);
 				dsl.create();
@@ -112,96 +112,92 @@ public class TagesView extends BaseAgendaView {
 					updateDate();
 				}
 			}
-
+			
 		});
 		bDay.setText(agenda.getActDate().toString(TimeTool.DATE_GER));
-
+		
 		Button bPlus = new Button(top, SWT.PUSH);
 		bPlus.setToolTipText(Messages.TagesView_nextDay);
-
+		
 		bPlus.setText(">"); //$NON-NLS-1$
 		bPlus.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				agenda.addDays(1);
 				updateDate();
 			}
 		});
-
+		
 		Button bPrint = new Button(top, SWT.CENTER | SWT.PUSH | SWT.FLAT);
 		bPrint.setImage(Desk.getImage(Desk.IMG_PRINTER));
 		bPrint.setToolTipText(Messages.TagesView_printDay);
 		bPrint.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				printAction.run();
 			}
 		});
-
+		
 		SashForm sash = new SashForm(parent, SWT.VERTICAL);
 		sash.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tv = new TableViewer(sash, SWT.NONE);
-		tv.getControl().setLayoutData(
-				SWTHelper.getFillGridData(1, true, 1, true));
+		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tv.setLabelProvider(new AgendaLabelProvider());
-
+		
 		tDetail = new Text(sash, SWT.MULTI | SWT.BORDER | SWT.WRAP);
 		lCreator = new Label(parent, SWT.NONE);
-		lCreator
-				.setFont(Desk
-						.getFont(ch.elexis.preferences.PreferenceConstants.USR_SMALLFONT));
+		lCreator.setFont(Desk.getFont(ch.elexis.preferences.PreferenceConstants.USR_SMALLFONT));
 		lCreator.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		lCreator.setText(" - "); //$NON-NLS-1$
-
-		sash.setWeights(new int[] { 80, 20 });
+		
+		sash.setWeights(new int[] {
+			80, 20
+		});
 		makePrivateActions();
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void dispose() {
-	}
-
-	class AgendaLabelProvider extends LabelProvider implements
-			ITableColorProvider, ITableLabelProvider {
-
-		public Color getBackground(Object element, int columnIndex) {
+	
+	public void dispose(){}
+	
+	class AgendaLabelProvider extends LabelProvider implements ITableColorProvider,
+			ITableLabelProvider {
+		
+		public Color getBackground(Object element, int columnIndex){
 			if (element instanceof IPlannable) {
 				IPlannable p = (IPlannable) element;
 				return Plannables.getStatusColor(p);
 			}
 			return null;
 		}
-
-		public Color getForeground(Object element, int columnIndex) {
+		
+		public Color getForeground(Object element, int columnIndex){
 			if (element instanceof IPlannable) {
 				IPlannable p = (IPlannable) element;
 				return SWTHelper.getContrast(Plannables.getTypColor(p));
 			}
 			return null;
 		}
-
-		public Image getColumnImage(Object element, int columnIndex) {
+		
+		public Image getColumnImage(Object element, int columnIndex){
 			if (element instanceof IPlannable) {
 				IPlannable p = (IPlannable) element;
 				return Plannables.getTypImage(p);
 			}
 			return null;
 		}
-
-		public String getColumnText(Object element, int columnIndex) {
+		
+		public String getColumnText(Object element, int columnIndex){
 			if (element instanceof IPlannable) {
 				IPlannable p = (IPlannable) element;
 				StringBuilder sb = new StringBuilder();
-				sb.append(Plannables.getStartTimeAsString(p))
-						.append("-") //$NON-NLS-1$
-						.append(Plannables.getEndTimeAsString(p))
-						.append(" ").append(p.getTitle()); //$NON-NLS-1$
-
+				sb.append(Plannables.getStartTimeAsString(p)).append("-") //$NON-NLS-1$
+					.append(Plannables.getEndTimeAsString(p)).append(" ").append(p.getTitle()); //$NON-NLS-1$
+				
 				// show reason if its configured
 				if (Hub.userCfg.get(PreferenceConstants.AG_SHOW_REASON, false)) {
 					if (p instanceof Termin) {
@@ -214,53 +210,50 @@ public class TagesView extends BaseAgendaView {
 						}
 					}
 				}
-
+				
 				return sb.toString();
 			}
 			return "?"; //$NON-NLS-1$
 		}
-
+		
 	}
-
-	public void updateDate() {
+	
+	public void updateDate(){
 		/*
-		if (pinger != null) {
-			pinger.doSync();
-		}
-		*/
+		 * if (pinger != null) { pinger.doSync(); }
+		 */
 		bDay.setText(agenda.getActDate().toString(TimeTool.WEEKDAY)
-				+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER)); //$NON-NLS-1$
+			+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER)); //$NON-NLS-1$
 		tv.refresh();
 	}
-
+	
 	@Override
-	public void setTermin(Termin t) {
+	public void setTermin(Termin t){
 		StringBuilder sb = new StringBuilder(200);
 		TimeSpan ts = t.getTimeSpan();
 		sb
-				.append(ts.from.toString(TimeTool.TIME_SMALL))
-				.append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
-				.append(" ").append(t.getPersonalia()).append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
-				.append(t.getType())
-				.append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
+			.append(ts.from.toString(TimeTool.TIME_SMALL))
+			.append("-").append(ts.until.toString(TimeTool.TIME_SMALL)) //$NON-NLS-1$
+			.append(" ").append(t.getPersonalia()).append("\n(") //$NON-NLS-1$ //$NON-NLS-2$
+			.append(t.getType())
+			.append(",").append(t.getStatus()).append(")\n--------\n").append(t.getGrund()); //$NON-NLS-1$ //$NON-NLS-2$
 		sb.append("\n--------\n").append(t.getStatusHistoryDesc());
 		tDetail.setText(sb.toString());
 		sb.setLength(0);
 		sb.append(StringTool.unNull(t.get("ErstelltVon"))).append("/").append( //$NON-NLS-2$
-				t.getCreateTime().toString(TimeTool.FULL_GER));
+			t.getCreateTime().toString(TimeTool.FULL_GER));
 		lCreator.setText(sb.toString());
 		agenda.dispatchTermin(t);
-
+		
 	}
-
-	private void makePrivateActions() {
+	
+	private void makePrivateActions(){
 		newViewAction = new Action(Messages.TagesView_newWindow) {
 			@Override
-			public void run() {
+			public void run(){
 				try {
-					getViewSite().getPage().showView(ID,
-							StringTool.unique("Agenda"), //$NON-NLS-1$
-							IWorkbenchPage.VIEW_VISIBLE);
+					getViewSite().getPage().showView(ID, StringTool.unique("Agenda"), //$NON-NLS-1$
+						IWorkbenchPage.VIEW_VISIBLE);
 				} catch (PartInitException e) {
 					ExHandler.handle(e);
 				}

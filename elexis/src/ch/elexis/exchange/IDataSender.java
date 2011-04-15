@@ -31,7 +31,8 @@ public interface IDataSender {
 	 * @param output
 	 *            an object this IDataSender can handle
 	 * @return the XML element created
-	 * @throws XChangeException if an error occurred
+	 * @throws XChangeException
+	 *             if an error occurred
 	 */
 	public XChangeElement store(Object output) throws XChangeException;
 	

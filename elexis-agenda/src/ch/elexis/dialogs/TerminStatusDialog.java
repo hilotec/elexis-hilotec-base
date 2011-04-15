@@ -30,14 +30,14 @@ public class TerminStatusDialog extends TitleAreaDialog {
 	Button[] bStatus;
 	String[] status;
 	Termin termin;
-
-	public TerminStatusDialog(Shell shell) {
+	
+	public TerminStatusDialog(Shell shell){
 		super(shell);
 		termin = (Termin) ElexisEventDispatcher.getSelected(Termin.class);
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(Composite parent){
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
@@ -47,25 +47,24 @@ public class TerminStatusDialog extends TitleAreaDialog {
 		for (int i = 0; i < status.length; i++) {
 			bStatus[i] = new Button(ret, SWT.RADIO);
 			bStatus[i].setText(status[i]);
-			bStatus[i].setLayoutData(SWTHelper.getFillGridData(1, true, 1,
-					false));
+			bStatus[i].setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			if (status[i].equals(orig)) {
 				bStatus[i].setSelection(true);
 			}
 		}
 		return ret;
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		getShell().setText(Messages.TerminStatusDialog_terminState);
 		setMessage(Messages.TerminStatusDialog_enterState);
 		setTitle(Messages.TerminStatusDialog_terminState);
 	}
-
+	
 	@Override
-	protected void okPressed() {
+	protected void okPressed(){
 		for (int i = 0; i < status.length; i++) {
 			if (bStatus[i].getSelection()) {
 				termin.setStatus(status[i]);
@@ -75,5 +74,5 @@ public class TerminStatusDialog extends TitleAreaDialog {
 		ElexisEventDispatcher.reload(Termin.class);
 		super.okPressed();
 	}
-
+	
 }

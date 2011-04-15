@@ -44,7 +44,7 @@ public class DBImportFirstPage extends WizardPage {
 	static final int MYSQL = 0;
 	static final int POSTGRESQL = 1;
 	static final int ODBC = 3;
-	static final int H2=2;
+	static final int H2 = 2;
 	
 	public DBImportFirstPage(String pageName){
 		super(
@@ -86,8 +86,8 @@ public class DBImportFirstPage extends WizardPage {
 				case H2:
 					server.setEnabled(false);
 					dbName.setEnabled(true);
-					defaultUser="sa";
-					defaultPassword="";
+					defaultUser = "sa";
+					defaultPassword = "";
 					break;
 				case ODBC:
 					server.setEnabled(false);

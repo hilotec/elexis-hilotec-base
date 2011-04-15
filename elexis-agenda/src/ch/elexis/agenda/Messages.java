@@ -1,27 +1,27 @@
 /*******************************************************************************
-* Copyright (c) 2005 IBM Corporation and others.
-*
-* All rights reserved. This program and the accompanying materials
-* are made available under the terms of the Eclipse Public License v1.0
-* which accompanies this distribution, and is available at
-* http://www.eclipse.org/legal/epl-v10.html
-*
-* Contributors:
-*     IBM - initial API and implementation
-*******************************************************************************/
+ * Copyright (c) 2005 IBM Corporation and others.
+ *
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM - initial API and implementation
+ *******************************************************************************/
 
 package ch.elexis.agenda;
 
 import org.eclipse.osgi.util.NLS;
 
 public final class Messages extends NLS {
-
+	
 	private static final String BUNDLE_NAME = "ch.elexis.agenda.messages";//$NON-NLS-1$
-
-	private Messages() {
-		// Do not instantiate
+	
+	private Messages(){
+	// Do not instantiate
 	}
-
+	
 	public static String TagesView_showToday;
 	public static String TagesView_previousDay;
 	public static String TagesView_selectDay;
@@ -39,7 +39,7 @@ public final class Messages extends NLS {
 	public static String TagesView_bereich;
 	public static String TagesView_selectBereich;
 	public static String TagesView_praxis;
-
+	
 	public static String Termin_appCantBeChanged;
 	public static String Termin_appointment_locked;
 	public static String Termin_deleted;
@@ -136,7 +136,7 @@ public final class Messages extends NLS {
 	public static String BaseAgendaView_printListOfDay;
 	public static String BaseAgendaView_printPatAppointments;
 	public static String BaseView_dayLimits;
-
+	
 	public static String BaseView_errorHappendPrinting;
 	public static String BaseView_errorWhilePrinting;
 	public static String BaseView_exportAgenda;
@@ -174,7 +174,7 @@ public final class Messages extends NLS {
 	public static String ICalTransfer_readError;
 	public static String ICalTransfer_until;
 	public static String MinutesFree;
-
+	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
 	}

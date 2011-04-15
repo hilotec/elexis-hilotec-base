@@ -40,7 +40,7 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	Brief actBrief;
 	
 	public RezeptBlatt(){
-		
+
 	}
 	
 	@Override
@@ -58,8 +58,8 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	
 	@Override
 	public void setFocus(){
-		// TODO Automatisch erstellter Methoden-Stub
-		
+	// TODO Automatisch erstellter Methoden-Stub
+	
 	}
 	
 	public boolean createList(Rezept rp, String template, String replace){
@@ -85,8 +85,8 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 			
 		}
 		rp.setBrief(actBrief);
-		if(text.getPlugin().insertTable(replace, 0, fields, wt)){
-			if(text.getPlugin().isDirectOutput()){
+		if (text.getPlugin().insertTable(replace, 0, fields, wt)) {
+			if (text.getPlugin().isDirectOutput()) {
 				text.getPlugin().print(null, null, true);
 				getSite().getPage().hideView(this);
 			}
@@ -137,7 +137,7 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	}
 	
 	public void visible(boolean mode){
-		
+
 	}
 	
 	public String getOutputterDescription(){
@@ -150,5 +150,5 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	
 	public Image getSymbol(){
 		return Desk.getImage(Desk.IMG_PRINTER);
-	}	
+	}
 }

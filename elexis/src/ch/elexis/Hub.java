@@ -71,11 +71,11 @@ import ch.rgw.tools.VersionInfo;
 public class Hub extends AbstractUIPlugin {
 	// Globale Konstanten
 	public final boolean DEBUGMODE;
-	public static final String APPLICATION_NAME="Elexis"; //$NON-NLS-1$
+	public static final String APPLICATION_NAME = "Elexis"; //$NON-NLS-1$
 	public static final String PLUGIN_ID = "ch.elexis"; //$NON-NLS-1$
 	public static final String COMMAND_PREFIX = PLUGIN_ID + ".commands."; //$NON-NLS-1$
 	static final String neededJRE = "1.6.0"; //$NON-NLS-1$
- public static final String Version = "2.1.5.x"; //$NON-NLS-1$
+	public static final String Version = "2.1.5.x"; //$NON-NLS-1$
 	public static final String DBVersion = "1.8.6"; //$NON-NLS-1$
 	public static final String SWTBOTTEST_KEY = "ch.elexis.swtbottest.key"; //$NON-NLS-1$
 	static final String[] mine = {
@@ -83,7 +83,10 @@ public class Hub extends AbstractUIPlugin {
 	private static List<ShutdownJob> shutdownJobs = new LinkedList<ShutdownJob>();
 	
 	// Globale Variable
-	/** Suche externe Config - poor mans dependency -> see ch.elexis.ElexisConfigurationConstants.java */
+	/**
+	 * Suche externe Config - poor mans dependency -> see
+	 * ch.elexis.ElexisConfigurationConstants.java
+	 */
 	public static boolean ecc = ElexisConfigurationConstants.init();
 	
 	/** Das Singleton-Objekt dieser Klasse */
@@ -119,34 +122,35 @@ public class Hub extends AbstractUIPlugin {
 	/** Der Initialisierer für die Voreinstellungen */
 	public static final PreferenceInitializer pin = new PreferenceInitializer();;
 	
-	
 	/** Factory für interne PersistentObjects */
 	public static final PersistentObjectFactory poFactory = new PersistentObjectFactory();
 	
 	/** Heartbeat */
 	public static Heartbeat heart;
 	
-	/** Beschreibbares Verzeichnis für userspezifische Konfigurationsdaten etc.
-	 * Achtung: "User" meint hier: den eingeloggten Betriebssystem-User, nicht den
-	 * Elexis-User. In Windows wird userDir meist %USERPROFILE%\elexis sein, in Linux
-	 * ~./elexis. Es kann mit getWritableUserDir() geholt werden.
+	/**
+	 * Beschreibbares Verzeichnis für userspezifische Konfigurationsdaten etc. Achtung: "User" meint
+	 * hier: den eingeloggten Betriebssystem-User, nicht den Elexis-User. In Windows wird userDir
+	 * meist %USERPROFILE%\elexis sein, in Linux ~./elexis. Es kann mit getWritableUserDir() geholt
+	 * werden.
 	 * */
 	private static File userDir;
 	
-	private final ElexisEventListenerImpl eeli_pat=new ElexisEventListenerImpl(Patient.class){
+	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
 		public void runInUi(ElexisEvent ev){
-			setWindowText((Patient)ev.getObject());
+			setWindowText((Patient) ev.getObject());
 		}
 	};
+	
 	/**
 	 * Constructor. No Eclipse dependend initializations here because the Platform has not been
 	 * iniatialized fully yet
 	 */
 	public Hub(){
-		if("true".equals(System.getProperty("DEBUGMODE"))){
-			DEBUGMODE=true;
-		}else{
-			DEBUGMODE=false;
+		if ("true".equals(System.getProperty("DEBUGMODE"))) {
+			DEBUGMODE = true;
+		} else {
+			DEBUGMODE = false;
 		}
 		log = Log.get("Elexis startup"); //$NON-NLS-1$
 		getWritableUserDir();
@@ -156,8 +160,8 @@ public class Hub extends AbstractUIPlugin {
 	}
 	
 	/*
-	 * called in startup sequence after initialization of the platform but before
-	 * initalization of the workbench
+	 * called in startup sequence after initialization of the platform but before initalization of
+	 * the workbench
 	 */
 	private static void initializeLog(final Settings cfg){
 		String logfileName = cfg.get(PreferenceConstants.ABL_LOGFILE, null);
@@ -193,8 +197,7 @@ public class Hub extends AbstractUIPlugin {
 			final LockFile lockfile = new LockFile(userDir, "elexislock", 4, timeoutSeconds); //$NON-NLS-1$
 			final int n = lockfile.lock();
 			if (n == 0) {
-				SWTHelper.alert(Messages.Hub_toomanyinstances,
-					Messages.Hub_nomoreinstances);
+				SWTHelper.alert(Messages.Hub_toomanyinstances, Messages.Hub_nomoreinstances);
 				System.exit(2);
 			} else {
 				HeartListener lockListener = new HeartListener() {
@@ -211,7 +214,7 @@ public class Hub extends AbstractUIPlugin {
 				heart.addListener(lockListener, Heartbeat.FREQUENCY_LOW);
 			}
 		} catch (IOException ex) {
-			log.log("Can not aquire lock file in "+userDir, Log.ERRORS); //$NON-NLS-1$
+			log.log("Can not aquire lock file in " + userDir, Log.ERRORS); //$NON-NLS-1$
 		}
 	}
 	
@@ -220,17 +223,17 @@ public class Hub extends AbstractUIPlugin {
 	}
 	
 	@Override
-	public void start(final BundleContext context) throws Exception {
+	public void start(final BundleContext context) throws Exception{
 		super.start(context);
 		plugin = this;
 		startUpBundle();
 		ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
-		//ElexisEventCascade.getInstance().start();
+		// ElexisEventCascade.getInstance().start();
 	}
 	
 	@Override
-	public void stop(final BundleContext context) throws Exception {
-		//ElexisEventCascade.getInstance().stop();
+	public void stop(final BundleContext context) throws Exception{
+		// ElexisEventCascade.getInstance().stop();
 		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
 		ElexisEventDispatcher.getInstance().dump();
 		heart.stop();
@@ -244,7 +247,7 @@ public class Hub extends AbstractUIPlugin {
 	 * Hier stehen Aktionen, die ganz früh, noch vor dem Starten der Workbench, durchgeführt werden
 	 * sollen.
 	 */
-	public void startUpBundle() {
+	public void startUpBundle(){
 		String[] args = Platform.getApplicationArgs();
 		String config = "default"; //$NON-NLS-1$
 		for (String s : args) {
@@ -271,7 +274,8 @@ public class Hub extends AbstractUIPlugin {
 		
 		// Java Version prüfen
 		VersionInfo vI = new VersionInfo(System.getProperty("java.version", "0.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
-		log.log(getId()+ "; Java: " + vI.version()+"\nencoding: "+System.getProperty("file.encoding"), Log.SYNCMARK);
+		log.log(getId() + "; Java: " + vI.version() + "\nencoding: "
+			+ System.getProperty("file.encoding"), Log.SYNCMARK);
 		
 		if (vI.isOlder(neededJRE)) {
 			String msg = Messages.Hub_21 + neededJRE;
@@ -287,13 +291,12 @@ public class Hub extends AbstractUIPlugin {
 		initializeLock();
 	}
 	
-	
 	/**
 	 * Programmende
 	 */
-	public static void postShutdown() {
-		//heart.stop();
-		//JobPool.getJobPool().dispose();
+	public static void postShutdown(){
+		// heart.stop();
+		// JobPool.getJobPool().dispose();
 		if (Hub.actUser != null) {
 			Anwender.logoff();
 		}
@@ -310,18 +313,15 @@ public class Hub extends AbstractUIPlugin {
 		if ((shutdownJobs != null) && (shutdownJobs.size() > 0)) {
 			Shell shell = new Shell(Display.getDefault());
 			MessageDialog dlg =
-				new MessageDialog(
-					shell,
-					Messages.Hub_title_configuration,
-					Dialog.getDefaultImage(),
-					Messages.Hub_message_configuration,
+				new MessageDialog(shell, Messages.Hub_title_configuration,
+					Dialog.getDefaultImage(), Messages.Hub_message_configuration,
 					SWT.ICON_INFORMATION, new String[] {}, 0);
 			dlg.setBlockOnOpen(false);
 			dlg.open();
 			for (ShutdownJob job : shutdownJobs) {
 				try {
 					job.doit();
-				} catch(Exception e) {
+				} catch (Exception e) {
 					log.log("Error starting job: " + e.getMessage(), Log.ERRORS);
 				}
 			}
@@ -336,7 +336,7 @@ public class Hub extends AbstractUIPlugin {
 		}
 		if (m == null) {
 			if ((mainActions != null) && (mainActions.mainWindow != null)
-					&& (mainActions.mainWindow.getShell() != null)) {
+				&& (mainActions.mainWindow.getShell() != null)) {
 				mandantCfg = userCfg;
 			}
 		} else {
@@ -346,7 +346,8 @@ public class Hub extends AbstractUIPlugin {
 		}
 		actMandant = m;
 		setWindowText(null);
-		ElexisEventDispatcher.getInstance().fire(new ElexisEvent(Hub.actMandant,Mandant.class,ElexisEvent.EVENT_MANDATOR_CHANGED));
+		ElexisEventDispatcher.getInstance().fire(
+			new ElexisEvent(Hub.actMandant, Mandant.class, ElexisEvent.EVENT_MANDATOR_CHANGED));
 	}
 	
 	public static void setWindowText(Patient pat){
@@ -372,7 +373,7 @@ public class Hub extends AbstractUIPlugin {
 			String nr = pat.getPatCode();
 			String alter = pat.getAlter();
 			sb.append("  / ").append(pat.getLabel()).append("(").append(alter).append(") - ") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			.append("[").append(nr).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
+				.append("[").append(nr).append("]"); //$NON-NLS-1$ //$NON-NLS-2$
 			
 			if (Reminder.findForPatient(pat, Hub.actUser).size() != 0) {
 				sb.append(Messages.Hub_message_reminders);
@@ -406,12 +407,11 @@ public class Hub extends AbstractUIPlugin {
 	}
 	
 	public static String getId(){
-		StringBuilder sb=new StringBuilder();
-		sb.append(APPLICATION_NAME).append(" v.").append(Version).append("\n")
-		.append(getRevision(true)).append("\n")
-		.append(System.getProperty("os.name")).append(StringConstants.SLASH)
-		.append(System.getProperty("os.version"))
-		.append(StringConstants.SLASH).append(System.getProperty("os.arch")); //$NON-NLS-1$
+		StringBuilder sb = new StringBuilder();
+		sb.append(APPLICATION_NAME).append(" v.").append(Version).append("\n").append(
+			getRevision(true)).append("\n").append(System.getProperty("os.name")).append(
+			StringConstants.SLASH).append(System.getProperty("os.version")).append(
+			StringConstants.SLASH).append(System.getProperty("os.arch")); //$NON-NLS-1$
 		return sb.toString();
 	}
 	
@@ -424,50 +424,36 @@ public class Hub extends AbstractUIPlugin {
 	 * Note: Obsoleted with change to mercurial
 	 */
 	/*
-	public static String getRevision(final boolean withdate){
-		String SVNREV = "$LastChangedRevision: 6387 $"; //$NON-NLS-1$
-		String res = SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
-		if (withdate == true) {
-			File base = new File(getBasePath() + "/rsc/compiletime.txt"); //$NON-NLS-1$
-			if (base.canRead()) {
-				String dat = null;
-				try {
-					dat = FileTool.readTextFile(base);
-				} catch(IOException e) {
-					ExHandler.handle(e);
-				}
-				
-				if (dat.equals("@TODAY@")) { //$NON-NLS-1$
-					res += Messages.Hub_38;
-				} else {
-					res += ", " + new TimeTool(dat + "00").toString(TimeTool.FULL_GER); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			} else {
-				res += Messages.Hub_compiletimenotknown;
-			}
-		}
-		Hub.plugin.getBundle().
-		return res;
-	}
-	*/
-	
+	 * public static String getRevision(final boolean withdate){ String SVNREV =
+	 * "$LastChangedRevision: 6387 $"; //$NON-NLS-1$ String res =
+	 * SVNREV.replaceFirst("\\$LastChangedRevision:\\s*([0-9]+)\\s*\\$", "$1"); //$NON-NLS-1$
+	 * //$NON-NLS-2$ if (withdate == true) { File base = new File(getBasePath() +
+	 * "/rsc/compiletime.txt"); //$NON-NLS-1$ if (base.canRead()) { String dat = null; try { dat =
+	 * FileTool.readTextFile(base); } catch(IOException e) { ExHandler.handle(e); }
+	 * 
+	 * if (dat.equals("@TODAY@")) { //$NON-NLS-1$ res += Messages.Hub_38; } else { res += ", " + new
+	 * TimeTool(dat + "00").toString(TimeTool.FULL_GER); //$NON-NLS-1$ //$NON-NLS-2$ } } else { res
+	 * += Messages.Hub_compiletimenotknown; } } Hub.plugin.getBundle(). return res; }
+	 */
+
 	public static String getRevision(final boolean withDate){
-		StringBuilder sb=new StringBuilder();
-		Bundle bundle=plugin.getBundle();
-		org.osgi.framework.Version v=bundle.getVersion();
+		StringBuilder sb = new StringBuilder();
+		Bundle bundle = plugin.getBundle();
+		org.osgi.framework.Version v = bundle.getVersion();
 		sb.append("[Bundle info: ").append(v.toString());
-		String check=System.getProperty("inEclipse"); //$NON-NLS-1$
-		if(check!=null && check.equals("true")){ //$NON-NLS-1$
+		String check = System.getProperty("inEclipse"); //$NON-NLS-1$
+		if (check != null && check.equals("true")) { //$NON-NLS-1$
 			sb.append(" (developer version)");
-		}		
-		if(withDate){
-			long lastModify=bundle.getLastModified();
-			TimeTool tt=new TimeTool(lastModify);
+		}
+		if (withDate) {
+			long lastModify = bundle.getLastModified();
+			TimeTool tt = new TimeTool(lastModify);
 			sb.append("; ").append(tt.toString(TimeTool.DATE_ISO));
 		}
 		sb.append("]");
 		return sb.toString();
 	}
+	
 	/**
 	 * get the base directory of this currently running elexis application
 	 * 
@@ -553,8 +539,8 @@ public class Hub extends AbstractUIPlugin {
 	 * 
 	 * @return a directory that exists always and is always writable and readable for plugins of the
 	 *         currently running elexis instance. Caution: this directory is not necessarily shared
-	 *         among different OS-Users. In Windows it is normally %USERPROFILE%\elexis,
-	 *         in Linux ~./elexis
+	 *         among different OS-Users. In Windows it is normally %USERPROFILE%\elexis, in Linux
+	 *         ~./elexis
 	 */
 	public static File getWritableUserDir(){
 		if (userDir == null) {
@@ -605,12 +591,11 @@ public class Hub extends AbstractUIPlugin {
 	}
 	
 	/**
-	 * Return the name of a config instance, the user chose.
-	 * This is just the valuie of the -Dconfig=xx runtime value
-	 * or "default" if no -Dconfig was set
+	 * Return the name of a config instance, the user chose. This is just the valuie of the
+	 * -Dconfig=xx runtime value or "default" if no -Dconfig was set
 	 */
 	public static String getCfgVariant(){
-		String config=System.getProperty("config");
-		return config==null ? "default" : config;
+		String config = System.getProperty("config");
+		return config == null ? "default" : config;
 	}
 }

@@ -482,10 +482,10 @@ public class AfinionConnection extends AbstractConnection {
 						readToEndAndACK(packetNr, inputStream);
 					} else if (headerStr.indexOf("cmderr") != -1) {//$NON-NLS-1$
 						readToEndAndACK(packetNr, inputStream);
-// setState(SEND_PAT_REQUEST);
+						// setState(SEND_PAT_REQUEST);
 					} else if (headerStr.indexOf("cmdcmpl") != -1) {//$NON-NLS-1$
 						readToEndAndACK(packetNr, inputStream);
-// setState(SEND_PAT_REQUEST);
+						// setState(SEND_PAT_REQUEST);
 					} else if (headerStr.indexOf("debugmsg") != -1) {//$NON-NLS-1$
 						readToEndAndACK(packetNr, inputStream);
 					} else if (headerStr.indexOf("FFFF:IC") != -1) {//$NON-NLS-1$

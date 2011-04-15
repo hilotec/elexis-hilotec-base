@@ -38,104 +38,105 @@ import ch.rgw.tools.TimeTool;
 
 public class ColumnHeader extends Composite {
 	AgendaWeek view;
-	static final String IMG_PERSONS_NAME=Activator.PLUGIN_ID+"/personen"; //$NON-NLS-1$
-	static final String IMG_PERSONS_PATH="icons/personen.png"; //$NON-NLS-1$
+	static final String IMG_PERSONS_NAME = Activator.PLUGIN_ID + "/personen"; //$NON-NLS-1$
+	static final String IMG_PERSONS_PATH = "icons/personen.png"; //$NON-NLS-1$
 	ImageHyperlink ihRes;
 	
 	public ColumnHeader(Composite parent, AgendaWeek aw){
-		super(parent,SWT.NONE);
-		view=aw;
-		if(Desk.getImage(IMG_PERSONS_NAME)==null){
-			Desk.getImageRegistry().put(IMG_PERSONS_NAME, Activator.getImageDescriptor(IMG_PERSONS_PATH));
+		super(parent, SWT.NONE);
+		view = aw;
+		if (Desk.getImage(IMG_PERSONS_NAME) == null) {
+			Desk.getImageRegistry().put(IMG_PERSONS_NAME,
+				Activator.getImageDescriptor(IMG_PERSONS_PATH));
 		}
-		ihRes=new ImageHyperlink(this,SWT.NONE);
+		ihRes = new ImageHyperlink(this, SWT.NONE);
 		ihRes.setImage(Desk.getImage(IMG_PERSONS_NAME));
 		ihRes.setToolTipText(Messages.ColumnHeader_selectDaysToDisplay);
-		ihRes.addHyperlinkListener(new HyperlinkAdapter(){
-
+		ihRes.addHyperlinkListener(new HyperlinkAdapter() {
+			
 			@Override
-			public void linkActivated(HyperlinkEvent e) {
-				new SelectDaysDlg().open(); 
+			public void linkActivated(HyperlinkEvent e){
+				new SelectDaysDlg().open();
 			}
 			
 		});
 	}
 	
 	void recalc(double widthPerColumn, int left_offset, int padding, int textSize){
-		GridData gd=(GridData)getLayoutData();
-		gd.heightHint=textSize+2;
-		for(Control c:getChildren()){
-			if(c instanceof Label){
+		GridData gd = (GridData) getLayoutData();
+		gd.heightHint = textSize + 2;
+		for (Control c : getChildren()) {
+			if (c instanceof Label) {
 				c.dispose();
 			}
 		}
-		Point bSize=ihRes.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point bSize = ihRes.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		ihRes.setBounds(0, 0, bSize.x, bSize.y);
-		String[] labels=view.getDisplayedDays();
-		int count=labels.length;
-		for(int i=0;i<count;i++){
-			int lx=left_offset+(int) Math.round(i*(widthPerColumn+padding));
-			Label l=new Label(this, SWT.NONE);
-			TimeTool tt=new TimeTool(labels[i]);
-			StringBuilder sb=new StringBuilder(tt.toString(TimeTool.WEEKDAY));
+		String[] labels = view.getDisplayedDays();
+		int count = labels.length;
+		for (int i = 0; i < count; i++) {
+			int lx = left_offset + (int) Math.round(i * (widthPerColumn + padding));
+			Label l = new Label(this, SWT.NONE);
+			TimeTool tt = new TimeTool(labels[i]);
+			StringBuilder sb = new StringBuilder(tt.toString(TimeTool.WEEKDAY));
 			sb.append(", ").append(tt.toString(TimeTool.DATE_GER)); //$NON-NLS-1$
-			String coltext=sb.toString();
-			Point extend=SWTHelper.getStringBounds(this, coltext);
-			if(extend.x>widthPerColumn){
-				coltext=coltext.substring(0, coltext.length()-4);
-				extend=SWTHelper.getStringBounds(this, coltext);
-				if(extend.x>widthPerColumn){
-					coltext=coltext.substring(0,2);
+			String coltext = sb.toString();
+			Point extend = SWTHelper.getStringBounds(this, coltext);
+			if (extend.x > widthPerColumn) {
+				coltext = coltext.substring(0, coltext.length() - 4);
+				extend = SWTHelper.getStringBounds(this, coltext);
+				if (extend.x > widthPerColumn) {
+					coltext = coltext.substring(0, 2);
 				}
 				
 			}
 			l.setText(coltext);
 			
-			int outer=(int)Math.round(widthPerColumn);
-			int inner=l.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-			int off=(outer-inner)/2;
-			lx+=off;
-			l.setBounds(lx, 0, inner, textSize+2);
+			int outer = (int) Math.round(widthPerColumn);
+			int inner = l.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+			int off = (outer - inner) / 2;
+			lx += off;
+			l.setBounds(lx, 0, inner, textSize + 2);
 		}
 	}
 	
-	class SelectDaysDlg extends TitleAreaDialog{
+	class SelectDaysDlg extends TitleAreaDialog {
 		SelectDaysDlg(){
 			super(ColumnHeader.this.getShell());
 		}
-
+		
 		@Override
-		protected Control createDialogArea(Composite parent) {
-			Composite ret=(Composite) super.createDialogArea(parent);
+		protected Control createDialogArea(Composite parent){
+			Composite ret = (Composite) super.createDialogArea(parent);
 			ret.setLayout(new GridLayout());
-			String[] days=view.getDisplayedDays();
-			for (String s:TimeTool.Wochentage){
-				Button b=new Button(ret,SWT.CHECK);
+			String[] days = view.getDisplayedDays();
+			for (String s : TimeTool.Wochentage) {
+				Button b = new Button(ret, SWT.CHECK);
 				b.setText(s);
-				if(StringTool.getIndex(days, s)!=-1){
+				if (StringTool.getIndex(days, s) != -1) {
 					b.setSelection(true);
 				}
 			}
 			return ret;
 		}
-
+		
 		@Override
-		public void create() {
+		public void create(){
 			super.create();
 			getShell().setText(Messages.ColumnHeader_configureDisplay);
 			setTitle(Messages.ColumnHeader_displayWeekdays);
 			setMessage(Messages.ColumnHeader_pleaseSelectWeekdays);
 		}
-
+		
 		@Override
-		protected void okPressed() {
-			Composite dlg=(Composite)getDialogArea();
-			String[] res=TimeTool.Wochentage;
-			ArrayList<String> sel=new ArrayList<String>(res.length);
-			for(Control c:dlg.getChildren()){
-				if(c instanceof Button){
-					if(((Button) c).getSelection()){
-						sel.add(((Button)c).getText());
+		protected void okPressed(){
+			Composite dlg = (Composite) getDialogArea();
+			String[] res = TimeTool.Wochentage;
+			ArrayList<String> sel = new ArrayList<String>(res.length);
+			for (Control c : dlg.getChildren()) {
+				if (c instanceof Button) {
+					if (((Button) c).getSelection()) {
+						sel.add(((Button) c).getText());
 					}
 				}
 			}

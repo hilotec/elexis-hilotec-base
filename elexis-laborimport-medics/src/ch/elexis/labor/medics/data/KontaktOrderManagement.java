@@ -26,25 +26,23 @@ public class KontaktOrderManagement extends PersistentObject {
 	
 	static {
 		String checkExist = j.queryString("SELECT * FROM " //$NON-NLS-1$
-				+ TABLENAME);
+			+ TABLENAME);
 		if (checkExist == null) {
-			String filepath = PlatformHelper
-					.getBasePath("ch.elexis.laborimport.medics") //$NON-NLS-1$
-					+ File.separator
-					+ "createTable.script"; //$NON-NLS-1$
+			String filepath = PlatformHelper.getBasePath("ch.elexis.laborimport.medics") //$NON-NLS-1$
+				+ File.separator + "createTable.script"; //$NON-NLS-1$
 			Stm stm = j.getStatement();
 			try {
 				FileInputStream fis = new FileInputStream(filepath);
 				stm.execScript(fis, true, true);
 			} catch (Exception e) {
 				ExHandler.handle(e);
-				SWTHelper.showError(
-					Messages.KontaktOrderManagement_titleErrorCreateDB,
-						MessageFormat.format(Messages.KontaktOrderManagement_messageErrorCreateDB, filepath));
+				SWTHelper.showError(Messages.KontaktOrderManagement_titleErrorCreateDB,
+					MessageFormat.format(Messages.KontaktOrderManagement_messageErrorCreateDB,
+						filepath));
 			} finally {
 				j.releaseStatement(stm);
 			}
-
+			
 		}
 		addMapping(TABLENAME, FLD_KONTAKT_ID, FLD_ORDER_NR);
 	}
@@ -97,17 +95,17 @@ public class KontaktOrderManagement extends PersistentObject {
 		return value;
 	}
 	
-	public Long getOrderNr() {
+	public Long getOrderNr(){
 		String intStr = get(FLD_ORDER_NR);
 		return getLong(intStr);
 	}
 	
-	public void setOrderNr(final Long orderNr) {
+	public void setOrderNr(final Long orderNr){
 		if (orderNr != null) {
 			set(FLD_ORDER_NR, orderNr.toString());
 		}
 	}
-
+	
 	@Override
 	public String getLabel(){
 		Kontakt kontakt = getKontakt();
@@ -116,7 +114,7 @@ public class KontaktOrderManagement extends PersistentObject {
 		}
 		return "-"; //$NON-NLS-1$
 	}
-
+	
 	@Override
 	protected String getTableName(){
 		return TABLENAME;

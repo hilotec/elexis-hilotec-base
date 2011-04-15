@@ -20,27 +20,17 @@ import org.eclipse.swt.graphics.Image;
 import ch.elexis.data.PersistentObject;
 
 /**
- * Defaultimplementation des Labelproviders. Verwendet die getLabel()
- * Methode von PersistentObject.
+ * Defaultimplementation des Labelproviders. Verwendet die getLabel() Methode von PersistentObject.
+ * 
  * @author Gerry
  */
-public class DefaultLabelProvider extends LabelProvider implements
- ITableLabelProvider{
-
-	public Image getColumnImage(Object element, int columnIndex) {
+public class DefaultLabelProvider extends LabelProvider implements ITableLabelProvider {
+	
+	public Image getColumnImage(Object element, int columnIndex){
 		return null;
 	}
-
-	public String getColumnText(Object element, int columnIndex) {
-		if (element instanceof PersistentObject) {
-			PersistentObject po = (PersistentObject) element;
-			return po.getLabel();
-		}
-		return element.toString();
-	}
-
-	@Override
-	public String getText(Object element) {
+	
+	public String getColumnText(Object element, int columnIndex){
 		if (element instanceof PersistentObject) {
 			PersistentObject po = (PersistentObject) element;
 			return po.getLabel();
@@ -48,5 +38,13 @@ public class DefaultLabelProvider extends LabelProvider implements
 		return element.toString();
 	}
 	
+	@Override
+	public String getText(Object element){
+		if (element instanceof PersistentObject) {
+			PersistentObject po = (PersistentObject) element;
+			return po.getLabel();
+		}
+		return element.toString();
+	}
 	
 }

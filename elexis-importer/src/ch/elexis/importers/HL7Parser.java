@@ -36,8 +36,8 @@ public class HL7Parser {
 	public Result<Object> parse(final HL7 hl7, boolean createPatientIfNotFound){
 		Result<Kontakt> res = hl7.getLabor();
 		if (!res.isOK()) {
-			return new Result<Object>(Result.SEVERITY.ERROR, 1, Messages.HL7Parser_LabNotFound,
-				hl7.getFilename(), true);
+			return new Result<Object>(Result.SEVERITY.ERROR, 1, Messages.HL7Parser_LabNotFound, hl7
+				.getFilename(), true);
 		}
 		final Kontakt labor = res.get();
 		Result<Object> r2 = hl7.getPatient(createPatientIfNotFound);
@@ -67,10 +67,10 @@ public class HL7Parser {
 						typ = LabItem.typ.TEXT;
 					}
 					li =
-						new LabItem(obx.getItemCode(), itemname, labor, obx.getRefRange(),
-							obx.getRefRange(), obx.getUnits(), typ,
-							Messages.HL7Parser_AutomaticAddedGroup + dat,
-							Integer.toString(nummer++));
+						new LabItem(obx.getItemCode(), itemname, labor, obx.getRefRange(), obx
+							.getRefRange(), obx.getUnits(), typ,
+							Messages.HL7Parser_AutomaticAddedGroup + dat, Integer
+								.toString(nummer++));
 				} else {
 					li = list.get(0);
 				}
@@ -103,8 +103,8 @@ public class HL7Parser {
 						.getResultValue() + "\n" + obx.getComment()); //$NON-NLS-1$
 				} else {
 					lr =
-						new LabResult(pat, obr.getDate(), li, obx.getResultValue(),
-							obx.getComment());
+						new LabResult(pat, obr.getDate(), li, obx.getResultValue(), obx
+							.getComment());
 				}
 				
 				if (obx.isPathologic()) {

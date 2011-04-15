@@ -31,7 +31,7 @@ import ch.elexis.util.WidgetFactory;
 import ch.rgw.tools.StringTool;
 
 public class EditLabItem extends TitleAreaDialog {
-
+	
 	// private String[]
 	// fields={"Kürzel","Titel","Typ","Referenzbereich","Einheit"};
 	Text iKuerzel, iTitel, iRef, iRfF, iUnit, iPrio;
@@ -43,19 +43,18 @@ public class EditLabItem extends TitleAreaDialog {
 	Labor actLabor;
 	LabItem result;
 	ArrayList<String> groups;
-
 	
-	public EditLabItem(Shell parentShell, LabItem act) {
+	public EditLabItem(Shell parentShell, LabItem act){
 		super(parentShell);
 		
 		groups = new ArrayList<String>();
 		result = act;
 		if (act == null) {
-			String al = new Query<Labor>(Labor.class).findSingle(
+			String al =
+				new Query<Labor>(Labor.class).findSingle(
 					"istLabor", Messages.LaborPrefs_34, Messages.LaborPrefs_35); //$NON-NLS-1$
 			if (al == null) {
-				actLabor = new Labor(Messages.LaborPrefs_36,
-						Messages.LaborPrefs_37);
+				actLabor = new Labor(Messages.LaborPrefs_36, Messages.LaborPrefs_37);
 			} else {
 				actLabor = Labor.load(al);
 			}
@@ -63,9 +62,9 @@ public class EditLabItem extends TitleAreaDialog {
 			actLabor = act.getLabor();
 		}
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(Composite parent){
 		getShell().setText(Messages.LaborPrefs_labParams);
 		setTitle(Messages.LaborPrefs_enterNewLabParam);
 		setMessage(Messages.LaborPrefs_pleaseEditParam);
@@ -76,15 +75,15 @@ public class EditLabItem extends TitleAreaDialog {
 		labors = new org.eclipse.swt.widgets.List(ret, SWT.BORDER);
 		labors.setLayoutData(SWTHelper.getFillGridData(4, true, 1, false));
 		labors.addSelectionListener(new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
+			
+			public void widgetSelected(SelectionEvent e){
 				int i = labors.getSelectionIndex();
 				if (i != -1) {
 					actLabor = lablist.get(labors.getItem(i));
 				}
-
+				
 			}
-
+			
 		});
 		Query<Labor> qbe = new Query<Labor>(Labor.class);
 		List<Labor> list = qbe.execute();
@@ -106,7 +105,7 @@ public class EditLabItem extends TitleAreaDialog {
 		WidgetFactory.createLabel(ret, Messages.LaborPrefs_39);
 		iTitel = new Text(ret, SWT.BORDER);
 		iTitel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-
+		
 		WidgetFactory.createLabel(ret, Messages.LaborPrefs_40);
 		Group grp = new Group(ret, SWT.NONE);
 		grp.setLayout(new FillLayout(SWT.HORIZONTAL));
@@ -120,30 +119,29 @@ public class EditLabItem extends TitleAreaDialog {
 		formula = new Button(grp, SWT.RADIO);
 		formula.setText(Messages.LaborPrefs_44);
 		formula.addSelectionListener(new SelectionAdapter() {
-
+			
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				if (formula.getSelection()) {
-
-					ScriptEditor se = new ScriptEditor(getShell(), formel,
-							Messages.LaborPrefs_45);
+					
+					ScriptEditor se = new ScriptEditor(getShell(), formel, Messages.LaborPrefs_45);
 					if (se.open() == Dialog.OK) {
 						formel = se.getScript();
 					}
 				}
 			}
-
+			
 		});
 		document = new Button(grp, SWT.RADIO);
 		document.setText(Messages.LaborPrefs_document);
 		document.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				documentSelectionChanged();
 			}
 		});
 		WidgetFactory.createLabel(ret, Messages.LaborPrefs_46);
-
+		
 		iRef = new Text(ret, SWT.BORDER);
 		iRef.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		WidgetFactory.createLabel(ret, Messages.LaborPrefs_47);
@@ -153,7 +151,7 @@ public class EditLabItem extends TitleAreaDialog {
 		iUnit = new Text(ret, SWT.BORDER);
 		iUnit.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		WidgetFactory.createLabel(ret, Messages.LaborPrefs_49);
-
+		
 		List<LabItem> labItems = LabItem.getLabItems();
 		groups.clear();
 		for (LabItem li : (List<LabItem>) labItems) {
@@ -163,7 +161,7 @@ public class EditLabItem extends TitleAreaDialog {
 			groups.add(li.getGroup());
 		}
 		Collections.sort(groups);
-
+		
 		cGroup = new Combo(ret, SWT.SINGLE | SWT.DROP_DOWN);
 		cGroup.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		cGroup.setToolTipText(Messages.LaborPrefs_50);
@@ -196,25 +194,25 @@ public class EditLabItem extends TitleAreaDialog {
 		}
 		return ret;
 	}
-
+	
 	/**
-	* Event method is called when document radio button is selected or deselected
-	*/
-	private void documentSelectionChanged() {
+	 * Event method is called when document radio button is selected or deselected
+	 */
+	private void documentSelectionChanged(){
 		iRef.setEnabled(!document.getSelection());
 		iRfF.setEnabled(!document.getSelection());
 	}
 	
 	@Override
-	protected void okPressed() {
+	protected void okPressed(){
 		LabItem.typ typ;
 		// String refmin="",refmax;
 		// refmax=iRef.getText();
-		if(iTitel.getText().length() < 1 && iPrio.getText().length() < 1) {
+		if (iTitel.getText().length() < 1 && iPrio.getText().length() < 1) {
 			setErrorMessage("Insert titel or sequenz number");
 			return;
 		}
-			
+		
 		if (numeric.getSelection() == true) {
 			typ = LabItem.typ.NUMERIC;
 		} else if (abs.getSelection() == true) {
@@ -227,9 +225,9 @@ public class EditLabItem extends TitleAreaDialog {
 			typ = LabItem.typ.TEXT;
 		}
 		if (result == null) {
-			result = new LabItem(iKuerzel.getText(), iTitel.getText(),
-					actLabor, iRef.getText(), iRfF.getText(), iUnit.getText(),
-					typ, cGroup.getText(), iPrio.getText());
+			result =
+				new LabItem(iKuerzel.getText(), iTitel.getText(), actLabor, iRef.getText(), iRfF
+					.getText(), iUnit.getText(), typ, cGroup.getText(), iPrio.getText());
 		} else {
 			String t = "0";
 			if (typ == LabItem.typ.TEXT) {
@@ -241,51 +239,49 @@ public class EditLabItem extends TitleAreaDialog {
 			} else if (typ == LabItem.typ.DOCUMENT) {
 				t = "4";
 			}
-			result.set(new String[] { Messages.LaborPrefs_58,
-					Messages.LaborPrefs_59, Messages.LaborPrefs_60,
-					Messages.LaborPrefs_61, Messages.LaborPrefs_62,
-					Messages.LaborPrefs_63, Messages.LaborPrefs_64,
-					Messages.LaborPrefs_65, Messages.LaborPrefs_66 },
-					iKuerzel.getText(), iTitel.getText(), actLabor.getId(),
-					iRef.getText(), iRfF.getText(), iUnit.getText(), t,
-					cGroup.getText(), iPrio.getText());
+			result.set(new String[] {
+				Messages.LaborPrefs_58, Messages.LaborPrefs_59, Messages.LaborPrefs_60,
+				Messages.LaborPrefs_61, Messages.LaborPrefs_62, Messages.LaborPrefs_63,
+				Messages.LaborPrefs_64, Messages.LaborPrefs_65, Messages.LaborPrefs_66
+			}, iKuerzel.getText(), iTitel.getText(), actLabor.getId(), iRef.getText(), iRfF
+				.getText(), iUnit.getText(), t, cGroup.getText(), iPrio.getText());
 		}
 		if (!StringTool.isNothing(formel)) {
 			result.setFormula(formel);
 		}
 		super.okPressed();
 	}
-
-	public void setShortDescText(String string) {
+	
+	public void setShortDescText(String string){
 		iKuerzel.setText(string);
 	}
 	
-	public void setTitelText(String string) {
-		if(string != null)
+	public void setTitelText(String string){
+		if (string != null)
 			iTitel.setText(string);
 	}
 	
-	public void setRefMText(String string) {
-		if(string != null)
+	public void setRefMText(String string){
+		if (string != null)
 			iRef.setText(string);
 	}
 	
-	public void setRefFText(String string) {
-		if(string != null)
+	public void setRefFText(String string){
+		if (string != null)
 			iRfF.setText(string);
 	}
 	
-	public void setUnitText(String string) {
-		if(string != null)
+	public void setUnitText(String string){
+		if (string != null)
 			iUnit.setText(string);
 	}
 	
-	public void setSelectedLab(Kontakt lab) {
+	public void setSelectedLab(Kontakt lab){
 		String[] items = labors.getItems();
 		String searchItem = lab.getLabel();
 		int idx = 0;
-		for(; idx < items.length; idx++) {
-			if(items[idx].equalsIgnoreCase(searchItem)) {
+		for (; idx < items.length; idx++) {
+			if (items[idx].equalsIgnoreCase(searchItem)) {
 				labors.setSelection(idx);
 				actLabor = lablist.get(labors.getItem(idx));
 				return;

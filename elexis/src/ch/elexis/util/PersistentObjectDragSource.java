@@ -37,11 +37,11 @@ public class PersistentObjectDragSource implements DragSourceListener {
 	Transfer myTransfer = TextTransfer.getInstance();
 	
 	public PersistentObjectDragSource(final StructuredViewer v){
-		dragSource=v.getControl();
-		renderer=new ISelectionRenderer(){
+		dragSource = v.getControl();
+		renderer = new ISelectionRenderer() {
 			
-			public List<PersistentObject> getSelection() {
-				IStructuredSelection sel=(IStructuredSelection) v.getSelection();
+			public List<PersistentObject> getSelection(){
+				IStructuredSelection sel = (IStructuredSelection) v.getSelection();
 				return sel.toList();
 			}
 			
@@ -49,7 +49,7 @@ public class PersistentObjectDragSource implements DragSourceListener {
 		setup();
 	}
 	
-	public PersistentObjectDragSource(final Control source, final ISelectionRenderer renderer) {
+	public PersistentObjectDragSource(final Control source, final ISelectionRenderer renderer){
 		this.renderer = renderer;
 		dragSource = source;
 		setup();
@@ -57,15 +57,18 @@ public class PersistentObjectDragSource implements DragSourceListener {
 	
 	private void setup(){
 		DragSource mine = new DragSource(dragSource, DND.DROP_COPY);
-		mine.setTransfer(new Transfer[] { myTransfer });
+		mine.setTransfer(new Transfer[] {
+			myTransfer
+		});
 		mine.addDragListener(this);
 	}
-	public void dragFinished(final DragSourceEvent event) {
-		// TODO Auto-generated method stub
-		
+	
+	public void dragFinished(final DragSourceEvent event){
+	// TODO Auto-generated method stub
+	
 	}
 	
-	public void dragSetData(final DragSourceEvent event) {
+	public void dragSetData(final DragSourceEvent event){
 		
 		StringBuilder sb = new StringBuilder();
 		for (PersistentObject s : selection) {
@@ -75,7 +78,7 @@ public class PersistentObjectDragSource implements DragSourceListener {
 		event.data = sb.toString().replace(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
-	public void dragStart(final DragSourceEvent event) {
+	public void dragStart(final DragSourceEvent event){
 		
 		selection = renderer.getSelection();
 		// IStructuredSelection

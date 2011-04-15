@@ -41,7 +41,7 @@ public class MedikamentSelector extends CodeSelectorFactory implements ArtikelDe
 		if (dataloader == null) {
 			dataloader =
 				new ListLoader(JOBNAME, new Query<Medikament>(Medikament.class), new String[] {
-					"Name","Substanz","Notiz"
+					"Name", "Substanz", "Notiz"
 				});
 			JobPool.getJobPool().addJob(dataloader);
 		}

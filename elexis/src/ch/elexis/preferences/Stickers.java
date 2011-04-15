@@ -263,7 +263,7 @@ public class Stickers extends PreferencePage implements IWorkbenchPreferencePage
 		Query<Sticker> qbe = new Query<Sticker>(Sticker.class);
 		lEtiketten = qbe.execute();
 		if (lEtiketten != null) {
-			
+
 		} else {
 			lEtiketten = new LinkedList<Sticker>();
 		}

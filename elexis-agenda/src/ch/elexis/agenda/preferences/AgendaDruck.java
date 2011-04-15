@@ -39,8 +39,7 @@ import ch.elexis.data.Query;
 import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
 
-public class AgendaDruck extends PreferencePage implements
-		IWorkbenchPreferencePage {
+public class AgendaDruck extends PreferencePage implements IWorkbenchPreferencePage {
 	
 	Combo cTerminTemplate;
 	Text tTerminPrinter;
@@ -52,16 +51,16 @@ public class AgendaDruck extends PreferencePage implements
 	Button bDirectPrint;
 	
 	PrinterSelector psel;
-	 
-    public AgendaDruck() {
-        setDescription(Messages.AgendaDruck_settingsForPrint);
-    }
-
-    @Override
-	protected Control createContents(Composite parent) {
-		psel=new PrinterSelector();
-		Composite ret=new Composite(parent,SWT.NONE);
-		ret.setLayout(new GridLayout(3,false));
+	
+	public AgendaDruck(){
+		setDescription(Messages.AgendaDruck_settingsForPrint);
+	}
+	
+	@Override
+	protected Control createContents(Composite parent){
+		psel = new PrinterSelector();
+		Composite ret = new Composite(parent, SWT.NONE);
+		ret.setLayout(new GridLayout(3, false));
 		new Label(ret, SWT.NONE).setText(Messages.AgendaDruck_templateForCards);
 		cTerminTemplate = new Combo(ret, SWT.READ_ONLY);
 		cTerminTemplate.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
@@ -70,11 +69,11 @@ public class AgendaDruck extends PreferencePage implements
 		bDirectPrint.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		bDirectPrint.setText(Messages.AgendaDruck_printDirectly);
 		bDirectPrint.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				refreshDirectPrint();
 			}
 			
-			public void widgetDefaultSelected(SelectionEvent e) {
+			public void widgetDefaultSelected(SelectionEvent e){
 				widgetSelected(e);
 			}
 		});
@@ -83,82 +82,90 @@ public class AgendaDruck extends PreferencePage implements
 		cPrinterArea.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		cPrinterArea.setLayout(new GridLayout(3, false));
 		
-		new Label(cPrinterArea,SWT.NONE).setText(Messages.AgendaDruck_printerForCards);
-		tTerminPrinter=new Text(cPrinterArea,SWT.BORDER|SWT.READ_ONLY);
-		tTerminPrinter.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
+		new Label(cPrinterArea, SWT.NONE).setText(Messages.AgendaDruck_printerForCards);
+		tTerminPrinter = new Text(cPrinterArea, SWT.BORDER | SWT.READ_ONLY);
+		tTerminPrinter.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tTerminPrinter.setData("TerminPrinter"); //$NON-NLS-1$
-		bTerminPrinterButton=new Button(cPrinterArea,SWT.PUSH);
+		bTerminPrinterButton = new Button(cPrinterArea, SWT.PUSH);
 		bTerminPrinterButton.setText(" ->"); //$NON-NLS-1$
 		bTerminPrinterButton.setData(tTerminPrinter);
 		bTerminPrinterButton.addSelectionListener(psel);
 		
-		new Label(cPrinterArea,SWT.NONE).setText(Messages.AgendaDruck_TrayForCards);
-		tTerminTray=new Text(cPrinterArea,SWT.BORDER);
-		tTerminTray.setLayoutData(SWTHelper.getFillGridData(2,true,1,false));
+		new Label(cPrinterArea, SWT.NONE).setText(Messages.AgendaDruck_TrayForCards);
+		tTerminTray = new Text(cPrinterArea, SWT.BORDER);
+		tTerminTray.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
 		setInitialValues();
 		
 		return ret;
 	}
-    
-    private void refreshDirectPrint() {
-    	boolean directPrint = bDirectPrint.getSelection();
-
-    	if (directPrint) {
-    		cPrinterArea.setVisible(true);
-    	} else {
-    		cPrinterArea.setVisible(false);
-    	}
-    }
-    
-    /* fill combo box with available templates */
-    private void setTemplates() {
-    	cTerminTemplate.removeAll();
-    	
-    	String currentTemplate = Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE,
-    			PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE_DEFAULT);
-
-    	Brief[] templates = getSystemTemplates();
-    	for (int i = 0; i < templates.length; i++) {
-    		Brief brief = templates[i];
-    		String name = brief.getBetreff();
-    		cTerminTemplate.add(name);
-    	}
-    	
-    	cTerminTemplate.setText(currentTemplate);
-    }
-    
-    private void setInitialValues() {
-        setTemplates();
-        
-        tTerminPrinter.setText(Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_NAME, "")); //$NON-NLS-1$
-        tTerminTray.setText(Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY, "")); //$NON-NLS-1$
-        
-        boolean directPrint = Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT,
-        		PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT);
-        bDirectPrint.setSelection(directPrint);
-        refreshDirectPrint();
-    }
-    
-    @Override
-	public boolean performOk() {
-    	Hub.localCfg.set(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE, cTerminTemplate.getText());
-    	Hub.localCfg.set(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_NAME, tTerminPrinter.getText());
-		Hub.localCfg.set(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY, tTerminTray.getText());
-		Hub.localCfg.set(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT, bDirectPrint.getSelection());
+	
+	private void refreshDirectPrint(){
+		boolean directPrint = bDirectPrint.getSelection();
+		
+		if (directPrint) {
+			cPrinterArea.setVisible(true);
+		} else {
+			cPrinterArea.setVisible(false);
+		}
+	}
+	
+	/* fill combo box with available templates */
+	private void setTemplates(){
+		cTerminTemplate.removeAll();
+		
+		String currentTemplate =
+			Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE,
+				PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE_DEFAULT);
+		
+		Brief[] templates = getSystemTemplates();
+		for (int i = 0; i < templates.length; i++) {
+			Brief brief = templates[i];
+			String name = brief.getBetreff();
+			cTerminTemplate.add(name);
+		}
+		
+		cTerminTemplate.setText(currentTemplate);
+	}
+	
+	private void setInitialValues(){
+		setTemplates();
+		
+		tTerminPrinter.setText(Hub.localCfg.get(
+			PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_NAME, "")); //$NON-NLS-1$
+		tTerminTray.setText(Hub.localCfg.get(
+			PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY, "")); //$NON-NLS-1$
+		
+		boolean directPrint =
+			Hub.localCfg.get(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT,
+				PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT);
+		bDirectPrint.setSelection(directPrint);
+		refreshDirectPrint();
+	}
+	
+	@Override
+	public boolean performOk(){
+		Hub.localCfg.set(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_TEMPLATE, cTerminTemplate
+			.getText());
+		Hub.localCfg.set(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_NAME, tTerminPrinter
+			.getText());
+		Hub.localCfg.set(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_PRINTER_TRAY, tTerminTray
+			.getText());
+		Hub.localCfg.set(PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT, bDirectPrint
+			.getSelection());
 		
 		Hub.localCfg.flush();
 		
-    	return super.performOk();
+		return super.performOk();
 	}
-
-	public void init(IWorkbench workbench) {
-        // nothing to do
-    }
 	
-	private Brief[] getSystemTemplates() {
+	public void init(IWorkbench workbench){
+	// nothing to do
+	}
+	
+	private Brief[] getSystemTemplates(){
 		Query<Brief> qbe = new Query<Brief>(Brief.class);
-		qbe.add(Brief.FLD_TYPE,Query.EQUALS, Brief.TEMPLATE);
+		qbe.add(Brief.FLD_TYPE, Query.EQUALS, Brief.TEMPLATE);
 		qbe.add(Brief.FLD_KONSULTATION_ID, Query.EQUALS, "SYS");
 		qbe.startGroup();
 		qbe.add(Brief.FLD_DESTINATION_ID, Query.EQUALS, Hub.actMandant.getId());
@@ -167,7 +174,7 @@ public class AgendaDruck extends PreferencePage implements
 		qbe.endGroup();
 		qbe.and();
 		qbe.add("geloescht", Query.NOT_EQUAL, StringConstants.ONE);
-
+		
 		qbe.orderBy(false, Brief.FLD_DATE);
 		List<Brief> l = qbe.execute();
 		if (l != null) {
@@ -176,21 +183,19 @@ public class AgendaDruck extends PreferencePage implements
 			return new Brief[0];
 		}
 	}
-
-	class PrinterSelector extends SelectionAdapter{
+	
+	class PrinterSelector extends SelectionAdapter {
 		@Override
-		public void widgetSelected(SelectionEvent e) {
-			PrintDialog pd=new PrintDialog(getShell());
-			PrinterData pdata=pd.open();
-			if(pdata!=null){
-				Text tx=(Text) ((Button)e.getSource()).getData();
+		public void widgetSelected(SelectionEvent e){
+			PrintDialog pd = new PrintDialog(getShell());
+			PrinterData pdata = pd.open();
+			if (pdata != null) {
+				Text tx = (Text) ((Button) e.getSource()).getData();
 				tx.setText(pdata.name);
 				tx.setData(pdata);
 			}
 		}
 		
-		
 	};
-
-
+	
 }

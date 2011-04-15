@@ -30,32 +30,33 @@ public class ScriptEditor extends TitleAreaDialog {
 	
 	public ScriptEditor(Shell shell, String vorgabe, String titel){
 		super(shell);
-		script=vorgabe;
-		title=titel;
+		script = vorgabe;
+		title = titel;
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
-		GridData full=new GridData(GridData.FILL_BOTH|GridData.GRAB_HORIZONTAL|GridData.GRAB_VERTICAL);
+	protected Control createDialogArea(Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
+		GridData full =
+			new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
 		ret.setLayoutData(full);
 		ret.setLayout(new FillLayout());
-		text=new Text(ret,SWT.MULTI|SWT.BORDER);
+		text = new Text(ret, SWT.MULTI | SWT.BORDER);
 		text.setText(StringTool.unNull(script));
 		return ret;
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		setTitle(Messages.ScriptEditor_editScript);
 		setMessage(title);
 		getShell().setText(Messages.ScriptEditor_ScriptTitle);
 	}
-
+	
 	@Override
-	protected void okPressed() {
-		script=text.getText();
+	protected void okPressed(){
+		script = text.getText();
 		super.okPressed();
 	}
 	

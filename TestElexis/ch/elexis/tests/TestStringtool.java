@@ -12,21 +12,21 @@ import ch.rgw.tools.StringTool;
 
 public class TestStringtool extends TestCase {
 	
-
 	protected void setUp() throws Exception{
-	
+
 	}
 	
 	public void testMatchMail() throws Exception{
-		String mailaddr="psiska@students.unibe.ch";
+		String mailaddr = "psiska@students.unibe.ch";
 		assertTrue(StringTool.isMailAddress(mailaddr));
 	}
+	
 	public void testAmbiguify() throws Exception{
-		String n1="abcädefüghiöjklè";
-		String n2="abcaedefÜghiOejklé";
-		String n3=StringTool.unambiguify(n1);
-		String n4=StringTool.unambiguify(n2);
-		assertEquals(n3,n4);
+		String n1 = "abcädefüghiöjklè";
+		String n2 = "abcaedefÜghiOejklé";
+		String n3 = StringTool.unambiguify(n1);
+		String n4 = StringTool.unambiguify(n2);
+		assertEquals(n3, n4);
 	}
 	
 	/**
@@ -35,7 +35,7 @@ public class TestStringtool extends TestCase {
 	 * @throws Exception
 	 */
 	public void testFold() throws Exception{
-		Hashtable<String,String> hash=new Hashtable<String,String>();
+		Hashtable<String, String> hash = new Hashtable<String, String>();
 		hash.put("first", "thisisfirst");
 		hash.put("second", "thisissecond");
 		assertNotNull(hash);
@@ -46,14 +46,13 @@ public class TestStringtool extends TestCase {
 	}
 	
 	public void testEnPrintable() throws Exception{
-		byte[] check=new byte[256];
-		for(int i=0;i<255;i++){
-			check[i]=(byte)i;
+		byte[] check = new byte[256];
+		for (int i = 0; i < 255; i++) {
+			check[i] = (byte) i;
 		}
-		String print=StringTool.enPrintableStrict(check);
-		byte[] dec=StringTool.dePrintableStrict(print);
+		String print = StringTool.enPrintableStrict(check);
+		byte[] dec = StringTool.dePrintableStrict(print);
 		assertTrue(Arrays.equals(check, dec));
 	}
-	
 	
 }

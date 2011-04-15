@@ -25,7 +25,8 @@ public class ObservationMessage {
 	List<IValueType> observations = new Vector<IValueType>();
 	
 	public ObservationMessage(String _sendingApplication, String _sendingFacility,
-		String _dateTimeOfMessage, String _externalPid, String _internalPid, String _orderNumber) throws ParseException {
+		String _dateTimeOfMessage, String _externalPid, String _internalPid, String _orderNumber)
+		throws ParseException{
 		super();
 		this.sendingApplication = _sendingApplication;
 		this.sendingFacility = _sendingFacility;

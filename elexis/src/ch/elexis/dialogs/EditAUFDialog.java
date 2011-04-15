@@ -45,28 +45,23 @@ public class EditAUFDialog extends TitleAreaDialog {
 	private Text tProzent, tGrund, tZusatz;
 	TimeTool tt = new TimeTool();
 	
-	
-	public EditAUFDialog(Shell shell, AUF a, Fall fall) {
+	public EditAUFDialog(Shell shell, AUF a, Fall fall){
 		super(shell);
 		auf = a;
-		this.fall=fall;
+		this.fall = fall;
 	}
 	
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(Composite parent){
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout(2, true));
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		new Label(ret, SWT.NONE).setText(Messages
-			.getString("EditAUFDialog.from")); //$NON-NLS-1$
-		new Label(ret, SWT.NONE).setText(Messages
-			.getString("EditAUFDialog.until")); //$NON-NLS-1$
+		new Label(ret, SWT.NONE).setText(Messages.getString("EditAUFDialog.from")); //$NON-NLS-1$
+		new Label(ret, SWT.NONE).setText(Messages.getString("EditAUFDialog.until")); //$NON-NLS-1$
 		dpVon = new DatePicker(ret, SWT.NONE);
 		dpBis = new DatePicker(ret, SWT.NONE);
-		new Label(ret, SWT.NONE).setText(Messages
-			.getString("EditAUFDialog.percent")); //$NON-NLS-1$
-		new Label(ret, SWT.NONE).setText(Messages
-			.getString("EditAUFDialog.reason")); //$NON-NLS-1$
+		new Label(ret, SWT.NONE).setText(Messages.getString("EditAUFDialog.percent")); //$NON-NLS-1$
+		new Label(ret, SWT.NONE).setText(Messages.getString("EditAUFDialog.reason")); //$NON-NLS-1$
 		tProzent = new Text(ret, SWT.BORDER);
 		tGrund = new Text(ret, SWT.BORDER);
 		tProzent.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -74,8 +69,7 @@ public class EditAUFDialog extends TitleAreaDialog {
 		
 		Label lbZusatz = new Label(ret, SWT.NONE);
 		lbZusatz.setText(Messages.getString("EditAUFDialog.additional")); //$NON-NLS-1$
-		lbZusatz.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 2,
-			1));
+		lbZusatz.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, false, 2, 1));
 		tZusatz = new Text(ret, SWT.MULTI);
 		tZusatz.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
 		if (auf != null) {
@@ -85,12 +79,12 @@ public class EditAUFDialog extends TitleAreaDialog {
 			tProzent.setText(auf.getProzent());
 			tZusatz.setText(auf.getZusatz());
 		} else {
-			if(fall==null){
+			if (fall == null) {
 				fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
 			}
 			if (fall != null) {
 				tGrund.setText(fall.getGrund());
-			}else{
+			} else {
 				setMessage("Bitte wählen Sie zuerst einen Fall für diese AUF aus");
 			}
 			tProzent.setText("100"); //$NON-NLS-1$
@@ -101,9 +95,9 @@ public class EditAUFDialog extends TitleAreaDialog {
 	}
 	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
-		setTitle(Messages.getString("EditAUFDialog.auf")+" - "+ElexisEventDispatcher.getSelectedPatient().getLabel()); //$NON-NLS-1$
+		setTitle(Messages.getString("EditAUFDialog.auf") + " - " + ElexisEventDispatcher.getSelectedPatient().getLabel()); //$NON-NLS-1$
 		if (auf == null) {
 			setMessage(Messages.getString("EditAUFDialog.enterNewAUF")); //$NON-NLS-1$
 		} else {
@@ -114,14 +108,14 @@ public class EditAUFDialog extends TitleAreaDialog {
 	}
 	
 	@Override
-	protected void okPressed() {
+	protected void okPressed(){
 		TimeTool tt = new TimeTool();
 		tt.setTimeInMillis(dpVon.getDate().getTime());
 		String von = tt.toString(TimeTool.DATE_GER);
 		tt.setTimeInMillis(dpBis.getDate().getTime());
 		String bis = tt.toString(TimeTool.DATE_GER);
 		String zus = tZusatz.getText();
-		//Fall fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+		// Fall fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
 		if (auf == null) {
 			auf = new AUF(fall, von, bis, tProzent.getText(), tGrund.getText());
 			if (!StringTool.isNothing(zus)) {
@@ -129,10 +123,14 @@ public class EditAUFDialog extends TitleAreaDialog {
 			}
 		} else {
 			fall = auf.getFall();
-			String[] parms = new String[] { AUF.FLD_CASE_ID, AUF.FLD_DATE_FROM,
-				AUF.FLD_DATE_UNTIL, AUF.FLD_REASON, AUF.FLD_PERCENT, AUF.FLD_ZUSATZ };
-			String[] vals = new String[] { fall.getId(), von, bis,
-				tGrund.getText(), tProzent.getText(), zus };
+			String[] parms =
+				new String[] {
+					AUF.FLD_CASE_ID, AUF.FLD_DATE_FROM, AUF.FLD_DATE_UNTIL, AUF.FLD_REASON,
+					AUF.FLD_PERCENT, AUF.FLD_ZUSATZ
+				};
+			String[] vals = new String[] {
+				fall.getId(), von, bis, tGrund.getText(), tProzent.getText(), zus
+			};
 			auf.set(parms, vals);
 		}
 		super.okPressed();

@@ -13,29 +13,37 @@
 package ch.rgw.tools;
 
 public class MimeTool {
-	final static String[][] mapping={
-			{"pdf","application/pdf"},
-			{"ods","application/vnd.oasis.opendocument.text"},
-			{"jpg","image/jpeg"},
-			{"pps","application/mspowerpoint"},
-			{"png","image/png"}
+	final static String[][] mapping = {
+		{
+			"pdf", "application/pdf"
+		}, {
+			"ods", "application/vnd.oasis.opendocument.text"
+		}, {
+			"jpg", "image/jpeg"
+		}, {
+			"pps", "application/mspowerpoint"
+		}, {
+			"png", "image/png"
+		}
 	};
 	
 	/**
 	 * find the mimetype for a given extension
-	 * @param ext an extension with or without dot. Case doesn't matter
-	 * @return the matching mimetype or application/octet-stream if none was found, or
-	 * the empty string if ext was null
+	 * 
+	 * @param ext
+	 *            an extension with or without dot. Case doesn't matter
+	 * @return the matching mimetype or application/octet-stream if none was found, or the empty
+	 *         string if ext was null
 	 */
 	public static String getMimeType(String ext){
-		if(ext==null){
+		if (ext == null) {
 			return "";
 		}
-		if(ext.startsWith(".")){
-			ext=ext.substring(1);
+		if (ext.startsWith(".")) {
+			ext = ext.substring(1);
 		}
-		for(String[] line:mapping){
-			if(line[0].equalsIgnoreCase(ext)){
+		for (String[] line : mapping) {
+			if (line[0].equalsIgnoreCase(ext)) {
 				return line[1];
 			}
 		}
@@ -43,17 +51,19 @@ public class MimeTool {
 	}
 	
 	/**
-	 * find the file extension for a given mimetype. If more than one extension is
-	 * known for a mimetyoe, only the first one will be chosen
-	 * @param mimetype a mimetype. Case doesn't matter
+	 * find the file extension for a given mimetype. If more than one extension is known for a
+	 * mimetyoe, only the first one will be chosen
+	 * 
+	 * @param mimetype
+	 *            a mimetype. Case doesn't matter
 	 * @return the matching extension or the empty string if none was found
 	 */
 	public static String getExtension(String mimetype){
-		if(mimetype==null){
+		if (mimetype == null) {
 			return "";
 		}
-		for(String[] line:mapping){
-			if(line[1].equalsIgnoreCase(mimetype)){
+		for (String[] line : mapping) {
+			if (line[1].equalsIgnoreCase(mimetype)) {
 				return line[0];
 			}
 		}

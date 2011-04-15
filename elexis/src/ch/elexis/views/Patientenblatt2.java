@@ -76,8 +76,8 @@ import ch.elexis.util.WidgetFactory;
 import ch.rgw.tools.StringTool;
 
 /**
- * Detailansicht eines Patientrecords Ersatz für Patientenblatt mit erweiterter
- * Funktionalität (Lock, Nutzung von InputPanel)
+ * Detailansicht eines Patientrecords Ersatz für Patientenblatt mit erweiterter Funktionalität
+ * (Lock, Nutzung von InputPanel)
  */
 public class Patientenblatt2 extends Composite implements IActivationListener {
 	private static final String KEY_DBFIELD = "dbfield"; //$NON-NLS-1$
@@ -89,32 +89,32 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 	private final static String CFG_BEZUGSKONTAKTTYPEN = "views/patientenblatt/Bezugskontakttypen"; //$NON-NLS-1$
 	public final static String CFG_EXTRAFIELDS = "views/patientenblatt/extrafelder"; //$NON-NLS-1$
 	private final static String SPLITTER = "#!>"; //$NON-NLS-1$
-	private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(
-			Patient.class) {
-		public void runInUi(ElexisEvent ev) {
+	private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
+		public void runInUi(ElexisEvent ev){
 			setPatient(ElexisEventDispatcher.getSelectedPatient());
-
+			
 		}
 	};
-
-	private ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(
-			Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
-		public void runInUi(ElexisEvent ev) {
-			setPatient(ElexisEventDispatcher.getSelectedPatient());
-			recreateUserpanel();
-		}
-	};
-
-	private final static String[] lbExpandable = {
+	
+	private ElexisEventListenerImpl eeli_user =
+		new ElexisEventListenerImpl(Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
+			public void runInUi(ElexisEvent ev){
+				setPatient(ElexisEventDispatcher.getSelectedPatient());
+				recreateUserpanel();
+			}
+		};
+	
+	private final static String[] lbExpandable =
+		{
 			Messages.getString("Patientenblatt2.diagnosesLbl"), //$NON-NLS-1$
 			Messages.getString("Patientenblatt2.persAnamnesisLbl"), //$NON-NLS-1$
-			Messages.getString("Patientenblatt2.allergiesLbl"), Messages.getString("Patientenblatt2.risksLbl"), Messages.getString("Patientenblatt2.remarksLbk") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			Messages.getString("Patientenblatt2.allergiesLbl"), Messages.getString("Patientenblatt2.risksLbl"), Messages.getString("Patientenblatt2.remarksLbk")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	private final Text[] txExpandable = new Text[lbExpandable.length];
-	private final static String[] dfExpandable = { "Diagnosen", "PersAnamnese", //$NON-NLS-1$ //$NON-NLS-2$
-			"Allergien", "Risiken", "Bemerkung" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private final static String[] dfExpandable = {
+		"Diagnosen", "PersAnamnese", //$NON-NLS-1$ //$NON-NLS-2$
+		"Allergien", "Risiken", "Bemerkung"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	private final ExpandableComposite[] ec = new ExpandableComposite[lbExpandable.length];
-	private final static String FIXMEDIKATION = Messages
-			.getString("Patientenblatt2.fixmedication"); //$NON-NLS-1$
+	private final static String FIXMEDIKATION = Messages.getString("Patientenblatt2.fixmedication"); //$NON-NLS-1$
 	// private final static String[] lbLists={"Fixmedikation"/*,"Reminders" */};
 	private final FormText inpAdresse;
 	private final ListDisplay<BezugsKontakt> inpZusatzAdresse /* , dlReminder */;
@@ -128,71 +128,78 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 	private boolean bLocked = true;
 	private Composite cUserfields;
 	Hyperlink hHA;
-
-	void recreateUserpanel() {
+	
+	void recreateUserpanel(){
 		// cUserfields.setRedraw(false);
 		if (ipp != null) {
 			ipp.dispose();
 			ipp = null;
 		}
-
+		
 		ArrayList<InputData> fields = new ArrayList<InputData>(20);
-		fields.add(new InputData(
+		fields
+			.add(new InputData(
 				Messages.getString("Patientenblatt2.name"), Patient.FLD_NAME, InputData.Typ.STRING, null)); //$NON-NLS-1$
-		fields.add(new InputData(
+		fields
+			.add(new InputData(
 				Messages.getString("Patientenblatt2.firstname"), Patient.FLD_FIRSTNAME, InputData.Typ.STRING, null)); //$NON-NLS-1$
-		fields.add(new InputData(
+		fields
+			.add(new InputData(
 				Messages.getString("Patientenblatt2.birthdate"), Patient.BIRTHDATE, InputData.Typ.DATE, null)); //$NON-NLS-1$
-		fields.add(new InputData(
-				Messages.getString("Patientenblatt2.sex"), Patient.FLD_SEX, null, new String[] { Person.FEMALE, Person.MALE }, false)); //$NON-NLS-1$
-		fields.add(new InputData(
+		fields
+			.add(new InputData(
+				Messages.getString("Patientenblatt2.sex"), Patient.FLD_SEX, null, new String[] { Person.FEMALE, Person.MALE}, false)); //$NON-NLS-1$
+		fields
+			.add(new InputData(
 				Messages.getString("Patientenblatt2.phone1"), Patient.FLD_PHONE1, InputData.Typ.STRING, null)); //$NON-NLS-1$
-		fields.add(new InputData(
+		fields
+			.add(new InputData(
 				Messages.getString("Patientenblatt2.phone2"), Patient.FLD_PHONE2, InputData.Typ.STRING, null)); //$NON-NLS-1$
-		fields.add(new InputData(
+		fields
+			.add(new InputData(
 				Messages.getString("Patientenblatt2.mobile"), Patient.MOBILE, InputData.Typ.STRING, null)); //$NON-NLS-1$
-		fields.add(new InputData(
+		fields
+			.add(new InputData(
 				Messages.getString("Patientenblatt2.fax"), Patient.FLD_FAX, InputData.Typ.STRING, null)); //$NON-NLS-1$
-		fields.add(new InputData(
+		fields
+			.add(new InputData(
 				Messages.getString("Patientenblatt2.email"), Patient.FLD_E_MAIL, InputData.Typ.STRING, null)); //$NON-NLS-1$
-		fields.add(new InputData(
+		fields
+			.add(new InputData(
 				Messages.getString("Patientenblatt2.group"), Patient.FLD_GROUP, InputData.Typ.STRING, null)); //$NON-NLS-1$
-		fields.add(new InputData(
+		fields
+			.add(new InputData(
 				Messages.getString("Patientenblatt2.balance"), Patient.FLD_BALANCE, new LabeledInputField.IContentProvider() { //$NON-NLS-1$
-
-					public void displayContent(PersistentObject po,
-							InputData ltf) {
-						ltf.setText(actPatient.getKontostand()
-								.getAmountAsString());
-
+				
+					public void displayContent(PersistentObject po, InputData ltf){
+						ltf.setText(actPatient.getKontostand().getAmountAsString());
+						
 					}
-
-					public void reloadContent(PersistentObject po, InputData ltf) {
+					
+					public void reloadContent(PersistentObject po, InputData ltf){
 						if (new AddBuchungDialog(getShell(), actPatient).open() == Dialog.OK) {
-							ltf.setText(actPatient.getKontostand()
-									.getAmountAsString());
+							ltf.setText(actPatient.getKontostand().getAmountAsString());
 						}
 					}
-
+					
 				}));
-
-		String[] userfields = Hub.userCfg.get(CFG_EXTRAFIELDS,
-				StringConstants.EMPTY).split(StringConstants.COMMA);
+		
+		String[] userfields =
+			Hub.userCfg.get(CFG_EXTRAFIELDS, StringConstants.EMPTY).split(StringConstants.COMMA);
 		for (String extfield : userfields) {
 			if (!StringTool.isNothing(extfield)) {
-				fields.add(new InputData(extfield, Patient.FLD_EXTINFO,
-						InputData.Typ.STRING, extfield));
+				fields.add(new InputData(extfield, Patient.FLD_EXTINFO, InputData.Typ.STRING,
+					extfield));
 			}
 		}
-		ipp = new InputPanel(cUserfields, 2, 6,
-				fields.toArray(new InputData[0]));
+		ipp = new InputPanel(cUserfields, 2, 6, fields.toArray(new InputData[0]));
 		ipp.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		ipp.changed(ipp.getChildren());
 		// cUserfields.setRedraw(true);
 		cUserfields.setBounds(ipp.getBounds());
 	}
-
-	Patientenblatt2(final Composite parent, final IViewSite site) {
+	
+	Patientenblatt2(final Composite parent, final IViewSite site){
 		super(parent, SWT.NONE);
 		viewsite = site;
 		makeActions();
@@ -205,187 +212,178 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 		cUserfields.setLayout(new GridLayout());
 		cUserfields.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		recreateUserpanel();
-
+		
 		Composite cPersonalien = tk.createComposite(form.getBody());
 		cPersonalien.setLayout(new GridLayout(2, false));
-		cPersonalien
-				.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		hHA = tk.createHyperlink(cPersonalien,
-				Messages.getString("Patientenblatt2.postal"), SWT.NONE); //$NON-NLS-1$
+		cPersonalien.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		hHA =
+			tk
+				.createHyperlink(cPersonalien,
+					Messages.getString("Patientenblatt2.postal"), SWT.NONE); //$NON-NLS-1$
 		hHA.addHyperlinkListener(hr);
 		hHA.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
 		inpAdresse = tk.createFormText(cPersonalien, false);
 		inpAdresse.setText("---\n", false, false); //$NON-NLS-1$
 		inpAdresse.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-
+		
 		IExpansionListener ecExpansionListener = new ExpansionAdapter() {
 			@Override
-			public void expansionStateChanging(final ExpansionEvent e) {
+			public void expansionStateChanging(final ExpansionEvent e){
 				ExpandableComposite src = (ExpandableComposite) e.getSource();
-				UserSettings2.saveExpandedState(
-						KEY_PATIENTENBLATT + src.getText(), e.getState());
+				UserSettings2.saveExpandedState(KEY_PATIENTENBLATT + src.getText(), e.getState());
 			}
-
+			
 		};
-
-		ecZA = WidgetFactory.createExpandableComposite(tk, form,
-				Messages.getString("Patientenblatt2.additionalAdresses")); //$NON-NLS-1$
+		
+		ecZA =
+			WidgetFactory.createExpandableComposite(tk, form, Messages
+				.getString("Patientenblatt2.additionalAdresses")); //$NON-NLS-1$
 		UserSettings2.setExpandedState(ecZA, "Patientenblatt/Zusatzadressen"); //$NON-NLS-1$
-
+		
 		ecZA.addExpansionListener(ecExpansionListener);
+		
+		inpZusatzAdresse =
+			new ListDisplay<BezugsKontakt>(ecZA, SWT.NONE, new ListDisplay.LDListener() {
+				/*
+				 * public boolean dropped(final PersistentObject dropped) { return false; }
+				 */
 
-		inpZusatzAdresse = new ListDisplay<BezugsKontakt>(ecZA, SWT.NONE,
-				new ListDisplay.LDListener() {
-					/*
-					 * public boolean dropped(final PersistentObject dropped) {
-					 * return false; }
-					 */
-
-					public void hyperlinkActivated(final String l) {
-						final String[] sortFields = new String[] {
-								Kontakt.FLD_NAME1, Kontakt.FLD_NAME2,
-								Kontakt.FLD_STREET };
-						KontaktSelektor ksl = new KontaktSelektor(
-								getShell(),
-								Kontakt.class,
-								Messages.getString("Patientenblatt2.contactForAdditionalAddress"), Messages.getString("Patientenblatt2.pleaseSelectardress"), sortFields); //$NON-NLS-1$ //$NON-NLS-2$
-						if (ksl.open() == Dialog.OK) {
-							Kontakt k = (Kontakt) ksl.getSelection();
-							BezugsKontaktAuswahl bza = new BezugsKontaktAuswahl();
-							// InputDialog id=new
-							// InputDialog(getShell(),"Bezugstext für Adresse","Geben Sie bitte einen Text ein, der die Bedeutung dieser Adresse erklärt","",null);
-							if (bza.open() == Dialog.OK) {
-								String bezug = bza.getResult();
-								BezugsKontakt bk = actPatient.addBezugsKontakt(
-										k, bezug);
-								inpZusatzAdresse.add(bk);
-								form.reflow(true);
-							}
-
+				public void hyperlinkActivated(final String l){
+					final String[] sortFields = new String[] {
+						Kontakt.FLD_NAME1, Kontakt.FLD_NAME2, Kontakt.FLD_STREET
+					};
+					KontaktSelektor ksl =
+						new KontaktSelektor(
+							getShell(),
+							Kontakt.class,
+							Messages.getString("Patientenblatt2.contactForAdditionalAddress"), Messages.getString("Patientenblatt2.pleaseSelectardress"), sortFields); //$NON-NLS-1$ //$NON-NLS-2$
+					if (ksl.open() == Dialog.OK) {
+						Kontakt k = (Kontakt) ksl.getSelection();
+						BezugsKontaktAuswahl bza = new BezugsKontaktAuswahl();
+						// InputDialog id=new
+						// InputDialog(getShell(),"Bezugstext für Adresse","Geben Sie bitte einen Text ein, der die Bedeutung dieser Adresse erklärt","",null);
+						if (bza.open() == Dialog.OK) {
+							String bezug = bza.getResult();
+							BezugsKontakt bk = actPatient.addBezugsKontakt(k, bezug);
+							inpZusatzAdresse.add(bk);
+							form.reflow(true);
 						}
-
+						
 					}
-
-					public String getLabel(Object o) {
-						BezugsKontakt bezugsKontakt = (BezugsKontakt) o;
-
-						StringBuffer sb = new StringBuffer();
-						sb.append(bezugsKontakt.getLabel());
-
-						Kontakt other = Kontakt.load(bezugsKontakt
-								.get(BezugsKontakt.OTHER_ID));
-						if (other.exists()) {
-							List<String> tokens = new ArrayList<String>();
-
-							String telefon1 = other.get(Kontakt.FLD_PHONE1);
-							String telefon2 = other.get(Kontakt.FLD_PHONE2);
-							String mobile = other.get(Kontakt.FLD_MOBILEPHONE);
-							String eMail = other.get(Kontakt.FLD_E_MAIL);
-							String fax = other.get(Kontakt.FLD_FAX);
-
-							if (!StringTool.isNothing(telefon1)) {
-								tokens.add("T1: " + telefon1); //$NON-NLS-1$
-							}
-							if (!StringTool.isNothing(telefon2)) {
-								tokens.add("T2: " + telefon2); //$NON-NLS-1$
-							}
-							if (!StringTool.isNothing(mobile)) {
-								tokens.add("M: " + mobile); //$NON-NLS-1$
-							}
-							if (!StringTool.isNothing(fax)) {
-								tokens.add("F: " + fax); //$NON-NLS-1$
-							}
-							if (!StringTool.isNothing(eMail)) {
-								tokens.add(eMail);
-							}
-							for (String token : tokens) {
-								sb.append(", "); //$NON-NLS-1$
-								sb.append(token);
-							}
-							return sb.toString();
+					
+				}
+				
+				public String getLabel(Object o){
+					BezugsKontakt bezugsKontakt = (BezugsKontakt) o;
+					
+					StringBuffer sb = new StringBuffer();
+					sb.append(bezugsKontakt.getLabel());
+					
+					Kontakt other = Kontakt.load(bezugsKontakt.get(BezugsKontakt.OTHER_ID));
+					if (other.exists()) {
+						List<String> tokens = new ArrayList<String>();
+						
+						String telefon1 = other.get(Kontakt.FLD_PHONE1);
+						String telefon2 = other.get(Kontakt.FLD_PHONE2);
+						String mobile = other.get(Kontakt.FLD_MOBILEPHONE);
+						String eMail = other.get(Kontakt.FLD_E_MAIL);
+						String fax = other.get(Kontakt.FLD_FAX);
+						
+						if (!StringTool.isNothing(telefon1)) {
+							tokens.add("T1: " + telefon1); //$NON-NLS-1$
 						}
-						return "?"; //$NON-NLS-1$
+						if (!StringTool.isNothing(telefon2)) {
+							tokens.add("T2: " + telefon2); //$NON-NLS-1$
+						}
+						if (!StringTool.isNothing(mobile)) {
+							tokens.add("M: " + mobile); //$NON-NLS-1$
+						}
+						if (!StringTool.isNothing(fax)) {
+							tokens.add("F: " + fax); //$NON-NLS-1$
+						}
+						if (!StringTool.isNothing(eMail)) {
+							tokens.add(eMail);
+						}
+						for (String token : tokens) {
+							sb.append(", "); //$NON-NLS-1$
+							sb.append(token);
+						}
+						return sb.toString();
 					}
-				});
-		inpZusatzAdresse.addHyperlinks(Messages
-				.getString("Patientenblatt2.add")); //$NON-NLS-1$
+					return "?"; //$NON-NLS-1$
+				}
+			});
+		inpZusatzAdresse.addHyperlinks(Messages.getString("Patientenblatt2.add")); //$NON-NLS-1$
 		// inpZusatzAdresse.setMenu(createZusatzAdressMenu());
 		inpZusatzAdresse.setMenu(removeZAAction, showZAAction);
-
+		
 		ecZA.setClient(inpZusatzAdresse);
 		for (int i = 0; i < lbExpandable.length; i++) {
-			ec[i] = WidgetFactory.createExpandableComposite(tk, form,
-					lbExpandable[i]);
-			UserSettings2.setExpandedState(ec[i], KEY_PATIENTENBLATT
-					+ lbExpandable[i]);
+			ec[i] = WidgetFactory.createExpandableComposite(tk, form, lbExpandable[i]);
+			UserSettings2.setExpandedState(ec[i], KEY_PATIENTENBLATT + lbExpandable[i]);
 			txExpandable[i] = tk.createText(ec[i], "", SWT.MULTI); //$NON-NLS-1$
 			txExpandable[i].addFocusListener(new Focusreact(dfExpandable[i]));
 			ec[i].setData(KEY_DBFIELD, dfExpandable[i]);
 			ec[i].addExpansionListener(new ExpansionAdapter() {
 				@Override
-				public void expansionStateChanging(final ExpansionEvent e) {
-					ExpandableComposite src = (ExpandableComposite) e
-							.getSource();
+				public void expansionStateChanging(final ExpansionEvent e){
+					ExpandableComposite src = (ExpandableComposite) e.getSource();
 					if (e.getState() == true) {
 						Text tx = (Text) src.getClient();
 						if (actPatient != null) {
-							tx.setText(StringTool.unNull(actPatient
-									.get((String) src.getData(KEY_DBFIELD))));
+							tx.setText(StringTool.unNull(actPatient.get((String) src
+								.getData(KEY_DBFIELD))));
 						} else {
 							tx.setText(""); //$NON-NLS-1$
 						}
 					}
-					UserSettings2.saveExpandedState(
-							KEY_PATIENTENBLATT + src.getText(), e.getState());
+					UserSettings2.saveExpandedState(KEY_PATIENTENBLATT + src.getText(), e
+						.getState());
 				}
-
+				
 			});
 			txExpandable[i].addKeyListener(new KeyListener() {
-
-				public void keyReleased(KeyEvent e) {
+				
+				public void keyReleased(KeyEvent e){
 					Text tx = (Text) e.getSource();
 					tx.redraw();
 					form.getBody().layout(true);
 				}
-
-				public void keyPressed(KeyEvent e) {
-				}
+				
+				public void keyPressed(KeyEvent e){}
 			});
-
+			
 			ec[i].setClient(txExpandable[i]);
 		}
 		ecdm = WidgetFactory.createExpandableComposite(tk, form, FIXMEDIKATION);
-		UserSettings2
-				.setExpandedState(ecdm, KEY_PATIENTENBLATT + FIXMEDIKATION);
+		UserSettings2.setExpandedState(ecdm, KEY_PATIENTENBLATT + FIXMEDIKATION);
 		ecdm.addExpansionListener(ecExpansionListener);
 		dmd = new FixMediDisplay(ecdm, site);
 		ecdm.setClient(dmd);
-
+		
 		viewmenu = new ViewMenus(viewsite);
-		viewmenu.createMenu(GlobalActions.printEtikette,
-				GlobalActions.printAdresse, GlobalActions.printBlatt,
-				GlobalActions.printRoeBlatt);
+		viewmenu.createMenu(GlobalActions.printEtikette, GlobalActions.printAdresse,
+			GlobalActions.printBlatt, GlobalActions.printRoeBlatt);
 		viewmenu.createToolbar(lockAction);
 		GlobalEventDispatcher.addActivationListener(this, site.getPart());
 		tk.paintBordersFor(form.getBody());
 	}
-
+	
 	@Override
-	public void dispose() {
-		GlobalEventDispatcher
-				.removeActivationListener(this, viewsite.getPart());
+	public void dispose(){
+		GlobalEventDispatcher.removeActivationListener(this, viewsite.getPart());
 		super.dispose();
 	}
-
+	
 	class Focusreact extends FocusAdapter {
 		private final String field;
-
-		Focusreact(final String f) {
+		
+		Focusreact(final String f){
 			field = f;
 		}
-
+		
 		@Override
-		public void focusLost(final FocusEvent e) {
+		public void focusLost(final FocusEvent e){
 			if (actPatient == null) {
 				return;
 			}
@@ -405,69 +403,63 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 			}
 		}
 	}
-
+	
 	/*
-	 * private Menu createZusatzAdressMenu() { Menu ret = new
-	 * Menu(inpZusatzAdresse); delZA = new MenuItem(ret, SWT.NONE);
-	 * delZA.setText(Messages.getString("Patientenblatt2.removeAddress"));
+	 * private Menu createZusatzAdressMenu() { Menu ret = new Menu(inpZusatzAdresse); delZA = new
+	 * MenuItem(ret, SWT.NONE); delZA.setText(Messages.getString("Patientenblatt2.removeAddress"));
 	 * //$NON-NLS-1$ delZA.addSelectionListener(new SelectionAdapter() {
 	 * 
-	 * @Override public void widgetSelected(final SelectionEvent e) { if
-	 * (!bLocked) { BezugsKontakt a = (BezugsKontakt) inpZusatzAdresse
-	 * .getSelection(); actPatient.removeBezugsKontakt(Kontakt.load(a
-	 * .get(BezugsKontakt.OTHER_ID))); setPatient(actPatient); } }
+	 * @Override public void widgetSelected(final SelectionEvent e) { if (!bLocked) { BezugsKontakt
+	 * a = (BezugsKontakt) inpZusatzAdresse .getSelection();
+	 * actPatient.removeBezugsKontakt(Kontakt.load(a .get(BezugsKontakt.OTHER_ID)));
+	 * setPatient(actPatient); } }
 	 * 
 	 * }); MenuItem showZA = new MenuItem(ret, SWT.NONE);
-	 * showZA.setText(Messages.getString("Patientenblatt2.showAddress"));
-	 * //$NON-NLS-1$ showZA.addSelectionListener(new SelectionAdapter() {
+	 * showZA.setText(Messages.getString("Patientenblatt2.showAddress")); //$NON-NLS-1$
+	 * showZA.addSelectionListener(new SelectionAdapter() {
 	 * 
-	 * @Override public void widgetSelected(final SelectionEvent e) { Kontakt a
-	 * = Kontakt.load(((BezugsKontakt) inpZusatzAdresse
-	 * .getSelection()).get(BezugsKontakt.OTHER_ID)); KontaktDetailDialog kdd =
-	 * new KontaktDetailDialog(form .getShell(), a); kdd.open(); } }); return
-	 * ret; }
+	 * @Override public void widgetSelected(final SelectionEvent e) { Kontakt a =
+	 * Kontakt.load(((BezugsKontakt) inpZusatzAdresse .getSelection()).get(BezugsKontakt.OTHER_ID));
+	 * KontaktDetailDialog kdd = new KontaktDetailDialog(form .getShell(), a); kdd.open(); } });
+	 * return ret; }
 	 */
 
 	class Hyperlinkreact extends HyperlinkAdapter {
-
+		
 		@Override
 		@SuppressWarnings("synthetic-access")
-		public void linkActivated(final HyperlinkEvent e) {
+		public void linkActivated(final HyperlinkEvent e){
 			if (actPatient != null) {
-				AnschriftEingabeDialog aed = new AnschriftEingabeDialog(
-						form.getShell(), actPatient);
+				AnschriftEingabeDialog aed =
+					new AnschriftEingabeDialog(form.getShell(), actPatient);
 				aed.open();
-				inpAdresse.setText(actPatient.getPostAnschrift(false), false,
-						false);
+				inpAdresse.setText(actPatient.getPostAnschrift(false), false, false);
 			}
 		}
 	}
-
-	public void setPatient(final Patient p) {
+	
+	public void setPatient(final Patient p){
 		actPatient = p;
 		ipp.getAutoForm().reload(actPatient);
-
+		
 		if (actPatient == null) {
-			form.setText(Messages
-					.getString("Patientenblatt2.noPatientSelected")); //$NON-NLS-1$
+			form.setText(Messages.getString("Patientenblatt2.noPatientSelected")); //$NON-NLS-1$
 			inpAdresse.setText(StringConstants.EMPTY, false, false);
 			inpZusatzAdresse.clear();
 			return;
 		}
-
+		
 		form.setText(StringTool.unNull(p.getName()) + StringConstants.SPACE
-				+ StringTool.unNull(p.getVorname())
-				+ " (" + p.getPatCode() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+			+ StringTool.unNull(p.getVorname()) + " (" + p.getPatCode() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
 		inpAdresse.setText(p.getPostAnschrift(false), false, false);
 		UserSettings2.setExpandedState(ecZA, "Patientenblatt/Zusatzadressen"); //$NON-NLS-1$
 		inpZusatzAdresse.clear();
 		for (BezugsKontakt za : p.getBezugsKontakte()) {
 			inpZusatzAdresse.add(za);
 		}
-
+		
 		for (int i = 0; i < dfExpandable.length; i++) {
-			UserSettings2.setExpandedState(ec[i],
-					KEY_PATIENTENBLATT + ec[i].getText());
+			UserSettings2.setExpandedState(ec[i], KEY_PATIENTENBLATT + ec[i].getText());
 			if (ec[i].isExpanded() == true) {
 				txExpandable[i].setText(p.get(dfExpandable[i]));
 			}
@@ -476,58 +468,54 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 		form.reflow(true);
 		setLocked(true);
 	}
-
-	public void refresh() {
+	
+	public void refresh(){
 		form.reflow(true);
 	}
-
-	private void makeActions() {
-		lockAction = new RestrictedAction(
-				AccessControlDefaults.PATIENT_MODIFY,
-				Messages.getString("Patientenblatt2.saved"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk
-						.getImageDescriptor(Desk.IMG_LOCK_CLOSED));
-				setToolTipText(Messages
-						.getString("Patientenblatt2.savedToolTip")); //$NON-NLS-1$
-				setChecked(true);
-			}
-
+	
+	private void makeActions(){
+		lockAction =
+			new RestrictedAction(AccessControlDefaults.PATIENT_MODIFY, Messages
+				.getString("Patientenblatt2.saved"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_LOCK_CLOSED));
+					setToolTipText(Messages.getString("Patientenblatt2.savedToolTip")); //$NON-NLS-1$
+					setChecked(true);
+				}
+				
+				@Override
+				public void doRun(){
+					setLocked(isChecked());
+				}
+				
+			};
+		
+		removeZAAction = new Action(Messages.getString("Patientenblatt2.removeAddress")) {
 			@Override
-			public void doRun() {
-				setLocked(isChecked());
-			}
-
-		};
-
-		removeZAAction = new Action(
-				Messages.getString("Patientenblatt2.removeAddress")) {
-			@Override
-			public void run() {
+			public void run(){
 				if (!bLocked) {
-					BezugsKontakt a = (BezugsKontakt) inpZusatzAdresse
-							.getSelection();
+					BezugsKontakt a = (BezugsKontakt) inpZusatzAdresse.getSelection();
 					a.delete();
 					setPatient(actPatient);
 				}
 			}
 		};
-
-		showZAAction = new RestrictedAction(
-				AccessControlDefaults.PATIENT_DISPLAY,
-				Messages.getString("Patientenblatt2.showAddress")) {
-			@Override
-			public void doRun() {
-				Kontakt a = Kontakt.load(((BezugsKontakt) inpZusatzAdresse
-						.getSelection()).get(BezugsKontakt.OTHER_ID));
-				KontaktDetailDialog kdd = new KontaktDetailDialog(
-						form.getShell(), a);
-				kdd.open();
-			}
-		};
+		
+		showZAAction =
+			new RestrictedAction(AccessControlDefaults.PATIENT_DISPLAY, Messages
+				.getString("Patientenblatt2.showAddress")) {
+				@Override
+				public void doRun(){
+					Kontakt a =
+						Kontakt.load(((BezugsKontakt) inpZusatzAdresse.getSelection())
+							.get(BezugsKontakt.OTHER_ID));
+					KontaktDetailDialog kdd = new KontaktDetailDialog(form.getShell(), a);
+					kdd.open();
+				}
+			};
 	}
-
-	public void setLocked(boolean bLock) {
+	
+	public void setLocked(boolean bLock){
 		bLocked = bLock;
 		ipp.setLocked(bLock);
 		inpZusatzAdresse.enableHyperlinks(!bLock);
@@ -536,67 +524,60 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 		removeZAAction.setEnabled(!bLock);
 		if (bLock) {
 			hHA.setForeground(Desk.getColor(Desk.COL_GREY));
-			lockAction.setImageDescriptor(Desk
-					.getImageDescriptor(Desk.IMG_LOCK_CLOSED));
+			lockAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_LOCK_CLOSED));
 		} else {
 			hHA.setForeground(Desk.getColor(Desk.COL_BLUE));
-			lockAction.setImageDescriptor(Desk
-					.getImageDescriptor(Desk.IMG_LOCK_OPEN));
+			lockAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_LOCK_OPEN));
 		}
 		lockAction.setChecked(bLock);
 		for (ExpandableComposite ex : ec) {
 			ex.getClient().setEnabled(!bLock);
 		}
 	}
-
-	public void activation(final boolean mode) {
-		// TODO Auto-generated method stub
-
+	
+	public void activation(final boolean mode){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void visible(final boolean mode) {
+	
+	public void visible(final boolean mode){
 		if (mode == true) {
-			setPatient((Patient) ElexisEventDispatcher.getInstance()
-					.getSelected(Patient.class));
-			ElexisEventDispatcher.getInstance().addListeners(eeli_pat,
-					eeli_user);
+			setPatient((Patient) ElexisEventDispatcher.getInstance().getSelected(Patient.class));
+			ElexisEventDispatcher.getInstance().addListeners(eeli_pat, eeli_user);
 		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat,
-					eeli_user);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat, eeli_user);
 		}
-
+		
 	}
-
+	
 	class BezugsKontaktAuswahl extends Dialog {
 		Combo cbType;
 		String result = ""; //$NON-NLS-1$
-
-		public BezugsKontaktAuswahl() {
+		
+		public BezugsKontaktAuswahl(){
 			super(Patientenblatt2.this.getShell());
 		}
-
+		
 		@Override
-		public void create() {
+		public void create(){
 			super.create();
-			getShell().setText(
-					Messages.getString("Patientenblatt2.kindOfRelation")); //$NON-NLS-1$
+			getShell().setText(Messages.getString("Patientenblatt2.kindOfRelation")); //$NON-NLS-1$
 		}
-
+		
 		@Override
-		protected Control createDialogArea(Composite parent) {
+		protected Control createDialogArea(Composite parent){
 			Composite ret = (Composite) super.createDialogArea(parent);
-			new Label(ret, SWT.NONE)
-					.setText(Messages
-							.getString("Patientenblatt2.pleaseEnterKindOfRelationship")); //$NON-NLS-1$
+			new Label(ret, SWT.NONE).setText(Messages
+				.getString("Patientenblatt2.pleaseEnterKindOfRelationship")); //$NON-NLS-1$
 			cbType = new Combo(ret, SWT.NONE);
 			cbType.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			String bez = Hub.globalCfg.get(CFG_BEZUGSKONTAKTTYPEN, ""); //$NON-NLS-1$
 			cbType.setItems(bez.split(SPLITTER));
 			return ret;
 		}
-
+		
 		@Override
-		protected void okPressed() {
+		protected void okPressed(){
 			result = cbType.getText();
 			String[] items = cbType.getItems();
 			String nitem = cbType.getText();
@@ -604,15 +585,14 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 			if (StringTool.getIndex(items, nitem) == -1) {
 				res = nitem + SPLITTER;
 			}
-			Hub.globalCfg.set(CFG_BEZUGSKONTAKTTYPEN,
-					res + StringTool.join(items, SPLITTER));
+			Hub.globalCfg.set(CFG_BEZUGSKONTAKTTYPEN, res + StringTool.join(items, SPLITTER));
 			super.okPressed();
 		}
-
-		public String getResult() {
+		
+		public String getResult(){
 			return result;
 		}
-
+		
 	}
-
+	
 }

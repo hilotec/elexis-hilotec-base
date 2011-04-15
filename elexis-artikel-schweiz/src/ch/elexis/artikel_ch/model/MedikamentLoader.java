@@ -21,7 +21,7 @@ import ch.elexis.util.viewers.CommonViewer;
 public class MedikamentLoader extends FlatDataLoader {
 	
 	public MedikamentLoader(CommonViewer cv){
-		super(cv,new Query<Medikament>(Medikament.class));
+		super(cv, new Query<Medikament>(Medikament.class));
 		setOrderFields(Medikament.FLD_NAME);
 	}
 }

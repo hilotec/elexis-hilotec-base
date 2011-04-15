@@ -64,7 +64,7 @@ public interface IVerrechenbar extends ICodeElement {
 	public String getXidDomain();
 	
 	// public AbstractDataLoaderJob getDataloader();
-	//public String[] getDisplayedFields();
+	// public String[] getDisplayedFields();
 	
 	public static class DefaultComparator implements Comparator<IVerrechenbar> {
 		public int compare(final IVerrechenbar v1, final IVerrechenbar v2){

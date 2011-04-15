@@ -41,18 +41,17 @@ import ch.elexis.util.PlatformHelper;
 import ch.rgw.io.FileTool;
 import ch.rgw.tools.ExHandler;
 
-public class AgendaImages extends PreferencePage implements
-		IWorkbenchPreferencePage {
+public class AgendaImages extends PreferencePage implements IWorkbenchPreferencePage {
 	private SettingsPreferenceStore prefs;
-
-	public AgendaImages() {
+	
+	public AgendaImages(){
 		prefs = new SettingsPreferenceStore(Hub.userCfg);
 		setPreferenceStore(prefs);
 		setDescription(Messages.AgendaImages_imagesForAgenda);
 	}
-
+	
 	@Override
-	protected Control createContents(final Composite parent) {
+	protected Control createContents(final Composite parent){
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout(3, false));
 		for (String t : Termin.TerminTypes) {
@@ -66,52 +65,45 @@ public class AgendaImages extends PreferencePage implements
 			bCh.setData(t);
 			bCh.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(SelectionEvent e){
 					FileDialog fdl = new FileDialog(parent.getShell(), SWT.OPEN);
 					
-					String dpath = PlatformHelper.getBasePath(Activator.PLUGIN_ID).replaceFirst(
-							"\\\\bin", "") + File.separator + "icons"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					String dpath =
+						PlatformHelper.getBasePath(Activator.PLUGIN_ID).replaceFirst("\\\\bin", "") + File.separator + "icons"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 					fdl.setFilterPath(dpath);
 					String name = fdl.open();
 					File src = new File(name);
 					try {
-						Image img = new Image(Desk.getDisplay(),
-								new FileInputStream(src));
+						Image img = new Image(Desk.getDisplay(), new FileInputStream(src));
 						if (img != null) { // File bezeichnet ein lesbares Bild
-							File dest = new File(dpath + File.separator
-									+ src.getName());
-							if (!dest.getAbsolutePath().equalsIgnoreCase(
-									src.getAbsolutePath())) {
-
+							File dest = new File(dpath + File.separator + src.getName());
+							if (!dest.getAbsolutePath().equalsIgnoreCase(src.getAbsolutePath())) {
+								
 								// Ist noch nicht im richtigen Verzeichnis
-								if (FileTool.copyFile(src, dest,
-										FileTool.FAIL_IF_EXISTS) == false) {
+								if (FileTool.copyFile(src, dest, FileTool.FAIL_IF_EXISTS) == false) {
 									MessageDialog.openError(parent.getShell(),
-											Messages.AgendaImages_cannotCopy,
-											Messages.AgendaImages_6 + name
-													+ Messages.AgendaImages_7);
+										Messages.AgendaImages_cannotCopy, Messages.AgendaImages_6
+											+ name + Messages.AgendaImages_7);
 									return;
 								}
 							}
-							String t = (String) ((Button) e.getSource())
-									.getData();
-							Hub.userCfg.set(
-									PreferenceConstants.AG_TYPIMAGE_PREFIX + t,
-									"icons/" + dest.getName()); //$NON-NLS-1$
+							String t = (String) ((Button) e.getSource()).getData();
+							Hub.userCfg.set(PreferenceConstants.AG_TYPIMAGE_PREFIX + t,
+								"icons/" + dest.getName()); //$NON-NLS-1$
 						}
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
 					}
 				}
-
+				
 			});
 		}
 		return ret;
 	}
-
-	public void init(IWorkbench workbench) {
-		// TODO Auto-generated method stub
-
+	
+	public void init(IWorkbench workbench){
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 }

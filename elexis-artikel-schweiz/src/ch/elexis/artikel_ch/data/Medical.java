@@ -14,36 +14,43 @@ package ch.elexis.artikel_ch.data;
 
 import ch.elexis.data.Artikel;
 
-public class Medical extends Artikel{
+public class Medical extends Artikel {
 	@Override
-	protected String getConstraint() {
+	protected String getConstraint(){
 		return "Typ='Medical'"; //$NON-NLS-1$
 	}
+	
 	protected void setConstraint(){
-		set("Typ","Medical"); //$NON-NLS-1$ //$NON-NLS-2$
+		set("Typ", "Medical"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
+	
 	@Override
-	public String getCodeSystemName() {
-			return "Medicals"; //$NON-NLS-1$
+	public String getCodeSystemName(){
+		return "Medicals"; //$NON-NLS-1$
 	}
+	
 	@Override
-	public String getCode() {
+	public String getCode(){
 		return getPharmaCode();
 	}
+	
 	public static Medical load(String id){
 		return new Medical(id);
 	}
+	
 	protected Medical(String id){
-		super (id);
+		super(id);
 	}
+	
 	protected Medical(){}
+	
 	@Override
-	public boolean isDragOK() {
+	public boolean isDragOK(){
 		return true;
 	}
 	
 	public String getLabel(){
 		return get("Name"); //$NON-NLS-1$
 	}
-
+	
 }

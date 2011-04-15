@@ -13,7 +13,7 @@ import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
 
 public class Test_LabItem extends AbstractPersistentObjectTest {
-
+	
 	private JdbcLink link;
 	private Organisation org;
 	
@@ -21,41 +21,39 @@ public class Test_LabItem extends AbstractPersistentObjectTest {
 	private LabResult formulaResult;
 	private LabItem formulaItem;
 	
-	private static final String REF_ITEM_KUERZEL = "kuerzel"; 
-	private static final String REF_ITEM_NAME = "testname"; 
+	private static final String REF_ITEM_KUERZEL = "kuerzel";
+	private static final String REF_ITEM_NAME = "testname";
 	private static final String REF_ITEM_UNIT = "mg/dl";
 	private static final String REF_ITEM_REFM = "0-1";
 	private static final String REF_ITEM_REFW = "0-2";
-	private static final String REF_ITEM_GROUP = "G gruppe";	
-	
+	private static final String REF_ITEM_GROUP = "G gruppe";
 	
 	@Before
-	public void setUp() {
+	public void setUp(){
 		link = initDB();
 		// create a instance of an PersistentObject ex. Organisation to test the query
 		org = new Organisation("orgname", "orgzusatz1");
-		new LabItem(REF_ITEM_KUERZEL, REF_ITEM_NAME, org,
-				REF_ITEM_REFM, REF_ITEM_REFW, REF_ITEM_UNIT,
-				LabItem.typ.NUMERIC, REF_ITEM_GROUP, "0");
+		new LabItem(REF_ITEM_KUERZEL, REF_ITEM_NAME, org, REF_ITEM_REFM, REF_ITEM_REFW,
+			REF_ITEM_UNIT, LabItem.typ.NUMERIC, REF_ITEM_GROUP, "0");
 	}
 	
 	@After
-	public void tearDown() {
+	public void tearDown(){
 		link.disconnect();
 	}
 	
 	@Test
-	public void testGetLabItems() {
+	public void testGetLabItems(){
 		List<LabItem> items = LabItem.getLabItems();
 		assertEquals(1, items.size());
 	}
 	
 	@Test
-	public void testGetLabItemsSelective() {
+	public void testGetLabItemsSelective(){
 		// create a second lab item to select
-		LabItem item = new LabItem("kuerzel1", "testname1", org,
-				"0-1", "0-2", "mg/dl",
-				LabItem.typ.NUMERIC, "gruppe", "0");
+		LabItem item =
+			new LabItem("kuerzel1", "testname1", org, "0-1", "0-2", "mg/dl", LabItem.typ.NUMERIC,
+				"gruppe", "0");
 		
 		List<LabItem> items = LabItem.getLabItems(org.getId(), "kuerzel1", "0-1", "0-2", "mg/dl");
 		assertEquals(1, items.size());
@@ -69,7 +67,7 @@ public class Test_LabItem extends AbstractPersistentObjectTest {
 	}
 	
 	@Test
-	public void testGetEinheit() {
+	public void testGetEinheit(){
 		List<LabItem> items = LabItem.getLabItems();
 		assertEquals(1, items.size());
 		LabItem loc = items.get(0);
@@ -77,7 +75,7 @@ public class Test_LabItem extends AbstractPersistentObjectTest {
 	}
 	
 	@Test
-	public void testSetEinheit() {
+	public void testSetEinheit(){
 		List<LabItem> items = LabItem.getLabItems();
 		assertEquals(1, items.size());
 		LabItem loc = items.get(0);
@@ -86,7 +84,7 @@ public class Test_LabItem extends AbstractPersistentObjectTest {
 	}
 	
 	@Test
-	public void testGetGroup() {
+	public void testGetGroup(){
 		List<LabItem> items = LabItem.getLabItems();
 		assertEquals(1, items.size());
 		LabItem loc = items.get(0);
@@ -94,32 +92,32 @@ public class Test_LabItem extends AbstractPersistentObjectTest {
 	}
 	
 	@Test
-	public void testGetRefM() {
+	public void testGetRefM(){
 		List<LabItem> items = LabItem.getLabItems();
 		assertEquals(1, items.size());
 		LabItem loc = items.get(0);
 		assertEquals(REF_ITEM_REFM, loc.getRefM());
 	}
-
+	
 	@Test
-	public void testSetRefM() {
+	public void testSetRefM(){
 		List<LabItem> items = LabItem.getLabItems();
 		assertEquals(1, items.size());
 		LabItem loc = items.get(0);
 		loc.setRefM("1-2");
 		assertEquals("1-2", loc.getRefM());
 	}
-
+	
 	@Test
-	public void testGetRefW() {
+	public void testGetRefW(){
 		List<LabItem> items = LabItem.getLabItems();
 		assertEquals(1, items.size());
 		LabItem loc = items.get(0);
 		assertEquals(REF_ITEM_REFW, loc.getRefW());
 	}
-
+	
 	@Test
-	public void testSetRefW() {
+	public void testSetRefW(){
 		List<LabItem> items = LabItem.getLabItems();
 		assertEquals(1, items.size());
 		LabItem loc = items.get(0);
@@ -128,7 +126,7 @@ public class Test_LabItem extends AbstractPersistentObjectTest {
 	}
 	
 	@Test
-	public void testGetLabor() {
+	public void testGetLabor(){
 		List<LabItem> items = LabItem.getLabItems();
 		assertEquals(1, items.size());
 		LabItem loc = items.get(0);
@@ -136,7 +134,7 @@ public class Test_LabItem extends AbstractPersistentObjectTest {
 	}
 	
 	@Test
-	public void testGetLabel() {
+	public void testGetLabel(){
 		List<LabItem> items = LabItem.getLabItems();
 		assertEquals(1, items.size());
 		LabItem loc = items.get(0);
@@ -144,7 +142,7 @@ public class Test_LabItem extends AbstractPersistentObjectTest {
 	}
 	
 	@Test
-	public void testGetShortLabel() {
+	public void testGetShortLabel(){
 		List<LabItem> items = LabItem.getLabItems();
 		assertEquals(1, items.size());
 		LabItem loc = items.get(0);
@@ -152,7 +150,7 @@ public class Test_LabItem extends AbstractPersistentObjectTest {
 	}
 	
 	@Test
-	public void testGetTyp() {
+	public void testGetTyp(){
 		List<LabItem> items = LabItem.getLabItems();
 		assertEquals(1, items.size());
 		LabItem loc = items.get(0);
@@ -160,35 +158,35 @@ public class Test_LabItem extends AbstractPersistentObjectTest {
 	}
 	
 	@Test
-	public void testSetFormula() {
+	public void testSetFormula(){
 		createFormulaEnv();
 		assertEquals("G_1*2", formulaItem.getFormula());
 	}
 	
 	@Test
-	public void testEvaluate() {
+	public void testEvaluate(){
 		createFormulaEnv();
 		// a null pointer will be thrown when looking for the script interpreter
 		// TODO write a plugin test including the interpreter
 		try {
 			formulaItem.evaluate(formulaPat, new TimeTool("01.01.00"));
 		} catch (NullPointerException e) {
-			
+
 		} catch (ElexisException e) {
 			fail();
 		}
 	}
 	
-	private void createFormulaEnv() {
+	private void createFormulaEnv(){
 		// create a second lab item to select
-		LabItem item = new LabItem("kuerzel1", "testname1", org,
-				"0-1", "0-2", "mg/dl",
-				LabItem.typ.NUMERIC, "G gruppe", "1");
+		LabItem item =
+			new LabItem("kuerzel1", "testname1", org, "0-1", "0-2", "mg/dl", LabItem.typ.NUMERIC,
+				"G gruppe", "1");
 		// create a lab item made up by a formula
-		formulaItem = new LabItem("formula", "formulatest", org,
-				"0-2", "0-4", "mg/dl",
-				LabItem.typ.FORMULA, "G gruppe", "2");
-
+		formulaItem =
+			new LabItem("formula", "formulatest", org, "0-2", "0-4", "mg/dl", LabItem.typ.FORMULA,
+				"G gruppe", "2");
+		
 		formulaPat = new Patient("testName", "testVorname", "01.01.79", "m");
 		
 		formulaResult = new LabResult(formulaPat, new TimeTool("01.01.00"), item, "0.5", "comment");

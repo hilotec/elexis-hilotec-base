@@ -29,56 +29,54 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 
 public class ExternalLink implements IKonsExtension {
-	public static final String ID="ch.elexis.text.ExternalLink"; //$NON-NLS-1$
-	//EnhancedTextField mine;
-	public String connect(IRichTextDisplay tf) {
+	public static final String ID = "ch.elexis.text.ExternalLink"; //$NON-NLS-1$
+	
+	// EnhancedTextField mine;
+	public String connect(IRichTextDisplay tf){
 		tf.addXrefHandler(ID, this);
 		return ID;
 	}
-
-	public boolean doLayout(StyleRange n, String provider, String id) {
-		n.underline=true;
-		n.foreground=Desk.getColor(Desk.COL_BLUE);
+	
+	public boolean doLayout(StyleRange n, String provider, String id){
+		n.underline = true;
+		n.foreground = Desk.getColor(Desk.COL_BLUE);
 		return true;
 	}
-
-	public boolean doXRef(String refProvider, String refID) {
-		try{
-			int r=refID.lastIndexOf('.');
-			String ext=""; //$NON-NLS-1$
-			if(r!=-1){
-				ext=refID.substring(r+1);
+	
+	public boolean doXRef(String refProvider, String refID){
+		try {
+			int r = refID.lastIndexOf('.');
+			String ext = ""; //$NON-NLS-1$
+			if (r != -1) {
+				ext = refID.substring(r + 1);
 			}
-			Program proggie=Program.findProgram(ext);
-			if(proggie!=null){
+			Program proggie = Program.findProgram(ext);
+			if (proggie != null) {
 				proggie.execute(refID);
-			}else{
-				if(Program.launch(refID)==false){
-					Runtime.getRuntime().exec(refID);	
+			} else {
+				if (Program.launch(refID) == false) {
+					Runtime.getRuntime().exec(refID);
 				}
 			}
-		}catch(Exception ex){
-			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
-					Messages.ExternalLink_CouldNotStartFile,
-					ex);
+		} catch (Exception ex) {
+			ElexisStatus status =
+				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+					Messages.ExternalLink_CouldNotStartFile, ex);
 			StatusManager.getManager().handle(status);
 		}
-
+		
 		return true;
 	}
-
-	public IAction[] getActions() {
+	
+	public IAction[] getActions(){
 		return null;
 	}
-
-	public void insert(Object o, int pos) {
-	}
-
-	public void removeXRef(String refProvider, String refID) {
-	}
-
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) throws CoreException {
-	}
-
+	
+	public void insert(Object o, int pos){}
+	
+	public void removeXRef(String refProvider, String refID){}
+	
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+		throws CoreException{}
+	
 }

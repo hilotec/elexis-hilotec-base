@@ -74,6 +74,7 @@ public class TrustXTransmit implements IRnOutputter {
 	
 	/**
 	 * Export and transmit all bills contained in rnn
+	 * 
 	 * @param rnn
 	 *            Collection of bills to transmit
 	 * @param asCopy
@@ -81,7 +82,8 @@ public class TrustXTransmit implements IRnOutputter {
 	 * 
 	 * @return Result containing all erroneous bills.
 	 */
-	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn, Properties props){
+	public Result<Rechnung> doOutput(final IRnOutputter.TYPE type, final Collection<Rechnung> rnn,
+		Properties props){
 		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		final Result<Rechnung> res = new Result<Rechnung>();
 		

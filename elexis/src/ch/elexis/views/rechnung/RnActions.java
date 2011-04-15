@@ -60,376 +60,336 @@ import ch.rgw.tools.Tree;
  * 
  */
 public class RnActions {
-	Action rnExportAction, editCaseAction, delRnAction, reactivateRnAction,
-			patDetailAction;
+	Action rnExportAction, editCaseAction, delRnAction, reactivateRnAction, patDetailAction;
 	Action expandAllAction, collapseAllAction, reloadAction, mahnWizardAction;
-	Action addPaymentAction, addExpenseAction, changeStatusAction,
-			stornoAction;
+	Action addPaymentAction, addExpenseAction, changeStatusAction, stornoAction;
 	Action increaseLevelAction, printListeAction, rnFilterAction;
 	Action addAccountExcessAction;
-
-	RnActions(final RechnungsListeView view) {
-
-		printListeAction = new Action(Messages
-				.getString("RnActions.printListAction")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
-				setToolTipText(Messages.getString("RnActions.printListTooltip")); //$NON-NLS-1$
-			}
-
-			@Override
-			public void run() {
-				Object[] sel = view.cv.getSelection();
-				new RnListeDruckDialog(view.getViewSite().getShell(), sel)
-						.open();
-			}
-		};
-		mahnWizardAction = new Action(Messages
-				.getString("RnActions.remindersAction")) { //$NON-NLS-1$
-			{
-				setToolTipText(Messages.getString("RnActions.remindersTooltip")); //$NON-NLS-1$
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_WIZARD));
-			}
-
-			@Override
-			public void run() {
-				if (!MessageDialog.openConfirm(view.getViewSite().getShell(),
-						Messages.getString("RnActions.reminderConfirmCaption"), //$NON-NLS-1$
+	
+	RnActions(final RechnungsListeView view){
+		
+		printListeAction = new Action(Messages.getString("RnActions.printListAction")) { //$NON-NLS-1$
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
+					setToolTipText(Messages.getString("RnActions.printListTooltip")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					Object[] sel = view.cv.getSelection();
+					new RnListeDruckDialog(view.getViewSite().getShell(), sel).open();
+				}
+			};
+		mahnWizardAction = new Action(Messages.getString("RnActions.remindersAction")) { //$NON-NLS-1$
+				{
+					setToolTipText(Messages.getString("RnActions.remindersTooltip")); //$NON-NLS-1$
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_WIZARD));
+				}
+				
+				@Override
+				public void run(){
+					if (!MessageDialog.openConfirm(view.getViewSite().getShell(), Messages
+						.getString("RnActions.reminderConfirmCaption"), //$NON-NLS-1$
 						Messages.getString("RnActions.reminderConfirmMessage"))) { //$NON-NLS-1$
-					return;
-				}
-				Handler.execute(view.getViewSite(), MahnlaufCommand.ID, null);
-				view.cfp.clearValues();
-				view.cfp.cbStat
+						return;
+					}
+					Handler.execute(view.getViewSite(), MahnlaufCommand.ID, null);
+					view.cfp.clearValues();
+					view.cfp.cbStat
 						.setText(RnControlFieldProvider.stats[RnControlFieldProvider.stats.length - 3]);
-				view.cfp.fireChangedEvent();
-			}
-		};
-		rnExportAction = new Action(Messages
-				.getString("RechnungsListeView.printAction")) { //$NON-NLS-1$
-			{
-				setToolTipText(Messages
-						.getString("RechnungsListeView.printToolTip")); //$NON-NLS-1$
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_GOFURTHER));
-				/*
-				 * GlobalEvents.getInstance().addSelectionListener(new
-				 * GlobalEvents.SelectionListener() {
-				 * 
-				 * public void selectionEvent(PersistentObject obj){ if(obj
-				 * instanceof Rechnung)
-				 * 
-				 * }
-				 * 
-				 * public void clearEvent(Class<? extends PersistentObject>
-				 * template){ // TODO Auto-generated method stub
-				 * 
-				 * } })
-				 */
-			}
-
-			@Override
-			public void run() {
-				List<Rechnung> list = view.createList();
-				new RnOutputDialog(view.getViewSite().getShell(), list).open();
-			}
-		};
-
-		patDetailAction = new Action(Messages
-				.getString("RnActions.patientDetailsAction")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				IWorkbenchPage rnPage = PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getActivePage();
-				try {
-					/* PatientDetailView fdv=(PatientDetailView) */rnPage
-							.showView(PatientDetailView2.ID);
-				} catch (Exception ex) {
-					ExHandler.handle(ex);
-				}
-			}
-
-		};
-		editCaseAction = new Action(Messages
-				.getString("RnActions.edirCaseAction")) { //$NON-NLS-1$
-
-			@Override
-			public void run() {
-				IWorkbenchPage rnPage = PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getActivePage();
-				try {
-					/* FallDetailView fdv=(FallDetailView) */rnPage
-							.showView(FallDetailView.ID);
-				} catch (Exception ex) {
-					ExHandler.handle(ex);
-				}
-			}
-
-		};
-		delRnAction = new Action(Messages
-				.getString("RnActions.deleteBillAction")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				List<Rechnung> list = view.createList();
-				for (Rechnung rn : list) {
-					rn.storno(true);
-				}
-			}
-		};
-		reactivateRnAction = new Action(Messages
-				.getString("RnActions.reactivateBillAction")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				List<Rechnung> list = view.createList();
-				for (Rechnung rn : list) {
-					rn.setStatus(RnStatus.OFFEN);
-				}
-			}
-		};
-		expandAllAction = new Action(Messages
-				.getString("RnActions.expandAllAction")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				view.cv.getViewerWidget().getControl().setRedraw(false);
-				((TreeViewer) view.cv.getViewerWidget()).expandAll();
-				view.cv.getViewerWidget().getControl().setRedraw(true);
-			}
-		};
-		collapseAllAction = new Action(Messages
-				.getString("RnActions.collapseAllAction")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				view.cv.getViewerWidget().getControl().setRedraw(false);
-				((TreeViewer) view.cv.getViewerWidget()).collapseAll();
-				view.cv.getViewerWidget().getControl().setRedraw(true);
-			}
-		};
-		reloadAction = new Action(Messages.getString("RnActions.reloadAction")) { //$NON-NLS-1$
-			{
-				setToolTipText(Messages.getString("RnActions.reloadTooltip")); //$NON-NLS-1$
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REFRESH));
-			}
-
-			@Override
-			public void run() {
-				view.cfp.fireChangedEvent();
-			}
-		};
-
-		addPaymentAction = new Action(Messages
-				.getString("RnActions.addBookingAction")) { //$NON-NLS-1$
-			{
-				setToolTipText(Messages
-						.getString("RnActions.addBookingTooltip")); //$NON-NLS-1$
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
-			}
-
-			@Override
-			public void run() {
-				List<Rechnung> list = view.createList();
-				if (list.size() > 0) {
-					Rechnung actRn = list.get(0);
-					try {
-						if (new RnDialogs.BuchungHinzuDialog(view.getViewSite()
-								.getShell(), actRn).open() == Dialog.OK) {
-							ElexisEventDispatcher.update(actRn);
-						}
-					} catch (ElexisException e) {
-						SWTHelper.showError(
-								"Zahlung hinzufügen ist nicht möglich", e
-										.getLocalizedMessage());
-					}
-				}
-			}
-		};
-
-		addExpenseAction = new Action(Messages
-				.getString("RnActions.addFineAction")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
-			}
-
-			@Override
-			public void run() {
-				List<Rechnung> list = view.createList();
-				if (list.size() > 0) {
-					Rechnung actRn = list.get(0);
-					try {
-						if (new RnDialogs.GebuehrHinzuDialog(view.getViewSite()
-								.getShell(), actRn).open() == Dialog.OK) {
-							ElexisEventDispatcher.update(actRn);
-						}
-					} catch (ElexisException e) {
-						SWTHelper.showError(
-								"Zahlung hinzufügen ist nicht möglich", e
-										.getLocalizedMessage());
-					}
-				}
-			}
-		};
-
-		changeStatusAction = new RestrictedAction(
-				AccessControlDefaults.ADMIN_CHANGE_BILLSTATUS_MANUALLY,
-				Messages.getString("RnActions.changeStateAction")) { //$NON-NLS-1$
-			{
-				setToolTipText(Messages
-						.getString("RnActions.changeStateTooltip")); //$NON-NLS-1$
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-			}
-
-			@Override
-			public void doRun() {
-				List<Rechnung> list = view.createList();
-				if (list.size() > 0) {
-					Rechnung actRn = list.get(0);
-					if (new RnDialogs.StatusAendernDialog(view.getViewSite()
-							.getShell(), actRn).open() == Dialog.OK) {
-						ElexisEventDispatcher.update(actRn);
-					}
-				}
-			}
-		};
-		stornoAction = new Action(Messages.getString("RnActions.stornoAction")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
-				setToolTipText(Messages
-						.getString("RnActions.stornoActionTooltip")); //$NON-NLS-1$
-			}
-
-			@Override
-			public void run() {
-				List<Rechnung> list = view.createList();
-				if (list.size() > 0) {
-					Rechnung actRn = list.get(0);
-					if (new RnDialogs.StornoDialog(view.getViewSite()
-							.getShell(), actRn).open() == Dialog.OK) {
-						ElexisEventDispatcher.update(actRn);
-					}
-				}
-			}
-		};
-		increaseLevelAction = new Action(Messages
-				.getString("RnActions.increaseReminderLevelAction")) { //$NON-NLS-1$
-			{
-				setToolTipText(Messages
-						.getString("RnActions.increadeReminderLevelTooltip")); //$NON-NLS-1$
-			}
-
-			@Override
-			public void run() {
-				List<Rechnung> list = view.createList();
-				if (list.size() > 0) {
-					Rechnung actRn = list.get(0);
-					switch (actRn.getStatus()) {
-					case RnStatus.OFFEN_UND_GEDRUCKT:
-						actRn.setStatus(RnStatus.MAHNUNG_1);
-						break;
-					case RnStatus.MAHNUNG_1_GEDRUCKT:
-						actRn.setStatus(RnStatus.MAHNUNG_2);
-						break;
-					case RnStatus.MAHNUNG_2_GEDRUCKT:
-						actRn.setStatus(RnStatus.MAHNUNG_3);
-						break;
-					default:
-						SWTHelper
-								.showInfo(
-										Messages
-												.getString("RnActions.changeStateErrorCaption"), //$NON-NLS-1$
-										Messages
-												.getString("RnActions.changeStateErrorMessage")); //$NON-NLS-1$
-					}
-				}
-
-			}
-		};
-		addAccountExcessAction = new Action(Messages
-				.getString("RnActions.addAccountGood")) { //$NON-NLS-1$
-			{
-				setToolTipText(Messages
-						.getString("RnActions.addAccountGoodTooltip")); //$NON-NLS-1$
-			}
-
-			@Override
-			public void run() {
-				List<Rechnung> list = view.createList();
-				if (list.size() > 0) {
-					Rechnung actRn = list.get(0);
-
-					// Allfaelliges Guthaben des Patienten der Rechnung als
-					// Anzahlung hinzufuegen
-					Fall fall = actRn.getFall();
-					Patient patient = fall.getPatient();
-					Money prepayment = patient.getAccountExcess();
-					if (prepayment.getCents() > 0) {
-						// make sure prepayment is not bigger than amount of
-						// bill
-						Money amount;
-						if (prepayment.getCents() > actRn.getBetrag()
-								.getCents()) {
-							amount = new Money(actRn.getBetrag());
-						} else {
-							amount = new Money(prepayment);
-						}
-
-						if (SWTHelper
-								.askYesNo(
-										Messages
-												.getString("RnActions.transferMoneyCaption"), //$NON-NLS-1$
-										"Das Konto von Patient \""
-												+ patient.getLabel()
-												+ "\" weist ein positives Kontoguthaben auf. Wollen Sie den Betrag von "
-												+ amount.toString()
-												+ " dieser Rechnung \""
-												+ actRn.getNr() + ": "
-												+ fall.getLabel()
-												+ "\" zuweisen?")) {
-
-							// remove amount from account and transfer it to the
-							// bill
-							Money accountAmount = new Money(amount);
-							accountAmount.negate();
-							new AccountTransaction(patient, null,
-									accountAmount, null,
-									"Anzahlung von Kontoguthaben auf Rechnung "
-											+ actRn.getNr());
-							actRn.addZahlung(amount,
-									"Anzahlung von Kontoguthaben", null);
-						}
-					}
-				}
-			}
-		};
-		rnFilterAction = new Action(Messages
-				.getString("RnActions.filterListAction"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
-				setToolTipText(Messages
-						.getString("RnActions.filterLIstTooltip")); //$NON-NLS-1$
-			}
-
-			@Override
-			public void run() {
-				if (isChecked()) {
-					RnFilterDialog rfd = new RnFilterDialog(view.getViewSite()
-							.getShell());
-					if (rfd.open() == Dialog.OK) {
-						view.cntp.setConstraints(rfd.ret);
-						view.cfp.fireChangedEvent();
-					}
-				} else {
-					view.cntp.setConstraints(null);
 					view.cfp.fireChangedEvent();
 				}
-
-			}
-		};
+			};
+		rnExportAction = new Action(Messages.getString("RechnungsListeView.printAction")) { //$NON-NLS-1$
+				{
+					setToolTipText(Messages.getString("RechnungsListeView.printToolTip")); //$NON-NLS-1$
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_GOFURTHER));
+					/*
+					 * GlobalEvents.getInstance().addSelectionListener(new
+					 * GlobalEvents.SelectionListener() {
+					 * 
+					 * public void selectionEvent(PersistentObject obj){ if(obj instanceof Rechnung)
+					 * 
+					 * }
+					 * 
+					 * public void clearEvent(Class<? extends PersistentObject> template){ // TODO
+					 * Auto-generated method stub
+					 * 
+					 * } })
+					 */
+				}
+				
+				@Override
+				public void run(){
+					List<Rechnung> list = view.createList();
+					new RnOutputDialog(view.getViewSite().getShell(), list).open();
+				}
+			};
+		
+		patDetailAction = new Action(Messages.getString("RnActions.patientDetailsAction")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					IWorkbenchPage rnPage =
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+					try {
+						/* PatientDetailView fdv=(PatientDetailView) */rnPage
+							.showView(PatientDetailView2.ID);
+					} catch (Exception ex) {
+						ExHandler.handle(ex);
+					}
+				}
+				
+			};
+		editCaseAction = new Action(Messages.getString("RnActions.edirCaseAction")) { //$NON-NLS-1$
+			
+				@Override
+				public void run(){
+					IWorkbenchPage rnPage =
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+					try {
+						/* FallDetailView fdv=(FallDetailView) */rnPage.showView(FallDetailView.ID);
+					} catch (Exception ex) {
+						ExHandler.handle(ex);
+					}
+				}
+				
+			};
+		delRnAction = new Action(Messages.getString("RnActions.deleteBillAction")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					List<Rechnung> list = view.createList();
+					for (Rechnung rn : list) {
+						rn.storno(true);
+					}
+				}
+			};
+		reactivateRnAction = new Action(Messages.getString("RnActions.reactivateBillAction")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					List<Rechnung> list = view.createList();
+					for (Rechnung rn : list) {
+						rn.setStatus(RnStatus.OFFEN);
+					}
+				}
+			};
+		expandAllAction = new Action(Messages.getString("RnActions.expandAllAction")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					view.cv.getViewerWidget().getControl().setRedraw(false);
+					((TreeViewer) view.cv.getViewerWidget()).expandAll();
+					view.cv.getViewerWidget().getControl().setRedraw(true);
+				}
+			};
+		collapseAllAction = new Action(Messages.getString("RnActions.collapseAllAction")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					view.cv.getViewerWidget().getControl().setRedraw(false);
+					((TreeViewer) view.cv.getViewerWidget()).collapseAll();
+					view.cv.getViewerWidget().getControl().setRedraw(true);
+				}
+			};
+		reloadAction = new Action(Messages.getString("RnActions.reloadAction")) { //$NON-NLS-1$
+				{
+					setToolTipText(Messages.getString("RnActions.reloadTooltip")); //$NON-NLS-1$
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REFRESH));
+				}
+				
+				@Override
+				public void run(){
+					view.cfp.fireChangedEvent();
+				}
+			};
+		
+		addPaymentAction = new Action(Messages.getString("RnActions.addBookingAction")) { //$NON-NLS-1$
+				{
+					setToolTipText(Messages.getString("RnActions.addBookingTooltip")); //$NON-NLS-1$
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ADDITEM));
+				}
+				
+				@Override
+				public void run(){
+					List<Rechnung> list = view.createList();
+					if (list.size() > 0) {
+						Rechnung actRn = list.get(0);
+						try {
+							if (new RnDialogs.BuchungHinzuDialog(view.getViewSite().getShell(),
+								actRn).open() == Dialog.OK) {
+								ElexisEventDispatcher.update(actRn);
+							}
+						} catch (ElexisException e) {
+							SWTHelper.showError("Zahlung hinzufügen ist nicht möglich", e
+								.getLocalizedMessage());
+						}
+					}
+				}
+			};
+		
+		addExpenseAction = new Action(Messages.getString("RnActions.addFineAction")) { //$NON-NLS-1$
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REMOVEITEM));
+				}
+				
+				@Override
+				public void run(){
+					List<Rechnung> list = view.createList();
+					if (list.size() > 0) {
+						Rechnung actRn = list.get(0);
+						try {
+							if (new RnDialogs.GebuehrHinzuDialog(view.getViewSite().getShell(),
+								actRn).open() == Dialog.OK) {
+								ElexisEventDispatcher.update(actRn);
+							}
+						} catch (ElexisException e) {
+							SWTHelper.showError("Zahlung hinzufügen ist nicht möglich", e
+								.getLocalizedMessage());
+						}
+					}
+				}
+			};
+		
+		changeStatusAction =
+			new RestrictedAction(AccessControlDefaults.ADMIN_CHANGE_BILLSTATUS_MANUALLY, Messages
+				.getString("RnActions.changeStateAction")) { //$NON-NLS-1$
+				{
+					setToolTipText(Messages.getString("RnActions.changeStateTooltip")); //$NON-NLS-1$
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
+				}
+				
+				@Override
+				public void doRun(){
+					List<Rechnung> list = view.createList();
+					if (list.size() > 0) {
+						Rechnung actRn = list.get(0);
+						if (new RnDialogs.StatusAendernDialog(view.getViewSite().getShell(), actRn)
+							.open() == Dialog.OK) {
+							ElexisEventDispatcher.update(actRn);
+						}
+					}
+				}
+			};
+		stornoAction = new Action(Messages.getString("RnActions.stornoAction")) { //$NON-NLS-1$
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
+					setToolTipText(Messages.getString("RnActions.stornoActionTooltip")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					List<Rechnung> list = view.createList();
+					if (list.size() > 0) {
+						Rechnung actRn = list.get(0);
+						if (new RnDialogs.StornoDialog(view.getViewSite().getShell(), actRn).open() == Dialog.OK) {
+							ElexisEventDispatcher.update(actRn);
+						}
+					}
+				}
+			};
+		increaseLevelAction =
+			new Action(Messages.getString("RnActions.increaseReminderLevelAction")) { //$NON-NLS-1$
+				{
+					setToolTipText(Messages.getString("RnActions.increadeReminderLevelTooltip")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					List<Rechnung> list = view.createList();
+					if (list.size() > 0) {
+						Rechnung actRn = list.get(0);
+						switch (actRn.getStatus()) {
+						case RnStatus.OFFEN_UND_GEDRUCKT:
+							actRn.setStatus(RnStatus.MAHNUNG_1);
+							break;
+						case RnStatus.MAHNUNG_1_GEDRUCKT:
+							actRn.setStatus(RnStatus.MAHNUNG_2);
+							break;
+						case RnStatus.MAHNUNG_2_GEDRUCKT:
+							actRn.setStatus(RnStatus.MAHNUNG_3);
+							break;
+						default:
+							SWTHelper.showInfo(Messages
+								.getString("RnActions.changeStateErrorCaption"), //$NON-NLS-1$
+								Messages.getString("RnActions.changeStateErrorMessage")); //$NON-NLS-1$
+						}
+					}
+					
+				}
+			};
+		addAccountExcessAction = new Action(Messages.getString("RnActions.addAccountGood")) { //$NON-NLS-1$
+				{
+					setToolTipText(Messages.getString("RnActions.addAccountGoodTooltip")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					List<Rechnung> list = view.createList();
+					if (list.size() > 0) {
+						Rechnung actRn = list.get(0);
+						
+						// Allfaelliges Guthaben des Patienten der Rechnung als
+						// Anzahlung hinzufuegen
+						Fall fall = actRn.getFall();
+						Patient patient = fall.getPatient();
+						Money prepayment = patient.getAccountExcess();
+						if (prepayment.getCents() > 0) {
+							// make sure prepayment is not bigger than amount of
+							// bill
+							Money amount;
+							if (prepayment.getCents() > actRn.getBetrag().getCents()) {
+								amount = new Money(actRn.getBetrag());
+							} else {
+								amount = new Money(prepayment);
+							}
+							
+							if (SWTHelper
+								.askYesNo(
+									Messages.getString("RnActions.transferMoneyCaption"), //$NON-NLS-1$
+									"Das Konto von Patient \""
+										+ patient.getLabel()
+										+ "\" weist ein positives Kontoguthaben auf. Wollen Sie den Betrag von "
+										+ amount.toString() + " dieser Rechnung \"" + actRn.getNr()
+										+ ": " + fall.getLabel() + "\" zuweisen?")) {
+								
+								// remove amount from account and transfer it to the
+								// bill
+								Money accountAmount = new Money(amount);
+								accountAmount.negate();
+								new AccountTransaction(patient, null, accountAmount, null,
+									"Anzahlung von Kontoguthaben auf Rechnung " + actRn.getNr());
+								actRn.addZahlung(amount, "Anzahlung von Kontoguthaben", null);
+							}
+						}
+					}
+				}
+			};
+		rnFilterAction =
+			new Action(Messages.getString("RnActions.filterListAction"), Action.AS_CHECK_BOX) { //$NON-NLS-1$
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_FILTER));
+					setToolTipText(Messages.getString("RnActions.filterLIstTooltip")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					if (isChecked()) {
+						RnFilterDialog rfd = new RnFilterDialog(view.getViewSite().getShell());
+						if (rfd.open() == Dialog.OK) {
+							view.cntp.setConstraints(rfd.ret);
+							view.cfp.fireChangedEvent();
+						}
+					} else {
+						view.cntp.setConstraints(null);
+						view.cfp.fireChangedEvent();
+					}
+					
+				}
+			};
 	}
-
-	static class RnListeDruckDialog extends TitleAreaDialog implements
-			ICallback {
+	
+	static class RnListeDruckDialog extends TitleAreaDialog implements ICallback {
 		ArrayList<Rechnung> rnn;
 		private TextContainer text;
-
-		public RnListeDruckDialog(final Shell shell, final Object[] tree) {
+		
+		public RnListeDruckDialog(final Shell shell, final Object[] tree){
 			super(shell);
 			rnn = new ArrayList<Rechnung>(tree.length);
 			for (Object o : tree) {
@@ -442,11 +402,9 @@ public class RnActions {
 						tr = tr.getParent();
 					}
 					if (tr.contents instanceof Patient) {
-						for (Tree tFall : (Tree[]) tr.getChildren().toArray(
-								new Tree[0])) {
+						for (Tree tFall : (Tree[]) tr.getChildren().toArray(new Tree[0])) {
 							Fall fall = (Fall) tFall.contents;
-							for (Tree tRn : (Tree[]) tFall.getChildren()
-									.toArray(new Tree[0])) {
+							for (Tree tRn : (Tree[]) tFall.getChildren().toArray(new Tree[0])) {
 								Rechnung rn = (Rechnung) tRn.contents;
 								rnn.add(rn);
 							}
@@ -454,12 +412,12 @@ public class RnActions {
 					}
 				}
 			}
-
+			
 		}
-
+		
 		@SuppressWarnings("unchecked")
 		@Override
-		protected Control createDialogArea(final Composite parent) {
+		protected Control createDialogArea(final Composite parent){
 			Composite ret = new Composite(parent, SWT.NONE);
 			text = new TextContainer(getShell());
 			ret.setLayout(new FillLayout());
@@ -467,16 +425,14 @@ public class RnActions {
 			text.getPlugin().createContainer(ret, this);
 			text.getPlugin().showMenu(false);
 			text.getPlugin().showToolbar(false);
+			text.createFromTemplateName(null,
+				"Liste", Brief.UNKNOWN, Hub.actUser, Messages.getString("RnActions.bills")); //$NON-NLS-1$ //$NON-NLS-2$
 			text
-					.createFromTemplateName(
-							null,
-							"Liste", Brief.UNKNOWN, Hub.actUser, Messages.getString("RnActions.bills")); //$NON-NLS-1$ //$NON-NLS-2$
-			text
-					.getPlugin()
-					.insertText(
-							"[Titel]", //$NON-NLS-1$
-							Messages.getString("RnActions.billsListPrintetAt") + new TimeTool().toString(TimeTool.DATE_GER) + "\n", //$NON-NLS-1$ //$NON-NLS-2$
-							SWT.CENTER);
+				.getPlugin()
+				.insertText(
+					"[Titel]", //$NON-NLS-1$
+					Messages.getString("RnActions.billsListPrintetAt") + new TimeTool().toString(TimeTool.DATE_GER) + "\n", //$NON-NLS-1$ //$NON-NLS-2$
+					SWT.CENTER);
 			String[][] table = new String[rnn.size() + 1][];
 			Money sum = new Money();
 			int i;
@@ -499,34 +455,35 @@ public class RnActions {
 			table[i][2] = sum.getAmountAsString();
 			text.getPlugin().setFont("Helvetica", SWT.NORMAL, 9); //$NON-NLS-1$
 			text.getPlugin().insertTable("[Liste]", 0, table, new int[] { //$NON-NLS-1$
-					10, 80, 10 });
+					10, 80, 10
+				});
 			text.getPlugin().showMenu(true);
 			text.getPlugin().showToolbar(true);
 			return ret;
 		}
-
+		
 		@Override
-		public void create() {
+		public void create(){
 			super.create();
 			getShell().setText(Messages.getString("RnActions.billsList")); //$NON-NLS-1$
 			setTitle(Messages.getString("RnActions.printListCaption")); //$NON-NLS-1$
 			setMessage(Messages.getString("RnActions.printListMessage")); //$NON-NLS-1$
 			getShell().setSize(900, 700);
-			SWTHelper.center(Hub.plugin.getWorkbench()
-					.getActiveWorkbenchWindow().getShell(), getShell());
+			SWTHelper.center(Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getShell(),
+				getShell());
 		}
-
+		
 		@Override
-		protected void okPressed() {
+		protected void okPressed(){
 			super.okPressed();
 		}
-
-		public void save() {
-			// TODO Auto-generated method stub
-
+		
+		public void save(){
+		// TODO Auto-generated method stub
+		
 		}
-
-		public boolean saveAs() {
+		
+		public boolean saveAs(){
 			// TODO Auto-generated method stub
 			return false;
 		}

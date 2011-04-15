@@ -98,22 +98,22 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 	
 	CommonViewer cv;
 	ViewerConfigurer vc;
-	//ESRLoader esrloader;
+	// ESRLoader esrloader;
 	FlatDataLoader fdl;
-	public final static ACE DISPLAY_ESR = new ACE(ACE.ACE_IMPLICIT,"DisplayESR"); //$NON-NLS-1$
+	public final static ACE DISPLAY_ESR = new ACE(ACE.ACE_IMPLICIT, "DisplayESR"); //$NON-NLS-1$
 	Query<ESRRecord> qbe;
 	// private Action loadESRFile;
 	private ViewMenus menus;
 	private ESRSelectionListener esrl;
 	
 	public ESRView2(){
-		
-		// Hub.acl.grantForSelf(DISPLAY_ESR);
+
+	// Hub.acl.grantForSelf(DISPLAY_ESR);
 	}
 	
 	@Override
 	public void dispose(){
-		//Hub.acl.revokeFromSelf(DISPLAY_ESR);
+		// Hub.acl.revokeFromSelf(DISPLAY_ESR);
 		GlobalEventDispatcher.removeActivationListener(this, getViewSite().getPart());
 	}
 	
@@ -122,45 +122,42 @@ public class ESRView2 extends ViewPart implements IActivationListener {
 		parent.setLayout(new GridLayout());
 		cv = new CommonViewer();
 		qbe = new Query<ESRRecord>(ESRRecord.class);
-		fdl=new FlatDataLoader(cv, qbe);
+		fdl = new FlatDataLoader(cv, qbe);
 		/*
-		esrloader = (ESRLoader) JobPool.getJobPool().getJob(JOB_NAME);
-		if (esrloader == null) {
-			esrloader = new ESRLoader(qbe);
-			JobPool.getJobPool().addJob(esrloader);
-		}
-		*/
+		 * esrloader = (ESRLoader) JobPool.getJobPool().getJob(JOB_NAME); if (esrloader == null) {
+		 * esrloader = new ESRLoader(qbe); JobPool.getJobPool().addJob(esrloader); }
+		 */
 		fdl.addQueryFilter(new QueryFilter() {
-
-			public void apply(Query<? extends PersistentObject> qbe) {
+			
+			public void apply(Query<? extends PersistentObject> qbe){
 				if (Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
 					if (Hub.actMandant != null) {
 						qbe.startGroup();
 						qbe.add(ESRRecord.MANDANT_ID, Query.EQUALS, Hub.actMandant.getId());
 						qbe.or();
-						qbe.add(ESRRecord.MANDANT_ID, StringConstants.EMPTY, null); 
-						qbe.add(ESRRecord.FLD_REJECT_CODE, Query.NOT_EQUAL, StringConstants.ZERO); 
+						qbe.add(ESRRecord.MANDANT_ID, StringConstants.EMPTY, null);
+						qbe.add(ESRRecord.FLD_REJECT_CODE, Query.NOT_EQUAL, StringConstants.ZERO);
 						qbe.endGroup();
 						qbe.and();
-					}else{
+					} else {
 						qbe.insertFalse();
 					}
 				}
-
+				
 			}
 		});
-
+		
 		vc =
-			new ViewerConfigurer(fdl,
-				new ESRLabelProvider(), new DefaultControlFieldProvider(cv, new String[] {
+			new ViewerConfigurer(fdl, new ESRLabelProvider(), new DefaultControlFieldProvider(cv,
+				new String[] {
 					"Datum" //$NON-NLS-1$
-				}), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
-					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
+			}), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
+				SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		cv.create(vc, parent, SWT.None, getViewSite());
 		
 		createColumns(cv.getViewerWidget());
 		
-		//JobPool.getJobPool().activate(JOB_NAME, Job.SHORT);
+		// JobPool.getJobPool().activate(JOB_NAME, Job.SHORT);
 		makeActions();
 		menus = new ViewMenus(getViewSite());
 		menus.createToolbar(/* loadESRFile */);

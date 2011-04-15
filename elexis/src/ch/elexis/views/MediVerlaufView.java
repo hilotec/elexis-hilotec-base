@@ -60,26 +60,28 @@ import ch.rgw.tools.TimeTool;
 public class MediVerlaufView extends ViewPart implements IActivationListener {
 	TableViewer tv;
 	MediAbgabe[] mListe;
-	private static final String[] columns = {
-			Messages.getString("MediVerlaufView.dateFrom"), Messages.getString("MediVerlaufView.dateUntil"), Messages.getString("MediVerlaufView.medicament"), Messages.getString("MediVerlaufView.dosage") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-	private static final int[] colwidth = { 90, 90, 300, 200 };
-
-	private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(
-			Patient.class) {
-
-		public void runInUi(ElexisEvent ev) {
+	private static final String[] columns =
+		{
+			Messages.getString("MediVerlaufView.dateFrom"), Messages.getString("MediVerlaufView.dateUntil"), Messages.getString("MediVerlaufView.medicament"), Messages.getString("MediVerlaufView.dosage")}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	private static final int[] colwidth = {
+		90, 90, 300, 200
+	};
+	
+	private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
+		
+		public void runInUi(ElexisEvent ev){
 			reload();
 		}
 	};
 	int sortCol = 0;
 	MediSorter sorter = new MediSorter();
-
-	public MediVerlaufView() {
-		// TODO Auto-generated constructor stub
+	
+	public MediVerlaufView(){
+	// TODO Auto-generated constructor stub
 	}
-
+	
 	@Override
-	public void createPartControl(final Composite parent) {
+	public void createPartControl(final Composite parent){
 		parent.setLayout(new FillLayout());
 		tv = new TableViewer(parent, SWT.NONE);
 		Table table = tv.getTable();
@@ -89,14 +91,14 @@ public class MediVerlaufView extends ViewPart implements IActivationListener {
 			tc.setWidth(colwidth[i]);
 			tc.setData(i);
 			tc.addSelectionListener(new SelectionAdapter() {
-
+				
 				@Override
-				public void widgetSelected(final SelectionEvent e) {
+				public void widgetSelected(final SelectionEvent e){
 					int i = (Integer) ((TableColumn) e.getSource()).getData();
 					sortCol = i;
 					reload();
 				}
-
+				
 			});
 		}
 		table.setHeaderVisible(true);
@@ -104,52 +106,48 @@ public class MediVerlaufView extends ViewPart implements IActivationListener {
 		tv.setUseHashlookup(true);
 		tv.setContentProvider(new MediVerlaufContentProvider());
 		tv.setLabelProvider(new MediVerlaufLabelProvider());
-		GlobalEventDispatcher.addActivationListener(this, getViewSite()
-				.getPart());
+		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
 		tv.setSorter(sorter);
 		tv.setInput(getViewSite());
 	}
-
+	
 	@Override
-	public void dispose() {
-		GlobalEventDispatcher.removeActivationListener(this, getViewSite()
-				.getPart());
+	public void dispose(){
+		GlobalEventDispatcher.removeActivationListener(this, getViewSite().getPart());
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 	class MediVerlaufContentProvider implements IStructuredContentProvider {
-
-		public Object[] getElements(final Object inputElement) {
+		
+		public Object[] getElements(final Object inputElement){
 			return mListe == null ? new MediAbgabe[0] : mListe;
 		}
-
-		public void dispose() {
-			// TODO Auto-generated method stub
-
+		
+		public void dispose(){
+		// TODO Auto-generated method stub
+		
 		}
-
-		public void inputChanged(final Viewer viewer, final Object oldInput,
-				final Object newInput) {
-			// TODO Auto-generated method stub
-
+		
+		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput){
+		// TODO Auto-generated method stub
+		
 		}
-
+		
 	}
-
-	static class MediVerlaufLabelProvider extends LabelProvider implements
-			ITableLabelProvider {
-
-		public Image getColumnImage(final Object element, final int columnIndex) {
+	
+	static class MediVerlaufLabelProvider extends LabelProvider implements ITableLabelProvider {
+		
+		public Image getColumnImage(final Object element, final int columnIndex){
 			// TODO Auto-generated method stub
 			return null;
 		}
-
-		public String getColumnText(final Object element, final int columnIndex) {
+		
+		public String getColumnText(final Object element, final int columnIndex){
 			if (element instanceof MediAbgabe) {
 				MediAbgabe ma = (MediAbgabe) element;
 				switch (columnIndex) {
@@ -167,96 +165,83 @@ public class MediVerlaufView extends ViewPart implements IActivationListener {
 			}
 			return "?"; //$NON-NLS-1$
 		}
-
+		
 	}
-
-	public void clearEvent(final Class<? extends PersistentObject> template) {
-		// TODO Auto-generated method stub
-
+	
+	public void clearEvent(final Class<? extends PersistentObject> template){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void reload() {
-		IProgressService progressService = PlatformUI.getWorkbench()
-				.getProgressService();
+	
+	public void reload(){
+		IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
 		try {
-			progressService.runInUI(PlatformUI.getWorkbench()
-					.getProgressService(), new IRunnableWithProgress() {
-				public void run(final IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
-					monitor
+			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
+				new IRunnableWithProgress() {
+					public void run(final IProgressMonitor monitor)
+						throws InvocationTargetException, InterruptedException{
+						monitor
 							.beginTask(
-									Messages
-											.getString("MediVerlaufView.reading"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
-					monitor.subTask(Messages
-							.getString("MediVerlaufView.findPrescriptions")); //$NON-NLS-1$
-					Query<Prescription> qbe = new Query<Prescription>(
-							Prescription.class);
-					qbe.add(Prescription.PATIENT_ID, Query.EQUALS,
-							ElexisEventDispatcher.getSelectedPatient().getId());
-					List<Prescription> list = qbe.execute();
-					LinkedList<MediAbgabe> alle = new LinkedList<MediAbgabe>();
-					monitor.subTask(Messages
-							.getString("MediVerlaufView.findMedicaments")); //$NON-NLS-1$
-					try {
-						for (Prescription p : list) {
-							Map<TimeTool, String> terms = p.getTerms();
-							TimeTool[] tts = terms.keySet().toArray(
-									new TimeTool[0]);
-							for (int i = 0; i < tts.length - 1; i++) {
-								if (i < tts.length - 1) {
-									alle
-											.add(new MediAbgabe(
-													tts[i]
-															.toString(TimeTool.DATE_GER),
-													tts[i + 1]
-															.toString(TimeTool.DATE_GER),
-													p));
-								} else {
-									alle.add(new MediAbgabe(tts[i]
-											.toString(TimeTool.DATE_GER),
+								Messages.getString("MediVerlaufView.reading"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+						monitor.subTask(Messages.getString("MediVerlaufView.findPrescriptions")); //$NON-NLS-1$
+						Query<Prescription> qbe = new Query<Prescription>(Prescription.class);
+						qbe.add(Prescription.PATIENT_ID, Query.EQUALS, ElexisEventDispatcher
+							.getSelectedPatient().getId());
+						List<Prescription> list = qbe.execute();
+						LinkedList<MediAbgabe> alle = new LinkedList<MediAbgabe>();
+						monitor.subTask(Messages.getString("MediVerlaufView.findMedicaments")); //$NON-NLS-1$
+						try {
+							for (Prescription p : list) {
+								Map<TimeTool, String> terms = p.getTerms();
+								TimeTool[] tts = terms.keySet().toArray(new TimeTool[0]);
+								for (int i = 0; i < tts.length - 1; i++) {
+									if (i < tts.length - 1) {
+										alle.add(new MediAbgabe(tts[i].toString(TimeTool.DATE_GER),
+											tts[i + 1].toString(TimeTool.DATE_GER), p));
+									} else {
+										alle.add(new MediAbgabe(tts[i].toString(TimeTool.DATE_GER),
 											" ... ", p)); //$NON-NLS-1$
+									}
 								}
-							}
-							alle.add(new MediAbgabe(tts[tts.length - 1]
+								alle.add(new MediAbgabe(tts[tts.length - 1]
 									.toString(TimeTool.DATE_GER), " ... ", p)); //$NON-NLS-1$
+							}
+						} catch (Exception ex) {
+							ExHandler.handle(ex);
 						}
-					} catch (Exception ex) {
-						ExHandler.handle(ex);
+						monitor.subTask(Messages.getString("MediVerlaufView.sorting")); //$NON-NLS-1$
+						mListe = alle.toArray(new MediAbgabe[0]);
+						tv.refresh(false);
+						monitor.done();
 					}
-					monitor.subTask(Messages
-							.getString("MediVerlaufView.sorting")); //$NON-NLS-1$
-					mListe = alle.toArray(new MediAbgabe[0]);
-					tv.refresh(false);
-					monitor.done();
-				}
-			}, null);
+				}, null);
 		} catch (Throwable ex) {
 			ExHandler.handle(ex);
 		}
 	}
-
-	public void selectionEvent(final PersistentObject obj) {
+	
+	public void selectionEvent(final PersistentObject obj){
 		if (obj instanceof Patient) {
 			reload();
 		}
-
+		
 	}
-
+	
 	class MediAbgabe implements Comparable<MediAbgabe> {
 		String orderA;
 		String von, bis;
 		String medi;
 		String dosis;
-
-		MediAbgabe(final String v, final String b, final Prescription p) {
+		
+		MediAbgabe(final String v, final String b, final Prescription p){
 			von = v;
 			bis = b;
 			orderA = new TimeTool(v).toString(TimeTool.DATE_COMPACT);
 			medi = p.getSimpleLabel();
 			dosis = p.getDosis();
 		}
-
-		public int compareTo(final MediAbgabe o) {
+		
+		public int compareTo(final MediAbgabe o){
 			switch (sortCol) {
 			case 0:
 				int res = orderA.compareTo(o.orderA);
@@ -271,39 +256,39 @@ public class MediVerlaufView extends ViewPart implements IActivationListener {
 				}
 				return res;
 			}
-
+			
 		}
-
+		
 		@Override
-		public boolean equals(Object obj) {
+		public boolean equals(Object obj){
 			if (obj instanceof MediAbgabe) {
 				return compareTo((MediAbgabe) obj) == 0;
 			}
 			return false;
 		}
 	}
-
-	public void activation(final boolean mode) {
-		// TODO Auto-generated method stub
-
+	
+	public void activation(final boolean mode){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void visible(final boolean mode) {
+	
+	public void visible(final boolean mode){
 		if (mode) {
 			ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
 			reload();
 		} else {
 			ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
 		}
-
+		
 	}
-
+	
 	private static class MediSorter extends ViewerSorter {
-
+		
 		@Override
-		public int compare(final Viewer viewer, final Object e1, final Object e2) {
+		public int compare(final Viewer viewer, final Object e1, final Object e2){
 			return ((MediAbgabe) e1).compareTo((MediAbgabe) e2);
 		}
-
+		
 	}
 }

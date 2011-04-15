@@ -50,16 +50,15 @@ public class EditFindingDialog extends TitleAreaDialog {
 	boolean[] multiline;
 	String[] values;
 	Text[] inputs;
-
+	
 	// HyperlinkListener scriptListener;
-
-	EditFindingDialog(final Shell parent, final Messwert m, final String n) {
+	
+	EditFindingDialog(final Shell parent, final Messwert m, final String n){
 		super(parent);
 		mw = m;
 		name = n;
 		names = Messwert.getSetup().getHashtable(Messwert.FLD_BEFUNDE);
-		flds = ((String) names.get(n + Messwert._FIELDS))
-				.split(Messwert.SETUP_SEPARATOR);
+		flds = ((String) names.get(n + Messwert._FIELDS)).split(Messwert.SETUP_SEPARATOR);
 		multiline = new boolean[flds.length];
 		values = new String[flds.length];
 		inputs = new Text[flds.length];
@@ -73,10 +72,10 @@ public class EditFindingDialog extends TitleAreaDialog {
 			}
 		}
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected Control createDialogArea(final Composite parent) {
+	protected Control createDialogArea(final Composite parent){
 		Composite ret = new Composite(parent, SWT.NONE);
 		Patient pat = ElexisEventDispatcher.getSelectedPatient();
 		if (pat != null) {
@@ -98,12 +97,12 @@ public class EditFindingDialog extends TitleAreaDialog {
 				if (heading.length == 1) {
 					new Label(ret, SWT.NONE).setText(flds[i]);
 				} else {
-					Label hl = SWTHelper.createHyperlink(ret, heading[0],
+					Label hl =
+						SWTHelper.createHyperlink(ret, heading[0],
 							new ScriptListener(heading[1], i));
 					hl.setForeground(Desk.getColor(Desk.COL_BLUE));
 				}
-				inputs[i] = SWTHelper.createText(ret, multiline[i] ? 4 : 1,
-						SWT.NONE);
+				inputs[i] = SWTHelper.createText(ret, multiline[i] ? 4 : 1, SWT.NONE);
 				inputs[i].setText(values[i] == null ? "" : values[i]); //$NON-NLS-1$
 				if (heading.length > 1) {
 					inputs[i].setEditable(false);
@@ -112,32 +111,29 @@ public class EditFindingDialog extends TitleAreaDialog {
 		}
 		return ret;
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
-		getShell().setText(
-				Messages.getString("EditFindingDialog.captionBefundEditDlg")); //$NON-NLS-1$
+		getShell().setText(Messages.getString("EditFindingDialog.captionBefundEditDlg")); //$NON-NLS-1$
 		Patient pat = ElexisEventDispatcher.getSelectedPatient();
 		if (pat == null) {
 			setTitle(Messages.getString("EditFindingDialog.noPatientSelected")); //$NON-NLS-1$
 		} else {
 			setTitle(pat.getLabel());
 		}
-		setMessage(MessageFormat
-				.format(Messages
-						.getString("EditFindingDialog.enterTextForBefund"), name)); //$NON-NLS-1$
+		setMessage(MessageFormat.format(
+			Messages.getString("EditFindingDialog.enterTextForBefund"), name)); //$NON-NLS-1$
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected void okPressed() {
+	protected void okPressed(){
 		Hashtable hash;
 		if (mw == null) {
 			hash = new Hashtable();
-			mw = new Messwert(ElexisEventDispatcher.getSelectedPatient(), name,
-					dp.getText(), hash);
+			mw = new Messwert(ElexisEventDispatcher.getSelectedPatient(), name, dp.getText(), hash);
 		} else {
 			hash = mw.getHashtable(Messwert.FLD_BEFUNDE);
 		}
@@ -152,18 +148,18 @@ public class EditFindingDialog extends TitleAreaDialog {
 		mw.setHashtable(Messwert.FLD_BEFUNDE, hash);
 		super.okPressed();
 	}
-
+	
 	class ScriptListener extends HyperlinkAdapter {
 		int v;
 		String script;
-
-		ScriptListener(final String scr, final int i) {
+		
+		ScriptListener(final String scr, final int i){
 			script = scr;
 			v = i;
 		}
-
+		
 		@Override
-		public void linkActivated(final HyperlinkEvent e) {
+		public void linkActivated(final HyperlinkEvent e){
 			for (int vals = 0; vals < inputs.length; vals++) {
 				String sval = inputs[vals].getText();
 				if (!StringTool.isNothing(sval)) {
@@ -173,17 +169,15 @@ public class EditFindingDialog extends TitleAreaDialog {
 					} catch (NumberFormatException nfe) {
 						// don't mind
 					}
-					script = script.replaceAll(
-							"F" + Integer.toString(vals + 1), Double //$NON-NLS-1$
-									.toString(dval));
+					script = script.replaceAll("F" + Integer.toString(vals + 1), Double //$NON-NLS-1$
+						.toString(dval));
 				}
 			}
-
+			
 			try {
 				Object result = null;
 				if (script.startsWith(Script.SCRIPT_MARKER)) {
-					String scriptname = script.substring(Script.SCRIPT_MARKER
-							.length());
+					String scriptname = script.substring(Script.SCRIPT_MARKER.length());
 					result = Script.executeScript(scriptname);
 				} else {
 					Interpreter scripter = Script.getInterpreterFor(script);
@@ -197,6 +191,6 @@ public class EditFindingDialog extends TitleAreaDialog {
 			}
 			inputs[v].setText(values[v]);
 		}
-
+		
 	}
 }

@@ -55,17 +55,16 @@ public class AUF2 extends ViewPart implements IActivationListener {
 	TableViewer tv;
 	private Action newAUF, delAUF, modAUF, printAUF;
 	private ElexisEventListener eli_auf = new ElexisEventListenerImpl(AUF.class) {
-
-		public void runInUi(ElexisEvent ev) {
+		
+		public void runInUi(ElexisEvent ev){
 			boolean bSelect = (ev.getType() == ElexisEvent.EVENT_SELECTED);
 			modAUF.setEnabled(bSelect);
 			delAUF.setEnabled(bSelect);
 		}
 	};
-	private ElexisEventListener eli_pat = new ElexisEventListenerImpl(
-			Patient.class) {
-
-		public void runInUi(ElexisEvent ev) {
+	private ElexisEventListener eli_pat = new ElexisEventListenerImpl(Patient.class) {
+		
+		public void runInUi(ElexisEvent ev){
 			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 				tv.refresh();
 				ElexisEventDispatcher.clearSelection(AUF.class);
@@ -74,17 +73,17 @@ public class AUF2 extends ViewPart implements IActivationListener {
 				newAUF.setEnabled(false);
 				modAUF.setEnabled(false);
 				delAUF.setEnabled(false);
-
+				
 			}
 		}
 	};
-
-	public AUF2() {
+	
+	public AUF2(){
 		setTitleImage(Desk.getImage(ICON));
 	}
-
+	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		// setTitleImage(Desk.getImage(ICON));
 		setPartName(Messages.getString("AUF2.certificate")); //$NON-NLS-1$
 		tv = new TableViewer(parent);
@@ -96,146 +95,140 @@ public class AUF2 extends ViewPart implements IActivationListener {
 		menus.createToolbar(newAUF, delAUF, printAUF);
 		tv.setUseHashlookup(true);
 		GlobalEventDispatcher.addActivationListener(this, this);
-		tv.addSelectionChangedListener(GlobalEventDispatcher.getInstance()
-				.getDefaultListener());
+		tv.addSelectionChangedListener(GlobalEventDispatcher.getInstance().getDefaultListener());
 		tv.addDoubleClickListener(new IDoubleClickListener() {
-			public void doubleClick(DoubleClickEvent event) {
+			public void doubleClick(DoubleClickEvent event){
 				modAUF.run();
 			}
 		});
 		tv.setInput(getViewSite());
 	}
-
+	
 	@Override
-	public void dispose() {
+	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
-
-	private void makeActions() {
+	
+	private void makeActions(){
 		newAUF = new Action(Messages.getString("AUF2.new")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
-				setToolTipText(Messages.getString("AUF2.createNewCert")); //$NON-NLS-1$
-			}
-
-			@Override
-			public void run() {
-				Patient pat = (Patient) ElexisEventDispatcher
-						.getSelected(Patient.class);
-				if (pat == null) {
-					SWTHelper.showError(
-							Messages.getString("AUF2.NoPatientSelected"), //$NON-NLS-1$
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
+					setToolTipText(Messages.getString("AUF2.createNewCert")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					Patient pat = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
+					if (pat == null) {
+						SWTHelper.showError(Messages.getString("AUF2.NoPatientSelected"), //$NON-NLS-1$
 							Messages.getString("AUF2.PleaseDoSelectPatient")); //$NON-NLS-1$
-					return;
-				}
-				Konsultation kons = (Konsultation) ElexisEventDispatcher
-						.getSelected(Konsultation.class);
-				Fall fall = null;
-				if(kons!=null){
-					fall = kons.getFall();
-					if (fall == null) {
-						SWTHelper
-								.showError(
-										Messages.getString("AUF2.noCaseSelected"), Messages.getString("AUF2.selectCase")); //$NON-NLS-1$ //$NON-NLS-2$
 						return;
-
 					}
-					if(!fall.getPatient().equals(pat)){
-						kons=null;
+					Konsultation kons =
+						(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+					Fall fall = null;
+					if (kons != null) {
+						fall = kons.getFall();
+						if (fall == null) {
+							SWTHelper
+								.showError(
+									Messages.getString("AUF2.noCaseSelected"), Messages.getString("AUF2.selectCase")); //$NON-NLS-1$ //$NON-NLS-2$
+							return;
+							
+						}
+						if (!fall.getPatient().equals(pat)) {
+							kons = null;
+						}
 					}
-				}
-				if (kons == null) {
-					kons = pat.getLetzteKons(false);
 					if (kons == null) {
-						SWTHelper
+						kons = pat.getLetzteKons(false);
+						if (kons == null) {
+							SWTHelper
 								.showError(
-										Messages.getString("AUF2.noCaseSelected"), Messages.getString("AUF2.selectCase")); //$NON-NLS-1$ //$NON-NLS-2$
-						return;
+									Messages.getString("AUF2.noCaseSelected"), Messages.getString("AUF2.selectCase")); //$NON-NLS-1$ //$NON-NLS-2$
+							return;
+						}
+						fall = kons.getFall();
 					}
-					fall = kons.getFall();
-				} 
-				new EditAUFDialog(getViewSite().getShell(), null,
-						fall).open();
-				tv.refresh(false);
-			}
-		};
+					new EditAUFDialog(getViewSite().getShell(), null, fall).open();
+					tv.refresh(false);
+				}
+			};
 		delAUF = new Action(Messages.getString("AUF2.delete")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
-				setToolTipText(Messages.getString("AUF2.deleteCertificate")); //$NON-NLS-1$
-			}
-
-			@Override
-			public void run() {
-				AUF sel = getSelectedAUF();
-				if (sel != null) {
-					if (MessageDialog
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_DELETE));
+					setToolTipText(Messages.getString("AUF2.deleteCertificate")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					AUF sel = getSelectedAUF();
+					if (sel != null) {
+						if (MessageDialog
 							.openConfirm(
-									getViewSite().getShell(),
-									Messages.getString("AUF2.deleteReally"), Messages.getString("AUF2.doyoywantdeletereally"))) { //$NON-NLS-1$ //$NON-NLS-2$
-						sel.delete();
-						tv.refresh(false);
+								getViewSite().getShell(),
+								Messages.getString("AUF2.deleteReally"), Messages.getString("AUF2.doyoywantdeletereally"))) { //$NON-NLS-1$ //$NON-NLS-2$
+							sel.delete();
+							tv.refresh(false);
+						}
 					}
 				}
-			}
-		};
+			};
 		modAUF = new Action(Messages.getString("AUF2.edit")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-				setToolTipText(Messages.getString("AUF2.editCertificate")); //$NON-NLS-1$
-			}
-
-			@Override
-			public void run() {
-				AUF sel = getSelectedAUF();
-				if (sel != null) {
-					new EditAUFDialog(getViewSite().getShell(), sel,
-							sel.getFall()).open();
-					tv.refresh(true);
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
+					setToolTipText(Messages.getString("AUF2.editCertificate")); //$NON-NLS-1$
 				}
-			}
-		};
+				
+				@Override
+				public void run(){
+					AUF sel = getSelectedAUF();
+					if (sel != null) {
+						new EditAUFDialog(getViewSite().getShell(), sel, sel.getFall()).open();
+						tv.refresh(true);
+					}
+				}
+			};
 		printAUF = new Action(Messages.getString("AUF2.print")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
-				setToolTipText(Messages.getString("AUF2.createPrint")); //$NON-NLS-1$
-			}
-
-			@Override
-			public void run() {
-				try {
-					AUFZeugnis az = (AUFZeugnis) getViewSite().getPage()
-							.showView(AUFZeugnis.ID);
-					AUF actAUF = (ch.elexis.data.AUF) ElexisEventDispatcher
-							.getSelected(AUF.class);
-					az.createAUZ(actAUF);
-				} catch (Exception ex) {
-					ExHandler.handle(ex);
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
+					setToolTipText(Messages.getString("AUF2.createPrint")); //$NON-NLS-1$
 				}
-
-			}
-		};
+				
+				@Override
+				public void run(){
+					try {
+						AUFZeugnis az =
+							(AUFZeugnis) getViewSite().getPage().showView(AUFZeugnis.ID);
+						AUF actAUF =
+							(ch.elexis.data.AUF) ElexisEventDispatcher.getSelected(AUF.class);
+						az.createAUZ(actAUF);
+					} catch (Exception ex) {
+						ExHandler.handle(ex);
+					}
+					
+				}
+			};
 	}
-
-	private ch.elexis.data.AUF getSelectedAUF() {
+	
+	private ch.elexis.data.AUF getSelectedAUF(){
 		IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
 		if ((sel == null) || (sel.isEmpty())) {
 			return null;
 		}
 		return (AUF) sel.getFirstElement();
 	}
-
+	
 	class AUFContentProvider implements IStructuredContentProvider {
-
-		public Object[] getElements(Object inputElement) {
-			Patient pat = (Patient) ElexisEventDispatcher
-					.getSelected(Patient.class);
+		
+		public Object[] getElements(Object inputElement){
+			Patient pat = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 			if (pat == null) {
 				return new Object[0];
 			}
@@ -245,29 +238,27 @@ public class AUF2 extends ViewPart implements IActivationListener {
 			List<AUF> list = qbe.execute();
 			return list.toArray();
 		}
-
-		public void dispose() { /* leer */
+		
+		public void dispose(){ /* leer */
 		}
-
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			/* leer */
+		
+		public void inputChanged(Viewer viewer, Object oldInput, Object newInput){
+		/* leer */
 		}
-
+		
 	}
-
-	public void activation(boolean mode) { /* egal */
+	
+	public void activation(boolean mode){ /* egal */
 	}
-
-	public void visible(boolean mode) {
+	
+	public void visible(boolean mode){
 		if (mode) {
 			ElexisEventDispatcher.getInstance().addListeners(eli_auf, eli_pat);
 			eli_pat.catchElexisEvent(new ElexisEvent(ElexisEventDispatcher
-					.getSelected(Patient.class), null,
-					ElexisEvent.EVENT_SELECTED));
+				.getSelected(Patient.class), null, ElexisEvent.EVENT_SELECTED));
 		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eli_auf,
-					eli_pat);
+			ElexisEventDispatcher.getInstance().removeListeners(eli_auf, eli_pat);
 		}
 	}
-
+	
 }

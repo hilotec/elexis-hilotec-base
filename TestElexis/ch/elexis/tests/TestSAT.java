@@ -132,7 +132,7 @@ public class TestSAT extends TestCase {
 	public void testUnwrap() throws Exception{
 		crypt = new JCECrypter(null, null, bobname, bobpwd.toCharArray());
 		SAT sat = new SAT(crypt);
-		Map<String,Serializable> res = sat.unwrap(encrypted, true);
+		Map<String, Serializable> res = sat.unwrap(encrypted, true);
 		assertNull(res.get("error"));
 		String val = (String) res.get("test");
 		assertEquals(val, "Ein Testtext");

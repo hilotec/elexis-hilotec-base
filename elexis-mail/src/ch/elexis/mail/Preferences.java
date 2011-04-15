@@ -39,52 +39,52 @@ public class Preferences extends FieldEditorPreferencePage implements IWorkbench
 	}
 	
 	public void init(IWorkbench workbench){
-		IPreferenceStore p=getPreferenceStore();
-		String elexislog=p.getString(PreferenceConstants.MAIL_ELEXIS_LOG);
-		if(elexislog.length()==0){
-			elexislog=new File(Hub.getWritableUserDir(),"elexis.log").getAbsolutePath(); //$NON-NLS-1$
+		IPreferenceStore p = getPreferenceStore();
+		String elexislog = p.getString(PreferenceConstants.MAIL_ELEXIS_LOG);
+		if (elexislog.length() == 0) {
+			elexislog = new File(Hub.getWritableUserDir(), "elexis.log").getAbsolutePath(); //$NON-NLS-1$
 			p.setDefault(PreferenceConstants.MAIL_ELEXIS_LOG, elexislog);
 		}
-		String eclipselog=p.getString(PreferenceConstants.MAIL_ECLIPSE_LOG);
-		if(eclipselog.length()==0){
-			
+		String eclipselog = p.getString(PreferenceConstants.MAIL_ECLIPSE_LOG);
+		if (eclipselog.length() == 0) {
+
 		}
-		String mode=p.getString(PreferenceConstants.MAIL_MODE);
-		if(mode.length()==0){
-			mode="pop"; //$NON-NLS-1$
+		String mode = p.getString(PreferenceConstants.MAIL_MODE);
+		if (mode.length() == 0) {
+			mode = "pop"; //$NON-NLS-1$
 			p.setDefault(PreferenceConstants.MAIL_MODE, mode);
 		}
-		String sender=p.getString(PreferenceConstants.MAIL_SENDER);
-		if(sender.length()==0){
-			List<Mandant> ml=Hub.getMandantenList();
-			if(ml.size()>0){
-				sender=ml.get(0).getMailAddress();
+		String sender = p.getString(PreferenceConstants.MAIL_SENDER);
+		if (sender.length() == 0) {
+			List<Mandant> ml = Hub.getMandantenList();
+			if (ml.size() > 0) {
+				sender = ml.get(0).getMailAddress();
 				p.setDefault(PreferenceConstants.MAIL_SENDER, sender);
 			}
 		}
-		String adressee=p.getString(PreferenceConstants.MAIL_QFA_ADDRESS);
-		if(adressee.length()==0){
-			adressee="admin@elexis.ch"; //$NON-NLS-1$
+		String adressee = p.getString(PreferenceConstants.MAIL_QFA_ADDRESS);
+		if (adressee.length() == 0) {
+			adressee = "admin@elexis.ch"; //$NON-NLS-1$
 			p.setDefault(PreferenceConstants.MAIL_QFA_ADDRESS, adressee);
 		}
-		String smport=p.getString(PreferenceConstants.MAIL_SMTPPORT);
-		if(smport.length()==0){
+		String smport = p.getString(PreferenceConstants.MAIL_SMTPPORT);
+		if (smport.length() == 0) {
 			p.setDefault(PreferenceConstants.MAIL_SMTPPORT, "25"); //$NON-NLS-1$
 		}
 	}
 	
 	@Override
 	protected void createFieldEditors(){
-		addField(new RadioGroupFieldEditor(PreferenceConstants.MAIL_MODE, Messages.Preferences_method, 2,
-			new String[][] {
-			{
-				"IMAP", "imap" //$NON-NLS-1$ //$NON-NLS-2$
-			}, {
-				"POP", "pop" //$NON-NLS-1$ //$NON-NLS-2$
-			}
-		}, getFieldEditorParent()));
-		addField(new StringFieldEditor(PreferenceConstants.MAIL_SERVER, Messages.Preferences_mailServer,
-			getFieldEditorParent()));
+		addField(new RadioGroupFieldEditor(PreferenceConstants.MAIL_MODE,
+			Messages.Preferences_method, 2, new String[][] {
+				{
+					"IMAP", "imap" //$NON-NLS-1$ //$NON-NLS-2$
+				}, {
+					"POP", "pop" //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			}, getFieldEditorParent()));
+		addField(new StringFieldEditor(PreferenceConstants.MAIL_SERVER,
+			Messages.Preferences_mailServer, getFieldEditorParent()));
 		addField(new StringFieldEditor(PreferenceConstants.MAIL_SMTP,
 			Messages.Preferences_SMTPServer, getFieldEditorParent()));
 		

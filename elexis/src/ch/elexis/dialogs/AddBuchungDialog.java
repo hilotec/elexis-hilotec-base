@@ -31,53 +31,54 @@ import ch.rgw.tools.Money;
 
 /**
  * Eine Buchung zu einem Patientenkonto zufügen
+ * 
  * @author gerry
- *
+ * 
  */
 public class AddBuchungDialog extends TitleAreaDialog {
-
-	Text betrag,text;
-	//int result;
+	
+	Text betrag, text;
+	// int result;
 	Patient pat;
 	
-	public AddBuchungDialog(Shell parentShell, Patient p) {
+	public AddBuchungDialog(Shell parentShell, Patient p){
 		super(parentShell);
-		pat=p;
+		pat = p;
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
+	protected Control createDialogArea(Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		new Label(ret,SWT.NONE).setText(Messages.getString("AddBuchungDialog.amountAs000")); //$NON-NLS-1$
-		betrag=new Text(ret,SWT.BORDER);
-		betrag.setLayoutData(new GridData(GridData.FILL,GridData.FILL,false,false));
-		new Label(ret,SWT.NONE).setText(Messages.getString("AddBuchungDialog.textForBooking")); //$NON-NLS-1$
-		text=SWTHelper.createText(ret, 4, SWT.NONE);
+		new Label(ret, SWT.NONE).setText(Messages.getString("AddBuchungDialog.amountAs000")); //$NON-NLS-1$
+		betrag = new Text(ret, SWT.BORDER);
+		betrag.setLayoutData(new GridData(GridData.FILL, GridData.FILL, false, false));
+		new Label(ret, SWT.NONE).setText(Messages.getString("AddBuchungDialog.textForBooking")); //$NON-NLS-1$
+		text = SWTHelper.createText(ret, 4, SWT.NONE);
 		return ret;
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		setTitle(Messages.getString("AddBuchungDialog.enterBooking")); //$NON-NLS-1$
 		setMessage(Messages.getString("AddBuchungDialog.dontManual")); //$NON-NLS-1$
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 		getShell().setText(Messages.getString("AddBuchungDialog.manual")); //$NON-NLS-1$
 	}
-
+	
 	@Override
-	protected void okPressed() {
-		try{
-			Money mBetrag=MoneyInput.getFromTextField(betrag);
-			new AccountTransaction(pat,null,mBetrag,null,text.getText());
-		}catch(Exception ex){
-			SWTHelper.showError(Messages.getString("AddBuchungDialog.ErrorInAmount"), Messages.getString("AddBuchungDialog.CannotInterpretAmount")); //$NON-NLS-1$ //$NON-NLS-2$
+	protected void okPressed(){
+		try {
+			Money mBetrag = MoneyInput.getFromTextField(betrag);
+			new AccountTransaction(pat, null, mBetrag, null, text.getText());
+		} catch (Exception ex) {
+			SWTHelper
+				.showError(
+					Messages.getString("AddBuchungDialog.ErrorInAmount"), Messages.getString("AddBuchungDialog.CannotInterpretAmount")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		super.okPressed();
 	}
-
 	
-
 }

@@ -17,29 +17,33 @@ public class BezugsKontakt extends PersistentObject {
 	public static final String RELATION = "Bezug"; //$NON-NLS-1$
 	public static final String OTHER_ID = "otherID"; //$NON-NLS-1$
 	public static final String MY_ID = "myID"; //$NON-NLS-1$
-	private static final String tablename="KONTAKT_ADRESS_JOINT"; //$NON-NLS-1$
-	static{
-		addMapping(tablename,MY_ID,OTHER_ID,RELATION);
+	private static final String tablename = "KONTAKT_ADRESS_JOINT"; //$NON-NLS-1$
+	static {
+		addMapping(tablename, MY_ID, OTHER_ID, RELATION);
 	}
 	
-	public BezugsKontakt(Kontakt kontakt, Kontakt adr, String bezug) {
+	public BezugsKontakt(Kontakt kontakt, Kontakt adr, String bezug){
 		create(null);
-		set(new String[]{MY_ID,OTHER_ID,RELATION},kontakt.getId(),adr.getId(),bezug);
+		set(new String[] {
+			MY_ID, OTHER_ID, RELATION
+		}, kontakt.getId(), adr.getId(), bezug);
 	}
+	
 	@Override
-	public String getLabel() {
-		Kontakt k=Kontakt.load(get(OTHER_ID));
-		if(k.isValid()){
-			return get(RELATION)+": "+k.getLabel(); //$NON-NLS-1$
-		}else{
+	public String getLabel(){
+		Kontakt k = Kontakt.load(get(OTHER_ID));
+		if (k.isValid()) {
+			return get(RELATION) + ": " + k.getLabel(); //$NON-NLS-1$
+		} else {
 			return Messages.getString("BezugsKontakt.ContactDoesntExist"); //$NON-NLS-1$
 		}
 		
 	}
+	
 	public static BezugsKontakt load(String id){
 		return new BezugsKontakt(id);
 	}
-
+	
 	public Kontakt getBezugsKontakt(){
 		return Kontakt.load(get(OTHER_ID));
 	}
@@ -47,15 +51,16 @@ public class BezugsKontakt extends PersistentObject {
 	public String getBezug(){
 		return checkNull(get(RELATION));
 	}
+	
 	@Override
-	protected String getTableName() {
+	protected String getTableName(){
 		return tablename;
 	}
-
+	
 	protected BezugsKontakt(){}
+	
 	protected BezugsKontakt(String id){
 		super(id);
 	}
 	
-		
 }

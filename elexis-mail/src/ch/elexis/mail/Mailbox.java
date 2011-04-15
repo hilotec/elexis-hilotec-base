@@ -30,37 +30,37 @@ public class Mailbox {
 	Store store = null;
 	Folder inbox = null;
 	Message[] messages;
-
-	public Mailbox() {
+	
+	public Mailbox(){
 		Properties props = new Properties();
 		session = Session.getDefaultInstance(props);
 	}
-
-	public boolean open() {
+	
+	public boolean open(){
 		try {
-			store = session.getStore(Hub.localCfg.get(
-					PreferenceConstants.MAIL_MODE, "pop")); //$NON-NLS-1$
+			store = session.getStore(Hub.localCfg.get(PreferenceConstants.MAIL_MODE, "pop")); //$NON-NLS-1$
 			inbox = store.getDefaultFolder();
 			messages = inbox.getMessages();
 			return true;
 		} catch (Exception e) {
 			ExHandler.handle(e);
 		}
-
+		
 		return false;
 	}
-
+	
 	public int getMessageCount(){
 		return messages.length;
 	}
 	
 	public String getHeaders(){
-		for(Message m:messages){
-			
+		for (Message m : messages) {
+
 		}
 		return ""; //$NON-NLS-1$
 	}
-	public void close() {
+	
+	public void close(){
 		try {
 			if (inbox != null) {
 				inbox.close(true);

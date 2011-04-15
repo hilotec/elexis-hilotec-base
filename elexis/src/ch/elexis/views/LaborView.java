@@ -161,8 +161,8 @@ public class LaborView extends ViewPart implements IActivationListener, ISaveabl
 	};
 	
 	private ElexisEventListener eeli_labitem = new ElexisEventListener() {
-		private final ElexisEvent eetmpl = new ElexisEvent(null, LabItem.class,
-			ElexisEvent.EVENT_RELOAD);
+		private final ElexisEvent eetmpl =
+			new ElexisEvent(null, LabItem.class, ElexisEvent.EVENT_RELOAD);
 		
 		public ElexisEvent getElexisEventFilter(){
 			return eetmpl;
@@ -526,8 +526,8 @@ public class LaborView extends ViewPart implements IActivationListener, ISaveabl
 	
 	@Override
 	public void setFocus(){
-		// TODO Automatisch erstellter Methoden-Stub
-		
+	// TODO Automatisch erstellter Methoden-Stub
+	
 	}
 	
 	public void selectionEvent(final PersistentObject obj){
@@ -826,8 +826,8 @@ public class LaborView extends ViewPart implements IActivationListener, ISaveabl
 							TimeTool dat = dsl.getSelectedDate();
 							String nDat = dat.toString(TimeTool.DATE_COMPACT);
 							Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
-							qbe.add(LabResult.DATE, Query.EQUALS,
-								dOld.toString(TimeTool.DATE_COMPACT));
+							qbe.add(LabResult.DATE, Query.EQUALS, dOld
+								.toString(TimeTool.DATE_COMPACT));
 							qbe.add(LabResult.PATIENT_ID, Query.EQUALS, actPatient.getId());
 							for (LabResult lr : qbe.execute()) {
 								lr.set(LabResult.DATE, nDat);

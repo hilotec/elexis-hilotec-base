@@ -31,8 +31,7 @@ import ch.elexis.exchange.elements.XidElement;
 public abstract class XChangeExporter implements IDataSender {
 	private final XChangeContainer container = new XChangeContainer();
 	
-	
-	public boolean canHandle(Class<? extends PersistentObject> clazz) {
+	public boolean canHandle(Class<? extends PersistentObject> clazz){
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -48,44 +47,46 @@ public abstract class XChangeExporter implements IDataSender {
 	public XChangeContainer getContainer(){
 		return container;
 	}
+	
 	/**
-	 * Add a new Contact to the file. It will only be added, if it does not yet
-	 * exist. Rule for the created ID: If a Contact has a really unique ID (EAN,
-	 * Unique Patient Identifier) then this shold be used. Otherwise a unique id
-	 * should be generated (here we take the existing id from Elexis which is by
-	 * definition already a UUID)
+	 * Add a new Contact to the file. It will only be added, if it does not yet exist. Rule for the
+	 * created ID: If a Contact has a really unique ID (EAN, Unique Patient Identifier) then this
+	 * shold be used. Otherwise a unique id should be generated (here we take the existing id from
+	 * Elexis which is by definition already a UUID)
 	 * 
 	 * @param k
 	 *            the contact to insert
-	 * @return the Element node of the newly inserted (or earlier inserted)
-	 *         contact
+	 * @return the Element node of the newly inserted (or earlier inserted) contact
 	 */
 	@SuppressWarnings("unchecked")
-	public ContactElement addContact(Kontakt k) {
-		ContactsElement eContacts=container.getContactsElement();
-		List<ContactElement> lContacts = (List<ContactElement>) eContacts
-		.getChildren(ContactElement.XMLNAME, ContactElement.class);
+	public ContactElement addContact(Kontakt k){
+		ContactsElement eContacts = container.getContactsElement();
+		List<ContactElement> lContacts =
+			(List<ContactElement>) eContacts.getChildren(ContactElement.XMLNAME,
+				ContactElement.class);
 		for (ContactElement e : lContacts) {
 			XidElement xid = e.getXid();
 			if ((xid != null) && (xid.match(k) == XidElement.XIDMATCH.SURE)) {
 				// TODO
-				//e.setContainer(container);
+				// e.setContainer(container);
 				return e;
 			}
 		}
 		ContactElement contact = new ContactElement().asExporter(this, k);
 		eContacts.add(contact);
-		container.addChoice(contact.getElement(),k.getLabel(),k);
+		container.addChoice(contact.getElement(), k.getLabel(), k);
 		return contact;
 	}
 	
 	/**
-	 * Add a Patient to the Container.This will as well export the medical history of the patient and ist
-	 * thus the starting point for exporting the EMR.
-	 * @param pat the Patient to export
+	 * Add a Patient to the Container.This will as well export the medical history of the patient
+	 * and ist thus the starting point for exporting the EMR.
+	 * 
+	 * @param pat
+	 *            the Patient to export
 	 * @return the ContactElement that was created from the Patient (containing the Medical-Element)
 	 */
-	public ContactElement addPatient(Patient pat) {
+	public ContactElement addPatient(Patient pat){
 		ContactElement ret = addContact(pat);
 		List<BezugsKontakt> bzl = pat.getBezugsKontakte();
 		
@@ -97,13 +98,12 @@ public abstract class XChangeExporter implements IDataSender {
 		ret.add(eMedical);
 		
 		getContainer().addChoice(eMedical.getElement(), Messages.XChangeContainer_kg, eMedical);
-		for(IConfigurationElement ice:getContainer().getXChangeContributors()){
-			
+		for (IConfigurationElement ice : getContainer().getXChangeContributors()) {
+
 		}
 		/*
-		for (IExchangeContributor iex : getContainer().getXChangeContributors()) {
-			iex.exportHook(eMedical);
-		}
+		 * for (IExchangeContributor iex : getContainer().getXChangeContributors()) {
+		 * iex.exportHook(eMedical); }
 		 */
 		return ret;
 	}
@@ -119,6 +119,5 @@ public abstract class XChangeExporter implements IDataSender {
 	public void addBinary(String id, byte[] contents){
 		container.binFiles.put(id, contents);
 	}
-	
 	
 }

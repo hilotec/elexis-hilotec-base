@@ -9,27 +9,28 @@ import ch.elexis.Hub;
 import ch.elexis.preferences.SettingsPreferenceStore;
 
 public class Preferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
-	public static final String CFG_DIRECTORY="hl7/downloaddir";
-	
+	public static final String CFG_DIRECTORY = "hl7/downloaddir";
 	
 	public Preferences(){
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(Hub.localCfg));
 	}
+	
 	@Override
 	protected void createFieldEditors(){
-		addField(new DirectoryFieldEditor(CFG_DIRECTORY,"Importverzeichnis",getFieldEditorParent()));
+		addField(new DirectoryFieldEditor(CFG_DIRECTORY, "Importverzeichnis",
+			getFieldEditorParent()));
 	}
 	
 	public void init(IWorkbench workbench){
 	// TODO Auto-generated method stub
 	
 	}
+	
 	@Override
 	protected void performApply(){
 		super.performApply();
 		Hub.localCfg.flush();
 	}
-
 	
 }

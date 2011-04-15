@@ -65,66 +65,66 @@ public class BAGMediDetailBlatt extends Composite {
 	
 	InputData[] fields =
 		new InputData[] {
-		new InputData("Hersteller", "ExtInfo", new LabeledInputField.IContentProvider() {
-			public void displayContent(PersistentObject po, InputData ltf){
-				Kontakt hersteller = ((BAGMedi) po).getHersteller();
-				if (hersteller.isValid()) {
-					String lbl = hersteller.getLabel();
-					if (lbl.length() > 15) {
-						lbl = lbl.substring(0, 12) + "...";
+			new InputData("Hersteller", "ExtInfo", new LabeledInputField.IContentProvider() {
+				public void displayContent(PersistentObject po, InputData ltf){
+					Kontakt hersteller = ((BAGMedi) po).getHersteller();
+					if (hersteller.isValid()) {
+						String lbl = hersteller.getLabel();
+						if (lbl.length() > 15) {
+							lbl = lbl.substring(0, 12) + "...";
+						}
+						ltf.setText(lbl);
+					} else {
+						ltf.setText("?");
 					}
-					ltf.setText(lbl);
-				} else {
-					ltf.setText("?");
 				}
-			}
-			
-			public void reloadContent(PersistentObject po, InputData ltf){}
-			
-		}), new InputData("Therap. Gruppe", "Gruppe", InputData.Typ.STRING, null),
-		new InputData("Generika", "ExtInfo", InputData.Typ.STRING, "Generika"),
-		new InputData("Pharmacode", "ExtInfo", InputData.Typ.STRING, "Pharmacode"),
-		new InputData("BAG-Dossier", "ExtInfo", InputData.Typ.STRING, "BAG-Dossier"),
-		new InputData("Swissmedic-Nr", "ExtInfo", InputData.Typ.STRING, "Swissmedic-Nr"),
-		new InputData("Swissmedic-Liste", "ExtInfo", InputData.Typ.STRING, "Swissmedic-Liste"),
-		new InputData("ExFactory", "EK_Preis", InputData.Typ.CURRENCY, null),
-		new InputData("Verkauf", "VK_Preis", InputData.Typ.CURRENCY, null),
-		new InputData("Limitatio", "ExtInfo", InputData.Typ.STRING, "Limitatio"),
-		new InputData("LimitatioPts", "ExtInfo", InputData.Typ.STRING, "LimitatioPts"),
-		new InputData("Max. Pckg. an Lager", "Maxbestand", Typ.STRING, null),
-		new InputData("Min. Pckg. an Lager", "Minbestand", Typ.STRING, null),
-		new InputData("Aktuell Pckg. an Lager", "Istbestand", Typ.STRING, null),
-		new InputData("Aktuell an Lager", "ExtInfo", Typ.INT, "Anbruch"),
-		new InputData("Stück pro Packung", "ExtInfo", Typ.INT, "Verpackungseinheit"),
-		new InputData("Stück pro Abgabe", "ExtInfo", Typ.INT, "Verkaufseinheit"),
-		new InputData("Lieferant", "Lieferant", new LabeledInputField.IContentProvider() {
-			public void displayContent(PersistentObject po, InputData ltf){
-				String lbl = ((Artikel) po).getLieferant().getLabel();
-				if (lbl.length() > 15) {
-					lbl = lbl.substring(0, 12) + "...";
-				}
-				ltf.setText(lbl);
-			}
-			
-			public void reloadContent(PersistentObject po, InputData ltf){
-				KontaktSelektor ksl =
-					new KontaktSelektor(Hub.getActiveShell(), Kontakt.class, "Lieferant",
-					"Bitte wählen Sie, wer diesen Artikel liefert",Kontakt.DEFAULT_SORT);
-				if (ksl.open() == Dialog.OK) {
-					Kontakt k = (Kontakt) ksl.getSelection();
-					((Artikel) po).setLieferant(k);
+				
+				public void reloadContent(PersistentObject po, InputData ltf){}
+				
+			}), new InputData("Therap. Gruppe", "Gruppe", InputData.Typ.STRING, null),
+			new InputData("Generika", "ExtInfo", InputData.Typ.STRING, "Generika"),
+			new InputData("Pharmacode", "ExtInfo", InputData.Typ.STRING, "Pharmacode"),
+			new InputData("BAG-Dossier", "ExtInfo", InputData.Typ.STRING, "BAG-Dossier"),
+			new InputData("Swissmedic-Nr", "ExtInfo", InputData.Typ.STRING, "Swissmedic-Nr"),
+			new InputData("Swissmedic-Liste", "ExtInfo", InputData.Typ.STRING, "Swissmedic-Liste"),
+			new InputData("ExFactory", "EK_Preis", InputData.Typ.CURRENCY, null),
+			new InputData("Verkauf", "VK_Preis", InputData.Typ.CURRENCY, null),
+			new InputData("Limitatio", "ExtInfo", InputData.Typ.STRING, "Limitatio"),
+			new InputData("LimitatioPts", "ExtInfo", InputData.Typ.STRING, "LimitatioPts"),
+			new InputData("Max. Pckg. an Lager", "Maxbestand", Typ.STRING, null),
+			new InputData("Min. Pckg. an Lager", "Minbestand", Typ.STRING, null),
+			new InputData("Aktuell Pckg. an Lager", "Istbestand", Typ.STRING, null),
+			new InputData("Aktuell an Lager", "ExtInfo", Typ.INT, "Anbruch"),
+			new InputData("Stück pro Packung", "ExtInfo", Typ.INT, "Verpackungseinheit"),
+			new InputData("Stück pro Abgabe", "ExtInfo", Typ.INT, "Verkaufseinheit"),
+			new InputData("Lieferant", "Lieferant", new LabeledInputField.IContentProvider() {
+				public void displayContent(PersistentObject po, InputData ltf){
 					String lbl = ((Artikel) po).getLieferant().getLabel();
 					if (lbl.length() > 15) {
 						lbl = lbl.substring(0, 12) + "...";
 					}
 					ltf.setText(lbl);
-					ElexisEventDispatcher.reload(Artikel.class);
 				}
-			}
-			
-		})
+				
+				public void reloadContent(PersistentObject po, InputData ltf){
+					KontaktSelektor ksl =
+						new KontaktSelektor(Hub.getActiveShell(), Kontakt.class, "Lieferant",
+							"Bitte wählen Sie, wer diesen Artikel liefert", Kontakt.DEFAULT_SORT);
+					if (ksl.open() == Dialog.OK) {
+						Kontakt k = (Kontakt) ksl.getSelection();
+						((Artikel) po).setLieferant(k);
+						String lbl = ((Artikel) po).getLieferant().getLabel();
+						if (lbl.length() > 15) {
+							lbl = lbl.substring(0, 12) + "...";
+						}
+						ltf.setText(lbl);
+						ElexisEventDispatcher.reload(Artikel.class);
+					}
+				}
+				
+			})
 		
-	};
+		};
 	
 	public BAGMediDetailBlatt(final Composite pr){
 		super(pr, SWT.NONE);

@@ -24,26 +24,31 @@ public class FieldDescriptor<T extends PersistentObject> {
 	Typ tFeldTyp;
 	Object ext;
 	
-	/** Retrieve the visible label of the field	 */
+	/** Retrieve the visible label of the field */
 	public String getLabel(){
 		return sAnzeige;
 	}
+	
 	/** return the name of the database field backing this field */
 	public String getFieldname(){
 		return sFeldname;
 	}
+	
 	/** return the name of this field in the Object's ExitInfo properties */
 	public String getHashname(){
 		return sHashname;
 	}
+	
 	/** get the type of this field */
 	public Typ getFieldType(){
 		return tFeldTyp;
 	}
+	
 	/** Return any object associated with this field */
 	public Object getExtension(){
 		return ext;
 	}
+	
 	public FieldDescriptor(String anzeige, String feldname, Typ feldtyp, String hashname){
 		sAnzeige = anzeige;
 		sFeldname = feldname;

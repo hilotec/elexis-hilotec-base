@@ -30,18 +30,17 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.io.Settings;
 
 /**
- * Ein Preference-Element zum EInstellen eines DecoratedStrings (Text mit Farbe
- * und Icon)
+ * Ein Preference-Element zum EInstellen eines DecoratedStrings (Text mit Farbe und Icon)
  * 
  * @author gerry
  * 
  */
 public class DecoratedStringChooser extends Composite {
-
+	
 	public DecoratedStringChooser(Composite parent, final Settings cfg,
-			final DecoratedString[] strings) {
+		final DecoratedString[] strings){
 		super(parent, SWT.BORDER);
-
+		
 		int num = strings.length;
 		int typRows = ((int) Math.sqrt(num));
 		int typCols = typRows + (num - (typRows * typRows));
@@ -50,8 +49,7 @@ public class DecoratedStringChooser extends Composite {
 		}
 		setLayout(new GridLayout(typCols, true));
 		Label expl = new Label(this, SWT.WRAP);
-		expl
-				.setText(Messages.getString("DecoratedStringChooser.howToChange")); //$NON-NLS-1$
+		expl.setText(Messages.getString("DecoratedStringChooser.howToChange")); //$NON-NLS-1$
 		expl.setLayoutData(SWTHelper.getFillGridData(typCols, false, 1, false));
 		for (int i = 0; i < num; i++) {
 			Label lab = new Label(this, SWT.NONE);
@@ -62,9 +60,9 @@ public class DecoratedStringChooser extends Composite {
 			GridData gd = new GridData(GridData.FILL_BOTH);
 			lab.setLayoutData(gd);
 			lab.addMouseListener(new MouseAdapter() {
-
+				
 				@Override
-				public void mouseDoubleClick(MouseEvent e) {
+				public void mouseDoubleClick(MouseEvent e){
 					ColorDialog cd = new ColorDialog(getShell());
 					Label l = (Label) e.getSource();
 					RGB selected = cd.open();
@@ -74,7 +72,7 @@ public class DecoratedStringChooser extends Composite {
 						cfg.set(l.getText(), symbolic);
 					}
 				}
-
+				
 			});
 		}
 	}

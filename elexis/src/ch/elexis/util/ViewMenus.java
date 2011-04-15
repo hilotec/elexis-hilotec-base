@@ -22,119 +22,134 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 
 import ch.elexis.actions.RestrictedAction;
 
-
 /**
  * This class simplifies the handling of menus and toolbars.
+ * 
  * @author gerry
- *
+ * 
  */
 public class ViewMenus {
-    IViewSite site;
-    //IAction[] actions;
-    public ViewMenus(IViewSite s ){
-        site=s;
- 
-    }
-    /**
-     * Create a menu containing the specified actions. 
-     * @param actions a collection of actions and null-values (that represent separators)
-     */
-    public void createMenu(IAction...actions ){
-        IMenuManager mgr=site.getActionBars().getMenuManager();
-        for(IAction ac:actions){
-        	if(ac==null){
-        		mgr.add(new Separator());
-        	}else{
-        		mgr.add(ac);	
-        	}
-        }
-    }
-    /**
-     * Create a toolbar containing the specified actions
-     * @param actions a collection of actions and null-values (that represent separators)
-     */
-    public void createToolbar(IAction...actions ){
-        IToolBarManager tmg=site.getActionBars().getToolBarManager();
-        for(IAction ac:actions){
-        	if(ac==null){
-        		tmg.add(new Separator());
-        	}else{
-        		tmg.add(ac);
-        	}
-        }
-    }
-    
-    /**
-     * Attach a context menu to a org.eclipse.jface.StructuredViewer
-     * @param viewer the viewer
-     * @param actions the actions to use
-     */
-    public void createViewerContextMenu(StructuredViewer viewer, final IAction...actions ){
-        MenuManager menuMgr=new MenuManager();
-        menuMgr.setRemoveAllWhenShown(true);
-        menuMgr.addMenuListener(new IMenuListener(){
-            public void menuAboutToShow(IMenuManager manager) {
-                fillContextMenu(manager,actions);               
-            }
-        });
-        Menu menu=menuMgr.createContextMenu(viewer.getControl());
-        viewer.getControl().setMenu(menu);
-        
-        site.registerContextMenu(menuMgr,viewer);
-    }
-    /**
-     * Creates a menu for the given control containing the given actions
-     * @param control the Control to add the menu to
-     * @param actions the actions to be shown in the menu
-     */
-    public void createControlContextMenu(Control control, final IAction...actions){
-        MenuManager menuMgr=new MenuManager();
-        menuMgr.setRemoveAllWhenShown(true);
-        menuMgr.addMenuListener(new IMenuListener(){
-            public void menuAboutToShow(IMenuManager manager) {
-                fillContextMenu(manager,actions);               
-            }
-        });
-        Menu menu=menuMgr.createContextMenu(control);
-        control.setMenu(menu);
-    }
-    
-    /**
-     * Creates a menu for the given Control that will be populated by the provided populator
-     * This can be used to construct dynamic menus that change contents depending of state.
-     */
-    public void createControlContextMenu(Control control, final IMenuPopulator populator){
-    	final MenuManager menuMgr=new MenuManager();
-    	menuMgr.setRemoveAllWhenShown(true);
-        menuMgr.addMenuListener(new IMenuListener(){
-            public void menuAboutToShow(IMenuManager manager) {
-                for(IAction ac:populator.fillMenu()){
-                	if(ac==null){
-                		menuMgr.add(new Separator());
-                	}else{
-                		menuMgr.add(ac);
-                	}
-                }
-            }
-        });
-        Menu menu=menuMgr.createContextMenu(control);
-        control.setMenu(menu);
-    }
-    protected void fillContextMenu(IMenuManager manager, IAction...actions) {
-        manager.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
-        for(IAction ac:actions){
-        	if(ac==null){
-        		manager.add(new Separator());
-        	}else{
-        		if(ac instanceof RestrictedAction){
-        			((RestrictedAction)ac).reflectRight();
-        		}
-        		manager.add(ac);
-        	}
-        }
-    }
-
-    public static interface IMenuPopulator{
-    	public IAction[] fillMenu();
-    };
+	IViewSite site;
+	
+	// IAction[] actions;
+	public ViewMenus(IViewSite s){
+		site = s;
+		
+	}
+	
+	/**
+	 * Create a menu containing the specified actions.
+	 * 
+	 * @param actions
+	 *            a collection of actions and null-values (that represent separators)
+	 */
+	public void createMenu(IAction... actions){
+		IMenuManager mgr = site.getActionBars().getMenuManager();
+		for (IAction ac : actions) {
+			if (ac == null) {
+				mgr.add(new Separator());
+			} else {
+				mgr.add(ac);
+			}
+		}
+	}
+	
+	/**
+	 * Create a toolbar containing the specified actions
+	 * 
+	 * @param actions
+	 *            a collection of actions and null-values (that represent separators)
+	 */
+	public void createToolbar(IAction... actions){
+		IToolBarManager tmg = site.getActionBars().getToolBarManager();
+		for (IAction ac : actions) {
+			if (ac == null) {
+				tmg.add(new Separator());
+			} else {
+				tmg.add(ac);
+			}
+		}
+	}
+	
+	/**
+	 * Attach a context menu to a org.eclipse.jface.StructuredViewer
+	 * 
+	 * @param viewer
+	 *            the viewer
+	 * @param actions
+	 *            the actions to use
+	 */
+	public void createViewerContextMenu(StructuredViewer viewer, final IAction... actions){
+		MenuManager menuMgr = new MenuManager();
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager){
+				fillContextMenu(manager, actions);
+			}
+		});
+		Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(menu);
+		
+		site.registerContextMenu(menuMgr, viewer);
+	}
+	
+	/**
+	 * Creates a menu for the given control containing the given actions
+	 * 
+	 * @param control
+	 *            the Control to add the menu to
+	 * @param actions
+	 *            the actions to be shown in the menu
+	 */
+	public void createControlContextMenu(Control control, final IAction... actions){
+		MenuManager menuMgr = new MenuManager();
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager){
+				fillContextMenu(manager, actions);
+			}
+		});
+		Menu menu = menuMgr.createContextMenu(control);
+		control.setMenu(menu);
+	}
+	
+	/**
+	 * Creates a menu for the given Control that will be populated by the provided populator This
+	 * can be used to construct dynamic menus that change contents depending of state.
+	 */
+	public void createControlContextMenu(Control control, final IMenuPopulator populator){
+		final MenuManager menuMgr = new MenuManager();
+		menuMgr.setRemoveAllWhenShown(true);
+		menuMgr.addMenuListener(new IMenuListener() {
+			public void menuAboutToShow(IMenuManager manager){
+				for (IAction ac : populator.fillMenu()) {
+					if (ac == null) {
+						menuMgr.add(new Separator());
+					} else {
+						menuMgr.add(ac);
+					}
+				}
+			}
+		});
+		Menu menu = menuMgr.createContextMenu(control);
+		control.setMenu(menu);
+	}
+	
+	protected void fillContextMenu(IMenuManager manager, IAction... actions){
+		manager.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
+		for (IAction ac : actions) {
+			if (ac == null) {
+				manager.add(new Separator());
+			} else {
+				if (ac instanceof RestrictedAction) {
+					((RestrictedAction) ac).reflectRight();
+				}
+				manager.add(ac);
+			}
+		}
+	}
+	
+	public static interface IMenuPopulator {
+		public IAction[] fillMenu();
+	};
 }

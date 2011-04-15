@@ -57,7 +57,7 @@ public class Ablauf extends FieldEditorPreferencePage implements IWorkbenchPrefe
 				{
 					Messages.Ablauf_10, "4"}, //$NON-NLS-1$
 				{
-					Messages.Ablauf_12, "5"}  //$NON-NLS-1$
+					Messages.Ablauf_12, "5"} //$NON-NLS-1$
 			}, getFieldEditorParent()));
 		
 		addField(new RadioGroupFieldEditor(PreferenceConstants.ABL_LOGALERT, Messages.Ablauf_14, 2,
@@ -65,11 +65,11 @@ public class Ablauf extends FieldEditorPreferencePage implements IWorkbenchPrefe
 				{
 					Messages.Ablauf_15, "0"}, //$NON-NLS-1$
 				{
-					Messages.Ablauf_17, "1"},  //$NON-NLS-1$
+					Messages.Ablauf_17, "1"}, //$NON-NLS-1$
 				{
 					Messages.Ablauf_19, "2"}, //$NON-NLS-1$
 				{
-					Messages.Ablauf_21, "3"}  //$NON-NLS-1$
+					Messages.Ablauf_21, "3"} //$NON-NLS-1$
 			}, getFieldEditorParent()));
 		
 		addField(new StringFieldEditor(PreferenceConstants.ABL_TRACE, Messages.Ablauf_23,

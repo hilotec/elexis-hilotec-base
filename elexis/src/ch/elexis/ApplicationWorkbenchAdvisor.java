@@ -64,13 +64,14 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		loginshell = new Shell(Desk.getDisplay());
 		Log.setAlert(loginshell);
 		try {
-			if(PersistentObject.connect(Hub.localCfg, loginshell) == false)
+			if (PersistentObject.connect(Hub.localCfg, loginshell) == false)
 				handlePersistenceException();
-			} catch (PersistenceException pe) {
+		} catch (PersistenceException pe) {
 			handlePersistenceException();
-			}
+		}
 		
-		//Hub.localCfg=new SqlSettings(PersistentObject.getConnection(), "CLIENTCONFIG", "param", "value", "Station='"+NetTool.hostname+"'");
+		// Hub.localCfg=new SqlSettings(PersistentObject.getConnection(), "CLIENTCONFIG", "param",
+		// "value", "Station='"+NetTool.hostname+"'");
 		// look whether we have do to some work before creating the workbench
 		try {
 			final Class<?> up = Class.forName("ch.elexis.PreStartUpdate"); //$NON-NLS-1$
@@ -93,7 +94,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		} catch (Exception ex) {
 			Hub.log.log("Error executing PreStartUpdate " + ex.getMessage(), Log.ERRORS); //$NON-NLS-1$
 		}
-
+		
 		Hub.pin.initializeDisplayPreferences(Desk.getDisplay());
 		configurer.setSaveAndRestore(true);
 		Log.setAlert(null);
@@ -107,13 +108,13 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		Log.setAlert(shell);
 		String username = System.getProperty("ch.elexis.username");
 		String password = System.getProperty("ch.elexis.password");
-		if (username != null && password != null){
+		if (username != null && password != null) {
 			Log log = Log.get("LoginDialog"); //$NON-NLS-1$
-			log.log("Bypassing LoginDialg username " + username + " " + password, Log.ERRORS);		
-			if(!Anwender.login(username, password)){
-				log.log("Authentication failed. Exiting",Log.FATALS);
+			log.log("Bypassing LoginDialg username " + username + " " + password, Log.ERRORS);
+			if (!Anwender.login(username, password)) {
+				log.log("Authentication failed. Exiting", Log.FATALS);
 			}
-		}else{
+		} else {
 			LoginDialog dlg = new LoginDialog(shell);
 			dlg.create();
 			dlg.getShell().setText(Messages.ApplicationWorkbenchAdvisor_7);
@@ -161,17 +162,13 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 		super.postShutdown();
 	}
 	
-	private void handlePersistenceException() {
+	private void handlePersistenceException(){
 		Log.setAlertLevel(Log.ERRORS);
-		Hub.log.log(
-				Messages.ApplicationWorkbenchAdvisor_0
-						+ PersistentObject.getConnection().lastErrorString,
-				Log.ERRORS);
-		MessageDialog.openError(
-				loginshell,
-				Messages.ApplicationWorkbenchAdvisor_1,
-				Messages.ApplicationWorkbenchAdvisor_2
-						+ PersistentObject.getConnection().lastErrorString);
+		Hub.log.log(Messages.ApplicationWorkbenchAdvisor_0
+			+ PersistentObject.getConnection().lastErrorString, Log.ERRORS);
+		MessageDialog.openError(loginshell, Messages.ApplicationWorkbenchAdvisor_1,
+			Messages.ApplicationWorkbenchAdvisor_2
+				+ PersistentObject.getConnection().lastErrorString);
 		PersistentObject.disconnect();
 		WizardDialog wd = new WizardDialog(loginshell, new DBConnectWizard());
 		wd.open();

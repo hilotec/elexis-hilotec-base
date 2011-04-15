@@ -34,27 +34,26 @@ import ch.elexis.text.ITextPlugin.ICallback;
 public class LaborblattView extends ViewPart implements ICallback {
 	public static final String ID = "ch.elexis.Laborblatt"; //$NON-NLS-1$
 	TextContainer text;
-
-	public LaborblattView() {
-	}
-
+	
+	public LaborblattView(){}
+	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		text = new TextContainer(getViewSite());
 		text.getPlugin().createContainer(parent, this);
-
+		
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Automatisch erstellter Methoden-Stub
-
+	public void setFocus(){
+	// TODO Automatisch erstellter Methoden-Stub
+	
 	}
-
-	public boolean createLaborblatt(final Patient pat, final String[] header,
-			final TableItem[] rows) {
-		Brief br = text.createFromTemplateName(Konsultation.getAktuelleKons(),
-				Messages.getString("LaborblattView.LabTemplateName"), Brief.LABOR, pat, null); //$NON-NLS-1$
+	
+	public boolean createLaborblatt(final Patient pat, final String[] header, final TableItem[] rows){
+		Brief br =
+			text.createFromTemplateName(Konsultation.getAktuelleKons(), Messages
+				.getString("LaborblattView.LabTemplateName"), Brief.LABOR, pat, null); //$NON-NLS-1$
 		if (br == null) {
 			return false;
 		}
@@ -71,7 +70,7 @@ public class LaborblattView extends ViewPart implements ICallback {
 		}
 		colsizes[0] = Math.round(first);
 		colsizes[1] = Math.round(second);
-
+		
 		LinkedList<String[]> usedRows = new LinkedList<String[]>();
 		usedRows.add(header);
 		for (int i = 0; i < rows.length; i++) {
@@ -90,14 +89,14 @@ public class LaborblattView extends ViewPart implements ICallback {
 		}
 		String[][] fld = usedRows.toArray(new String[0][]);
 		return text.getPlugin().insertTable("[Laborwerte]", //$NON-NLS-1$
-				ITextPlugin.FIRST_ROW_IS_HEADER, fld, colsizes);
+			ITextPlugin.FIRST_ROW_IS_HEADER, fld, colsizes);
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	public boolean createLaborblatt(Patient pat, Document doc) {
-		/* Brief br= */text.createFromTemplateName(Konsultation
-				.getAktuelleKons(), Messages.getString("LaborblattView.LabTemplateName"), Brief.LABOR, pat, null); //$NON-NLS-1$
-
+	public boolean createLaborblatt(Patient pat, Document doc){
+		/* Brief br= */text.createFromTemplateName(Konsultation.getAktuelleKons(), Messages
+			.getString("LaborblattView.LabTemplateName"), Brief.LABOR, pat, null); //$NON-NLS-1$
+		
 		ArrayList<String[]> rows = new ArrayList<String[]>();
 		Element root = doc.getRootElement();
 		String druckdat = root.getAttributeValue(Messages.getString("LaborblattView.created")); //$NON-NLS-1$
@@ -113,16 +112,17 @@ public class LaborblattView extends ViewPart implements ICallback {
 		rows.add(firstline);
 		List groups = root.getChildren("Gruppe"); //$NON-NLS-1$
 		for (Element el : (List<Element>) groups) {
-			rows.add(new String[] { el.getAttribute("Name").getValue() }); //$NON-NLS-1$
+			rows.add(new String[] {
+				el.getAttribute("Name").getValue()}); //$NON-NLS-1$
 			List<Element> params = el.getChildren("Parameter"); //$NON-NLS-1$
 			for (Element param : params) {
 				Element ref = param.getChild("Referenz"); //$NON-NLS-1$
 				String[] row = new String[cols];
 				StringBuilder sb = new StringBuilder();
 				sb.append(param.getAttributeValue("Name")).append(" (").append( //$NON-NLS-1$ //$NON-NLS-2$
-						ref.getAttributeValue("min")).append("-").append( //$NON-NLS-1$ //$NON-NLS-2$
-						ref.getAttributeValue("max")).append(") ").append( //$NON-NLS-1$ //$NON-NLS-2$
-						param.getAttributeValue("Einheit")); //$NON-NLS-1$
+					ref.getAttributeValue("min")).append("-").append( //$NON-NLS-1$ //$NON-NLS-2$
+					ref.getAttributeValue("max")).append(") ").append( //$NON-NLS-1$ //$NON-NLS-2$
+					param.getAttributeValue("Einheit")); //$NON-NLS-1$
 				row[0] = sb.toString();
 				List<Element> results = param.getChildren("Resultat"); //$NON-NLS-1$
 				int i = 1;
@@ -132,25 +132,24 @@ public class LaborblattView extends ViewPart implements ICallback {
 				rows.add(row);
 			}
 		}
-		if(text.getPlugin().insertTable("[Laborwerte]", //$NON-NLS-1$
-				ITextPlugin.FIRST_ROW_IS_HEADER, rows.toArray(new String[0][]),
-				null)){
-			if(text.getPlugin().isDirectOutput()){
+		if (text.getPlugin().insertTable("[Laborwerte]", //$NON-NLS-1$
+			ITextPlugin.FIRST_ROW_IS_HEADER, rows.toArray(new String[0][]), null)) {
+			if (text.getPlugin().isDirectOutput()) {
 				text.getPlugin().print(null, null, true);
 				getSite().getPage().hideView(this);
 				return true;
 			}
 		}
 		return false;
-
+		
 	}
-
-	public void save() {
-		// TODO Automatisch erstellter Methoden-Stub
-
+	
+	public void save(){
+	// TODO Automatisch erstellter Methoden-Stub
+	
 	}
-
-	public boolean saveAs() {
+	
+	public boolean saveAs(){
 		// TODO Automatisch erstellter Methoden-Stub
 		return false;
 	}

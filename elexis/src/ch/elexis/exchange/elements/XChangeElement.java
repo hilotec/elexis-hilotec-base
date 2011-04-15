@@ -30,7 +30,7 @@ import ch.rgw.tools.Result;
  */
 public abstract class XChangeElement {
 	public static final String ATTR_ID = "id";
-	public static final String ATTR_DATE="date";
+	public static final String ATTR_DATE = "date";
 	protected XChangeExporter sender;
 	private XChangeImporter reader;
 	protected Element ex;
@@ -99,9 +99,11 @@ public abstract class XChangeElement {
 	public XChangeImporter getReader(){
 		return reader;
 	}
+	
 	public XChangeExporter getSender(){
 		return sender;
 	}
+	
 	/*
 	 * public void setContainer(XChangeContainer c){ parent = c; }
 	 */
@@ -121,6 +123,7 @@ public abstract class XChangeElement {
 	
 	/**
 	 * append a XID that consists solely of the local identity id
+	 * 
 	 * @param id
 	 */
 	public void setDefaultXid(String id){
@@ -148,8 +151,8 @@ public abstract class XChangeElement {
 	
 	public XidElement getXid(){
 		XidElement xid = new XidElement();
-		Element el=ex.getChild(XidElement.XMLNAME, XChangeContainer.ns);
-		if(el==null){
+		Element el = ex.getChild(XidElement.XMLNAME, XChangeContainer.ns);
+		if (el == null) {
 			return null;
 		}
 		xid.setElement(el);
@@ -158,6 +161,7 @@ public abstract class XChangeElement {
 	
 	/**
 	 * FInd all children of a specified subclass of XChangeElement with a specified element name
+	 * 
 	 * @param name
 	 * @param clazz
 	 * @return a possibly empty list or null on errors
@@ -167,9 +171,8 @@ public abstract class XChangeElement {
 		LinkedList<XChangeElement> ret = new LinkedList<XChangeElement>();
 		for (Object el : ex.getChildren(name, XChangeContainer.ns)) {
 			try {
-				XChangeElement xc =
-					clazz.getConstructor().newInstance();
-				xc.setElement((Element)el);
+				XChangeElement xc = clazz.getConstructor().newInstance();
+				xc.setElement((Element) el);
 				ret.add(xc);
 			} catch (Exception e) {
 				ExHandler.handle(e);
@@ -186,8 +189,7 @@ public abstract class XChangeElement {
 		}
 		XChangeElement ret;
 		try {
-			ret =
-				clazz.getConstructor().newInstance();
+			ret = clazz.getConstructor().newInstance();
 			ret.setWriter(getSender());
 			ret.setReader(getReader());
 			ret.setElement(el);
@@ -200,13 +202,15 @@ public abstract class XChangeElement {
 	
 	/**
 	 * create a string representation of this Element. Subclasses should override
-	 * @param format one of gthe FORMAT constants
-	 * @return a String representation if the format was supported. The default implementation returns
-	 * always "Format not supported"
+	 * 
+	 * @param format
+	 *            one of gthe FORMAT constants
+	 * @return a String representation if the format was supported. The default implementation
+	 *         returns always "Format not supported"
 	 */
 	public Result<String> toString(final FORMAT format){
 		return new Result<String>(Result.SEVERITY.ERROR, FORMAT_NOT_SUPPORTED,
-				"Format not supported", null, true);
+			"Format not supported", null, true);
 	}
 	
 	public void setAttribute(String attr, String value){

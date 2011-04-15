@@ -6,11 +6,10 @@ package ch.elexis.actions;
 
 import org.eclipse.ui.IViewSite;
 
-
 public class StatusLine {
-    
-    public static void setText(IViewSite site, String text){
-        site.getActionBars().getStatusLineManager().setMessage(text);
-    }
-    
+	
+	public static void setText(IViewSite site, String text){
+		site.getActionBars().getStatusLineManager().setMessage(text);
+	}
+	
 }

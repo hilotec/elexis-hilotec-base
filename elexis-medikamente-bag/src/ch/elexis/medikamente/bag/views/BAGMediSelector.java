@@ -30,11 +30,11 @@ public class BAGMediSelector extends CodeSelectorFactory {
 	CommonViewer cv;
 	SelectorPanelProvider slp;
 	FieldDescriptor<?>[] fields =
-	{
-		new FieldDescriptor<BAGMedi>("Name", FIELD_NAME, FieldDescriptor.Typ.STRING,null),
-		new FieldDescriptor<BAGMedi>("Substanz", FIELD_SUBSTANCE, Typ.STRING,null),
-		new FieldDescriptor<BAGMedi>("Notizen",FIELD_NOTES,Typ.STRING,null)
-	};
+		{
+			new FieldDescriptor<BAGMedi>("Name", FIELD_NAME, FieldDescriptor.Typ.STRING, null),
+			new FieldDescriptor<BAGMedi>("Substanz", FIELD_SUBSTANCE, Typ.STRING, null),
+			new FieldDescriptor<BAGMedi>("Notizen", FIELD_NOTES, Typ.STRING, null)
+		};
 	BagMediContentProvider fdl;
 	
 	@Override

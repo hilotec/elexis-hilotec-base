@@ -69,8 +69,8 @@ public class Note extends PersistentObject {
 	 * create or update the table if necessary
 	 */
 	static {
-		addMapping(TABLENAME, FLD_PARENT, FLD_TITLE, FLD_CONTENTS, "Datum=S:D:Date", FLD_REFS, FLD_KEYWORDS,
-			FLD_MIMETYPE);
+		addMapping(TABLENAME, FLD_PARENT, FLD_TITLE, FLD_CONTENTS, "Datum=S:D:Date", FLD_REFS,
+			FLD_KEYWORDS, FLD_MIMETYPE);
 		Note start = load("1"); //$NON-NLS-1$
 		if (!start.exists()) {
 			createOrModifyTable(create);

@@ -161,8 +161,8 @@ public class XChangeContributor implements IExchangeContributor {
 	}
 	
 	public void importHook(XChangeContainer container, PersistentObject context){
-		// TODO Auto-generated method stub
-		
+	// TODO Auto-generated method stub
+	
 	}
 	
 	public boolean init(MedicalElement me, boolean export){
@@ -171,8 +171,8 @@ public class XChangeContributor implements IExchangeContributor {
 	}
 	
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-	throws CoreException{
-		
+		throws CoreException{
+
 	}
 	
 }

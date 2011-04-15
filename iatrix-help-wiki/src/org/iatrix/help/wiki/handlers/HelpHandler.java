@@ -23,16 +23,14 @@ public class HelpHandler extends AbstractHandler {
 	/**
 	 * The constructor.
 	 */
-	public HelpHandler() {
-	}
-
+	public HelpHandler(){}
+	
 	/**
-	 * the command has been executed, so extract extract the needed information
-	 * from the application context.
+	 * the command has been executed, so extract extract the needed information from the application
+	 * context.
 	 */
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil
-				.getActiveWorkbenchWindowChecked(event);
+	public Object execute(ExecutionEvent event) throws ExecutionException{
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		
 		// we use the view's class name as context id
 		String contextId = null;
@@ -46,13 +44,12 @@ public class HelpHandler extends AbstractHandler {
 		
 		// TODO DEBUG
 		System.out.println("DEBUG: " + contextId);
-
-
+		
 		if (contextId != null) {
 			// activate view
 			try {
-				IViewPart view = Hub.plugin.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage().showView(
+				IViewPart view =
+					Hub.plugin.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(
 						WikiView.ID);
 				if (view != null && view instanceof WikiView) {
 					WikiView wikiView = (WikiView) view;
@@ -62,7 +59,7 @@ public class HelpHandler extends AbstractHandler {
 				ExHandler.handle(ex);
 			}
 		}
-
+		
 		return null;
 	}
 }

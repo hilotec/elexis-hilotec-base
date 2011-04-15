@@ -13,36 +13,39 @@ import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.data.Patient;
 
 public class JiveXView extends ViewPart {
-
-	public JiveXView() {
-		// TODO Auto-generated constructor stub
+	
+	public JiveXView(){
+	// TODO Auto-generated constructor stub
 	}
-
-	ElexisEventListenerImpl eeli_pat=new ElexisEventListenerImpl(Patient.class){
-
+	
+	ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
+		
 		@Override
-		public void runInUi(ElexisEvent ev) {
-			if(ElexisEventDispatcher.getSelectedPatient()==null){
-				
+		public void runInUi(ElexisEvent ev){
+			if (ElexisEventDispatcher.getSelectedPatient() == null) {
+
 			}
 		}
 		
 	};
+	
 	@Override
-	public void createPartControl(Composite parent) {
-		Button button=new Button(parent,SWT.PUSH);
+	public void createPartControl(Composite parent){
+		Button button = new Button(parent, SWT.PUSH);
 		button.setText("Auftrag...");
 		button.addSelectionListener(new SelectionAdapter() {
-			Patient pat=ElexisEventDispatcher.getSelectedPatient();
-			InputDialog id=new InputDialog(getSite().getShell(), "Röntgenauftrag an JiveX", "Bitte geben Sie das gewünschte Bild an","", null);
+			Patient pat = ElexisEventDispatcher.getSelectedPatient();
+			InputDialog id =
+				new InputDialog(getSite().getShell(), "Röntgenauftrag an JiveX",
+					"Bitte geben Sie das gewünschte Bild an", "", null);
 			
 		});
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 }

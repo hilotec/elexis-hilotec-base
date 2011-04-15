@@ -45,13 +45,12 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	public static final String CREATOR = "Creator";
 	public static final String KONTAKT_ID = "IdentID";
 	static final String TABLENAME = "REMINDERS";
-
-	public static final String STATE_PLANNED="geplant";
-	public static final String STATE_DUE="fällig";
-	public static final String STATE_OVERDUE="überfällig";
-	public static final String DONE="erledigt";
-	public static final String UNDONE="unerledigt";
 	
+	public static final String STATE_PLANNED = "geplant";
+	public static final String STATE_DUE = "fällig";
+	public static final String STATE_OVERDUE = "überfällig";
+	public static final String DONE = "erledigt";
+	public static final String UNDONE = "unerledigt";
 	
 	@Override
 	protected String getTableName(){
@@ -111,21 +110,22 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 			KONTAKT_ID, CREATOR, DUE, STATUS, TYPE, "Params", MESSAGE
 		}, new String[] {
 			ident.getId(), Hub.actUser.getId(), due,
-			Byte.toString((byte) Status.STATE_PLANNED.ordinal()), Byte.toString((byte) typ.ordinal()),
-			params, msg
+			Byte.toString((byte) Status.STATE_PLANNED.ordinal()),
+			Byte.toString((byte) typ.ordinal()), params, msg
 		});
 	}
 	
 	/**
-	 * Add a new user to the list of responsibles for that reminder, if not already in list.
-	 * The reminder will show up among the reminders, if one of its responsibles is logged in.
+	 * Add a new user to the list of responsibles for that reminder, if not already in list. The
+	 * reminder will show up among the reminders, if one of its responsibles is logged in.
 	 * 
 	 * @param a
 	 *            the user to add to the list of responsible users
 	 */
 	public void addResponsible(final Anwender a){
 		for (Anwender anwender : getResponsibles()) {
-			if(anwender.getId().equalsIgnoreCase(a.getId())) return;
+			if (anwender.getId().equalsIgnoreCase(a.getId()))
+				return;
 		}
 		addToList("Responsibles", a.getId(), (String[]) null);
 	}
@@ -135,14 +135,14 @@ public class Reminder extends PersistentObject implements Comparable<Reminder> {
 	 * If the user is not in the list, nothing is done.
 	 * 
 	 * @param a
-	 * 			the user to remove from the list of responsible users
+	 *            the user to remove from the list of responsible users
 	 */
 	public void removeResponsible(final Anwender a){
 		for (Anwender anwender : getResponsibles()) {
-			if(anwender.getId().equalsIgnoreCase(a.getId())) removeFromList("Responsibles", a.getId());
+			if (anwender.getId().equalsIgnoreCase(a.getId()))
+				removeFromList("Responsibles", a.getId());
 		}
 	}
-	
 	
 	/** Einen Reminder anhand seiner ID aus der Datenbank einlesen */
 	public static Reminder load(final String id){

@@ -96,33 +96,38 @@ public class Mandanten extends PreferencePage implements IWorkbenchPreferencePag
 		def =
 			new InputData[] {
 				new InputData(Messages.Mandanten_kuerzel, "Label", Typ.STRING, null), //$NON-NLS-1$
-				new InputData(Messages.Mandanten_password, PersistentObject.FLD_EXTINFO, Typ.STRING, "UsrPwd"),  //$NON-NLS-1$
+				new InputData(Messages.Mandanten_password, PersistentObject.FLD_EXTINFO,
+					Typ.STRING, "UsrPwd"), //$NON-NLS-1$
 				// -> KSK, NIF und EAN gehören zu Tarmed.
 				// new InputData("KSK-Nr","ExtInfo",Typ.STRING,"KSK"),
 				// new InputData("NIF","ExtInfo",Typ.STRING,"NIF"),
 				// new InputData("EANr","ExtInfo",Typ.STRING,"EAN"),
-				new InputData(Messages.Mandanten_groups, PersistentObject.FLD_EXTINFO, "Groups", grp.split(",")), //$NON-NLS-1$ //$NON-NLS-2$ 
-				new InputData(Messages.Mandanten_biller, PersistentObject.FLD_EXTINFO, new IContentProvider() { 
-					
-					public void displayContent(PersistentObject po, InputData ltf){
-						Mandant m = (Mandant) po;
-						Kontakt r = m.getRechnungssteller();
-						ltf.setText(r.getLabel());
-					}
-					
-					public void reloadContent(PersistentObject po, InputData ltf){
-						Kontakt rsi = (Kontakt) po;
-						KontaktSelektor ksl =
-							new KontaktSelektor(getShell(), Kontakt.class,
-								Messages.Mandanten_selectBiller,
-								Messages.Mandanten_pleaseSelectBiller,new String[]{Kontakt.FLD_NAME1,Kontakt.FLD_NAME2});
-						if (ksl.open() == Dialog.OK) {
-							rsi = (Kontakt) ksl.getSelection();
+				new InputData(Messages.Mandanten_groups, PersistentObject.FLD_EXTINFO,
+					"Groups", grp.split(",")), //$NON-NLS-1$ //$NON-NLS-2$ 
+				new InputData(Messages.Mandanten_biller, PersistentObject.FLD_EXTINFO,
+					new IContentProvider() {
+						
+						public void displayContent(PersistentObject po, InputData ltf){
+							Mandant m = (Mandant) po;
+							Kontakt r = m.getRechnungssteller();
+							ltf.setText(r.getLabel());
 						}
-						((Mandant) po).setRechnungssteller(rsi);
-						ltf.setText(rsi.getLabel());
-					}
-				})
+						
+						public void reloadContent(PersistentObject po, InputData ltf){
+							Kontakt rsi = (Kontakt) po;
+							KontaktSelektor ksl =
+								new KontaktSelektor(getShell(), Kontakt.class,
+									Messages.Mandanten_selectBiller,
+									Messages.Mandanten_pleaseSelectBiller, new String[] {
+										Kontakt.FLD_NAME1, Kontakt.FLD_NAME2
+									});
+							if (ksl.open() == Dialog.OK) {
+								rsi = (Kontakt) ksl.getSelection();
+							}
+							((Mandant) po).setRechnungssteller(rsi);
+							ltf.setText(rsi.getLabel());
+						}
+					})
 			};
 	}
 	

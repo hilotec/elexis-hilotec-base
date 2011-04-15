@@ -21,16 +21,15 @@ import org.eclipse.core.runtime.Platform;
 
 public class PlatformHelper {
 	public static String getBasePath(String pluginID){
-  	  try {
-  	        URL url = Platform.getBundle(pluginID).getEntry("/");
-  	        url  = FileLocator.toFileURL(url);
-  	        String bundleLocation = url.getPath();
-  	        File file = new File(bundleLocation);
-  	        bundleLocation = file.getAbsolutePath();
-  	        return bundleLocation;
-  	      }
-  	      catch(Throwable throwable) {
-  	        return "";
-  	      }
-  	}
+		try {
+			URL url = Platform.getBundle(pluginID).getEntry("/");
+			url = FileLocator.toFileURL(url);
+			String bundleLocation = url.getPath();
+			File file = new File(bundleLocation);
+			bundleLocation = file.getAbsolutePath();
+			return bundleLocation;
+		} catch (Throwable throwable) {
+			return "";
+		}
+	}
 }

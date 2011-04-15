@@ -35,7 +35,7 @@ import ch.rgw.tools.TimeTool;
  * @version 0.5.1
  * @see GnuPG - http://www.gnupg.org/
  * 
- * Modified 2006/10 by G. Weirich for use in Elexis
+ *      Modified 2006/10 by G. Weirich for use in Elexis
  */
 
 public class GnuPG implements Cryptologist {
@@ -396,12 +396,12 @@ public class GnuPG implements Cryptologist {
 		boolean success;
 		StringBuilder sb = new StringBuilder();
 		sb.append("Key-Type: DSA\n Key-Length: 2048\n Subkey-Type: ELG-E\n Subkey-Length: 2048")
-		.append("\n Name-Real: ").append(name);
+			.append("\n Name-Real: ").append(name);
 		if (!StringTool.isNothing(bem)) {
 			sb.append("\n Name-Comment: ").append(bem);
 		}
 		sb.append("\n Name-Email: ").append(mail).append("\n Expire-Date: 0").append(
-		"\n Passphrase: ").append(pwd).append("\n %commit\n");
+			"\n Passphrase: ").append(pwd).append("\n %commit\n");
 		
 		success = runGnuPG("--gen-key", sb.toString());
 		if (success && this.gpg_exitCode != 0) {
@@ -415,7 +415,7 @@ public class GnuPG implements Cryptologist {
 		boolean success;
 		StringBuilder sb = new StringBuilder();
 		sb.append("passwd\n").append(oldpwd).append("\n").append(newpwd).append("\n")
-		.append(newpwd).append("\n").append("quit\n");
+			.append(newpwd).append("\n").append("quit\n");
 		success = runGnuPG("--edit-key " + key, sb.toString());
 		if (success && this.gpg_exitCode != 0) {
 			success = false;
@@ -569,8 +569,7 @@ public class GnuPG implements Cryptologist {
 	}
 	
 	/**
-	 * A utility method for creating a unique temporary file when needed by one of the main methods.
-	 * <BR>
+	 * A utility method for creating a unique temporary file when needed by one of the main methods. <BR>
 	 * The file handle is store in tmpFile object var.
 	 * 
 	 * @param inStr
@@ -681,27 +680,26 @@ public class GnuPG implements Cryptologist {
 		return false;
 	}
 	
-	public String getUser() {
+	public String getUser(){
 		return identity;
 	}
 	
-	public X509Certificate getCertificate(String alias) {
+	public X509Certificate getCertificate(String alias){
 		// TODO Auto-generated method stub
 		return null;
 	}
 	
-	public boolean isFunctional() {
+	public boolean isFunctional(){
 		// TODO Auto-generated method stub
 		return false;
 	}
 	
-	public boolean addCertificate(byte[] certEncoded) {
+	public boolean addCertificate(byte[] certEncoded){
 		// TODO Auto-generated method stub
 		return false;
 	}
 	
-	public byte[] getCertificateEncoded(String alias)
-	throws CryptologistException {
+	public byte[] getCertificateEncoded(String alias) throws CryptologistException{
 		return null;
 	}
 	
@@ -709,17 +707,16 @@ public class GnuPG implements Cryptologist {
 		// TODO Auto-generated method stub
 		return false;
 	}
-
-	public void decrypt(InputStream source, OutputStream dest)
-			throws CryptologistException {
-		// TODO Auto-generated method stub
-		
+	
+	public void decrypt(InputStream source, OutputStream dest) throws CryptologistException{
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void encrypt(InputStream source, OutputStream dest,
-			String receiverKeyName) throws CryptologistException {
-		// TODO Auto-generated method stub
-		
+	
+	public void encrypt(InputStream source, OutputStream dest, String receiverKeyName)
+		throws CryptologistException{
+	// TODO Auto-generated method stub
+	
 	}
 	
 }

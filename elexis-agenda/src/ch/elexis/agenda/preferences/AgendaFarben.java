@@ -37,98 +37,99 @@ import ch.elexis.util.SWTHelper;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
 
-public class AgendaFarben extends PreferencePage implements
-        IWorkbenchPreferencePage {
+public class AgendaFarben extends PreferencePage implements IWorkbenchPreferencePage {
 	private SettingsPreferenceStore prefs;
-    private int typCols,typRows,statusCols;
-    //private ColorCellEditor[] editors;
-    //private String[] columnProperties;
-    
-    public AgendaFarben(){
-    	prefs=new SettingsPreferenceStore(Hub.userCfg);
-        setPreferenceStore(prefs);
-        setDescription(Messages.AgendaFarben_colorSettings); 
-    }
-    
-    public void init(IWorkbench workbench)
-    {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    protected Control createContents(Composite parent)
-    {
-        Composite par=new Composite(parent,SWT.NONE);
-        par.setLayout(new GridLayout(1,false));
-        Group top=new Group(par,SWT.BORDER);
-        Group bottom=new Group(par,SWT.BORDER);
-        String[] typ=Termin.TerminTypes;
-        top.setText(Messages.AgendaFarben_appTypes);
-        bottom.setText(Messages.AgendaFarben_appstateTypes);
-        int num=typ.length;
-        typRows=((int)Math.sqrt(num));
-        typCols=(num-(typRows*typRows));
-        if(typCols<4){
-        	typCols=4;
-        }
-        top.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-        top.setLayout(new GridLayout(typCols,true));
-        for(int i=0;i<num;i++){
-        	Label lab=new Label(top,SWT.NONE);
-        	lab.setText(typ[i]);
-        	String coldesc=Hub.userCfg.get(PreferenceConstants.AG_TYPCOLOR_PREFIX+typ[i],"FFFFFF"); //$NON-NLS-1$
-        	Color background=Desk.getColorFromRGB(coldesc);
-           	lab.setBackground(background);
-        	GridData gd=new GridData(GridData.FILL_BOTH);
-        	lab.setLayoutData(gd);
-        	lab.addMouseListener(new MouseAdapter(){
-
+	private int typCols, typRows, statusCols;
+	
+	// private ColorCellEditor[] editors;
+	// private String[] columnProperties;
+	
+	public AgendaFarben(){
+		prefs = new SettingsPreferenceStore(Hub.userCfg);
+		setPreferenceStore(prefs);
+		setDescription(Messages.AgendaFarben_colorSettings);
+	}
+	
+	public void init(IWorkbench workbench){
+	// TODO Auto-generated method stub
+	
+	}
+	
+	@Override
+	protected Control createContents(Composite parent){
+		Composite par = new Composite(parent, SWT.NONE);
+		par.setLayout(new GridLayout(1, false));
+		Group top = new Group(par, SWT.BORDER);
+		Group bottom = new Group(par, SWT.BORDER);
+		String[] typ = Termin.TerminTypes;
+		top.setText(Messages.AgendaFarben_appTypes);
+		bottom.setText(Messages.AgendaFarben_appstateTypes);
+		int num = typ.length;
+		typRows = ((int) Math.sqrt(num));
+		typCols = (num - (typRows * typRows));
+		if (typCols < 4) {
+			typCols = 4;
+		}
+		top.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		top.setLayout(new GridLayout(typCols, true));
+		for (int i = 0; i < num; i++) {
+			Label lab = new Label(top, SWT.NONE);
+			lab.setText(typ[i]);
+			String coldesc =
+				Hub.userCfg.get(PreferenceConstants.AG_TYPCOLOR_PREFIX + typ[i], "FFFFFF"); //$NON-NLS-1$
+			Color background = Desk.getColorFromRGB(coldesc);
+			lab.setBackground(background);
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			lab.setLayoutData(gd);
+			lab.addMouseListener(new MouseAdapter() {
+				
 				@Override
-				public void mouseDoubleClick(MouseEvent e) {
-					ColorDialog cd=new ColorDialog(getShell());
-					Label l=(Label)e.getSource();
-					RGB selected=cd.open();
-					String symbolic=Desk.createColor(selected);
+				public void mouseDoubleClick(MouseEvent e){
+					ColorDialog cd = new ColorDialog(getShell());
+					Label l = (Label) e.getSource();
+					RGB selected = cd.open();
+					String symbolic = Desk.createColor(selected);
 					l.setBackground(Desk.getColorFromRGB(symbolic));
-					Hub.userCfg.set(PreferenceConstants.AG_TYPCOLOR_PREFIX+l.getText(), symbolic);
+					Hub.userCfg.set(PreferenceConstants.AG_TYPCOLOR_PREFIX + l.getText(), symbolic);
 				}
-        		
-        	});
-        }
-        
-        String[] status=Termin.TerminStatus;
-        
-        num=status.length;
-        int statusRows=((int)Math.sqrt(num));
-        statusCols=num-(statusRows*statusRows);
-        if(statusCols<4){
-        	statusCols=4;
-        }
-        bottom.setLayout(new GridLayout(statusCols,true));
-        bottom.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-        for(int i=0;i<num;i++){
-        	Label lab=new Label(bottom,SWT.NONE);
-        	lab.setText(status[i]);
-        	GridData gd=new GridData(GridData.FILL_BOTH);
-        	lab.setLayoutData(gd);
-        	lab.setBackground(Desk.getColorFromRGB(Hub.userCfg.get(PreferenceConstants.AG_STATCOLOR_PREFIX+status[i], "FFFFFF"))); //$NON-NLS-1$
-        	lab.addMouseListener(new MouseAdapter(){
-
+				
+			});
+		}
+		
+		String[] status = Termin.TerminStatus;
+		
+		num = status.length;
+		int statusRows = ((int) Math.sqrt(num));
+		statusCols = num - (statusRows * statusRows);
+		if (statusCols < 4) {
+			statusCols = 4;
+		}
+		bottom.setLayout(new GridLayout(statusCols, true));
+		bottom.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		for (int i = 0; i < num; i++) {
+			Label lab = new Label(bottom, SWT.NONE);
+			lab.setText(status[i]);
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			lab.setLayoutData(gd);
+			lab.setBackground(Desk.getColorFromRGB(Hub.userCfg.get(
+				PreferenceConstants.AG_STATCOLOR_PREFIX + status[i], "FFFFFF"))); //$NON-NLS-1$
+			lab.addMouseListener(new MouseAdapter() {
+				
 				@Override
-				public void mouseDoubleClick(MouseEvent e) {
-					ColorDialog cd=new ColorDialog(getShell());
-					Label l=(Label)e.getSource();
-					RGB selected=cd.open();
-					String symbolic=Desk.createColor(selected);
+				public void mouseDoubleClick(MouseEvent e){
+					ColorDialog cd = new ColorDialog(getShell());
+					Label l = (Label) e.getSource();
+					RGB selected = cd.open();
+					String symbolic = Desk.createColor(selected);
 					l.setBackground(Desk.getColorFromRGB(symbolic));
-					Hub.userCfg.set(PreferenceConstants.AG_STATCOLOR_PREFIX+l.getText(),	symbolic);
+					Hub.userCfg
+						.set(PreferenceConstants.AG_STATCOLOR_PREFIX + l.getText(), symbolic);
 				}
-        		
-        	});
-        }
-
-        return par;
-    }
-    
+				
+			});
+		}
+		
+		return par;
+	}
+	
 }

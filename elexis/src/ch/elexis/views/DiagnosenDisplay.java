@@ -56,27 +56,25 @@ public class DiagnosenDisplay extends Composite implements ISelectionRenderer {
 	private final Hyperlink hDg;
 	private final Log log = Log.get("DiagnosenDisplay"); //$NON-NLS-1$
 	private final PersistentObjectDropTarget dropTarget;
-
-	public DiagnosenDisplay(final IWorkbenchPage page, final Composite parent,
-			final int style) {
+	
+	public DiagnosenDisplay(final IWorkbenchPage page, final Composite parent, final int style){
 		super(parent, style);
 		setLayout(new GridLayout());
-		hDg = Desk.getToolkit().createHyperlink(this,
+		hDg =
+			Desk.getToolkit().createHyperlink(this,
 				Messages.getString("DiagnosenDisplay.Diagnoses"), SWT.NONE); //$NON-NLS-1$
-		hDg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
-				| GridData.GRAB_HORIZONTAL));
+		hDg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
 		hDg.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
-			public void linkActivated(final HyperlinkEvent e) {
+			public void linkActivated(final HyperlinkEvent e){
 				try {
 					page.showView(DiagnosenView.ID);
-					CodeSelectorHandler.getInstance().setCodeSelectorTarget(
-							dropTarget);
+					CodeSelectorHandler.getInstance().setCodeSelectorTarget(dropTarget);
 				} catch (Exception ex) {
-					ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, 
-							Messages.getString("DiagnosenDisplay.ErrorStartingCodeSystem") +
-							ex.getMessage(),
-							ex, ElexisStatus.LOG_ERRORS);
+					ElexisStatus status =
+						new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, Messages
+							.getString("DiagnosenDisplay.ErrorStartingCodeSystem")
+							+ ex.getMessage(), ex, ElexisStatus.LOG_ERRORS);
 					StatusManager.getManager().handle(status, StatusManager.SHOW);
 				}
 			}
@@ -84,26 +82,26 @@ public class DiagnosenDisplay extends Composite implements ISelectionRenderer {
 		tDg = Desk.getToolkit().createTable(this, SWT.SINGLE | SWT.WRAP);
 		tDg.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tDg.setMenu(createDgMenu());
-
+		
 		// new PersistentObjectDragSource()
-		dropTarget = new PersistentObjectDropTarget(
+		dropTarget =
+			new PersistentObjectDropTarget(
 				Messages.getString("DiagnosenDisplay.DiagnoseTarget"), tDg, new DropReceiver()); //$NON-NLS-1$
 		new PersistentObjectDragSource(tDg, this);
-
+		
 	}
-
-	public void clear() {
+	
+	public void clear(){
 		tDg.removeAll();
 	}
-
-	private final class DropReceiver implements
-			PersistentObjectDropTarget.IReceiver {
-		public void dropped(final PersistentObject o, final DropTargetEvent ev) {
-			Konsultation actKons = (Konsultation) ElexisEventDispatcher
-					.getSelected(Konsultation.class);
+	
+	private final class DropReceiver implements PersistentObjectDropTarget.IReceiver {
+		public void dropped(final PersistentObject o, final DropTargetEvent ev){
+			Konsultation actKons =
+				(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 			if (actKons == null) {
 				SWTHelper.alert("Keine Konsultation ausgewählt",
-						"Bitte wählen Sie zuerst eine Konsultation aus");
+					"Bitte wählen Sie zuerst eine Konsultation aus");
 			} else {
 				if (o instanceof IDiagnose) {
 					actKons.addDiagnose((IDiagnose) o);
@@ -111,8 +109,8 @@ public class DiagnosenDisplay extends Composite implements ISelectionRenderer {
 				}
 			}
 		}
-
-		public boolean accept(final PersistentObject o) {
+		
+		public boolean accept(final PersistentObject o){
 			if (o instanceof IVerrechenbar) {
 				return true;
 			}
@@ -122,8 +120,8 @@ public class DiagnosenDisplay extends Composite implements ISelectionRenderer {
 			return false;
 		}
 	}
-
-	public void setDiagnosen(final Konsultation b) {
+	
+	public void setDiagnosen(final Konsultation b){
 		List<IDiagnose> dgl = b.getDiagnosen();
 		tDg.removeAll();
 		for (IDiagnose dg : dgl) {
@@ -132,39 +130,37 @@ public class DiagnosenDisplay extends Composite implements ISelectionRenderer {
 			ti.setData(dg);
 		}
 		// tDg.setEnabled(b.getStatus()==RnStatus.NICHT_VON_HEUTE);
-
+		
 	}
-
-	private Menu createDgMenu() {
+	
+	private Menu createDgMenu(){
 		Menu ret = new Menu(tDg);
 		MenuItem delDg = new MenuItem(ret, SWT.NONE);
 		delDg.setText(Messages.getString("DiagnosenDisplay.RemoveDiagnoses")); //$NON-NLS-1$
 		delDg.addSelectionListener(new delDgListener());
 		return ret;
 	}
-
+	
 	class delDgListener extends SelectionAdapter {
 		@Override
-		public void widgetSelected(final SelectionEvent e) {
+		public void widgetSelected(final SelectionEvent e){
 			int sel = tDg.getSelectionIndex();
 			TableItem ti = tDg.getItem(sel);
-			((Konsultation) ElexisEventDispatcher
-					.getSelected(Konsultation.class))
-					.removeDiagnose((IDiagnose) ti.getData());
+			((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class))
+				.removeDiagnose((IDiagnose) ti.getData());
 			tDg.remove(sel);
 			// setBehandlung(actBehandlung);
 		}
 	}
-
-	public List<PersistentObject> getSelection() {
+	
+	public List<PersistentObject> getSelection(){
 		TableItem[] sel = tDg.getSelection();
 		ArrayList<PersistentObject> ret = new ArrayList<PersistentObject>();
 		if ((sel != null) && (sel.length > 0)) {
 			for (TableItem ti : sel) {
 				IDiagnose id = (IDiagnose) ti.getData();
 				String clazz = id.getClass().getName();
-				ret.add(Hub.poFactory.createFromString(clazz
-						+ "::" + id.getCode())); //$NON-NLS-1$
+				ret.add(Hub.poFactory.createFromString(clazz + "::" + id.getCode())); //$NON-NLS-1$
 			}
 		}
 		return ret;

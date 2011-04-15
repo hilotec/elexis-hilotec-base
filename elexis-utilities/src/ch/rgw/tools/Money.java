@@ -67,11 +67,12 @@ public class Money extends Number implements Comparable<Money> {
 	
 	/**
 	 * Parse an amount given as string This might fail if the string doesn't conform to the current
-	 * locale's standard currency format. Note: In Switzerland, Separator is '.' while in Germany, Austria
-	 * and Others, it is ','. So if some Computers in the network have an OS locale setting of Switzerland and
-	 * others a german, amounts are entered differently. And even more: The MacOSX does not use swiss layout at all
-	 * but sees always ',' as separator. So if Macintosh, Windows and Linux PC's are in he same network,
-	 * we must make sure, that the decimal comma or dot is always honored correctly. 
+	 * locale's standard currency format. Note: In Switzerland, Separator is '.' while in Germany,
+	 * Austria and Others, it is ','. So if some Computers in the network have an OS locale setting
+	 * of Switzerland and others a german, amounts are entered differently. And even more: The
+	 * MacOSX does not use swiss layout at all but sees always ',' as separator. So if Macintosh,
+	 * Windows and Linux PC's are in he same network, we must make sure, that the decimal comma or
+	 * dot is always honored correctly.
 	 * 
 	 * @param val
 	 *            an amount
@@ -90,27 +91,26 @@ public class Money extends Number implements Comparable<Money> {
 	}
 	
 	private static Double parse(String raw) throws ParseException{
-		if(raw.matches("-?[0-9]+")){
+		if (raw.matches("-?[0-9]+")) {
 			return Double.parseDouble(raw);
 		}
-		if(raw.matches("-?[0-9]+[\\.,][0-9]{1,2}")){
-			String[] vals=raw.split("[\\.,]");
-			if(vals[1].length()==1){
-				vals[1]+="0";
+		if (raw.matches("-?[0-9]+[\\.,][0-9]{1,2}")) {
+			String[] vals = raw.split("[\\.,]");
+			if (vals[1].length() == 1) {
+				vals[1] += "0";
 			}
-			int fac=1;
-			if(vals[0].startsWith("-")){
-				vals[0]=vals[0].substring(1);
-				fac=-1;
+			int fac = 1;
+			if (vals[0].startsWith("-")) {
+				vals[0] = vals[0].substring(1);
+				fac = -1;
 			}
-			int cents=fac*(100*Integer.parseInt(vals[0])+Integer.parseInt(vals[1]));
-			double d=cents/100.0;
+			int cents = fac * (100 * Integer.parseInt(vals[0]) + Integer.parseInt(vals[1]));
+			double d = cents / 100.0;
 			return d;
 		}
 		throw new ParseException(raw, 1);
 	}
 	
-
 	/** Add some cents */
 	public void addCent(String cents){
 		String cleanValue = cents != null ? cents.trim() : "0";
@@ -306,8 +306,8 @@ public class Money extends Number implements Comparable<Money> {
 	}
 	
 	public static char getSeparator(){
-		double d=1.0/2.0;
-		String ds=NumberFormat.getCurrencyInstance().format(d);
+		double d = 1.0 / 2.0;
+		String ds = NumberFormat.getCurrencyInstance().format(d);
 		return ds.charAt(1);
 	}
 }

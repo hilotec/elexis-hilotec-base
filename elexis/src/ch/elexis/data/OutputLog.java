@@ -39,15 +39,18 @@ public class OutputLog extends PersistentObject {
 	static final HashMap<String, IOutputter> outputter_cache = new HashMap<String, IOutputter>();
 	
 	static {
-		addMapping(TABLENAME, FLD_OBJECT_ID, FLD_OBJECT_TYPE, FLD_OUTPUTTER, DATE_COMPOUND, FLD_EXTINFO);
+		addMapping(TABLENAME, FLD_OBJECT_ID, FLD_OBJECT_TYPE, FLD_OUTPUTTER, DATE_COMPOUND,
+			FLD_EXTINFO);
 	}
 	
 	public OutputLog(PersistentObject po, IOutputter io){
 		create(null);
 		set(new String[] {
 			FLD_OBJECT_ID, FLD_OBJECT_TYPE, FLD_DATE, FLD_OUTPUTTER
-		}, po.getId(), po.getClass().getName(), new TimeTool().toString(TimeTool.DATE_GER), io.getOutputterID());
-		ElexisEventDispatcher.getInstance().fire(new ElexisEvent(po,po.getClass(),ElexisEvent.EVENT_UPDATE));
+		}, po.getId(), po.getClass().getName(), new TimeTool().toString(TimeTool.DATE_GER), io
+			.getOutputterID());
+		ElexisEventDispatcher.getInstance().fire(
+			new ElexisEvent(po, po.getClass(), ElexisEvent.EVENT_UPDATE));
 	}
 	
 	@Override

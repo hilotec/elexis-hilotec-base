@@ -25,54 +25,53 @@ public class DBLog extends PersistentObject {
 	};
 	
 	static {
-		addMapping(TABLENAME, "OID", "Datum=S:D:datum", "typ", "userID",
-			"station", "ExtInfo");
+		addMapping(TABLENAME, "OID", "Datum=S:D:datum", "typ", "userID", "station", "ExtInfo");
 	}
 	
-	public DBLog(PersistentObject obj, TYP typ) {
+	public DBLog(PersistentObject obj, TYP typ){
 		create(null);
-		if (typ==null){
-			typ=TYP.UNKNOWN;
+		if (typ == null) {
+			typ = TYP.UNKNOWN;
 		}
-		String user="?";
-		if(Hub.actUser!=null){
-			user=Hub.actUser.getId();
+		String user = "?";
+		if (Hub.actUser != null) {
+			user = Hub.actUser.getId();
 		}
-		String hostname="?";
-		if(NetTool.hostname!=null){
-			hostname=NetTool.hostname;
+		String hostname = "?";
+		if (NetTool.hostname != null) {
+			hostname = NetTool.hostname;
 		}
-		String oid=obj.storeToString();
-		if(oid==null){
-			oid=obj.getId();
+		String oid = obj.storeToString();
+		if (oid == null) {
+			oid = obj.getId();
 		}
 		
-		set(new String[] { "OID", "Datum", "typ", "userID", "station" },
-			new String[] { oid,
-			new TimeTool().toString(TimeTool.DATE_GER), typ.name(),
-			user, hostname});
+		set(new String[] {
+			"OID", "Datum", "typ", "userID", "station"
+		}, new String[] {
+			oid, new TimeTool().toString(TimeTool.DATE_GER), typ.name(), user, hostname
+		});
 	}
 	
-	public static DBLog load(String id) {
+	public static DBLog load(String id){
 		return new DBLog(id);
 	}
 	
-	protected DBLog(String id) {
+	protected DBLog(String id){
 		super(id);
 	}
 	
-	protected DBLog() {
-	}
+	protected DBLog(){}
 	
 	public Anwender getAnwender(){
-		String aid=checkNull(get("userID"));
-		Anwender an=Anwender.load(aid);
+		String aid = checkNull(get("userID"));
+		Anwender an = Anwender.load(aid);
 		return an;
 	}
 	
 	public String getTimeStamp(){
-		long up=getLastUpdate();
-		TimeTool ts=new TimeTool(up);
+		long up = getLastUpdate();
+		TimeTool ts = new TimeTool(up);
 		return ts.toString(TimeTool.FULL_GER);
 	}
 	
@@ -85,8 +84,8 @@ public class DBLog extends PersistentObject {
 	}
 	
 	public PersistentObject getObject(){
-		String oid=getObjectID();
-		PersistentObject ret=Hub.poFactory.createFromString(oid);
+		String oid = getObjectID();
+		PersistentObject ret = Hub.poFactory.createFromString(oid);
 		return ret;
 	}
 	
@@ -95,12 +94,12 @@ public class DBLog extends PersistentObject {
 	}
 	
 	@Override
-	public String getLabel() {
+	public String getLabel(){
 		return "DB-Log";
 	}
 	
 	@Override
-	protected String getTableName() {
+	protected String getTableName(){
 		return TABLENAME;
 	}
 	

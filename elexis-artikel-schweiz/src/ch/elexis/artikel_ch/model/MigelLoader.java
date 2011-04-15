@@ -20,7 +20,7 @@ import ch.elexis.util.viewers.CommonViewer;
 
 public class MigelLoader extends FlatDataLoader {
 	public MigelLoader(CommonViewer cv){
-		super(cv,new Query<MiGelArtikel>(MiGelArtikel.class));
+		super(cv, new Query<MiGelArtikel>(MiGelArtikel.class));
 		setOrderFields(MiGelArtikel.FLD_NAME);
 	}
 }

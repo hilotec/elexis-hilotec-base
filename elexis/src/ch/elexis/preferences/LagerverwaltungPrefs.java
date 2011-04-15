@@ -23,42 +23,43 @@ import ch.elexis.Hub;
 
 /**
  * Einstellungen für die Lagerverwaltung
+ * 
  * @author Daniel Lutz <danlutz@watz.ch>
  */
-public class LagerverwaltungPrefs  extends FieldEditorPreferencePage
-					implements IWorkbenchPreferencePage {
-
+public class LagerverwaltungPrefs extends FieldEditorPreferencePage implements
+		IWorkbenchPreferencePage {
+	
 	public LagerverwaltungPrefs(){
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(Hub.globalCfg));
 		setDescription(Messages.LagerverwaltungPrefs_storageManagement);
-		getPreferenceStore().setDefault(PreferenceConstants.INVENTORY_CHECK_ILLEGAL_VALUES, PreferenceConstants.INVENTORY_CHECK_ILLEGAL_VALUES_DEFAULT);
+		getPreferenceStore().setDefault(PreferenceConstants.INVENTORY_CHECK_ILLEGAL_VALUES,
+			PreferenceConstants.INVENTORY_CHECK_ILLEGAL_VALUES_DEFAULT);
 	}
 	
 	@Override
-	protected void createFieldEditors() {
-		addField(new BooleanFieldEditor(PreferenceConstants.INVENTORY_CHECK_ILLEGAL_VALUES,Messages.LagerverwaltungPrefs_checkForInvalid,
-				getFieldEditorParent()));
-		addField(new RadioGroupFieldEditor(
-				PreferenceConstants.INVENTORY_ORDER_TRIGGER, Messages.LagerverwaltungPrefs_orderCriteria,
-				1, new String[][] {
-						{
-							Messages.LagerverwaltungPrefs_orderWhenBelowMi,
-							PreferenceConstants.INVENTORY_ORDER_TRIGGER_BELOW_VALUE
-						}, {
-							Messages.LagerverwaltungPrefs_orderWhenAtMin,
-							PreferenceConstants.INVENTORY_ORDER_TRIGGER_EQUAL_VALUE
-						},
-		}, getFieldEditorParent()));
+	protected void createFieldEditors(){
+		addField(new BooleanFieldEditor(PreferenceConstants.INVENTORY_CHECK_ILLEGAL_VALUES,
+			Messages.LagerverwaltungPrefs_checkForInvalid, getFieldEditorParent()));
+		addField(new RadioGroupFieldEditor(PreferenceConstants.INVENTORY_ORDER_TRIGGER,
+			Messages.LagerverwaltungPrefs_orderCriteria, 1, new String[][] {
+				{
+					Messages.LagerverwaltungPrefs_orderWhenBelowMi,
+					PreferenceConstants.INVENTORY_ORDER_TRIGGER_BELOW_VALUE
+				},
+				{
+					Messages.LagerverwaltungPrefs_orderWhenAtMin,
+					PreferenceConstants.INVENTORY_ORDER_TRIGGER_EQUAL_VALUE
+				},
+			}, getFieldEditorParent()));
 		
 	}
-
-	public void init(final IWorkbench workbench) {
-	}
-
+	
+	public void init(final IWorkbench workbench){}
+	
 	@Override
-	public boolean performOk() {
-		if(super.performOk()){
+	public boolean performOk(){
+		if (super.performOk()) {
 			Hub.globalCfg.flush();
 			return true;
 		}

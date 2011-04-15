@@ -42,26 +42,25 @@ import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 
-public class TerminListeView extends ViewPart implements IActivationListener,
-		ElexisEventListener {
+public class TerminListeView extends ViewPart implements IActivationListener, ElexisEventListener {
 	ScrolledForm form;
 	CommonViewer cv = new CommonViewer();
 	PersistentObjectLoader fdl;
-
-	public TerminListeView() {
-		// TODO Auto-generated constructor stub
+	
+	public TerminListeView(){
+	// TODO Auto-generated constructor stub
 	}
-
+	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		form = Desk.getToolkit().createScrolledForm(parent);
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite body = form.getBody();
 		body.setLayout(new GridLayout());
 		fdl = new FlatDataLoader(cv, new Query<Termin>(Termin.class));
 		fdl.addQueryFilter(new QueryFilter() {
-
-			public void apply(Query<? extends PersistentObject> qbe) {
+			
+			public void apply(Query<? extends PersistentObject> qbe){
 				Patient p = ElexisEventDispatcher.getSelectedPatient();
 				if (p == null) {
 					qbe.add(Termin.FLD_PATIENT, Query.EQUALS, "--"); //$NON-NLS-1$
@@ -70,33 +69,33 @@ public class TerminListeView extends ViewPart implements IActivationListener,
 				}
 			}
 		});
-
-		ViewerConfigurer vc = new ViewerConfigurer(fdl,
-				new DefaultLabelProvider(), new SimpleWidgetProvider(
-						SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
+		
+		ViewerConfigurer vc =
+			new ViewerConfigurer(fdl, new DefaultLabelProvider(), new SimpleWidgetProvider(
+				SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		cv.create(vc, body, SWT.NONE, this);
 		new Label(body, SWT.NONE).setText("bottom"); //$NON-NLS-1$
 		GlobalEventDispatcher.addActivationListener(this, this);
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void activation(boolean mode) {
-		// TODO Auto-generated method stub
-
+	
+	public void activation(boolean mode){
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 	@Override
-	public void dispose() {
+	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		super.dispose();
 	}
-
-	public void visible(boolean mode) {
+	
+	public void visible(boolean mode){
 		if (mode) {
 			// selectionEvent(GlobalEvents.getSelectedPatient());
 			ElexisEventDispatcher.getInstance().addListeners(this);
@@ -104,24 +103,24 @@ public class TerminListeView extends ViewPart implements IActivationListener,
 			ElexisEventDispatcher.getInstance().removeListeners(this);
 		}
 	}
-
-	public void catchElexisEvent(final ElexisEvent ev) {
+	
+	public void catchElexisEvent(final ElexisEvent ev){
 		Desk.asyncExec(new Runnable() {
-			public void run() {
+			public void run(){
 				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
 					form.setText(((Patient) ev.getObject()).getLabel());
 					fdl.inputChanged(cv.getViewerWidget(), this, this);
 				} else if (ev.getType() == ElexisEvent.EVENT_DESELECTED) {
 					form.setText("No Patient selected"); //$NON-NLS-1$
 				}
-
+				
 			}
 		});
 	}
-
-	public ElexisEvent getElexisEventFilter() {
-		return new ElexisEvent(null, Patient.class,
-				ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
+	
+	public ElexisEvent getElexisEventFilter(){
+		return new ElexisEvent(null, Patient.class, ElexisEvent.EVENT_SELECTED
+			| ElexisEvent.EVENT_DESELECTED);
 	}
-
+	
 }

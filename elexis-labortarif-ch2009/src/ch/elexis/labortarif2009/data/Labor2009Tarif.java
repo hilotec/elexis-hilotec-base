@@ -29,102 +29,102 @@ public class Labor2009Tarif extends VerrechenbarAdapter {
 	private final static String TABLENAME = "CH_MEDELEXIS_LABORTARIF2009"; //$NON-NLS-1$
 	public static final String VERSION = "0.1.0"; //$NON-NLS-1$
 	private static final String createTable = "create table " + TABLENAME + "(" //$NON-NLS-1$ //$NON-NLS-2$
-	+ "ID		VARCHAR(25) primary key," + "lastupdate BIGINT," //$NON-NLS-1$ //$NON-NLS-2$
-	+ "deleted	 CHAR(1) default '0'," + "chapter   VARCHAR(10)," //$NON-NLS-1$ //$NON-NLS-2$
-	+ "code		 VARCHAR(12)," + "tp		 VARCHAR(10)," //$NON-NLS-1$ //$NON-NLS-2$
-	+ "name		 VARCHAR(255)," + "limitatio TEXT," //$NON-NLS-1$ //$NON-NLS-2$
-	+ "fachbereich VARCHAR(10)," + "praxistyp VARCHAR(2)" + ");" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-	+ "INSERT INTO "+TABLENAME+"(ID,code) VALUES (1,'"+VERSION+"');"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		+ "ID		VARCHAR(25) primary key," + "lastupdate BIGINT," //$NON-NLS-1$ //$NON-NLS-2$
+		+ "deleted	 CHAR(1) default '0'," + "chapter   VARCHAR(10)," //$NON-NLS-1$ //$NON-NLS-2$
+		+ "code		 VARCHAR(12)," + "tp		 VARCHAR(10)," //$NON-NLS-1$ //$NON-NLS-2$
+		+ "name		 VARCHAR(255)," + "limitatio TEXT," //$NON-NLS-1$ //$NON-NLS-2$
+		+ "fachbereich VARCHAR(10)," + "praxistyp VARCHAR(2)" + ");" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		+ "INSERT INTO " + TABLENAME + "(ID,code) VALUES (1,'" + VERSION + "');"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	
 	private static final IOptifier l09optifier = new Optifier();
 	
 	static {
-		addMapping(TABLENAME, FLD_CHAPTER, FLD_CODE, FLD_TP, FLD_NAME,
-			FLD_LIMITATIO, FLD_FACHBEREICH, FLD_FACHSPEC);
+		addMapping(TABLENAME, FLD_CHAPTER, FLD_CODE, FLD_TP, FLD_NAME, FLD_LIMITATIO,
+			FLD_FACHBEREICH, FLD_FACHSPEC);
 		Labor2009Tarif version = load("1"); //$NON-NLS-1$
 		if (!version.exists()) {
 			createOrModifyTable(createTable);
 		}
-		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Analysenliste 2009", Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
+		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN,
+			"Analysenliste 2009", Xid.ASSIGNMENT_REGIONAL); //$NON-NLS-1$
 	}
 	
 	/** Only needed by the importer */
-	Labor2009Tarif(String chapter, String code, String tp, String name,
-		String lim, String fach, int fachspec) {
+	Labor2009Tarif(String chapter, String code, String tp, String name, String lim, String fach,
+		int fachspec){
 		create(null);
-		set(new String[] { FLD_CHAPTER, FLD_CODE, FLD_TP, FLD_NAME,
-			FLD_LIMITATIO, FLD_FACHBEREICH, FLD_FACHSPEC }, chapter, code,
-			tp, name, lim, fach, Integer.toString(fachspec));
+		set(new String[] {
+			FLD_CHAPTER, FLD_CODE, FLD_TP, FLD_NAME, FLD_LIMITATIO, FLD_FACHBEREICH, FLD_FACHSPEC
+		}, chapter, code, tp, name, lim, fach, Integer.toString(fachspec));
 	}
 	
 	@Override
-	public String getLabel() {
-		String code=getCode();
-		if(!StringTool.isNothing(code)){
+	public String getLabel(){
+		String code = getCode();
+		if (!StringTool.isNothing(code)) {
 			return new StringBuilder(code).append(" ").append(getText()) //$NON-NLS-1$
-			.append(" (").append(get(FLD_FACHBEREICH)).append(")") //$NON-NLS-1$ //$NON-NLS-2$
-			.toString();
-		}else{
+				.append(" (").append(get(FLD_FACHBEREICH)).append(")") //$NON-NLS-1$ //$NON-NLS-2$
+				.toString();
+		} else {
 			return "?"; //$NON-NLS-1$
 		}
 	}
 	
 	@Override
-	public String getCode() {
+	public String getCode(){
 		return get(FLD_CODE);
 	}
 	
 	@Override
-	public String getText() {
-		return StringTool.getFirstLine(get(FLD_NAME),80);
+	public String getText(){
+		return StringTool.getFirstLine(get(FLD_NAME), 80);
 	}
 	
 	@Override
-	protected String getTableName() {
+	protected String getTableName(){
 		return TABLENAME;
 	}
 	
-	public static Labor2009Tarif load(final String id) {
+	public static Labor2009Tarif load(final String id){
 		return new Labor2009Tarif(id);
 	}
 	
-	protected Labor2009Tarif(final String id) {
+	protected Labor2009Tarif(final String id){
 		super(id);
 	}
 	
-	public Labor2009Tarif() {
-	}
+	public Labor2009Tarif(){}
 	
-	public String getXidDomain() {
+	public String getXidDomain(){
 		return XIDDOMAIN;
 	}
 	
-	public double getFactor(TimeTool date, Fall fall) {
+	public double getFactor(TimeTool date, Fall fall){
 		double ret = getVKMultiplikator(date, MULTIPLICATOR_NAME);
 		return ret;
 	}
 	
-	public int getTP(TimeTool date, Fall fall) {
+	public int getTP(TimeTool date, Fall fall){
 		double tp = checkZeroDouble(get(FLD_TP));
 		return (int) Math.round(tp * 100.0);
 	}
 	
 	@Override
-	public boolean isDragOK() {
+	public boolean isDragOK(){
 		return true;
 	}
 	
 	@Override
-	public String getCodeSystemName() {
+	public String getCodeSystemName(){
 		return CODESYSTEM_NAME;
 	}
 	
-	public String getCodeSystemCode() {
+	public String getCodeSystemCode(){
 		return CODESYSTEM_CODE_LAB2009;
 	}
 	
 	@Override
-	public IOptifier getOptifier() {
+	public IOptifier getOptifier(){
 		return l09optifier;
 	}
 	

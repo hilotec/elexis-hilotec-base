@@ -21,40 +21,40 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import ch.rgw.io.Settings;
 
 /**
- * Dies ist eine Adapterklasse, die ch.rgw.tools.IO.Settings auf
- * Eclipse-Preferences abbildet. Es sollte keine direkte Verwendung dieser
- * Klasse notwendig sein. Intern wird das localCfg-Feld auf SysSettings und das
- * globalCfg-Feld auf SqlSettings abgebildet
+ * Dies ist eine Adapterklasse, die ch.rgw.tools.IO.Settings auf Eclipse-Preferences abbildet. Es
+ * sollte keine direkte Verwendung dieser Klasse notwendig sein. Intern wird das localCfg-Feld auf
+ * SysSettings und das globalCfg-Feld auf SqlSettings abgebildet
  * 
  * @author Gerry
  */
 public class SettingsPreferenceStore implements IPreferenceStore {
-
+	
 	private static final String _DEFAULT = "_default"; //$NON-NLS-1$
 	Settings base;
-	private LinkedList<IPropertyChangeListener> listeners = new LinkedList<IPropertyChangeListener>();
-
-	public SettingsPreferenceStore(Settings base) {
+	private LinkedList<IPropertyChangeListener> listeners =
+		new LinkedList<IPropertyChangeListener>();
+	
+	public SettingsPreferenceStore(Settings base){
 		this.base = base;
 	}
-
-	public Settings getBase() {
+	
+	public Settings getBase(){
 		return base;
 	}
-
-	public void flush() {
+	
+	public void flush(){
 		base.flush();
 	}
-
-	public void undo() {
+	
+	public void undo(){
 		base.undo();
 	}
-
-	private void set(String field, String value) {
+	
+	private void set(String field, String value){
 		base.set(field, value);
 	}
-
-	private String get(String field) {
+	
+	private String get(String field){
 		String z = base.get(field, null);
 		if (z == null) {
 			z = base.get(field + _DEFAULT, null);
@@ -64,27 +64,25 @@ public class SettingsPreferenceStore implements IPreferenceStore {
 		}
 		return z;
 	}
-
-	public void addPropertyChangeListener(IPropertyChangeListener listener) {
+	
+	public void addPropertyChangeListener(IPropertyChangeListener listener){
 		listeners.add(listener);
 	}
-
-	public boolean contains(String name) {
+	
+	public boolean contains(String name){
 		if (base.get(name, null) == null) {
 			return false;
 		}
 		return true;
 	}
-
-	public void firePropertyChangeEvent(String name, Object oldValue,
-			Object newValue) {
+	
+	public void firePropertyChangeEvent(String name, Object oldValue, Object newValue){
 		for (IPropertyChangeListener l : listeners) {
-			l.propertyChange(new PropertyChangeEvent(this, name, oldValue,
-					newValue));
+			l.propertyChange(new PropertyChangeEvent(this, name, oldValue, newValue));
 		}
 	}
-
-	public boolean getBoolean(String name) {
+	
+	public boolean getBoolean(String name){
 		String z = get(name);
 		if (z.equals("0")) { //$NON-NLS-1$
 			return false;
@@ -94,145 +92,145 @@ public class SettingsPreferenceStore implements IPreferenceStore {
 		}
 		return true;
 	}
-
-	public boolean getDefaultBoolean(String name) {
+	
+	public boolean getDefaultBoolean(String name){
 		return getBoolean(name + _DEFAULT);
 	}
-
-	public double getDefaultDouble(String name) {
+	
+	public double getDefaultDouble(String name){
 		return getDouble(name + _DEFAULT);
 	}
-
-	public float getDefaultFloat(String name) {
+	
+	public float getDefaultFloat(String name){
 		return getFloat(name + _DEFAULT);
 	}
-
-	public int getDefaultInt(String name) {
+	
+	public int getDefaultInt(String name){
 		return getInt(name + _DEFAULT);
 	}
-
-	public long getDefaultLong(String name) {
+	
+	public long getDefaultLong(String name){
 		return getLong(name + _DEFAULT);
 	}
-
-	public String getDefaultString(String name) {
+	
+	public String getDefaultString(String name){
 		return getString(name + _DEFAULT);
 	}
-
-	public double getDouble(String name) {
+	
+	public double getDouble(String name){
 		return Double.parseDouble(get(name));
 	}
-
-	public float getFloat(String name) {
+	
+	public float getFloat(String name){
 		return Float.parseFloat(get(name));
 	}
-
+	
 	/**
-	 * return an Integer. If the Value is not an Integer ot nonexistent, we return 0
-	 * (@see IPreferenceStore)
+	 * return an Integer. If the Value is not an Integer ot nonexistent, we return 0 (@see
+	 * IPreferenceStore)
 	 */
-	public int getInt(String name) {
-		try{
+	public int getInt(String name){
+		try {
 			return Integer.parseInt(get(name));
-		}catch(NumberFormatException ne){
+		} catch (NumberFormatException ne) {
 			return 0;
 		}
 	}
-
-	public long getLong(String name) {
+	
+	public long getLong(String name){
 		return Long.parseLong(get(name));
 	}
-
-	public String getString(String name) {
+	
+	public String getString(String name){
 		return get(name);
 	}
-
-	public boolean isDefault(String name) {
+	
+	public boolean isDefault(String name){
 		String def = get(name + _DEFAULT);
 		String act = get(name);
 		return def.equals(act);
 	}
-
-	public boolean needsSaving() {
+	
+	public boolean needsSaving(){
 		return base.isDirty();
 	}
-
-	public void putValue(String name, String value) {
+	
+	public void putValue(String name, String value){
 		set(name, value);
 	}
 	
-	public void remove(String name) {
+	public void remove(String name){
 		base.remove(name);
 	}
-
-	public void removePropertyChangeListener(IPropertyChangeListener listener) {
+	
+	public void removePropertyChangeListener(IPropertyChangeListener listener){
 		listeners.remove(listener);
 	}
-
-	public void setDefault(String name, double value) {
+	
+	public void setDefault(String name, double value){
 		set(name + _DEFAULT, Double.toString(value));
-
+		
 	}
-
-	public void setDefault(String name, float value) {
+	
+	public void setDefault(String name, float value){
 		set(name + _DEFAULT, Float.toString(value));
-
+		
 	}
-
-	public void setDefault(String name, int value) {
+	
+	public void setDefault(String name, int value){
 		set(name + _DEFAULT, Integer.toString(value));
 	}
-
-	public void setDefault(String name, long value) {
+	
+	public void setDefault(String name, long value){
 		set(name + _DEFAULT, Long.toString(value));
-
+		
 	}
-
-	public void setDefault(String name, String defaultObject) {
+	
+	public void setDefault(String name, String defaultObject){
 		set(name + _DEFAULT, defaultObject);
-
+		
 	}
-
-	public void setDefault(String name, boolean value) {
+	
+	public void setDefault(String name, boolean value){
 		set(name + _DEFAULT, Boolean.toString(value));
-
+		
 	}
-
-	public void setToDefault(String name) {
+	
+	public void setToDefault(String name){
 		set(name, get(name + _DEFAULT));
-
+		
 	}
-
-	public void setValue(String name, double value) {
+	
+	public void setValue(String name, double value){
 		firePropertyChangeEvent(name, getDouble(name), value);
 		set(name, Double.toString(value));
 	}
-
-	public void setValue(String name, float value) {
+	
+	public void setValue(String name, float value){
 		firePropertyChangeEvent(name, getFloat(name), value);
 		set(name, Float.toString(value));
-
+		
 	}
-
-	public void setValue(String name, int value) {
+	
+	public void setValue(String name, int value){
 		firePropertyChangeEvent(name, getInt(name), value);
 		set(name, Integer.toString(value));
 	}
-
-	public void setValue(String name, long value) {
+	
+	public void setValue(String name, long value){
 		firePropertyChangeEvent(name, getLong(name), value);
 		set(name, Long.toString(value));
-
+		
 	}
-
-	public void setValue(String name, String value) {
+	
+	public void setValue(String name, String value){
 		firePropertyChangeEvent(name, getString(name), value);
 		set(name, value);
 	}
-
-	public void setValue(String name, boolean value) {
+	
+	public void setValue(String name, boolean value){
 		firePropertyChangeEvent(name, getBoolean(name), value);
 		set(name, Boolean.toString(value));
 	}
-
+	
 }

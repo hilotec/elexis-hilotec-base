@@ -91,7 +91,7 @@ public class Messwert extends PersistentObject {
 	 * Näheres dazu in der Dokumenation von PersistentObject.
 	 */
 	static {
-		addMapping(TABLENAME, FLD_PATIENT_ID, FLD_NAME, DATE_COMPOUND, FLD_BEFUNDE); 
+		addMapping(TABLENAME, FLD_PATIENT_ID, FLD_NAME, DATE_COMPOUND, FLD_BEFUNDE);
 	}
 	
 	/**
@@ -115,7 +115,8 @@ public class Messwert extends PersistentObject {
 	public Messwert(Patient pat, String name, String date, Hashtable bf){
 		create(null);
 		set(new String[] {
-			FLD_PATIENT_ID, FLD_NAME, PersistentObject.FLD_DATE}, pat.getId(), name, date); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			FLD_PATIENT_ID, FLD_NAME, PersistentObject.FLD_DATE
+		}, pat.getId(), name, date); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		setHashtable(FLD_BEFUNDE, bf); //$NON-NLS-1$
 	}
 	

@@ -32,60 +32,58 @@ public class Messwert extends PersistentObject {
 	}
 	
 	private static final String create =
-		"CREATE TABLE " + TABLENAME + " (" +
-		"  ID			VARCHAR(25) PRIMARY KEY, " +
-		"  lastupdate 	BIGINT, " +
-		"  deleted		CHAR(1) DEFAULT '0', " +
-		"  MessungID	VARCHAR(25), " +
-		"  Name			VARCHAR(25), " +
-		"  Wert			VARCHAR(25) " +
-		");" +
-		"INSERT INTO " + TABLENAME + " (ID, Name) VALUES " +
-		"	('VERSION', '" + VERSION + "');";
-
+		"CREATE TABLE " + TABLENAME + " (" + "  ID			VARCHAR(25) PRIMARY KEY, "
+			+ "  lastupdate 	BIGINT, " + "  deleted		CHAR(1) DEFAULT '0', "
+			+ "  MessungID	VARCHAR(25), " + "  Name			VARCHAR(25), " + "  Wert			VARCHAR(25) "
+			+ ");" + "INSERT INTO " + TABLENAME + " (ID, Name) VALUES " + "	('VERSION', '"
+			+ VERSION + "');";
+	
 	/**
 	 * Pruefen ob die Tabelle existiert, und wenn nein, anlegen
 	 */
-	private static void checkTable() {
+	private static void checkTable(){
 		Messwert check = load("VERSION");
 		if (!check.exists()) {
 			createOrModifyTable(create);
 		}
-	}	
-	
+	}
 	
 	@Override
-	public String getLabel() {
+	public String getLabel(){
 		return get("Name");
 	}
 	
 	@Override
-	public String getTableName() {
+	public String getTableName(){
 		return TABLENAME;
 	}
 	
 	/**
 	 * Dieser Konstruktor darf nicht von aussen erreichbar sein
 	 */
-	protected Messwert() {}
+	protected Messwert(){}
 	
 	/**
 	 * Bereits existierenden Messwert anhand seiner ID erstellen
 	 * 
-	 * @param id ID
+	 * @param id
+	 *            ID
 	 */
-	protected Messwert(String id) {
+	protected Messwert(String id){
 		super(id);
 	}
 	
 	/**
 	 * Neuen Messwert anglegen
 	 * 
-	 * @param messung Messung zu der dieser Messwert gehoeren soll
-	 * @param name    Name des Messwertes
-	 * @param wert    Zu speichernder Wert
+	 * @param messung
+	 *            Messung zu der dieser Messwert gehoeren soll
+	 * @param name
+	 *            Name des Messwertes
+	 * @param wert
+	 *            Zu speichernder Wert
 	 */
-	public Messwert(Messung messung, String name, String wert) {
+	public Messwert(Messung messung, String name, String wert){
 		create(null);
 		set("MessungID", messung.getId());
 		set("Name", name);
@@ -95,10 +93,12 @@ public class Messwert extends PersistentObject {
 	/**
 	 * Neuen Messwert anlegen
 	 * 
-	 * @param messung Messung zu der dieser Messwert gehoeren soll
-	 * @param name    Name dieses Messwertes
+	 * @param messung
+	 *            Messung zu der dieser Messwert gehoeren soll
+	 * @param name
+	 *            Name dieses Messwertes
 	 */
-	public Messwert(Messung messung, String name) {
+	public Messwert(Messung messung, String name){
 		create(null);
 		set("MessungID", messung.getId());
 		set("Name", name);
@@ -108,55 +108,57 @@ public class Messwert extends PersistentObject {
 	/**
 	 * Messwert anhand seiner ID aus der Datenbank laden
 	 * 
-	 * @param id ID des gewuenschten Messwerts
+	 * @param id
+	 *            ID des gewuenschten Messwerts
 	 * 
 	 * @return Messwert
 	 */
-	public static Messwert load(final String id) {
+	public static Messwert load(final String id){
 		return new Messwert(id);
 	}
 	
 	/**
 	 * @return Name dieses Messwertes
 	 */
-	public String getName() {
+	public String getName(){
 		return get("Name");
 	}
 	
 	/**
 	 * @return Eigentlicher Messwert
 	 */
-	public String getWert() {
+	public String getWert(){
 		return get("Wert");
 	}
-
+	
 	/**
 	 * @return Dem Benutzer anzeigbare Form dieses Messwertes
 	 */
-	public String getDarstellungswert() {
+	public String getDarstellungswert(){
 		return getTyp().erstelleDarstellungswert(this);
 	}
 	
 	/**
 	 * Messwert aendern
 	 * 
-	 * @param wert Neuer Wert
+	 * @param wert
+	 *            Neuer Wert
 	 */
-	public void setWert(String wert) {
+	public void setWert(String wert){
 		set("Wert", wert);
 	}
 	
 	/**
 	 * @return Die Messung zu der diese Messung gehoert
 	 */
-	public Messung getMessung() {
+	public Messung getMessung(){
 		return new Messung(get("MessungID"));
 	}
 	
 	/**
 	 * @return Typ des Messwertes
 	 */
-	public IMesswertTyp getTyp() {
+	public IMesswertTyp getTyp(){
 		return getMessung().getTyp().getMesswertTyp(getName());
 	}
 }

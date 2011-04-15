@@ -30,23 +30,21 @@ public class Substance extends PersistentObject {
 	
 	static final String VERSION = "0.3.0";
 	static final String createDB =
-		"CREATE TABLE " + TABLENAME + "("
+		"CREATE TABLE " + TABLENAME
+			+ "("
 			+ "ID		VARCHAR(25) primary key," //
 			+ "lastupdate BIGINT,"
 			+ "deleted	CHAR(1) default '0',"
-			+ "salt		VARCHAR(30)," 			  // Bezeichnung des Salzes (OPTIONAL)
-			+ "name		VARCHAR(254)"			  // Bezeichnung des Wirkstoffs
-			+ ");" 		  
-			+ "CREATE INDEX CAUSTRIAS1 ON " + TABLENAME + " (index);"
-			+ "CREATE INDEX CAUSTRIAS2 ON " + TABLENAME + " (name);" 
-			+ "INSERT INTO " + TABLENAME
+			+ "salt		VARCHAR(30)," // Bezeichnung des Salzes (OPTIONAL)
+			+ "name		VARCHAR(254)" // Bezeichnung des Wirkstoffs
+			+ ");" + "CREATE INDEX CAUSTRIAS1 ON " + TABLENAME + " (index);"
+			+ "CREATE INDEX CAUSTRIAS2 ON " + TABLENAME + " (name);" + "INSERT INTO " + TABLENAME
 			+ " (ID,name) VALUES ('VERSION','" + VERSION + "');";
-	
 	
 	static {
 		// WHAT IS THIS? Marco D. / Herzpraxis
-		//addMapping(TABLENAME, "name", "index", "medis=JOINT:product:substance:"
-		//	+ Medikament.JOINTTABLE, "interactions=JOINT:Subst1:Subst2:" + Interaction.TABLENAME);
+		// addMapping(TABLENAME, "name", "index", "medis=JOINT:product:substance:"
+		// + Medikament.JOINTTABLE, "interactions=JOINT:Subst1:Subst2:" + Interaction.TABLENAME);
 		// Changed to:
 		addMapping(TABLENAME, FLD_NAME, "index", "salt");
 		Substance v = load("VERSION");
@@ -55,7 +53,7 @@ public class Substance extends PersistentObject {
 		} else {
 			VersionInfo vi = new VersionInfo(v.get("name"));
 			if (vi.isOlder(VERSION)) {
-					SWTHelper.showError("Datenbank Fehler", "Tabelle Substance ist zu alt");
+				SWTHelper.showError("Datenbank Fehler", "Tabelle Substance ist zu alt");
 			}
 		}
 	}
@@ -137,6 +135,5 @@ public class Substance extends PersistentObject {
 	protected Substance(final String id){
 		super(id);
 	}
-	
 	
 }

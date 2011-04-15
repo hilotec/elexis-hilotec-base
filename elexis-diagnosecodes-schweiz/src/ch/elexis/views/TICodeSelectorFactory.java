@@ -44,7 +44,8 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 				SimpleWidgetProvider.TYPE_TREE, SWT.NONE, null));
 	}
 	
-	static class TICodeContentProvider implements ITreeContentProvider, ICommonViewerContentProvider {
+	static class TICodeContentProvider implements ITreeContentProvider,
+			ICommonViewerContentProvider {
 		public Object[] getChildren(Object parentElement){
 			TICode c = (TICode) parentElement;
 			return c.getChildren();
@@ -80,11 +81,11 @@ public class TICodeSelectorFactory extends CodeSelectorFactory {
 		public void reorder(String field){}
 		
 		public void selected(){}
-
+		
 		@Override
-		public void init() {
-			// TODO Auto-generated method stub
-			
+		public void init(){
+		// TODO Auto-generated method stub
+		
 		}
 	}
 	

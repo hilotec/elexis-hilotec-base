@@ -37,7 +37,7 @@ public class NamedBlob extends PersistentObject {
 	
 	public static final String TABLENAME = "HEAP";
 	public static final String CONTENTS = "inhalt";
-
+	
 	/**
 	 * return the contents as Hashtable (will probably fail if the data was not stored using
 	 * put(Hashtable)
@@ -147,7 +147,7 @@ public class NamedBlob extends PersistentObject {
 				try {
 					fi = FileTool.readTextFile(file);
 					ni.putString(fi);
-				} catch(IOException e) {
+				} catch (IOException e) {
 					ExHandler.handle(e);
 				}
 			}

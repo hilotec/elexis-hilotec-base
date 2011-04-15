@@ -16,17 +16,17 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 public class AllTests {
-
-	public static Test suite() {
+	
+	public static Test suite(){
 		TestSuite suite = new TestSuite("Test for ch.elexis.tests");
-		//$JUnit-BEGIN$
+		// $JUnit-BEGIN$
 		suite.addTestSuite(TestHL7.class);
 		suite.addTestSuite(TestStringtool.class);
 		suite.addTestSuite(FtpServerTest.class);
 		suite.addTestSuite(TestCompress.class);
 		// suite.addTestSuite(TestSAT.class);
-		//$JUnit-END$
+		// $JUnit-END$
 		return suite;
 	}
-
+	
 }

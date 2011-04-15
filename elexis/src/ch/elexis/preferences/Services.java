@@ -22,27 +22,26 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
-public class Services extends PreferencePage implements
-		IWorkbenchPreferencePage {
-
+public class Services extends PreferencePage implements IWorkbenchPreferencePage {
+	
 	public Services(){
 		noDefaultAndApplyButton();
 	}
+	
 	@Override
-	protected Control createContents(Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
+	protected Control createContents(Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new FillLayout());
-		StyledText text=new StyledText(ret,SWT.NONE);
+		StyledText text = new StyledText(ret, SWT.NONE);
 		text.setWordWrap(true);
-		text.setText(Messages.Services_ExplanationLine1+
-				Messages.Services_ExplanationLine2+
-				Messages.Services_ExplanationLine3);
+		text.setText(Messages.Services_ExplanationLine1 + Messages.Services_ExplanationLine2
+			+ Messages.Services_ExplanationLine3);
 		return ret;
 	}
-
-	public void init(IWorkbench workbench) {
-		// TODO Automatisch erstellter Methoden-Stub
-
+	
+	public void init(IWorkbench workbench){
+	// TODO Automatisch erstellter Methoden-Stub
+	
 	}
-
+	
 }

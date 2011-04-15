@@ -26,26 +26,26 @@ import com.tiff.common.ui.datepicker.DatePicker;
 public class DateSelectorDialog extends Dialog {
 	DatePicker dp;
 	TimeTool date;
-
-	public DateSelectorDialog(Shell parent, TimeTool date) {
+	
+	public DateSelectorDialog(Shell parent, TimeTool date){
 		super(parent);
 		this.date = date;
 	}
-
-	public DateSelectorDialog(Shell parentShell) {
+	
+	public DateSelectorDialog(Shell parentShell){
 		this(parentShell, new TimeTool());
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(Composite parent){
 		dp = new DatePicker(parent, SWT.BORDER);
 		dp.setDate(date.getTime());
 		getShell().setText(Messages.getString("DateSelectorDialog.enterDate")); //$NON-NLS-1$
 		return dp;
 	}
-
-	public TimeTool getSelectedDate() {
+	
+	public TimeTool getSelectedDate(){
 		return new TimeTool(dp.getDate().getTime());
 	}
-
+	
 }

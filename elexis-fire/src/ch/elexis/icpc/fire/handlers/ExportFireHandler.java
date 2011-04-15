@@ -49,24 +49,25 @@ public class ExportFireHandler extends AbstractHandler {
 	private static final String CFGPARAM = "ICPC_FIRE_LAST_UPLOAD";
 	private Sticker fireSticker;
 	
-	public ExportFireHandler() {
-		String id = new Query<Sticker>(Sticker.class).findSingle(Sticker.NAME, Query.EQUALS,
-			FIRESTICKERNAME);
+	public ExportFireHandler(){
+		String id =
+			new Query<Sticker>(Sticker.class).findSingle(Sticker.NAME, Query.EQUALS,
+				FIRESTICKERNAME);
 		if (id == null) {
-			fireSticker = new Sticker(FIRESTICKERNAME, Desk
-				.getColor(Desk.COL_BLUE), Desk.getColor(Desk.COL_GREY));
+			fireSticker =
+				new Sticker(FIRESTICKERNAME, Desk.getColor(Desk.COL_BLUE), Desk
+					.getColor(Desk.COL_GREY));
 		} else {
 			fireSticker = Sticker.load(id);
 		}
 	}
 	
 	/**
-	 * the command has been executed, so extract extract the needed information
-	 * from the application context.
+	 * the command has been executed, so extract extract the needed information from the application
+	 * context.
 	 */
-	public Object execute(ExecutionEvent event) throws ExecutionException {
-		IWorkbenchWindow window = HandlerUtil
-		.getActiveWorkbenchWindowChecked(event);
+	public Object execute(ExecutionEvent event) throws ExecutionException{
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
 		String lastupdate = Hub.globalCfg.get(CFGPARAM, null);
 		if (lastupdate == null) {
 			lastupdate = "20090101";
@@ -75,13 +76,16 @@ public class ExportFireHandler extends AbstractHandler {
 		TimeTool ttFrom = new TimeTool(lastupdate);
 		qbe.add(Konsultation.DATE, Query.GREATER_OR_EQUAL, ttFrom.toString(TimeTool.DATE_COMPACT));
 		List<Konsultation> konsen = qbe.execute();
-		Hub.globalCfg.set(CFGPARAM, new TimeTool()
-		.toString(TimeTool.DATE_COMPACT));
+		Hub.globalCfg.set(CFGPARAM, new TimeTool().toString(TimeTool.DATE_COMPACT));
 		if (konsen.size() > 0) {
 			FileDialog fd = new FileDialog(Hub.getActiveShell(), SWT.SAVE);
-			fd.setFileName("elexis-fire"+new TimeTool().toString(TimeTool.DATE_COMPACT)+".xml");
-			fd.setFilterExtensions(new String[]{"xml"});
-			fd.setFilterNames(new String[]{"XML-Dateien"});
+			fd.setFileName("elexis-fire" + new TimeTool().toString(TimeTool.DATE_COMPACT) + ".xml");
+			fd.setFilterExtensions(new String[] {
+				"xml"
+			});
+			fd.setFilterNames(new String[] {
+				"XML-Dateien"
+			});
 			String expath = fd.open();
 			if (expath != null) {
 				Element eRoot = new Element("meldung");
@@ -99,28 +103,28 @@ public class ExportFireHandler extends AbstractHandler {
 					if (!k.getStickers().contains(fireSticker)) {
 						k.addSticker(fireSticker);
 						Element eKons = new Element("konsultation");
-						eKons.addContent(createSub("konsdate", new TimeTool(k
-							.getDatum()).toString(TimeTool.DATE_ISO)));
+						eKons.addContent(createSub("konsdate", new TimeTool(k.getDatum())
+							.toString(TimeTool.DATE_ISO)));
 						eKons.addContent(createSub("patid", pat.getPatCode()));
-						eKons.addContent(createSub("patyear", Integer
-							.toString(new TimeTool(pat.getGeburtsdatum())
-							.get(TimeTool.YEAR))));
-						eKons.addContent(createSub("patgender", pat
-							.getGeschlecht().equals(Person.MALE) ? "male"
-									: "female"));
-						eKons.addContent(createSub("arzt", TarmedRequirements.getEAN(k.getMandant())));
+						eKons.addContent(createSub("patyear", Integer.toString(new TimeTool(pat
+							.getGeburtsdatum()).get(TimeTool.YEAR))));
+						eKons.addContent(createSub("patgender", pat.getGeschlecht().equals(
+							Person.MALE) ? "male" : "female"));
+						eKons.addContent(createSub("arzt", TarmedRequirements
+							.getEAN(k.getMandant())));
 						eRoot.addContent(eKons);
-						Analyzer an=new Analyzer(k);
+						Analyzer an = new Analyzer(k);
 						an.addDiagnoseElement(eKons);
 						an.addVitalElement(eKons);
 						an.addLaborElements(eKons);
 						an.addMediElements(eKons);
 					}
 				}
-				if(XMLTool.writeXMLDocument(doc, expath)){
+				if (XMLTool.writeXMLDocument(doc, expath)) {
 					SWTHelper.showInfo("SGAM / Fire", "Die Datei wurde erfolgreich exportiert");
-				}else{
-					SWTHelper.showError("Fire", "SGAM / Fire", "Beim Export ist ein Fehler aufgetreten");
+				} else {
+					SWTHelper.showError("Fire", "SGAM / Fire",
+						"Beim Export ist ein Fehler aufgetreten");
 				}
 			}
 		}
@@ -128,7 +132,7 @@ public class ExportFireHandler extends AbstractHandler {
 		return null;
 	}
 	
-	private Element createSub(String name, String contents) {
+	private Element createSub(String name, String contents){
 		Element ret = new Element(name);
 		ret.setText(contents);
 		return ret;

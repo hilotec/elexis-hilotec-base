@@ -25,37 +25,40 @@ public class MediDetailDialog extends TitleAreaDialog {
 	Prescription art;
 	Text dosis;
 	Text einnahme;
-
+	
 	public MediDetailDialog(Shell shell, Prescription a){
 		super(shell);
-		art=a;
+		art = a;
 	}
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
-		ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
+	protected Control createDialogArea(Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
+		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
-		new Label(ret,SWT.NONE).setText(Messages.getString("MediDetailDialog.dosage")); //$NON-NLS-1$
-		dosis=new Text(ret,SWT.BORDER);
+		new Label(ret, SWT.NONE).setText(Messages.getString("MediDetailDialog.dosage")); //$NON-NLS-1$
+		dosis = new Text(ret, SWT.BORDER);
 		dosis.setText(art.getDosis());
-		new Label(ret,SWT.NONE).setText(Messages.getString("MediDetailDialog.prescription")); //$NON-NLS-1$
-		einnahme=new Text(ret,SWT.MULTI);
+		new Label(ret, SWT.NONE).setText(Messages.getString("MediDetailDialog.prescription")); //$NON-NLS-1$
+		einnahme = new Text(ret, SWT.MULTI);
 		einnahme.setText(art.getBemerkung());
-		einnahme.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
+		einnahme.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return ret;
 	}
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		setTitle(art.getArtikel().getLabel());
 		setMessage(Messages.getString("MediDetailDialog.pleaseEnterPrescription")); //$NON-NLS-1$
 		getShell().setText(Messages.getString("MediDetailDialog.articleDetail")); //$NON-NLS-1$
-
+		
 	}
+	
 	@Override
-	protected void okPressed() {
+	protected void okPressed(){
 		art.setDosis(dosis.getText());
-		art.set(Prescription.REMARK,einnahme.getText());
+		art.set(Prescription.REMARK, einnahme.getText());
 		super.okPressed();
 	}
 	

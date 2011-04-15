@@ -44,14 +44,14 @@ public class JCECrypter implements Cryptologist {
 	public static short KEY_MARKER = 0x10;
 	public static short IV_MARKER = 0x20;
 	public static short DATA_MARKER = 0x30;
-
+	
 	protected JCEKeyManager km;
 	protected String userKey;
 	protected char[] pwd;
-
+	
 	/**
-	 * Create a new Crypter. If the named keystore does not exist, it well
-	 * created newly and a key for the named user will be created as well.
+	 * Create a new Crypter. If the named keystore does not exist, it well created newly and a key
+	 * for the named user will be created as well.
 	 * 
 	 * @param keystore
 	 *            keystore to use or NULL for default keystore
@@ -63,12 +63,10 @@ public class JCECrypter implements Cryptologist {
 	 *            password for the user's key
 	 * @throws Exception
 	 */
-	public JCECrypter(String keystore, char[] kspwd, String mykey, char[] keypwd)
-			throws Exception {
+	public JCECrypter(String keystore, char[] kspwd, String mykey, char[] keypwd) throws Exception{
 		this(kspwd, mykey, keypwd);
 		if (keystore == null) {
-			keystore = System.getProperty("user.home") + File.separator
-					+ ".JCECrypter";
+			keystore = System.getProperty("user.home") + File.separator + ".JCECrypter";
 			if (kspwd == null) {
 				kspwd = "JCECrypterDefault".toCharArray();
 			}
@@ -77,8 +75,9 @@ public class JCECrypter implements Cryptologist {
 		if (km.load(true)) {
 			if (!km.existsPrivate(mykey)) {
 				KeyPair kp = km.generateKeys();
-				X509Certificate cert = km.generateCertificate(kp.getPublic(),
-						kp.getPrivate(), userKey, userKey, null, null);
+				X509Certificate cert =
+					km.generateCertificate(kp.getPublic(), kp.getPrivate(), userKey, userKey, null,
+						null);
 				km.addKeyPair(kp.getPrivate(), cert, pwd);
 				// km.addCertificate(cert);
 				km.save();
@@ -87,18 +86,18 @@ public class JCECrypter implements Cryptologist {
 			km = null;
 		}
 	}
-
-	protected JCECrypter(char[] kspwd, String mykey, char[] keypwd) {
+	
+	protected JCECrypter(char[] kspwd, String mykey, char[] keypwd){
 		userKey = mykey;
 		pwd = keypwd;
 		// Security
 		// .addProvider(new
 		// org.bouncycastle.jce.provider.BouncyCastleProvider()); // Add
-
+		
 	}
-
+	
 	@Override
-	protected void finalize() throws Throwable {
+	protected void finalize() throws Throwable{
 		if (pwd != null) {
 			for (int i = 0; i < pwd.length; i++) {
 				pwd[i] = 0;
@@ -106,9 +105,9 @@ public class JCECrypter implements Cryptologist {
 		}
 		super.finalize();
 	}
-
-	public Result<byte[]> decrypt(byte[] encrypted) {
-
+	
+	public Result<byte[]> decrypt(byte[] encrypted){
+		
 		try {
 			PrivateKey pk = km.getPrivateKey(userKey, pwd);
 			// Cipher rsaCip = Cipher.getInstance("RSA/None/OAEPPadding", "BC");
@@ -119,39 +118,37 @@ public class JCECrypter implements Cryptologist {
 			int magic = di.readShort();
 			if (magic != MAGIC) {
 				return new Result<byte[]>(Result.SEVERITY.ERROR, 1,
-						"Bad data format while trying to decrypt", null, true);
+					"Bad data format while trying to decrypt", null, true);
 			}
 			int version = di.readShort();
 			int mark = di.readShort();
 			if (mark != KEY_MARKER) {
-				return new Result<byte[]>(Result.SEVERITY.ERROR, 2,
-						"unexpected block marker", null, true);
+				return new Result<byte[]>(Result.SEVERITY.ERROR, 2, "unexpected block marker",
+					null, true);
 			}
 			int len = di.readInt();
 			byte[] d = new byte[len];
 			di.readFully(d);
 			Key bfKey = new SecretKeySpec(rsaCip.doFinal(d), SYMM_CIPHER_ALGO);
 			Cipher aesCip = Cipher.getInstance(SYMM_CIPHER_ALGO);
-			aesCip
-					.init(Cipher.DECRYPT_MODE, bfKey /* , new IvParameterSpec(iv) */);
+			aesCip.init(Cipher.DECRYPT_MODE, bfKey /* , new IvParameterSpec(iv) */);
 			mark = di.readShort();
 			if (mark != DATA_MARKER) {
-				return new Result<byte[]>(Result.SEVERITY.ERROR, 4,
-						"unexpected block marker", null, true);
+				return new Result<byte[]>(Result.SEVERITY.ERROR, 4, "unexpected block marker",
+					null, true);
 			}
 			len = di.readInt();
 			d = new byte[len];
 			di.readFully(d);
 			return new Result<byte[]>(aesCip.doFinal(d));
-
+			
 		} catch (Exception e) {
 			ExHandler.handle(e);
 		}
 		return null;
 	}
-
-	public void decrypt(InputStream source, OutputStream dest)
-			throws CryptologistException {
+	
+	public void decrypt(InputStream source, OutputStream dest) throws CryptologistException{
 		try {
 			PrivateKey pk = km.getPrivateKey(userKey, pwd);
 			// Cipher rsaCip = Cipher.getInstance("RSA/None/OAEPPadding", "BC");
@@ -160,28 +157,26 @@ public class JCECrypter implements Cryptologist {
 			DataInputStream di = new DataInputStream(source);
 			int magic = di.readShort();
 			if (magic != MAGIC) {
-				throw new CryptologistException(
-						"Bad data format while trying to decrypt",
-						CryptologistException.ERR_BAD_PROTOCOL);
+				throw new CryptologistException("Bad data format while trying to decrypt",
+					CryptologistException.ERR_BAD_PROTOCOL);
 			}
 			int version = di.readShort();
 			int mark = di.readShort();
 			if (mark != KEY_MARKER) {
 				throw new CryptologistException("unexpected block marker",
-						CryptologistException.ERR_BAD_PROTOCOL);
+					CryptologistException.ERR_BAD_PROTOCOL);
 			}
 			int len = di.readInt();
 			byte[] d = new byte[len];
 			di.readFully(d);
 			Key bfKey = new SecretKeySpec(rsaCip.doFinal(d), SYMM_CIPHER_ALGO);
 			Cipher aesCip = Cipher.getInstance(SYMM_CIPHER_ALGO);
-			aesCip
-					.init(Cipher.DECRYPT_MODE, bfKey /* , new IvParameterSpec(iv) */);
+			aesCip.init(Cipher.DECRYPT_MODE, bfKey /* , new IvParameterSpec(iv) */);
 			while (di.available() > 1) {
 				mark = di.readShort();
 				if (mark != DATA_MARKER) {
 					throw new CryptologistException("unexpected block marker",
-							CryptologistException.ERR_BAD_PROTOCOL);
+						CryptologistException.ERR_BAD_PROTOCOL);
 				}
 				len = di.readInt();
 				d = new byte[len];
@@ -191,15 +186,14 @@ public class JCECrypter implements Cryptologist {
 			}
 			dest.flush();
 		} catch (Exception e) {
-			throw new CryptologistException("Error while decoding "
-					+ e.getMessage(),
-					CryptologistException.ERR_DECRYPTION_FAILURE);
+			throw new CryptologistException("Error while decoding " + e.getMessage(),
+				CryptologistException.ERR_DECRYPTION_FAILURE);
 		}
-
+		
 	}
-
-	public void encrypt(InputStream source, OutputStream dest,
-			String receiverKeyName) throws CryptologistException {
+	
+	public void encrypt(InputStream source, OutputStream dest, String receiverKeyName)
+		throws CryptologistException{
 		final int BUFLEN = 65535;
 		try {
 			PublicKey cert = km.getPublicKey(receiverKeyName);
@@ -207,13 +201,13 @@ public class JCECrypter implements Cryptologist {
 			byte[] bfKey = generateBlowfishKey();
 			SecretKeySpec spec = new SecretKeySpec(bfKey, SYMM_CIPHER_ALGO);
 			bfCip.init(Cipher.ENCRYPT_MODE, spec);
-
+			
 			// Cipher rsaCip=Cipher.getInstance("RSA/None/OAEPPadding", "BC");
 			Cipher rsaCip = Cipher.getInstance(RSA_ALGO);
 			rsaCip.init(Cipher.ENCRYPT_MODE, cert);
-
+			
 			DataOutputStream dao = new DataOutputStream(dest);
-
+			
 			dao.writeShort(MAGIC);
 			dao.writeShort(VERSION);
 			writeBlock(dao, rsaCip.doFinal(bfKey), KEY_MARKER);
@@ -230,28 +224,27 @@ public class JCECrypter implements Cryptologist {
 			}
 			dao.flush();
 		} catch (Exception e) {
-			throw new CryptologistException("Encryption failed: "
-					+ e.getMessage(),
-					CryptologistException.ERR_ENCRYPTION_FAILURE);
+			throw new CryptologistException("Encryption failed: " + e.getMessage(),
+				CryptologistException.ERR_ENCRYPTION_FAILURE);
 		}
-
+		
 	}
-
-	public byte[] encrypt(byte[] source, String receiverKeyName) {
+	
+	public byte[] encrypt(byte[] source, String receiverKeyName){
 		try {
 			PublicKey cert = km.getPublicKey(receiverKeyName);
 			Cipher bfCip = Cipher.getInstance(SYMM_CIPHER_ALGO);
 			byte[] bfKey = generateBlowfishKey();
 			SecretKeySpec spec = new SecretKeySpec(bfKey, SYMM_CIPHER_ALGO);
 			bfCip.init(Cipher.ENCRYPT_MODE, spec);
-
+			
 			// Cipher rsaCip=Cipher.getInstance("RSA/None/OAEPPadding", "BC");
 			Cipher rsaCip = Cipher.getInstance(RSA_ALGO);
 			rsaCip.init(Cipher.ENCRYPT_MODE, cert);
-
+			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			DataOutputStream dao = new DataOutputStream(baos);
-
+			
 			dao.writeShort(MAGIC);
 			dao.writeShort(VERSION);
 			writeBlock(dao, rsaCip.doFinal(bfKey), KEY_MARKER);
@@ -261,15 +254,14 @@ public class JCECrypter implements Cryptologist {
 			writeBlock(dao, bfCip.doFinal(source), DATA_MARKER);
 			dao.flush();
 			return baos.toByteArray();
-
+			
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 		}
 		return null;
 	}
-
-	private void writeBlock(DataOutputStream o, byte[] block, int marker)
-			throws Exception {
+	
+	private void writeBlock(DataOutputStream o, byte[] block, int marker) throws Exception{
 		o.writeShort(marker);
 		o.writeInt(block.length);
 		o.write(block);
@@ -277,8 +269,8 @@ public class JCECrypter implements Cryptologist {
 			block[i] = 0;
 		}
 	}
-
-	public byte[] sign(byte[] source) {
+	
+	public byte[] sign(byte[] source){
 		try {
 			// Signature sig = Signature.getInstance("SHA1withRSA", "BC");
 			Signature sig = Signature.getInstance(SIGNATURE_ALGO);
@@ -290,12 +282,11 @@ public class JCECrypter implements Cryptologist {
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 		}
-
+		
 		return null;
 	}
-
-	public VERIFY_RESULT verify(byte[] data, byte[] signature,
-			String signerKeyName) {
+	
+	public VERIFY_RESULT verify(byte[] data, byte[] signature, String signerKeyName){
 		try {
 			// Signature sig = Signature.getInstance("SHA1withRSA", "BC");
 			Signature sig = Signature.getInstance(SIGNATURE_ALGO);
@@ -315,23 +306,23 @@ public class JCECrypter implements Cryptologist {
 		}
 		return VERIFY_RESULT.INTERNAL_ERROR;
 	}
-
-	public boolean hasCertificateOf(String alias) {
+	
+	public boolean hasCertificateOf(String alias){
 		return km.existsCertificate(alias);
 	}
-
-	public boolean hasKeyOf(String alias) {
+	
+	public boolean hasKeyOf(String alias){
 		return km.existsPrivate(alias);
 	}
-
-	public boolean addCertificate(X509Certificate cert) {
+	
+	public boolean addCertificate(X509Certificate cert){
 		if (km.addCertificate(cert)) {
 			return km.save();
 		}
 		return false;
 	}
-
-	public boolean addCertificate(byte[] certEncoded) {
+	
+	public boolean addCertificate(byte[] certEncoded){
 		ByteArrayInputStream bais = new ByteArrayInputStream(certEncoded);
 		X509Certificate cert;
 		try {
@@ -342,15 +333,14 @@ public class JCECrypter implements Cryptologist {
 			ExHandler.handle(e);
 			return false;
 		}
-
+		
 	}
-
-	public KeyPair generateKeys(String alias, char[] keypwd,
-			TimeTool validFrom, TimeTool validUntil) {
+	
+	public KeyPair generateKeys(String alias, char[] keypwd, TimeTool validFrom, TimeTool validUntil){
 		KeyPair ret = km.generateKeys();
 		if (alias != null) {
-			X509Certificate cert = generateCertificate(ret.getPublic(), alias,
-					validFrom, validUntil);
+			X509Certificate cert =
+				generateCertificate(ret.getPublic(), alias, validFrom, validUntil);
 			try {
 				km.addKeyPair(ret.getPrivate(), cert, keypwd);
 				km.save();
@@ -361,13 +351,13 @@ public class JCECrypter implements Cryptologist {
 		}
 		return ret;
 	}
-
-	public X509Certificate generateCertificate(PublicKey pk, String alias,
-			TimeTool validFrom, TimeTool validUntil) {
+	
+	public X509Certificate generateCertificate(PublicKey pk, String alias, TimeTool validFrom,
+		TimeTool validUntil){
 		PrivateKey priv = km.getPrivateKey(userKey, pwd);
 		try {
-			X509Certificate ret = km.generateCertificate(pk, priv, userKey,
-					alias, validFrom, validUntil);
+			X509Certificate ret =
+				km.generateCertificate(pk, priv, userKey, alias, validFrom, validUntil);
 			return ret;
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -375,12 +365,12 @@ public class JCECrypter implements Cryptologist {
 		}
 		return null;
 	}
-
-	public String getUser() {
+	
+	public String getUser(){
 		return userKey;
 	}
-
-	private byte[] generateBlowfishKey() {
+	
+	private byte[] generateBlowfishKey(){
 		try {
 			KeyGenerator key_gen = KeyGenerator.getInstance(SYMM_CIPHER_ALGO);
 			SecretKey key = key_gen.generateKey();
@@ -390,8 +380,8 @@ public class JCECrypter implements Cryptologist {
 			return null;
 		}
 	}
-
-	private Key generateAESKey() {
+	
+	private Key generateAESKey(){
 		try {
 			// KeyGenerator key_gen = KeyGenerator.getInstance("AES", "BC");
 			KeyGenerator key_gen = KeyGenerator.getInstance(KEY_ALGO);
@@ -403,30 +393,29 @@ public class JCECrypter implements Cryptologist {
 			return null;
 		}
 	}
-
-	public X509Certificate getCertificate(String alias) {
+	
+	public X509Certificate getCertificate(String alias){
 		return km.getCertificate(alias);
 	}
-
-	public byte[] getCertificateEncoded(String alias)
-			throws CryptologistException {
+	
+	public byte[] getCertificateEncoded(String alias) throws CryptologistException{
 		X509Certificate cert = getCertificate(alias);
 		if (cert != null) {
 			try {
 				return cert.getEncoded();
 			} catch (CertificateEncodingException ce) {
 				throw new CryptologistException("Could not encode certificate",
-						CryptologistException.ERR_CERTIFICATE_ENCODING);
+					CryptologistException.ERR_CERTIFICATE_ENCODING);
 			}
 		}
 		return null;
 	}
-
-	public boolean isFunctional() {
+	
+	public boolean isFunctional(){
 		return true;
 	}
-
-	public boolean removeCertificate(String alias) {
+	
+	public boolean removeCertificate(String alias){
 		return km.removeKey(alias);
 	}
 }

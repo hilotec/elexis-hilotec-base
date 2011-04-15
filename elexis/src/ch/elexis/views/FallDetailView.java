@@ -34,29 +34,28 @@ public class FallDetailView extends ViewPart implements ISaveablePart2, IActivat
 	public static final String ID = "ch.elexis.FallDetailView"; //$NON-NLS-1$
 	FallDetailBlatt2 fdb;
 	
-	private final ElexisEventListenerImpl eeli_kons = new ElexisEventListenerImpl(Konsultation.class){
-		public void runInUi(final ElexisEvent ev){
-			fdb.setFall(((Konsultation)ev.getObject()).getFall());
-		}
-	};
-	private final ElexisEventListenerImpl eeli_fall = new ElexisEventListenerImpl(
-		Fall.class) {
+	private final ElexisEventListenerImpl eeli_kons =
+		new ElexisEventListenerImpl(Konsultation.class) {
+			public void runInUi(final ElexisEvent ev){
+				fdb.setFall(((Konsultation) ev.getObject()).getFall());
+			}
+		};
+	private final ElexisEventListenerImpl eeli_fall = new ElexisEventListenerImpl(Fall.class) {
 		
-		public void runInUi(final ElexisEvent ev) {
+		public void runInUi(final ElexisEvent ev){
 			fdb.setFall((Fall) ev.getObject());
 		}
 	};
-	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(
-		Patient.class) {
+	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
 		
-		public void runInUi(final ElexisEvent ev) {
+		public void runInUi(final ElexisEvent ev){
 			Patient patient = (Patient) ev.getObject();
 			Fall selectedFall = fdb.getFall();
-			if (selectedFall == null
-					|| !selectedFall.getPatient().equals(patient)) {
+			if (selectedFall == null || !selectedFall.getPatient().equals(patient)) {
 				
 				Konsultation letzteKons = null;
-				if(patient != null)  letzteKons = patient.getLetzteKons(false);
+				if (patient != null)
+					letzteKons = patient.getLetzteKons(false);
 				if (letzteKons != null) {
 					fdb.setFall(letzteKons.getFall());
 				} else {
@@ -68,10 +67,8 @@ public class FallDetailView extends ViewPart implements ISaveablePart2, IActivat
 		}
 	};
 	
-	
-	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		parent.setLayout(new GridLayout());
 		fdb = new FallDetailBlatt2(parent);
 		fdb.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -79,55 +76,53 @@ public class FallDetailView extends ViewPart implements ISaveablePart2, IActivat
 	}
 	
 	@Override
-	public void setFocus() {
-	}
+	public void setFocus(){}
 	
 	@Override
-	public void dispose() {
+	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		super.dispose();
 	}
 	
 	/***********************************************************************************************
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir
-	 * benötigen das Interface nur, um das Schliessen einer View zu verhindern,
-	 * wenn die Perspektive fixiert ist. Gibt es da keine einfachere Methode?
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
+	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
+	 * Gibt es da keine einfachere Methode?
 	 */
-	public int promptToSaveOnClose() {
+	public int promptToSaveOnClose(){
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
 				: ISaveablePart2.NO;
 	}
 	
-	public void doSave(IProgressMonitor monitor) { /* leer */
+	public void doSave(IProgressMonitor monitor){ /* leer */
 	}
 	
-	public void doSaveAs() { /* leer */
+	public void doSaveAs(){ /* leer */
 	}
 	
-	public boolean isDirty() {
+	public boolean isDirty(){
 		return true;
 	}
 	
-	public boolean isSaveAsAllowed() {
+	public boolean isSaveAsAllowed(){
 		return false;
 	}
 	
-	public boolean isSaveOnCloseNeeded() {
+	public boolean isSaveOnCloseNeeded(){
 		return true;
 	}
 	
 	public void activation(boolean mode){
-		// TODO Auto-generated method stub
-		
+	// TODO Auto-generated method stub
+	
 	}
 	
 	public void visible(boolean mode){
-		if(mode){
+		if (mode) {
 			ElexisEventDispatcher.getInstance().addListeners(eeli_fall, eeli_pat, eeli_kons);
 			eeli_pat.catchElexisEvent(ElexisEvent.createPatientEvent());
-		}else{
-			ElexisEventDispatcher.getInstance()
-			.removeListeners(eeli_fall, eeli_pat, eeli_kons);
+		} else {
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_fall, eeli_pat, eeli_kons);
 			
 		}
 		

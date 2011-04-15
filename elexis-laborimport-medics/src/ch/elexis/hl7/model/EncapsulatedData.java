@@ -8,12 +8,13 @@ import org.apache.commons.codec.binary.Base64;
 import ch.elexis.hl7.util.HL7Helper;
 
 public class EncapsulatedData implements IValueType {
-
+	
 	String name;
 	byte[] data;
 	Date date;
 	
-	public EncapsulatedData(String name, String encoding, String text, String dateStr) throws ParseException {
+	public EncapsulatedData(String name, String encoding, String text, String dateStr)
+		throws ParseException{
 		super();
 		this.name = name;
 		if (dateStr != null && dateStr.length() > 0) {
@@ -25,11 +26,11 @@ public class EncapsulatedData implements IValueType {
 			data = text.getBytes();
 		}
 	}
-
+	
 	public String getName(){
 		return name;
 	}
-
+	
 	public byte[] getData(){
 		return data;
 	}
@@ -37,7 +38,7 @@ public class EncapsulatedData implements IValueType {
 	public Date getDate(){
 		return date;
 	}
-
+	
 	public void setDate(Date date){
 		this.date = date;
 	}

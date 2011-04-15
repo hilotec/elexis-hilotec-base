@@ -53,7 +53,7 @@ import ch.rgw.tools.TimeTool;
 public class ProportionalSheet extends Composite implements IAgendaLayout {
 	static final int LEFT_OFFSET_DEFAULT = 20;
 	static final int PADDING_DEFAULT = 5;
-
+	
 	private int left_offset, padding;
 	private AgendaParallel view;
 	private MenuManager contextMenuManager;
@@ -64,7 +64,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 	private int textWidth;
 	private double sheetWidth;
 	private double widthPerColumn;
-
+	
 	private TimeTool setTerminTo(int x, int y){
 		String resource = ""; //$NON-NLS-1$
 		for (int i = 0; i < resources.length; i++) {
@@ -89,60 +89,60 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 		}
 		return tt;
 	}
-	public ProportionalSheet(Composite parent, AgendaParallel v) {
+	
+	public ProportionalSheet(Composite parent, AgendaParallel v){
 		super(parent, SWT.NO_BACKGROUND);
 		view = v;
 		addControlListener(new ControlAdapter() {
 			@Override
-			public void controlResized(ControlEvent e) {
+			public void controlResized(ControlEvent e){
 				layout();
 				recalc();
 			}
 		});
 		addPaintListener(new TimePainter());
 		addMouseListener(new MouseAdapter() {
-
+			
 			@Override
-			public void mouseDoubleClick(MouseEvent e) {
+			public void mouseDoubleClick(MouseEvent e){
 				
-				TimeTool tt=setTerminTo(e.x,e.y);
+				TimeTool tt = setTerminTo(e.x, e.y);
 				TerminDialog dlg = new TerminDialog(null);
 				dlg.create();
 				dlg.setTime(tt);
 				if (dlg.open() == Dialog.OK) {
-
+					
 					refresh();
 				}
 			}
-
+			
 		});
 		
-	
 		// setBackground(Desk.getColor(Desk.COL_GREEN));
 		left_offset = LEFT_OFFSET_DEFAULT;
 		padding = PADDING_DEFAULT;
-		new PersistentObjectDropTarget(this,
-				new PersistentObjectDropTarget.IReceiver() {
-
-					public boolean accept(PersistentObject o) {
-						return true;
-					}
-
-			public void dropped(PersistentObject o, DropTargetEvent e) {
-				Point pt=Display.getCurrent().map(null, ProportionalSheet.this, e.x, e.y);
-				TimeTool tt=setTerminTo(pt.x,pt.y);
-				TerminLabel tl=(TerminLabel)e.widget;
-				Termin t=tl.getTermin();
-				if(t!=null){
+		new PersistentObjectDropTarget(this, new PersistentObjectDropTarget.IReceiver() {
+			
+			public boolean accept(PersistentObject o){
+				return true;
+			}
+			
+			public void dropped(PersistentObject o, DropTargetEvent e){
+				Point pt = Display.getCurrent().map(null, ProportionalSheet.this, e.x, e.y);
+				TimeTool tt = setTerminTo(pt.x, pt.y);
+				TerminLabel tl = (TerminLabel) e.widget;
+				Termin t = tl.getTermin();
+				if (t != null) {
 					t.setStartTime(tt);
 					t.setBereich(Activator.getDefault().getActResource());
-					tl.refresh();					
+					tl.refresh();
 					refresh();
 				}
-			}});
+			}
+		});
 	}
-
-	private boolean isBetween(int x, double lower, double upper) {
+	
+	private boolean isBetween(int x, double lower, double upper){
 		int y = (int) Math.round(lower);
 		int z = (int) Math.round(upper);
 		if ((x >= y) && (x <= z)) {
@@ -150,27 +150,26 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 		}
 		return false;
 	}
-
-	public MenuManager getContextMenuManager() {
+	
+	public MenuManager getContextMenuManager(){
 		return contextMenuManager;
 	}
-
-	public void clear() {
+	
+	public void clear(){
 		while (tlabels != null && tlabels.size() > 0) {
 			tlabels.remove(0).dispose();
 		}
 		recalc();
-
+		
 	}
-
-	synchronized void refresh() {
+	
+	synchronized void refresh(){
 		String[] resnames = view.getDisplayedResources();
 		Query<Termin> qbe = new Query<Termin>(Termin.class);
-		String day = Activator.getDefault().getActDate().toString(
-				TimeTool.DATE_COMPACT);
+		String day = Activator.getDefault().getActDate().toString(TimeTool.DATE_COMPACT);
 		qbe.add("Tag", "=", day);
 		qbe.startGroup();
-
+		
 		for (String n : resnames) {
 			qbe.add("BeiWem", "=", n);
 			qbe.or();
@@ -204,14 +203,14 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 		}
 		recalc();
 	}
-
-	void recalc() {
+	
+	void recalc(){
 		if (tlabels != null) {
 			ppm = AgendaParallel.getPixelPerMinute();
 			sheetHeight = (int) Math.round(ppm * 60 * 24);
 			ScrolledComposite sc = (ScrolledComposite) getParent();
 			Point mySize = getSize();
-
+			
 			if (mySize.x > 0.0) {
 				if (mySize.y != sheetHeight) {
 					setSize(mySize.x, sheetHeight);
@@ -231,7 +230,7 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 				widthPerColumn = sheetWidth / count;
 				ColumnHeader header = view.getHeader();
 				header.recalc(widthPerColumn, left_offset, padding, textSize.y);
-
+				
 				for (TerminLabel l : tlabels) {
 					l.refresh();
 				}
@@ -239,26 +238,26 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			}
 		}
 	}
-
-	public double getPixelPerMinute() {
+	
+	public double getPixelPerMinute(){
 		return ppm;
 	}
-
-	public double getWidthPerColumn() {
+	
+	public double getWidthPerColumn(){
 		return widthPerColumn;
 	}
-
-	public int getLeftOffset() {
+	
+	public int getLeftOffset(){
 		return left_offset;
 	}
-
-	public int getPadding() {
+	
+	public int getPadding(){
 		return padding;
 	}
-
+	
 	class TimePainter implements PaintListener {
-
-		public void paintControl(PaintEvent e) {
+		
+		public void paintControl(PaintEvent e){
 			GC gc = e.gc;
 			gc.fillRectangle(e.x, e.y, e.width, e.height);
 			int y = 0;
@@ -267,9 +266,8 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			TimeTool limit = new TimeTool("23:59"); //$NON-NLS-1$
 			Point textSize = gc.textExtent("88:88"); //$NON-NLS-1$
 			int textwidth = textSize.x;
-
-			int quarter = (int) Math.round(15.0 * AgendaParallel
-					.getPixelPerMinute());
+			
+			int quarter = (int) Math.round(15.0 * AgendaParallel.getPixelPerMinute());
 			int w = ProportionalSheet.this.getSize().x - 5;
 			int left = 0;
 			int right = w - textwidth;
@@ -291,10 +289,10 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 				runner.addHours(1);
 			}
 		}
-
+		
 	}
-
-	public Composite getComposite() {
+	
+	public Composite getComposite(){
 		return this;
 	}
 }

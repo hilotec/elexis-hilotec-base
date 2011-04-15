@@ -58,7 +58,8 @@ public class CodeSelectorFactory extends ch.elexis.views.codesystems.CodeSelecto
 		return IcpcCode.class;
 	}
 	
-	public class IcpcCodeContentProvider implements ICommonViewerContentProvider, ITreeContentProvider {
+	public class IcpcCodeContentProvider implements ICommonViewerContentProvider,
+			ITreeContentProvider {
 		
 		public void startListening(){}
 		
@@ -103,11 +104,11 @@ public class CodeSelectorFactory extends ch.elexis.views.codesystems.CodeSelecto
 			}
 			return false;
 		}
-
+		
 		@Override
-		public void init() {
-			// TODO Auto-generated method stub
-			
+		public void init(){
+		// TODO Auto-generated method stub
+		
 		}
 		
 	}

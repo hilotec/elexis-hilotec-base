@@ -1,4 +1,5 @@
 package ch.elexis.textplugin;
+
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -15,38 +16,36 @@ import org.eclipse.swt.widgets.Composite;
  * @author bogdan314
  */
 public class TextBox extends EStyledText implements PaintListener {
-
+	
 	public final static int MIN_SIZE = 15;
-
+	
 	private boolean highlight;
-
-	public TextBox(Composite parent, ElexisEditor editor) {
+	
+	public TextBox(Composite parent, ElexisEditor editor){
 		super(parent, editor, SWT.WRAP);
 		setSize(200, 100);
 		setRedraw(true);
 		setBackground(getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		addControlListener(new ControlAdapter() {
-			public void controlResized(ControlEvent e) {
+			public void controlResized(ControlEvent e){
 				redraw();
 			}
 		});
 		addPaintListener(this);
 	}
-
-	public void setHighlight(boolean highlight) {
+	
+	public void setHighlight(boolean highlight){
 		this.highlight = highlight;
-		setBackground(getDisplay().getSystemColor(
-				highlight ? SWT.COLOR_GRAY : SWT.COLOR_WHITE));
+		setBackground(getDisplay().getSystemColor(highlight ? SWT.COLOR_GRAY : SWT.COLOR_WHITE));
 	}
-
-	public void setLocation(int x, int y) {
-	}
-
-	public void forceLocation(int x, int y) {
+	
+	public void setLocation(int x, int y){}
+	
+	public void forceLocation(int x, int y){
 		super.setLocation(x, y);
 	}
-
-	public void paintControl(PaintEvent e) {
+	
+	public void paintControl(PaintEvent e){
 		Point size = getSize();
 		if (highlight && size.equals(getSize())) {
 			e.gc.drawRectangle(0, 0, size.x - 1, size.y - 1);
@@ -54,7 +53,7 @@ public class TextBox extends EStyledText implements PaintListener {
 	}
 	
 	@Override
-	public void readFrom(DataInputStream in) throws IOException {
+	public void readFrom(DataInputStream in) throws IOException{
 		int x = in.readInt();
 		int y = in.readInt();
 		int w = in.readInt();
@@ -65,12 +64,12 @@ public class TextBox extends EStyledText implements PaintListener {
 	}
 	
 	@Override
-	public void writeTo(DataOutputStream out) throws IOException {
+	public void writeTo(DataOutputStream out) throws IOException{
 		out.writeInt(getLocation().x);
 		out.writeInt(getLocation().y);
 		out.writeInt(getSize().x);
 		out.writeInt(getSize().y);
 		super.writeTo(out);
 	}
-
+	
 }

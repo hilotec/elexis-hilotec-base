@@ -27,7 +27,8 @@ public class ACE implements Serializable {
 	private static final long serialVersionUID = 34320020090119L;
 	
 	public static final ACE ACE_ROOT = new ACE(null, "root", Messages.getString("ACE.root")); //$NON-NLS-1$ //$NON-NLS-2$
-	public static final ACE ACE_IMPLICIT = new ACE(ACE.ACE_ROOT, "implicit", Messages.getString("ACE.implicit")); //$NON-NLS-1$ //$NON-NLS-2$
+	public static final ACE ACE_IMPLICIT =
+		new ACE(ACE.ACE_ROOT, "implicit", Messages.getString("ACE.implicit")); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	private final String name;
 	private String localizedName;
@@ -96,8 +97,8 @@ public class ACE implements Serializable {
 	}
 	
 	/**
-	 * get the full pathname of an ACE. This Method is internal to the ACL system and should
-	 * not be used externally
+	 * get the full pathname of an ACE. This Method is internal to the ACL system and should not be
+	 * used externally
 	 */
 	String getCanonicalName(){
 		StringBuilder sp = new StringBuilder();

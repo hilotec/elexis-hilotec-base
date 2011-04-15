@@ -31,53 +31,50 @@ import ch.rgw.tools.Result;
 import ch.rgw.tools.TimeTool;
 
 public class DataAccessor implements IDataAccess {
-
-	public String getName() {
+	
+	public String getName(){
 		return "ICPC2-Daten";
 	}
-
-	public String getDescription() {
+	
+	public String getDescription(){
 		return "Daten aus dem ICPC2-Plugin";
 	}
-
-	public List<Element> getList() {
+	
+	public List<Element> getList(){
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	private String code(IcpcCode ic) {
+	
+	private String code(IcpcCode ic){
 		return (ic == null ? "" : ic.getCode());
 	}
 	
 	/**
-	 * Alle Encounters in der Episode ep suchen, die zum Zeitraum
-	 * dates passen und Liste zurueck geben.
+	 * Alle Encounters in der Episode ep suchen, die zum Zeitraum dates passen und Liste zurueck
+	 * geben.
 	 */
-	private Result<Object> sucheEncounters(Episode ep, String dates,
-			PersistentObject dep)
-	{
+	private Result<Object> sucheEncounters(Episode ep, String dates, PersistentObject dep){
 		Query<Encounter> qen = new Query<Encounter>(Encounter.class);
 		qen.add("EpisodeID", Query.LIKE, ep.getId());
 		if (dep instanceof Konsultation) {
 			Konsultation kons = (Konsultation) dep;
 			qen.add("KonsID", Query.LIKE, kons.getId());
 		}
-
+		
 		// TODO: Filtern nach dates
 		
 		// Encounters ohne RFE, Diag und Procedere rauswerfen
 		qen.addPostQueryFilter(new IFilter() {
-			public boolean select(Object element) {
+			public boolean select(Object element){
 				Encounter e = (Encounter) element;
-				return e.getRFE() != null || e.getDiag() != null ||
-					e.getProc() != null;
+				return e.getRFE() != null || e.getDiag() != null || e.getProc() != null;
 			}
 		});
 		List<Encounter> result = qen.execute();
-
+		
 		// Sortieren
 		Collections.sort(result, new Comparator<Encounter>() {
-			public int compare(Encounter e1, Encounter e2) {
+			public int compare(Encounter e1, Encounter e2){
 				TimeTool tt1 = new TimeTool(e1.getKons().getDatum());
 				TimeTool tt2 = new TimeTool(e2.getKons().getDatum());
 				return tt1.compareTo(tt2);
@@ -87,10 +84,8 @@ public class DataAccessor implements IDataAccess {
 		return new Result<Object>(result);
 	}
 	
-	private Result<Object> sucheEncounters(List<Episode> eps,
-			Map<Episode, List<Encounter>> encs, PersistentObject dep,
-			String dates)
-	{
+	private Result<Object> sucheEncounters(List<Episode> eps, Map<Episode, List<Encounter>> encs,
+		PersistentObject dep, String dates){
 		
 		Patient pat;
 		
@@ -100,20 +95,18 @@ public class DataAccessor implements IDataAccess {
 		} else if (dep instanceof Patient) {
 			pat = (Patient) dep;
 		} else {
-			return new Result<Object>(Result.SEVERITY.ERROR,
-					IDataAccess.INVALID_PARAMETERS, "Ungültiger Parameter",
-					dep, true);
+			return new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
+				"Ungültiger Parameter", dep, true);
 		}
-
+		
 		// Alle Episoden des Patienten zusammensuchen
 		Query<Episode> qep = new Query<Episode>(Episode.class);
-		qep.add(Episode.FLD_PATIENT_ID, Query.LIKE,
-				pat.getId());
+		qep.add(Episode.FLD_PATIENT_ID, Query.LIKE, pat.getId());
 		qep.orderBy(false, Episode.FLD_START_DATE);
 		List<Episode> raw_eps = qep.execute();
 		
 		int count = 0;
-		for (Episode ep: raw_eps) {
+		for (Episode ep : raw_eps) {
 			// Betroffene Encounters suchen
 			Result<Object> res = sucheEncounters(ep, dates, dep);
 			if (!res.isOK()) {
@@ -135,26 +128,19 @@ public class DataAccessor implements IDataAccess {
 		return new Result<Object>(count);
 	}
 	
-	public Result<Object> getObject(String descriptor,
-			PersistentObject dependentObject, String dates, String[] params)
-	{
+	public Result<Object> getObject(String descriptor, PersistentObject dependentObject,
+		String dates, String[] params){
 		
 		if (descriptor.toLowerCase().equals("encounters")) {
 			/*
-			 * Tabelle in der Form:
-			 * Problem1 | Datum | aktiv/inaktiv
-			 *          | Datum | RFE | Diagnose | Procedere
-			 *     .        .      .        .          .
-			 * Problem2 | Datum | aktiv/inaktiv
-			 *     .        .      .        .          .
+			 * Tabelle in der Form: Problem1 | Datum | aktiv/inaktiv | Datum | RFE | Diagnose |
+			 * Procedere . . . . . Problem2 | Datum | aktiv/inaktiv . . . . .
 			 */
-			
+
 			List<Episode> episodes = new LinkedList<Episode>();
-			HashMap<Episode, List<Encounter>> encounters =
-				new HashMap<Episode, List<Encounter>>();
+			HashMap<Episode, List<Encounter>> encounters = new HashMap<Episode, List<Encounter>>();
 			
-			Result<Object> res = sucheEncounters(episodes, encounters,
-				dependentObject, dates);
+			Result<Object> res = sucheEncounters(episodes, encounters, dependentObject, dates);
 			if (!res.isOK()) {
 				return res;
 			}
@@ -171,7 +157,7 @@ public class DataAccessor implements IDataAccess {
 			result[i][4] = "Procedere";
 			i++;
 			
-			for (Episode ep: episodes) {
+			for (Episode ep : episodes) {
 				/* Zeile fuer Episode generieren */
 				result[i][0] = ep.getTitle();
 				result[i][1] = ep.getStartDate();
@@ -180,7 +166,7 @@ public class DataAccessor implements IDataAccess {
 				i++;
 				
 				/* Zeilen fuer Encounters generieren */
-				for (Encounter en: encounters.get(ep)) {
+				for (Encounter en : encounters.get(ep)) {
 					result[i][0] = "";
 					result[i][1] = en.getKons().getDatum();
 					result[i][2] = code(en.getRFE());
@@ -192,10 +178,9 @@ public class DataAccessor implements IDataAccess {
 			
 			return new Result<Object>(result);
 		} else {
-			return new Result<Object>(Result.SEVERITY.ERROR,
-				IDataAccess.OBJECT_NOT_FOUND, "Ungültiger Parameter",
-				descriptor, true);
+			return new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.OBJECT_NOT_FOUND,
+				"Ungültiger Parameter", descriptor, true);
 		}
 	}
-
+	
 }

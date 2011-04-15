@@ -39,51 +39,62 @@ public class Handler {
 	private static final String STR_MONITOR = "monitor"; //$NON-NLS-1$
 	private static final String STR_PARAM = "param"; //$NON-NLS-1$
 	private static HashMap<String, Object> paramMap = new HashMap<String, Object>();
-	public static final String DEFAULTPARAM="ch.elexis.commands.defaultParameter"; //$NON-NLS-1$
-	
+	public static final String DEFAULTPARAM = "ch.elexis.commands.defaultParameter"; //$NON-NLS-1$
 	
 	/**
 	 * Execute a Command with a single Object as Parameter and a ProgressMonitor
-	 * @param origin The ViewSite the Command was originated
-	 * @param commandID the ID of the command as defined in plugin.xml
-	 * @param param the arbitrary parameter
+	 * 
+	 * @param origin
+	 *            The ViewSite the Command was originated
+	 * @param commandID
+	 *            the ID of the command as defined in plugin.xml
+	 * @param param
+	 *            the arbitrary parameter
 	 * @return the return value of the Command's execute method
 	 */
-	public static Object executeWithProgress(IViewSite origin, String commandID, Object param, IProgressMonitor monitor){
-		HashMap<String,Object> hp=new HashMap<String,Object>();
+	public static Object executeWithProgress(IViewSite origin, String commandID, Object param,
+		IProgressMonitor monitor){
+		HashMap<String, Object> hp = new HashMap<String, Object>();
 		hp.put(STR_PARAM, param);
 		hp.put(STR_MONITOR, monitor);
-		return execute(origin,commandID,hp);
-	}
-	/**
-	 * Execute a Command with a single Object as Parameter
-	 * @param origin The ViewSite the Command was originated
-	 * @param commandID the ID of the command as defined in plugin.xml
-	 * @param param the arbitrary parameter
-	 * @return the return value of the Command's execute method
-	 */
-	public static Object execute(IViewSite origin, String commandID, Object param){
-		HashMap<String,Object> hp=new HashMap<String,Object>();
-		if(param!=null){
-			hp.put(STR_PARAM, param);
-		}
-		return execute(origin,commandID,hp);
+		return execute(origin, commandID, hp);
 	}
 	
 	/**
-	 * Return the given single Parameter. This is to be called from within
-	 * the execute method of the command
-	 * @param eev the ExecutionEnvironment of the command
-	 * @return the Object as given from the caller to execute(...) or null if 
-	 * no such object was given
+	 * Execute a Command with a single Object as Parameter
+	 * 
+	 * @param origin
+	 *            The ViewSite the Command was originated
+	 * @param commandID
+	 *            the ID of the command as defined in plugin.xml
+	 * @param param
+	 *            the arbitrary parameter
+	 * @return the return value of the Command's execute method
+	 */
+	public static Object execute(IViewSite origin, String commandID, Object param){
+		HashMap<String, Object> hp = new HashMap<String, Object>();
+		if (param != null) {
+			hp.put(STR_PARAM, param);
+		}
+		return execute(origin, commandID, hp);
+	}
+	
+	/**
+	 * Return the given single Parameter. This is to be called from within the execute method of the
+	 * command
+	 * 
+	 * @param eev
+	 *            the ExecutionEnvironment of the command
+	 * @return the Object as given from the caller to execute(...) or null if no such object was
+	 *         given
 	 */
 	@SuppressWarnings("unchecked")
 	public static Object getParam(ExecutionEvent eev){
-		Map<String,String> params=eev.getParameters();
-		String np=params.get(Handler.DEFAULTPARAM);
-		if(np!=null){
-			HashMap<String, Object> map=(HashMap<String, Object>) getParam(np);
-			if(map!=null){
+		Map<String, String> params = eev.getParameters();
+		String np = params.get(Handler.DEFAULTPARAM);
+		if (np != null) {
+			HashMap<String, Object> map = (HashMap<String, Object>) getParam(np);
+			if (map != null) {
 				return map.get(STR_PARAM);
 			}
 		}
@@ -92,27 +103,31 @@ public class Handler {
 	
 	/**
 	 * get the ProgressMonitor supplied by the caller
-	 * @param eev the ExecutionEnvironment of the Command
+	 * 
+	 * @param eev
+	 *            the ExecutionEnvironment of the Command
 	 * @return the monitor if any or null if none was given.
 	 */
 	@SuppressWarnings("unchecked")
 	public static IProgressMonitor getMonitor(ExecutionEvent eev){
-		Map<String,String> params=eev.getParameters();
-		String np=params.get(Handler.DEFAULTPARAM);
-		HashMap<String, Object> map=(HashMap<String, Object>) getParam(np);
-		if(map!=null){
-			return (IProgressMonitor)map.get(STR_MONITOR);
+		Map<String, String> params = eev.getParameters();
+		String np = params.get(Handler.DEFAULTPARAM);
+		HashMap<String, Object> map = (HashMap<String, Object>) getParam(np);
+		if (map != null) {
+			return (IProgressMonitor) map.get(STR_MONITOR);
 		}
 		return null;
 	}
+	
 	/**
 	 * Return a named parameter
+	 * 
 	 * @param paramName
 	 * @return
 	 */
 	public static Object getParam(String paramName){
-		Object ret=paramMap.get(paramName);
-		if(ret!=null){
+		Object ret = paramMap.get(paramName);
+		if (ret != null) {
 			paramMap.remove(paramName);
 		}
 		return ret;
@@ -166,6 +181,5 @@ public class Handler {
 		}
 		
 	}
-
 	
 }

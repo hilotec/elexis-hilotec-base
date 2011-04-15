@@ -52,10 +52,9 @@ public class TerminLabel extends Composite {
 	private Composite state;
 	IAgendaLayout ial;
 	Activator agenda = Activator.getDefault();
-	private IAction terminKuerzenAction, terminVerlaengernAction,
-			terminAendernAction;
-
-	public TerminLabel(IAgendaLayout al) {
+	private IAction terminKuerzenAction, terminVerlaengernAction, terminAendernAction;
+	
+	public TerminLabel(IAgendaLayout al){
 		super(al.getComposite(), SWT.BORDER);
 		ial = al;
 		makeActions();
@@ -68,67 +67,65 @@ public class TerminLabel extends Composite {
 		state.setLayoutData(new GridData());
 		lbl.addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseDoubleClick(MouseEvent e) {
+			public void mouseDoubleClick(MouseEvent e){
 				agenda.setActDate(t.getDay());
 				agenda.setActResource(t.getBereich());
 				new TerminDialog(t).open();
 				refresh();
 			}
-
+			
 			@Override
-			public void mouseUp(MouseEvent e) {
+			public void mouseUp(MouseEvent e){
 				agenda.dispatchTermin(t);
 				super.mouseUp(e);
 			}
-
+			
 		});
-		new PersistentObjectDragSource(lbl,
-				new PersistentObjectDragSource.ISelectionRenderer() {
-
-					public List<PersistentObject> getSelection() {
-						ArrayList<PersistentObject> ret = new ArrayList<PersistentObject>();
-						ret.add(TerminLabel.this.t);
-						return ret;
-					}
-				});
-
+		new PersistentObjectDragSource(lbl, new PersistentObjectDragSource.ISelectionRenderer() {
+			
+			public List<PersistentObject> getSelection(){
+				ArrayList<PersistentObject> ret = new ArrayList<PersistentObject>();
+				ret.add(TerminLabel.this.t);
+				return ret;
+			}
+		});
+		
 		new TerminLabelMenu();
-
+		
 	}
-
-	public void set(Termin t, int col) {
+	
+	public void set(Termin t, int col){
 		this.t = t;
 		this.column = col;
 	}
-
-	public TerminLabel(IAgendaLayout parent, Termin trm, int col) {
+	
+	public TerminLabel(IAgendaLayout parent, Termin trm, int col){
 		this(parent);
 		set(trm, col);
 	}
-
-	public int getColumn() {
+	
+	public int getColumn(){
 		return column;
 	}
-
-	public Termin getTermin() {
+	
+	public Termin getTermin(){
 		return t;
 	}
-
-	public void updateActions() {
-		boolean canChangeAppointments = Hub.acl
-				.request(ACLContributor.CHANGE_APPOINTMENTS);
+	
+	public void updateActions(){
+		boolean canChangeAppointments = Hub.acl.request(ACLContributor.CHANGE_APPOINTMENTS);
 		terminKuerzenAction.setEnabled(canChangeAppointments);
 		terminVerlaengernAction.setEnabled(canChangeAppointments);
 		terminAendernAction.setEnabled(canChangeAppointments);
-
+		
 	}
-
-	public void refresh() {
+	
+	public void refresh(){
 		Color back = Plannables.getTypColor(t);
 		lbl.setBackground(back);
 		// l.setBackground(Desk.getColor(Desk.COL_GREY20));
 		lbl.setForeground(SWTHelper.getContrast(back));
-
+		
 		// l.setForeground(Plannables.getStatusColor(t));
 		StringBuilder sb = new StringBuilder();
 		sb.append(t.getLabel()).append("\n").append(t.getGrund()); //$NON-NLS-1$
@@ -136,10 +133,10 @@ public class TerminLabel extends Composite {
 		lbl.setText(t.getTitle());
 		lbl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		lbl.setToolTipText(sb.toString());
-
-		int lx = ial.getLeftOffset()
-				+ (int) Math.round(getColumn()
-						* (ial.getWidthPerColumn() + ial.getPadding()));
+		
+		int lx =
+			ial.getLeftOffset()
+				+ (int) Math.round(getColumn() * (ial.getWidthPerColumn() + ial.getPadding()));
 		int ly = (int) Math.round(t.getBeginn() * ial.getPixelPerMinute());
 		int lw = (int) Math.round(ial.getWidthPerColumn());
 		int lh = (int) Math.round(t.getDauer() * ial.getPixelPerMinute());
@@ -155,42 +152,41 @@ public class TerminLabel extends Composite {
 		}
 		layout();
 	}
-
+	
 	class TerminLabelMenu {
-		TerminLabelMenu() {
+		TerminLabelMenu(){
 			MenuManager contextMenuManager = new MenuManager();
 			contextMenuManager.add(AgendaActions.terminStatusAction);
 			contextMenuManager.add(terminKuerzenAction);
 			contextMenuManager.add(terminVerlaengernAction);
 			contextMenuManager.add(terminAendernAction);
 			contextMenuManager.add(AgendaActions.delTerminAction);
-			TerminLabel.this.lbl.setMenu(contextMenuManager
-					.createContextMenu(TerminLabel.this.lbl));
+			TerminLabel.this.lbl
+				.setMenu(contextMenuManager.createContextMenu(TerminLabel.this.lbl));
 		}
-
+		
 	};
-
-	private void makeActions() {
+	
+	private void makeActions(){
 		terminAendernAction = new Action(Messages.TagesView_changeTermin) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
 				setToolTipText(Messages.TagesView_changeThisTermin);
 			}
-
+			
 			@Override
-			public void run() {
+			public void run(){
 				agenda.setActResource(t.getBereich());
-				TerminDialog dlg = new TerminDialog(
-						(Termin) ElexisEventDispatcher
-								.getSelected(Termin.class));
+				TerminDialog dlg =
+					new TerminDialog((Termin) ElexisEventDispatcher.getSelected(Termin.class));
 				dlg.open();
 				refresh();
-
+				
 			}
 		};
 		terminKuerzenAction = new Action(Messages.TagesView_shortenTermin) {
 			@Override
-			public void run() {
+			public void run(){
 				if (t != null) {
 					t.setDurationInMinutes(t.getDurationInMinutes() >> 1);
 					ElexisEventDispatcher.update(t);
@@ -199,11 +195,12 @@ public class TerminLabel extends Composite {
 		};
 		terminVerlaengernAction = new Action(Messages.TagesView_enlargeTermin) {
 			@Override
-			public void run() {
+			public void run(){
 				if (t != null) {
 					agenda.setActDate(t.getDay());
-					Termin n = Plannables.getFollowingTermin(agenda
-							.getActResource(), agenda.getActDate(), t);
+					Termin n =
+						Plannables.getFollowingTermin(agenda.getActResource(), agenda.getActDate(),
+							t);
 					if (n != null) {
 						t.setEndTime(n.getStartTime());
 						// t.setDurationInMinutes(t.getDurationInMinutes()+15);
@@ -215,5 +212,5 @@ public class TerminLabel extends Composite {
 			}
 		};
 	}
-
+	
 }

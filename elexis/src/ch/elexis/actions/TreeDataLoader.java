@@ -32,18 +32,17 @@ import ch.rgw.tools.LazyTree.LazyTreeListener;
 import ch.rgw.tools.Tree;
 
 /**
- * A PersistentObjectLoader for Tree-like structures. This reads its contents
- * from a table that has a "parent"-field to denote ancestry
+ * A PersistentObjectLoader for Tree-like structures. This reads its contents from a table that has
+ * a "parent"-field to denote ancestry
  * 
  * @author gerry
  * 
  */
-public class TreeDataLoader extends PersistentObjectLoader implements
-		ILazyTreeContentProvider {
+public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeContentProvider {
 	protected String parentColumn;
 	protected String orderBy;
 	protected LazyTree<PersistentObject> root;
-
+	
 	/**
 	 * Create a TreeDataLoader from a @see CommonViewer
 	 * 
@@ -54,17 +53,17 @@ public class TreeDataLoader extends PersistentObjectLoader implements
 	 * @param parentField
 	 *            the name of the field that contains ancestry information
 	 */
-	public TreeDataLoader(CommonViewer cv,
-			Query<? extends PersistentObject> query, String parentField,
-			String orderBy) {
+	public TreeDataLoader(CommonViewer cv, Query<? extends PersistentObject> query,
+		String parentField, String orderBy){
 		super(cv, query);
 		parentColumn = parentField;
 		this.orderBy = orderBy;
 		
-		root = (LazyTree<PersistentObject>) new LazyTree<PersistentObject>(
-				null, null, new LazyTreeListener() {
+		root =
+			(LazyTree<PersistentObject>) new LazyTree<PersistentObject>(null, null,
+				new LazyTreeListener() {
 					@Override
-					public boolean fetchChildren(LazyTree<?> l) {
+					public boolean fetchChildren(LazyTree<?> l){
 						PersistentObject p = (PersistentObject) l.contents;
 						if (l.getParent() == null) {
 							setQuery("NIL");
@@ -74,29 +73,26 @@ public class TreeDataLoader extends PersistentObjectLoader implements
 							}
 							setQuery(p.getId());
 						}
-						List<PersistentObject> children = (List<PersistentObject>) qbe
-								.execute();
+						List<PersistentObject> children = (List<PersistentObject>) qbe.execute();
 						for (PersistentObject po : children) {
 							new LazyTree(l, po, this);
 						}
 						return children.size() > 0;
 					}
-
+					
 					@Override
-					public boolean hasChildren(LazyTree<?> l) {
+					public boolean hasChildren(LazyTree<?> l){
 						return fetchChildren(l);
 					}
-
+					
 				});
 	}
-
-
-	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params) {
-		monitor.beginTask(
-				Messages.getString("TreeDataLoader.0"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
+	
+	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params){
+		monitor.beginTask(Messages.getString("TreeDataLoader.0"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		root.clear();
 		setQuery("NIL");
-
+		
 		for (PersistentObject po : qbe.execute()) {
 			new Tree<PersistentObject>(root, po);
 			if (monitor.isCanceled()) {
@@ -105,26 +101,25 @@ public class TreeDataLoader extends PersistentObjectLoader implements
 			monitor.worked(1);
 		}
 		monitor.done();
-
+		
 		Desk.asyncExec(new Runnable() {
-			public void run() {
-				((TreeViewer) cv.getViewerWidget()).setChildCount(cv
-						.getViewerWidget().getInput(), root.getChildren()
-						.size());
+			public void run(){
+				((TreeViewer) cv.getViewerWidget()).setChildCount(cv.getViewerWidget().getInput(),
+					root.getChildren().size());
 			}
 		});
-
+		
 		return Status.OK_STATUS;
 	}
-
-	public Object getParent(Object element) {
+	
+	public Object getParent(Object element){
 		if (element instanceof Tree) {
 			return ((Tree) element).getParent();
 		}
 		return null;
 	}
-
-	public void updateChildCount(Object element, int currentChildCount) {
+	
+	public void updateChildCount(Object element, int currentChildCount){
 		int num = 0;
 		if (element instanceof Tree) {
 			Tree<PersistentObject> t = (Tree<PersistentObject>) element;
@@ -140,8 +135,8 @@ public class TreeDataLoader extends PersistentObjectLoader implements
 		}
 		((TreeViewer) cv.getViewerWidget()).setChildCount(element, num);
 	}
-
-	public void updateElement(Object parent, int index) {
+	
+	public void updateElement(Object parent, int index){
 		Tree<PersistentObject> t;
 		if (parent instanceof Tree) {
 			t = (Tree<PersistentObject>) parent;
@@ -152,8 +147,8 @@ public class TreeDataLoader extends PersistentObjectLoader implements
 		((TreeViewer) cv.getViewerWidget()).replace(parent, index, elem);
 		updateChildCount(elem, 0);
 	}
-
-	protected void setQuery(String parent) {
+	
+	protected void setQuery(String parent){
 		qbe.clear();
 		ControlFieldProvider cfp = cv.getConfigurer().getControlFieldProvider();
 		if (cfp != null) {

@@ -94,10 +94,11 @@ public class Samdas {
 	
 	public void setRoot(Element el){
 		doc.removeContent();
-		//doc.getRootElement().detach();
-		eRoot=el;
+		// doc.getRootElement().detach();
+		eRoot = el;
 		doc.setRootElement(el);
 	}
+	
 	public Document getDocument(){
 		return doc;
 	}
@@ -225,11 +226,11 @@ public class Samdas {
 	}
 	
 	/**
-	 * A style is a display hint for a given Record or Range
-	 * a Record can have several styles for several output media.
-	 *
+	 * A style is a display hint for a given Record or Range a Record can have several styles for
+	 * several output media.
+	 * 
 	 */
-	public static class Style{
+	public static class Style {
 		/** Position and size (relative to parent element */
 		private Rectangle bounds;
 		/** Opacity from 0 (transparent) to 1 (opaque) */
@@ -237,6 +238,7 @@ public class Samdas {
 		/** Background color as rgb */
 		private long rgbBackground;
 	}
+	
 	/**
 	 * A Range is a part of the text. It is defined by a position, a length and a type.
 	 * 
@@ -280,7 +282,7 @@ public class Samdas {
 		
 		public static final String ATTR_ID = "id"; //$NON-NLS-1$
 		public static final String ATTR_PROVIDER = "provider"; //$NON-NLS-1$
-
+		
 		XRef(Element e){
 			super(e);
 		}
@@ -308,7 +310,7 @@ public class Samdas {
 	 */
 	public static class Markup extends Range {
 		public static final String ATTR_TYPE = "type"; //$NON-NLS-1$
-
+		
 		Markup(Element e){
 			super(e);
 		}
@@ -331,7 +333,7 @@ public class Samdas {
 	 */
 	public static class Section extends Range {
 		private static final String ATTR_NAME = "name"; //$NON-NLS-1$
-
+		
 		Section(Element e){
 			super(e);
 		}
@@ -342,9 +344,10 @@ public class Samdas {
 		}
 	}
 	
-	public static class Box{
+	public static class Box {
 
 	}
+	
 	@Deprecated
 	public static class Finding {
 		protected Element el;
@@ -375,12 +378,14 @@ public class Samdas {
 			super(new Element("analysis")); //$NON-NLS-1$
 		}
 	}
+	
 	@Deprecated
 	public static class Image extends Finding {
 		public Image(){
 			super(new Element("image")); //$NON-NLS-1$
 		}
 	}
+	
 	@Deprecated
 	public static class ECG extends Finding {
 		public ECG(){

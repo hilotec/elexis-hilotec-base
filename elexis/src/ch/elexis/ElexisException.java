@@ -16,26 +16,27 @@ import java.util.logging.Logger;
 
 public class ElexisException extends Exception {
 	private static final long serialVersionUID = -4535064606049686854L;
-	private static Logger log=Logger.getLogger("ElexisException");
+	private static Logger log = Logger.getLogger("ElexisException");
 	
-	public static final int EE_DUPLICATE_DISPATCHER=1;
+	public static final int EE_DUPLICATE_DISPATCHER = 1;
 	public static final int EE_BAD_DISPATCHER = 2;
-	public static final int EE_UNEXPECTED_RESPONSE=3;
+	public static final int EE_UNEXPECTED_RESPONSE = 3;
 	public static final int EE_FILE_ERROR = 4;
 	public static final int EE_NOT_SUPPORTED = 5;
 	public static final int EE_NOT_FOUND = 6;
 	
 	Class<?> clazz;
 	int errcode;
+	
 	public ElexisException(Class<?> clazz, String errmsg, int errcode){
-		this(clazz,errmsg,errcode,false);
+		this(clazz, errmsg, errcode, false);
 	}
 	
 	public ElexisException(Class<?> clazz, String errmsg, int errcode, boolean doLog){
 		super(errmsg);
-		this.clazz=clazz;
-		this.errcode=errcode;
-		log.severe(clazz.getName()+": "+errmsg+" "+Integer.toString(errcode));
+		this.clazz = clazz;
+		this.errcode = errcode;
+		log.severe(clazz.getName() + ": " + errmsg + " " + Integer.toString(errcode));
 	}
 	
 	public Class<?> getThrowingClass(){

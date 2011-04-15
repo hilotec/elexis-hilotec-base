@@ -36,57 +36,55 @@ public class Messung extends PersistentObject {
 	}
 	
 	private static final String create =
-		"CREATE TABLE " + TABLENAME + " (" +
-		"  ID			VARCHAR(25) PRIMARY KEY, " +
-		"  lastupdate 	BIGINT, " +
-		"  deleted		CHAR(1) DEFAULT '0', " +
-		"  PatientID	VARCHAR(25), " +
-		"  TypName		VARCHAR(25), " +
-		"  Datum		CHAR(8) " +
-		");" +
-		"INSERT INTO " + TABLENAME + " (ID, TypName) VALUES " +
-		"	('VERSION', '" + VERSION + "');";
-
+		"CREATE TABLE " + TABLENAME + " (" + "  ID			VARCHAR(25) PRIMARY KEY, "
+			+ "  lastupdate 	BIGINT, " + "  deleted		CHAR(1) DEFAULT '0', "
+			+ "  PatientID	VARCHAR(25), " + "  TypName		VARCHAR(25), " + "  Datum		CHAR(8) " + ");"
+			+ "INSERT INTO " + TABLENAME + " (ID, TypName) VALUES " + "	('VERSION', '" + VERSION
+			+ "');";
+	
 	/**
 	 * Pruefen ob die Tabelle existiert
 	 */
-	private static void checkTable() {
+	private static void checkTable(){
 		Messung check = load("VERSION");
 		if (!check.exists()) {
 			createOrModifyTable(create);
 		}
-	}	
+	}
 	
 	@Override
-	public String getLabel() {
+	public String getLabel(){
 		return get("TypName");
 	}
 	
 	@Override
-	public String getTableName() {
+	public String getTableName(){
 		return TABLENAME;
 	}
 	
 	/**
 	 * Dieser Konstruktor darf nicht oeffentlich sein
 	 */
-	protected Messung() {}
+	protected Messung(){}
 	
 	/**
 	 * Vorhandene Messung anhand der ID erstellen
+	 * 
 	 * @param id
 	 */
-	protected Messung(String id) {
+	protected Messung(String id){
 		super(id);
 	}
 	
 	/**
 	 * Neue Messung erstellen
 	 * 
-	 * @param patient Patient, dem diese Messung zugeordnet werden soll
-	 * @param typ     Typ der Messung
+	 * @param patient
+	 *            Patient, dem diese Messung zugeordnet werden soll
+	 * @param typ
+	 *            Typ der Messung
 	 */
-	public Messung(Patient patient, MessungTyp typ) {
+	public Messung(Patient patient, MessungTyp typ){
 		create(null);
 		set("PatientID", patient.getId());
 		set("TypName", typ.getName());
@@ -95,29 +93,34 @@ public class Messung extends PersistentObject {
 	
 	/**
 	 * Messung anhand der ID laden
-	 * @param id ID der Messung
+	 * 
+	 * @param id
+	 *            ID der Messung
 	 * @return Messung
 	 */
-	public static Messung load(final String id) {
+	public static Messung load(final String id){
 		return new Messung(id);
 	}
 	
 	/**
 	 * Datum dieser Messung
 	 */
-	public String getDatum() {
+	public String getDatum(){
 		return get("Datum");
 	}
-
+	
 	/**
 	 * Messwert in dieser Messung anhand seines Namens holen
-	 * @param name Name des Messwerttyps
+	 * 
+	 * @param name
+	 *            Name des Messwerttyps
 	 * @return Messwert
 	 */
-	public Messwert getMesswert(String name) {
+	public Messwert getMesswert(String name){
 		return getMesswert(name, true);
 	}
-	public Messwert getMesswert(String name, boolean create) {
+	
+	public Messwert getMesswert(String name, boolean create){
 		Query<Messwert> query = new Query<Messwert>(Messwert.class);
 		query.add("MessungID", Query.EQUALS, getId());
 		query.and();
@@ -138,49 +141,51 @@ public class Messung extends PersistentObject {
 	/**
 	 * @return Liste aller Messwerte
 	 */
-	public List<Messwert> getMesswerte() {
+	public List<Messwert> getMesswerte(){
 		List<IMesswertTyp> fields = getTyp().getMesswertTypen();
 		ArrayList<Messwert> messwerte = new ArrayList<Messwert>();
 		
-		for (IMesswertTyp dft: fields) {
+		for (IMesswertTyp dft : fields) {
 			messwerte.add(getMesswert(dft.getName()));
 		}
 		
 		return messwerte;
 	}
-
+	
 	/**
-	 * @param datum Datum neu setzen
+	 * @param datum
+	 *            Datum neu setzen
 	 */
-	public void setDatum(String datum) {
+	public void setDatum(String datum){
 		set("Datum", datum);
 	}
-
+	
 	/**
 	 * @return Typ der Messung
 	 */
-	public MessungTyp getTyp() {
+	public MessungTyp getTyp(){
 		MessungKonfiguration config = MessungKonfiguration.getInstance();
 		return config.getTypeByName(get("TypName"));
 	}
-
+	
 	/**
 	 * @return Patient zu dem diese Messung gehoert
 	 */
-	public Patient getPatient() {
+	public Patient getPatient(){
 		return Patient.load(get("PatientID"));
 	}
-
+	
 	/**
-	 * Alle Messungen eines bestimmten Typs zu einem bestimmten Patienten
-	 * zusammensuchen.
+	 * Alle Messungen eines bestimmten Typs zu einem bestimmten Patienten zusammensuchen.
 	 * 
-	 * @param patient Der Patient
-	 * @param typ     Typ der zu suchenden Messungen
+	 * @param patient
+	 *            Der Patient
+	 * @param typ
+	 *            Typ der zu suchenden Messungen
 	 * 
 	 * @return Liste mit den Messungen
 	 */
-	public static List<Messung> getPatientMessungen(Patient patient, MessungTyp typ) {
+	public static List<Messung> getPatientMessungen(Patient patient, MessungTyp typ){
 		Query<Messung> query = new Query<Messung>(Messung.class);
 		query.add("PatientID", Query.EQUALS, patient.getId());
 		if (typ != null) {
@@ -193,11 +198,12 @@ public class Messung extends PersistentObject {
 	/**
 	 * Alle Messungen eines bestimmten Typs zusammensuchen.
 	 * 
-	 * @param typ Typ der zu suchenden Messung
+	 * @param typ
+	 *            Typ der zu suchenden Messung
 	 * 
 	 * @return Liste mit den Messungen
 	 */
-	public static List<Messung> getMessungen(MessungTyp typ) {
+	public static List<Messung> getMessungen(MessungTyp typ){
 		Query<Messung> query = new Query<Messung>(Messung.class);
 		query.add("TypName", Query.EQUALS, typ.getName());
 		return query.execute();

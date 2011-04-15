@@ -24,26 +24,26 @@ public class TextField extends ActiveControl {
 	
 	public TextField(Composite parent, int displayBits, String displayName){
 		super(parent, displayBits, displayName);
-		int swtoption=SWT.BORDER;
-		if(isReadonly()){
-			swtoption|=SWT.READ_ONLY;
+		int swtoption = SWT.BORDER;
+		if (isReadonly()) {
+			swtoption |= SWT.READ_ONLY;
 		}
-		setControl(new Text(this,swtoption));
-		getTextControl().addModifyListener(new ModifyListener(){
+		setControl(new Text(this, swtoption));
+		getTextControl().addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e){
-				textContents=getTextControl().getText();
+				textContents = getTextControl().getText();
 				fireChangedEvent();
-			}});
+			}
+		});
 	}
 	
 	public Text getTextControl(){
-		return (Text)ctl;
+		return (Text) ctl;
 	}
-
 	
 	@Override
 	public void push(){
-		Desk.syncExec(new Runnable(){
+		Desk.syncExec(new Runnable() {
 			public void run(){
 				getTextControl().setText(textContents);
 			}

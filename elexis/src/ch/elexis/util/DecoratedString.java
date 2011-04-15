@@ -17,8 +17,9 @@ import org.eclipse.swt.graphics.Image;
 
 /**
  * Ein DecoratedsString ist ein String, der auch eine Farbe und ein Icon haben kann
+ * 
  * @author gerry
- *
+ * 
  */
 public class DecoratedString {
 	String text;
@@ -26,29 +27,36 @@ public class DecoratedString {
 	Image icon;
 	
 	public DecoratedString(String t){
-		text=t;
+		text = t;
 	}
+	
 	public DecoratedString(String t, Color fore, Color back){
-		text=t;
-		foreground=fore;
-		background=back;
+		text = t;
+		foreground = fore;
+		background = back;
 	}
+	
 	public DecoratedString(String t, Color fore){
-		text=t;
-		foreground=fore;
+		text = t;
+		foreground = fore;
 	}
+	
 	public void setText(String t){
-		text=t;
+		text = t;
 	}
+	
 	public void setForeground(Color c){
-		foreground=c;
+		foreground = c;
 	}
-	public String getText() {
+	
+	public String getText(){
 		return text;
 	}
+	
 	public Color getForeground(){
 		return foreground;
 	}
+	
 	public Color getBackground(){
 		return background;
 	}

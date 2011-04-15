@@ -84,9 +84,11 @@ public class ExcelWrapper {
 	}
 	
 	/**
-	 * Set the type for each field of the calc sheet. This is a hint to the parser how to
-	 * convert a value. ie an Excel Number field might be interpreted as String, Integer or float value
-	 * @param types Java Classes denoting the field types
+	 * Set the type for each field of the calc sheet. This is a hint to the parser how to convert a
+	 * value. ie an Excel Number field might be interpreted as String, Integer or float value
+	 * 
+	 * @param types
+	 *            Java Classes denoting the field types
 	 */
 	public void setFieldTypes(final Class<?>[] types){
 		this.types = types;
@@ -183,10 +185,13 @@ public class ExcelWrapper {
 	}
 	
 	/**
-	 * Get a Value safely (t.i: Don't thrwow an exeption if the index is tu large but
-	 * return an empty string instead.
-	 * @param row a List of Strings
-	 * @param col index to retrieve
+	 * Get a Value safely (t.i: Don't thrwow an exeption if the index is tu large but return an
+	 * empty string instead.
+	 * 
+	 * @param row
+	 *            a List of Strings
+	 * @param col
+	 *            index to retrieve
 	 * @return
 	 */
 	public static String getSafe(List<String> row, int col){

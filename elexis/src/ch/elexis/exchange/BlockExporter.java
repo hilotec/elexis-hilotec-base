@@ -18,7 +18,6 @@ import ch.rgw.tools.ExHandler;
 public class BlockExporter extends XChangeExporter {
 	ServiceBlocksElement lbs;
 	
-	
 	public boolean canHandle(Class<? extends PersistentObject> clazz){
 		if (clazz.equals(Leistungsblock.class)) {
 			return true;
@@ -47,7 +46,7 @@ public class BlockExporter extends XChangeExporter {
 				fos.close();
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
-				throw new XChangeException("Output failed "+ex.getMessage());
+				throw new XChangeException("Output failed " + ex.getMessage());
 			}
 		}
 		
@@ -55,12 +54,12 @@ public class BlockExporter extends XChangeExporter {
 	
 	public XChangeElement store(Object output) throws XChangeException{
 		if (output instanceof Leistungsblock) {
-			ServiceBlockElement sbe = new ServiceBlockElement().asExporter(this, (Leistungsblock) output);
+			ServiceBlockElement sbe =
+				new ServiceBlockElement().asExporter(this, (Leistungsblock) output);
 			lbs.add(sbe);
 			return sbe;
 		}
-		throw new XChangeException("Can't handle object type "+output.getClass().getName());
+		throw new XChangeException("Can't handle object type " + output.getClass().getName());
 	}
-	
 	
 }

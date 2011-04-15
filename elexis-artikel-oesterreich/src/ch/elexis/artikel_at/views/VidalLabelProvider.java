@@ -27,7 +27,7 @@ import ch.elexis.util.Log;
 import ch.elexis.util.viewers.DefaultLabelProvider;
 
 public class VidalLabelProvider extends DefaultLabelProvider implements ITableColorProvider {
-
+	
 	public VidalLabelProvider(){
 		if (Desk.getImage("VidalRed") == null) {
 			Desk.getImageRegistry().put("VidalRed", getImageDescriptor("rsc/redbox.ico"));
@@ -51,7 +51,7 @@ public class VidalLabelProvider extends DefaultLabelProvider implements ITableCo
 	public Image getColumnImage(Object element, int columnIndex){
 		String box;
 		
-		if(!(element instanceof Medikament)) {
+		if (!(element instanceof Medikament)) {
 			return Desk.getImage(Desk.IMG_ACHTUNG);
 		}
 		Medikament art = (Medikament) element;
@@ -80,7 +80,8 @@ public class VidalLabelProvider extends DefaultLabelProvider implements ITableCo
 		
 		if (element instanceof Medikament) {
 			Medikament art = (Medikament) element;
-			return Artikel_AT_Cache.get(art.getId(), Artikel_AT_Cache.MEDIKAMENT_AT_CACHE_ELEMENT_LABEL);
+			return Artikel_AT_Cache.get(art.getId(),
+				Artikel_AT_Cache.MEDIKAMENT_AT_CACHE_ELEMENT_LABEL);
 		}
 		return super.getColumnText(element, columnIndex);
 	}
@@ -92,11 +93,11 @@ public class VidalLabelProvider extends DefaultLabelProvider implements ITableCo
 	
 	public Color getForeground(Object element, int columnIndex){
 		// Extremely slow function
-		//if (element instanceof Artikel) {
-		//	if (((Artikel) element).isLagerartikel()) {
-		//		return Desk.getColor(Desk.COL_BLUE);
-		//	}
-		//}
+		// if (element instanceof Artikel) {
+		// if (((Artikel) element).isLagerartikel()) {
+		// return Desk.getColor(Desk.COL_BLUE);
+		// }
+		// }
 		return null;
 	}
 	

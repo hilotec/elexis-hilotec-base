@@ -15,18 +15,20 @@ import ch.rgw.io.InMemorySettings;
 import ch.rgw.tools.JdbcLink;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Hub.class, PreferenceInitializer.class, JdbcLink.class})
+@PrepareForTest( {
+	Hub.class, PreferenceInitializer.class, JdbcLink.class
+})
 public abstract class AbstractPersistentObjectTest {
-
+	
 	@BeforeClass
-	public static void oneTimeSetUp() {
+	public static void oneTimeSetUp(){
 		Hub.localCfg = new InMemorySettings();
 	}
 	
 	// create a JdbcLink with an initialized db for elexis
 	// the creation script is taken from the rsc directory
-    // of the host plugin when running a Plugin-Test
-	protected JdbcLink initDB() {
+	// of the host plugin when running a Plugin-Test
+	protected JdbcLink initDB(){
 		ResourceManager rsc = ResourceManager.getInstance();
 		String pluginPath = rsc.getResourceLocationByName("/createDB.script");
 		int end = pluginPath.lastIndexOf('/');

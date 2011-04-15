@@ -27,39 +27,39 @@ import ch.elexis.diagnosecodes_schweiz.Messages;
 import ch.elexis.util.SWTHelper;
 
 public class TICodeDetail implements IDetailDisplay {
-
-	FormToolkit tk=Desk.getToolkit();
-	Form form;
-	Text tID,tFull;
 	
-	public Class getElementClass() {
+	FormToolkit tk = Desk.getToolkit();
+	Form form;
+	Text tID, tFull;
+	
+	public Class getElementClass(){
 		return TICode.class;
 	}
-
-	public void display(Object obj) {
-		if(obj instanceof TICode){
-			TICode tc=(TICode) obj;
+	
+	public void display(Object obj){
+		if (obj instanceof TICode) {
+			TICode tc = (TICode) obj;
 			tID.setText(tc.getCode());
 			tFull.setText(tc.getText());
 		}
 	}
-
-	public String getTitle() {
+	
+	public String getTitle(){
 		return "TI Code"; //$NON-NLS-1$
 	}
-
-	public Composite createDisplay(Composite parent, IViewSite site) {
+	
+	public Composite createDisplay(Composite parent, IViewSite site){
 		parent.setLayout(new FillLayout());
-		form=tk.createForm(parent);
-		Composite body=form.getBody();
-		body.setLayout(new GridLayout(2,false));
-		tk.createLabel(body,"Code"); //$NON-NLS-1$
-		tID=tk.createText(body,""); //$NON-NLS-1$
-		tID.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		tk.createLabel(body,Messages.TICodeDetail_fulltext);
-		tFull=tk.createText(body,""); //$NON-NLS-1$
-		tFull.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
+		form = tk.createForm(parent);
+		Composite body = form.getBody();
+		body.setLayout(new GridLayout(2, false));
+		tk.createLabel(body, "Code"); //$NON-NLS-1$
+		tID = tk.createText(body, ""); //$NON-NLS-1$
+		tID.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tk.createLabel(body, Messages.TICodeDetail_fulltext);
+		tFull = tk.createText(body, ""); //$NON-NLS-1$
+		tFull.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		return body;
 	}
-
+	
 }

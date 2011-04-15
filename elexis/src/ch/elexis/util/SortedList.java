@@ -10,27 +10,26 @@ public class SortedList<T> extends LinkedList<T> {
 	private Comparator<T> cmp;
 	
 	public SortedList(Comparator<T> comp){
-		cmp=comp;
+		cmp = comp;
 	}
 	
-	public SortedList(Collection<T> source,Comparator<T> comp){
+	public SortedList(Collection<T> source, Comparator<T> comp){
 		super(source);
-		cmp=comp;
+		cmp = comp;
 		sort();
 	}
+	
 	public void sort(){
 		Collections.sort(this, cmp);
 	}
-
+	
 	@Override
-	public boolean add(T elem) {
-		if(super.add(elem)){
+	public boolean add(T elem){
+		if (super.add(elem)) {
 			sort();
 			return true;
 		}
 		return false;
 	}
-	
-	
 	
 }

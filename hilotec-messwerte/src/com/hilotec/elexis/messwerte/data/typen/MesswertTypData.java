@@ -38,52 +38,52 @@ public class MesswertTypData extends MesswertBase implements IMesswertTyp {
 	String refType;
 	
 	/**
-	 * Liste mit den moeglichen Auswahlen fuer die Combo. Notwendig damit dem
-	 * Index beim saveInput() auch wieder der passende Messung zugeordnet
-	 * werden kann.
+	 * Liste mit den moeglichen Auswahlen fuer die Combo. Notwendig damit dem Index beim saveInput()
+	 * auch wieder der passende Messung zugeordnet werden kann.
 	 */
 	List<Messung> refChoices;
 	
-	public MesswertTypData(String n, String t, String u) {
+	public MesswertTypData(String n, String t, String u){
 		super(n, t, u);
 	}
 	
-	public String erstelleDarstellungswert(Messwert messwert) {
+	public String erstelleDarstellungswert(Messwert messwert){
 		if (messwert.getWert().equals("")) {
 			return "";
 		}
 		Messung m = Messung.load(messwert.getWert());
-		return  m.getDatum();
+		return m.getDatum();
 	}
-
-	public String getDefault() {
+	
+	public String getDefault(){
 		return "";
 	}
-
-	public void setDefault(String str) {
-	}
+	
+	public void setDefault(String str){}
 	
 	/**
 	 * Typ der auswaehlbaren Messungen setzen
 	 * 
-	 * @param t Typ
+	 * @param t
+	 *            Typ
 	 */
-	public void setRefType(String t) {
+	public void setRefType(String t){
 		refType = t;
 	}
 	
-	public Widget createWidget(Composite parent, Messwert messwert) {
+	public Widget createWidget(Composite parent, Messwert messwert){
 		Patient patient = messwert.getMessung().getPatient();
 		Combo combo = new Combo(parent, SWT.DROP_DOWN);
 		
-		refChoices = Messung.getPatientMessungen(patient,
-			MessungKonfiguration.getInstance().getTypeByName(refType));
+		refChoices =
+			Messung.getPatientMessungen(patient, MessungKonfiguration.getInstance().getTypeByName(
+				refType));
 		for (int i = 0; i < refChoices.size(); i++) {
 			Messung messung = refChoices.get(i);
 			combo.add(messung.getDatum(), i);
 		}
 		
-		if  (!messwert.getWert().equals("")) {
+		if (!messwert.getWert().equals("")) {
 			for (int i = 0; i < refChoices.size(); i++) {
 				if (refChoices.get(i).getId().equals(messwert.getWert())) {
 					combo.select(i);
@@ -96,30 +96,30 @@ public class MesswertTypData extends MesswertBase implements IMesswertTyp {
 		return combo;
 	}
 	
-	public void saveInput(Widget widget, Messwert messwert) {
-        Combo combo = (Combo) widget;
-        int selected = combo.getSelectionIndex();
-        messwert.setWert(refChoices.get(selected).getId());
+	public void saveInput(Widget widget, Messwert messwert){
+		Combo combo = (Combo) widget;
+		int selected = combo.getSelectionIndex();
+		messwert.setWert(refChoices.get(selected).getId());
 	}
 	
 	/**
 	 * Messung zu einem Data-Messwert heraussuchen
 	 * 
-	 * @param messwert Messwert
+	 * @param messwert
+	 *            Messwert
 	 * 
 	 * @return Messwert oder null, wenn noch keine Messung zugewiesen ist
 	 */
-	public Messung getMessung(Messwert messwert) {
+	public Messung getMessung(Messwert messwert){
 		if (messwert.getWert().equals("")) {
 			return null;
 		}
 		
 		return Messung.load(messwert.getWert());
 	}
-
+	
 	@Override
-	public ActiveControl createControl(Composite parent, Messwert messwert,
-			boolean bEditable) {
+	public ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable){
 		// TODO Auto-generated method stub
 		return null;
 	}

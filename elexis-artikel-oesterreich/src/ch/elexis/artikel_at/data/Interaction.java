@@ -33,8 +33,7 @@ public class Interaction extends PersistentObject implements Comparable<Interact
 	final static String TABLENAME = "CH_ELEXIS_MEDIKAMENTE_BAG_INTERACTIONS";
 	final static String VERSION = "0.2.1";
 	static final String createDB =
-		"CREATE TABLE " + TABLENAME + " (" + "ID			VARCHAR(25)	primary key,"
-			+ "lastupdate BIGINT,"
+		"CREATE TABLE " + TABLENAME + " (" + "ID			VARCHAR(25)	primary key," + "lastupdate BIGINT,"
 			+ "deleted		CHAR(1) default '0'," + "Subst1		VARCHAR(25)," + "Subst2		VARCHAR(25),"
 			+ "Type			VARCHAR(20),"
 			+ "Relevance			CHAR(1),"

@@ -19,8 +19,7 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 /**
- * Eine Person ist ein Kontakt mit zusätzlich Namen, Geburtsdatum und
- * Geschlecht.
+ * Eine Person ist ein Kontakt mit zusätzlich Namen, Geburtsdatum und Geschlecht.
  * 
  * @author gerry
  * 
@@ -42,32 +41,32 @@ public class Person extends Kontakt {
 			Kontakt.FLD_IS_PERSON, TITLE);
 	}
 	
-	public String getName() {
+	public String getName(){
 		return checkNull(get(NAME));
 	}
 	
-	public String getVorname() {
+	public String getVorname(){
 		return checkNull(get(FIRSTNAME));
 	}
 	
-	public String getGeburtsdatum() {
+	public String getGeburtsdatum(){
 		return checkNull(get(BIRTHDATE));
 	}
 	
-	public String getGeschlecht() {
+	public String getGeschlecht(){
 		return checkNull(get(SEX));
 	}
 	
-	public String getNatel() {
+	public String getNatel(){
 		return get(MOBILE);
 	}
 	
-	public boolean isValid() {
+	public boolean isValid(){
 		return super.isValid();
 	}
 	
 	/** Eine Person mit gegebener Id aus der Datenbank einlesen */
-	public static Person load(String id) {
+	public static Person load(String id){
 		Person ret = new Person(id);
 		if (ret.get(NAME) == null) {
 			return null;
@@ -75,21 +74,25 @@ public class Person extends Kontakt {
 		return ret;
 	}
 	
-	protected Person(String id) {
+	protected Person(String id){
 		super(id);
 	}
 	
-	public Person() {
-		// System.out.println("Person");
+	public Person(){
+	// System.out.println("Person");
 	}
 	
 	/** Eine neue Person erstellen */
-	public Person(String Name, String Vorname, String Geburtsdatum, String s) {
+	public Person(String Name, String Vorname, String Geburtsdatum, String s){
 		create(null);
 		// String[] vals=new String[]{Name,Vorname,new
 		// TimeTool(Geburtsdatum).toString(TimeTool.DATE_COMPACT),s};
-		String[] vals = new String[] { Name, Vorname, Geburtsdatum, s };
-		String[] fields = new String[] { NAME, FIRSTNAME, BIRTHDATE, SEX };
+		String[] vals = new String[] {
+			Name, Vorname, Geburtsdatum, s
+		};
+		String[] fields = new String[] {
+			NAME, FIRSTNAME, BIRTHDATE, SEX
+		};
 		set(fields, vals);
 	}
 	
@@ -97,8 +100,7 @@ public class Person extends Kontakt {
 	 * This constructor is more critical than the previous one
 	 * 
 	 * @param name
-	 *            will be checked for non-alphabetic characters and may not be
-	 *            empty
+	 *            will be checked for non-alphabetic characters and may not be empty
 	 * @param vorname
 	 *            will be checked for non alphabetic characters but may be empty
 	 * @param gebDat
@@ -108,15 +110,14 @@ public class Person extends Kontakt {
 	 * @throws PersonDataException
 	 */
 	public Person(String name, String vorname, TimeTool gebDat, String s)
-	throws PersonDataException {
+		throws PersonDataException{
 		name = name.trim();
 		vorname = vorname.trim();
-		if ((StringTool.isNothing(name))
-				|| (!name.matches("[" + StringTool.wordChars + "\\s-]+"))) { //$NON-NLS-1$ //$NON-NLS-2$
+		if ((StringTool.isNothing(name)) || (!name.matches("[" + StringTool.wordChars + "\\s-]+"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			throw new PersonDataException(PersonDataException.CAUSE.LASTNAME);
 		}
 		if ((!StringTool.isNothing(vorname))
-				&& (!vorname.matches("[" + StringTool.wordChars + "\\s-]+"))) { //$NON-NLS-1$ //$NON-NLS-2$
+			&& (!vorname.matches("[" + StringTool.wordChars + "\\s-]+"))) { //$NON-NLS-1$ //$NON-NLS-2$
 			throw new PersonDataException(PersonDataException.CAUSE.FIRSTNAME);
 		}
 		String dat = StringTool.leer;
@@ -125,17 +126,20 @@ public class Person extends Kontakt {
 			int myYear = now.get(TimeTool.YEAR);
 			int oYear = gebDat.get(TimeTool.YEAR);
 			if (oYear > myYear || oYear < myYear - 120) {
-				throw new PersonDataException(
-					PersonDataException.CAUSE.BIRTHDATE);
+				throw new PersonDataException(PersonDataException.CAUSE.BIRTHDATE);
 			}
 			dat = gebDat.toString(TimeTool.DATE_COMPACT);
 		}
-		if(!s.equalsIgnoreCase(Person.MALE) && !s.equalsIgnoreCase(Person.FEMALE)){
+		if (!s.equalsIgnoreCase(Person.MALE) && !s.equalsIgnoreCase(Person.FEMALE)) {
 			throw new PersonDataException(PersonDataException.CAUSE.SEX);
 		}
 		create(null);
-		String[] fields = new String[] { NAME, FIRSTNAME, BIRTHDATE, SEX };
-		String[] vals = new String[] { name, vorname, dat, s };
+		String[] fields = new String[] {
+			NAME, FIRSTNAME, BIRTHDATE, SEX
+		};
+		String[] vals = new String[] {
+			name, vorname, dat, s
+		};
 		set(fields, vals);
 	}
 	
@@ -144,7 +148,7 @@ public class Person extends Kontakt {
 	 * 
 	 * @return a label describing this Person
 	 */
-	public String getLabel(boolean shortLabel) {
+	public String getLabel(boolean shortLabel){
 		StringBuilder sb = new StringBuilder();
 		
 		if (shortLabel) {
@@ -158,27 +162,31 @@ public class Person extends Kontakt {
 	
 	/**
 	 * Initialen holen
-	 * @param num Auf wieviele Stellen der Name gekürzt werden soll
+	 * 
+	 * @param num
+	 *            Auf wieviele Stellen der Name gekürzt werden soll
 	 */
 	public String getInitials(int num){
-		StringBuilder ret=new StringBuilder();
-		String name=getName();
-		String vorname=getVorname();
-		String sex=getGeschlecht();
-		String geb=getGeburtsdatum();
-		if(geb.length()>7){
-			geb=geb.substring(6);
+		StringBuilder ret = new StringBuilder();
+		String name = getName();
+		String vorname = getVorname();
+		String sex = getGeschlecht();
+		String geb = getGeburtsdatum();
+		if (geb.length() > 7) {
+			geb = geb.substring(6);
 		}
-		ret.append((name.length()>num-1) ? name.substring(0,num): name).append(".");
-		ret.append((vorname.length()>num-1) ? vorname.substring(0,num) : vorname).append(".(")
-		.append(sex).append("), ").append(geb);
+		ret.append((name.length() > num - 1) ? name.substring(0, num) : name).append(".");
+		ret.append((vorname.length() > num - 1) ? vorname.substring(0, num) : vorname).append(".(")
+			.append(sex).append("), ").append(geb);
 		return ret.toString();
 	}
+	
 	/** Einen String mit den Personalien holen */
-	public String getPersonalia() {
+	public String getPersonalia(){
 		StringBuffer ret = new StringBuffer(200);
-		String[] fields = new String[] { NAME, FIRSTNAME, BIRTHDATE, SEX,
-			TITLE };
+		String[] fields = new String[] {
+			NAME, FIRSTNAME, BIRTHDATE, SEX, TITLE
+		};
 		String[] vals = new String[fields.length];
 		get(fields, vals);
 		if (!StringTool.isNothing(vals[4])) {
@@ -200,13 +208,13 @@ public class Person extends Kontakt {
 	}
 	
 	@Override
-	protected String getConstraint() {
-		return new StringBuilder(Kontakt.FLD_IS_PERSON).append(StringTool.equals)
-		.append(JdbcLink.wrap(StringConstants.ONE)).toString();
+	protected String getConstraint(){
+		return new StringBuilder(Kontakt.FLD_IS_PERSON).append(StringTool.equals).append(
+			JdbcLink.wrap(StringConstants.ONE)).toString();
 	}
 	
 	@Override
-	protected void setConstraint() {
+	protected void setConstraint(){
 		set(Kontakt.FLD_IS_PERSON, StringConstants.ONE);
 	}
 	
@@ -215,7 +223,7 @@ public class Person extends Kontakt {
 	 * 
 	 * @param ice
 	 */
-	public void countItem(ICodeElement ice) {
+	public void countItem(ICodeElement ice){
 		statForItem((PersistentObject) ice);
 	}
 	
@@ -225,12 +233,12 @@ public class Person extends Kontakt {
 			LASTNAME, FIRSTNAME, BIRTHDATE, SEX
 		}
 		
-		static final String[] causes = new String[] { NAME, FIRSTNAME,
-			BIRTHDATE, "Geschlecht (m oder w)" }; //$NON-NLS-1$
+		static final String[] causes = new String[] {
+			NAME, FIRSTNAME, BIRTHDATE, "Geschlecht (m oder w)"}; //$NON-NLS-1$
 		
 		public CAUSE cause;
 		
-		PersonDataException(CAUSE cause) {
+		PersonDataException(CAUSE cause){
 			super(causes[cause.ordinal()]);
 			this.cause = cause;
 		}

@@ -76,20 +76,21 @@ public class DBConnectFirstPage extends WizardPage {
 		FormText alt = tk.createFormText(body, false);
 		StringBuilder old = new StringBuilder();
 		old.append("<form>Aktuelle Verbindung:<br/>"); //$NON-NLS-1$
-		ConfigurationScope pref=new ConfigurationScope();
-		IEclipsePreferences node=pref.getNode("connection");
-		String cnt=node.get(Hub.getCfgVariant(), null);
-		String driver="";
-		String connectString="";
-		String user="";
-		String typ="";
-		if(cnt!=null){
+		ConfigurationScope pref = new ConfigurationScope();
+		IEclipsePreferences node = pref.getNode("connection");
+		String cnt = node.get(Hub.getCfgVariant(), null);
+		String driver = "";
+		String connectString = "";
+		String user = "";
+		String typ = "";
+		if (cnt != null) {
 			Hashtable<Object, Object> hConn = PersistentObject.fold(StringTool.dePrintable(cnt));
-			if(hConn!=null){
-				driver=PersistentObject.checkNull(hConn.get(PersistentObject.CFG_DRIVER));
-				connectString=PersistentObject.checkNull(hConn.get(PersistentObject.CFG_CONNECTSTRING));
-				user=PersistentObject.checkNull(hConn.get(PersistentObject.CFG_USER));
-				typ=PersistentObject.checkNull(hConn.get(PersistentObject.CFG_TYPE));
+			if (hConn != null) {
+				driver = PersistentObject.checkNull(hConn.get(PersistentObject.CFG_DRIVER));
+				connectString =
+					PersistentObject.checkNull(hConn.get(PersistentObject.CFG_CONNECTSTRING));
+				user = PersistentObject.checkNull(hConn.get(PersistentObject.CFG_USER));
+				typ = PersistentObject.checkNull(hConn.get(PersistentObject.CFG_TYPE));
 			}
 		}
 		if (ch.rgw.tools.StringTool.isNothing(connectString)) {

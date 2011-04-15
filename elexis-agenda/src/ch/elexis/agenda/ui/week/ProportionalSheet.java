@@ -45,10 +45,10 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
-public class ProportionalSheet extends Composite implements IAgendaLayout{
+public class ProportionalSheet extends Composite implements IAgendaLayout {
 	static final int LEFT_OFFSET_DEFAULT = 20;
 	static final int PADDING_DEFAULT = 5;
-
+	
 	int left_offset, padding;
 	private AgendaWeek view;
 	private MenuManager contextMenuManager;
@@ -59,24 +59,22 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 	private int textWidth;
 	private double sheetWidth;
 	private double widthPerColumn;
-
 	
-	
-	public ProportionalSheet(Composite parent, AgendaWeek v) {
+	public ProportionalSheet(Composite parent, AgendaWeek v){
 		super(parent, SWT.NO_BACKGROUND);
 		view = v;
 		addControlListener(new ControlAdapter() {
 			@Override
-			public void controlResized(ControlEvent e) {
+			public void controlResized(ControlEvent e){
 				layout();
 				recalc();
 			}
 		});
 		addPaintListener(new TimePainter());
 		addMouseListener(new MouseAdapter() {
-
+			
 			@Override
-			public void mouseDoubleClick(MouseEvent e) {
+			public void mouseDoubleClick(MouseEvent e){
 				String resource = ""; //$NON-NLS-1$
 				for (int i = 0; i < resources.length; i++) {
 					double lower = left_offset + i * (widthPerColumn + padding);
@@ -98,30 +96,30 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 				if (resource.length() > 0) {
 					Activator.getDefault().setActResource(resource);
 				}
-
+				
 				TerminDialog dlg = new TerminDialog(null);
 				dlg.create();
 				dlg.setTime(tt);
 				if (dlg.open() == Dialog.OK) {
-
+					
 					refresh();
 				}
 			}
-
+			
 			@Override
-			public void mouseDown(MouseEvent e) {
+			public void mouseDown(MouseEvent e){
 				System.out.println("mousdown"); //$NON-NLS-1$
 				super.mouseDown(e);
 			}
-
+			
 		});
 		// setBackground(Desk.getColor(Desk.COL_GREEN));
 		left_offset = LEFT_OFFSET_DEFAULT;
 		padding = PADDING_DEFAULT;
-
+		
 	}
-
-	private boolean isBetween(int x, double lower, double upper) {
+	
+	private boolean isBetween(int x, double lower, double upper){
 		int y = (int) Math.round(lower);
 		int z = (int) Math.round(upper);
 		if ((x >= y) && (x <= z)) {
@@ -129,25 +127,25 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 		}
 		return false;
 	}
-
-	public MenuManager getContextMenuManager() {
+	
+	public MenuManager getContextMenuManager(){
 		return contextMenuManager;
 	}
-
-	public void clear() {
+	
+	public void clear(){
 		while (tlabels != null && tlabels.size() > 0) {
 			tlabels.remove(0).dispose();
 		}
 		recalc();
-
+		
 	}
-
-	synchronized void refresh() {
+	
+	synchronized void refresh(){
 		String[] days = view.getDisplayedDays();
 		Query<Termin> qbe = new Query<Termin>(Termin.class);
 		qbe.add("BeiWem", "=", Activator.getDefault().getActResource());
 		qbe.startGroup();
-		for(String date:days){
+		for (String date : days) {
 			qbe.add("Tag", "=", date);
 			qbe.or();
 		}
@@ -169,20 +167,20 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 		while (ipi.hasNext()) {
 			TerminLabel tl = iptl.next();
 			Termin t = ipi.next();
-			String dStart=t.getDay();
-			int column=StringTool.getIndex(days, dStart);
+			String dStart = t.getDay();
+			int column = StringTool.getIndex(days, dStart);
 			tl.set(t, column);
 		}
 		recalc();
 	}
-
-	void recalc() {
+	
+	void recalc(){
 		if (tlabels != null) {
 			ppm = BaseView.getPixelPerMinute();
 			sheetHeight = (int) Math.round(ppm * 60 * 24);
 			ScrolledComposite sc = (ScrolledComposite) getParent();
 			Point mySize = getSize();
-
+			
 			if (mySize.x > 0.0) {
 				if (mySize.y != sheetHeight) {
 					setSize(mySize.x, sheetHeight);
@@ -203,34 +201,35 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 				widthPerColumn = sheetWidth / count;
 				ColumnHeader header = view.getHeader();
 				header.recalc(widthPerColumn, left_offset, padding, textSize.y);
-
+				
 				for (TerminLabel l : tlabels) {
 					l.refresh();
-
+					
 				}
 				sc.layout();
 			}
 		}
 	}
-
-	public double getPixelPerMinute() {
+	
+	public double getPixelPerMinute(){
 		return ppm;
 	}
-
-	public double getWidthPerColumn() {
+	
+	public double getWidthPerColumn(){
 		return widthPerColumn;
 	}
-
+	
 	public int getPadding(){
 		return padding;
 	}
+	
 	public int getLeftOffset(){
 		return left_offset;
 	}
 	
 	class TimePainter implements PaintListener {
-
-		public void paintControl(PaintEvent e) {
+		
+		public void paintControl(PaintEvent e){
 			GC gc = e.gc;
 			gc.fillRectangle(e.x, e.y, e.width, e.height);
 			int y = 0;
@@ -239,9 +238,8 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 			TimeTool limit = new TimeTool("23:59"); //$NON-NLS-1$
 			Point textSize = gc.textExtent("88:88"); //$NON-NLS-1$
 			int textwidth = textSize.x;
-
-			int quarter = (int) Math.round(15.0 * BaseView
-					.getPixelPerMinute());
+			
+			int quarter = (int) Math.round(15.0 * BaseView.getPixelPerMinute());
 			int w = ProportionalSheet.this.getSize().x - 5;
 			int left = 0;
 			int right = w - textwidth;
@@ -263,10 +261,10 @@ public class ProportionalSheet extends Composite implements IAgendaLayout{
 				runner.addHours(1);
 			}
 		}
-
+		
 	}
-
-	public Composite getComposite() {
+	
+	public Composite getComposite(){
 		return this;
 	}
 }

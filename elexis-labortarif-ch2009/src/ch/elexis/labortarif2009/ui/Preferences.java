@@ -88,8 +88,8 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	}
 	
 	public void init(IWorkbench workbench){
-		// TODO Auto-generated method stub
-		
+	// TODO Auto-generated method stub
+	
 	}
 	
 	@Override

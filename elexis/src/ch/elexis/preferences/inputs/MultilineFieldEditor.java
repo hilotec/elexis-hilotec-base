@@ -25,85 +25,89 @@ import ch.elexis.util.SWTHelper;
 
 public class MultilineFieldEditor extends StringFieldEditor {
 	Text textField;
-	int numOfLines;	
-	int flags=SWT.BORDER;
+	int numOfLines;
+	int flags = SWT.BORDER;
 	boolean isStringList;
-
-	public MultilineFieldEditor(String name, String labelText, Composite parent) {
-	      //super(name, labelText, UNLIMITED, parent);
-		 this(name,labelText,3,0,false,parent);
-	 }
-	 
-	public MultilineFieldEditor(String name, String labelText, int numLines, int flags, boolean asStringList, Composite parent){
-		//super(name, labelText, UNLIMITED, parent);
-	      numOfLines=numLines;
-	      this.flags=SWT.BORDER|flags;
-	      isStringList=asStringList;
-	      init(name,labelText);
-		  createControl(parent);
-		  GridData gd=(GridData)textField.getLayoutData();
-		  GC gc=new GC(textField);
-		  Point pt=gc.textExtent("X"); //$NON-NLS-1$
-		  gd.minimumHeight=pt.y*numLines;
-		  gd.heightHint=pt.y*numLines;
-		  gd.grabExcessHorizontalSpace=true;
-		  textField.setLayoutData(gd);
+	
+	public MultilineFieldEditor(String name, String labelText, Composite parent){
+		// super(name, labelText, UNLIMITED, parent);
+		this(name, labelText, 3, 0, false, parent);
 	}
-	@Override
-	public Text getTextControl(Composite parent) {
-		 if (textField == null) {
-	            textField = SWTHelper.createText(parent, numOfLines, flags);
-	            textField.setFont(parent.getFont());
-	            textField.addKeyListener(new KeyAdapter() {
-                   public void keyReleased(KeyEvent e) {
-                        valueChanged();
-                   }
-               });
-	            textField.addDisposeListener(new DisposeListener() {
-	                public void widgetDisposed(DisposeEvent event) {
-	                    textField = null;
-	                }
-	            });
-	        } else {
-	            checkParent(textField, parent);
-	        }
-	        return textField;
+	
+	public MultilineFieldEditor(String name, String labelText, int numLines, int flags,
+		boolean asStringList, Composite parent){
+		// super(name, labelText, UNLIMITED, parent);
+		numOfLines = numLines;
+		this.flags = SWT.BORDER | flags;
+		isStringList = asStringList;
+		init(name, labelText);
+		createControl(parent);
+		GridData gd = (GridData) textField.getLayoutData();
+		GC gc = new GC(textField);
+		Point pt = gc.textExtent("X"); //$NON-NLS-1$
+		gd.minimumHeight = pt.y * numLines;
+		gd.heightHint = pt.y * numLines;
+		gd.grabExcessHorizontalSpace = true;
+		textField.setLayoutData(gd);
 	}
+	
 	@Override
-	 protected void doLoad() {
+	public Text getTextControl(Composite parent){
+		if (textField == null) {
+			textField = SWTHelper.createText(parent, numOfLines, flags);
+			textField.setFont(parent.getFont());
+			textField.addKeyListener(new KeyAdapter() {
+				public void keyReleased(KeyEvent e){
+					valueChanged();
+				}
+			});
+			textField.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent event){
+					textField = null;
+				}
+			});
+		} else {
+			checkParent(textField, parent);
+		}
+		return textField;
+	}
+	
+	@Override
+	protected void doLoad(){
 		if (textField != null) {
 			String value = getPreferenceStore().getString(getPreferenceName());
-			if(isStringList){
-				value=value.replaceAll(",", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
+			if (isStringList) {
+				value = value.replaceAll(",", "\n"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-	        textField.setText(value);
-        }
-    }
+			textField.setText(value);
+		}
+	}
+	
 	@Override
-	protected void doStore() {
-		String value=textField.getText();
-		if(isStringList){
-			value=value.replaceAll("[\\r\\n]+", ","); //$NON-NLS-1$ //$NON-NLS-2$
+	protected void doStore(){
+		String value = textField.getText();
+		if (isStringList) {
+			value = value.replaceAll("[\\r\\n]+", ","); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		getPreferenceStore().setValue(getPreferenceName(), value);
 	}
+	
 	@Override
-	public String getStringValue() {
-		String ret=super.getStringValue();
-		if(isStringList){
+	public String getStringValue(){
+		String ret = super.getStringValue();
+		if (isStringList) {
 			return ret.replaceAll("[\\r\\n]+", ","); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return ret;
 	}
-
+	
 	@Override
-	public void setStringValue(String value) {
-		if(isStringList){
+	public void setStringValue(String value){
+		if (isStringList) {
 			super.setStringValue(value.replaceAll(",", "\\n")); //$NON-NLS-1$ //$NON-NLS-2$
-		}else{
+		} else {
 			super.setStringValue(value);
 		}
 	}
-	
 	
 }

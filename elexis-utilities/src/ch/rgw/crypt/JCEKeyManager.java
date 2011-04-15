@@ -38,9 +38,8 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 /**
- * Vereinfachtes API für die Java Kryptographie-Klassen KeyManager stellt die
- * Verbindung zu einem keystore her und lässt auf die darin befindlichen
- * Schlüssel zugreifen.
+ * Vereinfachtes API für die Java Kryptographie-Klassen KeyManager stellt die Verbindung zu einem
+ * keystore her und lässt auf die darin befindlichen Schlüssel zugreifen.
  */
 
 public class JCEKeyManager {
@@ -48,7 +47,7 @@ public class JCEKeyManager {
 	// "SHA256WithRSAEncryption";
 	private static final String CERTIFICATE_SIGNATURE_ALGO = "SHA256withRSA";
 	
-	public static String Version() {
+	public static String Version(){
 		return "0.1.6";
 	}
 	
@@ -57,8 +56,7 @@ public class JCEKeyManager {
 	protected static Logger log;
 	
 	@SuppressWarnings("unused")
-	private JCEKeyManager() {
-	}
+	private JCEKeyManager(){}
 	
 	protected char[] storePwd = null;
 	protected String ksType;
@@ -75,19 +73,17 @@ public class JCEKeyManager {
 	}
 	
 	/**
-	 * The Constructor does not actually create or access a keystore but only
-	 * defines the access rules The keystore ist valid after a successful call
-	 * to create() or load()
+	 * The Constructor does not actually create or access a keystore but only defines the access
+	 * rules The keystore ist valid after a successful call to create() or load()
 	 * 
 	 * @param keystoreFile
-	 *            path and name of the keystore to use if null:
-	 *            {user.home}/.keystore is used.
+	 *            path and name of the keystore to use if null: {user.home}/.keystore is used.
 	 * @param type
 	 *            type of the keystore. If NULL: jks
 	 * @param keystorePwd
 	 *            password for the keystore must not be null.
 	 */
-	public JCEKeyManager(String keystoreFile, String type, char[] keystorePwd) {
+	public JCEKeyManager(String keystoreFile, String type, char[] keystorePwd){
 		this(type, keystorePwd);
 		if (StringTool.isNothing(keystoreFile)) {
 			ksFile = System.getProperty("user.home") + "/.keystore";
@@ -106,7 +102,7 @@ public class JCEKeyManager {
 		
 	}
 	
-	public JCEKeyManager(String type, char[] storepwd) {
+	public JCEKeyManager(String type, char[] storepwd){
 		try {
 			_srnd = SecureRandom.getInstance("SHA1PRNG");
 		} catch (NoSuchAlgorithmException e) {
@@ -124,7 +120,7 @@ public class JCEKeyManager {
 	/**
 	 * Keystore laden
 	 */
-	public boolean load(boolean bCreateIfNotExists) {
+	public boolean load(boolean bCreateIfNotExists){
 		try {
 			File ksf = new File(ksFile);
 			if (!ksf.exists()) {
@@ -134,15 +130,14 @@ public class JCEKeyManager {
 			ks.load(new FileInputStream(ksFile), storePwd);
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			log.log(Level.SEVERE,
-				"No Keystore found or could not open Keystore: "
+			log.log(Level.SEVERE, "No Keystore found or could not open Keystore: "
 				+ ex.getMessage());
 			return false;
 		}
 		return true;
 	}
 	
-	public boolean create(boolean bDeleteIfExists) {
+	public boolean create(boolean bDeleteIfExists){
 		File ksF = new File(ksFile);
 		if (ksF.exists()) {
 			if (bDeleteIfExists) {
@@ -165,7 +160,7 @@ public class JCEKeyManager {
 		return save();
 	}
 	
-	public boolean save() {
+	public boolean save(){
 		try {
 			ks.store(new FileOutputStream(ksFile), storePwd);
 			return true;
@@ -175,20 +170,19 @@ public class JCEKeyManager {
 		return false;
 	}
 	
-	public boolean isKeystoreLoaded() {
+	public boolean isKeystoreLoaded(){
 		return (ks == null) ? false : true;
 	}
 	
 	/**
-	 * Public key mit dem Alias alias holen. Es wird auf Gültigkeit des
-	 * Zertifiktats getestet
+	 * Public key mit dem Alias alias holen. Es wird auf Gültigkeit des Zertifiktats getestet
 	 * 
 	 * @param alias
 	 *            Name des gesuchten Schlüssels
 	 * @return den gesuchten Schlüssel oder null - nicht gefunden
 	 */
-	public PublicKey getPublicKey(String alias) {
-		if(alias==null){
+	public PublicKey getPublicKey(String alias){
+		if (alias == null) {
 			return null;
 		}
 		if (ks == null) {
@@ -213,7 +207,7 @@ public class JCEKeyManager {
 		
 	}
 	
-	public X509Certificate getCertificate(String alias) {
+	public X509Certificate getCertificate(String alias){
 		if (ks == null) {
 			log.log(Level.WARNING, "Keystore nicht geladen");
 			if (!load(true)) {
@@ -237,10 +231,10 @@ public class JCEKeyManager {
 	}
 	
 	/** Public key aus einem Input Stream lesen */
-	public PublicKey getPublicKey(InputStream is) {
+	public PublicKey getPublicKey(InputStream is){
 		try {
-			java.security.cert.CertificateFactory cf = java.security.cert.CertificateFactory
-			.getInstance("X.509");
+			java.security.cert.CertificateFactory cf =
+				java.security.cert.CertificateFactory.getInstance("X.509");
 			java.security.cert.Certificate cert = cf.generateCertificate(is);
 			return cert.getPublicKey();
 		} catch (Exception ex) {
@@ -258,7 +252,7 @@ public class JCEKeyManager {
 	 *            Schlüssel-Passwort
 	 * @return den Schlüssel oder null
 	 */
-	public PrivateKey getPrivateKey(String alias, char[] pwd) {
+	public PrivateKey getPrivateKey(String alias, char[] pwd){
 		
 		try {
 			if (StringTool.isNothing(alias) || (!ks.isKeyEntry(alias))) {
@@ -280,7 +274,7 @@ public class JCEKeyManager {
 	 *            Ein X.509 Zertifikat
 	 * @return true bei Erfolg
 	 */
-	public boolean addCertificate(X509Certificate cert) {
+	public boolean addCertificate(X509Certificate cert){
 		
 		try {
 			String[] n = cert.getSubjectX500Principal().getName().split(",");
@@ -301,12 +295,11 @@ public class JCEKeyManager {
 	}
 	
 	/*
-	 * public Certificate createCertificate(PublicKey pk, PrivateKey
-	 * signingKey){ CertificateFactory
+	 * public Certificate createCertificate(PublicKey pk, PrivateKey signingKey){ CertificateFactory
 	 * cf=CertificateFactory.getInstance("X.509"); } throws InvalidKeyException,
 	 * NoSuchProviderException, SignatureException {
 	 */
-	
+
 	/**
 	 * Generate a certificate from a public key and a signing private key.
 	 * 
@@ -322,12 +315,10 @@ public class JCEKeyManager {
 	 * @throws KeyStoreException
 	 * 
 	 */
-	public X509Certificate generateCertificate(PublicKey pk,
-		PrivateKey signingKey, String issuer, String subject,
-		TimeTool ttFrom, TimeTool ttUntil) throws InvalidKeyException,
-		NoSuchProviderException, SignatureException,
-		CertificateEncodingException, IllegalStateException,
-		NoSuchAlgorithmException, KeyStoreException {
+	public X509Certificate generateCertificate(PublicKey pk, PrivateKey signingKey, String issuer,
+		String subject, TimeTool ttFrom, TimeTool ttUntil) throws InvalidKeyException,
+		NoSuchProviderException, SignatureException, CertificateEncodingException,
+		IllegalStateException, NoSuchAlgorithmException, KeyStoreException{
 		
 		// generate the certificate
 		X509V1CertificateGenerator certGen = new X509V1CertificateGenerator();
@@ -352,14 +343,16 @@ public class JCEKeyManager {
 		return cert;
 	}
 	
-	public boolean addKeyPair(PrivateKey kpriv, X509Certificate cert,
-		char[] keyPwd) throws Exception {
+	public boolean addKeyPair(PrivateKey kpriv, X509Certificate cert, char[] keyPwd)
+		throws Exception{
 		String alias = getName(cert);
-		ks.setKeyEntry(alias, kpriv, keyPwd, new Certificate[] { cert });
+		ks.setKeyEntry(alias, kpriv, keyPwd, new Certificate[] {
+			cert
+		});
 		return true;
 	}
 	
-	String getName(X509Certificate cert) {
+	String getName(X509Certificate cert){
 		String cn = cert.getSubjectDN().getName();
 		int s = cn.indexOf('=');
 		if (s != -1) {
@@ -368,7 +361,7 @@ public class JCEKeyManager {
 		return cn;
 	}
 	
-	public boolean existsPrivate(String alias) {
+	public boolean existsPrivate(String alias){
 		try {
 			return ks.isKeyEntry(alias);
 		} catch (KeyStoreException e) {
@@ -377,7 +370,7 @@ public class JCEKeyManager {
 		}
 	}
 	
-	public boolean existsCertificate(String alias) {
+	public boolean existsCertificate(String alias){
 		try {
 			return ks.isCertificateEntry(alias);
 		} catch (Exception ex) {
@@ -386,7 +379,7 @@ public class JCEKeyManager {
 		}
 	}
 	
-	public KeyPair generateKeys() {
+	public KeyPair generateKeys(){
 		try {
 			KeyPairGenerator kp = KeyPairGenerator.getInstance("RSA");
 			kp.initialize(1024, _srnd);
@@ -399,23 +392,19 @@ public class JCEKeyManager {
 	}
 	
 	/*
-	 * public DHParameterSpec createParams() throws Exception{
-	 * AlgorithmParameterGenerator paramGen =
-	 * AlgorithmParameterGenerator.getInstance("DH"); paramGen.init(512);
-	 * AlgorithmParameters params = paramGen.generateParameters();
-	 * DHParameterSpec dhps = (DHParameterSpec)
+	 * public DHParameterSpec createParams() throws Exception{ AlgorithmParameterGenerator paramGen
+	 * = AlgorithmParameterGenerator.getInstance("DH"); paramGen.init(512); AlgorithmParameters
+	 * params = paramGen.generateParameters(); DHParameterSpec dhps = (DHParameterSpec)
 	 * params.getParameterSpec(DHParameterSpec.class); return dhps; }
 	 * 
-	 * public KeyPair createKeyPair(DHParameterSpec params){ try {
-	 * KeyPairGenerator kpg = KeyPairGenerator.getInstance("DiffieHellman"); if
-	 * (params != null) { kpg.initialize(params); } KeyPair kp =
-	 * kpg.generateKeyPair();
+	 * public KeyPair createKeyPair(DHParameterSpec params){ try { KeyPairGenerator kpg =
+	 * KeyPairGenerator.getInstance("DiffieHellman"); if (params != null) { kpg.initialize(params);
+	 * } KeyPair kp = kpg.generateKeyPair();
 	 * 
-	 * return kp; } catch (Exception ex) { ExHandler.handle(ex); return null; }
-	 * }
+	 * return kp; } catch (Exception ex) { ExHandler.handle(ex); return null; } }
 	 */
-	
-	public SecureRandom getRandom() {
+
+	public SecureRandom getRandom(){
 		return _srnd;
 	}
 	

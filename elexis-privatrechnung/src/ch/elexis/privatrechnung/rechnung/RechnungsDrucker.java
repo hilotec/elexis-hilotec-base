@@ -99,7 +99,8 @@ public class RechnungsDrucker implements IRnOutputter {
 	/**
 	 * Print the bill(s)
 	 */
-	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn, Properties props){
+	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn,
+		Properties props){
 		IWorkbenchPage rnPage;
 		final Result<Rechnung> result = new Result<Rechnung>(); // =new
 		// Result<Rechnung>(Log.ERRORS,99,"Not

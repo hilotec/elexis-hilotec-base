@@ -38,99 +38,102 @@ import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 
 /**
- * The header above the resource columns with the name of the resources (and probably later more elements)
+ * The header above the resource columns with the name of the resources (and probably later more
+ * elements)
+ * 
  * @author gerry
- *
+ * 
  */
 public class ColumnHeader extends Composite {
 	AgendaParallel view;
-	static final String IMG_PERSONS_NAME=Activator.PLUGIN_ID+"/personen"; //$NON-NLS-1$
-	static final String IMG_PERSONS_PATH="icons/personen.png"; //$NON-NLS-1$
+	static final String IMG_PERSONS_NAME = Activator.PLUGIN_ID + "/personen"; //$NON-NLS-1$
+	static final String IMG_PERSONS_PATH = "icons/personen.png"; //$NON-NLS-1$
 	ImageHyperlink ihRes;
 	
 	ColumnHeader(Composite parent, AgendaParallel v){
-		super(parent,SWT.NONE);
-		view=v;
+		super(parent, SWT.NONE);
+		view = v;
 		
-		if(Desk.getImage(IMG_PERSONS_NAME)==null){
-			Desk.getImageRegistry().put(IMG_PERSONS_NAME, Activator.getImageDescriptor(IMG_PERSONS_PATH));
+		if (Desk.getImage(IMG_PERSONS_NAME) == null) {
+			Desk.getImageRegistry().put(IMG_PERSONS_NAME,
+				Activator.getImageDescriptor(IMG_PERSONS_PATH));
 		}
-		ihRes=new ImageHyperlink(this,SWT.NONE);
+		ihRes = new ImageHyperlink(this, SWT.NONE);
 		ihRes.setImage(Desk.getImage(IMG_PERSONS_NAME));
 		ihRes.setToolTipText(Messages.ColumnHeader_selectMandatorToShow);
-		ihRes.addHyperlinkListener(new HyperlinkAdapter(){
-
+		ihRes.addHyperlinkListener(new HyperlinkAdapter() {
+			
 			@Override
-			public void linkActivated(HyperlinkEvent e) {
-				new SelectResourceDlg().open(); 
+			public void linkActivated(HyperlinkEvent e){
+				new SelectResourceDlg().open();
 			}
 			
 		});
 		
 	}
 	
-
 	void recalc(double widthPerColumn, int left_offset, int padding, int textSize){
-		GridData gd=(GridData)getLayoutData();
-		gd.heightHint=textSize+2;
-		for(Control c:getChildren()){
-			if(c instanceof Label){
+		GridData gd = (GridData) getLayoutData();
+		gd.heightHint = textSize + 2;
+		for (Control c : getChildren()) {
+			if (c instanceof Label) {
 				c.dispose();
 			}
 		}
-		Point bSize=ihRes.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		Point bSize = ihRes.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		ihRes.setBounds(0, 0, bSize.x, bSize.y);
-		String[] labels=view.getDisplayedResources();
-		int count=labels.length;
-		for(int i=0;i<count;i++){
-			int lx=left_offset+(int) Math.round(i*(widthPerColumn+padding));
-			Label l=new Label(this, SWT.NONE);
+		String[] labels = view.getDisplayedResources();
+		int count = labels.length;
+		for (int i = 0; i < count; i++) {
+			int lx = left_offset + (int) Math.round(i * (widthPerColumn + padding));
+			Label l = new Label(this, SWT.NONE);
 			l.setText(labels[i]);
-			int outer=(int)Math.round(widthPerColumn);
-			int inner=l.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
-			int off=(outer-inner)/2;
-			lx+=off;
-			l.setBounds(lx, 0, inner, textSize+2);
+			int outer = (int) Math.round(widthPerColumn);
+			int inner = l.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+			int off = (outer - inner) / 2;
+			lx += off;
+			l.setBounds(lx, 0, inner, textSize + 2);
 		}
 	}
 	
-	class SelectResourceDlg extends TitleAreaDialog{
-
-		public SelectResourceDlg() {
+	class SelectResourceDlg extends TitleAreaDialog {
+		
+		public SelectResourceDlg(){
 			super(ColumnHeader.this.getShell());
 		}
+		
 		@Override
-		protected Control createDialogArea(Composite parent) {
-			Composite ret=(Composite) super.createDialogArea(parent);
-			String[] displayed=view.getDisplayedResources();
-			for(String r:Activator.getDefault().getResources()){
-				Button b=new Button(ret,SWT.CHECK);
+		protected Control createDialogArea(Composite parent){
+			Composite ret = (Composite) super.createDialogArea(parent);
+			String[] displayed = view.getDisplayedResources();
+			for (String r : Activator.getDefault().getResources()) {
+				Button b = new Button(ret, SWT.CHECK);
 				b.setText(r);
-				if(StringTool.getIndex(displayed, r)!=-1){
+				if (StringTool.getIndex(displayed, r) != -1) {
 					b.setSelection(true);
 				}
 				b.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			}
 			return ret;
 		}
-
+		
 		@Override
-		public void create() {
+		public void create(){
 			super.create();
 			getShell().setText(Messages.ColumnHeader_Mandantors);
 			setTitle(Messages.ColumnHeader_mandatorsForParallelView);
 			setMessage(Messages.ColumnHeader_selectMandators);
 		}
-
+		
 		@Override
-		protected void okPressed() {
-			Composite dlg=(Composite)getDialogArea();
-			String[] res=Activator.getDefault().getResources();
-			ArrayList<String> sel=new ArrayList<String>(res.length);
-			for(Control c:dlg.getChildren()){
-				if(c instanceof Button){
-					if(((Button) c).getSelection()){
-						sel.add(((Button)c).getText());
+		protected void okPressed(){
+			Composite dlg = (Composite) getDialogArea();
+			String[] res = Activator.getDefault().getResources();
+			ArrayList<String> sel = new ArrayList<String>(res.length);
+			for (Control c : dlg.getChildren()) {
+				if (c instanceof Button) {
+					if (((Button) c).getSelection()) {
+						sel.add(((Button) c).getText());
 					}
 				}
 			}

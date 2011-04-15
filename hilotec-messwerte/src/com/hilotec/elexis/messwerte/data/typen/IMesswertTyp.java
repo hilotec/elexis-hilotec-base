@@ -22,22 +22,20 @@ import com.hilotec.elexis.messwerte.data.Messwert;
 
 public interface IMesswertTyp {
 	/**
-	 * @return Feldname des Messwertes (interne Verwendung zum Referenzieren
-	 *         von Feldern)
+	 * @return Feldname des Messwertes (interne Verwendung zum Referenzieren von Feldern)
 	 */
 	public abstract String getName();
-
+	
 	/**
 	 * @return Beschriftung des Messwertes (zum Anzeigen fuer den User)
 	 */
 	public abstract String getTitle();
-
+	
 	/**
-	 * @return Einheit, die zum Messwert angezeigt werden soll, kann auch leer
-	 *         sein.
+	 * @return Einheit, die zum Messwert angezeigt werden soll, kann auch leer sein.
 	 */
 	public abstract String getUnit();
-
+	
 	/**
 	 * @return Standardwert des Messwerts, wenn er neu angelegt wird
 	 */
@@ -46,17 +44,21 @@ public interface IMesswertTyp {
 	/**
 	 * Standardwert aendern
 	 * 
-	 * @param def Neuer Standardwert
+	 * @param def
+	 *            Neuer Standardwert
 	 */
 	public abstract void setDefault(String def);
-
+	
 	/**
-	 * Widget fuer die Darstellung des Messwertes im Editieren-Dialog erstellen
-	 * und auch glech mit aktuellem Wert befuellen.
+	 * Widget fuer die Darstellung des Messwertes im Editieren-Dialog erstellen und auch glech mit
+	 * aktuellem Wert befuellen.
+	 * 
 	 * @see saveInput
-	 *
-	 * @param parent   Eltern-Element in dem das Widget escheinen soll
-	 * @param messwert Messwert, der dargestellt werden soll
+	 * 
+	 * @param parent
+	 *            Eltern-Element in dem das Widget escheinen soll
+	 * @param messwert
+	 *            Messwert, der dargestellt werden soll
 	 * 
 	 * @return Widget
 	 */
@@ -64,28 +66,32 @@ public interface IMesswertTyp {
 	
 	/**
 	 * Erzeugt ein AciveControl und befüllt es mit dem Messwert
+	 * 
 	 * @param parent
 	 * @param messwert
-	 * @param bEditable true wenn das Feld editierbar sein soll
+	 * @param bEditable
+	 *            true wenn das Feld editierbar sein soll
 	 * @return
 	 */
-	public abstract ActiveControl createControl(Composite parent, Messwert messwert, boolean bEditable);
-
+	public abstract ActiveControl createControl(Composite parent, Messwert messwert,
+		boolean bEditable);
+	
 	/**
-	 * Eingaben, die im Uebergebenen Widget getaetigt wurden, in den
-	 * angegebenen Messwert einfuellen. Das uebegebene Widget wurde vorher mit
-	 * createWidget() erstellt
+	 * Eingaben, die im Uebergebenen Widget getaetigt wurden, in den angegebenen Messwert
+	 * einfuellen. Das uebegebene Widget wurde vorher mit createWidget() erstellt
+	 * 
 	 * @see createWidget
 	 * 
 	 * @param widget
 	 * @param messwert
 	 */
 	public abstract void saveInput(Widget widget, Messwert messwert);
-
+	
 	/**
 	 * Von einem Messwert eine fuer den Benutzer lesbare Form generieren
 	 * 
-	 * @param messwert Darzustellender Messwert
+	 * @param messwert
+	 *            Darzustellender Messwert
 	 * 
 	 * @return String wie er dem Benutzer praesentiert werden kann
 	 */

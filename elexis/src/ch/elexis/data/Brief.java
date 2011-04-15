@@ -58,9 +58,9 @@ public class Brief extends PersistentObject {
 	}
 	
 	static {
-		addMapping(TABLENAME, FLD_SUBJECT, FLD_PATIENT_ID, DATE_COMPOUND, FLD_SENDER_ID, FLD_DESTINATION_ID,
-			FLD_KONSULTATION_ID, FLD_TYPE, "modifiziert=S:D:modifiziert", "geloescht", FLD_MIME_TYPE,
-			"gedruckt=S:D:gedruckt", "Path");
+		addMapping(TABLENAME, FLD_SUBJECT, FLD_PATIENT_ID, DATE_COMPOUND, FLD_SENDER_ID,
+			FLD_DESTINATION_ID, FLD_KONSULTATION_ID, FLD_TYPE, "modifiziert=S:D:modifiziert",
+			"geloescht", FLD_MIME_TYPE, "gedruckt=S:D:gedruckt", "Path");
 	}
 	
 	protected Brief(){/* leer */
@@ -95,11 +95,11 @@ public class Brief extends PersistentObject {
 			}
 			String dat = Datum.toString(TimeTool.DATE_GER);
 			set(new String[] {
-				FLD_SUBJECT, FLD_PATIENT_ID, FLD_DATE, FLD_SENDER_ID, FLD_DATE_MODIFIED, FLD_DESTINATION_ID,
-				FLD_KONSULTATION_ID, FLD_TYPE, "geloescht"
+				FLD_SUBJECT, FLD_PATIENT_ID, FLD_DATE, FLD_SENDER_ID, FLD_DATE_MODIFIED,
+				FLD_DESTINATION_ID, FLD_KONSULTATION_ID, FLD_TYPE, "geloescht"
 			}, new String[] {
-				Betreff, pat, dat, Absender == null ? StringTool.leer : Absender.getId(), dat, dst, bhdl, typ,
-						StringConstants.ZERO
+				Betreff, pat, dat, Absender == null ? StringTool.leer : Absender.getId(), dat, dst,
+				bhdl, typ, StringConstants.ZERO
 			});
 			new contents(this);
 			getConnection().commit();
@@ -191,8 +191,9 @@ public class Brief extends PersistentObject {
 	}
 	
 	public OutputLog logOutput(IOutputter outputter){
-		return new OutputLog(this,outputter);
+		return new OutputLog(this, outputter);
 	}
+	
 	/** Einen Brief unwiederruflich löschen */
 	public boolean remove(){
 		getConnection().setAutoCommit(false);

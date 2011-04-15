@@ -92,7 +92,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		// register(MainMenuActions.showPerspectiveAction);
 		
 		// create open perspective actions according to the list of Sidebar
-		if (Hub.localCfg.get(PreferenceConstants.SHOWTOOLBARITEMS, Boolean.toString(true)).equalsIgnoreCase(Boolean.toString(true))) {
+		if (Hub.localCfg.get(PreferenceConstants.SHOWTOOLBARITEMS, Boolean.toString(true))
+			.equalsIgnoreCase(Boolean.toString(true))) {
 			List<IConfigurationElement> ex = Extensions.getExtensions("ch.elexis.Sidebar"); //$NON-NLS-1$
 			openPerspectiveActions = new IAction[ex.size()];
 			int i = 0;
@@ -103,7 +104,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 				IPerspectiveDescriptor perspectiveDescriptor =
 					PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(id);
 				if (perspectiveDescriptor != null) {
-					openPerspectiveActions[i] = new OpenPerspectiveAction(perspectiveDescriptor,name,icon);
+					openPerspectiveActions[i] =
+						new OpenPerspectiveAction(perspectiveDescriptor, name, icon);
 				}
 				
 				i++;
@@ -192,7 +194,8 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 		tbm.add(GlobalActions.printAdresse);
 		
 		coolBar.add(tbm);
-		if (Hub.localCfg.get(PreferenceConstants.SHOWTOOLBARITEMS, Boolean.toString(true)).equalsIgnoreCase(Boolean.toString(true))) {
+		if (Hub.localCfg.get(PreferenceConstants.SHOWTOOLBARITEMS, Boolean.toString(true))
+			.equalsIgnoreCase(Boolean.toString(true))) {
 			ToolBarManager tb2 = new ToolBarManager();
 			// ci.getToolBarManager().add(new Separator());
 			for (IAction action : openPerspectiveActions) {
@@ -224,19 +227,18 @@ public class ApplicationActionBarAdvisor extends ActionBarAdvisor {
 			
 			setId(perspectiveDescriptor.getId());
 			if (!StringTool.isNothing(icon)) {
-				ImageDescriptor imd=Desk.getImageDescriptor(icon);
-				if(imd==null){
-					imd=perspectiveDescriptor.getImageDescriptor();
+				ImageDescriptor imd = Desk.getImageDescriptor(icon);
+				if (imd == null) {
+					imd = perspectiveDescriptor.getImageDescriptor();
 				}
 				setImageDescriptor(imd);
-			}else{
+			} else {
 				
 				setImageDescriptor(perspectiveDescriptor.getImageDescriptor());
 			}
 			
 			setToolTipText((StringTool.isNothing(name) ? perspectiveDescriptor.getLabel() : name)
 				+ Messages.ApplicationActionBarAdvisor_10);
-			
 			
 			this.perspectiveDescriptor = perspectiveDescriptor;
 		}

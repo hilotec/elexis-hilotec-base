@@ -38,47 +38,40 @@ import ch.rgw.io.Settings;
 import ch.rgw.tools.ExHandler;
 
 /**
- * Datenbankspezifische Einstellungen. Datenbanktyp, Connect-String, Jdbc-Klasse
- * usw.
+ * Datenbankspezifische Einstellungen. Datenbanktyp, Connect-String, Jdbc-Klasse usw.
  */
-public class Datenbank extends PreferencePage implements
-		IWorkbenchPreferencePage {
-
+public class Datenbank extends PreferencePage implements IWorkbenchPreferencePage {
+	
 	Button bKons, bRn, bRepair;
 	Label lOutputFile;
 	Button bOutputFile, bCheck;
 	Settings cfg;
-
-	public Datenbank() {
-
+	
+	public Datenbank(){
+		
 		noDefaultAndApplyButton();
 		setPreferenceStore(new SettingsPreferenceStore(Hub.localCfg));
 		cfg = Hub.localCfg;
 		setDescription(Messages.Datenbank_databaseConnectionHeading);
 	}
-
+	
 	@Override
-	protected Control createContents(Composite parent) {
+	protected Control createContents(Composite parent){
 		final Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new GridLayout(2, false));
 		new Label(ret, SWT.NONE).setText(Messages.Datenbank_databaseConnection);
-		new Text(ret, SWT.READ_ONLY).setText(cfg.get(
-				PreferenceConstants.DB_CLASS, "")); //$NON-NLS-1$
+		new Text(ret, SWT.READ_ONLY).setText(cfg.get(PreferenceConstants.DB_CLASS, "")); //$NON-NLS-1$
 		new Label(ret, SWT.NONE).setText(Messages.Datenbank_connectString);
-		new Text(ret, SWT.READ_ONLY).setText(cfg.get(
-				PreferenceConstants.DB_CONNECT, "")); //$NON-NLS-1$
+		new Text(ret, SWT.READ_ONLY).setText(cfg.get(PreferenceConstants.DB_CONNECT, "")); //$NON-NLS-1$
 		new Label(ret, SWT.NONE).setText(Messages.Datenbank_usernameForDatabase);
-		new Text(ret, SWT.READ_ONLY).setText(cfg.get(
-				PreferenceConstants.DB_USERNAME, "")); //$NON-NLS-1$
+		new Text(ret, SWT.READ_ONLY).setText(cfg.get(PreferenceConstants.DB_USERNAME, "")); //$NON-NLS-1$
 		new Label(ret, SWT.NONE).setText(Messages.Datenbank_passwordForDatabase);
-		new Text(ret, SWT.READ_ONLY).setText(cfg.get(
-				PreferenceConstants.DB_PWD, "")); //$NON-NLS-1$
+		new Text(ret, SWT.READ_ONLY).setText(cfg.get(PreferenceConstants.DB_PWD, "")); //$NON-NLS-1$
 		new Label(ret, SWT.NONE).setText(Messages.Datenbank_typeOfDatabase);
-		new Text(ret, SWT.READ_ONLY).setText(cfg.get(
-				PreferenceConstants.DB_TYP, "")); //$NON-NLS-1$
-
-		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper
-				.getFillGridData(2, true, 1, false));
+		new Text(ret, SWT.READ_ONLY).setText(cfg.get(PreferenceConstants.DB_TYP, "")); //$NON-NLS-1$
+		
+		new Label(ret, SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper.getFillGridData(2,
+			true, 1, false));
 		if (false) { // TODO
 			new Label(ret, SWT.NONE).setText(Messages.Datenbank_reorganization);
 			bRepair = new Button(ret, SWT.CHECK);
@@ -87,7 +80,7 @@ public class Datenbank extends PreferencePage implements
 			bOutputFile.setText(Messages.Datenbank_writeLogTo);
 			bOutputFile.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(SelectionEvent e){
 					FileDialog fd = new FileDialog(ret.getShell(), SWT.SAVE);
 					String f = fd.open();
 					if (f != null) {
@@ -96,8 +89,7 @@ public class Datenbank extends PreferencePage implements
 				}
 			});
 			lOutputFile = new Label(ret, SWT.NONE);
-			lOutputFile.setLayoutData(SWTHelper.getFillGridData(1, true, 1,
-					false));
+			lOutputFile.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			bKons = new Button(ret, SWT.CHECK);
 			bKons.setText(Messages.Datenbank_checkKonsultations);
 			bRn = new Button(ret, SWT.CHECK);
@@ -106,13 +98,12 @@ public class Datenbank extends PreferencePage implements
 			bCheck.setText(Messages.Datenbank_doCheck);
 			bCheck.addSelectionListener(new SelectionAdapter() {
 				@Override
-				public void widgetSelected(SelectionEvent e) {
+				public void widgetSelected(SelectionEvent e){
 					try {
 						File fo = new File(lOutputFile.getText());
 						fo.createNewFile();
 						FileOutputStream fos = new FileOutputStream(fo);
-						DatabaseCleaner dc = new DatabaseCleaner(fos, bRepair
-								.getSelection());
+						DatabaseCleaner dc = new DatabaseCleaner(fos, bRepair.getSelection());
 						if (bKons.getSelection()) {
 							dc.checkKonsultationen();
 						}
@@ -122,22 +113,21 @@ public class Datenbank extends PreferencePage implements
 						fos.close();
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
-						MessageDialog.openError(getShell(),
-								Messages.Datenbank_errorWritingLog,
-								Messages.Datenbank_couldntCreateLog);
+						MessageDialog.openError(getShell(), Messages.Datenbank_errorWritingLog,
+							Messages.Datenbank_couldntCreateLog);
 					}
 				}
 			});
 		} // false
 		return ret;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
 	 */
-	public void init(IWorkbench workbench) {/* leer */
+	public void init(IWorkbench workbench){/* leer */
 	}
-
+	
 }

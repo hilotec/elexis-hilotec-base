@@ -10,7 +10,6 @@ public abstract class HL7Parser {
 	protected String receivingApplication = ""; //$NON-NLS-1$
 	protected String receivingFacility = ""; //$NON-NLS-1$
 	
-	
 	public HL7Parser(){
 		super();
 	}
@@ -20,7 +19,7 @@ public abstract class HL7Parser {
 		this.receivingApplication = receivingApplication;
 		this.receivingFacility = receivingFacility;
 	}
-
+	
 	/**
 	 * Returns version of HL7
 	 * 

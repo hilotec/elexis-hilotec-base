@@ -109,10 +109,10 @@ public class DefaultContentProvider implements ICommonViewerContentProvider {
 	public void selected(){
 	// nothing to do
 	}
-
+	
 	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-		
+	public void init(){
+	// TODO Auto-generated method stub
+	
 	}
 }

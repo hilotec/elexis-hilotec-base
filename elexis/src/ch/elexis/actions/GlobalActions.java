@@ -321,7 +321,8 @@ public class GlobalActions {
 				public void run(){
 					Kontakt kontakt = (Kontakt) ElexisEventDispatcher.getSelected(Kontakt.class);
 					if (kontakt == null) {
-						SWTHelper.showInfo("Kein Kontakt ausgewählt", "Bitte wählen Sie vor dem Drucken einen Kontakt!");
+						SWTHelper.showInfo("Kein Kontakt ausgewählt",
+							"Bitte wählen Sie vor dem Drucken einen Kontakt!");
 						return;
 					}
 					EtiketteDruckenDialog dlg =
@@ -335,9 +336,8 @@ public class GlobalActions {
 							dlg.close();
 						} else {
 							SWTHelper
-									.alert(
-											"Fehler beim Drucken",
-											"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+								.alert("Fehler beim Drucken",
+									"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
 						}
 					} else {
 						dlg.setBlockOnOpen(true);
@@ -356,7 +356,8 @@ public class GlobalActions {
 				public void run(){
 					Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 					if (actPatient == null) {
-						SWTHelper.showInfo("Kein Patient ausgewählt", "Bitte wählen Sie vor dem Drucken einen Patient!");
+						SWTHelper.showInfo("Kein Patient ausgewählt",
+							"Bitte wählen Sie vor dem Drucken einen Patient!");
 						return;
 					}
 					
@@ -372,9 +373,8 @@ public class GlobalActions {
 							dlg.close();
 						} else {
 							SWTHelper
-									.alert(
-											"Fehler beim Drucken",
-											"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+								.alert("Fehler beim Drucken",
+									"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
 						}
 					} else {
 						dlg.setBlockOnOpen(true);
@@ -394,7 +394,8 @@ public class GlobalActions {
 				public void run(){
 					Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 					if (actPatient == null) {
-						SWTHelper.showInfo("Kein Patient ausgewählt", "Bitte wählen Sie vor dem Drucken einen Patient!");
+						SWTHelper.showInfo("Kein Patient ausgewählt",
+							"Bitte wählen Sie vor dem Drucken einen Patient!");
 						return;
 					}
 					EtiketteDruckenDialog dlg =
@@ -409,9 +410,8 @@ public class GlobalActions {
 							dlg.close();
 						} else {
 							SWTHelper
-									.alert(
-											"Fehler beim Drucken",
-											"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+								.alert("Fehler beim Drucken",
+									"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
 						}
 					} else {
 						dlg.setBlockOnOpen(true);
@@ -430,12 +430,12 @@ public class GlobalActions {
 				public void run(){
 					Patient actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
 					if (actPatient == null) {
-						SWTHelper.showInfo("Kein Patient ausgewählt", "Bitte wählen Sie vor dem Drucken einen Patient!");
+						SWTHelper.showInfo("Kein Patient ausgewählt",
+							"Bitte wählen Sie vor dem Drucken einen Patient!");
 						return;
 					}
 					EtiketteDruckenDialog dlg =
-						new EtiketteDruckenDialog(mainWindow.getShell(),
-							actPatient,
+						new EtiketteDruckenDialog(mainWindow.getShell(), actPatient,
 							"PatientEtikette");
 					dlg.setTitle(Messages.getString("GlobalActions.PrintLabel"));
 					dlg.setMessage(Messages.getString("GlobalActions.PrintLabelToolTip"));
@@ -446,9 +446,8 @@ public class GlobalActions {
 							dlg.close();
 						} else {
 							SWTHelper
-									.alert(
-											"Fehler beim Drucken",
-											"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
+								.alert("Fehler beim Drucken",
+									"Beim Drucken ist ein Fehler aufgetreten. Bitte überprüfen Sie die Einstellungen.");
 						}
 					} else {
 						dlg.setBlockOnOpen(true);
@@ -575,8 +574,7 @@ public class GlobalActions {
 						
 						// notify listeners about change
 						ElexisEventDispatcher.getInstance().fire(
-										new ElexisEvent(k, k.getClass(),
-										ElexisEvent.EVENT_UPDATE));
+							new ElexisEvent(k, k.getClass(), ElexisEvent.EVENT_UPDATE));
 						
 						ElexisEventDispatcher.fireSelectionEvent(k);
 					}
@@ -833,10 +831,10 @@ public class GlobalActions {
 	}
 	
 	/**
-	 * Return true if direct printing on defined printer. 
-	 * If false, the user has to choose the printer and print himself
+	 * Return true if direct printing on defined printer. If false, the user has to choose the
+	 * printer and print himself
 	 */
-	private boolean isDirectPrint() {
+	private boolean isDirectPrint(){
 		return !Hub.localCfg.get("Drucker/Etiketten/Choose", true);
 	}
 	

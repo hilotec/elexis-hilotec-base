@@ -13,7 +13,6 @@
 
 package ch.elexis.exchange.elements;
 
-
 /**
  * A connection e.g. phone or mail
  * 

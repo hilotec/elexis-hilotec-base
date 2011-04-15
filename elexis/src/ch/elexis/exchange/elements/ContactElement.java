@@ -49,7 +49,6 @@ public class ContactElement extends XChangeElement {
 	public static final String VALUE_MALE = "male"; //$NON-NLS-1$
 	public static final String VALUE_FEMALE = "female"; //$NON-NLS-1$
 	
-	
 	public void add(AddressElement ae){
 		super.add(ae);
 	}
@@ -65,7 +64,6 @@ public class ContactElement extends XChangeElement {
 	public List<AddressElement> getAddresses(){
 		return (List<AddressElement>) getChildren(ELEM_ADDRESS, AddressElement.class);
 	}
-	
 	
 	public ContactElement asExporter(XChangeExporter parent, Kontakt k){
 		asExporter(parent);
@@ -103,7 +101,8 @@ public class ContactElement extends XChangeElement {
 	
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append(Messages.getString("ContactElement.Name")).append(getAttr(ATTR_LASTNAME)).append(StringTool.lf); //$NON-NLS-1$
+		sb
+			.append(Messages.getString("ContactElement.Name")).append(getAttr(ATTR_LASTNAME)).append(StringTool.lf); //$NON-NLS-1$
 		sb.append(Messages.getString("ContactElement.vorname")).append(getAttr(ATTR_FIRSTNAME)); //$NON-NLS-1$
 		String middle = getAttr(ATTR_MIDDLENAME);
 		if (middle.length() > 0) {
@@ -112,7 +111,7 @@ public class ContactElement extends XChangeElement {
 		sb.append(Messages.getString("ContactElement.gebdat")); //$NON-NLS-1$
 		TimeTool geb = new TimeTool(getAttr(ATTR_BIRTHDATE));
 		sb.append(geb.toString(TimeTool.DATE_GER)).append(StringTool.lf);
-		sb.append("PID: ").append(getAttr(ATTR_ID)).append(StringTool.lf+StringTool.lf); //$NON-NLS-1$
+		sb.append("PID: ").append(getAttr(ATTR_ID)).append(StringTool.lf + StringTool.lf); //$NON-NLS-1$
 		List<AddressElement> addresses = getAddresses();
 		for (AddressElement adr : addresses) {
 			sb.append(adr.toString()).append(StringTool.lf);

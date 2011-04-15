@@ -78,20 +78,18 @@ import com.tiff.common.ui.datepicker.DatePickerCombo;
  * Display detail data of a Fall
  */
 public class FallDetailBlatt2 extends Composite {
-	private static final String SELECT_CONTACT_BODY = Messages
-			.getString("FallDetailBlatt2.PleaseSelectContactFor"); //$NON-NLS-1$
-	private static final String SELECT_CONTACT_CAPTION = Messages
-			.getString("FallDetailBlatt2.PleaseSelectCpntactCaption"); //$NON-NLS-1$
-	private static final String LABEL = Messages
-			.getString("FallDetailBlatt2.Labek"); //$NON-NLS-1$
-	private static final String RECHNUNGSEMPFAENGER = Messages
-			.getString("FallDetailBlatt2.BillAdressee"); //$NON-NLS-1$
-	private static final String VERSICHERUNGSNUMMER = Messages
-			.getString("FallDetailBlatt2.InsuranceNumber"); //$NON-NLS-1$
-	private static final String KOSTENTRAEGER = Messages
-			.getString("FallDetailBlatt2.Guarantor"); //$NON-NLS-1$
-	private static final String ABRECHNUNGSMETHODE = Messages
-			.getString("FallDetailBlatt2.BillingMethod"); //$NON-NLS-1$
+	private static final String SELECT_CONTACT_BODY =
+		Messages.getString("FallDetailBlatt2.PleaseSelectContactFor"); //$NON-NLS-1$
+	private static final String SELECT_CONTACT_CAPTION =
+		Messages.getString("FallDetailBlatt2.PleaseSelectCpntactCaption"); //$NON-NLS-1$
+	private static final String LABEL = Messages.getString("FallDetailBlatt2.Labek"); //$NON-NLS-1$
+	private static final String RECHNUNGSEMPFAENGER =
+		Messages.getString("FallDetailBlatt2.BillAdressee"); //$NON-NLS-1$
+	private static final String VERSICHERUNGSNUMMER =
+		Messages.getString("FallDetailBlatt2.InsuranceNumber"); //$NON-NLS-1$
+	private static final String KOSTENTRAEGER = Messages.getString("FallDetailBlatt2.Guarantor"); //$NON-NLS-1$
+	private static final String ABRECHNUNGSMETHODE =
+		Messages.getString("FallDetailBlatt2.BillingMethod"); //$NON-NLS-1$
 	private static final String DEFINITIONSDELIMITER = ";"; //$NON-NLS-1$
 	private static final String ARGUMENTSSDELIMITER = ":"; //$NON-NLS-1$
 	private static final String ITEMDELIMITER = "\t"; //$NON-NLS-1$
@@ -100,20 +98,22 @@ public class FallDetailBlatt2 extends Composite {
 	String[] Abrechnungstypen = Fall.getAbrechnungsSysteme();
 	private Fall actFall;
 	DayDateCombo ddc;
-
+	
 	String itemsErrorMessage = "parameters not supplied;please control parameters;in preferences"; //$NON-NLS-1$
-
-	public static final String[] Reasons = { Fall.TYPE_DISEASE,
-			Fall.TYPE_ACCIDENT, Fall.TYPE_MATERNITY, Fall.TYPE_PREVENTION,
-			Fall.TYPE_BIRTHDEFECT, Fall.TYPE_OTHER };
+	
+	public static final String[] Reasons =
+		{
+			Fall.TYPE_DISEASE, Fall.TYPE_ACCIDENT, Fall.TYPE_MATERNITY, Fall.TYPE_PREVENTION,
+			Fall.TYPE_BIRTHDEFECT, Fall.TYPE_OTHER
+		};
 	public static final String[] dgsys = null;
 	Combo cAbrechnung, cReason;
 	DatePickerCombo dpVon, dpBis;
 	Text tBezeichnung, tGarant;
 	Hyperlink autoFill;
 	List<Control> lReqs = new ArrayList<Control>();
-
-	public FallDetailBlatt2(final Composite parent) {
+	
+	public FallDetailBlatt2(final Composite parent){
 		super(parent, SWT.NONE);
 		tk = Desk.getToolkit();
 		form = tk.createScrolledForm(this);
@@ -123,29 +123,29 @@ public class FallDetailBlatt2 extends Composite {
 		tk.createLabel(top, ABRECHNUNGSMETHODE);
 		Composite cpAbrechnung = new Composite(top, SWT.NONE);
 		// *** want to have no-color-background...
-		cpAbrechnung.setBackground(new Color(cpAbrechnung.getDisplay(), 255,
-				255, 255));
+		cpAbrechnung.setBackground(new Color(cpAbrechnung.getDisplay(), 255, 255, 255));
 		GridLayout grid = new GridLayout(2, false);
 		grid.marginWidth = 0;
 		cpAbrechnung.setLayout(grid);
 		cAbrechnung = new Combo(cpAbrechnung, SWT.READ_ONLY);
-		autoFill = tk.createHyperlink(cpAbrechnung,
+		autoFill =
+			tk.createHyperlink(cpAbrechnung,
 				Messages.getString("FallDetailBlatt2.ApplyData"), SWT.NONE); //$NON-NLS-1$
 		autoFill.addHyperlinkListener(new HyperlinkAdapter() {
-
+			
 			@Override
-			public void linkActivated(final HyperlinkEvent e) {
+			public void linkActivated(final HyperlinkEvent e){
 				Fall f = getFall();
 				if (f == null) {
 					return;
 				}
 				String abr = f.getAbrechnungsSystem();
 				// make sure compatibility methods are called
-
+				
 				String ktNew = f.getInfoString(KOSTENTRAEGER);
-				String ktOld = f.get(Messages
-						.getString("FallDetailBlatt2.GuarantorNoSpecialChars")); //$NON-NLS-1$
-
+				String ktOld =
+					f.get(Messages.getString("FallDetailBlatt2.GuarantorNoSpecialChars")); //$NON-NLS-1$
+				
 				if (StringTool.isNothing(ktNew)) {
 					Kontakt k = Kontakt.load(ktOld);
 					if (k.isValid()) {
@@ -154,33 +154,29 @@ public class FallDetailBlatt2 extends Composite {
 				}
 				String vnNew = f.getInfoString(VERSICHERUNGSNUMMER);
 				// String vnOld=f.getVersNummer();
-				String vnOld = f.get(Messages
-						.getString("FallDetailBlatt2.InsNumber")); //$NON-NLS-1$
+				String vnOld = f.get(Messages.getString("FallDetailBlatt2.InsNumber")); //$NON-NLS-1$
 				if (StringTool.isNothing(vnNew)) {
 					f.setRequiredString(VERSICHERUNGSNUMMER, vnOld);
 				}
-
+				
 				Fall[] faelle = f.getPatient().getFaelle();
 				for (Fall f0 : faelle) {
 					if (f0.getId().equals(f.getId())) {
 						// ignore current Fall
 						continue;
 					}
-
+					
 					if (f0.getAbrechnungsSystem().equals(abr)) {
 						if (f.getInfoString(RECHNUNGSEMPFAENGER).isEmpty()) {
-							f.setInfoString(RECHNUNGSEMPFAENGER,
-									f0.get("GarantID")); //$NON-NLS-1$
+							f.setInfoString(RECHNUNGSEMPFAENGER, f0.get("GarantID")); //$NON-NLS-1$
 						}
 						if (f.getInfoString(KOSTENTRAEGER).isEmpty()) {
-							f.setInfoString(
-									KOSTENTRAEGER,
-									f0.get(Messages
-											.getString("FallDetailBlatt2.GuarantorNoSpecialChars"))); //$NON-NLS-1$
+							f.setInfoString(KOSTENTRAEGER, f0.get(Messages
+								.getString("FallDetailBlatt2.GuarantorNoSpecialChars"))); //$NON-NLS-1$
 						}
 						if (f.getInfoString(VERSICHERUNGSNUMMER).isEmpty()) {
-							f.setInfoString(VERSICHERUNGSNUMMER,
-									f0.getInfoString(VERSICHERUNGSNUMMER));
+							f.setInfoString(VERSICHERUNGSNUMMER, f0
+								.getInfoString(VERSICHERUNGSNUMMER));
 						}
 						// TODO break? or looking for the most current Fall?
 						break;
@@ -190,56 +186,52 @@ public class FallDetailBlatt2 extends Composite {
 			}
 		});
 		cAbrechnung.setItems(Abrechnungstypen);
-
+		
 		cAbrechnung.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e){
 				int i = cAbrechnung.getSelectionIndex();
 				Fall fall = getFall();
 				if (fall != null) {
 					if (fall.getBehandlungen(false).length > 0) {
 						if (Hub.acl.request(AccessControlDefaults.CASE_MODIFY)) {
-							if (SWTHelper.askYesNo(
-									Messages.getString("FallDetailBlatt2.DontChangeBillingSystemCaption"), //$NON-NLS-1$
-									Messages.getString("FallDetailBlatt2.DontChangeBillingSystemBody"))) { //$NON-NLS-1$
-								fall.setAbrechnungsSystem(cAbrechnung
-										.getItem(i));
+							if (SWTHelper.askYesNo(Messages
+								.getString("FallDetailBlatt2.DontChangeBillingSystemCaption"), //$NON-NLS-1$
+								Messages.getString("FallDetailBlatt2.DontChangeBillingSystemBody"))) { //$NON-NLS-1$
+								fall.setAbrechnungsSystem(cAbrechnung.getItem(i));
 								setFall(fall);
-								ElexisEventDispatcher.fireSelectionEvent(fall
-										.getPatient());
+								ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
 								return;
 							}
 						} else {
-							SWTHelper.alert(
-									Messages.getString("FallDetailBlatt2.CantChangeBillingSystemCaption"), //$NON-NLS-1$
-									Messages.getString("FallDetailBlatt2.CantChangeBillingSystemBody")); //$NON-NLS-1$
+							SWTHelper.alert(Messages
+								.getString("FallDetailBlatt2.CantChangeBillingSystemCaption"), //$NON-NLS-1$
+								Messages.getString("FallDetailBlatt2.CantChangeBillingSystemBody")); //$NON-NLS-1$
 						}
 						String gesetz = fall.getAbrechnungsSystem();
 						if (ch.rgw.tools.StringTool.isNothing(gesetz)) {
-							gesetz = Messages
-									.getString("FallDetailBlatt2.free"); //$NON-NLS-1$
+							gesetz = Messages.getString("FallDetailBlatt2.free"); //$NON-NLS-1$
 						}
 						cAbrechnung.select(cAbrechnung.indexOf(gesetz));
-
+						
 					} else {
 						fall.setAbrechnungsSystem(Abrechnungstypen[i]);
 						setFall(fall);
-						ElexisEventDispatcher.fireSelectionEvent(fall
-								.getPatient());
+						ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
 						// Falls noch kein Garant gesetzt ist: Garanten des
 						// letzten Falles zum
 						// selben Gesetz nehmen
 					}
-
+					
 				}
 			}
-
+			
 		});
 		tk.createLabel(top, LABEL);
 		tBezeichnung = tk.createText(top, StringTool.leer);
 		tBezeichnung.addFocusListener(new FocusAdapter() {
 			@Override
-			public void focusLost(final FocusEvent e) {
+			public void focusLost(final FocusEvent e){
 				String newval = ((Text) e.getSource()).getText();
 				Fall fall = getFall();
 				if (fall != null) {
@@ -249,15 +241,13 @@ public class FallDetailBlatt2 extends Composite {
 				super.focusLost(e);
 			}
 		});
-		tBezeichnung
-				.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		tk.createLabel(top,
-				Messages.getString("FallDetailBlatt2.ReasonForInsurance")); //$NON-NLS-1$
+		tBezeichnung.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tk.createLabel(top, Messages.getString("FallDetailBlatt2.ReasonForInsurance")); //$NON-NLS-1$
 		cReason = new Combo(top, SWT.READ_ONLY);
 		cReason.setItems(Reasons);
 		cReason.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e){
 				int i = cReason.getSelectionIndex();
 				Fall fall = getFall();
 				if (fall != null) {
@@ -270,36 +260,37 @@ public class FallDetailBlatt2 extends Composite {
 		tk.createLabel(top, Messages.getString("FallDetailBlatt2.StartDate")); //$NON-NLS-1$
 		dpVon = new DatePickerCombo(top, SWT.NONE);
 		dpVon.addSelectionListener(new SelectionAdapter() {
-
+			
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e){
 				Fall fall = getFall();
 				fall.setBeginnDatum(new TimeTool(dpVon.getDate().getTime())
-						.toString(TimeTool.DATE_GER));
+					.toString(TimeTool.DATE_GER));
 				ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
 			}
-
+			
 		});
 		tk.createLabel(top, Messages.getString("FallDetailBlatt2.EndDate")); //$NON-NLS-1$
 		dpBis = new DatePickerCombo(top, SWT.NONE);
 		dpBis.addSelectionListener(new SelectionAdapter() {
-
+			
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e){
 				Fall fall = getFall();
 				fall.setEndDatum(new TimeTool(dpBis.getDate().getTime())
-						.toString(TimeTool.DATE_GER));
+					.toString(TimeTool.DATE_GER));
 				ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
 			}
-
+			
 		});
-		ddc = new DayDateCombo(
+		ddc =
+			new DayDateCombo(
 				top,
 				Messages.getString("FallDetailBlatt2.ProposeForBillingIn"), Messages.getString("FallDetailBlatt2.DaysOrAfter")); //$NON-NLS-1$ //$NON-NLS-2$
 		ddc.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		ddc.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				TimeTool nDate = ddc.getDate();
 				Fall fall = getFall();
 				if (fall != null) {
@@ -308,23 +299,22 @@ public class FallDetailBlatt2 extends Composite {
 			}
 		});
 		tk.adapt(ddc);
-
+		
 		Composite separatorBar = new Composite(top, SWT.NONE);
-		separatorBar
-				.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		separatorBar.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		GridLayout gridLayout = new GridLayout(1, false);
 		gridLayout.marginTop = -1;
 		separatorBar.setLayout(gridLayout);
 		Label lbReq = new Label(separatorBar, SWT.NONE);
 		lbReq.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		lbReq.setText(ch.elexis.preferences.Messages.Leistungscodes_necessaryData);
-
-		Hyperlink hlGarant = tk.createHyperlink(top, RECHNUNGSEMPFAENGER,
-				SWT.NONE);
+		
+		Hyperlink hlGarant = tk.createHyperlink(top, RECHNUNGSEMPFAENGER, SWT.NONE);
 		hlGarant.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
-			public void linkActivated(final HyperlinkEvent e) {
-				KontaktSelektor ksl = new KontaktSelektor(
+			public void linkActivated(final HyperlinkEvent e){
+				KontaktSelektor ksl =
+					new KontaktSelektor(
 						getShell(),
 						Kontakt.class,
 						Messages.getString("FallDetailBlatt2.SelectGuarantorCaption"), //$NON-NLS-1$
@@ -335,29 +325,27 @@ public class FallDetailBlatt2 extends Composite {
 					if (fall != null) {
 						fall.setGarant(sel);
 						setFall(fall);
-						ElexisEventDispatcher.fireSelectionEvent(fall
-								.getPatient());
+						ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
 					}
 				}
 			}
 		});
-
+		
 		tGarant = tk.createText(top, StringTool.leer);
-
+		
 		tGarant.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tk.paintBordersFor(top);
 		setFall(getFall());
 	}
-
+	
 	class TristateSelection implements SelectionListener {
-		TristateSelection() {
-		}
-
+		TristateSelection(){}
+		
 		/**
 		 * changing state: empty -> checked -> unchecked (cycling through)
 		 */
 		@Override
-		public void widgetSelected(SelectionEvent e) {
+		public void widgetSelected(SelectionEvent e){
 			Button button = ((Button) e.getSource());
 			boolean selection = !button.getSelection();
 			boolean grayed = button.getGrayed();
@@ -374,25 +362,24 @@ public class FallDetailBlatt2 extends Composite {
 				button.setGrayed(true);
 			}
 		}
-
+		
 		@Override
-		public void widgetDefaultSelected(SelectionEvent e) {
-		}
-
+		public void widgetDefaultSelected(SelectionEvent e){}
+		
 	}
-
+	
 	class Focusreact implements FocusListener {
-
+		
 		private final String field;
-
-		Focusreact(final String dbField) {
+		
+		Focusreact(final String dbField){
 			field = dbField;
 		}
-
-		public void focusGained(final FocusEvent e) { /* nichts */
+		
+		public void focusGained(final FocusEvent e){ /* nichts */
 		}
-
-		public void focusLost(final FocusEvent e) {
+		
+		public void focusLost(final FocusEvent e){
 			String newval = StringTool.leer;
 			String widgetType = e.widget.getClass().getName();
 			widgetType = widgetType.split("\\.")[widgetType.split("\\.").length - 1]; //$NON-NLS-1$ //$NON-NLS-2$
@@ -403,27 +390,27 @@ public class FallDetailBlatt2 extends Composite {
 				String kind = (String) ((Combo) e.getSource()).getData("kind"); //$NON-NLS-1$
 				if (kind.equalsIgnoreCase("S")) { //$NON-NLS-1$
 					newval = ((Combo) e.getSource()).getText(); // save as
-																// string
+					// string
 				} else {
-					newval = StringTool.leer
-							+ ((Combo) e.getSource()).getSelectionIndex(); // save
-																			// as
-																			// index
-																			// in
-																			// combo
+					newval = StringTool.leer + ((Combo) e.getSource()).getSelectionIndex(); // save
+					// as
+					// index
+					// in
+					// combo
 				}
 			} else if (widgetType.equalsIgnoreCase("List")) { //$NON-NLS-1$
-				int[] selection = ((org.eclipse.swt.widgets.List) e.getSource())
-						.getSelectionIndices();
+				int[] selection =
+					((org.eclipse.swt.widgets.List) e.getSource()).getSelectionIndices();
 				String delim = StringTool.leer;
-				String kind = (String) ((org.eclipse.swt.widgets.List) e
-						.getSource()).getData("kind"); //$NON-NLS-1$
+				String kind =
+					(String) ((org.eclipse.swt.widgets.List) e.getSource()).getData("kind"); //$NON-NLS-1$
 				if (kind.equalsIgnoreCase("S")) { // save as string list, tab delimited   //$NON-NLS-1$
 					for (int ii = 0; ii < selection.length; ii++) {
-						newval = newval
+						newval =
+							newval
 								+ delim
 								+ ((org.eclipse.swt.widgets.List) e.getSource())
-										.getItem(selection[ii]);
+									.getItem(selection[ii]);
 						delim = ITEMDELIMITER;
 					}
 				} else { // save as numeric index list, tab delimited
@@ -473,27 +460,27 @@ public class FallDetailBlatt2 extends Composite {
 				}
 			}
 		}
-
+		
 	}
-
+	
 	/**
 	 * disposes of required and optional fields on the bottom of the page.<br>
 	 * re-reads the contents for this case for the upper part<br>
-	 * recreates the required and optional fields on the bottom of the page
-	 * (call to setExtendedFields)
+	 * recreates the required and optional fields on the bottom of the page (call to
+	 * setExtendedFields)
 	 * 
 	 * @param f
 	 *            caseID
 	 */
 	@SuppressWarnings("unchecked")
-	public void setFall(final Fall f) {
+	public void setFall(final Fall f){
 		// *** dispose of currently displayed fields
 		actFall = f;
 		for (Control c : lReqs) {
 			c.dispose();
 		}
 		lReqs.clear();
-
+		
 		// *** fill billing systems into combo, set current system
 		cAbrechnung.setItems(Fall.getAbrechnungsSysteme());
 		if (f == null) {
@@ -502,12 +489,12 @@ public class FallDetailBlatt2 extends Composite {
 			cReason.select(0);
 			return;
 		}
-
+		
 		form.setText(f.getLabel());
-
+		
 		// *** set Fallbezeichnung
 		tBezeichnung.setText(f.getBezeichnung());
-
+		
 		// *** set Grund (Krankheit/Unfall/...)
 		String grund = f.getGrund();
 		int ix = cReason.indexOf(grund);
@@ -517,7 +504,7 @@ public class FallDetailBlatt2 extends Composite {
 		cReason.select(ix);
 		String abr = f.getAbrechnungsSystem();
 		cAbrechnung.setText(abr);
-
+		
 		// *** set startDate/EndDate
 		TimeTool tt = new TimeTool();
 		if (tt.set(f.getBeginnDatum()) == true) {
@@ -530,10 +517,10 @@ public class FallDetailBlatt2 extends Composite {
 		} else {
 			dpBis.setDate(null);
 		}
-
+		
 		// *** set Garant
 		tGarant.setText(f.getGarant().getLabel());
-
+		
 		// *** adding required fields defined in prefs
 		String reqs = f.getRequirements();
 		if ((reqs != null) && (reqs.length() > 0)) {
@@ -544,16 +531,14 @@ public class FallDetailBlatt2 extends Composite {
 		// *** adding optional fields defined in prefs
 		String optionals = f.getOptionals();
 		if ((optionals != null) && (optionals.length() > 0)) {
-			setExtendedFields(
-					f,
-					optionals,
-					Messages.getString("FallDetailBlatt2.optionalData"), false, false); //$NON-NLS-1$
+			setExtendedFields(f, optionals,
+				Messages.getString("FallDetailBlatt2.optionalData"), false, false); //$NON-NLS-1$
 		}
-
+		
 		// ****** show any other fields from extinfo - ONLY FOR ADMINS, NOT
 		// INTENDED FOR NORMAL USERS !!!
 		// first part fields with definition, second part without definition
-
+		
 		// *** display all unused field having a display specification
 		String[] reqsArray = f.getRequirements().split(DEFINITIONSDELIMITER);
 		for (int reqI = 0; reqI < reqsArray.length; reqI++) {
@@ -571,7 +556,7 @@ public class FallDetailBlatt2 extends Composite {
 		if ((strUnused != null) && (!strUnused.isEmpty())) {
 			String[] allUnused = strUnused.split(DEFINITIONSDELIMITER); //$NON-NLS-1$
 			Arrays.sort(allUnused, String.CASE_INSENSITIVE_ORDER); // *** sort
-																	// alphabetically
+			// alphabetically
 			for (String unusedPart : allUnused) {
 				int posColon = unusedPart.indexOf(ARGUMENTSSDELIMITER);
 				String key = unusedPart.substring(0, posColon);
@@ -595,18 +580,15 @@ public class FallDetailBlatt2 extends Composite {
 				}
 			}
 		}
-
-		Hashtable<String, String> httmp = getFall().getHashtable(
-				PersistentObject.FLD_EXTINFO);
-		Hashtable<String, String> ht = (Hashtable<String, String>) httmp
-				.clone();
+		
+		Hashtable<String, String> httmp = getFall().getHashtable(PersistentObject.FLD_EXTINFO);
+		Hashtable<String, String> ht = (Hashtable<String, String>) httmp.clone();
 		
 		String[] unusedHashStringArray = {};
-		if (unusedHash.size() > 0)	{
+		if (unusedHash.size() > 0) {
 			String unusedHashString = unusedHash.toString();
 			unusedHashString = unusedHashString.substring(1);
-			unusedHashString = unusedHashString.substring(0,
-					unusedHashString.length() - 1);
+			unusedHashString = unusedHashString.substring(0, unusedHashString.length() - 1);
 			unusedHashStringArray = unusedHashString.split(", "); //$NON-NLS-1$
 		}
 		String otherFieldsList_2 = StringTool.leer;
@@ -617,8 +599,10 @@ public class FallDetailBlatt2 extends Composite {
 			String controlName = itemParts[0];
 			String[] controlDefParts = itemParts[1].split(ARGUMENTSSDELIMITER);
 			String controlType = controlDefParts[0];
-
-			String[] itemList = { StringTool.leer };
+			
+			String[] itemList = {
+				StringTool.leer
+			};
 			if (controlType.equalsIgnoreCase("X")) { //$NON-NLS-1$
 				if (controlDefParts.length > 1) {
 					itemList = controlDefParts[1].split(ITEMDELIMITER);
@@ -639,8 +623,8 @@ public class FallDetailBlatt2 extends Composite {
 						values = controlDefParts[1];
 					}
 					if (!isAdded) {
-						otherFieldsList_2 = otherFieldsList_2 + delim
-								+ controlName + ARGUMENTSSDELIMITER
+						otherFieldsList_2 =
+							otherFieldsList_2 + delim + controlName + ARGUMENTSSDELIMITER
 								+ controlType + ARGUMENTSSDELIMITER + values;
 					}
 					delim = DEFINITIONSDELIMITER;
@@ -651,13 +635,11 @@ public class FallDetailBlatt2 extends Composite {
 		// *** only for admins!
 		if (otherFieldsList_2.length() > 0) {
 			if (Hub.acl.request(AccessControlDefaults.CASE_MODIFY_SPECIALS) == true) {
-				setExtendedFields(
-						f,
-						otherFieldsList_2,
-						Messages.getString("FallDetailBlatt2.unusedFieldsWithDefinition"), true, true); //$NON-NLS-1$
+				setExtendedFields(f, otherFieldsList_2, Messages
+					.getString("FallDetailBlatt2.unusedFieldsWithDefinition"), true, true); //$NON-NLS-1$
 			}
 		}
-
+		
 		// *** collect all other fields that are not yet shown anywhere else,
 		// display as text
 		String otherFieldsList = otherFieldsList_2;
@@ -668,8 +650,7 @@ public class FallDetailBlatt2 extends Composite {
 			String subkey = (String) arr[i];
 			String abrSystem = getFall().getAbrechnungsSystem();
 			String key = Leistungscodes.CFG_KEY + "/" + abrSystem; //$NON-NLS-1$
-			String bed = Hub.globalCfg.get(
-					key + "/bedingungen", StringTool.leer); //$NON-NLS-1$
+			String bed = Hub.globalCfg.get(key + "/bedingungen", StringTool.leer); //$NON-NLS-1$
 			boolean isAlreadyShown = false;
 			if (subkey.equalsIgnoreCase(Fall.FLD_BILLING))
 				isAlreadyShown = true;
@@ -677,7 +658,7 @@ public class FallDetailBlatt2 extends Composite {
 			// if (subkey.equalsIgnoreCase("Fallnummer")) isAlreadyShown = true;
 			// if (subkey.equalsIgnoreCase("Gesetz")) isAlreadyShown = true;
 			String[] bedArr = bed.split(DEFINITIONSDELIMITER);
-			if (!bed.isEmpty())	{
+			if (!bed.isEmpty()) {
 				for (int ii = 0; ii < bedArr.length; ii++) {
 					String fldParts = bedArr[ii];
 					String[] flds = fldParts.split(ARGUMENTSSDELIMITER);
@@ -699,11 +680,10 @@ public class FallDetailBlatt2 extends Composite {
 					}
 				}
 			}
-			String opt = Hub.globalCfg
-					.get(key + "/fakultativ", StringTool.leer); //$NON-NLS-1$
+			String opt = Hub.globalCfg.get(key + "/fakultativ", StringTool.leer); //$NON-NLS-1$
 			if (!isAlreadyShown) {
 				String[] optArr = opt.split(DEFINITIONSDELIMITER);
-				if (!opt.isEmpty())	{
+				if (!opt.isEmpty()) {
 					for (int ii = 0; ii < optArr.length; ii++) {
 						String fld = optArr[ii].split(ARGUMENTSSDELIMITER)[0];
 						if (fld.equalsIgnoreCase(subkey)) {
@@ -718,11 +698,10 @@ public class FallDetailBlatt2 extends Composite {
 					// *** try to find def
 					String theVal = (String) unusedHash.get(subkey);
 					String[] vals = theVal.split(ARGUMENTSSDELIMITER);
-					otherFieldsList = otherFieldsList + delim + subkey
-							+ ARGUMENTSSDELIMITER + vals[0];
+					otherFieldsList =
+						otherFieldsList + delim + subkey + ARGUMENTSSDELIMITER + vals[0];
 					if (vals.length > 1) {
-						otherFieldsList = otherFieldsList + ARGUMENTSSDELIMITER
-								+ vals[1];
+						otherFieldsList = otherFieldsList + ARGUMENTSSDELIMITER + vals[1];
 					}
 				} else {
 					// *** if no spec found, then show as text
@@ -731,7 +710,7 @@ public class FallDetailBlatt2 extends Composite {
 				delim = DEFINITIONSDELIMITER;
 			}
 		}
-
+		
 		if (otherFieldsList.length() > 0) {
 			// *** want to sort alphabetically here
 			String[] tmpArr = otherFieldsList.split(DEFINITIONSDELIMITER);
@@ -744,35 +723,31 @@ public class FallDetailBlatt2 extends Composite {
 			}
 			// *** only for admins!
 			if (Hub.acl.request(AccessControlDefaults.CASE_MODIFY_SPECIALS) == true) {
-				setExtendedFields(
-						f,
-						otherFieldsList,
-						Messages.getString("FallDetailBlatt2.unusedFieldsWithoutDefinition"), true, true); //$NON-NLS-1$
+				setExtendedFields(f, otherFieldsList, Messages
+					.getString("FallDetailBlatt2.unusedFieldsWithoutDefinition"), true, true); //$NON-NLS-1$
 			}
 		}
 	}
-
+	
 	/**
-	 * creates the required or optional fields on the bottom of the page and
-	 * fills them with the appropriate values.
+	 * creates the required or optional fields on the bottom of the page and fills them with the
+	 * appropriate values.
 	 * 
 	 * @param f
 	 *            caseID
 	 * @param fieldList
-	 *            this is the fieldList from the prefs for required OR optional
-	 *            fields
+	 *            this is the fieldList from the prefs for required OR optional fields
 	 * @param TitleBarText
-	 *            if not "" and not null then show a bar-separator on top of the
-	 *            fields
+	 *            if not "" and not null then show a bar-separator on top of the fields
 	 * @param deletable
 	 *            is this deletable? - show delete button
 	 *            <p>
-	 *            The fieldList param contains a ;-separated list of
-	 *            fieldName:fieldType[:items] pairs/triplets. the first item is
-	 *            the name for the field used in the database (extInfo-Field) <br>
+	 *            The fieldList param contains a ;-separated list of fieldName:fieldType[:items]
+	 *            pairs/triplets. the first item is the name for the field used in the database
+	 *            (extInfo-Field) <br>
 	 *            the second item is the fieldType <br>
-	 *            the third item is the tab-delimited itemList to be used for
-	 *            combos, lists, radios and checkboxes
+	 *            the third item is the tab-delimited itemList to be used for combos, lists, radios
+	 *            and checkboxes
 	 *            <p>
 	 *            fieldType is one of the following:
 	 *            <ul>
@@ -794,8 +769,7 @@ public class FallDetailBlatt2 extends Composite {
 	 *            <li>
 	 *            LS - List items saved as strings, tab-delimited</li>
 	 *            <li>
-	 *            LN - List items saved as numerics, tab-delimited (selected
-	 *            indexes)</li>
+	 *            LN - List items saved as numerics, tab-delimited (selected indexes)</li>
 	 *            <li>
 	 *            X - CheckBox, always saved as 0 or 1</li>
 	 *            <li>
@@ -804,18 +778,16 @@ public class FallDetailBlatt2 extends Composite {
 	 *            RN - Radios saved as numeric (selected index)</li>
 	 *            </ul>
 	 */
-	private void setExtendedFields(final Fall f, final String fieldList,
-			String TitleBarText, boolean deletable, boolean dangerous) {
+	private void setExtendedFields(final Fall f, final String fieldList, String TitleBarText,
+		boolean deletable, boolean dangerous){
 		// *** kind "numeric" or "string" is saved in the dataField of the
 		// control
-
+		
 		// *** show separator bar (title bar) if requested
 		if ((TitleBarText != null) && (!TitleBarText.isEmpty())) {
 			Composite separatorBar = new Composite(form.getBody(), SWT.NONE);
-			separatorBar.setLayoutData(SWTHelper.getFillGridData(2, true, 1,
-					false));
-			Color dangerousColor = new Color(separatorBar.getDisplay(), 255,
-					150, 150);
+			separatorBar.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+			Color dangerousColor = new Color(separatorBar.getDisplay(), 255, 150, 150);
 			GridLayout gridLayout = new GridLayout(1, false);
 			gridLayout.marginTop = -1;
 			gridLayout.marginBottom = -1;
@@ -836,10 +808,10 @@ public class FallDetailBlatt2 extends Composite {
 			if (r.length < 2) { // *** needs at least fieldName and fieldType...
 				continue;
 			}
-
+			
 			// *** read the saved value from the db
 			String val = f.getInfoString(r[0]);
-
+			
 			// *** create label or hyperlink for this field
 			Hyperlink hl = null;
 			if (r[1].equals("K")) { //$NON-NLS-1$  // *** Kontakt
@@ -852,22 +824,22 @@ public class FallDetailBlatt2 extends Composite {
 			} else {
 				lReqs.add(tk.createLabel(form.getBody(), r[0]));
 			}
-
+			
 			// *** create/get parent for data part (right part)
 			Composite subParent = createRightComposite(deletable);
 			// lReqs.add(subParent);
-
+			
 			// *** create String List for combos, lists and checkboxes
 			String[] items = itemsErrorMessage.split(";"); //$NON-NLS-1$
 			if ((r[1].equals("CS")) //$NON-NLS-1$
-					|| (r[1].equals("CN")) //$NON-NLS-1$
-					|| (r[1].equals("LS")) //$NON-NLS-1$
-					|| (r[1].equals("LN")) //$NON-NLS-1$
-					|| (r[1].equals("RS")) //$NON-NLS-1$
-					|| (r[1].equals("RN")) //$NON-NLS-1$
-					|| (r[1].equals("X"))) { //$NON-NLS-1$
+				|| (r[1].equals("CN")) //$NON-NLS-1$
+				|| (r[1].equals("LS")) //$NON-NLS-1$
+				|| (r[1].equals("LN")) //$NON-NLS-1$
+				|| (r[1].equals("RS")) //$NON-NLS-1$
+				|| (r[1].equals("RN")) //$NON-NLS-1$
+				|| (r[1].equals("X"))) { //$NON-NLS-1$
 				if (r.length >= 4) { // *** must have an sql- or
-										// script-statement
+					// script-statement
 					if (r[2].equalsIgnoreCase("SQL")) { //$NON-NLS-1$
 						// ITextPlugin plugin = null;
 						// final Brief dummyBrief = new Brief("DummyBetreff",
@@ -876,10 +848,10 @@ public class FallDetailBlatt2 extends Composite {
 						// String tmp = (String)
 						// textContainer.replaceSQLClause(dummyBrief, "SQL:" +
 						// r[3]);
-						String itemsStr = (String) TextContainer
-								.replaceSQLClause("SQL:" + r[3]); //$NON-NLS-1$
+						String itemsStr = (String) TextContainer.replaceSQLClause("SQL:" + r[3]); //$NON-NLS-1$
 						itemsStr = itemsStr.replaceAll("\r\n", ITEMDELIMITER); //$NON-NLS-1$
-						itemsStr = (itemsStr.replaceAll("\n", ITEMDELIMITER)).replaceAll("\r", ITEMDELIMITER); //$NON-NLS-1$  //$NON-NLS-2$
+						itemsStr =
+							(itemsStr.replaceAll("\n", ITEMDELIMITER)).replaceAll("\r", ITEMDELIMITER); //$NON-NLS-1$  //$NON-NLS-2$
 						items = itemsStr.split(ITEMDELIMITER);
 					}
 				} else if (r.length >= 3) {
@@ -887,18 +859,16 @@ public class FallDetailBlatt2 extends Composite {
 						items = r[2].split(ITEMDELIMITER);
 				}
 			}
-
+			
 			Control dataField = null;
 			Composite stretchComposite = null;
 			// *** create data field
 			if (r[1].equals("T")) { //$NON-NLS-1$  // *** simple Text, single line
 				dataField = tk.createText(subParent, val);
-				dataField.setLayoutData(SWTHelper.getFillGridData(1, true, 1,
-						false));
+				dataField.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 				dataField.addFocusListener(new Focusreact(r[0]));
 			} else if (r[1].equals("D")) { //$NON-NLS-1$  // *** Date
-				final DatePickerCombo dp = new DatePickerCombo(subParent,
-						SWT.NONE);
+				final DatePickerCombo dp = new DatePickerCombo(subParent, SWT.NONE);
 				TimeTool tt = new TimeTool();
 				if (tt.set(val)) {
 					dp.setDate(tt.getTime());
@@ -906,7 +876,7 @@ public class FallDetailBlatt2 extends Composite {
 				dp.setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
 				dp.addSelectionListener(new SelectionAdapter() {
 					@Override
-					public void widgetSelected(final SelectionEvent e) {
+					public void widgetSelected(final SelectionEvent e){
 						TimeTool tt = new TimeTool(dp.getDate().getTime());
 						f.setInfoString(r[0], tt.toString(TimeTool.DATE_GER));
 					}
@@ -916,12 +886,12 @@ public class FallDetailBlatt2 extends Composite {
 				dataField = tk.createText(subParent, val);
 				hl.addHyperlinkListener(new HyperlinkAdapter() {
 					@Override
-					public void linkActivated(final HyperlinkEvent e) {
-						KontaktSelektor ksl = new KontaktSelektor(getShell(),
-								Kontakt.class, SELECT_CONTACT_CAPTION,
-								MessageFormat.format(SELECT_CONTACT_BODY,
-										new Object[] { r[0] }),
-									true, Kontakt.DEFAULT_SORT);
+					public void linkActivated(final HyperlinkEvent e){
+						KontaktSelektor ksl =
+							new KontaktSelektor(getShell(), Kontakt.class, SELECT_CONTACT_CAPTION,
+								MessageFormat.format(SELECT_CONTACT_BODY, new Object[] {
+									r[0]
+								}), true, Kontakt.DEFAULT_SORT);
 						// "Bitte wählen Sie den Kontakt für " + r[0] +
 						// " aus", true);
 						if (ksl.open() == Dialog.OK) {
@@ -934,60 +904,52 @@ public class FallDetailBlatt2 extends Composite {
 									fall.setInfoString(r[0], StringTool.leer);
 								}
 								setFall(fall);
-								ElexisEventDispatcher.fireSelectionEvent(fall
-										.getPatient());
+								ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
 							}
 						}
 					}
 				});
 				((Text) dataField).setEditable(false);
-				dataField.setLayoutData(SWTHelper.getFillGridData(1, true, 1,
-						false));
+				dataField.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			} else if (r[1].equals("TM")) { //$NON-NLS-1$  // *** multiline text
 				Text multiText = new Text(subParent, SWT.MULTI + SWT.BORDER);
 				multiText.setText(val);
-				multiText.setLayoutData(SWTHelper.getFillGridData(1, true, 1,
-						false));
+				multiText.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 				multiText.addFocusListener(new Focusreact(r[0]));
 				multiText.addKeyListener(new KeyListener() {
 					@Override
-					public void keyPressed(KeyEvent e) {
-					}
-
+					public void keyPressed(KeyEvent e){}
+					
 					@Override
-					public void keyReleased(KeyEvent e) {
+					public void keyReleased(KeyEvent e){
 						// *** this simply makes the field grow or shrink to the
 						// needed size
 						// and repositions the following controls, too
-						Point sizePt = ((Text) (e.widget)).computeSize(
-								SWT.DEFAULT, SWT.DEFAULT);
-						((Text) (e.widget)).setSize(
-								((Text) (e.widget)).getBounds().width, sizePt.y);
+						Point sizePt = ((Text) (e.widget)).computeSize(SWT.DEFAULT, SWT.DEFAULT);
+						((Text) (e.widget))
+							.setSize(((Text) (e.widget)).getBounds().width, sizePt.y);
 						form.getBody().layout(true);
 					}
 				});
 				dataField = multiText;
 			} else if (r[1].equals("TS")) { //$NON-NLS-1$
-				dataField = tk.createLabel(subParent,
-						"Styled Text disabled - still experimental"); //$NON-NLS-1$
+				dataField = tk.createLabel(subParent, "Styled Text disabled - still experimental"); //$NON-NLS-1$
 				if (Hub.actUser.getLabel().equalsIgnoreCase("addsdfgss")) { // +++++ my testing  //$NON-NLS-1$
 					// get the extension for styled text
 					String extensionToUse = "Interner Text"; //$NON-NLS-1$
 					IExtensionRegistry exr = Platform.getExtensionRegistry();
-					IExtensionPoint exp = exr
-							.getExtensionPoint("ch.elexis.Text"); //$NON-NLS-1$
+					IExtensionPoint exp = exr.getExtensionPoint("ch.elexis.Text"); //$NON-NLS-1$
 					ITextPlugin plugin = null;
 					if (exp != null) {
 						IExtension[] extensions = exp.getExtensions();
 						for (IExtension ex : extensions) {
-							IConfigurationElement[] elems = ex
-									.getConfigurationElements();
+							IConfigurationElement[] elems = ex.getConfigurationElements();
 							for (IConfigurationElement el : elems) {
 								if ((extensionToUse == null)
-										|| el.getAttribute("name").equals(extensionToUse)) { //$NON-NLS-1$
+									|| el.getAttribute("name").equals(extensionToUse)) { //$NON-NLS-1$
 									try {
-										plugin = (ITextPlugin) el
-												.createExecutableExtension("Klasse"); //$NON-NLS-1$
+										plugin =
+											(ITextPlugin) el.createExecutableExtension("Klasse"); //$NON-NLS-1$
 										plugin.setSaveOnFocusLost(true);
 									} catch (Exception e) {
 										ExHandler.handle(e);
@@ -998,36 +960,28 @@ public class FallDetailBlatt2 extends Composite {
 					}
 					if (plugin != null) {
 						SaveCallback saveCallback = new SaveCallback();
-						Composite textContainer = plugin.createContainer(
-								subParent, saveCallback);
+						Composite textContainer = plugin.createContainer(subParent, saveCallback);
 						// boolean ok =
 						// ((ITextPlugin)plugin).loadFromByteArray(val.getBytes(),
 						// false);
-
+						
 						// I can get the actual elexisEditor if really needed...
 						Control[] children = textContainer.getChildren();
 						Composite elexisEditor = null;
 						for (int iii = 0; iii < children.length; iii++) {
 							Control child = children[iii];
-							if (child
-									.getClass()
-									.getName()
-									.equalsIgnoreCase(
-											"ch.elexis.textplugin.ElexisEditor")) { //$NON-NLS-1$
+							if (child.getClass().getName().equalsIgnoreCase(
+								"ch.elexis.textplugin.ElexisEditor")) { //$NON-NLS-1$
 								elexisEditor = (Composite) child;
-								elexisEditor.addFocusListener(new Focusreact(
-										r[0]));
+								elexisEditor.addFocusListener(new Focusreact(r[0]));
 							}
 						}
 						Control[] children2 = elexisEditor.getChildren();
 						Composite page = null;
 						for (int iii = 0; iii < children2.length; iii++) {
 							Control child = children2[iii];
-							if (child
-									.getClass()
-									.getName()
-									.equalsIgnoreCase(
-											"org.eclipse.swt.custom.ScrolledComposite")) { //$NON-NLS-1$
+							if (child.getClass().getName().equalsIgnoreCase(
+								"org.eclipse.swt.custom.ScrolledComposite")) { //$NON-NLS-1$
 								page = (Composite) child;
 								page.addFocusListener(new Focusreact(r[0]));
 							}
@@ -1036,37 +990,29 @@ public class FallDetailBlatt2 extends Composite {
 					}
 				}
 				/*
-				 * // *** styled Text, variant onPositive RichTextViewer final
-				 * RichTextViewer richTextViewer = new RichTextViewer(subParent,
-				 * SWT.BORDER); GridData gridData = new
-				 * GridData(GridData.FILL_BOTH); gridData.horizontalSpan = 1;
+				 * // *** styled Text, variant onPositive RichTextViewer final RichTextViewer
+				 * richTextViewer = new RichTextViewer(subParent, SWT.BORDER); GridData gridData =
+				 * new GridData(GridData.FILL_BOTH); gridData.horizontalSpan = 1;
 				 * //gridData.minimumWidth = 200; gridData.minimumHeight = 200;
-				 * richTextViewer.getControl().setLayoutData(gridData); File
-				 * myFile; try { myFile = File.createTempFile("RTV", ".html");
-				 * myFile.deleteOnExit(); FileOutputStream fout = new
-				 * FileOutputStream(myFile); fout.write(val.getBytes());
-				 * fout.close();
-				 * richTextViewer.getLayerManager().openHTMLFile(myFile
-				 * .getPath()); } catch (IOException e) { e.printStackTrace(); }
-				 * richTextViewer.addRichDocumentListener(new
-				 * IRichDocumentListener(){ public void
+				 * richTextViewer.getControl().setLayoutData(gridData); File myFile; try { myFile =
+				 * File.createTempFile("RTV", ".html"); myFile.deleteOnExit(); FileOutputStream fout
+				 * = new FileOutputStream(myFile); fout.write(val.getBytes()); fout.close();
+				 * richTextViewer.getLayerManager().openHTMLFile(myFile .getPath()); } catch
+				 * (IOException e) { e.printStackTrace(); }
+				 * richTextViewer.addRichDocumentListener(new IRichDocumentListener(){ public void
 				 * documentAboutToBeChanged(DocumentEvent event) { } public void
-				 * documentChanged(DocumentEvent event, RichDocumentChange
-				 * change) { String s
-				 * =richTextViewer.getLayerManager().getSerializedString();
-				 * System.out.println(s); Fall fall = getFall(); if (fall !=
-				 * null) { fall.setInfoString(r[0], s);
+				 * documentChanged(DocumentEvent event, RichDocumentChange change) { String s
+				 * =richTextViewer.getLayerManager().getSerializedString(); System.out.println(s);
+				 * Fall fall = getFall(); if (fall != null) { fall.setInfoString(r[0], s);
 				 * ElexisEventDispatcher.update(fall);
-				 * ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
-				 * } } }); //richTextViewer.getTextWidget().addFocusListener(new
-				 * Focusreact(r[0]));
+				 * ElexisEventDispatcher.fireSelectionEvent(fall.getPatient()); } } });
+				 * //richTextViewer.getTextWidget().addFocusListener(new Focusreact(r[0]));
 				 */
 			} else if (r[1].equals("CS")) { //$NON-NLS-1$  // *** combo, selected value saved as selected string
 				stretchComposite = new Composite(subParent, SWT.NONE);
-				stretchComposite.setBackground(new Color(stretchComposite
-						.getDisplay(), 255, 255, 255));
-				stretchComposite.setLayoutData(SWTHelper.getFillGridData(1,
-						true, 1, false));
+				stretchComposite.setBackground(new Color(stretchComposite.getDisplay(), 255, 255,
+					255));
+				stretchComposite.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 				lReqs.add(stretchComposite);
 				GridLayout radioLayout = new GridLayout(1, false);
 				radioLayout.marginWidth = 0;
@@ -1075,16 +1021,14 @@ public class FallDetailBlatt2 extends Composite {
 				combo.setItems(items);
 				combo.setText(val);
 				combo.setData("kind", "S"); //$NON-NLS-1$ //$NON-NLS-2$
-				combo.setLayoutData(SWTHelper.getFillGridData(1, false, 1,
-						false));
+				combo.setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
 				combo.addFocusListener(new Focusreact(r[0]));
 				dataField = combo;
 			} else if (r[1].equals("CN")) { //$NON-NLS-1$  // *** combo, selected value saved as selected index (zero-based)
 				stretchComposite = new Composite(subParent, SWT.NONE);
-				stretchComposite.setBackground(new Color(stretchComposite
-						.getDisplay(), 255, 255, 255));
-				stretchComposite.setLayoutData(SWTHelper.getFillGridData(1,
-						true, 1, false));
+				stretchComposite.setBackground(new Color(stretchComposite.getDisplay(), 255, 255,
+					255));
+				stretchComposite.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 				GridLayout radioLayout = new GridLayout(1, false);
 				radioLayout.marginWidth = 0;
 				stretchComposite.setLayout(radioLayout);
@@ -1093,25 +1037,23 @@ public class FallDetailBlatt2 extends Composite {
 				if (!val.isEmpty()) {
 					try {
 						combo.setText(items[Integer.parseInt(val)]);
-					} catch (Exception e) {
-					}
+					} catch (Exception e) {}
 				}
 				combo.setData("kind", "N"); //$NON-NLS-1$ //$NON-NLS-2$
-				combo.setLayoutData(SWTHelper.getFillGridData(1, false, 1,
-						false));
+				combo.setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
 				combo.addFocusListener(new Focusreact(r[0]));
 				dataField = combo;
 			} else if (r[1].equals("LS")) { //$NON-NLS-1$  // *** selection list, selection saved as tab-delimited string-list
 				stretchComposite = new Composite(subParent, SWT.NONE);
-				stretchComposite.setBackground(new Color(stretchComposite
-						.getDisplay(), 255, 255, 255));
-				stretchComposite.setLayoutData(SWTHelper.getFillGridData(1,
-						true, 1, false));
+				stretchComposite.setBackground(new Color(stretchComposite.getDisplay(), 255, 255,
+					255));
+				stretchComposite.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 				GridLayout radioLayout = new GridLayout(items.length, false);
 				radioLayout.marginWidth = 0;
 				stretchComposite.setLayout(radioLayout);
-				org.eclipse.swt.widgets.List list = new org.eclipse.swt.widgets.List(
-						stretchComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
+				org.eclipse.swt.widgets.List list =
+					new org.eclipse.swt.widgets.List(stretchComposite, SWT.BORDER | SWT.MULTI
+						| SWT.V_SCROLL);
 				String[] vals = val.split(ITEMDELIMITER);
 				for (int lIx = 0; lIx < items.length; lIx++) {
 					list.add(items[lIx]);
@@ -1122,21 +1064,20 @@ public class FallDetailBlatt2 extends Composite {
 					}
 				}
 				list.setData("kind", "S"); //$NON-NLS-1$ //$NON-NLS-2$
-				list.setLayoutData(SWTHelper
-						.getFillGridData(1, false, 1, false));
+				list.setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
 				list.addFocusListener(new Focusreact(r[0]));
 				dataField = list;
 			} else if (r[1].equals("LN")) { //$NON-NLS-1$  // *** selection list numeric, selection saved as tab-delimited list of selected-item-nums
 				stretchComposite = new Composite(subParent, SWT.NONE);
-				stretchComposite.setBackground(new Color(stretchComposite
-						.getDisplay(), 255, 255, 255));
-				stretchComposite.setLayoutData(SWTHelper.getFillGridData(1,
-						true, 1, false));
+				stretchComposite.setBackground(new Color(stretchComposite.getDisplay(), 255, 255,
+					255));
+				stretchComposite.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 				GridLayout radioLayout = new GridLayout(items.length, false);
 				radioLayout.marginWidth = 0;
 				stretchComposite.setLayout(radioLayout);
-				org.eclipse.swt.widgets.List list = new org.eclipse.swt.widgets.List(
-						stretchComposite, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL);
+				org.eclipse.swt.widgets.List list =
+					new org.eclipse.swt.widgets.List(stretchComposite, SWT.BORDER | SWT.MULTI
+						| SWT.V_SCROLL);
 				String[] vals = val.split(ITEMDELIMITER);
 				for (int lIx = 0; lIx < items.length; lIx++) {
 					list.add(items[lIx]);
@@ -1147,25 +1088,20 @@ public class FallDetailBlatt2 extends Composite {
 					}
 				}
 				list.setData("kind", "N"); //$NON-NLS-1$ //$NON-NLS-2$
-				list.setLayoutData(SWTHelper
-						.getFillGridData(1, false, 1, false));
+				list.setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
 				list.addFocusListener(new Focusreact(r[0]));
 				dataField = list;
 			} else if (r[1].equals("RS")) { // radio group //$NON-NLS-1$  // *** radio group, selection saved string
 				Composite radioComposite = new Composite(subParent, SWT.NONE);
-				radioComposite.setBackground(new Color(radioComposite
-						.getDisplay(), 255, 255, 255));
-				radioComposite.setLayoutData(SWTHelper.getFillGridData(1, true,
-						1, false));
+				radioComposite.setBackground(new Color(radioComposite.getDisplay(), 255, 255, 255));
+				radioComposite.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 				GridLayout radioLayout = new GridLayout(items.length, false);
 				radioLayout.marginWidth = 0;
 				radioComposite.setLayout(radioLayout);
 				Button[] radios = new Button[items.length];
 				for (int rIx = 0; rIx < items.length; rIx++) {
-					radios[rIx] = new Button(radioComposite, SWT.RADIO
-							+ SWT.NONE);
-					radios[rIx].setBackground(new Color(radios[rIx]
-							.getDisplay(), 255, 255, 255));
+					radios[rIx] = new Button(radioComposite, SWT.RADIO + SWT.NONE);
+					radios[rIx].setBackground(new Color(radios[rIx].getDisplay(), 255, 255, 255));
 					radios[rIx].setText(items[rIx]);
 					radios[rIx].setData("index", rIx); //$NON-NLS-1$
 					radios[rIx].setData("kind", "S"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1179,19 +1115,15 @@ public class FallDetailBlatt2 extends Composite {
 				dataField = radioComposite;
 			} else if (r[1].equals("RN")) { // radio group //$NON-NLS-1$  // *** radio group
 				Composite radioComposite = new Composite(subParent, SWT.NONE);
-				radioComposite.setBackground(new Color(radioComposite
-						.getDisplay(), 255, 255, 255));
-				radioComposite.setLayoutData(SWTHelper.getFillGridData(1, true,
-						1, false));
+				radioComposite.setBackground(new Color(radioComposite.getDisplay(), 255, 255, 255));
+				radioComposite.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 				GridLayout radioLayout = new GridLayout(items.length, false);
 				radioLayout.marginWidth = 0;
 				radioComposite.setLayout(radioLayout);
 				Button[] radios = new Button[items.length];
 				for (int rIx = 0; rIx < items.length; rIx++) {
-					radios[rIx] = new Button(radioComposite, SWT.RADIO
-							+ SWT.NONE);
-					radios[rIx].setBackground(new Color(radios[rIx]
-							.getDisplay(), 255, 255, 255));
+					radios[rIx] = new Button(radioComposite, SWT.RADIO + SWT.NONE);
+					radios[rIx].setBackground(new Color(radios[rIx].getDisplay(), 255, 255, 255));
 					radios[rIx].setText(items[rIx]);
 					radios[rIx].setData("index", rIx); //$NON-NLS-1$
 					radios[rIx].setData("kind", "N"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1213,23 +1145,19 @@ public class FallDetailBlatt2 extends Composite {
 				if (r.length < 3)
 					items = StringTool.leer.split(ITEMDELIMITER);
 				if (items.length > 1) {
-					Composite checkBoxComposite = new Composite(subParent,
-							SWT.NONE);
-					checkBoxComposite.setBackground(new Color(checkBoxComposite
-							.getDisplay(), 255, 255, 255));
-					checkBoxComposite.setLayoutData(SWTHelper.getFillGridData(
-							1, true, 1, false));
-					GridLayout checkBoxLayout = new GridLayout(items.length,
-							false);
+					Composite checkBoxComposite = new Composite(subParent, SWT.NONE);
+					checkBoxComposite.setBackground(new Color(checkBoxComposite.getDisplay(), 255,
+						255, 255));
+					checkBoxComposite.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+					GridLayout checkBoxLayout = new GridLayout(items.length, false);
 					checkBoxLayout.marginWidth = 0;
 					checkBoxComposite.setLayout(checkBoxLayout);
 					Button[] checks = new Button[items.length];
 					for (int rIx = 0; rIx < items.length; rIx++) {
 						String val2 = f.getInfoString(r[0] + "_" + items[rIx]); //$NON-NLS-1$
-						checks[rIx] = new Button(checkBoxComposite, SWT.CHECK
-								+ SWT.NONE);
-						checks[rIx].setBackground(new Color(checks[rIx]
-								.getDisplay(), 255, 255, 255));
+						checks[rIx] = new Button(checkBoxComposite, SWT.CHECK + SWT.NONE);
+						checks[rIx]
+							.setBackground(new Color(checks[rIx].getDisplay(), 255, 255, 255));
 						checks[rIx].setText(items[rIx]);
 						if (val2.isEmpty()) {
 							checks[rIx].setSelection(true);
@@ -1241,10 +1169,8 @@ public class FallDetailBlatt2 extends Composite {
 							checks[rIx].setSelection(true);
 							checks[rIx].setGrayed(false);
 						}
-						checks[rIx].addFocusListener(new Focusreact(r[0]
-								+ "_" + items[rIx])); //$NON-NLS-1$
-						checks[rIx]
-								.addSelectionListener(new TristateSelection());
+						checks[rIx].addFocusListener(new Focusreact(r[0] + "_" + items[rIx])); //$NON-NLS-1$
+						checks[rIx].addSelectionListener(new TristateSelection());
 						lReqs.add(checks[rIx]);
 					}
 					dataField = checkBoxComposite;
@@ -1263,44 +1189,43 @@ public class FallDetailBlatt2 extends Composite {
 					}
 					check.addFocusListener(new Focusreact(r[0]));
 					check.addSelectionListener(new TristateSelection());
-					check.setBackground(new Color(check.getDisplay(), 255, 255,
-							255));
-					check.setLayoutData(SWTHelper.getFillGridData(1, true, 1,
-							false));
+					check.setBackground(new Color(check.getDisplay(), 255, 255, 255));
+					check.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 					dataField = check;
 				}
 			} else { // *** not supported...
-				dataField = tk
+				dataField =
+					tk
 						.createLabel(
-								subParent,
-								"FallDetailBlatt2().setExtendedFields(): field type not supported: " + r[1]); //$NON-NLS-1$
+							subParent,
+							"FallDetailBlatt2().setExtendedFields(): field type not supported: " + r[1]); //$NON-NLS-1$
 			}
-
+			
 			// *** add delete button if deletable
 			addDeleteButton(deletable, subParent, r, f);
-
+			
 			// *** add stretchComposite and dataField to controlList
 			if (stretchComposite != null) {
 				lReqs.add(stretchComposite);
 			}
 			lReqs.add(dataField);
 		}
-
+		
 		TimeTool bt = f.getBillingDate();
 		ddc.setDates(bt);
 		form.reflow(true);
 		form.redraw();
-		if(actFall != null && !actFall.equals(ElexisEventDispatcher.getSelected(Fall.class))){
+		if (actFall != null && !actFall.equals(ElexisEventDispatcher.getSelected(Fall.class))) {
 			ElexisEventDispatcher.fireSelectionEvent(actFall);
 		}
 	}
-
+	
 	/**
 	 * create the composite on the right side with two columns
 	 * 
 	 * @return
 	 */
-	protected Composite createRightComposite(boolean deletable) {
+	protected Composite createRightComposite(boolean deletable){
 		// *** if deletable, then just use form.getBody()
 		if (deletable) {
 			Composite tmpComp = new Composite(form.getBody(), SWT.NONE);
@@ -1318,26 +1243,23 @@ public class FallDetailBlatt2 extends Composite {
 			return form.getBody();
 		}
 	}
-
-	protected void addDeleteButton(boolean deletable, Composite parent,
-			String[] r, final Fall f) {
+	
+	protected void addDeleteButton(boolean deletable, Composite parent, String[] r, final Fall f){
 		if (deletable) {
 			Button tmpButton = new Button(parent, SWT.NONE);
-			tmpButton
-					.setText(Messages.getString("FallDetailBlatt2.deleteData")); //$NON-NLS-1$
+			tmpButton.setText(Messages.getString("FallDetailBlatt2.deleteData")); //$NON-NLS-1$
 			tmpButton.setData("KeyForDataToBeDeleted_Marlovits", r[0]); //$NON-NLS-1$
 			tmpButton.addSelectionListener(new SelectionListener() {
 				@Override
-				public void widgetSelected(SelectionEvent e) {
-					String key = (String) e.widget
-							.getData("KeyForDataToBeDeleted_Marlovits"); //$NON-NLS-1$
+				public void widgetSelected(SelectionEvent e){
+					String key = (String) e.widget.getData("KeyForDataToBeDeleted_Marlovits"); //$NON-NLS-1$
 					int savedCacheTime = Fall.getDefaultCacheLifetime();
 					try {
 						Fall.setDefaultCacheLifetime(0);
 						@SuppressWarnings("unchecked")
-						Hashtable<String, String> ht = f
-								.getHashtable("extinfo"); //$NON-NLS-1$
-						if (SWTHelper.askYesNo(
+						Hashtable<String, String> ht = f.getHashtable("extinfo"); //$NON-NLS-1$
+						if (SWTHelper
+							.askYesNo(
 								StringTool.leer,
 								Messages.getString("FallDetailBlatt2.DoYouWantToDeleteThisData") + key + "/" + ht.get(key) + Messages.getString("FallDetailBlatt2.reallyFromTheCase"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							ht.remove(key);
@@ -1348,30 +1270,28 @@ public class FallDetailBlatt2 extends Composite {
 						Fall.setDefaultCacheLifetime(savedCacheTime);
 					}
 				}
-
+				
 				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-				}
+				public void widgetDefaultSelected(SelectionEvent e){}
 			});
 			lReqs.add(tmpButton);
 			lReqs.add(parent);
 		}
 	}
-
-	public Fall getFall() {
+	
+	public Fall getFall(){
 		if (actFall == null) {
 			actFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
 		}
 		return actFall;
 	}
-
+	
 	public class SaveCallback implements ICallback {
 		@Override
-		public void save() {
-		}
-
+		public void save(){}
+		
 		@Override
-		public boolean saveAs() {
+		public boolean saveAs(){
 			return true;
 		}
 	}

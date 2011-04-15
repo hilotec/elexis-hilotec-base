@@ -15,44 +15,46 @@ public class ChoiceDialog extends Dialog {
 	String message;
 	String[] choices;
 	Button[] buttons;
-	int result=-1;
+	int result = -1;
+	
 	public ChoiceDialog(Shell shell, String title, String message, String[] choices){
 		super(shell);
-		this.title=title;
-		this.choices=choices;
-		this.message=message;
-		buttons=new Button[choices.length];
+		this.title = title;
+		this.choices = choices;
+		this.message = message;
+		buttons = new Button[choices.length];
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		Composite ret=(Composite) super.createDialogArea(parent);
-		Label msg=new Label(ret, SWT.NONE);
+	protected Control createDialogArea(Composite parent){
+		Composite ret = (Composite) super.createDialogArea(parent);
+		Label msg = new Label(ret, SWT.NONE);
 		msg.setText(message);
-		for(int i=0;i<choices.length;i++){
-			buttons[i]=new Button(ret,SWT.RADIO);
+		for (int i = 0; i < choices.length; i++) {
+			buttons[i] = new Button(ret, SWT.RADIO);
 			buttons[i].setText(choices[i]);
 			buttons[i].setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		}
 		return ret;
 	}
-
+	
 	@Override
-	protected void okPressed() {
-		for(int i=0;i<buttons.length;i++){
-			if(buttons[i].getSelection()){
-				result=i;
+	protected void okPressed(){
+		for (int i = 0; i < buttons.length; i++) {
+			if (buttons[i].getSelection()) {
+				result = i;
 				break;
 			}
 		}
 		super.okPressed();
 	}
-
+	
 	public int getResult(){
 		return result;
 	}
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		getShell().setText(title);
 	}

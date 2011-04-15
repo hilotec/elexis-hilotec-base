@@ -71,32 +71,31 @@ public class ESRView extends ViewPart implements IActivationListener {
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	ESRLoader esrloader;
-	public final static ACE DISPLAY_ESR = new ACE(AccessControlDefaults.DATA,
-		"ch.elexis.ebanking_ch:DisplayESR", Messages.ESRView_showESRData); //$NON-NLS-1$
+	public final static ACE DISPLAY_ESR =
+		new ACE(AccessControlDefaults.DATA,
+			"ch.elexis.ebanking_ch:DisplayESR", Messages.ESRView_showESRData); //$NON-NLS-1$
 	Query<ESRRecord> qbe;
 	private Action loadESRFile;
 	private ViewMenus menus;
 	private ESRSelectionListener esrl;
 	
-	private final ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(
-		Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
-		
-		@Override
-		public void catchElexisEvent(ElexisEvent ev) {
-			JobPool.getJobPool().activate("ESR-Loader", Job.SHORT); //$NON-NLS-1$
-		}
-		
-	};
-	
+	private final ElexisEventListenerImpl eeli_user =
+		new ElexisEventListenerImpl(Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
+			
+			@Override
+			public void catchElexisEvent(ElexisEvent ev){
+				JobPool.getJobPool().activate("ESR-Loader", Job.SHORT); //$NON-NLS-1$
+			}
+			
+		};
 	
 	@Override
-	public void dispose() {
-		GlobalEventDispatcher.removeActivationListener(this, getViewSite()
-			.getPart());
+	public void dispose(){
+		GlobalEventDispatcher.removeActivationListener(this, getViewSite().getPart());
 	}
 	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		parent.setLayout(new GridLayout());
 		cv = new CommonViewer();
 		qbe = new Query<ESRRecord>(ESRRecord.class);
@@ -106,12 +105,12 @@ public class ESRView extends ViewPart implements IActivationListener {
 			JobPool.getJobPool().addJob(esrloader);
 		}
 		
-		vc = new ViewerConfigurer(new LazyContentProvider(cv, esrloader,
-			DISPLAY_ESR), new ESRLabelProvider(),
-			new DefaultControlFieldProvider(cv, new String[] { "Datum" }),
-			new ViewerConfigurer.DefaultButtonProvider(),
-			new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST,
-				SWT.NONE, cv));
+		vc =
+			new ViewerConfigurer(new LazyContentProvider(cv, esrloader, DISPLAY_ESR),
+				new ESRLabelProvider(), new DefaultControlFieldProvider(cv, new String[] {
+					"Datum"
+				}), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
+					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		cv.create(vc, parent, SWT.None, getViewSite());
 		JobPool.getJobPool().activate("ESR-Loader", Job.SHORT); //$NON-NLS-1$
 		makeActions();
@@ -120,35 +119,34 @@ public class ESRView extends ViewPart implements IActivationListener {
 		menus.createMenu(loadESRFile);
 		esrl = new ESRSelectionListener();
 		cv.addDoubleClickListener(new CommonViewer.DoubleClickListener() {
-			public void doubleClicked(PersistentObject obj, CommonViewer cv) {
-				ESRRecordDialog erd = new ESRRecordDialog(getViewSite()
-					.getShell(), (ESRRecord) obj);
+			public void doubleClicked(PersistentObject obj, CommonViewer cv){
+				ESRRecordDialog erd =
+					new ESRRecordDialog(getViewSite().getShell(), (ESRRecord) obj);
 				if (erd.open() == Dialog.OK) {
 					cv.notify(CommonViewer.Message.update);
 				}
 			}
 			
 		});
-		GlobalEventDispatcher.addActivationListener(this, getViewSite()
-			.getPart());
+		GlobalEventDispatcher.addActivationListener(this, getViewSite().getPart());
 	}
 	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-		
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
 	
-	class ESRLabelProvider extends LabelProvider implements
-	ITableLabelProvider, ITableColorProvider {
+	class ESRLabelProvider extends LabelProvider implements ITableLabelProvider,
+			ITableColorProvider {
 		DecimalFormat df = new DecimalFormat("###0.00"); //$NON-NLS-1$
 		
-		public Image getColumnImage(Object element, int columnIndex) {
+		public Image getColumnImage(Object element, int columnIndex){
 			// TODO Auto-generated method stub
 			return null;
 		}
 		
-		public String getColumnText(Object element, int columnIndex) {
+		public String getColumnText(Object element, int columnIndex){
 			if (element instanceof ESRRecord) {
 				ESRRecord rec = (ESRRecord) element;
 				if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
@@ -162,12 +160,9 @@ public class ESRView extends ViewPart implements IActivationListener {
 					sb.append(rn.getNr()).append(": "); //$NON-NLS-1$
 				}
 				String betrag = rec.getBetrag().getAmountAsString();
-				sb
-				.append(rec.getEinlesedatatum())
-				.append("/").append(rec.getVerarbeitungsdatum()) //$NON-NLS-1$
-				.append("/").append(rec.getValuta()).append(" - ").append( //$NON-NLS-1$ //$NON-NLS-2$
-					rec.getPatient().getLabel())
-					.append(" - ").append(betrag); //$NON-NLS-1$
+				sb.append(rec.getEinlesedatatum()).append("/").append(rec.getVerarbeitungsdatum()) //$NON-NLS-1$
+					.append("/").append(rec.getValuta()).append(" - ").append( //$NON-NLS-1$ //$NON-NLS-2$
+						rec.getPatient().getLabel()).append(" - ").append(betrag); //$NON-NLS-1$
 				String dat = rec.getGebucht();
 				if (StringTool.isNothing(dat)) {
 					sb.append(Messages.ESRView_not_booked);
@@ -180,11 +175,11 @@ public class ESRView extends ViewPart implements IActivationListener {
 			return null;
 		}
 		
-		public Color getForeground(Object element, int columnIndex) {
+		public Color getForeground(Object element, int columnIndex){
 			return Desk.getDisplay().getSystemColor(SWT.COLOR_BLACK);
 		}
 		
-		public Color getBackground(Object element, int columnIndex) {
+		public Color getBackground(Object element, int columnIndex){
 			if (element instanceof ESRRecord) {
 				ESRRecord rec = (ESRRecord) element;
 				if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
@@ -207,14 +202,14 @@ public class ESRView extends ViewPart implements IActivationListener {
 	class ESRLoader extends AbstractDataLoaderJob {
 		Query<ESRRecord> qbe;
 		
-		ESRLoader(Query<ESRRecord> qbe) {
+		ESRLoader(Query<ESRRecord> qbe){
 			super("ESR-Loader", qbe, new String[] { //$NON-NLS-1$
-			"Datum" }); //$NON-NLS-1$
+					"Datum"}); //$NON-NLS-1$
 			this.qbe = qbe;
 		}
 		
 		@Override
-		public IStatus execute(IProgressMonitor monitor) {
+		public IStatus execute(IProgressMonitor monitor){
 			monitor.beginTask(Messages.ESRView_loadESR, SWT.INDETERMINATE);
 			
 			qbe.clear();
@@ -232,7 +227,8 @@ public class ESRView extends ViewPart implements IActivationListener {
 			}
 			
 			vc.getControlFieldProvider().setQuery(qbe);
-			qbe.orderBy(true, new String[] { "Datum", "Gebucht" //$NON-NLS-1$ //$NON-NLS-2$
+			qbe.orderBy(true, new String[] {
+				"Datum", "Gebucht" //$NON-NLS-1$ //$NON-NLS-2$
 			});
 			List<ESRRecord> list = qbe.execute();
 			result = list.toArray();
@@ -241,15 +237,14 @@ public class ESRView extends ViewPart implements IActivationListener {
 		}
 		
 		@Override
-		public int getSize() {
-			return PersistentObject.getConnection().queryInt(
-			"SELECT COUNT(0) FROM ESRRECORDS"); //$NON-NLS-1$
+		public int getSize(){
+			return PersistentObject.getConnection().queryInt("SELECT COUNT(0) FROM ESRRECORDS"); //$NON-NLS-1$
 			
 		}
 		
 	}
 	
-	private void makeActions() {
+	private void makeActions(){
 		loadESRFile = new Action(Messages.ESRView_read_ESR) {
 			{
 				setToolTipText(Messages.ESRView_read_ESR_explain);
@@ -257,131 +252,88 @@ public class ESRView extends ViewPart implements IActivationListener {
 			}
 			
 			@Override
-			public void run() {
-				FileDialog fld = new FileDialog(getViewSite().getShell(),
-					SWT.OPEN);
+			public void run(){
+				FileDialog fld = new FileDialog(getViewSite().getShell(), SWT.OPEN);
 				fld.setText(Messages.ESRView_selectESR);
 				final String filename = fld.open();
 				if (filename != null) {
 					final ESRFile esrf = new ESRFile();
 					final File file = new File(filename);
 					try {
-						PlatformUI.getWorkbench().getProgressService()
-						.busyCursorWhile(new IRunnableWithProgress() {
-							
-							public void run(IProgressMonitor monitor)
-							throws InvocationTargetException,
-							InterruptedException {
-								monitor.beginTask(
-									Messages.ESRView_reading_ESR,
-									(int) (file.length() / 25));
-								Result<List<ESRRecord>> result = esrf
-								.read(file, monitor);
-								if (result.isOK()) {
-									for (ESRRecord rec : result.get()) {
-										monitor.worked(1);
-										if (rec.getRejectCode().equals(
-											ESRRecord.REJECT.OK)) {
-											if (rec
-													.getTyp()
-													.equals(
-														ESRRecord.MODE.Summenrecord)) {
-												Hub.log
-												.log(
-													Messages.ESRView_ESR_finished
-													+ rec
-													.getBetrag(),
-													Log.INFOS);
-											} else if ((rec.getTyp()
+						PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
+							new IRunnableWithProgress() {
+								
+								public void run(IProgressMonitor monitor)
+									throws InvocationTargetException, InterruptedException{
+									monitor.beginTask(Messages.ESRView_reading_ESR, (int) (file
+										.length() / 25));
+									Result<List<ESRRecord>> result = esrf.read(file, monitor);
+									if (result.isOK()) {
+										for (ESRRecord rec : result.get()) {
+											monitor.worked(1);
+											if (rec.getRejectCode().equals(ESRRecord.REJECT.OK)) {
+												if (rec.getTyp()
+													.equals(ESRRecord.MODE.Summenrecord)) {
+													Hub.log.log(Messages.ESRView_ESR_finished
+														+ rec.getBetrag(), Log.INFOS);
+												} else if ((rec.getTyp()
 													.equals(ESRRecord.MODE.Storno_edv))
 													|| (rec.getTyp()
-															.equals(ESRRecord.MODE.Storno_Schalter))) {
-												Rechnung rn = rec
-												.getRechnung();
-												Money zahlung = rec
-												.getBetrag()
-												.negate();
-												rn
-												.addZahlung(
-													zahlung,
-													Messages.ESRView_storno_for
-													+ rn
-													.getNr()
-													+ " / " //$NON-NLS-1$
-													+ rec
-													.getPatient()
-													.getPatCode(),
-													new TimeTool(
-														rec
-														.getValuta()));
-												rec.setGebucht(null);
-											} else {
-												Rechnung rn = rec
-												.getRechnung();
-												if (rn.getStatus() == RnStatus.BEZAHLT) {
-													if (SWTHelper
-															.askYesNo(
-																Messages.ESRView_paid,
-																Messages.ESRView_rechnung
-																+ rn
-																.getNr()
+														.equals(ESRRecord.MODE.Storno_Schalter))) {
+													Rechnung rn = rec.getRechnung();
+													Money zahlung = rec.getBetrag().negate();
+													rn.addZahlung(zahlung,
+														Messages.ESRView_storno_for + rn.getNr()
+															+ " / " //$NON-NLS-1$
+															+ rec.getPatient().getPatCode(),
+														new TimeTool(rec.getValuta()));
+													rec.setGebucht(null);
+												} else {
+													Rechnung rn = rec.getRechnung();
+													if (rn.getStatus() == RnStatus.BEZAHLT) {
+														if (SWTHelper.askYesNo(
+															Messages.ESRView_paid,
+															Messages.ESRView_rechnung + rn.getNr()
 																+ Messages.ESRView_ispaid) == false) {
-														continue;
+															continue;
+														}
 													}
-												}
-												Money zahlung = rec
-												.getBetrag();
-												Money offen = rn
-												.getOffenerBetrag();
-												if (zahlung
-														.isMoreThan(offen)) {
-													if (SWTHelper
-															.askYesNo(
-																Messages.ESRView_toohigh,
-																Messages.ESRView_paymentfor
-																+ rn
-																.getNr()
+													Money zahlung = rec.getBetrag();
+													Money offen = rn.getOffenerBetrag();
+													if (zahlung.isMoreThan(offen)) {
+														if (SWTHelper.askYesNo(
+															Messages.ESRView_toohigh,
+															Messages.ESRView_paymentfor
+																+ rn.getNr()
 																+ Messages.ESRView_morethan) == false) {
-														continue;
+															continue;
+														}
 													}
+													
+													rn.addZahlung(zahlung, Messages.ESRView_vesrfor
+														+ rn.getNr() + " / " //$NON-NLS-1$
+														+ rec.getPatient().getPatCode(),
+														new TimeTool(rec.getValuta()));
+													rec.setGebucht(null);
 												}
-												
-												rn
-												.addZahlung(
-													zahlung,
-													Messages.ESRView_vesrfor
-													+ rn
-													.getNr()
-													+ " / " //$NON-NLS-1$
-													+ rec
-													.getPatient()
-													.getPatCode(),
-													new TimeTool(
-														rec
-														.getValuta()));
-												rec.setGebucht(null);
 											}
 										}
+										monitor.done();
+									} else {
+										ResultAdapter.displayResult(result,
+											Messages.ESRView_errorESR);
 									}
-									monitor.done();
-								} else {
-									ResultAdapter.displayResult(result,
-										Messages.ESRView_errorESR);
 								}
-							}
-							
-						});
+								
+							});
 					} catch (InvocationTargetException e) {
 						ExHandler.handle(e);
 						SWTHelper.showError(Messages.ESRView_errorESR2,
-							Messages.ESRView_errrorESR2,
-							Messages.ESRView_couldnotread + e.getMessage()
-							+ e.getCause().getMessage());
+							Messages.ESRView_errrorESR2, Messages.ESRView_couldnotread
+								+ e.getMessage() + e.getCause().getMessage());
 					} catch (InterruptedException e) {
 						ExHandler.handle(e);
-						SWTHelper
-						.showError(
-							"ESR interrupted", Messages.ESRView_interrupted, e //$NON-NLS-1$
+						SWTHelper.showError("ESR interrupted", Messages.ESRView_interrupted, e //$NON-NLS-1$
 							.getMessage());
 					}
 					
@@ -392,16 +344,16 @@ public class ESRView extends ViewPart implements IActivationListener {
 		};
 	}
 	
-	public void activation(boolean mode) {
-		// TODO Auto-generated method stub
-		
+	public void activation(boolean mode){
+	// TODO Auto-generated method stub
+	
 	}
 	
-	public void visible(boolean mode) {
+	public void visible(boolean mode){
 		if (mode) {
-			ElexisEventDispatcher.getInstance().addListeners(eeli_user,esrl);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_user, esrl);
 		} else {
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_user,esrl);
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_user, esrl);
 		}
 		esrl.activate(mode);
 	}

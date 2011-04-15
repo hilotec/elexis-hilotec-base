@@ -22,34 +22,36 @@ import ch.elexis.preferences.SettingsPreferenceStore;
 
 /**
  * Einstellungen zur Verknüpfung externen Dokumenten
+ * 
  * @author Daniel Lutz
  */
-public class ExterneDokumente extends FieldEditorPreferencePage implements
-		IWorkbenchPreferencePage {
-
-	public ExterneDokumente() {
+public class ExterneDokumente extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+	
+	public ExterneDokumente(){
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(Hub.localCfg));
 		setDescription("Externe Dokumente");
 	}
-
+	
 	@Override
-	protected void createFieldEditors() {
+	protected void createFieldEditors(){
 		DirectoryFieldEditor dfe;
 		
-		dfe=new DirectoryFieldEditor(PreferenceConstants.BASIS_PFAD,
+		dfe =
+			new DirectoryFieldEditor(PreferenceConstants.BASIS_PFAD,
 				"Verzeichnis für externe Dokumente", getFieldEditorParent());
 		addField(dfe);
 		
-		dfe=new DirectoryFieldEditor(PreferenceConstants.BASIS_PFAD2,
+		dfe =
+			new DirectoryFieldEditor(PreferenceConstants.BASIS_PFAD2,
 				"Verzeichnis für externe Dokumente", getFieldEditorParent());
 		addField(dfe);
-
-		dfe=new DirectoryFieldEditor(PreferenceConstants.BASIS_PFAD3,
+		
+		dfe =
+			new DirectoryFieldEditor(PreferenceConstants.BASIS_PFAD3,
 				"Verzeichnis für externe Dokumente", getFieldEditorParent());
 		addField(dfe);
 	}
-
-	public void init(IWorkbench workbench) {
-	}
+	
+	public void init(IWorkbench workbench){}
 }

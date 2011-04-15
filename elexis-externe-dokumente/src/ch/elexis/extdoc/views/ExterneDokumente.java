@@ -115,7 +115,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	/*
 	 * private String actPath = null;
 	 */
-	
+
 	// work-around to get the job
 	// TODO cleaner design
 	BackgroundJob globalJob;
@@ -127,12 +127,12 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	
 	private final ElexisEventListenerImpl eeli_pat =
 		new ElexisEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED) {
-		@Override
-		public void runInUi(ElexisEvent ev){
-			actPatient = (Patient) ev.getObject();
-			refresh();
-		}
-	};
+			@Override
+			public void runInUi(ElexisEvent ev){
+				actPatient = (Patient) ev.getObject();
+				refresh();
+			}
+		};
 	
 	class DataLoader extends BackgroundJob {
 		public DataLoader(String jobName){
@@ -442,7 +442,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		 * pathCombo.addSelectionListener(new SelectionAdapter() { public void
 		 * widgetSelected(SelectionEvent e) { actPath = pathCombo.getText(); refresh(); } });
 		 */
-		
+
 		// table
 		
 		viewer =
@@ -463,7 +463,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		tc.setWidth(120);
 		tc.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event){
-				// TODO sort by Datum
+			// TODO sort by Datum
 			}
 		});
 		
@@ -472,7 +472,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		tc.setWidth(400);
 		tc.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event){
-				// TODO sort by Name
+			// TODO sort by Name
 			}
 		});
 		
@@ -623,7 +623,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		};
 		verifyAction.setText("Dateien überprüfen");
 		verifyAction
-		.setToolTipText("Überprüfen, ob alle Dateien einem Patienten zugeordnet werden können");
+			.setToolTipText("Überprüfen, ob alle Dateien einem Patienten zugeordnet werden können");
 	}
 	
 	private void hookDoubleClickAction(){
@@ -657,7 +657,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	 * private void showMessage(String message) { MessageDialog.openInformation(
 	 * viewer.getControl().getShell(), "Externe Dokumente", message); }
 	 */
-	
+
 	private void openFileEditorDialog(File file){
 		FileEditDialog fed = new FileEditDialog(getViewSite().getShell(), file);
 		fed.open();
@@ -691,7 +691,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	 * Die View wird aktiviert (z.B angeklickt oder mit Tab)
 	 */
 	public void activation(boolean mode){
-		/* Interessiert uns nicht */
+	/* Interessiert uns nicht */
 	}
 	
 	/**

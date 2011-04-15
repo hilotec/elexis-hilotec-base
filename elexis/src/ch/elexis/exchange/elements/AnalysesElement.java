@@ -13,7 +13,6 @@
 
 package ch.elexis.exchange.elements;
 
-
 public class AnalysesElement extends XChangeElement {
 	
 	@Override

@@ -27,10 +27,12 @@ import ch.elexis.admin.IACLContributor;
 public class ACLContributor implements IACLContributor {
 	/** The right to use the agenda at all */
 	public static final ACE ACE_AGENDA = new ACE(ACE.ACE_ROOT, Activator.PLUGIN_ID, "Agenda"); //$NON-NLS-1$
-	public static final ACE USE_AGENDA = new ACE(ACE_AGENDA, "user", Messages.ACLContributor_acl_use); //$NON-NLS-1$
+	public static final ACE USE_AGENDA =
+		new ACE(ACE_AGENDA, "user", Messages.ACLContributor_acl_use); //$NON-NLS-1$
 	
 	/** administrative rights to the agenda */
-	public static final ACE ADMIN_AGENDA = new ACE(ACE_AGENDA, "admin", Messages.ACLContributor_acl_administer); //$NON-NLS-1$
+	public static final ACE ADMIN_AGENDA =
+		new ACE(ACE_AGENDA, "admin", Messages.ACLContributor_acl_administer); //$NON-NLS-1$
 	
 	/** The right to see appointments */
 	public static final ACE DISPLAY_APPOINTMENTS =
@@ -55,7 +57,7 @@ public class ACLContributor implements IACLContributor {
 	 */
 	public ACE[] getACL(){
 		return new ACE[] {
-			ACE_AGENDA,USE_AGENDA, ADMIN_AGENDA, DISPLAY_APPOINTMENTS, CHANGE_APPOINTMENTS,
+			ACE_AGENDA, USE_AGENDA, ADMIN_AGENDA, DISPLAY_APPOINTMENTS, CHANGE_APPOINTMENTS,
 			DELETE_APPOINTMENTS, CHANGE_DAYSETTINGS, CHANGE_APPLOCK
 		};
 	}
@@ -63,7 +65,7 @@ public class ACLContributor implements IACLContributor {
 	/**
 	 * react on errors reserving rights
 	 */
-	public ACE[] reject(final ACE[] acl ){
+	public ACE[] reject(final ACE[] acl){
 		return null;
 	}
 	

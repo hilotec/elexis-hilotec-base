@@ -21,34 +21,38 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
 
 public class BAGMediFactory extends PersistentObjectFactory {
-
+	
 	@Override
-	public PersistentObject createFromString(final String code) {
-	    try{
-	        String[] ci=code.split("::");
-	        Class clazz=Class.forName(ci[0]);
-	        Method load=clazz.getMethod("load",new Class[]{String.class});
-	        return  (PersistentObject)(load.invoke(null,new Object[]{ci[1]}));
-	    }catch(Exception ex){
-	    	
-	    	//ExHandler.handle(ex);
-	    	return null;
-	    
+	public PersistentObject createFromString(final String code){
+		try {
+			String[] ci = code.split("::");
+			Class clazz = Class.forName(ci[0]);
+			Method load = clazz.getMethod("load", new Class[] {
+				String.class
+			});
+			return (PersistentObject) (load.invoke(null, new Object[] {
+				ci[1]
+			}));
+		} catch (Exception ex) {
+			
+			// ExHandler.handle(ex);
+			return null;
+			
 		}
 	}
-
+	
 	@Override
-	protected PersistentObject doCreateTemplate(final Class typ) {
+	protected PersistentObject doCreateTemplate(final Class typ){
 		try {
-			return (PersistentObject)typ.newInstance();
+			return (PersistentObject) typ.newInstance();
 		} catch (Exception e) {
 			// ExHandler.handle(e);
 			return null;
 		}
-			
+		
 	}
-
+	
 	public static ImageDescriptor loadImageDescriptor(final String path){
-        return AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.medikamente.bag", path); 
+		return AbstractUIPlugin.imageDescriptorFromPlugin("ch.elexis.medikamente.bag", path);
 	}
 }

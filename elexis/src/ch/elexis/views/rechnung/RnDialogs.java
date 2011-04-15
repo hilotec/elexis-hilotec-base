@@ -57,7 +57,7 @@ public class RnDialogs {
 		
 		public GebuehrHinzuDialog(Shell shell, Rechnung r) throws ElexisException{
 			super(shell);
-			if(r.getStatus()==RnStatus.STORNIERT){
+			if (r.getStatus() == RnStatus.STORNIERT) {
 				throw new ElexisException(getClass(), RECHNUNG_IST_STORNIERT, ERR_STORNO);
 			}
 			rn = r;
@@ -99,20 +99,18 @@ public class RnDialogs {
 			Money ret = MoneyInput.getFromTextField(amount);
 			if (ret != null) {
 				ret = ret.multiply(-1.0);
-				rn.addZahlung(ret, bemerkung.getText(),new TimeTool(dp.getDate().getTime()));
+				rn.addZahlung(ret, bemerkung.getText(), new TimeTool(dp.getDate().getTime()));
 				super.okPressed();
 			} else {
 				ErrorDialog
-				.openError(
-					getShell(),
-					Messages.getString("RnDialogs.amountInvalid"), Messages.getString("RnDialogs.invalidFormat"), //$NON-NLS-1$ //$NON-NLS-2$
-					new Status(1, "ch.elexis", 1, "CurrencyFormat", null)); //$NON-NLS-1$ //$NON-NLS-2$
+					.openError(
+						getShell(),
+						Messages.getString("RnDialogs.amountInvalid"), Messages.getString("RnDialogs.invalidFormat"), //$NON-NLS-1$ //$NON-NLS-2$
+						new Status(1, "ch.elexis", 1, "CurrencyFormat", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 		}
 	}
-	
-	
 	
 	public static class BuchungHinzuDialog extends TitleAreaDialog {
 		
@@ -122,7 +120,7 @@ public class RnDialogs {
 		
 		public BuchungHinzuDialog(Shell shell, Rechnung r) throws ElexisException{
 			super(shell);
-			if(r.getStatus()==RnStatus.STORNIERT){
+			if (r.getStatus() == RnStatus.STORNIERT) {
 				throw new ElexisException(getClass(), RECHNUNG_IST_STORNIERT, ERR_STORNO);
 			}
 			rn = r;
@@ -163,14 +161,14 @@ public class RnDialogs {
 			// Number num=df.parse(amount.getText());
 			Money ret = MoneyInput.getFromTextField(amount);
 			if (ret != null) {
-				rn.addZahlung(ret, bemerkung.getText(),new TimeTool(dp.getDate().getTime()));
+				rn.addZahlung(ret, bemerkung.getText(), new TimeTool(dp.getDate().getTime()));
 				super.okPressed();
 			} else {
 				ErrorDialog
-				.openError(
-					getShell(),
-					Messages.getString("RnDialogs.amountInvalid"), Messages.getString("RnDialogs.invalidFormat"), //$NON-NLS-1$ //$NON-NLS-2$
-					new Status(1, "ch.elexis", 1, "CurrencyFormat", null)); //$NON-NLS-1$ //$NON-NLS-2$
+					.openError(
+						getShell(),
+						Messages.getString("RnDialogs.amountInvalid"), Messages.getString("RnDialogs.invalidFormat"), //$NON-NLS-1$ //$NON-NLS-2$
+						new Status(1, "ch.elexis", 1, "CurrencyFormat", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			
 		}
@@ -198,8 +196,8 @@ public class RnDialogs {
 			cbStates.setVisibleItemCount(RnStatus.getStatusTexts().length);
 			cbStates.select(rn.getStatus());
 			cbStates.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			new Label(ret, SWT.WRAP)
-			.setText(Messages.getString("RnDialogs.warningDontChangeManually")); //$NON-NLS-1$
+			new Label(ret, SWT.WRAP).setText(Messages
+				.getString("RnDialogs.warningDontChangeManually")); //$NON-NLS-1$
 			return ret;
 		}
 		

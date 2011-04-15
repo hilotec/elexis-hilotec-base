@@ -20,19 +20,19 @@ import org.eclipse.jface.viewers.IFilter;
 import ch.elexis.data.PersistentObject;
 
 public class ObjectFilterRegistry {
-
+	
 	private static ObjectFilterRegistry theInstance;
 	private final Hashtable<Class<? extends PersistentObject>, IObjectFilterProvider> hash =
 		new Hashtable<Class<? extends PersistentObject>, IObjectFilterProvider>();
-
+	
 	private ObjectFilterRegistry(){}
+	
 	public static ObjectFilterRegistry getInstance(){
-		if(theInstance==null){
-			theInstance=new ObjectFilterRegistry();
+		if (theInstance == null) {
+			theInstance = new ObjectFilterRegistry();
 		}
 		return theInstance;
 	}
-	
 	
 	public synchronized void registerObjectFilter(final Class<? extends PersistentObject> clazz,
 		final IObjectFilterProvider provider){

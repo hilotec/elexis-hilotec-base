@@ -22,37 +22,35 @@ import ch.elexis.Hub;
 import ch.elexis.agenda.Messages;
 import ch.elexis.preferences.SettingsPreferenceStore;
 
-public class AgendaAnzeige extends FieldEditorPreferencePage implements
-		IWorkbenchPreferencePage {
+public class AgendaAnzeige extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
 	SettingsPreferenceStore prefs = new SettingsPreferenceStore(Hub.userCfg);
-	 
-    public AgendaAnzeige() {
-        super(GRID);
-        
-        prefs.setDefault(PreferenceConstants.AG_SHOW_REASON, false);
-
-        setPreferenceStore(prefs);
-
-        setDescription(Messages.AgendaAnzeige_options); 
-    }
-
-     @Override
-    protected void createFieldEditors() {
-    	 addField(new BooleanFieldEditor(PreferenceConstants.AG_SHOW_REASON,
-    			 Messages.AgendaAnzeige_showReason, getFieldEditorParent()));
-    }
-     
-    @Override
-	public boolean performOk() {
-    	prefs.flush();
-    	return super.performOk();
+	
+	public AgendaAnzeige(){
+		super(GRID);
+		
+		prefs.setDefault(PreferenceConstants.AG_SHOW_REASON, false);
+		
+		setPreferenceStore(prefs);
+		
+		setDescription(Messages.AgendaAnzeige_options);
 	}
-
-	public void init(IWorkbench workbench)
-    {
-        // TODO Auto-generated method stub
-
-    }
-
+	
+	@Override
+	protected void createFieldEditors(){
+		addField(new BooleanFieldEditor(PreferenceConstants.AG_SHOW_REASON,
+			Messages.AgendaAnzeige_showReason, getFieldEditorParent()));
+	}
+	
+	@Override
+	public boolean performOk(){
+		prefs.flush();
+		return super.performOk();
+	}
+	
+	public void init(IWorkbench workbench){
+	// TODO Auto-generated method stub
+	
+	}
+	
 }

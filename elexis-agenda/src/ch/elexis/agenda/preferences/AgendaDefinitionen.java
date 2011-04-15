@@ -26,64 +26,58 @@ import ch.elexis.preferences.inputs.MultilineFieldEditor;
 import ch.rgw.tools.StringTool;
 
 public class AgendaDefinitionen extends FieldEditorPreferencePage implements
-        IWorkbenchPreferencePage {
-	 SettingsPreferenceStore prefs=new SettingsPreferenceStore(Hub.globalCfg);
-    public AgendaDefinitionen() {
-        super(GRID);
-       
-        prefs.setDefault(PreferenceConstants.AG_TERMINTYPEN, StringTool.join(Termin.TerminTypes,",")); //$NON-NLS-1$
-        prefs.setDefault(PreferenceConstants.AG_TERMINSTATUS, StringTool.join(Termin.TerminStatus,",")); //$NON-NLS-1$
-        setPreferenceStore(prefs);
-        setDescription(Messages.AgendaDefinitionen_defForAgenda); 
-    }
-
-     @Override
-    protected void createFieldEditors()
-    {
-    	 addField(new MultilineFieldEditor(PreferenceConstants.AG_BEREICHE,
-    			 Messages.AgendaDefinitionen_shortCutsForBer,
-    			 5,SWT.V_SCROLL,true,
-    			 getFieldEditorParent()));
-    	 
-    	 addField(new MultilineFieldEditor(PreferenceConstants.AG_TERMINTYPEN,
-    			 Messages.AgendaDefinitionen_enterTypes,
-    			 5,SWT.V_SCROLL,true,
-    			 getFieldEditorParent()));
-    	 
-    	 addField(new MultilineFieldEditor(PreferenceConstants.AG_TERMINSTATUS,
-    			 Messages.AgendaDefinitionen_states,
-    			 5,SWT.V_SCROLL,true,
-    			 getFieldEditorParent()));
-    	 /*
-    	addField(new StringListFieldEditor(PreferenceConstants.AG_BEREICHE,
-    			Messages.AgendaDefinitionen_shortCutsForBer, 
-    			Messages.AgendaDefinitionen_enterNames + 
-    			Messages.AgendaDefinitionen_5, 
-    			Messages.AgendaDefinitionen_ranges,getFieldEditorParent())); 
-    	
-        addField(new StringListFieldEditor(PreferenceConstants.AG_TERMINTYPEN,
-        		Messages.AgendaDefinitionen_enterTypes, 
-                Messages.AgendaDefinitionen_enterTypeList, 
-                Messages.AgendaDefinitionen_types,getFieldEditorParent())); 
-        
-        addField(new StringListFieldEditor(PreferenceConstants.AG_TERMINSTATUS,
-        		Messages.AgendaDefinitionen_states,Messages.AgendaDefinitionen_enterStates+ 
-        		Messages.AgendaDefinitionen_12,Messages.AgendaDefinitionen_state ,getFieldEditorParent()));
-        		*/ 
-
-    }
-
-     
-    @Override
-	public boolean performOk() {
-    	prefs.flush();
-    	return super.performOk();
+		IWorkbenchPreferencePage {
+	SettingsPreferenceStore prefs = new SettingsPreferenceStore(Hub.globalCfg);
+	
+	public AgendaDefinitionen(){
+		super(GRID);
+		
+		prefs.setDefault(PreferenceConstants.AG_TERMINTYPEN, StringTool.join(Termin.TerminTypes,
+			",")); //$NON-NLS-1$
+		prefs.setDefault(PreferenceConstants.AG_TERMINSTATUS, StringTool.join(Termin.TerminStatus,
+			",")); //$NON-NLS-1$
+		setPreferenceStore(prefs);
+		setDescription(Messages.AgendaDefinitionen_defForAgenda);
 	}
+	
+	@Override
+	protected void createFieldEditors(){
+		addField(new MultilineFieldEditor(PreferenceConstants.AG_BEREICHE,
+			Messages.AgendaDefinitionen_shortCutsForBer, 5, SWT.V_SCROLL, true,
+			getFieldEditorParent()));
+		
+		addField(new MultilineFieldEditor(PreferenceConstants.AG_TERMINTYPEN,
+			Messages.AgendaDefinitionen_enterTypes, 5, SWT.V_SCROLL, true, getFieldEditorParent()));
+		
+		addField(new MultilineFieldEditor(PreferenceConstants.AG_TERMINSTATUS,
+			Messages.AgendaDefinitionen_states, 5, SWT.V_SCROLL, true, getFieldEditorParent()));
+		/*
+		 * addField(new StringListFieldEditor(PreferenceConstants.AG_BEREICHE,
+		 * Messages.AgendaDefinitionen_shortCutsForBer, Messages.AgendaDefinitionen_enterNames +
+		 * Messages.AgendaDefinitionen_5,
+		 * Messages.AgendaDefinitionen_ranges,getFieldEditorParent()));
+		 * 
+		 * addField(new StringListFieldEditor(PreferenceConstants.AG_TERMINTYPEN,
+		 * Messages.AgendaDefinitionen_enterTypes, Messages.AgendaDefinitionen_enterTypeList,
+		 * Messages.AgendaDefinitionen_types,getFieldEditorParent()));
+		 * 
+		 * addField(new StringListFieldEditor(PreferenceConstants.AG_TERMINSTATUS,
+		 * Messages.AgendaDefinitionen_states,Messages.AgendaDefinitionen_enterStates+
+		 * Messages.AgendaDefinitionen_12,Messages.AgendaDefinitionen_state
+		 * ,getFieldEditorParent()));
+		 */
 
-	public void init(IWorkbench workbench)
-    {
-        // TODO Auto-generated method stub
-
-    }
-
+	}
+	
+	@Override
+	public boolean performOk(){
+		prefs.flush();
+		return super.performOk();
+	}
+	
+	public void init(IWorkbench workbench){
+	// TODO Auto-generated method stub
+	
+	}
+	
 }

@@ -30,46 +30,48 @@ import ch.elexis.util.SWTHelper;
 import ch.elexis.util.LabeledInputField.AutoForm;
 import ch.elexis.views.artikel.Artikeldetail;
 
-public class ArtikelDetailDialog extends TitleAreaDialog{
+public class ArtikelDetailDialog extends TitleAreaDialog {
 	Artikel art;
-	public ArtikelDetailDialog(Shell shell,PersistentObject o){
+	
+	public ArtikelDetailDialog(Shell shell, PersistentObject o){
 		super(shell);
-		art=(Artikel)o;
+		art = (Artikel) o;
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		ScrolledComposite ret=new ScrolledComposite(parent,SWT.V_SCROLL);
-		Composite cnt=new Composite(ret,SWT.NONE);
+	protected Control createDialogArea(Composite parent){
+		ScrolledComposite ret = new ScrolledComposite(parent, SWT.V_SCROLL);
+		Composite cnt = new Composite(ret, SWT.NONE);
 		ret.setContent(cnt);
 		ret.setExpandHorizontal(true);
 		ret.setExpandVertical(true);
-		ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
+		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		cnt.setLayout(new FillLayout());
-		AutoForm tblArtikel = new LabeledInputField.AutoForm(cnt,Artikeldetail.getFieldDefs(parent.getShell()));
+		AutoForm tblArtikel =
+			new LabeledInputField.AutoForm(cnt, Artikeldetail.getFieldDefs(parent.getShell()));
 		tblArtikel.reload(art);
-		ret.setMinSize(cnt.computeSize(SWT.DEFAULT,SWT.DEFAULT));
+		ret.setMinSize(cnt.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		return ret;
 	}
 	
 	@Override
-	protected Point getInitialSize() {
-		Point orig=super.getInitialSize();
-		orig.y+=orig.y>>2;
+	protected Point getInitialSize(){
+		Point orig = super.getInitialSize();
+		orig.y += orig.y >> 2;
 		return orig;
 	}
-
+	
 	@Override
-	public void create() {
-		setShellStyle(getShellStyle()|SWT.RESIZE);
+	public void create(){
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		super.create();
 		getShell().setText(Messages.getString("ArtikelDetailDialog.articleDetail")); //$NON-NLS-1$
 		setTitle(art.getLabel());
 		setMessage(Messages.getString("ArtikelDetailDialog.enterArticleDetails")); //$NON-NLS-1$
 	}
-
+	
 	@Override
-	protected void okPressed() {
+	protected void okPressed(){
 		ElexisEventDispatcher.reload(Artikel.class);
 		super.okPressed();
 	}

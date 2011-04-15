@@ -62,33 +62,34 @@ public class TemplateDrucker {
 			tpw = (TemplatePrintView) page.showView(TemplatePrintView.ID);
 			progressService.runInUI(PlatformUI.getWorkbench().getProgressService(),
 				new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor){
-					monitor.beginTask(
-						Messages.getString("TemplateDrucker.printing") + template + "...", 1); //$NON-NLS-1$
-					
-					Patient actPatient =
-						(Patient) ElexisEventDispatcher.getSelected(Patient.class);
-					if (tpw.doPrint(actPatient, template, printer, tray, monitor) == false) {
-						Status status =
-							new Status(Status.ERROR, "ch.elexis", Status.ERROR, Messages
-								.getString("TemplateDrucker.errorPrinting"), null);
-						ErrorDialog
-						.openError(
-							null,
-							Messages.getString("TemplateDrucker.errorPrinting"), Messages.getString("TemplateDrucker.docname") + template + Messages.getString("TemplateDrucker.couldntPrint"), status); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					public void run(IProgressMonitor monitor){
+						monitor.beginTask(
+							Messages.getString("TemplateDrucker.printing") + template + "...", 1); //$NON-NLS-1$
 						
+						Patient actPatient =
+							(Patient) ElexisEventDispatcher.getSelected(Patient.class);
+						if (tpw.doPrint(actPatient, template, printer, tray, monitor) == false) {
+							Status status =
+								new Status(Status.ERROR, "ch.elexis", Status.ERROR, Messages
+									.getString("TemplateDrucker.errorPrinting"), null);
+							ErrorDialog
+								.openError(
+									null,
+									Messages.getString("TemplateDrucker.errorPrinting"), Messages.getString("TemplateDrucker.docname") + template + Messages.getString("TemplateDrucker.couldntPrint"), status); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+							
+						}
+						
+						monitor.done();
 					}
-					
-					monitor.done();
-				}
-			}, null);
+				}, null);
 			
 			page.hideView(tpw);
 			
 		} catch (Exception ex) {
-			ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
-					Messages.getString("TemplateDrucker.errorPrinting") + ": " +  Messages.getString("TemplateDrucker.couldntOpen"),
-					ex);
+			ElexisStatus status =
+				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, Messages
+					.getString("TemplateDrucker.errorPrinting")
+					+ ": " + Messages.getString("TemplateDrucker.couldntOpen"), ex);
 			StatusManager.getManager().handle(status);
 		}
 	}

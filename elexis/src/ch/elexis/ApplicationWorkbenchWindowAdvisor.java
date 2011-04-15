@@ -50,7 +50,8 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		configurer.setShowProgressIndicator(true);
 		configurer.setTitle(Hub.APPLICATION_NAME);
 		configurer.setShowFastViewBars(true);
-		if (Hub.localCfg.get(PreferenceConstants.SHOWPERSPECTIVESELECTOR, Boolean.toString(false)).equals(Boolean.toString(true))) {
+		if (Hub.localCfg.get(PreferenceConstants.SHOWPERSPECTIVESELECTOR, Boolean.toString(false))
+			.equals(Boolean.toString(true))) {
 			configurer.setShowPerspectiveBar(true);
 		} else {
 			configurer.setShowPerspectiveBar(false);
@@ -59,9 +60,9 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 		PlatformUI.getPreferenceStore().setValue(
 			IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, false);
 		// Aber die Animationen sind eher nervend, nicht?
-		PlatformUI.getPreferenceStore().setValue(
-			IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
-	
+		PlatformUI.getPreferenceStore().setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
+			false);
+		
 	}
 	
 	@Override

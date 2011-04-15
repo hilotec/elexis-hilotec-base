@@ -40,30 +40,32 @@ import ch.elexis.util.SWTHelper;
 public class BildanzeigeFenster extends TitleAreaDialog {
 	Bild bild;
 	Image img;
+	
 	public BildanzeigeFenster(Shell shell, Bild bild){
 		super(shell);
-		this.bild=bild;
+		this.bild = bild;
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		//parent.setLayout(new FillLayout());
-		ScrolledComposite ret=new ScrolledComposite(parent,SWT.H_SCROLL|SWT.V_SCROLL|SWT.BORDER);
+	protected Control createDialogArea(Composite parent){
+		// parent.setLayout(new FillLayout());
+		ScrolledComposite ret =
+			new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		Composite canvas=new Composite(ret,SWT.NONE);
+		Composite canvas = new Composite(ret, SWT.NONE);
 		ret.setContent(canvas);
-		img=bild.createImage();
-		Rectangle r=img.getBounds();
-		//GridData gd=new GridData(r.width,r.height);
-		//canvas.setLayoutData(gd);
-		canvas.addPaintListener(new PaintListener(){
-			public void paintControl(PaintEvent e) {
-				GC gc=e.gc;
+		img = bild.createImage();
+		Rectangle r = img.getBounds();
+		// GridData gd=new GridData(r.width,r.height);
+		// canvas.setLayoutData(gd);
+		canvas.addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e){
+				GC gc = e.gc;
 				gc.drawImage(img, 0, 0);
 			}
 		});
-		canvas.addDisposeListener(new DisposeListener(){
-			public void widgetDisposed(DisposeEvent e) {
+		canvas.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e){
 				img.dispose();
 			}
 			
@@ -73,51 +75,54 @@ public class BildanzeigeFenster extends TitleAreaDialog {
 	}
 	
 	@Override
-	protected void createButtonsForButtonBar(Composite parent) {
-		Button bClose=createButton(parent, org.eclipse.jface.dialogs.Dialog.OK, Messages.BildanzeigeFenster_Close, true);
-		bClose.addSelectionListener(new SelectionAdapter(){
-
+	protected void createButtonsForButtonBar(Composite parent){
+		Button bClose =
+			createButton(parent, org.eclipse.jface.dialogs.Dialog.OK,
+				Messages.BildanzeigeFenster_Close, true);
+		bClose.addSelectionListener(new SelectionAdapter() {
+			
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				BildanzeigeFenster.this.okPressed();
 			}
 			
 		});
-		Button bExport=createButton(parent,4,Messages.BildanzeigeFenster_Export,false);
-		bExport.addSelectionListener(new SelectionAdapter(){
+		Button bExport = createButton(parent, 4, Messages.BildanzeigeFenster_Export, false);
+		bExport.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
-				FileDialog fd=new FileDialog(BildanzeigeFenster.this.getShell(),SWT.SAVE);
-				String fname=fd.open();
-				if(fname!=null){
-					File file=new File(fname);
-					try{
-						if(!file.createNewFile() || !file.canWrite()){
-							SWTHelper.showError(Messages.BildanzeigeFenster_Error, Messages.BildanzeigeFenster_Cannot+fname+Messages.BildanzeigeFenster_Create);
-						}else{
-							byte[] arr=bild.getData();
-							FileOutputStream fout=new FileOutputStream(file);
+			public void widgetSelected(SelectionEvent e){
+				FileDialog fd = new FileDialog(BildanzeigeFenster.this.getShell(), SWT.SAVE);
+				String fname = fd.open();
+				if (fname != null) {
+					File file = new File(fname);
+					try {
+						if (!file.createNewFile() || !file.canWrite()) {
+							SWTHelper.showError(Messages.BildanzeigeFenster_Error,
+								Messages.BildanzeigeFenster_Cannot + fname
+									+ Messages.BildanzeigeFenster_Create);
+						} else {
+							byte[] arr = bild.getData();
+							FileOutputStream fout = new FileOutputStream(file);
 							fout.write(arr);
 							fout.close();
 						}
-					}catch(Exception ex){
-							SWTHelper.showError(Messages.BildanzeigeFenster_Error, Messages.BildanzeigeFenster_ErrorWriting+fname);
+					} catch (Exception ex) {
+						SWTHelper.showError(Messages.BildanzeigeFenster_Error,
+							Messages.BildanzeigeFenster_ErrorWriting + fname);
 					}
 				}
 			}
 		});
-		//super.createButtonsForButtonBar(parent);
+		// super.createButtonsForButtonBar(parent);
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		getShell().setText(bild.getPatient().getLabel());
 		setTitle(bild.getLabel());
 		setMessage(bild.get("Info")); //$NON-NLS-1$
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
-	
-	
 	
 }

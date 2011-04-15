@@ -28,11 +28,11 @@ import org.eclipse.swt.widgets.*;
 import ch.elexis.data.Kontakt;
 import ch.elexis.util.SWTHelper;
 
-
 /**
  * Dialog to view/modify identifiers such as EAN, AHV, SSN, OID on objects
+ * 
  * @author Gerry
- *
+ * 
  */
 public class KontaktExtDialog extends TitleAreaDialog {
 	private Kontakt k;
@@ -40,73 +40,79 @@ public class KontaktExtDialog extends TitleAreaDialog {
 	
 	public KontaktExtDialog(Shell shell, Kontakt k, String[] defvalues){
 		super(shell);
-		this.k=k;
-		f=defvalues;
-		Arrays.sort(f, new Comparator<String>(){
-
-			public int compare(String o1, String o2) {
+		this.k = k;
+		f = defvalues;
+		Arrays.sort(f, new Comparator<String>() {
+			
+			public int compare(String o1, String o2){
 				return o1.compareTo(o2);
-			}});
+			}
+		});
 	}
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		ExtInfoTable ret=new ExtInfoTable(parent,f);
-		ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
+	protected Control createDialogArea(Composite parent){
+		ExtInfoTable ret = new ExtInfoTable(parent, f);
+		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setKontakt(k);
 		return ret;
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		setTitle(k.getLabel());
 		setMessage(Messages.getString("KontaktExtDialog.pleaseENterDetails")); //$NON-NLS-1$
 		getShell().setText(Messages.getString("KontaktExtDialog.indetityDetails")); //$NON-NLS-1$
 	}
+	
 	@Override
-	protected void okPressed() {
+	protected void okPressed(){
 		// TODO Automatisch erstellter Methoden-Stub
 		super.okPressed();
 	}
 	
-	
-	public static class ExtInfoTable extends Composite{
+	public static class ExtInfoTable extends Composite {
 		Kontakt actKontakt;
 		TableCursor cursor;
 		ControlEditor editor;
 		String[] fields;
 		Table table;
-		private HashMap<String,String> xids;
-	
+		private HashMap<String, String> xids;
+		
 		/**
 		 * fields can be of the form {name1,name2...} or {name1=xiddomain1,name2,name3=Xiddomain3}
+		 * 
 		 * @param parent
 		 * @param f
 		 */
 		public ExtInfoTable(Composite parent, String[] f){
-			super(parent,SWT.NONE);
-			xids=new HashMap<String, String>();
+			super(parent, SWT.NONE);
+			xids = new HashMap<String, String>();
 			setLayout(new FillLayout());
-			//kontakt=k;
-			fields=new String[f.length];
+			// kontakt=k;
+			fields = new String[f.length];
 			
-			for(int i=0;i<f.length;i++){
-				String[] val=f[i].split("="); //$NON-NLS-1$
-				fields[i]=val[0];
-				if(val.length==2){
+			for (int i = 0; i < f.length; i++) {
+				String[] val = f[i].split("="); //$NON-NLS-1$
+				fields[i] = val[0];
+				if (val.length == 2) {
 					xids.put(val[0], val[1]);
 				}
 			}
-			table=new Table(this,SWT.V_SCROLL|SWT.FULL_SELECTION|SWT.SINGLE|SWT.H_SCROLL);
-			cursor=new TableCursor(table,SWT.NONE);
-			editor=new ControlEditor(cursor);
-			editor.grabHorizontal=true;
-			editor.grabVertical=true;
+			table = new Table(this, SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.SINGLE | SWT.H_SCROLL);
+			cursor = new TableCursor(table, SWT.NONE);
+			editor = new ControlEditor(cursor);
+			editor.grabHorizontal = true;
+			editor.grabVertical = true;
 			cursor.addSelectionListener(new SelectionAdapter() {
 				// Tabellenauswahl soll dem Cursor folgen
-				public void widgetSelected(SelectionEvent e) {
-					table.setSelection(new TableItem[] {cursor.getRow()});
+				public void widgetSelected(SelectionEvent e){
+					table.setSelection(new TableItem[] {
+						cursor.getRow()
+					});
 				}
+				
 				// Eingabetaste
 				public void widgetDefaultSelected(SelectionEvent e){
 					TableItem row = cursor.getRow();
@@ -116,62 +122,64 @@ public class KontaktExtDialog extends TitleAreaDialog {
 			});
 			// Sonstige Taste
 			cursor.addKeyListener(new KeyAdapter() {
-				public void keyPressed(KeyEvent e) {
-					if(e.character>0x30){
-						StringBuilder sb=new StringBuilder();
+				public void keyPressed(KeyEvent e){
+					if (e.character > 0x30) {
+						StringBuilder sb = new StringBuilder();
 						sb.append(e.character);
 						doEdit(sb.toString());
 					}
 				}
 			});
-
+			
 			table.setLinesVisible(true);
-			TableColumn parms=new TableColumn(table,SWT.NONE);
-			TableColumn vals=new TableColumn(table,SWT.NONE);
+			TableColumn parms = new TableColumn(table, SWT.NONE);
+			TableColumn vals = new TableColumn(table, SWT.NONE);
 			parms.setText(Messages.getString("KontaktExtDialog.parameter")); //$NON-NLS-1$
 			vals.setText(Messages.getString("KontaktExtDialog.value")); //$NON-NLS-1$
 			parms.setWidth(150);
 			vals.setWidth(150);
 			table.setHeaderVisible(true);
-			for(int i=0;i<fields.length;i++){
-				new TableItem(table,SWT.NONE);
+			for (int i = 0; i < fields.length; i++) {
+				new TableItem(table, SWT.NONE);
 			}
-
+			
 		}
+		
 		public void setKontakt(Kontakt k){
-			for(int i=0;i<fields.length;i++){
-				TableItem it=table.getItem(i);
-				it.setText(0,fields[i]);
-				String val=""; //$NON-NLS-1$
-				String xid=xids.get(fields[i]);
-				if(xid!=null){
-					val=k.getXid(xid);
+			for (int i = 0; i < fields.length; i++) {
+				TableItem it = table.getItem(i);
+				it.setText(0, fields[i]);
+				String val = ""; //$NON-NLS-1$
+				String xid = xids.get(fields[i]);
+				if (xid != null) {
+					val = k.getXid(xid);
 				}
-				if(val.length()==0){
-					val=(String)k.getInfoElement(fields[i]);
+				if (val.length() == 0) {
+					val = (String) k.getInfoElement(fields[i]);
 				}
-				it.setText(1,val==null ? "" : val); //$NON-NLS-1$
+				it.setText(1, val == null ? "" : val); //$NON-NLS-1$
 			}
-			actKontakt=k;
+			actKontakt = k;
 		}
+		
 		private void doEdit(String inp){
 			final Text text = new Text(cursor, SWT.BORDER);
 			text.setText(inp);
 			text.setSelection(inp.length());
 			text.addKeyListener(new KeyAdapter() {
-				public void keyPressed(KeyEvent e) {
-					if ((e.character == SWT.CR) || (e.keyCode == SWT.ARROW_DOWN)){
+				public void keyPressed(KeyEvent e){
+					if ((e.character == SWT.CR) || (e.keyCode == SWT.ARROW_DOWN)) {
 						TableItem it = cursor.getRow();
-						int idx = cursor.getColumn();				// Spalte der Anzeige
-						//String ntext=text.getText();
-						it.setText(idx,text.getText());
-						actKontakt.setInfoElement(it.getText(0),it.getText(1));
-						String xid=xids.get(it.getText(0));
-						if(xid!=null){
+						int idx = cursor.getColumn(); // Spalte der Anzeige
+						// String ntext=text.getText();
+						it.setText(idx, text.getText());
+						actKontakt.setInfoElement(it.getText(0), it.getText(1));
+						String xid = xids.get(it.getText(0));
+						if (xid != null) {
 							actKontakt.addXid(xid, it.getText(1), true);
 						}
 						text.dispose();
-						//cursorDown();
+						// cursorDown();
 					}
 					// close the text editor when the user hits "ESC"
 					if (e.character == SWT.ESC) {
@@ -184,6 +192,5 @@ public class KontaktExtDialog extends TitleAreaDialog {
 		}
 		
 	}
-	
 	
 }

@@ -57,85 +57,94 @@ public class ESRRecordDialog extends TitleAreaDialog {
 	
 	private InputData[] fields =
 		{
-			new InputData(Messages.ESRRecordDialog_readInDate, "Eingelesen", InputData.Typ.DATE, null), //$NON-NLS-1$
+			new InputData(Messages.ESRRecordDialog_readInDate,
+				"Eingelesen", InputData.Typ.DATE, null), //$NON-NLS-1$
 			new InputData(Messages.ESRRecordDialog_esrType, "ESRCode", InputData.Typ.STRING, null), //$NON-NLS-1$
-			new InputData(Messages.ESRRecordDialog_bookedDate, "Verarbeitet", InputData.Typ.DATE, null), //$NON-NLS-1$
-			new InputData(Messages.ESRRecordDialog_addedDate, "Gutgeschrieben", InputData.Typ.DATE, null), //$NON-NLS-1$
+			new InputData(Messages.ESRRecordDialog_bookedDate,
+				"Verarbeitet", InputData.Typ.DATE, null), //$NON-NLS-1$
+			new InputData(Messages.ESRRecordDialog_addedDate,
+				"Gutgeschrieben", InputData.Typ.DATE, null), //$NON-NLS-1$
 			new InputData(Messages.ESRRecordDialog_receivedDate, "Datum", InputData.Typ.DATE, null), //$NON-NLS-1$
-			new InputData(Messages.ESRRecordDialog_amount, "BetragInRp", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
-			new InputData(Messages.ESRRecordDialog_billNr, "RechnungsID", new LabeledInputField.IContentProvider() { //$NON-NLS-1$
-				public void displayContent(PersistentObject po, InputData ltf){
-					Rechnung rn = rec.getRechnung();
-					if (rn == null) {
-						ltf.setText("??"); //$NON-NLS-1$
-					} else {
-						ltf.setText(rn.getNr());
+			new InputData(Messages.ESRRecordDialog_amount,
+				"BetragInRp", InputData.Typ.CURRENCY, null), //$NON-NLS-1$
+			new InputData(Messages.ESRRecordDialog_billNr,
+				"RechnungsID", new LabeledInputField.IContentProvider() { //$NON-NLS-1$
+					public void displayContent(PersistentObject po, InputData ltf){
+						Rechnung rn = rec.getRechnung();
+						if (rn == null) {
+							ltf.setText("??"); //$NON-NLS-1$
+						} else {
+							ltf.setText(rn.getNr());
+						}
 					}
-				}
-				
-				public void reloadContent(PersistentObject po, InputData ltf){
-					InputDialog id =
-						new InputDialog(getShell(), Messages.ESRRecordDialog_changeBillNr,
-							Messages.ESRRecordDialog_pleaseEnterNewBilNr, ltf.getText(), null);
-					if (id.open() == Dialog.OK) {
-						String rnid =
-							new Query<Rechnung>(Rechnung.class).findSingle("RnNummer", "=", id //$NON-NLS-1$ //$NON-NLS-2$
-								.getValue());
-						int err = 0;
-						if (rnid != null) {
-							Rechnung r = Rechnung.load(rnid);
-							if (r.isAvailable()) {
-								Fall fall = r.getFall();
-								if (fall.isAvailable()) {
-									Patient pat = fall.getPatient();
-									Mandant mn = r.getMandant();
-									if (pat.isAvailable()) {
-										rec.set("RechnungsID", r.getId()); //$NON-NLS-1$
-										// ltf.setText(r.getNr());
-										rec.set("PatientID", pat.getId()); //$NON-NLS-1$
-										if (mn != null && mn.isValid()) {
-											rec.set("MandantID", mn.getId()); //$NON-NLS-1$
+					
+					public void reloadContent(PersistentObject po, InputData ltf){
+						InputDialog id =
+							new InputDialog(getShell(), Messages.ESRRecordDialog_changeBillNr,
+								Messages.ESRRecordDialog_pleaseEnterNewBilNr, ltf.getText(), null);
+						if (id.open() == Dialog.OK) {
+							String rnid =
+								new Query<Rechnung>(Rechnung.class).findSingle("RnNummer", "=", id //$NON-NLS-1$ //$NON-NLS-2$
+									.getValue());
+							int err = 0;
+							if (rnid != null) {
+								Rechnung r = Rechnung.load(rnid);
+								if (r.isAvailable()) {
+									Fall fall = r.getFall();
+									if (fall.isAvailable()) {
+										Patient pat = fall.getPatient();
+										Mandant mn = r.getMandant();
+										if (pat.isAvailable()) {
+											rec.set("RechnungsID", r.getId()); //$NON-NLS-1$
+											// ltf.setText(r.getNr());
+											rec.set("PatientID", pat.getId()); //$NON-NLS-1$
+											if (mn != null && mn.isValid()) {
+												rec.set("MandantID", mn.getId()); //$NON-NLS-1$
+											}
+											af.reload(rec);
+										} else {
+											err = 4;
 										}
-										af.reload(rec);
 									} else {
-										err = 4;
+										err = 3;
 									}
+									
 								} else {
-									err = 3;
+									err = 2;
 								}
 								
 							} else {
-								err = 2;
+								err = 1;
 							}
-							
-						} else {
-							err = 1;
-						}
-						if (err != 0) {
-							SWTHelper.showError(Messages.ESRRecordDialog_billNotFound, MessageFormat.
-									format(Messages.ESRRecordDialog_noValidBillFound,id.getValue()));
+							if (err != 0) {
+								SWTHelper.showError(Messages.ESRRecordDialog_billNotFound,
+									MessageFormat.format(Messages.ESRRecordDialog_noValidBillFound,
+										id.getValue()));
+							}
 						}
 					}
-				}
+					
+				}),
+			new InputData(Messages.ESRRecordDialog_patient,
+				"PatientID", new LabeledInputField.IContentProvider() { //$NON-NLS-1$
 				
-			}), new InputData(Messages.ESRRecordDialog_patient, "PatientID", new LabeledInputField.IContentProvider() { //$NON-NLS-1$
-				
-				public void displayContent(PersistentObject po, InputData ltf){
-					ltf.setText(rec.getPatient().getLabel());
-				}
-				
-				public void reloadContent(PersistentObject po, InputData ltf){
-					KontaktSelektor ksl =
-						new KontaktSelektor(getShell(), Patient.class, Messages.ESRRecordDialog_selectPatient,
-							Messages.ESRRecordDialog_pleaseSelectPatient,Patient.DEFAULT_SORT);
-					if (ksl.open() == Dialog.OK) {
-						Patient actPatient = (Patient) ksl.getSelection();
-						rec.set("PatientID", actPatient.getId()); //$NON-NLS-1$
-						ltf.setText(actPatient.getLabel());
+					public void displayContent(PersistentObject po, InputData ltf){
+						ltf.setText(rec.getPatient().getLabel());
 					}
-				}
-				
-			})
+					
+					public void reloadContent(PersistentObject po, InputData ltf){
+						KontaktSelektor ksl =
+							new KontaktSelektor(getShell(), Patient.class,
+								Messages.ESRRecordDialog_selectPatient,
+								Messages.ESRRecordDialog_pleaseSelectPatient, Patient.DEFAULT_SORT);
+						if (ksl.open() == Dialog.OK) {
+							Patient actPatient = (Patient) ksl.getSelection();
+							rec.set("PatientID", actPatient.getId()); //$NON-NLS-1$
+							ltf.setText(actPatient.getLabel());
+						}
+					}
+					
+				})
 		
 		};
 	
@@ -206,8 +215,9 @@ public class ESRRecordDialog extends TitleAreaDialog {
 			if (bBooked) {
 				Money zahlung = rec.getBetrag();
 				Rechnung rn = rec.getRechnung();
-				rn.addZahlung(zahlung.negate(), Messages.ESRRecordDialog_stornoESR + rn.getNr() + " / " //$NON-NLS-1$
-					+ rec.getPatient().getPatCode(),null);
+				rn.addZahlung(zahlung.negate(), Messages.ESRRecordDialog_stornoESR + rn.getNr()
+					+ " / " //$NON-NLS-1$
+					+ rec.getPatient().getPatCode(), null);
 				rec.set(Messages.ESRRecordDialog_booked, ""); //$NON-NLS-1$
 			}
 		}

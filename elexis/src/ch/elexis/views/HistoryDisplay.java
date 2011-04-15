@@ -42,83 +42,75 @@ import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;
 
 /**
- * Anzeige der vergangenen Konsultationen. Es sollen einerseits "sofort" die
- * letzten 3 oder 4 Kons angezeigt werden, andererseits aber je nach Anforderung
- * auch frühere nachgeladen werden. Dies ist noch nicht korrekt implemetiert -
- * aktuell werden immer alle Kons. geladen.
+ * Anzeige der vergangenen Konsultationen. Es sollen einerseits "sofort" die letzten 3 oder 4 Kons
+ * angezeigt werden, andererseits aber je nach Anforderung auch frühere nachgeladen werden. Dies ist
+ * noch nicht korrekt implemetiert - aktuell werden immer alle Kons. geladen.
  * 
  * @author Gerry
  * 
  */
-public class HistoryDisplay extends ScrolledComposite implements
-		BackgroundJobListener, ElexisEventListener {
+public class HistoryDisplay extends ScrolledComposite implements BackgroundJobListener,
+		ElexisEventListener {
 	FormText text;
 	ArrayList<Konsultation> lKons;
 	StringBuilder sb;
 	HistoryLoader loader;
 	private boolean bLock;
 	HistoryDisplay self = this;
-
+	
 	boolean multiline = false;
-
-	public HistoryDisplay(Composite parent, final IViewSite site) {
+	
+	public HistoryDisplay(Composite parent, final IViewSite site){
 		this(parent, site, false);
 	}
-
-	public HistoryDisplay(Composite parent, final IViewSite site,
-			boolean multiline) {
+	
+	public HistoryDisplay(Composite parent, final IViewSite site, boolean multiline){
 		super(parent, SWT.V_SCROLL | SWT.BORDER);
 		this.multiline = multiline;
 		lKons = new ArrayList<Konsultation>(20);
 		text = Desk.getToolkit().createFormText(this, false);
 		text.setWhitespaceNormalized(true);
-		text
-				.setColor(Desk.COL_BLUE, Desk.getColorRegistry().get(
-						Desk.COL_BLUE));
-		text.setColor(Desk.COL_GREEN, Desk.getColorRegistry().get(
-				Desk.COL_LIGHTGREY));
+		text.setColor(Desk.COL_BLUE, Desk.getColorRegistry().get(Desk.COL_BLUE));
+		text.setColor(Desk.COL_GREEN, Desk.getColorRegistry().get(Desk.COL_LIGHTGREY));
 		setContent(text);
 		text.addHyperlinkListener(new HyperlinkAdapter() {
-
+			
 			@Override
-			public void linkActivated(HyperlinkEvent e) {
+			public void linkActivated(HyperlinkEvent e){
 				String id = (String) e.getHref();
 				Konsultation k = Konsultation.load(id);
 				ElexisEventDispatcher.fireSelectionEvent(k);
 			}
-
+			
 		});
-		text
-				.setText(
-						Messages.getString("HistoryDisplay.NoPatientSelected"), false, false); //$NON-NLS-1$
+		text.setText(Messages.getString("HistoryDisplay.NoPatientSelected"), false, false); //$NON-NLS-1$
 		sb = new StringBuilder(1000);
 		addControlListener(new ControlAdapter() {
 			@Override
-			public void controlResized(ControlEvent e) {
-				text.setSize(text.computeSize(self.getSize().x - 15,
-						SWT.DEFAULT));
+			public void controlResized(ControlEvent e){
+				text.setSize(text.computeSize(self.getSize().x - 15, SWT.DEFAULT));
 			}
-
+			
 		});
 		ElexisEventDispatcher.getInstance().addListeners(this);
 	}
-
+	
 	@Override
-	public void dispose() {
+	public void dispose(){
 		ElexisEventDispatcher.getInstance().removeListeners(this);
 		super.dispose();
 	}
-
-	public void setFilter(KonsFilter f) {
+	
+	public void setFilter(KonsFilter f){
 		stop();
 		loader.setFilter(f);
 	}
-
-	public void start() {
+	
+	public void start(){
 		start(null);
 	}
-
-	public void start(KonsFilter f) {
+	
+	public void start(KonsFilter f){
 		stop();
 		sb.setLength(0);
 		loader = new HistoryLoader(sb, lKons, multiline);
@@ -126,16 +118,16 @@ public class HistoryDisplay extends ScrolledComposite implements
 		loader.addListener(this);
 		loader.schedule();
 	}
-
-	public void stop() {
+	
+	public void stop(){
 		if (loader != null) {
 			loader.removeListener(this);
 			loader.cancel();
 			loader = null;
 		}
 	}
-
-	public void load(Fall fall, boolean clear) {
+	
+	public void load(Fall fall, boolean clear){
 		if (clear) {
 			lKons.clear();
 		}
@@ -146,8 +138,8 @@ public class HistoryDisplay extends ScrolledComposite implements
 			}
 		}
 	}
-
-	public void load(Patient pat) {
+	
+	public void load(Patient pat){
 		if (pat != null) {
 			lKons.clear();
 			Fall[] faelle = pat.getFaelle();
@@ -156,40 +148,38 @@ public class HistoryDisplay extends ScrolledComposite implements
 			}
 		}
 	}
-
-	public void jobFinished(BackgroundJob j) {
+	
+	public void jobFinished(BackgroundJob j){
 		Desk.getDisplay().asyncExec(new Runnable() {
-			public void run() {
+			public void run(){
 				String s = (String) loader.getData();
 				// System.out.println(s);
-
+				
 				// check if widget is valid
 				if (!isDisposed()) {
 					text.setText(s, true, true);
-					text.setSize(text.computeSize(self.getSize().x - 10,
-							SWT.DEFAULT));
+					text.setSize(text.computeSize(self.getSize().x - 10, SWT.DEFAULT));
 				}
-
+				
 			}
 		});
 	}
-
-	public void catchElexisEvent(ElexisEvent ev) {
+	
+	public void catchElexisEvent(ElexisEvent ev){
 		Desk.asyncExec(new Runnable() {
-
-			public void run() {
+			
+			public void run(){
 				if (text != null && (!text.isDisposed())) {
-					text.setFont(Desk
-							.getFont(PreferenceConstants.USR_DEFAULTFONT));
+					text.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
 				}
 			}
 		});
 	}
-
-	private final ElexisEvent eetemplate = new ElexisEvent(null, null,
-			ElexisEvent.EVENT_USER_CHANGED);
-
-	public ElexisEvent getElexisEventFilter() {
+	
+	private final ElexisEvent eetemplate =
+		new ElexisEvent(null, null, ElexisEvent.EVENT_USER_CHANGED);
+	
+	public ElexisEvent getElexisEventFilter(){
 		return eetemplate;
 	}
 }

@@ -30,60 +30,58 @@ import ch.elexis.util.IKonsExtension;
 public class KonsExtension implements IKonsExtension {
 	IRichTextDisplay mine;
 	static final String EPISODE_TITLE = "Problem: ";
-
-	public String connect(final IRichTextDisplay tf) {
+	
+	public String connect(final IRichTextDisplay tf){
 		mine = tf;
 		mine.addDropReceiver(Episode.class, this);
 		return Activator.PLUGIN_ID;
 	}
-
-	public boolean doLayout(final StyleRange n, final String provider,
-			final String id) {
+	
+	public boolean doLayout(final StyleRange n, final String provider, final String id){
 		n.background = Desk.getColor(Desk.COL_GREEN);
 		return true;
 	}
-
-	public boolean doXRef(final String refProvider, final String refID) {
+	
+	public boolean doXRef(final String refProvider, final String refID){
 		Encounter enc = Encounter.load(refID);
 		if (enc.exists()) {
 			ElexisEventDispatcher.fireSelectionEvent(enc);
 		}
 		return true;
 	}
-
-	public IAction[] getActions() {
+	
+	public IAction[] getActions(){
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	public void insert(final Object o, final int pos) {
+	
+	public void insert(final Object o, final int pos){
 		if (o instanceof Episode) {
 			Episode ep = (Episode) o;
-			final Konsultation k = (Konsultation) ElexisEventDispatcher
-					.getSelected(Konsultation.class);
+			final Konsultation k =
+				(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
 			Encounter enc = new Encounter(k, ep);
 			List<IDiagnose> diags = ep.getDiagnoses();
 			for (IDiagnose dg : diags) {
 				k.addDiagnose(dg);
 			}
-			mine.insertXRef(pos, EPISODE_TITLE + ep.getLabel(),
-					Activator.PLUGIN_ID, enc.getId());
+			mine.insertXRef(pos, EPISODE_TITLE + ep.getLabel(), Activator.PLUGIN_ID, enc.getId());
 			k.updateEintrag(mine.getContentsAsXML(), false);
 			ElexisEventDispatcher.update(k);
 		}
-
+		
 	}
-
-	public void removeXRef(final String refProvider, final String refID) {
+	
+	public void removeXRef(final String refProvider, final String refID){
 		Encounter encounter = Encounter.load(refID);
 		encounter.delete();
-
+		
 	}
-
+	
 	public void setInitializationData(final IConfigurationElement config,
-			final String propertyName, final Object data) throws CoreException {
-		// TODO Auto-generated method stub
-
+		final String propertyName, final Object data) throws CoreException{
+	// TODO Auto-generated method stub
+	
 	}
-
+	
 }

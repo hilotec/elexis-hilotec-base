@@ -34,13 +34,13 @@ public interface IRnOutputter {
 	public static enum TYPE {
 		ORIG, COPY, STORNO
 	};
-	/** 
-	 * Property indicating the output method. 
-	 * "asDefault" -> The user requested output via default outputter
-	 * "byName" -> The user requested this outputter by name.
-	 * If the property is not set, byName will be assumed.
+	
+	/**
+	 * Property indicating the output method. "asDefault" -> The user requested output via default
+	 * outputter "byName" -> The user requested this outputter by name. If the property is not set,
+	 * byName will be assumed.
 	 */
-	public static final String PROP_OUTPUT_METHOD="OutputMethod";
+	public static final String PROP_OUTPUT_METHOD = "OutputMethod";
 	
 	/**
 	 * A short textual description for this output (as Label)
@@ -58,7 +58,8 @@ public interface IRnOutputter {
 	 *            properties for various purposes. Can be null.
 	 * @return a result indicating errors
 	 */
-	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn, final Properties props);
+	public Result<Rechnung> doOutput(final TYPE type, final Collection<Rechnung> rnn,
+		final Properties props);
 	
 	/**
 	 * Cancelling an already output bill: Depending on the type of the outputter, this might result

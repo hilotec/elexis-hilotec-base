@@ -78,7 +78,7 @@ public class MedikamentImporter extends ImporterPage {
 		 * mode=" (Modus: Alles neu erstellen)"; } }
 		 */
 		monitor
-		.beginTask(Messages.MedikamentImporter_MedikamentImportTitle + mode, (int) (l / 100));
+			.beginTask(Messages.MedikamentImporter_MedikamentImportTitle + mode, (int) (l / 100));
 		Query<Artikel> qbe = new Query<Artikel>(Artikel.class);
 		int counter = 0;
 		String titel, ek, vk, kasse, cmws;
@@ -141,7 +141,7 @@ public class MedikamentImporter extends ImporterPage {
 				}
 			}
 			
-			if (reca.equals("11")) { 
+			if (reca.equals("11")) {
 				titel = new String(in.substring(10, 60)).trim(); // Text
 				ek = new String(in.substring(60, 66)).trim(); // EK-Preis
 				vk = new String(in.substring(66, 72)).trim(); // VK-Preis

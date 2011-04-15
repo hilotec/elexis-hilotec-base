@@ -27,13 +27,13 @@ public class SelectFallDialog extends TitleAreaDialog {
 	Fall[] faelle;
 	public Fall result;
 	org.eclipse.swt.widgets.List list;
-
-	public SelectFallDialog(Shell shell) {
+	
+	public SelectFallDialog(Shell shell){
 		super(shell);
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
+	protected Control createDialogArea(Composite parent){
 		list = new org.eclipse.swt.widgets.List(parent, SWT.BORDER);
 		list.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Fall actFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
@@ -43,17 +43,17 @@ public class SelectFallDialog extends TitleAreaDialog {
 		}
 		return list;
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		setTitle(Messages.getString("SelectFallDialog.selectFall")); //$NON-NLS-1$
 		setMessage(Messages.getString("SelectFallDialog.pleaseSelectCase")); //$NON-NLS-1$
 		getShell().setText(Messages.getString("SelectFallDialog.Cases")); //$NON-NLS-1$
 	}
-
+	
 	@Override
-	public void okPressed() {
+	public void okPressed(){
 		int sel = list.getSelectionIndex();
 		if (sel == -1) {
 			result = null;
@@ -61,5 +61,5 @@ public class SelectFallDialog extends TitleAreaDialog {
 		result = faelle[sel];
 		super.okPressed();
 	}
-
+	
 }

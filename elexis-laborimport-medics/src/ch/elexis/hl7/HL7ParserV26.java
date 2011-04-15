@@ -31,7 +31,7 @@ public class HL7ParserV26 extends HL7Parser {
 	public HL7ParserV26(String receivingApplication, String receivingFacility){
 		super(receivingApplication, receivingFacility);
 	}
-
+	
 	/**
 	 * Creates an OMG_O19 message
 	 * 
@@ -216,8 +216,9 @@ public class HL7ParserV26 extends HL7Parser {
 		// Name der sendenden Institution. Optional (Beschreibung gemäss HL7 Standard).
 		// Gemäss HD Type Definition von HL7 folgendermassen:
 		// <mandantenkürzel>^<EAN des Mandanten>^L Beispiel: mf7601234567890^L
-		msh.getMsh4_SendingFacility().getHd1_NamespaceID().setValue(Hub.actMandant.get(Anwender.LABEL));
-		String ean =  Hub.actMandant.getXid(Xid.DOMAIN_EAN);
+		msh.getMsh4_SendingFacility().getHd1_NamespaceID().setValue(
+			Hub.actMandant.get(Anwender.LABEL));
+		String ean = Hub.actMandant.getXid(Xid.DOMAIN_EAN);
 		msh.getMsh4_SendingFacility().getHd2_UniversalID().setValue(ean);
 		msh.getMsh4_SendingFacility().getHd3_UniversalIDType().setValue("L"); //$NON-NLS-1$
 		// Name der empfangenden Anwendung. Eindeutigkeit dito MSH.3
@@ -236,8 +237,8 @@ public class HL7ParserV26 extends HL7Parser {
 		msh.getMsh9_MessageType().getMessageStructure().setValue(""); //$NON-NLS-1$
 		// Eindeutige Nachrichtennummer: GUID
 		msh.getMsh10_MessageControlID().setValue(StringTool.unique("MessageControlID")); //$NON-NLS-1$
-		msh.getMsh11_ProcessingID().getPt1_ProcessingID()
-			.setValue(StringTool.unique("ProcessingID")); //$NON-NLS-1$
+		msh.getMsh11_ProcessingID().getPt1_ProcessingID().setValue(
+			StringTool.unique("ProcessingID")); //$NON-NLS-1$
 		msh.getMsh12_VersionID().getVid1_VersionID().setValue(getVersion());
 	}
 	
@@ -340,12 +341,12 @@ public class HL7ParserV26 extends HL7Parser {
 		in1.getIn12_InsurancePlanID().getCwe1_Identifier().setValue(plan);
 		// EAN Nummer der Versicherung
 		// Beispiel: EAN123456789^^^CHEMEDIAT;
-		String ean=kostentraeger.getXid(Xid.DOMAIN_EAN);
+		String ean = kostentraeger.getXid(Xid.DOMAIN_EAN);
 		in1.getIn13_InsuranceCompanyID(0).getCx1_IDNumber().setValue("EAN" + ean); //$NON-NLS-1$
 		in1.getIn13_InsuranceCompanyID(0).getCx4_AssigningAuthority().getHd1_NamespaceID()
 			.setValue("CHEMEDIAT"); //$NON-NLS-1$
-		in1.getIn14_InsuranceCompanyName(0).getXon1_OrganizationName()
-			.setValue(kostentraeger.get(Kontakt.FLD_NAME1));
+		in1.getIn14_InsuranceCompanyName(0).getXon1_OrganizationName().setValue(
+			kostentraeger.get(Kontakt.FLD_NAME1));
 		
 		addAddressToXAD(in1.getIn15_InsuranceCompanyAddress(0), kostentraeger);
 		addKontaktToXPN(in1.getIn116_NameOfInsured(0), patient);
@@ -363,7 +364,7 @@ public class HL7ParserV26 extends HL7Parser {
 	 */
 	private void fillORC(final ORC orc, final long auftragsNummer) throws DataTypeException{
 		orc.getOrc1_OrderControl().setValue("1"); //$NON-NLS-1$
-		orc.getOrc2_PlacerOrderNumber().getEi1_EntityIdentifier()
-			.setValue(new Long(auftragsNummer).toString());
+		orc.getOrc2_PlacerOrderNumber().getEi1_EntityIdentifier().setValue(
+			new Long(auftragsNummer).toString());
 	}
 }

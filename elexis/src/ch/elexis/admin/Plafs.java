@@ -23,8 +23,8 @@ import ch.elexis.util.PlatformHelper;
 import ch.rgw.tools.ExHandler;
 
 /**
- * Stub for later development of plafs: Provide Strings not only depending of the locale but also
- * of the plaf. A client request a String and Plafs returns the value of that String matching the
+ * Stub for later development of plafs: Provide Strings not only depending of the locale but also of
+ * the plaf. A client request a String and Plafs returns the value of that String matching the
  * actual plaf
  * 
  * @author Gerry
@@ -77,11 +77,10 @@ public class Plafs {
 				}
 			}
 			dais.close();
-		} catch(EOFException ee){
+		} catch (EOFException ee) {
 			// nope
 			p.put("plaf", "none");
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			p.put("plaf", "none");
 		}

@@ -75,28 +75,29 @@ public class MessungKonfiguration {
 	public static final String ATTR_LINES = "lines";
 	public static final String ELEMENT_DATATYPE = "datatype";
 	public static final String CONFIG_FILENAME = "messwerte.xml";
-
+	
 	private static MessungKonfiguration the_one_and_only_instance = null;
 	ArrayList<MessungTyp> types;
 	private final Log log = Log.get("DataConfiguration");
 	private String defaultFile;
 	
-	public static MessungKonfiguration getInstance() {
+	public static MessungKonfiguration getInstance(){
 		if (the_one_and_only_instance == null) {
 			the_one_and_only_instance = new MessungKonfiguration();
 		}
 		return the_one_and_only_instance;
 	}
-
-	private MessungKonfiguration() {
+	
+	private MessungKonfiguration(){
 		types = new ArrayList<MessungTyp>();
-		defaultFile = Hub.localCfg.get(Preferences.CONFIG_FILE,
-				Hub.getWritableUserDir() + File.separator + CONFIG_FILENAME);
-
+		defaultFile =
+			Hub.localCfg.get(Preferences.CONFIG_FILE, Hub.getWritableUserDir() + File.separator
+				+ CONFIG_FILENAME);
+		
 		readFromXML(null);
 	}
-
-	private Panel createPanelFromNode(Element n) {
+	
+	private Panel createPanelFromNode(Element n){
 		String type = n.getAttribute("type");
 		Panel ret = new Panel(type);
 		LinkedList<String> attributeList = new LinkedList<String>();
@@ -104,10 +105,11 @@ public class MessungKonfiguration {
 		Node node = n.getFirstChild();
 		while (node != null) {
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
-				String nodename=node.getNodeName();
+				String nodename = node.getNodeName();
 				if (nodename.equals("attribute")) {
 					NamedNodeMap na = node.getAttributes();
-					String nx = na.getNamedItem("name").getNodeValue() + "="
+					String nx =
+						na.getNamedItem("name").getNodeValue() + "="
 							+ na.getNamedItem("value").getNodeValue();
 					attributeList.add(nx);
 				} else if (nodename.equals("panel")) {
@@ -119,47 +121,43 @@ public class MessungKonfiguration {
 		ret.setAttributes(attributeList.toArray(new String[0]));
 		ret.setPanels(panelsList.toArray(new Panel[0]));
 		return ret;
-
+		
 	}
-
-	public void readFromXML(String path) {
+	
+	public void readFromXML(String path){
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder builder;
 		Document doc;
-		SchemaFactory sfac = SchemaFactory
-				.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-
-		if(path==null){
-			path=defaultFile;
+		SchemaFactory sfac = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+		
+		if (path == null) {
+			path = defaultFile;
 		}
 		try {
-			String schemapath = PlatformHelper
-					.getBasePath("com.hilotec.elexis.messwerte")
-					+ File.separator + "rsc" + File.separator + "messwerte.xsd";
+			String schemapath =
+				PlatformHelper.getBasePath("com.hilotec.elexis.messwerte") + File.separator + "rsc"
+					+ File.separator + "messwerte.xsd";
 			Schema s = sfac.newSchema(new File(schemapath));
 			factory.setSchema(s);
-
+			
 			builder = factory.newDocumentBuilder();
 			builder.setErrorHandler(new ErrorHandler() {
-				public void error(SAXParseException exception)
-						throws SAXException {
+				public void error(SAXParseException exception) throws SAXException{
 					throw exception;
 				}
-
-				public void fatalError(SAXParseException exception)
-						throws SAXException {
+				
+				public void fatalError(SAXParseException exception) throws SAXException{
 					throw exception;
 				}
-
-				public void warning(SAXParseException exception)
-						throws SAXException {
+				
+				public void warning(SAXParseException exception) throws SAXException{
 					throw exception;
 				}
 			});
 			doc = builder.parse(new FileInputStream(path));
-
+			
 			Element rootel = doc.getDocumentElement();
-
+			
 			// datatype-Deklarationen durchgehen und einlesen
 			NodeList nl = rootel.getElementsByTagName(ELEMENT_DATATYPE);
 			for (int i = 0; i < nl.getLength(); i++) {
@@ -178,9 +176,9 @@ public class MessungKonfiguration {
 					dt = new MessungTyp(name, title, panel);
 				} else {
 					dt = new MessungTyp(name, title);
-
+					
 				}
-
+				
 				// Einzlene Felddeklarationen durchgehen
 				NodeList dtf = edt.getChildNodes();
 				for (int j = 0; j < dtf.getLength(); j++) {
@@ -188,153 +186,138 @@ public class MessungKonfiguration {
 					if (ndtf.getNodeType() != Node.ELEMENT_NODE) {
 						continue;
 					}
-
+					
 					Element edtf = (Element) ndtf;
 					String fn = edtf.getAttribute(ATTR_NAME);
 					String ft = edtf.getAttribute(ATTR_TITLE);
 					if (ft.equals("")) {
 						ft = fn;
 					}
-
+					
 					// OldMesswertTyp dft;
 					IMesswertTyp typ;
 					if (edtf.getNodeName().equals(NAME_NUMFIELD)) {
-						typ = new MesswertTypNum(fn, ft,
-								edtf.getAttribute(ATTR_UNIT));
+						typ = new MesswertTypNum(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						if (edtf.hasAttribute(ATTR_DEFAULT)) {
 							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
 						}
 					} else if (edtf.getNodeName().equals(NAME_BOOLFIELD)) {
-						typ = new MesswertTypBool(fn, ft,
-								edtf.getAttribute(ATTR_UNIT));
+						typ = new MesswertTypBool(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						if (edtf.hasAttribute(ATTR_DEFAULT)) {
 							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
 						}
 					} else if (edtf.getNodeName().equals(NAME_STRINGFIELD)) {
-						MesswertTypStr str = new MesswertTypStr(fn, ft,
-								edtf.getAttribute(ATTR_UNIT));
+						MesswertTypStr str =
+							new MesswertTypStr(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						typ = str;
-
+						
 						if (edtf.hasAttribute(ATTR_DEFAULT)) {
 							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
 						}
 						if (edtf.hasAttribute(ATTR_LINES)) {
-							str.setLines(Integer.parseInt(edtf
-									.getAttribute("lines")));
+							str.setLines(Integer.parseInt(edtf.getAttribute("lines")));
 						}
 					} else if (edtf.getNodeName().equals(NAME_ENUMFIELD)) {
-						MesswertTypEnum en = new MesswertTypEnum(fn, ft,
-								edtf.getAttribute(ATTR_UNIT));
+						MesswertTypEnum en =
+							new MesswertTypEnum(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						typ = en;
-
+						
 						if (edtf.hasAttribute(ATTR_DEFAULT)) {
 							typ.setDefault(edtf.getAttribute(ATTR_DEFAULT));
 						}
-
+						
 						NodeList children = edtf.getChildNodes();
 						for (int k = 0; k < children.getLength(); k++) {
 							if (children.item(k).getNodeType() != Node.ELEMENT_NODE) {
 								continue;
 							}
-
+							
 							Element choice = (Element) children.item(k);
-							en.addChoice(choice.getAttribute(ATTR_TITLE),
-									Integer.parseInt(choice
-											.getAttribute(ATTR_VALUE)));
+							en.addChoice(choice.getAttribute(ATTR_TITLE), Integer.parseInt(choice
+								.getAttribute(ATTR_VALUE)));
 						}
-
+						
 						// Wenn kein vernuenftiger Standardwert angegeben wurde
 						// nehmen wir die erste Auswahlmoeglichkeit
 						if (typ.getDefault().equals("")) {
 							for (int k = 0; k < children.getLength(); k++) {
 								if (children.item(k).getNodeType() == Node.ELEMENT_NODE) {
 									Element choice = (Element) children.item(k);
-									typ.setDefault(choice
-											.getAttribute(ATTR_VALUE));
+									typ.setDefault(choice.getAttribute(ATTR_VALUE));
 									break;
 								}
 							}
 						}
 					} else if (edtf.getNodeName().equals(NAME_CALCFIELD)) {
-						MesswertTypCalc calc = new MesswertTypCalc(fn, ft,
-								edtf.getAttribute(ATTR_UNIT));
+						MesswertTypCalc calc =
+							new MesswertTypCalc(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						typ = calc;
-
-						Element formula = (Element) edtf.getElementsByTagName(
-								ELEMENT_FORMULA).item(0);
-						calc.setFormula(formula.getTextContent(),
-								formula.getAttribute(ATTR_INTERPRETER));
-
-						NodeList children = edtf
-								.getElementsByTagName(ELEMENT_VAR);
+						
+						Element formula =
+							(Element) edtf.getElementsByTagName(ELEMENT_FORMULA).item(0);
+						calc.setFormula(formula.getTextContent(), formula
+							.getAttribute(ATTR_INTERPRETER));
+						
+						NodeList children = edtf.getElementsByTagName(ELEMENT_VAR);
 						for (int k = 0; k < children.getLength(); k++) {
 							Node n = children.item(k);
 							if (n.getNodeType() != Node.ELEMENT_NODE) {
 								continue;
 							}
 							Element var = (Element) n;
-							calc.addVariable(var.getAttribute(ATTR_NAME),
-									var.getAttribute(ATTR_SOURCE));
+							calc.addVariable(var.getAttribute(ATTR_NAME), var
+								.getAttribute(ATTR_SOURCE));
 						}
 					} else if (edtf.getNodeName().equals(NAME_DATAFIELD)) {
-						MesswertTypData data = new MesswertTypData(fn, ft,
-								edtf.getAttribute(ATTR_UNIT));
+						MesswertTypData data =
+							new MesswertTypData(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						typ = data;
-
+						
 						data.setRefType(edtf.getAttribute(ATTR_TYPE));
 					} else if (edtf.getNodeName().equals(NAME_SCALEFIELD)) {
-						MesswertTypScale scale = new MesswertTypScale(fn, ft,
-								edtf.getAttribute(ATTR_UNIT));
+						MesswertTypScale scale =
+							new MesswertTypScale(fn, ft, edtf.getAttribute(ATTR_UNIT));
 						typ = scale;
 						if (edtf.hasAttribute(ATTR_DEFAULT)) {
 							scale.setDefault(edtf.getAttribute(ATTR_DEFAULT));
 						}
 						if (edtf.hasAttribute(ATTR_MIN)) {
-							scale.setMin(Integer.parseInt(edtf
-									.getAttribute(ATTR_MIN)));
+							scale.setMin(Integer.parseInt(edtf.getAttribute(ATTR_MIN)));
 						}
 						if (edtf.hasAttribute(ATTR_MAX)) {
-							scale.setMax(Integer.parseInt(edtf
-									.getAttribute(ATTR_MAX)));
+							scale.setMax(Integer.parseInt(edtf.getAttribute(ATTR_MAX)));
 						}
 					} else {
-						log.log("Unbekannter Feldtyp: '" + edtf.getNodeName()
-								+ "'", Log.ERRORS);
+						log.log("Unbekannter Feldtyp: '" + edtf.getNodeName() + "'", Log.ERRORS);
 						continue;
 					}
 					dt.addField(typ);
 				}
 				types.add(dt);
 			}
-
+			
 		} catch (Error e) {
-			log.log("Einlesen der XML-Datei felgeschlagen: " + e.getMessage(),
-					Log.ERRORS);
+			log.log("Einlesen der XML-Datei felgeschlagen: " + e.getMessage(), Log.ERRORS);
 		} catch (SAXParseException e) {
 			ExHandler.handle(e);
-			SWTHelper
-					.showError(
-							"Hilotec-Messwerte: Fehler in XML Struktur",
-							MessageFormat
-									.format("Die Datei {0} enthielt einen Fehler in Zeile {1}: {2}",
-											path, e.getLineNumber(),
-											e.getMessage()));
-			log.log("Einlesen der XML-Datei felgeschlagen: " + e.getMessage()
-					+ ", Zeile: " + e.getLineNumber(), Log.ERRORS);
+			SWTHelper.showError("Hilotec-Messwerte: Fehler in XML Struktur", MessageFormat.format(
+				"Die Datei {0} enthielt einen Fehler in Zeile {1}: {2}", path, e.getLineNumber(), e
+					.getMessage()));
+			log.log("Einlesen der XML-Datei felgeschlagen: " + e.getMessage() + ", Zeile: "
+				+ e.getLineNumber(), Log.ERRORS);
 		} catch (Exception e) {
 			ExHandler.handle(e);
-			log.log("Einlesen der XML-Datei felgeschlagen: " + e.getMessage(),
-					Log.ERRORS);
-
+			log.log("Einlesen der XML-Datei felgeschlagen: " + e.getMessage(), Log.ERRORS);
+			
 		}
-
+		
 	}
-
-	public ArrayList<MessungTyp> getTypes() {
+	
+	public ArrayList<MessungTyp> getTypes(){
 		return types;
 	}
-
-	public MessungTyp getTypeByName(String name) {
+	
+	public MessungTyp getTypeByName(String name){
 		for (MessungTyp t : types) {
 			if (t.getName().compareTo(name) == 0) {
 				return t;

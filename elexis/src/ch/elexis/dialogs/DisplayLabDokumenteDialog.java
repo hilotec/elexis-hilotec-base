@@ -118,8 +118,8 @@ public class DisplayLabDokumenteDialog extends TitleAreaDialog {
 		try {
 			if (this.docManager != null) {
 				java.util.List<IOpaqueDocument> documentList =
-					this.docManager.listDocuments(patient, null, docName, null,
-						new TimeSpan(this.date, this.date), null);
+					this.docManager.listDocuments(patient, null, docName, null, new TimeSpan(
+						this.date, this.date), null);
 				if (documentList == null || documentList.size() == 0) {
 					throw new IOException(MessageFormat.format("Dokument {0} nicht vorhanden!",
 						docName));

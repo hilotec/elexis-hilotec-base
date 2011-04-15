@@ -17,55 +17,55 @@ public class MediPreisKorrektur {
 	FileWriter writer;
 	
 	public String recalc(String dateFrom){
-		File file = new File(System.getProperty("user.home") + File.separator
-				+ "elexis" + File.separator + "medipreiskorrektur.log");
+		File file =
+			new File(System.getProperty("user.home") + File.separator + "elexis" + File.separator
+				+ "medipreiskorrektur.log");
 		try {
 			writer = new FileWriter(file);
 			if (SWTHelper.askYesNo("WARNUNG",
-					"Wirklich alle Konsultationen seit (einschliesslich) dem " + dateFrom
-							+ " auf den aktuell gültigen Medikamentenpreis umrechnen?")) {
+				"Wirklich alle Konsultationen seit (einschliesslich) dem " + dateFrom
+					+ " auf den aktuell gültigen Medikamentenpreis umrechnen?")) {
 				TimeTool ttFrom = new TimeTool();
 				if (!ttFrom.set(dateFrom)) {
-					writer.write("bad date format: " + dateFrom
-							+ " aborting.\n");
+					writer.write("bad date format: " + dateFrom + " aborting.\n");
 					return "Datumformat kann nicht interpretiert werden. Bitte als dd.mm.yyyy eingeben";
 				}
-				Query<Konsultation> qbe=new Query<Konsultation>(Konsultation.class);
+				Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
 				qbe.add(Konsultation.DATE, ">=", ttFrom.toString(TimeTool.DATE_COMPACT));
-				int i=0;
+				int i = 0;
 				Money old = new Money();
 				Money changed = new Money();
-				for(Konsultation kons:qbe.execute()){
-					writer.write("\nKonsultation: "+kons.getLabel());
-					Rechnung rn=kons.getRechnung();
-					if( (rn!=null) && (rn.getStatus()!=RnStatus.STORNIERT)){
+				for (Konsultation kons : qbe.execute()) {
+					writer.write("\nKonsultation: " + kons.getLabel());
+					Rechnung rn = kons.getRechnung();
+					if ((rn != null) && (rn.getStatus() != RnStatus.STORNIERT)) {
 						writer.write(": Rechnung bereits erstellt, übersprungen.");
-					}else{
+					} else {
 						i++;
 						List<Verrechnet> vv = kons.getLeistungen();
 						for (Verrechnet v : vv) {
-							String codesystem=v.getVerrechenbar().getCodeSystemCode();
-							if(codesystem.startsWith("Medi")){
-							old.addMoney(new Money(v.get("VK_Preis")).multiply(v
-									.getZahl() / 100.0));
-							v.setStandardPreis();
-							changed.addMoney(v.getBruttoPreis().multiply(
-									v.getZahl()));
+							String codesystem = v.getVerrechenbar().getCodeSystemCode();
+							if (codesystem.startsWith("Medi")) {
+								old.addMoney(new Money(v.get("VK_Preis"))
+									.multiply(v.getZahl() / 100.0));
+								v.setStandardPreis();
+								changed.addMoney(v.getBruttoPreis().multiply(v.getZahl()));
 							}
 						}
 						writer.write("konvertiert. ");
 					}
 				}
-				StringBuilder sb=new StringBuilder();
-				sb.append("Konversion beendet. ").append(i).append(" Konsultationen wurden umgerechnet\n")
-				.append("Alter Betrag: ").append(old.getAmountAsString()).append("\n")
-				.append("Neuer Betrag: ").append(changed.getAmountAsString()).append("\n");
+				StringBuilder sb = new StringBuilder();
+				sb.append("Konversion beendet. ").append(i).append(
+					" Konsultationen wurden umgerechnet\n").append("Alter Betrag: ").append(
+					old.getAmountAsString()).append("\n").append("Neuer Betrag: ").append(
+					changed.getAmountAsString()).append("\n");
 				return sb.toString();
-			}else{
+			} else {
 				return "\nabgebrochen.";
 			}
-
-		}catch(Exception ex){
+			
+		} catch (Exception ex) {
 			return "Fehler beim Ablauf.";
 		}
 	}

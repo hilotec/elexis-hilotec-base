@@ -41,41 +41,41 @@ public class ESRRecord extends PersistentObject {
 	
 	public static enum MODE {
 		Gutschrift_edv, Storno_edv, Korrektur_edv, Gutschrift_Schalter, Storno_Schalter,
-		Korrektur_Schalter, Summenrecord, Unbekannt
+			Korrektur_Schalter, Summenrecord, Unbekannt
 	};
 	
 	public static enum REJECT {
 		OK, ESRREJECT, MASSENREJECT, BETRAG, MANDANT, RN_NUMMER, PAT_NUMMER, DUPLIKAT, ANDERE,
-		PAT_FALSCH
+			PAT_FALSCH
 	};
 	
-	private static final String createDB="DROP TABLE "+TABLENAME+";" + //$NON-NLS-1$ //$NON-NLS-2$
-	"DROP INDEX ESR1;"+ //$NON-NLS-1$
-	"DROP INDEX ESR2;"+ //$NON-NLS-1$
-	"DROP INDEX ESR3;"+ //$NON-NLS-1$
-	"CREATE TABLE "+TABLENAME+"(" + //$NON-NLS-1$ //$NON-NLS-2$
-	"ID			VARCHAR(25) PRIMARY KEY," + //$NON-NLS-1$
-	"lastupdate BIGINT,"+ //$NON-NLS-1$
-	"deleted	CHAR(1) default '0',"+ //$NON-NLS-1$
-	"DATUM			CHAR(8)," + //$NON-NLS-1$
-	"EINGELESEN		CHAR(8)," + //$NON-NLS-1$
-	"VERARBEITET	CHAR(8)," + //$NON-NLS-1$
-	"GUTSCHRIFT		CHAR(8)," + //$NON-NLS-1$
-	"BETRAGINRP		CHAR(8)," + //$NON-NLS-1$
-	"CODE			CHAR(3)," + //$NON-NLS-1$
-	"RECHNUNGSID VARCHAR(25)," + //$NON-NLS-1$
-	"PATIENTID	 VARCHAR(25)," + //$NON-NLS-1$
-	"MANDANTID	 VARCHAR(25)," + //$NON-NLS-1$
-	"REJECTCODE	 CHAR(3)," + //$NON-NLS-1$
-	"KOSTEN		 CHAR(4)," + //$NON-NLS-1$
-	"GEBUCHT	 CHAR(8)," + //$NON-NLS-1$
-	"FILE		 VARCHAR(80));"+ //$NON-NLS-1$
-	"CREATE INDEX ESR1 ON "+TABLENAME+" (DATUM);"+ //$NON-NLS-1$ //$NON-NLS-2$
-	"CREATE INDEX ESR2 ON "+TABLENAME+" (PATIENTID);"+ //$NON-NLS-1$ //$NON-NLS-2$
-	"CREATE INDEX ESR3 ON "+TABLENAME+" (REJECTCODE);" + //$NON-NLS-1$ //$NON-NLS-2$
-	"INSERT INTO "+TABLENAME+" (ID,FILE) VALUES ('1','"+VERSION+"');"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	private static final String createDB = "DROP TABLE " + TABLENAME + ";" + //$NON-NLS-1$ //$NON-NLS-2$
+		"DROP INDEX ESR1;" + //$NON-NLS-1$
+		"DROP INDEX ESR2;" + //$NON-NLS-1$
+		"DROP INDEX ESR3;" + //$NON-NLS-1$
+		"CREATE TABLE " + TABLENAME + "(" + //$NON-NLS-1$ //$NON-NLS-2$
+		"ID			VARCHAR(25) PRIMARY KEY," + //$NON-NLS-1$
+		"lastupdate BIGINT," + //$NON-NLS-1$
+		"deleted	CHAR(1) default '0'," + //$NON-NLS-1$
+		"DATUM			CHAR(8)," + //$NON-NLS-1$
+		"EINGELESEN		CHAR(8)," + //$NON-NLS-1$
+		"VERARBEITET	CHAR(8)," + //$NON-NLS-1$
+		"GUTSCHRIFT		CHAR(8)," + //$NON-NLS-1$
+		"BETRAGINRP		CHAR(8)," + //$NON-NLS-1$
+		"CODE			CHAR(3)," + //$NON-NLS-1$
+		"RECHNUNGSID VARCHAR(25)," + //$NON-NLS-1$
+		"PATIENTID	 VARCHAR(25)," + //$NON-NLS-1$
+		"MANDANTID	 VARCHAR(25)," + //$NON-NLS-1$
+		"REJECTCODE	 CHAR(3)," + //$NON-NLS-1$
+		"KOSTEN		 CHAR(4)," + //$NON-NLS-1$
+		"GEBUCHT	 CHAR(8)," + //$NON-NLS-1$
+		"FILE		 VARCHAR(80));" + //$NON-NLS-1$
+		"CREATE INDEX ESR1 ON " + TABLENAME + " (DATUM);" + //$NON-NLS-1$ //$NON-NLS-2$
+		"CREATE INDEX ESR2 ON " + TABLENAME + " (PATIENTID);" + //$NON-NLS-1$ //$NON-NLS-2$
+		"CREATE INDEX ESR3 ON " + TABLENAME + " (REJECTCODE);" + //$NON-NLS-1$ //$NON-NLS-2$
+		"INSERT INTO " + TABLENAME + " (ID,FILE) VALUES ('1','" + VERSION + "');"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	
-	private static final String upd2="ALTER TABLE "+TABLENAME+" ADD lastupdate BIGINT;"; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String upd2 = "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;"; //$NON-NLS-1$ //$NON-NLS-2$
 	static {
 		addMapping(
 			TABLENAME,
@@ -84,7 +84,8 @@ public class ESRRecord extends PersistentObject {
 			"Verarbeitet=S:D:VERARBEITET", //$NON-NLS-1$
 			"Gutgeschrieben=S:D:GUTSCHRIFT", //$NON-NLS-1$
 			"BetragInRp=BETRAGINRP", //$NON-NLS-1$
-			CODE, RECHNUNGS_ID, PATIENT_ID, MANDANT_ID, FLD_REJECT_CODE, "Gebucht=S:D:GEBUCHT", "File" //$NON-NLS-1$ //$NON-NLS-2$
+			CODE, RECHNUNGS_ID, PATIENT_ID, MANDANT_ID, FLD_REJECT_CODE,
+			"Gebucht=S:D:GEBUCHT", "File" //$NON-NLS-1$ //$NON-NLS-2$
 		);
 		ESRRecord init = load("1"); //$NON-NLS-1$
 		if (init == null) {
@@ -95,9 +96,9 @@ public class ESRRecord extends PersistentObject {
 				getConnection().exec(
 					"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';"); //$NON-NLS-1$ //$NON-NLS-2$
 				init.set("File", VERSION); //$NON-NLS-1$
-			}else{
-				VersionInfo vi=new VersionInfo(v);
-				if(vi.isOlder("2.0.0")){ //$NON-NLS-1$
+			} else {
+				VersionInfo vi = new VersionInfo(v);
+				if (vi.isOlder("2.0.0")) { //$NON-NLS-1$
 					createOrModifyTable(upd2);
 					
 				}
@@ -212,11 +213,11 @@ public class ESRRecord extends PersistentObject {
 					mandantID = ""; //$NON-NLS-1$
 				} else {
 					m = rn.getMandant();
-					if(m==null){
-						rejectCode=REJECT.MANDANT;
-						vals[6]=""; //$NON-NLS-1$
-						mandantID=""; //$NON-NLS-1$
-					}else{
+					if (m == null) {
+						rejectCode = REJECT.MANDANT;
+						vals[6] = ""; //$NON-NLS-1$
+						mandantID = ""; //$NON-NLS-1$
+					} else {
 						mandantID = m.getId();
 					}
 				}
@@ -226,7 +227,7 @@ public class ESRRecord extends PersistentObject {
 			long patnr = Long.parseLong(PatNr); // führende Nullen wegbringen
 			String PatID =
 				new Query<Patient>(Patient.class)
-				.findSingle("PatientNr", "=", Long.toString(patnr)); //$NON-NLS-1$ //$NON-NLS-2$
+					.findSingle("PatientNr", "=", Long.toString(patnr)); //$NON-NLS-1$ //$NON-NLS-2$
 			if (PatID == null) {
 				if (rejectCode == REJECT.OK) {
 					rejectCode = REJECT.PAT_NUMMER;

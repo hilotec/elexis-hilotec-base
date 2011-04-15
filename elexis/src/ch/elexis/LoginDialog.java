@@ -35,75 +35,77 @@ import ch.elexis.util.SWTHelper;
 public class LoginDialog extends TitleAreaDialog {
 	Text usr, pwd;
 	boolean hasUsers;
-	ButtonEnabler be=new ButtonEnabler();
-	public LoginDialog(Shell parentShell) {
+	ButtonEnabler be = new ButtonEnabler();
+	
+	public LoginDialog(Shell parentShell){
 		super(parentShell);
 		
-		Query<Anwender> qbe=new Query<Anwender>(Anwender.class);
-		List<Anwender> list=qbe.execute();
-		hasUsers=(list.size()>1);
+		Query<Anwender> qbe = new Query<Anwender>(Anwender.class);
+		List<Anwender> list = qbe.execute();
+		hasUsers = (list.size() > 1);
 	}
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
-		ret.setLayoutData(SWTHelper.getFillGridData(1,true,1,true));
-		ret.setLayout(new GridLayout(2,false));
-		Label lu=new Label(ret,SWT.NONE);
+	protected Control createDialogArea(Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
+		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		ret.setLayout(new GridLayout(2, false));
+		Label lu = new Label(ret, SWT.NONE);
 		
 		lu.setText(Messages.LoginDialog_0);
-		usr=new Text(ret,SWT.BORDER);
-		usr.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		new Label(ret,SWT.NONE).setText(Messages.LoginDialog_1);
-		pwd=new Text(ret,SWT.BORDER|SWT.PASSWORD);
-		pwd.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		if(hasUsers==false){
+		usr = new Text(ret, SWT.BORDER);
+		usr.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		new Label(ret, SWT.NONE).setText(Messages.LoginDialog_1);
+		pwd = new Text(ret, SWT.BORDER | SWT.PASSWORD);
+		pwd.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		if (hasUsers == false) {
 			usr.setText("Administrator"); //$NON-NLS-1$
 			pwd.setText("admin"); //$NON-NLS-1$
 		}
-		//usr.addModifyListener(be);
-		//pwd.addModifyListener(be);
+		// usr.addModifyListener(be);
+		// pwd.addModifyListener(be);
 		return ret;
 	}
 	
-	
-	
 	@Override
-	protected void okPressed() {
-		if(Anwender.login(usr.getText(),pwd.getText())==true){
+	protected void okPressed(){
+		if (Anwender.login(usr.getText(), pwd.getText()) == true) {
 			super.okPressed();
-		}
-		else{
-			setMessage(Messages.LoginDialog_4,IMessageProvider.ERROR);
-			//getButton(IDialogConstants.OK_ID).setEnabled(false);
+		} else {
+			setMessage(Messages.LoginDialog_4, IMessageProvider.ERROR);
+			// getButton(IDialogConstants.OK_ID).setEnabled(false);
 		}
 	}
+	
 	@Override
-	protected void cancelPressed() {
-		Hub.actUser=null;
-		Hub.actMandant=null;
+	protected void cancelPressed(){
+		Hub.actUser = null;
+		Hub.actMandant = null;
 		Hub.mainActions.adaptForUser();
 		super.cancelPressed();
 	}
+	
 	@Override
 	public void create(){
 		super.create();
 		getButton(IDialogConstants.OK_ID).setText(Messages.LoginDialog_login);
 		getButton(IDialogConstants.CANCEL_ID).setText(Messages.LoginDialog_terminate);
-		//getButton(IDialogConstants.OK_ID).setEnabled(false);
-
+		// getButton(IDialogConstants.OK_ID).setEnabled(false);
+		
 	}
-	class ButtonEnabler implements ModifyListener{
+	
+	class ButtonEnabler implements ModifyListener {
 		
 		@Override
-		public void modifyText(ModifyEvent e) {
-			if(usr.getText().length()==0 || pwd.getText().length()==0){
-				//getButton(IDialogConstants.OK_ID).setEnabled(false);
-			}else{
-				//getButton(IDialogConstants.OK_ID).setEnabled(true);
+		public void modifyText(ModifyEvent e){
+			if (usr.getText().length() == 0 || pwd.getText().length() == 0) {
+				// getButton(IDialogConstants.OK_ID).setEnabled(false);
+			} else {
+				// getButton(IDialogConstants.OK_ID).setEnabled(true);
 			}
 			
 		}
 		
 	}
-
+	
 }

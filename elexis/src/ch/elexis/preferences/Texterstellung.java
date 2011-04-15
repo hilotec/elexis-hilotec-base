@@ -25,46 +25,38 @@ import ch.elexis.util.Extensions;
 
 /**
  * Einstellungen zur Verknüpfung mit einem externen Texterstellungs-Modul
+ * 
  * @author Gerry
  */
-public class Texterstellung extends FieldEditorPreferencePage implements
-		IWorkbenchPreferencePage {
-
-	public Texterstellung() {
+public class Texterstellung extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+	
+	public Texterstellung(){
 		super(GRID);
 		setPreferenceStore(new SettingsPreferenceStore(Hub.localCfg));
 		setDescription(Messages.Texterstellung_TextProcessor);
 	}
-
-	@Override
-	protected void createFieldEditors() {
-		
-		List<IConfigurationElement> list= Extensions.getExtensions("ch.elexis.Text"); //$NON-NLS-1$
-		String[][] rows=new String[list.size()][];
-		int i=0;
-		for (IConfigurationElement ice:list){
-			rows[i]=new String[2];
-			rows[i][1]=ice.getAttribute("name"); //$NON-NLS-1$
-			rows[i][0]=Integer.toString(i)+" : "+rows[i][1]; //$NON-NLS-1$
-			i+=1;
-		}
-		addField(new RadioGroupFieldEditor(
-				PreferenceConstants.P_TEXTMODUL,
-			Messages.Texterstellung_ExternalProgram,
-			2,
-			/*
-			new String[][] { { "&0: Keines", "none" }, 
-						{ "&1: OpenOffice", "OpenOffice" }
-			*/
-			rows
-		 , getFieldEditorParent()));
-
-		
-
-	}
-
-	public void init(IWorkbench workbench) {}
-
 	
-
+	@Override
+	protected void createFieldEditors(){
+		
+		List<IConfigurationElement> list = Extensions.getExtensions("ch.elexis.Text"); //$NON-NLS-1$
+		String[][] rows = new String[list.size()][];
+		int i = 0;
+		for (IConfigurationElement ice : list) {
+			rows[i] = new String[2];
+			rows[i][1] = ice.getAttribute("name"); //$NON-NLS-1$
+			rows[i][0] = Integer.toString(i) + " : " + rows[i][1]; //$NON-NLS-1$
+			i += 1;
+		}
+		addField(new RadioGroupFieldEditor(PreferenceConstants.P_TEXTMODUL,
+			Messages.Texterstellung_ExternalProgram, 2,
+			/*
+			 * new String[][] { { "&0: Keines", "none" }, { "&1: OpenOffice", "OpenOffice" }
+			 */
+			rows, getFieldEditorParent()));
+		
+	}
+	
+	public void init(IWorkbench workbench){}
+	
 }

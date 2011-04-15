@@ -79,18 +79,17 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 	TableViewer tv;
 	Bestellung actBestellung;
 	ViewMenus viewmenus;
-	private IAction removeAction, wizardAction, countAction, loadAction,
-			saveAction, printAction, sendAction;
+	private IAction removeAction, wizardAction, countAction, loadAction, saveAction, printAction,
+			sendAction;
 	private IAction exportClipboardAction, checkInAction;
-
+	
 	@Override
-	public void createPartControl(final Composite parent) {
+	public void createPartControl(final Composite parent){
 		parent.setLayout(new FillLayout());
 		form = tk.createForm(parent);
 		Composite body = form.getBody();
 		body.setLayout(new GridLayout());
-		Table table = new Table(body, SWT.V_SCROLL | SWT.FULL_SELECTION
-				| SWT.SINGLE);
+		Table table = new Table(body, SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.SINGLE);
 		TableColumn tc0 = new TableColumn(table, SWT.CENTER);
 		tc0.setText(Messages.getString("BestellView.Number")); //$NON-NLS-1$
 		tc0.setWidth(40);
@@ -105,82 +104,80 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 		table.setLinesVisible(true);
 		tv = new TableViewer(table);
 		tv.setContentProvider(new IStructuredContentProvider() {
-			public Object[] getElements(final Object inputElement) {
+			public Object[] getElements(final Object inputElement){
 				if (actBestellung != null) {
 					return actBestellung.asList().toArray();
 				}
 				return new Object[0];
 			}
-
-			public void dispose() {
-			}
-
-			public void inputChanged(final Viewer viewer,
-					final Object oldInput, final Object newInput) {
-			}
-
+			
+			public void dispose(){}
+			
+			public void inputChanged(final Viewer viewer, final Object oldInput,
+				final Object newInput){}
+			
 		});
 		tv.setLabelProvider(new BestellungLabelProvider());
 		tv.setSorter(new ViewerSorter() {
 			@Override
-			public int compare(final Viewer viewer, final Object e1,
-					final Object e2) {
+			public int compare(final Viewer viewer, final Object e1, final Object e2){
 				String s1 = ((Item) e1).art.getName();
 				String s2 = ((Item) e2).art.getName();
 				return s1.compareTo(s2);
 			}
-
+			
 		});
-		Transfer[] types = new Transfer[] { TextTransfer.getInstance() };
+		Transfer[] types = new Transfer[] {
+			TextTransfer.getInstance()
+		};
 		tv.addDropSupport(DND.DROP_COPY, types, new DropTargetAdapter() {
-
+			
 			@Override
-			public void dragEnter(final DropTargetEvent event) {
+			public void dragEnter(final DropTargetEvent event){
 				event.detail = DND.DROP_COPY;
 			}
-
+			
 			@Override
-			public void drop(final DropTargetEvent event) {
+			public void drop(final DropTargetEvent event){
 				String drp = (String) event.data;
 				String[] dl = drp.split(","); //$NON-NLS-1$
 				if (actBestellung == null) {
-					InputDialog dlg = new InputDialog(getViewSite().getShell(),
-							Messages.getString("BestellView.CreateNewOrder"), //$NON-NLS-1$
+					InputDialog dlg =
+						new InputDialog(getViewSite().getShell(), Messages
+							.getString("BestellView.CreateNewOrder"), //$NON-NLS-1$
 							Messages.getString("BestellView.EnterOrderTitle"), //$NON-NLS-1$
 							StringTool.leer, null);
 					if (dlg.open() == Dialog.OK) {
-						setBestellung(new Bestellung(dlg.getValue(),
-								Hub.actUser));
+						setBestellung(new Bestellung(dlg.getValue(), Hub.actUser));
 					} else {
 						return;
 					}
 				}
 				for (String obj : dl) {
-					PersistentObject dropped = Hub.poFactory
-							.createFromString(obj);
+					PersistentObject dropped = Hub.poFactory.createFromString(obj);
 					if (dropped instanceof Artikel) {
 						actBestellung.addItem((Artikel) dropped, 1);
 					}
 				}
 				tv.refresh();
 			}
-
+			
 		});
 		makeActions();
 		viewmenus = new ViewMenus(getViewSite());
-		viewmenus.createToolbar(wizardAction, saveAction, loadAction,
-				printAction, sendAction);
-		viewmenus.createMenu(wizardAction, saveAction, loadAction, printAction,
-				sendAction, exportClipboardAction);
-		viewmenus.createViewerContextMenu(tv, new IAction[] { removeAction,
-				countAction });
+		viewmenus.createToolbar(wizardAction, saveAction, loadAction, printAction, sendAction);
+		viewmenus.createMenu(wizardAction, saveAction, loadAction, printAction, sendAction,
+			exportClipboardAction);
+		viewmenus.createViewerContextMenu(tv, new IAction[] {
+			removeAction, countAction
+		});
 		form.getToolBarManager().add(checkInAction);
 		form.updateToolBar();
 		setBestellung(null);
 		tv.setInput(getViewSite());
 	}
-
-	private void setBestellung(final Bestellung b) {
+	
+	private void setBestellung(final Bestellung b){
 		actBestellung = b;
 		if (b != null) {
 			form.setText(b.getLabel());
@@ -192,29 +189,28 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 			checkInAction.setEnabled(false);
 		}
 	}
-
+	
 	@Override
-	public void dispose() {
+	public void dispose(){
 		/*
 		 * GlobalEvents.getInstance().removeSelectionListener(this);
 		 * cv.getConfigurer().getContentProvider().stopListening();
 		 */
 		super.dispose();
 	}
-
+	
 	@Override
-	public void setFocus() {
+	public void setFocus(){
 
 	}
-
-	class BestellungLabelProvider extends LabelProvider implements
-			ITableLabelProvider {
-
-		public Image getColumnImage(final Object element, final int columnIndex) {
+	
+	class BestellungLabelProvider extends LabelProvider implements ITableLabelProvider {
+		
+		public Image getColumnImage(final Object element, final int columnIndex){
 			return null;
 		}
-
-		public String getColumnText(final Object element, final int columnIndex) {
+		
+		public String getColumnText(final Object element, final int columnIndex){
 			if (element instanceof Bestellung.Item) {
 				Item it = (Item) element;
 				switch (columnIndex) {
@@ -224,337 +220,318 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 					return it.art.getLabel();
 				case 2:
 					Kontakt k = it.art.getLieferant();
-					return k.exists() ? k.getLabel() : Messages
-							.getString("BestellView.Unknown"); //$NON-NLS-1$
+					return k.exists() ? k.getLabel() : Messages.getString("BestellView.Unknown"); //$NON-NLS-1$
 				default:
 					return "?"; //$NON-NLS-1$
 				}
 			}
 			return "??"; //$NON-NLS-1$
 		}
-
+		
 	}
-
-	private void makeActions() {
-		removeAction = new Action(Messages
-				.getString("BestellView.RemoveArticle")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				IStructuredSelection sel = (IStructuredSelection) tv
-						.getSelection();
-				if ((sel != null) && (!sel.isEmpty())) {
-					if (actBestellung != null) {
-						actBestellung.removeItem((Item) sel.getFirstElement());
-					}
-					tv.refresh();
-				}
-			}
-		};
-		wizardAction = new Action(Messages
-				.getString("BestellView.AutomaticOrder")) { //$NON-NLS-1$
-			{
-				setToolTipText(Messages
-						.getString("BestellView.CreateAutomaticOrder")); //$NON-NLS-1$
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_WIZARD));
-			}
-
-			@Override
-			public void run() {
-				if (actBestellung == null) {
-					setBestellung(new Bestellung(Messages
-							.getString("BestellView.Automatic"), Hub.actUser)); //$NON-NLS-1$
-				}
-				/*
-				 * Query<Artikel> qbe=new Query<Artikel>(Artikel.class);
-				 * qbe.add("Minbestand","<>","0"); List<Artikel>
-				 * l=qbe.execute();
-				 */
-
-				int trigger = Hub.globalCfg.get(
-						PreferenceConstants.INVENTORY_ORDER_TRIGGER,
-						PreferenceConstants.INVENTORY_ORDER_TRIGGER_DEFAULT);
-
-				List<Artikel> l = Artikel.getLagerartikel();
-				for (Artikel a : l) {
-					if ((a == null) || (!a.exists())) {
-						continue;
-					}
-					// String name = a.getLabel();
-					int ist = a.getIstbestand();
-					int min = a.getMinbestand();
-					int max = a.getMaxbestand();
-
-					boolean order = false;
-					switch (trigger) {
-					case PreferenceConstants.INVENTORY_ORDER_TRIGGER_BELOW:
-						order = (ist < min);
-						break;
-					case PreferenceConstants.INVENTORY_ORDER_TRIGGER_EQUAL:
-						order = (ist <= min);
-						break;
-					default:
-						order = (ist < min);
-					}
-					if (order) {
-						int toOrder = max - ist;
-						if (toOrder > 0) {
-							actBestellung.addItem(a, toOrder);
+	
+	private void makeActions(){
+		removeAction = new Action(Messages.getString("BestellView.RemoveArticle")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
+					if ((sel != null) && (!sel.isEmpty())) {
+						if (actBestellung != null) {
+							actBestellung.removeItem((Item) sel.getFirstElement());
 						}
+						tv.refresh();
 					}
 				}
-				tv.refresh(true);
-			}
-		};
-		countAction = new Action(Messages.getString("BestellView.ChangeNumber")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				IStructuredSelection sel = (IStructuredSelection) tv
-						.getSelection();
-				if ((sel != null) && (!sel.isEmpty())) {
-					Item it = (Item) sel.getFirstElement();
-					int old = it.num;
-					InputDialog in = new InputDialog(getViewSite().getShell(),
-							Messages.getString("BestellView.ChangeNumber"), //$NON-NLS-1$
-							Messages.getString("BestellView.EnterNewNumber"), //$NON-NLS-1$
-							Integer.toString(old), null);
-					if (in.open() == Dialog.OK) {
-						it.num = Integer.parseInt(in.getValue());
-						tv.refresh(it, true);
+			};
+		wizardAction = new Action(Messages.getString("BestellView.AutomaticOrder")) { //$NON-NLS-1$
+				{
+					setToolTipText(Messages.getString("BestellView.CreateAutomaticOrder")); //$NON-NLS-1$
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_WIZARD));
+				}
+				
+				@Override
+				public void run(){
+					if (actBestellung == null) {
+						setBestellung(new Bestellung(
+							Messages.getString("BestellView.Automatic"), Hub.actUser)); //$NON-NLS-1$
 					}
-				}
-			}
-		};
-		saveAction = new Action(Messages.getString("BestellView.SavelIst")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				if (actBestellung != null) {
-					actBestellung.save();
-				}
-			}
-		};
-		printAction = new Action(Messages.getString("BestellView.PrintOrder")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				if (actBestellung != null) {
-					actBestellung.save();
-					List<Item> list = actBestellung.asList();
-					ArrayList<Item> best = new ArrayList<Item>();
-					Kontakt adressat = null;
-					Iterator<Item> iter = list.iterator();
-					while (iter.hasNext()) {
-						Item it = (Item) iter.next();
-						if (adressat == null) {
-							adressat = it.art.getLieferant();
-							if (!adressat.exists()) {
-								adressat = null;
-								continue;
+					/*
+					 * Query<Artikel> qbe=new Query<Artikel>(Artikel.class);
+					 * qbe.add("Minbestand","<>","0"); List<Artikel> l=qbe.execute();
+					 */
+
+					int trigger =
+						Hub.globalCfg.get(PreferenceConstants.INVENTORY_ORDER_TRIGGER,
+							PreferenceConstants.INVENTORY_ORDER_TRIGGER_DEFAULT);
+					
+					List<Artikel> l = Artikel.getLagerartikel();
+					for (Artikel a : l) {
+						if ((a == null) || (!a.exists())) {
+							continue;
+						}
+						// String name = a.getLabel();
+						int ist = a.getIstbestand();
+						int min = a.getMinbestand();
+						int max = a.getMaxbestand();
+						
+						boolean order = false;
+						switch (trigger) {
+						case PreferenceConstants.INVENTORY_ORDER_TRIGGER_BELOW:
+							order = (ist < min);
+							break;
+						case PreferenceConstants.INVENTORY_ORDER_TRIGGER_EQUAL:
+							order = (ist <= min);
+							break;
+						default:
+							order = (ist < min);
+						}
+						if (order) {
+							int toOrder = max - ist;
+							if (toOrder > 0) {
+								actBestellung.addItem(a, toOrder);
 							}
 						}
-						if (it.art.getLieferant().getId().equals(
-								adressat.getId())) {
-							best.add(it);
-							iter.remove();
+					}
+					tv.refresh(true);
+				}
+			};
+		countAction = new Action(Messages.getString("BestellView.ChangeNumber")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
+					if ((sel != null) && (!sel.isEmpty())) {
+						Item it = (Item) sel.getFirstElement();
+						int old = it.num;
+						InputDialog in =
+							new InputDialog(getViewSite().getShell(), Messages
+								.getString("BestellView.ChangeNumber"), //$NON-NLS-1$
+								Messages.getString("BestellView.EnterNewNumber"), //$NON-NLS-1$
+								Integer.toString(old), null);
+						if (in.open() == Dialog.OK) {
+							it.num = Integer.parseInt(in.getValue());
+							tv.refresh(it, true);
 						}
 					}
-
-					try {
-						BestellBlatt bb = (BestellBlatt) getViewSite()
-								.getPage().showView(BestellBlatt.ID);
-						bb.createOrder(adressat, best);
-						tv.refresh();
-					} catch (PartInitException e) {
-						ExHandler.handle(e);
-
+				}
+			};
+		saveAction = new Action(Messages.getString("BestellView.SavelIst")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					if (actBestellung != null) {
+						actBestellung.save();
 					}
 				}
-			}
-		};
-		sendAction = new Action(Messages.getString("BestellView.SendOrder")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-				actBestellung.save();
-				List<IConfigurationElement> list = Extensions
-						.getExtensions("ch.elexis.Transporter"); //$NON-NLS-1$
-				for (IConfigurationElement ic : list) {
-					String handler = ic.getAttribute("type"); //$NON-NLS-1$
-					
-					if (handler !=null && handler.contains("ch.elexis.data.Bestellung")) { //$NON-NLS-1$
+			};
+		printAction = new Action(Messages.getString("BestellView.PrintOrder")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					if (actBestellung != null) {
+						actBestellung.save();
+						List<Item> list = actBestellung.asList();
+						ArrayList<Item> best = new ArrayList<Item>();
+						Kontakt adressat = null;
+						Iterator<Item> iter = list.iterator();
+						while (iter.hasNext()) {
+							Item it = (Item) iter.next();
+							if (adressat == null) {
+								adressat = it.art.getLieferant();
+								if (!adressat.exists()) {
+									adressat = null;
+									continue;
+								}
+							}
+							if (it.art.getLieferant().getId().equals(adressat.getId())) {
+								best.add(it);
+								iter.remove();
+							}
+						}
+						
 						try {
-							IDataSender sender = (IDataSender) ic
-									.createExecutableExtension("ExporterClass"); //$NON-NLS-1$
-
-							sender.store(actBestellung);
-							sender.finalizeExport();
-							SWTHelper
-									.showInfo(
-											Messages
-													.getString("BestellView.OrderSentCaption"), //$NON-NLS-1$
-											Messages
-													.getString("BestellView.OrderSentBody")); //$NON-NLS-1$
+							BestellBlatt bb =
+								(BestellBlatt) getViewSite().getPage().showView(BestellBlatt.ID);
+							bb.createOrder(adressat, best);
 							tv.refresh();
-
-						} catch (CoreException ex) {
-							ExHandler.handle(ex);
-						} catch (XChangeException xx) {
-							SWTHelper
-									.showError(
-											Messages
-													.getString("BestellView.OrderNotPossible"), //$NON-NLS-1$
-											Messages
-													.getString("BestellView.NoAutomaticOrderAvailable " + xx.getMessage())); //$NON-NLS-1$
-
+						} catch (PartInitException e) {
+							ExHandler.handle(e);
+							
 						}
 					}
 				}
-			}
-		};
-		loadAction = new Action(Messages.getString("BestellView.OpenOrder")) { //$NON-NLS-1$
-			@Override
-			public void run() {
-
-				ListDialog dlg = new ListDialog(getViewSite().getShell());
-				dlg.setContentProvider(new BestellContentProvider());
-				dlg.setLabelProvider(new DefaultLabelProvider());
-				dlg.setMessage(Messages.getString("BestellView.SelectOrder")); //$NON-NLS-1$
-				dlg.setTitle(Messages.getString("BestellView.ReadOrder")); //$NON-NLS-1$
-				dlg.setInput(this);
-				if (dlg.open() == Dialog.OK) {
-					Bestellung res = (Bestellung) dlg.getResult()[0];
-					setBestellung(res);
+			};
+		sendAction = new Action(Messages.getString("BestellView.SendOrder")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					actBestellung.save();
+					List<IConfigurationElement> list =
+						Extensions.getExtensions("ch.elexis.Transporter"); //$NON-NLS-1$
+					for (IConfigurationElement ic : list) {
+						String handler = ic.getAttribute("type"); //$NON-NLS-1$
+						
+						if (handler != null && handler.contains("ch.elexis.data.Bestellung")) { //$NON-NLS-1$
+							try {
+								IDataSender sender =
+									(IDataSender) ic.createExecutableExtension("ExporterClass"); //$NON-NLS-1$
+								
+								sender.store(actBestellung);
+								sender.finalizeExport();
+								SWTHelper.showInfo(Messages
+									.getString("BestellView.OrderSentCaption"), //$NON-NLS-1$
+									Messages.getString("BestellView.OrderSentBody")); //$NON-NLS-1$
+								tv.refresh();
+								
+							} catch (CoreException ex) {
+								ExHandler.handle(ex);
+							} catch (XChangeException xx) {
+								SWTHelper
+									.showError(
+										Messages.getString("BestellView.OrderNotPossible"), //$NON-NLS-1$
+										Messages
+											.getString("BestellView.NoAutomaticOrderAvailable " + xx.getMessage())); //$NON-NLS-1$
+								
+							}
+						}
+					}
 				}
-			}
-		};
-		printAction.setImageDescriptor(Desk
-				.getImageDescriptor(Desk.IMG_PRINTER));
-		printAction
-				.setToolTipText(Messages.getString("BestellView.PrintOrder")); //$NON-NLS-1$
-
+			};
+		loadAction = new Action(Messages.getString("BestellView.OpenOrder")) { //$NON-NLS-1$
+				@Override
+				public void run(){
+					
+					ListDialog dlg = new ListDialog(getViewSite().getShell());
+					dlg.setContentProvider(new BestellContentProvider());
+					dlg.setLabelProvider(new DefaultLabelProvider());
+					dlg.setMessage(Messages.getString("BestellView.SelectOrder")); //$NON-NLS-1$
+					dlg.setTitle(Messages.getString("BestellView.ReadOrder")); //$NON-NLS-1$
+					dlg.setInput(this);
+					if (dlg.open() == Dialog.OK) {
+						Bestellung res = (Bestellung) dlg.getResult()[0];
+						setBestellung(res);
+					}
+				}
+			};
+		printAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
+		printAction.setToolTipText(Messages.getString("BestellView.PrintOrder")); //$NON-NLS-1$
+		
 		saveAction.setImageDescriptor(Hub.getImageDescriptor("rsc/save.gif"));
 		saveAction.setToolTipText(Messages.getString("BestellView.saveOrder")); //$NON-NLS-1$
-		sendAction
-				.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NETWORK));
-		sendAction.setToolTipText(Messages
-				.getString("BestellView.transmitOrder")); //$NON-NLS-1$
+		sendAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NETWORK));
+		sendAction.setToolTipText(Messages.getString("BestellView.transmitOrder")); //$NON-NLS-1$
 		// loadAction.setImageDescriptor(Hub.getImageDescriptor("rsc/open.gif"));
 		loadAction.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
-		loadAction.setToolTipText(Messages
-				.getString("BestellView.loadEarlierOrder")); //$NON-NLS-1$
-
-		exportClipboardAction = new Action(Messages
-				.getString("BestellView.copyToClipboard")) { //$NON-NLS-1$
-			{
-				setToolTipText(Messages
-						.getString("BestellView.copyToClipBioardForGalexis")); //$NON-NLS-1$
-			}
-
-			@Override
-			public void run() {
-				if (actBestellung != null) {
-					List<Item> list = actBestellung.asList();
-					ArrayList<Item> best = new ArrayList<Item>();
-					Kontakt adressat = null;
-					Iterator<Item> iter = list.iterator();
-					while (iter.hasNext()) {
-						Item it = (Item) iter.next();
-						if (adressat == null) {
-							adressat = it.art.getLieferant();
-							if (!adressat.exists()) {
-								adressat = null;
-								continue;
+		loadAction.setToolTipText(Messages.getString("BestellView.loadEarlierOrder")); //$NON-NLS-1$
+		
+		exportClipboardAction = new Action(Messages.getString("BestellView.copyToClipboard")) { //$NON-NLS-1$
+				{
+					setToolTipText(Messages.getString("BestellView.copyToClipBioardForGalexis")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					if (actBestellung != null) {
+						List<Item> list = actBestellung.asList();
+						ArrayList<Item> best = new ArrayList<Item>();
+						Kontakt adressat = null;
+						Iterator<Item> iter = list.iterator();
+						while (iter.hasNext()) {
+							Item it = (Item) iter.next();
+							if (adressat == null) {
+								adressat = it.art.getLieferant();
+								if (!adressat.exists()) {
+									adressat = null;
+									continue;
+								}
+							}
+							if (it.art.getLieferant().getId().equals(adressat.getId())) {
+								best.add(it);
+								iter.remove();
 							}
 						}
-						if (it.art.getLieferant().getId().equals(
-								adressat.getId())) {
-							best.add(it);
-							iter.remove();
+						
+						StringBuffer export = new StringBuffer();
+						for (Item item : best) {
+							String pharmaCode = item.art.get(Artikel.FLD_PHARMACODE);
+							int num = item.num;
+							String name = item.art.getName();
+							String line = pharmaCode + ", " + num + ", " + name; //$NON-NLS-1$ //$NON-NLS-2$
+							
+							export.append(line);
+							export.append(System.getProperty("line.separator")); //$NON-NLS-1$
 						}
+						
+						String clipboardText = export.toString();
+						Clipboard clipboard = new Clipboard(Desk.getDisplay());
+						TextTransfer textTransfer = TextTransfer.getInstance();
+						Transfer[] transfers = new Transfer[] {
+							textTransfer
+						};
+						Object[] data = new Object[] {
+							clipboardText
+						};
+						clipboard.setContents(data, transfers);
+						clipboard.dispose();
 					}
-
-					StringBuffer export = new StringBuffer();
-					for (Item item : best) {
-						String pharmaCode = item.art.get(Artikel.FLD_PHARMACODE);
-						int num = item.num;
-						String name = item.art.getName();
-						String line = pharmaCode + ", " + num + ", " + name; //$NON-NLS-1$ //$NON-NLS-2$
-
-						export.append(line);
-						export.append(System.getProperty("line.separator")); //$NON-NLS-1$
-					}
-
-					String clipboardText = export.toString();
-					Clipboard clipboard = new Clipboard(Desk.getDisplay());
-					TextTransfer textTransfer = TextTransfer.getInstance();
-					Transfer[] transfers = new Transfer[] { textTransfer };
-					Object[] data = new Object[] { clipboardText };
-					clipboard.setContents(data, transfers);
-					clipboard.dispose();
 				}
-			}
-		};
-		checkInAction = new Action(Messages
-				.getString("BestellView.CheckInCaption")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_TICK));
-				setToolTipText(Messages.getString("BestellView.CheckInBody")); //$NON-NLS-1$
-			}
-
-			@Override
-			public void run() {
-				if (actBestellung != null && actBestellung.exists()) {
-					OrderImportDialog dialog = new OrderImportDialog(getSite()
-							.getShell(), actBestellung);
-					dialog.open();
-				} else {
-					SWTHelper.alert(Messages.getString("BestellView.NoOrder"), //$NON-NLS-1$
+			};
+		checkInAction = new Action(Messages.getString("BestellView.CheckInCaption")) { //$NON-NLS-1$
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_TICK));
+					setToolTipText(Messages.getString("BestellView.CheckInBody")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					if (actBestellung != null && actBestellung.exists()) {
+						OrderImportDialog dialog =
+							new OrderImportDialog(getSite().getShell(), actBestellung);
+						dialog.open();
+					} else {
+						SWTHelper.alert(Messages.getString("BestellView.NoOrder"), //$NON-NLS-1$
 							Messages.getString("BestellView.NoOrderLoaded")); //$NON-NLS-1$
+					}
 				}
-			}
-
-		};
+				
+			};
 	}
-
+	
 	class BestellContentProvider implements IStructuredContentProvider {
-
-		public Object[] getElements(final Object inputElement) {
+		
+		public Object[] getElements(final Object inputElement){
 			Query<Bestellung> qbe = new Query<Bestellung>(Bestellung.class);
 			return qbe.execute().toArray();
-
+			
 		}
-
-		public void dispose() {
-		}
-
-		public void inputChanged(final Viewer viewer, final Object oldInput,
-				final Object newInput) {
-		}
-
+		
+		public void dispose(){}
+		
+		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput){}
+		
 	}
-
+	
 	/*
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir
-	 * benötigen das Interface nur, um das Schliessen einer View zu verhindern,
-	 * wenn die Perspektive fixiert ist. Gibt es da keine einfachere Methode?
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
+	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
+	 * Gibt es da keine einfachere Methode?
 	 */
-	public int promptToSaveOnClose() {
+	public int promptToSaveOnClose(){
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
 				: ISaveablePart2.NO;
 	}
-
-	public void doSave(final IProgressMonitor monitor) { /* leer */
+	
+	public void doSave(final IProgressMonitor monitor){ /* leer */
 	}
-
-	public void doSaveAs() { /* leer */
+	
+	public void doSaveAs(){ /* leer */
 	}
-
-	public boolean isDirty() {
+	
+	public boolean isDirty(){
 		return true;
 	}
-
-	public boolean isSaveAsAllowed() {
+	
+	public boolean isSaveAsAllowed(){
 		return false;
 	}
-
-	public boolean isSaveOnCloseNeeded() {
+	
+	public boolean isSaveOnCloseNeeded(){
 		return true;
 	}
 }

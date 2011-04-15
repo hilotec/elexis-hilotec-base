@@ -19,40 +19,41 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
 
 public class ArtikelFactory extends PersistentObjectFactory {
-
-	public ArtikelFactory() {}
-
+	
+	public ArtikelFactory(){}
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	public PersistentObject createFromString(String code) {
-	    try{
-	        String[] ci=code.split("::"); //$NON-NLS-1$
-	        // Workaround for compatibility with older package structure
-	        if(ci[0].startsWith("ch.elexis.data")){ //$NON-NLS-1$
-	        	int ix=ci[0].lastIndexOf('.');
-	        	ci[0]="ch.elexis.artikel_ch.data"+ci[0].substring(ix); //$NON-NLS-1$
-	        }
-	        Class clazz=Class.forName(ci[0]);
-	        Method load=clazz.getMethod("load",new Class[]{String.class}); //$NON-NLS-1$
-	        return  (PersistentObject)(load.invoke(null,new Object[]{ci[1]}));
-	    }catch(Exception ex){
-	    	
-	    	//ExHandler.handle(ex);
-	    	return null;
-	    
+	public PersistentObject createFromString(String code){
+		try {
+			String[] ci = code.split("::"); //$NON-NLS-1$
+			// Workaround for compatibility with older package structure
+			if (ci[0].startsWith("ch.elexis.data")) { //$NON-NLS-1$
+				int ix = ci[0].lastIndexOf('.');
+				ci[0] = "ch.elexis.artikel_ch.data" + ci[0].substring(ix); //$NON-NLS-1$
+			}
+			Class clazz = Class.forName(ci[0]);
+			Method load = clazz.getMethod("load", new Class[] { String.class}); //$NON-NLS-1$
+			return (PersistentObject) (load.invoke(null, new Object[] {
+				ci[1]
+			}));
+		} catch (Exception ex) {
+			
+			// ExHandler.handle(ex);
+			return null;
+			
 		}
 	}
-
+	
 	@Override
-	protected PersistentObject doCreateTemplate(Class<? extends PersistentObject> typ) {
+	protected PersistentObject doCreateTemplate(Class<? extends PersistentObject> typ){
 		try {
-			return (PersistentObject)typ.newInstance();
+			return (PersistentObject) typ.newInstance();
 		} catch (Exception e) {
 			// ExHandler.handle(e);
 			return null;
 		}
-			
+		
 	}
 	
-
 }

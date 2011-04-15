@@ -33,8 +33,8 @@ public class NoteFactory extends PersistentObjectFactory {
 			String[] ci = code.split("::"); //$NON-NLS-1$
 			Class<?> clazz = Class.forName(ci[0]);
 			Method load = clazz.getMethod("load", new Class[] { //$NON-NLS-1$
-				String.class
-			});
+					String.class
+				});
 			return (PersistentObject) (load.invoke(null, new Object[] {
 				ci[1]
 			}));

@@ -19,7 +19,7 @@ import ch.rgw.tools.JdbcLinkException;
 public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	
 	@Test
-	public void testFirstConnect() {
+	public void testFirstConnect(){
 		ResourceManager rsc = ResourceManager.getInstance();
 		String pluginPath = rsc.getResourceLocationByName("/createDB.script");
 		int end = pluginPath.lastIndexOf('/');
@@ -39,7 +39,7 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	}
 	
 	@Test
-	public void testConnect() {
+	public void testConnect(){
 		ResourceManager rsc = ResourceManager.getInstance();
 		String pluginPath = rsc.getResourceLocationByName("/createDB.script");
 		int end = pluginPath.lastIndexOf('/');
@@ -57,10 +57,11 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	}
 	
 	@Test
-	public void testConnectFail() {
+	public void testConnectFail(){
 		ResourceManager rsc = ResourceManager.getInstance();
 		PowerMockito.mockStatic(Hub.class);
-		PowerMockito.when(Hub.getBasePath()).thenReturn(rsc.getResourceLocationByName("/createDB.script"));
+		PowerMockito.when(Hub.getBasePath()).thenReturn(
+			rsc.getResourceLocationByName("/createDB.script"));
 		PowerMockito.when(Hub.getCfgVariant()).thenReturn("default");
 		PowerMockito.mockStatic(PreferenceInitializer.class);
 		PowerMockito.when(PreferenceInitializer.getDefaultDBPath()).thenReturn("");
@@ -72,7 +73,7 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 			PersistentObject.connect(link);
 			fail("Expected Exception not thrown!");
 		} catch (JdbcLinkException je) {
-			
+
 		}
 		
 		// this connect methods opens its own JdbcLink by all means
@@ -93,18 +94,19 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 		// this is nice for runtime but makes testing really hard :)
 		// we need to mock JdbcLink.createH2Link to stop creation of database
 		PowerMockito.mockStatic(JdbcLink.class);
-		PowerMockito.when(JdbcLink.createH2Link(Matchers.anyString())).thenReturn(new JdbcLink("", "", ""));
+		PowerMockito.when(JdbcLink.createH2Link(Matchers.anyString())).thenReturn(
+			new JdbcLink("", "", ""));
 		// connect and simulate db creation failure with JdbcLink mock
 		try {
 			PersistentObject.connect(Hub.localCfg, null);
 			fail("Expected Exception not thrown!");
 		} catch (PersistenceException pe) {
-			
+
 		}
 	}
 	
 	@Test
-	public void testGet() {
+	public void testGet(){
 		JdbcLink link = initDB();
 		
 		PersistentObjectImpl impl = new PersistentObjectImpl();
@@ -115,7 +117,7 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	}
 	
 	@Test
-	public void testState() {
+	public void testState(){
 		JdbcLink link = initDB();
 		
 		PersistentObjectImpl impl = new PersistentObjectImpl();
@@ -126,7 +128,7 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	}
 	
 	@Test
-	public void testGetFail() {
+	public void testGetFail(){
 		JdbcLink link = initDB();
 		
 		PersistentObjectImpl impl = new PersistentObjectImpl();
@@ -135,7 +137,7 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 			assertNotNull(ret);
 			assertEquals(PersistentObject.MAPPING_ERROR_MARKER + "**", ret);
 		} catch (PersistenceException pe) {
-			
+
 		}
 		
 		// if we pass ID we should get to code that reaches into the db
@@ -145,27 +147,27 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 			fail("Expected Exception not thrown!");
 			link.disconnect();
 		} catch (PersistenceException pe) {
-			
+
 		}
 		
 		link.disconnect();
 	}
 	
 	private class PersistentObjectImpl extends PersistentObject {
-
+		
 		String tablename;
 		
-		public String getTestGet() {
+		public String getTestGet(){
 			return "test";
 		}
 		
 		@Override
-		public String getLabel() {
+		public String getLabel(){
 			return null;
 		}
-
+		
 		@Override
-		protected String getTableName() {
+		protected String getTableName(){
 			return tablename;
 		}
 		

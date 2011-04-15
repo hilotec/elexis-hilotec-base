@@ -134,11 +134,11 @@ public class LazyContentProvider implements ICommonViewerContentProvider, ILazyC
 	public Object[] getElements(Object inputElement){
 		return (Object[]) dataloader.getData();
 	}
-
+	
 	@Override
-	public void init() {
-		// TODO Auto-generated method stub
-		
+	public void init(){
+	// TODO Auto-generated method stub
+	
 	}
 	
 }

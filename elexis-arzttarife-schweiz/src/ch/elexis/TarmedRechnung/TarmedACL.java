@@ -13,7 +13,6 @@
 
 package ch.elexis.TarmedRechnung;
 
-
 /**
  * Für die Tarmed-Rechnung spezifische Zugriffsrechte auf Mandantendaten einrichten.
  * 

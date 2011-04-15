@@ -18,7 +18,7 @@ import ch.elexis.exchange.XChangeContainer;
 public class DocumentsElement extends XChangeElement {
 	
 	@Override
-	public String getXMLName() {
+	public String getXMLName(){
 		return XChangeContainer.ENCLOSE_DOCUMENTS;
 	}
 	

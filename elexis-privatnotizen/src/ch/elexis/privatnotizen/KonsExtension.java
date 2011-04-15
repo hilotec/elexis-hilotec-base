@@ -65,7 +65,8 @@ public class KonsExtension implements IKonsExtension {
 			public void run(){
 				Privatnotiz np = new Privatnotiz(Hub.actMandant);
 				if (new NotizInputDialog(Desk.getTopShell(), np).open() == Dialog.OK) {
-					mine.insertXRef(-1, Messages.KonsExtension_noteActionXREFText, "privatnotizen", np.getId()); //$NON-NLS-2$
+					mine.insertXRef(-1, Messages.KonsExtension_noteActionXREFText,
+						"privatnotizen", np.getId()); //$NON-NLS-2$
 				} else {
 					np.delete();
 				}

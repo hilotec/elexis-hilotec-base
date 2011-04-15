@@ -16,11 +16,11 @@
 package ch.elexis.admin;
 
 /**
- * An ACLContributor declares a List of AccessControlElements it will use. Such Elements will define rights a
- * user has, and will be editable via the administrator UI (Settings tab "groups and rights"). The
- * names of such ACE's can be chosen freely and thus might collide. In such case, the framework will
- * assign them on a first-come-first-serve basis. Thus, the second client requesting the same verb
- * will get a reject.
+ * An ACLContributor declares a List of AccessControlElements it will use. Such Elements will define
+ * rights a user has, and will be editable via the administrator UI (Settings tab
+ * "groups and rights"). The names of such ACE's can be chosen freely and thus might collide. In
+ * such case, the framework will assign them on a first-come-first-serve basis. Thus, the second
+ * client requesting the same verb will get a reject.
  * 
  * @author gerry
  * 

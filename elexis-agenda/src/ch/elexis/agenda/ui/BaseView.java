@@ -62,61 +62,59 @@ import ch.rgw.tools.TimeTool;
  * @author Gerry
  * 
  */
-public abstract class BaseView extends ViewPart implements HeartListener,
-		IActivationListener {
+public abstract class BaseView extends ViewPart implements HeartListener, IActivationListener {
 	private static final String DEFAULT_PIXEL_PER_MINUTE = "1.0"; //$NON-NLS-1$
-
+	
 	public IAction newTerminAction, blockAction;
-	public IAction dayLimitsAction, newViewAction, printAction, exportAction,
-			importAction;
+	public IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction;
 	public IAction printPatientAction, todayAction;
 	MenuManager menu = new MenuManager();
 	protected Activator agenda = Activator.getDefault();
-
-	private final ElexisEventListenerImpl eeli_termin = new ElexisEventListenerImpl(
-			Termin.class, ElexisEvent.EVENT_RELOAD) {
-		public void runInUi(ElexisEvent ev) {
-			internalRefresh();
-		}
-	};
-
-	private final ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(
-			Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
-		public void runInUi(ElexisEvent ev) {
-			updateActions();
-			agenda.setActResource(Hub.userCfg.get(
-					PreferenceConstants.AG_BEREICH, agenda.getActResource()));
-
-		}
-	};
-
+	
+	private final ElexisEventListenerImpl eeli_termin =
+		new ElexisEventListenerImpl(Termin.class, ElexisEvent.EVENT_RELOAD) {
+			public void runInUi(ElexisEvent ev){
+				internalRefresh();
+			}
+		};
+	
+	private final ElexisEventListenerImpl eeli_user =
+		new ElexisEventListenerImpl(Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
+			public void runInUi(ElexisEvent ev){
+				updateActions();
+				agenda.setActResource(Hub.userCfg.get(PreferenceConstants.AG_BEREICH, agenda
+					.getActResource()));
+				
+			}
+		};
+	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		makeActions();
 		create(parent);
 		GlobalEventDispatcher.addActivationListener(this, this);
 		internalRefresh();
 	}
-
+	
 	@Override
-	public void dispose() {
+	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		super.dispose();
 	}
-
+	
 	abstract protected void create(Composite parent);
-
+	
 	abstract protected void refresh();
-
+	
 	abstract protected IPlannable getSelection();
-
-	private void internalRefresh() {
+	
+	private void internalRefresh(){
 		if (Hub.acl.request(ACLContributor.DISPLAY_APPOINTMENTS)) {
 			refresh();
 		}
 	}
-
-	protected void checkDay(String resource, TimeTool date) {
+	
+	protected void checkDay(String resource, TimeTool date){
 		if (date == null) {
 			date = agenda.getActDate();
 		}
@@ -138,93 +136,83 @@ public abstract class BaseView extends ViewPart implements HeartListener,
 			for (String fld : flds) {
 				String from = fld.substring(0, 4);
 				String until = fld.replaceAll("-", "").substring(4); //$NON-NLS-1$ //$NON-NLS-2$
-				new Termin(resource, day, TimeTool
-						.getMinutesFromTimeString(from), TimeTool
-						.getMinutesFromTimeString(until), Termin
-						.typReserviert(), Termin.statusLeer());
+				new Termin(resource, day, TimeTool.getMinutesFromTimeString(from), TimeTool
+					.getMinutesFromTimeString(until), Termin.typReserviert(), Termin.statusLeer());
 			}
-
+			
 		}
-
+		
 	}
-
-	protected void updateActions() {
-		dayLimitsAction.setEnabled(Hub.acl
-				.request(ACLContributor.CHANGE_DAYSETTINGS));
-		boolean canChangeAppointments = Hub.acl
-				.request(ACLContributor.CHANGE_APPOINTMENTS);
+	
+	protected void updateActions(){
+		dayLimitsAction.setEnabled(Hub.acl.request(ACLContributor.CHANGE_DAYSETTINGS));
+		boolean canChangeAppointments = Hub.acl.request(ACLContributor.CHANGE_APPOINTMENTS);
 		newTerminAction.setEnabled(canChangeAppointments);
 		AgendaActions.updateActions();
 		internalRefresh();
 	}
-
-	public void heartbeat() {
+	
+	public void heartbeat(){
 		internalRefresh();
 	}
-
-	public void activation(boolean mode) {
+	
+	public void activation(boolean mode){
 
 	}
-
-	public void visible(boolean mode) {
+	
+	public void visible(boolean mode){
 		if (mode) {
 			Hub.heart.addListener(this);
-			ElexisEventDispatcher.getInstance().addListeners(eeli_termin,
-					eeli_user);
+			ElexisEventDispatcher.getInstance().addListeners(eeli_termin, eeli_user);
 		} else {
 			Hub.heart.removeListener(this);
-			ElexisEventDispatcher.getInstance().removeListeners(eeli_termin,
-					eeli_user);
-
+			ElexisEventDispatcher.getInstance().removeListeners(eeli_termin, eeli_user);
+			
 		}
-
+		
 	}
-
+	
 	/**
 	 * Return the scale factor, i.e. the number of Pixels to use for one minute.
 	 * 
 	 * @return thepixel-per-minute scale.
 	 */
-	public static double getPixelPerMinute() {
-		String ppm = Hub.localCfg.get(PreferenceConstants.AG_PIXEL_PER_MINUTE,
-				DEFAULT_PIXEL_PER_MINUTE);
+	public static double getPixelPerMinute(){
+		String ppm =
+			Hub.localCfg.get(PreferenceConstants.AG_PIXEL_PER_MINUTE, DEFAULT_PIXEL_PER_MINUTE);
 		try {
 			double ret = Double.parseDouble(ppm);
 			return ret;
 		} catch (NumberFormatException ne) {
-			Hub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE,
-					DEFAULT_PIXEL_PER_MINUTE);
+			Hub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE, DEFAULT_PIXEL_PER_MINUTE);
 			return Double.parseDouble(DEFAULT_PIXEL_PER_MINUTE);
 		}
 	}
-
-	protected void makeActions() {
+	
+	protected void makeActions(){
 		dayLimitsAction = new Action(Messages.BaseView_dayLimits) {
 			@Override
-			public void run() {
-				new TagesgrenzenDialog(PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getShell(), agenda
-						.getActDate().toString(TimeTool.DATE_COMPACT), agenda
-						.getActResource()).open();
+			public void run(){
+				new TagesgrenzenDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+					.getShell(), agenda.getActDate().toString(TimeTool.DATE_COMPACT), agenda
+					.getActResource()).open();
 				refresh();
 			}
 		};
-
+		
 		blockAction = new Action(Messages.TagesView_lockPeriod) {
 			@Override
-			public void run() {
+			public void run(){
 				IPlannable p = getSelection();
 				if (p != null) {
 					if (p instanceof Termin.Free) {
-						new Termin(agenda.getActResource(), agenda.getActDate()
-								.toString(TimeTool.DATE_COMPACT), p
-								.getStartMinute(), p.getDurationInMinutes()
-								+ p.getStartMinute(), Termin.typReserviert(),
-								Termin.statusLeer());
+						new Termin(agenda.getActResource(), agenda.getActDate().toString(
+							TimeTool.DATE_COMPACT), p.getStartMinute(), p.getDurationInMinutes()
+							+ p.getStartMinute(), Termin.typReserviert(), Termin.statusLeer());
 						ElexisEventDispatcher.reload(Termin.class);
 					}
 				}
-
+				
 			}
 		};
 		newTerminAction = new Action(Messages.TagesView_newTermin) {
@@ -232,9 +220,9 @@ public abstract class BaseView extends ViewPart implements HeartListener,
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEW));
 				setToolTipText(Messages.TagesView_createNewTermin);
 			}
-
+			
 			@Override
-			public void run() {
+			public void run(){
 				new TerminDialog(null).open();
 				internalRefresh();
 			}
@@ -244,13 +232,12 @@ public abstract class BaseView extends ViewPart implements HeartListener,
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
 				setToolTipText(Messages.BaseView_printAPpointmentsOfSelectedDay);
 			}
-
+			
 			@Override
-			public void run() {
-				IPlannable[] liste = Plannables.loadDay(
-						agenda.getActResource(), agenda.getActDate());
-				new TerminListeDruckenDialog(getViewSite().getShell(), liste)
-						.open();
+			public void run(){
+				IPlannable[] liste =
+					Plannables.loadDay(agenda.getActResource(), agenda.getActDate());
+				new TerminListeDruckenDialog(getViewSite().getShell(), liste).open();
 				internalRefresh();
 			}
 		};
@@ -259,37 +246,34 @@ public abstract class BaseView extends ViewPart implements HeartListener,
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PRINTER));
 				setToolTipText(Messages.BaseView_printFutureAppointmentsOfSelectedPatient);
 			}
-
+			
 			@Override
-			public void run() {
+			public void run(){
 				Patient patient = ElexisEventDispatcher.getSelectedPatient();
 				if (patient != null) {
 					Query<Termin> qbe = new Query<Termin>(Termin.class);
 					qbe.add("Wer", "=", patient.getId());
 					qbe.add("deleted", "<>", "1");
-					qbe.add("Tag", ">=", new TimeTool()
-							.toString(TimeTool.DATE_COMPACT));
+					qbe.add("Tag", ">=", new TimeTool().toString(TimeTool.DATE_COMPACT));
 					qbe.orderBy(false, "Tag", "Beginn");
 					java.util.List<Termin> list = qbe.execute();
 					if (list != null) {
-						boolean directPrint = Hub.localCfg
-								.get(
-										PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT,
-										PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT);
-
-						TermineDruckenDialog dlg = new TermineDruckenDialog(
-								getViewSite().getShell(), list
-										.toArray(new Termin[0]));
+						boolean directPrint =
+							Hub.localCfg.get(
+								PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT,
+								PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT);
+						
+						TermineDruckenDialog dlg =
+							new TermineDruckenDialog(getViewSite().getShell(), list
+								.toArray(new Termin[0]));
 						if (directPrint) {
 							dlg.setBlockOnOpen(false);
 							dlg.open();
 							if (dlg.doPrint()) {
 								dlg.close();
 							} else {
-								SWTHelper
-										.alert(
-												Messages.BaseView_errorWhilePrinting,
-												Messages.BaseView_errorHappendPrinting);
+								SWTHelper.alert(Messages.BaseView_errorWhilePrinting,
+									Messages.BaseView_errorHappendPrinting);
 							}
 						} else {
 							dlg.setBlockOnOpen(true);
@@ -304,42 +288,40 @@ public abstract class BaseView extends ViewPart implements HeartListener,
 				setToolTipText(Messages.BaseView_exportAppojntmentsOfMandator);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_GOFURTHER));
 			}
-
+			
 			@Override
-			public void run() {
+			public void run(){
 				ICalTransfer ict = new ICalTransfer();
-				ict.doExport(agenda.getActDate(), agenda.getActDate(), agenda
-						.getActResource());
+				ict.doExport(agenda.getActDate(), agenda.getActDate(), agenda.getActResource());
 			}
 		};
-
+		
 		importAction = new Action(Messages.BaseView_importAgenda) {
 			{
 				setToolTipText(Messages.BaseView_importFromICal);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_IMPORT));
 			}
-
+			
 			@Override
-			public void run() {
+			public void run(){
 				ICalTransfer ict = new ICalTransfer();
 				ict.doImport(agenda.getActResource());
 			}
 		};
-
+		
 		todayAction = new Action(Messages.BaseView_today) {
 			{
 				setToolTipText(Messages.BaseView_showToday);
-				setImageDescriptor(Activator
-						.getImageDescriptor("icons/calendar_view_day.png")); //$NON-NLS-1$
+				setImageDescriptor(Activator.getImageDescriptor("icons/calendar_view_day.png")); //$NON-NLS-1$
 			}
-
+			
 			@Override
-			public void run() {
+			public void run(){
 				agenda.setActDate(new TimeTool());
 				internalRefresh();
 			}
 		};
-
+		
 		IMenuManager mgr = getViewSite().getActionBars().getMenuManager();
 		mgr.add(dayLimitsAction);
 		mgr.add(exportAction);
@@ -348,7 +330,7 @@ public abstract class BaseView extends ViewPart implements HeartListener,
 		mgr.add(printPatientAction);
 		IToolBarManager tmr = getViewSite().getActionBars().getToolBarManager();
 		tmr.add(todayAction);
-
+		
 	}
-
+	
 }

@@ -56,8 +56,8 @@ public class AUFZeugnis extends ViewPart implements ICallback, IActivationListen
 		actBrief =
 			text.createFromTemplateName(Konsultation.getAktuelleKons(), "AUF-Zeugnis", Brief.AUZ, //$NON-NLS-1$
 				null, null);
-		//text.getPlugin().setFormat(PageFormat.A5);
-		if(text.getPlugin().isDirectOutput()){
+		// text.getPlugin().setFormat(PageFormat.A5);
+		if (text.getPlugin().isDirectOutput()) {
 			text.getPlugin().print(null, null, true);
 			getSite().getPage().hideView(this);
 		}

@@ -21,23 +21,23 @@ import ch.elexis.views.IDetailDisplay;
 public class BAGMediDetailDisplay implements IDetailDisplay {
 	BAGMediDetailBlatt blatt;
 	
-	public Composite createDisplay(final Composite parent, final IViewSite site) {
-		blatt=new BAGMediDetailBlatt(parent);
+	public Composite createDisplay(final Composite parent, final IViewSite site){
+		blatt = new BAGMediDetailBlatt(parent);
 		return blatt;
 	}
-
-	public void display(final Object obj) {
+	
+	public void display(final Object obj){
 		blatt.display((BAGMedi) obj);
-
+		
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	public Class getElementClass() {
+	public Class getElementClass(){
 		return BAGMedi.class;
 	}
-
-	public String getTitle() {
+	
+	public String getTitle(){
 		return BAGMedi.CODESYSTEMNAME;
 	}
-
+	
 }

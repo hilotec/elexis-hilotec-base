@@ -58,8 +58,7 @@ public class XChangeContributor implements IExchangeContributor {
 	@SuppressWarnings("unchecked")
 	public void importHook(XChangeContainer container, PersistentObject context){
 		String rootpath = container.getProperty("ROOTPATH"); //$NON-NLS-1$
-		List<Element> records =
-			container.getElements(rootpath + "/records/record"); //$NON-NLS-1$
+		List<Element> records = container.getElements(rootpath + "/records/record"); //$NON-NLS-1$
 		for (Element re : records) {
 			/*
 			 * List<Element> xrefs=re.getChildren("xref", container.getNamespace()); Samdas smd=new
@@ -81,14 +80,14 @@ public class XChangeContributor implements IExchangeContributor {
 	}
 	
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
-	throws CoreException{
-		// Nothing
-		
+		throws CoreException{
+	// Nothing
+	
 	}
 	
 	public boolean init(MedicalElement me, boolean bExport){
 		if (bExport) {
-			
+
 		}
 		return true;
 	}

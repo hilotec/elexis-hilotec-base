@@ -164,8 +164,8 @@ public class Log {
 				if (level > SYNCMARK) {
 					type = Levels[level];
 				}
-				if(message==null){
-					message=" *!*!*! Internal Error: NULL Log Message !*!*! ";
+				if (message == null) {
+					message = " *!*!*! Internal Error: NULL Log Message !*!*! ";
 				}
 				lastError =
 					new StringBuilder().append(" |").append(type).append("| - ").append(prefix)
@@ -223,10 +223,9 @@ public class Log {
 	 * @param level
 	 *            der level
 	 */
-	public void log(final Throwable t) {
+	public void log(final Throwable t){
 		log(t, null, Log.ERRORS);
 	}
-	
 	
 	public static void trace(String msg){
 		StringBuffer mark = new StringBuffer(100);
@@ -236,19 +235,19 @@ public class Log {
 		out.println(mark.toString());
 	}
 	
-	public boolean isDebug() {
+	public boolean isDebug(){
 		return DEBUGMSG <= LogLevel;
 	}
 	
-	public boolean isInfo() {
+	public boolean isInfo(){
 		return INFOS <= LogLevel;
 	}
 	
-	public boolean isWarn() {
+	public boolean isWarn(){
 		return WARNINGS <= LogLevel;
 	}
 	
-	public boolean isError() {
+	public boolean isError(){
 		return ERRORS <= LogLevel;
 	}
 	

@@ -161,9 +161,8 @@ public class SearchView extends ViewPart implements ISaveablePart2 {
 						Konsultation konsultation = (Konsultation) po;
 						Fall fall = konsultation.getFall();
 						Patient pat = fall.getPatient();
-						label =
-							pat.getLabel() + " - " + fall.getLabel() + " - " //$NON-NLS-1$ //$NON-NLS-2$
-								+ konsultation.getLabel();
+						label = pat.getLabel() + " - " + fall.getLabel() + " - " //$NON-NLS-1$ //$NON-NLS-2$
+							+ konsultation.getLabel();
 					} else {
 						label = po.getLabel();
 					}

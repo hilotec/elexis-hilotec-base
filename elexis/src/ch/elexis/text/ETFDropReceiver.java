@@ -24,14 +24,14 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.util.IKonsExtension;
 import ch.elexis.util.PersistentObjectDropTarget.IReceiver;
 
-public class ETFDropReceiver implements IReceiver{
+public class ETFDropReceiver implements IReceiver {
 	EnhancedTextField etf;
 	
 	Hashtable<Class<?>, IKonsExtension> targets;
 	
 	ETFDropReceiver(final EnhancedTextField et){
-		etf=et;
-		targets=new Hashtable<Class<?>, IKonsExtension>();
+		etf = et;
+		targets = new Hashtable<Class<?>, IKonsExtension>();
 	}
 	
 	public void addReceiver(final Class<?> clazz, final IKonsExtension rec){
@@ -42,30 +42,28 @@ public class ETFDropReceiver implements IReceiver{
 		targets.remove(clazz);
 	}
 	
-	public boolean accept(final PersistentObject o) {
+	public boolean accept(final PersistentObject o){
 		/*
-		if(targets.get(o.getClass())!=null){
-			return true;
-		}
-		return false;
+		 * if(targets.get(o.getClass())!=null){ return true; } return false;
 		 */
 		return true;
 	}
 	
-	public void dropped(final PersistentObject o, final DropTargetEvent ev) {
-		Point point=Desk.getDisplay().getCursorLocation();
-		Point mapped=Desk.getDisplay().map(null, etf.text, point);
-		Point maxOffset=etf.text.getLocationAtOffset(etf.text.getCharCount());
-		int pos=etf.text.getCharCount();
-		if(mapped.y<maxOffset.y){
-			pos=etf.text.getOffsetAtLocation(new Point(0,mapped.y));
+	public void dropped(final PersistentObject o, final DropTargetEvent ev){
+		Point point = Desk.getDisplay().getCursorLocation();
+		Point mapped = Desk.getDisplay().map(null, etf.text, point);
+		Point maxOffset = etf.text.getLocationAtOffset(etf.text.getCharCount());
+		int pos = etf.text.getCharCount();
+		if (mapped.y < maxOffset.y) {
+			pos = etf.text.getOffsetAtLocation(new Point(0, mapped.y));
 		}
-		IKonsExtension rec=targets.get(o.getClass());
-		if(rec!=null){
+		IKonsExtension rec = targets.get(o.getClass());
+		if (rec != null) {
 			rec.insert(o, pos);
-		}else{
-			Konsultation actKons=(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
-			if(actKons!=null){
+		} else {
+			Konsultation actKons =
+				(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+			if (actKons != null) {
 				etf.text.insert(o.getLabel());
 				actKons.updateEintrag(etf.getContentsAsXML(), false);
 			}

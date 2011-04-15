@@ -420,8 +420,8 @@ public class TimeTool extends GregorianCalendar {
 	public static int[] parseTime(final String tx){
 		
 		String t = tx.trim();
-		if(t.endsWith(".0")){
-			t=t.substring(0,t.length()-2);
+		if (t.endsWith(".0")) {
+			t = t.substring(0, t.length() - 2);
 		}
 		String[] tim = t.split(":"); // hh:mm
 		if (tim.length < 2) {
@@ -729,13 +729,13 @@ public class TimeTool extends GregorianCalendar {
 			super(msg);
 		}
 	}
-
+	
 	@Override
 	public int compareTo(Calendar arg0){
-		long diff=(getTimeInMillis()-arg0.getTimeInMillis());
-		if(diff<0){
+		long diff = (getTimeInMillis() - arg0.getTimeInMillis());
+		if (diff < 0) {
 			return -1;
-		}else if(diff>0){
+		} else if (diff > 0) {
 			return 1;
 		}
 		return 0;

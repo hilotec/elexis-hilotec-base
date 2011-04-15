@@ -29,34 +29,36 @@ public class DateInput extends Composite {
 	DatePickerCombo dpc;
 	
 	public DateInput(final Composite parent){
-		super(parent,SWT.NONE);
+		super(parent, SWT.NONE);
 		setLayout(new FillLayout());
-		dpc=new DatePickerCombo(this, SWT.BORDER);
+		dpc = new DatePickerCombo(this, SWT.BORDER);
 	}
+	
 	public DateInput(final Composite parent, final String label){
-		super(parent,SWT.NONE);
+		super(parent, SWT.NONE);
 		setLayout(new GridLayout());
-		new Label(this,SWT.NONE).setText(label);
-		dpc=new DatePickerCombo(this, SWT.BORDER);
+		new Label(this, SWT.NONE).setText(label);
+		dpc = new DatePickerCombo(this, SWT.BORDER);
 		dpc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 	}
 	
 	public DateInput(final Composite parent, final String label, final String date){
-		this(parent,label);
-		TimeTool tt=new TimeTool(date);
+		this(parent, label);
+		TimeTool tt = new TimeTool(date);
 		dpc.setDate(tt.getTime());
 	}
 	
 	public TimeTool getDate(){
-		String t=dpc.getText();
-		if(t.length()==0){
-			Date d=dpc.getDate();
-			return d==null ? null : new TimeTool(d.getTime());
-		}else{
-			if(t.matches("[0-9]{4,4}")){
-				t="01.01."+t;
-			}if(t.matches("[0-9][0-9]")){
-				t="01.01.20"+t;
+		String t = dpc.getText();
+		if (t.length() == 0) {
+			Date d = dpc.getDate();
+			return d == null ? null : new TimeTool(d.getTime());
+		} else {
+			if (t.matches("[0-9]{4,4}")) {
+				t = "01.01." + t;
+			}
+			if (t.matches("[0-9][0-9]")) {
+				t = "01.01.20" + t;
 			}
 			return new TimeTool(t);
 		}

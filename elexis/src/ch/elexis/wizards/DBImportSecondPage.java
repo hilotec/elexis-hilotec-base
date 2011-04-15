@@ -24,33 +24,33 @@ import org.eclipse.swt.widgets.Text;
 import ch.elexis.util.SWTHelper;
 
 public class DBImportSecondPage extends WizardPage {
-	Text name,pwd;
-	public DBImportSecondPage(String pageName) {
+	Text name, pwd;
+	
+	public DBImportSecondPage(String pageName){
 		super("Credentials"); //$NON-NLS-1$
 		setTitle(Messages.getString("DBImportSecondPage.userDetails")); //$NON-NLS-1$
-		setMessage(Messages.getString("DBImportSecondPage.enterUsername")+ //$NON-NLS-1$
-				Messages.getString("DBImportSecondPage.enterPassword")); //$NON-NLS-1$
+		setMessage(Messages.getString("DBImportSecondPage.enterUsername") + //$NON-NLS-1$
+			Messages.getString("DBImportSecondPage.enterPassword")); //$NON-NLS-1$
 	}
-
-	public DBImportSecondPage(String pageName, String title,
-			ImageDescriptor titleImage) {
+	
+	public DBImportSecondPage(String pageName, String title, ImageDescriptor titleImage){
 		super(pageName, title, titleImage);
 		// TODO Automatisch erstellter Konstruktoren-Stub
 	}
 	
-	public void createControl(Composite parent) {
-		DBImportWizard wiz=(DBImportWizard) getWizard();
-		Composite form = new Composite(parent,SWT.NONE);
-		form.setLayout(new GridLayout(1,false));
-		name=new Text(form,SWT.BORDER);
-		name.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		pwd=new Text(form,SWT.BORDER);
-		pwd.setLayoutData(SWTHelper.getFillGridData(1,true,1,false));
-		if((wiz.preset!=null) && (wiz.preset.length==5)){
+	public void createControl(Composite parent){
+		DBImportWizard wiz = (DBImportWizard) getWizard();
+		Composite form = new Composite(parent, SWT.NONE);
+		form.setLayout(new GridLayout(1, false));
+		name = new Text(form, SWT.BORDER);
+		name.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		pwd = new Text(form, SWT.BORDER);
+		pwd.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		if ((wiz.preset != null) && (wiz.preset.length == 5)) {
 			name.setText(wiz.preset[3]);
 			pwd.setText(wiz.preset[4]);
 		}
 		setControl(form);
 	}
-
+	
 }

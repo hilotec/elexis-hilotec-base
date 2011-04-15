@@ -108,11 +108,16 @@ public class MsgDetailDialog extends Dialog {
 		}
 		bOK = createButton(parent, IDialogConstants.OK_ID, sOK, false);
 		parent.getShell().setDefaultButton(bOK);
-		bAnswer = createButton(parent, IDialogConstants.CLIENT_ID + 1, Messages.MsgDetailDialog_reply, false);
+		bAnswer =
+			createButton(parent, IDialogConstants.CLIENT_ID + 1, Messages.MsgDetailDialog_reply,
+				false);
 		bAnswer.addSelectionListener(clickListener);
-		bAsReminder = createButton(parent, IDialogConstants.CLIENT_ID + 2, Messages.MsgDetailDialog_asReminder, false);
+		bAsReminder =
+			createButton(parent, IDialogConstants.CLIENT_ID + 2,
+				Messages.MsgDetailDialog_asReminder, false);
 		bAsReminder.addSelectionListener(clickListener);
-		bCancel = createButton(parent, IDialogConstants.CANCEL_ID, Messages.MsgDetailDialog_cancel, false);
+		bCancel =
+			createButton(parent, IDialogConstants.CANCEL_ID, Messages.MsgDetailDialog_cancel, false);
 		if (msg == null) {
 			bAnswer.setEnabled(false);
 		}

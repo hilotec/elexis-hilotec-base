@@ -13,21 +13,21 @@ import ch.elexis.text.IOpaqueDocument;
 import ch.elexis.util.Extensions;
 
 public class DocumentRemover {
-
-	void run(IProgressMonitor monitor, int i) {
+	
+	void run(IProgressMonitor monitor, int i){
 		monitor.subTask("Lösche Dokumente");
 		Query<Brief> qbe = new Query<Brief>(Brief.class);
 		for (Brief brief : qbe.execute()) {
 			brief.delete();
 		}
-		monitor.worked(i/2);
-		Object os = Extensions
-				.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
+		monitor.worked(i / 2);
+		Object os = Extensions.findBestService(GlobalServiceDescriptors.DOCUMENT_MANAGEMENT);
 		if (os != null) {
 			IDocumentManager dm = (IDocumentManager) os;
 			try {
-				List<IOpaqueDocument> documents=dm.listDocuments(null, null, null, null, null, null);
-				for(IOpaqueDocument doc:documents){
+				List<IOpaqueDocument> documents =
+					dm.listDocuments(null, null, null, null, null, null);
+				for (IOpaqueDocument doc : documents) {
 					dm.removeDocument(doc.getGUID());
 				}
 			} catch (ElexisException e) {
@@ -35,7 +35,7 @@ public class DocumentRemover {
 				e.printStackTrace();
 			}
 		}
-		monitor.worked(i/2);
+		monitor.worked(i / 2);
 	}
-
+	
 }

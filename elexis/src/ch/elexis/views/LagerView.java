@@ -50,71 +50,66 @@ import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
 import ch.elexis.util.viewers.ViewerConfigurer.WidgetProvider;
 
-public class LagerView extends ViewPart implements DoubleClickListener,
-		ISaveablePart2, IActivationListener {
+public class LagerView extends ViewPart implements DoubleClickListener, ISaveablePart2,
+		IActivationListener {
 	public static final String ID = "ch.elexis.LagerView"; //$NON-NLS-1$
 	CommonViewer cv;
 	ViewerConfigurer vc;
-	ElexisEventListenerImpl eeli_article=new ElexisEventListenerImpl(Artikel.class,ElexisEvent.EVENT_RELOAD) {
-		public void catchElexisEvent(ElexisEvent ev) {
-			cv.notify(CommonViewer.Message.update);
-		}
-	};
+	ElexisEventListenerImpl eeli_article =
+		new ElexisEventListenerImpl(Artikel.class, ElexisEvent.EVENT_RELOAD) {
+			public void catchElexisEvent(ElexisEvent ev){
+				cv.notify(CommonViewer.Message.update);
+			}
+		};
 	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		parent.setLayout(new GridLayout());
 		cv = new CommonViewer();
-		vc = new ViewerConfigurer(
-				new DefaultContentProvider(cv, Artikel.class) {
-					@Override
-					public Object[] getElements(Object inputElement) {
-						/*
-						 * Query<Artikel> qbe=new Query<Artikel>(Artikel.class);
-						 * qbe.startGroup(); qbe.add("Minbestand","<>","0");
-						 * qbe.or(); qbe.add("Maxbestand","<>","0");
-						 * qbe.endGroup();
-						 * //cv.getConfigurer().getControlFieldProvider
-						 * ().setQuery(qbe); List<Artikel> l=qbe.execute();
-						 */
+		vc = new ViewerConfigurer(new DefaultContentProvider(cv, Artikel.class) {
+			@Override
+			public Object[] getElements(Object inputElement){
+				/*
+				 * Query<Artikel> qbe=new Query<Artikel>(Artikel.class); qbe.startGroup();
+				 * qbe.add("Minbestand","<>","0"); qbe.or(); qbe.add("Maxbestand","<>","0");
+				 * qbe.endGroup(); //cv.getConfigurer().getControlFieldProvider ().setQuery(qbe);
+				 * List<Artikel> l=qbe.execute();
+				 */
 
-						return Artikel.getLagerartikel().toArray();
-					}
-
-				}, new LagerLabelProvider() {
-				},
-				null, // new DefaultControlFieldProvider(cv,new
-				// String[]{"Name","Lieferant"}),
-				new ViewerConfigurer.DefaultButtonProvider(),
-				new LagerWidgetProvider());
+				return Artikel.getLagerartikel().toArray();
+			}
+			
+		}, new LagerLabelProvider() {}, null, // new DefaultControlFieldProvider(cv,new
+			// String[]{"Name","Lieferant"}),
+			new ViewerConfigurer.DefaultButtonProvider(), new LagerWidgetProvider());
 		cv.create(vc, parent, SWT.NONE, getViewSite());
 		cv.getConfigurer().getContentProvider().startListening();
 		cv.addDoubleClickListener(this);
 		GlobalEventDispatcher.addActivationListener(this, this);
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// cv.getConfigurer().getControlFieldProvider().setFocus();
+	public void setFocus(){
+	// cv.getConfigurer().getControlFieldProvider().setFocus();
 	}
-
+	
 	@Override
-	public void dispose() {
+	public void dispose(){
 		cv.getConfigurer().getContentProvider().stopListening();
 		cv.removeDoubleClickListener(this);
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		super.dispose();
 	}
-
-	class LagerLabelProvider extends LabelProvider implements
-			ITableLabelProvider, ITableColorProvider {
-
-		public Image getColumnImage(Object element, int columnIndex) {
+	
+	class LagerLabelProvider extends LabelProvider implements ITableLabelProvider,
+			ITableColorProvider {
+		
+		public Image getColumnImage(Object element, int columnIndex){
 			// TODO Auto-generated method stub
 			return null;
 		}
-
-		public String getColumnText(Object element, int columnIndex) {
+		
+		public String getColumnText(Object element, int columnIndex){
 			if (element instanceof Artikel) {
 				Artikel art = (Artikel) element;
 				switch (columnIndex) {
@@ -141,28 +136,26 @@ public class LagerView extends ViewPart implements DoubleClickListener,
 					return element.toString();
 				}
 				return ""; //$NON-NLS-1$
-
+				
 			}
-
+			
 		}
-
+		
 		/**
-		 * Lagerartikel are shown in blue, arrticles that should be ordered are
-		 * shown in red
+		 * Lagerartikel are shown in blue, arrticles that should be ordered are shown in red
 		 */
-		public Color getForeground(Object element, int columnIndex) {
+		public Color getForeground(Object element, int columnIndex){
 			if (element instanceof Artikel) {
 				Artikel art = (Artikel) element;
-
+				
 				if (art.isLagerartikel()) {
-					int trigger = Hub.globalCfg
-							.get(
-									PreferenceConstants.INVENTORY_ORDER_TRIGGER,
-									PreferenceConstants.INVENTORY_ORDER_TRIGGER_DEFAULT);
-
+					int trigger =
+						Hub.globalCfg.get(PreferenceConstants.INVENTORY_ORDER_TRIGGER,
+							PreferenceConstants.INVENTORY_ORDER_TRIGGER_DEFAULT);
+					
 					int ist = art.getIstbestand();
 					int min = art.getMinbestand();
-
+					
 					boolean order = false;
 					switch (trigger) {
 					case PreferenceConstants.INVENTORY_ORDER_TRIGGER_BELOW:
@@ -174,7 +167,7 @@ public class LagerView extends ViewPart implements DoubleClickListener,
 					default:
 						order = (ist < min);
 					}
-
+					
 					if (order) {
 						return Desk.getColor(Desk.COL_RED);
 					} else {
@@ -182,24 +175,26 @@ public class LagerView extends ViewPart implements DoubleClickListener,
 					}
 				}
 			}
-
+			
 			return null;
 		}
-
-		public Color getBackground(Object element, int columnIndex) {
+		
+		public Color getBackground(Object element, int columnIndex){
 			return null;
 		}
 	}
-
+	
 	class LagerWidgetProvider implements WidgetProvider {
-		String[] columns = {
+		String[] columns =
+			{
 				Messages.getString("LagerView.pharmacode"), Messages.getString("LagerView.name"), Messages.getString("LagerView.istBestand"), Messages.getString("LagerView.minBestand"), Messages.getString("LagerView.maxBestand"), Messages.getString("LagerView.controlled"), Messages.getString("LagerView.dealer") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$
+			};
+		int[] colwidth = {
+			60, 300, 40, 40, 40, 40, 200
 		};
-		int[] colwidth = { 60, 300, 40, 40, 40, 40, 200 };
-
-		public StructuredViewer createViewer(Composite parent) {
-			Table table = new Table(parent, SWT.V_SCROLL | SWT.FULL_SELECTION
-					| SWT.SINGLE);
+		
+		public StructuredViewer createViewer(Composite parent){
+			Table table = new Table(parent, SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.SINGLE);
 			for (int i = 0; i < columns.length; i++) {
 				TableColumn tc = new TableColumn(table, SWT.LEFT);
 				tc.setText(columns[i]);
@@ -207,14 +202,15 @@ public class LagerView extends ViewPart implements DoubleClickListener,
 				tc.setData(i);
 				tc.addSelectionListener(new SelectionAdapter() {
 					@Override
-					public void widgetSelected(SelectionEvent e) {
-						cv.getViewerWidget().setSorter(
-								new LagerTableSorter((Integer) ((TableColumn) e
-										.getSource()).getData()));
+					public void widgetSelected(SelectionEvent e){
+						cv.getViewerWidget()
+							.setSorter(
+								new LagerTableSorter((Integer) ((TableColumn) e.getSource())
+									.getData()));
 					}
-
+					
 				});
-
+				
 			}
 			table.setHeaderVisible(true);
 			table.setLinesVisible(true);
@@ -222,76 +218,79 @@ public class LagerView extends ViewPart implements DoubleClickListener,
 			ret.setSorter(new LagerTableSorter(1));
 			return ret;
 		}
-
+		
 		class LagerTableSorter extends ViewerSorter {
 			int col;
-
-			LagerTableSorter(int c) {
+			
+			LagerTableSorter(int c){
 				col = c;
 			}
-
+			
 			@Override
-			public int compare(Viewer viewer, Object e1, Object e2) {
-				String s1 = ((LagerLabelProvider) cv.getConfigurer()
-						.getLabelProvider()).getColumnText(e1, col);
-				String s2 = ((LagerLabelProvider) cv.getConfigurer()
-						.getLabelProvider()).getColumnText(e2, col);
+			public int compare(Viewer viewer, Object e1, Object e2){
+				String s1 =
+					((LagerLabelProvider) cv.getConfigurer().getLabelProvider()).getColumnText(e1,
+						col);
+				String s2 =
+					((LagerLabelProvider) cv.getConfigurer().getLabelProvider()).getColumnText(e2,
+						col);
 				return s1.compareTo(s2);
 			}
-
+			
 		}
 	}
-
-	public void doubleClicked(PersistentObject obj, CommonViewer cv) {
+	
+	public void doubleClicked(PersistentObject obj, CommonViewer cv){
 		new ArtikelDetailDialog(getViewSite().getShell(), obj).open();
-
+		
 	}
-
-	public void reloadContents(Class clazz) {
+	
+	public void reloadContents(Class clazz){
 		if (clazz.equals(Artikel.class)) {
 			cv.notify(CommonViewer.Message.update);
 		}
-
+		
 	}
-
+	
 	/***********************************************************************************************
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir
-	 * benötigen das Interface nur, um das Schliessen einer View zu verhindern,
-	 * wenn die Perspektive fixiert ist. Gibt es da keine einfachere Methode?
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
+	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
+	 * Gibt es da keine einfachere Methode?
 	 */
-	public int promptToSaveOnClose() {
+	public int promptToSaveOnClose(){
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
 				: ISaveablePart2.NO;
 	}
-
-	public void doSave(IProgressMonitor monitor) { /* leer */
+	
+	public void doSave(IProgressMonitor monitor){ /* leer */
 	}
-
-	public void doSaveAs() { /* leer */
+	
+	public void doSaveAs(){ /* leer */
 	}
-
-	public boolean isDirty() {
+	
+	public boolean isDirty(){
 		return true;
 	}
-
-	public boolean isSaveAsAllowed() {
+	
+	public boolean isSaveAsAllowed(){
 		return false;
 	}
-
-	public boolean isSaveOnCloseNeeded() {
+	
+	public boolean isSaveOnCloseNeeded(){
 		return true;
 	}
-
-	public void activation(boolean mode) {
-		// TODO Auto-generated method stub
-		
+	
+	public void activation(boolean mode){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void visible(boolean mode) {
-		if(mode){
+	
+	public void visible(boolean mode){
+		if (mode) {
 			ElexisEventDispatcher.getInstance().addListeners(eeli_article);
-			eeli_article.catchElexisEvent(new ElexisEvent(null,Artikel.class,ElexisEvent.EVENT_RELOAD));
-		}else{
+			eeli_article.catchElexisEvent(new ElexisEvent(null, Artikel.class,
+				ElexisEvent.EVENT_RELOAD));
+		} else {
 			ElexisEventDispatcher.getInstance().removeListeners(eeli_article);
 		}
 		

@@ -30,42 +30,47 @@ import ch.rgw.tools.ExHandler;
 
 public class KonsExtension implements IKonsExtension {
 	IRichTextDisplay mine;
-	public String connect(IRichTextDisplay tf) {
-		mine=tf;
+	
+	public String connect(IRichTextDisplay tf){
+		mine = tf;
 		return "bildanzeige"; //$NON-NLS-1$
 	}
-
-	public boolean doLayout(StyleRange n, String provider, String id) {
-		n.background=Desk.getColor(Desk.COL_GREEN);
+	
+	public boolean doLayout(StyleRange n, String provider, String id){
+		n.background = Desk.getColor(Desk.COL_GREEN);
 		return true;
 	}
-
-	public boolean doXRef(String refProvider, String refID) {
-		Bild bild=Bild.load(refID);
-		new BildanzeigeFenster(Desk.getTopShell(),bild).open();
+	
+	public boolean doXRef(String refProvider, String refID){
+		Bild bild = Bild.load(refID);
+		new BildanzeigeFenster(Desk.getTopShell(), bild).open();
 		return true;
 	}
-
-	public IAction[] getActions() {
-		IAction[] ret=new IAction[1];
-		ret[0]= new Action(Messages.KonsExtension_InsertImage){
+	
+	public IAction[] getActions(){
+		IAction[] ret = new IAction[1];
+		ret[0] = new Action(Messages.KonsExtension_InsertImage) {
 			@Override
-			public void run() {
-				FileDialog fd=new FileDialog(Desk.getTopShell());
-				String iName=fd.open();
-				if(iName!=null){
-					try{
-						ImageLoader iml=new ImageLoader();
+			public void run(){
+				FileDialog fd = new FileDialog(Desk.getTopShell());
+				String iName = fd.open();
+				if (iName != null) {
+					try {
+						ImageLoader iml = new ImageLoader();
 						iml.load(iName);
-						BildImportDialog bid=new BildImportDialog(Desk.getTopShell(),iml);
-						if(bid.open()==Dialog.OK){
-							Bild bild=bid.result;
-							mine.insertXRef(-1, Messages.KonsExtension_Image+bild.get("Titel"), "bildanzeige", bild.getId());  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
+						BildImportDialog bid = new BildImportDialog(Desk.getTopShell(), iml);
+						if (bid.open() == Dialog.OK) {
+							Bild bild = bid.result;
+							mine
+								.insertXRef(
+									-1,
+									Messages.KonsExtension_Image + bild.get("Titel"), "bildanzeige", bild.getId()); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 						}
 						
-					}catch(Throwable t){
+					} catch (Throwable t) {
 						ExHandler.handle(t);
-						SWTHelper.showError(Messages.KonsExtension_ErrorLoading, Messages.KonsExtension_ImageCouldnotBeLoaded+t.getMessage());
+						SWTHelper.showError(Messages.KonsExtension_ErrorLoading,
+							Messages.KonsExtension_ImageCouldnotBeLoaded + t.getMessage());
 					}
 				}
 			}
@@ -73,22 +78,21 @@ public class KonsExtension implements IKonsExtension {
 		};
 		return ret;
 	}
-
-	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) throws CoreException {
-		// TODO Auto-generated method stub
-
+	
+	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
+		throws CoreException{
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void removeXRef(String refProvider, String refID) {
-		Bild bild=Bild.load(refID);
+	
+	public void removeXRef(String refProvider, String refID){
+		Bild bild = Bild.load(refID);
 		bild.delete();
 	}
-
-	public void insert(Object o, int pos) {
-		// TODO Auto-generated method stub
-		
+	
+	public void insert(Object o, int pos){
+	// TODO Auto-generated method stub
+	
 	}
-
-
+	
 }

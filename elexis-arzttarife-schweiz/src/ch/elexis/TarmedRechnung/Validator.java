@@ -24,54 +24,51 @@ import ch.rgw.tools.StringTool;
 public class Validator {
 	
 	public Result<Rechnung> checkBill(final XMLExporter xp, final Result<Rechnung> res){
-		Rechnung rn=xp.rn;
-		Kontakt m=rn.getMandant();
-		if(rn.getStatus()>RnStatus.OFFEN){
-			return res;	// Wenn sie eh schon gedruckt war machen wir kein Büro mehr auf
+		Rechnung rn = xp.rn;
+		Kontakt m = rn.getMandant();
+		if (rn.getStatus() > RnStatus.OFFEN) {
+			return res; // Wenn sie eh schon gedruckt war machen wir kein Büro mehr auf
 		}
 		
-		if((m==null) || (!m.isValid()) ){
+		if ((m == null) || (!m.isValid())) {
 			rn.reject(RnStatus.REJECTCODE.NO_MANDATOR, Messages.Validator_NoMandator);
-			res.add(Result.SEVERITY.ERROR,2,Messages.Validator_NoMandator,rn,true);
-	
+			res.add(Result.SEVERITY.ERROR, 2, Messages.Validator_NoMandator, rn, true);
+			
 		}
-		Fall fall=rn.getFall();
+		Fall fall = rn.getFall();
 		
-		if((fall==null) || (!fall.isValid())){
+		if ((fall == null) || (!fall.isValid())) {
 			rn.reject(RnStatus.REJECTCODE.NO_CASE, Messages.Validator_NoCase);
-			res.add(Result.SEVERITY.ERROR,4,Messages.Validator_NoCase,rn,true);
+			res.add(Result.SEVERITY.ERROR, 4, Messages.Validator_NoCase, rn, true);
 		}
 		/*
-		String g=fall.getGesetz();
-		if(g.equalsIgnoreCase(Fall.LAW_OTHER)){
-			return res;
-		}
-		*/
-		String ean=TarmedRequirements.getEAN(m);
-		if(StringTool.isNothing(ean)){
+		 * String g=fall.getGesetz(); if(g.equalsIgnoreCase(Fall.LAW_OTHER)){ return res; }
+		 */
+		String ean = TarmedRequirements.getEAN(m);
+		if (StringTool.isNothing(ean)) {
 			rn.reject(RnStatus.REJECTCODE.NO_MANDATOR, Messages.Validator_NoEAN);
-			res.add(Result.SEVERITY.ERROR,3,Messages.Validator_NoEAN,rn,true);
+			res.add(Result.SEVERITY.ERROR, 3, Messages.Validator_NoEAN, rn, true);
 		}
-		Kontakt kostentraeger=fall.getRequiredContact(TarmedRequirements.INSURANCE);
-		if(kostentraeger==null){
+		Kontakt kostentraeger = fall.getRequiredContact(TarmedRequirements.INSURANCE);
+		if (kostentraeger == null) {
 			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoName);
-			res.add(Result.SEVERITY.ERROR,7,Messages.Validator_NoName,rn,true);
+			res.add(Result.SEVERITY.ERROR, 7, Messages.Validator_NoName, rn, true);
 			return res;
 		}
-		ean=TarmedRequirements.getEAN(kostentraeger);
+		ean = TarmedRequirements.getEAN(kostentraeger);
 		
-		if(StringTool.isNothing(ean) || (!ean.matches(TarmedRequirements.EAN_PATTERN))){ 
+		if (StringTool.isNothing(ean) || (!ean.matches(TarmedRequirements.EAN_PATTERN))) {
 			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoEAN2);
-			res.add(Result.SEVERITY.ERROR,6,Messages.Validator_NoEAN2,rn,true);
+			res.add(Result.SEVERITY.ERROR, 6, Messages.Validator_NoEAN2, rn, true);
 		}
-		String bez=kostentraeger.get(Kontakt.FLD_NAME1); 
-		if(StringTool.isNothing(bez)){
+		String bez = kostentraeger.get(Kontakt.FLD_NAME1);
+		if (StringTool.isNothing(bez)) {
 			rn.reject(RnStatus.REJECTCODE.NO_GUARANTOR, Messages.Validator_NoName);
-			res.add(Result.SEVERITY.ERROR,7,Messages.Validator_NoName,rn,true);
+			res.add(Result.SEVERITY.ERROR, 7, Messages.Validator_NoName, rn, true);
 		}
-		if(StringTool.isNothing(xp.diagnosen)){
+		if (StringTool.isNothing(xp.diagnosen)) {
 			rn.reject(RnStatus.REJECTCODE.NO_DIAG, Messages.Validator_NoDiagnosis);
-			res.add(Result.SEVERITY.ERROR,8,Messages.Validator_NoDiagnosis,rn,true);
+			res.add(Result.SEVERITY.ERROR, 8, Messages.Validator_NoDiagnosis, rn, true);
 		}
 		return res;
 	}

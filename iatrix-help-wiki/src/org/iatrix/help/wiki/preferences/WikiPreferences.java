@@ -22,12 +22,11 @@ import org.iatrix.help.wiki.Constants;
 import ch.elexis.Hub;
 import ch.elexis.preferences.SettingsPreferenceStore;
 
-public class WikiPreferences extends FieldEditorPreferencePage implements
-		IWorkbenchPreferencePage {
+public class WikiPreferences extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
 	private SettingsPreferenceStore prefs = new SettingsPreferenceStore(Hub.globalCfg);
 	
-	public WikiPreferences() {
+	public WikiPreferences(){
 		super(GRID);
 		setPreferenceStore(prefs);
 		prefs.setDefault(Constants.CFG_BASE_URL, Constants.DEFAULT_BASE_URL);
@@ -35,21 +34,19 @@ public class WikiPreferences extends FieldEditorPreferencePage implements
 	}
 	
 	@Override
-	protected void createFieldEditors() {
-		addField(new StringFieldEditor(Constants.CFG_BASE_URL,
-				"Basis-URL",
-				getFieldEditorParent()));
-		addField(new StringFieldEditor(Constants.CFG_START_PAGE,
-				"Start-Seite",
-				getFieldEditorParent()));
+	protected void createFieldEditors(){
+		addField(new StringFieldEditor(Constants.CFG_BASE_URL, "Basis-URL", getFieldEditorParent()));
+		addField(new StringFieldEditor(Constants.CFG_START_PAGE, "Start-Seite",
+			getFieldEditorParent()));
 	}
-
-	public void init(IWorkbench workbench) {
-		// TODO Auto-generated method stub
-		
+	
+	public void init(IWorkbench workbench){
+	// TODO Auto-generated method stub
+	
 	}
+	
 	@Override
-	public boolean performOk() {
+	public boolean performOk(){
 		prefs.flush();
 		return super.performOk();
 	}

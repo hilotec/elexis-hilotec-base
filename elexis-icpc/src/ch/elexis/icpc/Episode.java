@@ -42,40 +42,37 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 	protected static final String INACTIVE_VALUE = "0";
 	protected static final String ACTIVE_VALUE = "1";
 	
-	private final static String createDB=
-		"CREATE TABLE "+TABLENAME+" ("+
-		"ID				VARCHAR(25),"+
-		"lastupdate		BIGINT,"+
-		"deleted 		CHAR(1) default '0',"+
-		"PatientID		VARCHAR(25),"+
-		"Title			VARCHAR(256),"+
-	    "StartDate      VARCHAR(20),"+  // date of first occurrence; may be simply a year or any text 
-	    "Number         VARCHAR(10),"+  // number for individual, possibly hierarchical, organization
-	    "Status         CHAR(1) DEFAULT '1',"+  // status, '1' == active, '0' == inactive
-	    "ExtInfo		BLOB"+
-		");"+
-		
-		"CREATE INDEX "+TABLENAME+"1 ON "+TABLENAME+" (PatientID);"+
-		
-		"INSERT INTO "+TABLENAME+" (ID,Title) VALUES ('1',"+JdbcLink.wrap(VERSION)+");";
+	private final static String createDB =
+		"CREATE TABLE " + TABLENAME + " (" + "ID				VARCHAR(25)," + "lastupdate		BIGINT,"
+			+ "deleted 		CHAR(1) default '0'," + "PatientID		VARCHAR(25),"
+			+ "Title			VARCHAR(256)," + "StartDate      VARCHAR(20)," + // date of first occurrence;
+																		// may be simply a year or
+																		// any text
+			"Number         VARCHAR(10)," + // number for individual, possibly hierarchical,
+											// organization
+			"Status         CHAR(1) DEFAULT '1'," + // status, '1' == active, '0' == inactive
+			"ExtInfo		BLOB" + ");" +
+
+			"CREATE INDEX " + TABLENAME + "1 ON " + TABLENAME + " (PatientID);" +
+
+			"INSERT INTO " + TABLENAME + " (ID,Title) VALUES ('1'," + JdbcLink.wrap(VERSION) + ");";
 	
 	private static final String LINKNAME = TABLENAME + "_DIAGNOSES_LINK";
 	private final static String createLink =
-		"CREATE TABLE " + LINKNAME + " (" + 
-		"ID				VARCHAR(25)," +
-		"lastupdate 	BIGINT,"+
-		"deleted		char(1) default '0',"
-			+ "Episode		VARCHAR(25)," + 
-			"Diagnosis		VARCHAR(80)" + ");";
+		"CREATE TABLE " + LINKNAME + " (" + "ID				VARCHAR(25)," + "lastupdate 	BIGINT,"
+			+ "deleted		char(1) default '0'," + "Episode		VARCHAR(25)," + "Diagnosis		VARCHAR(80)"
+			+ ");";
 	
-	private static final String upd041="ALTER TABLE "+TABLENAME+" add lastupdate BIGINT;"+
-	"ALTER TABLE "+LINKNAME+" ADD lastupdate BIGINT;";
+	private static final String upd041 =
+		"ALTER TABLE " + TABLENAME + " add lastupdate BIGINT;" + "ALTER TABLE " + LINKNAME
+			+ " ADD lastupdate BIGINT;";
 	
-	private static final String upd042="CREATE INDEX "+TABLENAME+"2 ON "+TABLENAME+" (Title);";
+	private static final String upd042 =
+		"CREATE INDEX " + TABLENAME + "2 ON " + TABLENAME + " (Title);";
 	
 	static {
-		addMapping(TABLENAME, FLD_PATIENT_ID, FLD_TITLE, FLD_START_DATE, FLD_NUMBER, FLD_STATUS, FLD_EXTINFO,
-			"DiagLink=JOINT:Diagnosis:Episode:" + LINKNAME);
+		addMapping(TABLENAME, FLD_PATIENT_ID, FLD_TITLE, FLD_START_DATE, FLD_NUMBER, FLD_STATUS,
+			FLD_EXTINFO, "DiagLink=JOINT:Diagnosis:Episode:" + LINKNAME);
 		JdbcLink j = getConnection();
 		Episode version = load(StringConstants.ONE);
 		if (!version.exists()) {
@@ -123,11 +120,11 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 					createOrModifyTable(createLink);
 					version.set(FLD_TITLE, VERSION);
 				}
-				if(vi.isOlder("0.4.1")){
+				if (vi.isOlder("0.4.1")) {
 					createOrModifyTable(upd041);
 					version.set(FLD_TITLE, VERSION);
 				}
-				if(vi.isOlder("0.4.2")){
+				if (vi.isOlder("0.4.2")) {
 					createOrModifyTable(upd042);
 					version.set(FLD_TITLE, VERSION);
 				}
@@ -143,11 +140,11 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 	}
 	
 	public static Episode findEpisode(Patient pat, String title){
-		Query<Episode> qbe=new Query<Episode>(Episode.class);
+		Query<Episode> qbe = new Query<Episode>(Episode.class);
 		qbe.add(FLD_PATIENT_ID, Query.EQUALS, pat.getId());
 		qbe.add(FLD_TITLE, Query.EQUALS, title);
-		List<Episode> result=qbe.execute();
-		if(result==null || result.size()==0){
+		List<Episode> result = qbe.execute();
+		if (result == null || result.size() == 0) {
 			return null;
 		}
 		return result.get(0);
@@ -198,7 +195,7 @@ public class Episode extends PersistentObject implements Comparable<Episode> {
 	
 	public void removeDiagnosis(final IDiagnose id){
 		String clazz = id.getClass().getName();
-		removeFromList("DiagLink", clazz+"::"+id.getCode());
+		removeFromList("DiagLink", clazz + "::" + id.getCode());
 	}
 	
 	@Override

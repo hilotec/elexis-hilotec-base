@@ -24,45 +24,51 @@ import ch.elexis.actions.GlobalActions;
 import ch.elexis.util.ViewMenus;
 
 public class KontaktDetailView extends ViewPart implements ISaveablePart2 {
-	public static final String ID="ch.elexis.KontaktDetailView"; //$NON-NLS-1$
+	public static final String ID = "ch.elexis.KontaktDetailView"; //$NON-NLS-1$
 	KontaktBlatt kb;
 	
-	public KontaktDetailView() {
-	
-	}
+	public KontaktDetailView(){
 
+	}
+	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		parent.setLayout(new FillLayout());
-		kb=new KontaktBlatt(parent, SWT.NONE, getViewSite());
+		kb = new KontaktBlatt(parent, SWT.NONE, getViewSite());
 		ViewMenus menu = new ViewMenus(getViewSite());
 		menu.createMenu(GlobalActions.printKontaktEtikette);
 		menu.createToolbar(GlobalActions.printKontaktEtikette);
-
+		
 	}
-
+	
 	@Override
-	public void setFocus() {
+	public void setFocus(){
 		kb.setFocus();
 	}
+	
 	/* ******
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2
-	 * Wir benötigen das Interface nur, um das Schliessen einer View zu verhindern,
-	 * wenn die Perspektive fixiert ist.
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
+	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
 	 * Gibt es da keine einfachere Methode?
-	 */ 
-	public int promptToSaveOnClose() {
-		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL : ISaveablePart2.NO;
+	 */
+	public int promptToSaveOnClose(){
+		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
+				: ISaveablePart2.NO;
 	}
-	public void doSave(IProgressMonitor monitor) { /* leer */ }
-	public void doSaveAs() { /* leer */}
-	public boolean isDirty() {
+	
+	public void doSave(IProgressMonitor monitor){ /* leer */}
+	
+	public void doSaveAs(){ /* leer */}
+	
+	public boolean isDirty(){
 		return true;
 	}
-	public boolean isSaveAsAllowed() {
+	
+	public boolean isSaveAsAllowed(){
 		return false;
 	}
-	public boolean isSaveOnCloseNeeded() {
+	
+	public boolean isSaveOnCloseNeeded(){
 		return true;
 	}
 }

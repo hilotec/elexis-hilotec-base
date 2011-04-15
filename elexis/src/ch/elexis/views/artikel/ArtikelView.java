@@ -51,8 +51,7 @@ import ch.elexis.views.IDetailDisplay;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 import ch.rgw.tools.ExHandler;
 
-public class ArtikelView extends ViewPart implements IActivationListener,
-ISaveablePart2 {
+public class ArtikelView extends ViewPart implements IActivationListener, ISaveablePart2 {
 	private static final String KEY_CE = "ce"; //$NON-NLS-1$
 	private static final String KEY_DETAIL = "detail"; //$NON-NLS-1$
 	public static final String ID = "ch.elexis.artikelview"; //$NON-NLS-1$
@@ -62,7 +61,7 @@ ISaveablePart2 {
 	private Hashtable<String, ImporterPage> importers;
 	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		parent.setLayout(new FillLayout());
 		ctab = new CTabFolder(parent, SWT.NONE);
 		importers = new Hashtable<String, ImporterPage>();
@@ -76,26 +75,23 @@ ISaveablePart2 {
 		}
 		ctab.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(SelectionEvent e){
 				CTabItem top = ctab.getSelection();
 				if (top != null) {
 					String t = top.getText();
 					
-					MasterDetailsPage page = (MasterDetailsPage) top
-					.getControl();
+					MasterDetailsPage page = (MasterDetailsPage) top.getControl();
 					if (page == null) {
 						try {
-							IDetailDisplay det = (IDetailDisplay) top
-							.getData(KEY_DETAIL);
-							IConfigurationElement ce = (IConfigurationElement) top
-							.getData(KEY_CE);
-							CodeSelectorFactory cs = (CodeSelectorFactory) ce
-							.createExecutableExtension("CodeSelectorFactory"); //$NON-NLS-1$
+							IDetailDisplay det = (IDetailDisplay) top.getData(KEY_DETAIL);
+							IConfigurationElement ce = (IConfigurationElement) top.getData(KEY_CE);
+							CodeSelectorFactory cs =
+								(CodeSelectorFactory) ce
+									.createExecutableExtension("CodeSelectorFactory"); //$NON-NLS-1$
 							String a = ce.getAttribute("ImporterClass"); //$NON-NLS-1$
 							ImporterPage ip = null;
 							if (a != null) {
-								ip = (ImporterPage) ce
-								.createExecutableExtension("ImporterClass"); //$NON-NLS-1$
+								ip = (ImporterPage) ce.createExecutableExtension("ImporterClass"); //$NON-NLS-1$
 								if (ip != null) {
 									importers.put(det.getTitle(), ip);
 								}
@@ -123,15 +119,13 @@ ISaveablePart2 {
 		
 	}
 	
-	private void addCustomBlocksPage() {
+	private void addCustomBlocksPage(){
 		/*
-		 * BlockSelector cs=new BlockSelector(); BlockDetailDisplay bdd=new
-		 * BlockDetailDisplay();
+		 * BlockSelector cs=new BlockSelector(); BlockDetailDisplay bdd=new BlockDetailDisplay();
 		 * 
-		 * MasterDetailsPage page=new MasterDetailsPage(ctab,cs,bdd); CTabItem
-		 * ct=new CTabItem(ctab,SWT.NONE); ct.setText(bdd.getTitle());
-		 * ct.setControl(page); ct.setData(bdd); page.sash.setWeights(new
-		 * int[]{30,70});
+		 * MasterDetailsPage page=new MasterDetailsPage(ctab,cs,bdd); CTabItem ct=new
+		 * CTabItem(ctab,SWT.NONE); ct.setText(bdd.getTitle()); ct.setControl(page);
+		 * ct.setData(bdd); page.sash.setWeights(new int[]{30,70});
 		 */
 		EigenartikelSelektor es = new EigenartikelSelektor();
 		EigenartikelDisplay ead = new EigenartikelDisplay();
@@ -140,25 +134,25 @@ ISaveablePart2 {
 		ct.setText(ead.getTitle());
 		ct.setControl(page);
 		ct.setData(ead);
-		page.sash.setWeights(new int[] { 30, 70 });
+		page.sash.setWeights(new int[] {
+			30, 70
+		});
 		
 	}
 	
-	private void makeActions() {
+	private void makeActions(){
 		importAction = new Action(Messages.ArtikelView_importAction) {
 			@Override
-			public void run() {
+			public void run(){
 				CTabItem it = ctab.getSelection();
 				if (it != null) {
 					ImporterPage top = importers.get(it.getText());
 					if (top != null) {
-						ImportDialog dlg = new ImportDialog(getViewSite()
-							.getShell(), top);
+						ImportDialog dlg = new ImportDialog(getViewSite().getShell(), top);
 						dlg.create();
 						dlg.setTitle(top.getTitle());
 						dlg.setMessage(top.getDescription());
-						dlg.getShell().setText(
-							Messages.ArtikelView_importCaption);
+						dlg.getShell().setText(Messages.ArtikelView_importCaption);
 						if (dlg.open() == Dialog.OK) {
 							top.run(false);
 						}
@@ -174,25 +168,25 @@ ISaveablePart2 {
 	private class ImportDialog extends TitleAreaDialog {
 		ImporterPage importer;
 		
-		public ImportDialog(Shell parentShell, ImporterPage i) {
+		public ImportDialog(Shell parentShell, ImporterPage i){
 			super(parentShell);
 			importer = i;
 		}
 		
 		@Override
-		protected Control createDialogArea(Composite parent) {
+		protected Control createDialogArea(Composite parent){
 			return importer.createPage(parent);
 		}
 		
 		@Override
-		protected void okPressed() {
+		protected void okPressed(){
 			importer.collect();
 			super.okPressed();
 		}
 		
 	}
 	
-	private void addPagesFor(String point) {
+	private void addPagesFor(String point){
 		List<IConfigurationElement> list = Extensions.getExtensions(point);
 		for (IConfigurationElement ce : list) {
 			try {
@@ -200,18 +194,16 @@ ISaveablePart2 {
 				if (!"Artikel".equals(ce.getName())) { //$NON-NLS-1$
 					continue;
 				}
-				IDetailDisplay d = (IDetailDisplay) ce
-				.createExecutableExtension("CodeDetailDisplay"); //$NON-NLS-1$
+				IDetailDisplay d =
+					(IDetailDisplay) ce.createExecutableExtension("CodeDetailDisplay"); //$NON-NLS-1$
 				CTabItem ct = new CTabItem(ctab, SWT.NONE);
 				ct.setText(d.getTitle());
 				ct.setData(KEY_CE, ce);
 				ct.setData(KEY_DETAIL, d);
 			} catch (Exception ex) {
-				MessageBox mb = new MessageBox(getViewSite().getShell(),
-					SWT.ICON_ERROR | SWT.OK);
+				MessageBox mb = new MessageBox(getViewSite().getShell(), SWT.ICON_ERROR | SWT.OK);
 				mb.setText(Messages.ArtikelView_errorCaption);
-				mb.setMessage(Messages.ArtikelView_errorText + ce.getName()
-					+ ":\n" //$NON-NLS-1$
+				mb.setMessage(Messages.ArtikelView_errorText + ce.getName() + ":\n" //$NON-NLS-1$
 					+ ex.getLocalizedMessage());
 				mb.open();
 			}
@@ -219,22 +211,21 @@ ISaveablePart2 {
 	}
 	
 	@Override
-	public void setFocus() {
+	public void setFocus(){
 		if (ctab.getItemCount() > 0) {
 			ctab.setFocus();
 		}
 	}
 	
 	/*
-	 * public void selectionEvent(PersistentObject obj){ CTabItem top =
-	 * ctab.getSelection(); if (top != null) { IDetailDisplay ids =
-	 * (IDetailDisplay) top.getData(); Class cl = ids.getElementClass(); String
-	 * o1 = obj.getClass().getName(); String o2 = cl.getName(); if
+	 * public void selectionEvent(PersistentObject obj){ CTabItem top = ctab.getSelection(); if (top
+	 * != null) { IDetailDisplay ids = (IDetailDisplay) top.getData(); Class cl =
+	 * ids.getElementClass(); String o1 = obj.getClass().getName(); String o2 = cl.getName(); if
 	 * (o1.equals(o2)) { ids.display(obj); } }
 	 * 
 	 * }
 	 */
-	
+
 	class MasterDetailsPage extends Composite {
 		SashForm sash;
 		CommonViewer cv;
@@ -242,10 +233,9 @@ ISaveablePart2 {
 		
 		ElexisEventListenerImpl eeli_div;
 		
-		MasterDetailsPage(Composite parent, CodeSelectorFactory master,
-			IDetailDisplay detail) {
+		MasterDetailsPage(Composite parent, CodeSelectorFactory master, IDetailDisplay detail){
 			super(parent, SWT.NONE);
-			eeli_div=new ElexisEventListenerImpl(detail.getElementClass()){
+			eeli_div = new ElexisEventListenerImpl(detail.getElementClass()) {
 				@Override
 				public void runInUi(ElexisEvent ev){
 					detailDisplay.display(ev.getObject());
@@ -254,10 +244,9 @@ ISaveablePart2 {
 			setLayout(new FillLayout());
 			sash = new SashForm(this, SWT.NONE);
 			cv = new CommonViewer();
-			cv.create(master.createViewerConfigurer(cv), sash, SWT.NONE,
-				getViewSite());
-			//cv.getViewerWidget().addSelectionChangedListener(
-			//GlobalEventDispatcher.getInstance().getDefaultListener());
+			cv.create(master.createViewerConfigurer(cv), sash, SWT.NONE, getViewSite());
+			// cv.getViewerWidget().addSelectionChangedListener(
+			// GlobalEventDispatcher.getInstance().getDefaultListener());
 			/* Composite page= */detail.createDisplay(sash, getViewSite());
 			cv.getConfigurer().getContentProvider().startListening();
 			detailDisplay = detail;
@@ -271,17 +260,16 @@ ISaveablePart2 {
 	}
 	
 	@Override
-	public void dispose() {
+	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		if ((ctab != null) && (!ctab.isDisposed())) {
 			for (CTabItem ct : ctab.getItems()) {
 				MasterDetailsPage page = (MasterDetailsPage) ct.getControl();
-				//((MasterDetailsPage) ct.getControl()).cv.getViewerWidget()
-				//.removeSelectionChangedListener(
-				//	GlobalEventDispatcher.getInstance()
-				//	.getDefaultListener());
-				page.cv.getConfigurer()
-				.getContentProvider().stopListening();
+				// ((MasterDetailsPage) ct.getControl()).cv.getViewerWidget()
+				// .removeSelectionChangedListener(
+				// GlobalEventDispatcher.getInstance()
+				// .getDefaultListener());
+				page.cv.getConfigurer().getContentProvider().stopListening();
 				page.dispose();
 			}
 		}
@@ -289,7 +277,7 @@ ISaveablePart2 {
 	}
 	
 	/** Vom ActivationListener */
-	public void activation(boolean mode) {
+	public void activation(boolean mode){
 		CTabItem top = ctab.getSelection();
 		if (top != null) {
 			MasterDetailsPage page = (MasterDetailsPage) top.getControl();
@@ -303,37 +291,35 @@ ISaveablePart2 {
 		
 	}
 	
-	public void visible(boolean mode) {
-		
+	public void visible(boolean mode){
+
 	}
 	
-	
-	
 	/*
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir
-	 * benötigen das Interface nur, um das Schliessen einer View zu verhindern,
-	 * wenn die Perspektive fixiert ist. Gibt es da keine einfachere Methode?
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
+	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
+	 * Gibt es da keine einfachere Methode?
 	 */
-	public int promptToSaveOnClose() {
+	public int promptToSaveOnClose(){
 		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
 				: ISaveablePart2.NO;
 	}
 	
-	public void doSave(IProgressMonitor monitor) { /* leer */
+	public void doSave(IProgressMonitor monitor){ /* leer */
 	}
 	
-	public void doSaveAs() { /* leer */
+	public void doSaveAs(){ /* leer */
 	}
 	
-	public boolean isDirty() {
+	public boolean isDirty(){
 		return true;
 	}
 	
-	public boolean isSaveAsAllowed() {
+	public boolean isSaveAsAllowed(){
 		return false;
 	}
 	
-	public boolean isSaveOnCloseNeeded() {
+	public boolean isSaveOnCloseNeeded(){
 		return true;
 	}
 }

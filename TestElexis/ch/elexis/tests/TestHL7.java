@@ -5,7 +5,7 @@ import junit.framework.TestCase;
 
 public class TestHL7 extends TestCase {
 	public void testLabImport() throws Exception{
-		HL7Parser hlp=new HL7Parser("TestLabor");
+		HL7Parser hlp = new HL7Parser("TestLabor");
 		fail();
 		
 	}

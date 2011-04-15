@@ -37,65 +37,64 @@ public class EtiketteDruckenDialog extends TitleAreaDialog implements ICallback 
 	
 	public EtiketteDruckenDialog(final Shell _shell, final Kontakt _kontakt, final String _template){
 		super(_shell);
-		this.kontakt=_kontakt;
+		this.kontakt = _kontakt;
 		this.template = _template;
 	}
-
-	public void setMessage(String newMessage) {
+	
+	public void setMessage(String newMessage){
 		this.message = newMessage;
 	}
-
-	public void setTitle(String newTitle) {
+	
+	public void setTitle(String newTitle){
 		this.title = newTitle;
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		Composite ret=new Composite(parent,SWT.NONE);
+	protected Control createDialogArea(Composite parent){
+		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayout(new FillLayout());
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		
-		text=new TextContainer(getShell());
+		text = new TextContainer(getShell());
 		text.getPlugin().createContainer(ret, this);
 		text.getPlugin().showMenu(false);
 		text.getPlugin().showToolbar(false);
 		text.createFromTemplateName(null, template, Brief.UNKNOWN, kontakt, title);
-		if(text.getPlugin().isDirectOutput()){
+		if (text.getPlugin().isDirectOutput()) {
 			text.getPlugin().print(null, null, true);
 			okPressed();
 		}
 		return ret;
 	}
 	
-
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		super.setTitle(title);
 		super.setMessage(message);
 		getShell().setText("Etikette");
 		getShell().setSize(800, 700);
 	}
-
+	
 	@Override
-	public void save() {
-		// Do nothing
+	public void save(){
+	// Do nothing
 	}
 	
 	@Override
-	public boolean saveAs() {
+	public boolean saveAs(){
 		return false;
 	}
-
-	public boolean doPrint() {
+	
+	public boolean doPrint(){
 		if (text == null) {
 			// text container is not initialized
 			return false;
 		}
-
+		
 		String printer = Hub.localCfg.get("Drucker/Etiketten/Name", "");
 		String tray = Hub.localCfg.get("Drucker/Etiketten/Schacht", null);
-
+		
 		return text.getPlugin().print(printer, tray, false);
 	}
 }

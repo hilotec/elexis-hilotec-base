@@ -23,10 +23,10 @@ public class CountArticles {
 	HashMap<IVerrechenbar, Integer> unpaid = new HashMap<IVerrechenbar, Integer>();
 	Money mPaid = new Money();
 	Money mUnpaid = new Money();
-
+	
 	/**
-	 * Check all sold Articles between fromDate and untilDate (inclusive) and
-	 * count paid and unpaid as per reference date
+	 * Check all sold Articles between fromDate and untilDate (inclusive) and count paid and unpaid
+	 * as per reference date
 	 * 
 	 * @param fromDate
 	 *            Date to begin counting (inclusive)
@@ -38,17 +38,14 @@ public class CountArticles {
 	 *            path to file to write detail data into or null (don't write)
 	 * @return A String describing sums calculated
 	 */
-	public String run(String fromDate, String untilDate, String referenceDate,
-			String outputFile) {
+	public String run(String fromDate, String untilDate, String referenceDate, String outputFile){
 		try {
-			Query<Konsultation> qbe = new Query<Konsultation>(
-					Konsultation.class);
-			qbe.add(Konsultation.FLD_DATE, Query.GREATER_OR_EQUAL,
-					new TimeTool(fromDate).toString(TimeTool.DATE_COMPACT));
-			qbe.add(Konsultation.DATE, Query.LESS_OR_EQUAL, new TimeTool(
-					untilDate).toString(TimeTool.DATE_COMPACT));
-			qbe.add(Konsultation.FLD_MANDATOR_ID, Query.EQUALS,
-					Hub.actMandant.getId());
+			Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
+			qbe.add(Konsultation.FLD_DATE, Query.GREATER_OR_EQUAL, new TimeTool(fromDate)
+				.toString(TimeTool.DATE_COMPACT));
+			qbe.add(Konsultation.DATE, Query.LESS_OR_EQUAL, new TimeTool(untilDate)
+				.toString(TimeTool.DATE_COMPACT));
+			qbe.add(Konsultation.FLD_MANDATOR_ID, Query.EQUALS, Hub.actMandant.getId());
 			TimeTool refDate = new TimeTool(referenceDate);
 			for (Konsultation k : qbe.execute()) {
 				boolean bPaid = false;
@@ -57,8 +54,7 @@ public class CountArticles {
 					if (r.getOffenerBetrag().isNeglectable()) {
 						List<Zahlung> payments = r.getZahlungen();
 						for (Zahlung z : payments) {
-							if (new TimeTool(z.getDatum())
-									.isBeforeOrEqual(refDate)) {
+							if (new TimeTool(z.getDatum()).isBeforeOrEqual(refDate)) {
 								bPaid = true;
 								break;
 							}
@@ -91,51 +87,59 @@ public class CountArticles {
 								sum += count;
 							}
 						}
-
+						
 					}
 				}
 			}
 			if (outputFile != null) {
-				File file=new File(outputFile);
-				FileWriter fw=new FileWriter(file);
-				CSVWriter cs=new CSVWriter(fw);
-				cs.writeNext(new String[]{"Artikelstatistik per",refDate.toString(TimeTool.DATE_GER)});
-				cs.writeNext(new String[]{"Bezahlte Artikel","Anzahl"});
-				for(Entry<IVerrechenbar, Integer> entry:paid.entrySet()){
-					IVerrechenbar iv=entry.getKey();
-					Integer sum=entry.getValue();
-					cs.writeNext(new String[]{iv.getText(),sum.toString()});
+				File file = new File(outputFile);
+				FileWriter fw = new FileWriter(file);
+				CSVWriter cs = new CSVWriter(fw);
+				cs.writeNext(new String[] {
+					"Artikelstatistik per", refDate.toString(TimeTool.DATE_GER)
+				});
+				cs.writeNext(new String[] {
+					"Bezahlte Artikel", "Anzahl"
+				});
+				for (Entry<IVerrechenbar, Integer> entry : paid.entrySet()) {
+					IVerrechenbar iv = entry.getKey();
+					Integer sum = entry.getValue();
+					cs.writeNext(new String[] {
+						iv.getText(), sum.toString()
+					});
 				}
-				cs.writeNext(new String[]{"Gesamtbetrag:",mPaid.getAmountAsString()});
-				cs.writeNext(new String[]{});
-				cs.writeNext(new String[]{"Unbezahlte Artikel","Anzahl"});
-				for(Entry<IVerrechenbar, Integer> entry:unpaid.entrySet()){
-					IVerrechenbar iv=entry.getKey();
-					Integer sum=entry.getValue();
-					cs.writeNext(new String[]{iv.getText(),sum.toString()});
+				cs.writeNext(new String[] {
+					"Gesamtbetrag:", mPaid.getAmountAsString()
+				});
+				cs.writeNext(new String[] {});
+				cs.writeNext(new String[] {
+					"Unbezahlte Artikel", "Anzahl"
+				});
+				for (Entry<IVerrechenbar, Integer> entry : unpaid.entrySet()) {
+					IVerrechenbar iv = entry.getKey();
+					Integer sum = entry.getValue();
+					cs.writeNext(new String[] {
+						iv.getText(), sum.toString()
+					});
 				}
-				cs.writeNext(new String[]{"Gesamtbetrag:",mUnpaid.getAmountAsString()});
+				cs.writeNext(new String[] {
+					"Gesamtbetrag:", mUnpaid.getAmountAsString()
+				});
 				cs.close();
 			}
 			StringBuilder sb = new StringBuilder();
-			sb.append("Artikelabgabe von (einschliesslich) ")
-					.append(new TimeTool(fromDate).toString(TimeTool.DATE_GER))
-					.append(" bis (einschliesslich) ")
-					.append(new TimeTool(untilDate).toString(TimeTool.DATE_GER))
-					.append(":\n")
-					.append("Bezahlte Artikel: ")
-					.append(mPaid.getAmountAsString())
-					.append("\n")
-					.append("Unbezahlte Artikel: ")
-					.append(mUnpaid.getAmountAsString())
-					.append("\n")
-					.append("(Jeweils per Stichtag "
-							+ new TimeTool(referenceDate)
-									.toString(TimeTool.DATE_GER)).append(")\n");
+			sb.append("Artikelabgabe von (einschliesslich) ").append(
+				new TimeTool(fromDate).toString(TimeTool.DATE_GER)).append(
+				" bis (einschliesslich) ").append(
+				new TimeTool(untilDate).toString(TimeTool.DATE_GER)).append(":\n").append(
+				"Bezahlte Artikel: ").append(mPaid.getAmountAsString()).append("\n").append(
+				"Unbezahlte Artikel: ").append(mUnpaid.getAmountAsString()).append("\n").append(
+				"(Jeweils per Stichtag " + new TimeTool(referenceDate).toString(TimeTool.DATE_GER))
+				.append(")\n");
 			return sb.toString();
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return "Error executing Script: "+ex.getMessage();
+			return "Error executing Script: " + ex.getMessage();
 		}
 	}
 }

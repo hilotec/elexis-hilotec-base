@@ -10,26 +10,26 @@ public class Probe {
 	private String hint;
 	private String zusatztext;
 	
-	public Probe(final String[] strArray) {
+	public Probe(final String[] strArray){
 		parse(strArray);
 	}
-
+	
 	/**
 	 * Liest Probendaten aus Array
 	 * 
 	 * @param strArray
 	 *            Array[7]
 	 */
-	private void parse(final String[] strArray) {
+	private void parse(final String[] strArray){
 		int dateIndex = strArray[1].indexOf("."); //$NON-NLS-1$
 		int timeIndex = strArray[1].indexOf(":"); //$NON-NLS-1$
-
+		
 		String dateStr = strArray[1].substring(dateIndex - 2, dateIndex + 6);
 		String timeStr = strArray[1].substring(timeIndex - 2, timeIndex + 6);
-
+		
 		date = new TimeTool(dateStr);
 		date.set(timeStr);
-
+		
 		if (strArray.length > 2) {
 			ident = strArray[2].trim();
 		}
@@ -46,16 +46,17 @@ public class Probe {
 			zusatztext = strArray[5].trim();
 		}
 	}
-
+	
 	/**
 	 * Schreibt Labordaten
+	 * 
 	 * @return String Warnungsmeldung, die geloggt werden sollte
 	 */
-	public String write(Patient patient) throws PackageException {
+	public String write(Patient patient) throws PackageException{
 		if (getResultat().length() < 19) {
 			throw new PackageException(Messages.getString("Probe.ResultatMsg")); //$NON-NLS-1$
 		}
-
+		
 		String paramName;
 		String value;
 		String unit;
@@ -77,30 +78,30 @@ public class Probe {
 			value = getResultat().substring(5, 11).trim();
 			unit = getResultat().substring(12, getResultat().length()).trim();
 		}
-
+		
 		Value val = Value.getValue(paramName, unit);
 		val.fetchValue(patient, value, "", getDate()); //$NON-NLS-1$
 		
 		return val.getWarning();
 	}
-
-	public TimeTool getDate() {
+	
+	public TimeTool getDate(){
 		return date;
 	}
-
-	public String getIdent() {
+	
+	public String getIdent(){
 		return ident;
 	}
-
-	public String getResultat() {
+	
+	public String getResultat(){
 		return resultat;
 	}
-
-	public String getHint() {
+	
+	public String getHint(){
 		return hint;
 	}
-
-	public String getZusatztext() {
+	
+	public String getZusatztext(){
 		return zusatztext;
 	}
 }

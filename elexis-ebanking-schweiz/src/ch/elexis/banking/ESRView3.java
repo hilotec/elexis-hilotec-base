@@ -34,7 +34,7 @@ public class ESRView3 extends ViewPart implements IActivationListener {
 	CommonViewer cv;
 	ViewerConfigurer vc;
 	FlatDataLoader loader;
-
+	
 	private static final int DATUM_INDEX = 0;
 	private static final int RN_NUMMER_INDEX = 1;
 	private static final int BETRAG_INDEX = 2;
@@ -44,40 +44,42 @@ public class ESRView3 extends ViewPart implements IActivationListener {
 	private static final int PATIENT_INDEX = 6;
 	private static final int BUCHUNG_INDEX = 7;
 	private static final int DATEI_INDEX = 8;
-
-	private static final String[] COLUMN_TEXTS = { "Datum", // DATUM_INDEX
-			"Rn-Nummer", // RN_NUMMER_INDEX
-			"Betrag", // BETRAG
-			"Eingelesen", // EINGELESEN_INDEX
-			"Verrechnet", // VERRECHNET_INDEX
-			"Gutgeschrieben", // GUTGESCHRIEBEN_INDEX
-			"Patient", // PATIENT_INDEX
-			"Buchung", // BUCHUNG_INDEX
-			"Datei", // DATEI_INDEX
+	
+	private static final String[] COLUMN_TEXTS = {
+		"Datum", // DATUM_INDEX
+		"Rn-Nummer", // RN_NUMMER_INDEX
+		"Betrag", // BETRAG
+		"Eingelesen", // EINGELESEN_INDEX
+		"Verrechnet", // VERRECHNET_INDEX
+		"Gutgeschrieben", // GUTGESCHRIEBEN_INDEX
+		"Patient", // PATIENT_INDEX
+		"Buchung", // BUCHUNG_INDEX
+		"Datei", // DATEI_INDEX
 	};
-	private static final int[] COLUMN_WIDTHS = { 60, // DATUM_INDEX
-			50, // RN_NUMMER_INDEX
-			50, // BETRAG
-			80, // EINGELESEN_INDEX
-			80, // VERRECHNET_INDEX
-			80, // GUTGESCHRIEBEN_INDEX
-			150, // PATIENT_INDEX
-			80, // BUCHUNG_INDEX
-			80, // DATEI_INDEX
+	private static final int[] COLUMN_WIDTHS = {
+		60, // DATUM_INDEX
+		50, // RN_NUMMER_INDEX
+		50, // BETRAG
+		80, // EINGELESEN_INDEX
+		80, // VERRECHNET_INDEX
+		80, // GUTGESCHRIEBEN_INDEX
+		150, // PATIENT_INDEX
+		80, // BUCHUNG_INDEX
+		80, // DATEI_INDEX
 	};
-
-	public ESRView3() {
+	
+	public ESRView3(){
 
 	}
-
+	
 	@Override
-	public void createPartControl(Composite parent) {
+	public void createPartControl(Composite parent){
 		parent.setLayout(new FillLayout());
 		cv = new CommonViewer();
 		loader = new FlatDataLoader(cv, new Query<ESRRecord>(ESRRecord.class));
 		loader.addQueryFilter(new QueryFilter() {
-
-			public void apply(Query<? extends PersistentObject> qbe) {
+			
+			public void apply(Query<? extends PersistentObject> qbe){
 				if (Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
 					if (Hub.actMandant != null) {
 						qbe.startGroup();
@@ -89,69 +91,66 @@ public class ESRView3 extends ViewPart implements IActivationListener {
 						qbe.and();
 					}
 				}
-
+				
 			}
 		});
-
-		vc = new ViewerConfigurer(loader,
-				new ESRLabelProvider(),
-				(ControlFieldProvider) new DefaultControlFieldProvider(cv, new String[]{"Datum"}),
-				new ViewerConfigurer.DefaultButtonProvider(),
-				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST,
-						SWT.NONE, null));
+		
+		vc =
+			new ViewerConfigurer(loader, new ESRLabelProvider(),
+				(ControlFieldProvider) new DefaultControlFieldProvider(cv, new String[] {
+					"Datum"
+				}), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
+					SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, null));
 		cv.create(vc, parent, SWT.NONE, getViewSite());
-
+		
 		/*
-		 * makeActions(); cv.setObjectCreateAction(getViewSite(),
-		 * createKontakt); menu = new ViewMenus(getViewSite());
-		 * menu.createViewerContextMenu(cv.getViewerWidget(), delKontakt,
+		 * makeActions(); cv.setObjectCreateAction(getViewSite(), createKontakt); menu = new
+		 * ViewMenus(getViewSite()); menu.createViewerContextMenu(cv.getViewerWidget(), delKontakt,
 		 * dupKontakt); menu.createMenu(GlobalActions.printKontaktEtikette);
 		 * menu.createToolbar(GlobalActions.printKontaktEtikette);
 		 * vc.getContentProvider().startListening();
-		 * vc.getControlFieldProvider().addChangeListener(this);
-		 * cv.addDoubleClickListener(new CommonViewer.DoubleClickListener() {
-		 * public void doubleClicked(PersistentObject obj, CommonViewer cv){ try
-		 * { KontaktDetailView kdv = (KontaktDetailView)
-		 * getSite().getPage().showView(KontaktDetailView.ID);
-		 * kdv.kb.catchElexisEvent(new ElexisEvent(obj, obj.getClass(),
-		 * ElexisEvent.EVENT_SELECTED)); } catch (PartInitException e) {
-		 * ExHandler.handle(e); }
+		 * vc.getControlFieldProvider().addChangeListener(this); cv.addDoubleClickListener(new
+		 * CommonViewer.DoubleClickListener() { public void doubleClicked(PersistentObject obj,
+		 * CommonViewer cv){ try { KontaktDetailView kdv = (KontaktDetailView)
+		 * getSite().getPage().showView(KontaktDetailView.ID); kdv.kb.catchElexisEvent(new
+		 * ElexisEvent(obj, obj.getClass(), ElexisEvent.EVENT_SELECTED)); } catch (PartInitException
+		 * e) { ExHandler.handle(e); }
 		 * 
 		 * } });
 		 */
 	}
-
+	
 	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void activation(boolean mode) {
-		// TODO Auto-generated method stub
-
+	
+	public void activation(boolean mode){
+	// TODO Auto-generated method stub
+	
 	}
-
-	public void visible(boolean mode) {
-		// TODO Auto-generated method stub
-
+	
+	public void visible(boolean mode){
+	// TODO Auto-generated method stub
+	
 	}
-
-	class ESRLabelProvider extends LabelProvider implements
-			ITableLabelProvider, ITableColorProvider {
+	
+	class ESRLabelProvider extends LabelProvider implements ITableLabelProvider,
+			ITableColorProvider {
 		DecimalFormat df = new DecimalFormat("###0.00");
-
-		public Image getColumnImage(Object element, int columnIndex) {
+		
+		public Image getColumnImage(Object element, int columnIndex){
 			// TODO Auto-generated method stub
 			return null;
 		}
-
-		public String getColumnText(Object element, int columnIndex) {
+		
+		public String getColumnText(Object element, int columnIndex){
 			String text = "";
-
+			
 			if (element instanceof ESRRecord) {
 				ESRRecord rec = (ESRRecord) element;
-
+				
 				if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
 					switch (columnIndex) {
 					case DATUM_INDEX:
@@ -198,8 +197,7 @@ public class ESRView3 extends ViewPart implements IActivationListener {
 						if (StringTool.isNothing(dat)) {
 							text = "Nicht verbucht!";
 						} else {
-							text = new TimeTool(dat)
-									.toString(TimeTool.DATE_GER);
+							text = new TimeTool(dat).toString(TimeTool.DATE_GER);
 						}
 						break;
 					case DATEI_INDEX:
@@ -208,15 +206,15 @@ public class ESRView3 extends ViewPart implements IActivationListener {
 					}
 				}
 			}
-
+			
 			return text;
 		}
-
-		public Color getForeground(Object element, int columnIndex) {
+		
+		public Color getForeground(Object element, int columnIndex){
 			return Desk.getColor(Desk.COL_BLACK);
 		}
-
-		public Color getBackground(Object element, int columnIndex) {
+		
+		public Color getBackground(Object element, int columnIndex){
 			if (element instanceof ESRRecord) {
 				ESRRecord rec = (ESRRecord) element;
 				if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {

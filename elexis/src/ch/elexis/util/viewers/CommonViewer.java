@@ -78,7 +78,7 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 	}
 	
 	public CommonViewer(){
-		
+
 	}
 	
 	public void setObjectCreateAction(IViewSite site, IAction action){

@@ -49,8 +49,8 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class AgendaParallel extends BaseView {
-
-	private IAction dayFwdAction, dayBackAction,showCalendarAction;
+	
+	private IAction dayFwdAction, dayBackAction, showCalendarAction;
 	private ProportionalSheet sheet;
 	private ColumnHeader header;
 	private Composite wrapper;
@@ -80,8 +80,8 @@ public class AgendaParallel extends BaseView {
 		bounding.setExpandHorizontal(true);
 		bounding.setExpandVertical(true);
 		makePrivateActions();
-		for(String s:getDisplayedResources()){
-			checkDay(s,null);
+		for (String s : getDisplayedResources()) {
+			checkDay(s, null);
 		}
 		refresh();
 	}
@@ -90,6 +90,7 @@ public class AgendaParallel extends BaseView {
 	public void setFocus(){
 		sheet.setFocus();
 	}
+	
 	@Override
 	protected IPlannable getSelection(){
 		// TODO Auto-generated method stub
@@ -97,8 +98,9 @@ public class AgendaParallel extends BaseView {
 	}
 	
 	/**
-	 * Return the resources to display. This are by default all defined resources, but users
-	 * can exclude some of them from display 
+	 * Return the resources to display. This are by default all defined resources, but users can
+	 * exclude some of them from display
+	 * 
 	 * @return a stering array with all resources to display
 	 */
 	public String[] getDisplayedResources(){
@@ -115,17 +117,15 @@ public class AgendaParallel extends BaseView {
 	void clear(){
 		sheet.clear();
 	}
+	
 	@Override
 	protected void refresh(){
-		showCalendarAction.setText(agenda.getActDate().toString(
-				TimeTool.WEEKDAY)
-				+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER)); //$NON-NLS-1$
+		showCalendarAction.setText(agenda.getActDate().toString(TimeTool.WEEKDAY)
+			+ ", " + agenda.getActDate().toString(TimeTool.DATE_GER)); //$NON-NLS-1$
 		sheet.refresh();
 		wrapper.layout();
 		getViewSite().getActionBars().getToolBarManager().update(true);
 	}
-	
-
 	
 	private void makePrivateActions(){
 		dayFwdAction = new Action(Messages.AgendaParallel_dayForward) {
@@ -133,30 +133,30 @@ public class AgendaParallel extends BaseView {
 				setToolTipText(Messages.AgendaParallel_showNextDay);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEXT));
 			}
-
+			
 			@Override
-			public void run() {
+			public void run(){
 				agenda.addDays(1);
-				for(String s:getDisplayedResources()){
-					checkDay(s,null);
+				for (String s : getDisplayedResources()) {
+					checkDay(s, null);
 				}
 				refresh();
 			}
 		};
-
+		
 		dayBackAction = new Action(Messages.AgendaParallel_dayBack) {
 			{
 				setToolTipText(Messages.AgendaParallel_showPreviousDay);
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_PREVIOUS));
 			}
-
+			
 			@Override
-			public void run() {
+			public void run(){
 				agenda.addDays(-1);
-				for(String s:getDisplayedResources()){
-					checkDay(s,null);
+				for (String s : getDisplayedResources()) {
+					checkDay(s, null);
 				}
-
+				
 				refresh();
 			}
 		};
@@ -165,66 +165,71 @@ public class AgendaParallel extends BaseView {
 				setToolTipText(Messages.AgendaParallel_showCalendarForSelcetion);
 				// setImageDescriptor(Activator.getImageDescriptor("icons/calendar.png"));
 			}
-
+			
 			@Override
-			public void run() {
-				DateSelectorDialog dsl = new DateSelectorDialog(getViewSite()
-						.getShell(), agenda.getActDate());
+			public void run(){
+				DateSelectorDialog dsl =
+					new DateSelectorDialog(getViewSite().getShell(), agenda.getActDate());
 				if (dsl.open() == Dialog.OK) {
 					agenda.setActDate(dsl.getSelectedDate());
-					for(String s:getDisplayedResources()){
-						checkDay(s,null);
+					for (String s : getDisplayedResources()) {
+						checkDay(s, null);
 					}
-
+					
 					refresh();
 				}
 			}
 		};
-
-		final IAction zoomAction=new Action(Messages.AgendaParallel_zoom,Action.AS_DROP_DOWN_MENU){
-			Menu mine;
-			{
-				setToolTipText(Messages.AgendaParallel_setZoomFactor);
-				setImageDescriptor(Activator.getImageDescriptor("icons/zoom.png")); //$NON-NLS-1$
-				setMenuCreator(new IMenuCreator(){
-
-					public void dispose() {
-						mine.dispose();
-					}
-
-					public Menu getMenu(Control parent) {
-						mine=new Menu(parent);
-						fillMenu();
-						return mine;
-					}
-
-					public Menu getMenu(Menu parent) {
-						mine=new Menu(parent);
-						fillMenu();
-						return mine;
-					}});
-			}
-			private void fillMenu(){
-				for(String s:new String[]{"40","60","80","100","120","140","160","200","300"}){ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
-					MenuItem it=new MenuItem(mine,SWT.RADIO);
-					it.setText(s+"%"); //$NON-NLS-1$
-					it.addSelectionListener(new SelectionAdapter(){
-
-						@Override
-						public void widgetSelected(SelectionEvent e) {
-							MenuItem mi=(MenuItem)e.getSource();
-							int scale=Integer.parseInt(mi.getText().split("%")[0]); //$NON-NLS-1$
-							double factor=scale/100.0;
-							Hub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE, Double.toString(factor));
-							sheet.recalc();
+		
+		final IAction zoomAction =
+			new Action(Messages.AgendaParallel_zoom, Action.AS_DROP_DOWN_MENU) {
+				Menu mine;
+				{
+					setToolTipText(Messages.AgendaParallel_setZoomFactor);
+					setImageDescriptor(Activator.getImageDescriptor("icons/zoom.png")); //$NON-NLS-1$
+					setMenuCreator(new IMenuCreator() {
+						
+						public void dispose(){
+							mine.dispose();
 						}
 						
+						public Menu getMenu(Control parent){
+							mine = new Menu(parent);
+							fillMenu();
+							return mine;
+						}
+						
+						public Menu getMenu(Menu parent){
+							mine = new Menu(parent);
+							fillMenu();
+							return mine;
+						}
 					});
 				}
-			}
-		};
-		IToolBarManager tmr=getViewSite().getActionBars().getToolBarManager();
-
+				
+				private void fillMenu(){
+					for (String s : new String[] {
+						"40", "60", "80", "100", "120", "140", "160", "200", "300"}) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
+						MenuItem it = new MenuItem(mine, SWT.RADIO);
+						it.setText(s + "%"); //$NON-NLS-1$
+						it.addSelectionListener(new SelectionAdapter() {
+							
+							@Override
+							public void widgetSelected(SelectionEvent e){
+								MenuItem mi = (MenuItem) e.getSource();
+								int scale = Integer.parseInt(mi.getText().split("%")[0]); //$NON-NLS-1$
+								double factor = scale / 100.0;
+								Hub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE, Double
+									.toString(factor));
+								sheet.recalc();
+							}
+							
+						});
+					}
+				}
+			};
+		IToolBarManager tmr = getViewSite().getActionBars().getToolBarManager();
+		
 		tmr.add(new Separator());
 		tmr.add(dayBackAction);
 		tmr.add(showCalendarAction);

@@ -111,7 +111,7 @@ public class XidElement extends XChangeElement {
 			int v1 = val & 3;
 			Identity ident =
 				new Identity()
-			.asExporter(home, xid.getDomain(), xid.getDomainId(), v1, isUUID(xid));
+					.asExporter(home, xid.getDomain(), xid.getDomainId(), v1, isUUID(xid));
 			add(ident);
 		}
 		return this;
@@ -209,7 +209,7 @@ public class XidElement extends XChangeElement {
 			String domid = xid.getDomainId();
 			for (Identity ident : idents) {
 				if (ident.getAttr(ATTR_IDENTITY_DOMAIN).equals(domain)
-						&& ident.getAttr(ATTR_IDENTITY_DOMAIN_ID).equals(domid)) {
+					&& ident.getAttr(ATTR_IDENTITY_DOMAIN_ID).equals(domid)) {
 					if (XidElement.isUUID(xid)) {
 						return XIDMATCH.SURE;
 					} else {
@@ -272,8 +272,9 @@ public class XidElement extends XChangeElement {
 	public static class Identity extends XChangeElement {
 		
 		public Identity(){
-			
+
 		}
+		
 		public String getXMLName(){
 			return ELEMENT_IDENTITY;
 		}

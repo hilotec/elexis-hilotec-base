@@ -22,8 +22,7 @@ public class DBInfo {
 		Resource rsc = new Resource("ch.elexis.data");
 		InputStream is = rsc.getInputStream("createDB.script");
 		String sql;
-		Pattern table = Pattern
-				.compile("CREATE.+?TABLE\\s+([a-zA-Z0-9_]+)\\s*\\((.+)"); // (.+)\\);.*");
+		Pattern table = Pattern.compile("CREATE.+?TABLE\\s+([a-zA-Z0-9_]+)\\s*\\((.+)"); // (.+)\\);.*");
 		Pattern line = Pattern.compile("([a-zA-Z_0-9]+).+\\(([0-9]+)\\).*");
 		while ((sql = JdbcLink.readStatement(is)) != null) {
 			Matcher m = table.matcher(sql);
@@ -34,15 +33,14 @@ public class DBInfo {
 				for (String f : fields) {
 					Matcher l = line.matcher(f.trim());
 					if (l.matches()) {
-						dbFields.put(name.toLowerCase() + "#"
-								+ l.group(1).toLowerCase(), Integer.parseInt(l
-								.group(2)));
+						dbFields.put(name.toLowerCase() + "#" + l.group(1).toLowerCase(), Integer
+							.parseInt(l.group(2)));
 					}
 				}
 			}
 		}
 	}
-
+	
 	/**
 	 * Länge eines Textfelds holen
 	 * 
@@ -50,19 +48,18 @@ public class DBInfo {
 	 *            Tabellenname
 	 * @param field
 	 *            Feldname
-	 * @return die Länge oder 0 wenn das Feld nicht existiert oder unlimitiert
-	 *         ist.
+	 * @return die Länge oder 0 wenn das Feld nicht existiert oder unlimitiert ist.
 	 */
-	public static int getFieldLength(String table, String field) {
+	public static int getFieldLength(String table, String field){
 		String key = table.toLowerCase() + "#" + field.toLowerCase();
 		Integer ret = (Integer) dbFields.get(key);
 		if (ret == null) {
 			return 0;
 		}
 		return ret.intValue();
-
+		
 	}
-
+	
 	/**
 	 * Fragen, ob ein Feld existiert
 	 * 
@@ -70,7 +67,7 @@ public class DBInfo {
 	 * @param field
 	 * @return
 	 */
-	public static boolean fieldExists(String table, String field) {
+	public static boolean fieldExists(String table, String field){
 		String key = table.toLowerCase() + "#" + field.toLowerCase();
 		return dbFields.containsKey(key);
 	}

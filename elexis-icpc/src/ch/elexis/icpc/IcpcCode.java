@@ -29,22 +29,13 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 	static final String TABLENAME = "CH_ELEXIS_ICPC";
 	static final String VERSION = "1.2.1";
 	
-	public static final String createDB="CREATE TABLE "+TABLENAME+" ("+
-	"ID			CHAR(3) primary key,"+
-	"lastupdate BIGINT,"+
-	"deleted	CHAR(1) default '0',"+
-	"component	CHAR(2),"+
-	"short		VARCHAR(80),"+
-	"synonyms   VARCHAR(250),"+
-	"icd10		    TEXT,"+
-	"txt			TEXT,"+
-	"criteria		TEXT,"+
-	"inclusion 		TEXT,"+
-	"exclusion		TEXT,"+
-	"consider		TEXT,"+
-	"note			TEXT);"+
-	"create index "+TABLENAME+"_IDX1 ON "+TABLENAME+" (component);"+
-	"INSERT INTO "+TABLENAME+" (ID,txt) VALUES ('ver','"+VERSION+"');";
+	public static final String createDB =
+		"CREATE TABLE " + TABLENAME + " (" + "ID			CHAR(3) primary key," + "lastupdate BIGINT,"
+			+ "deleted	CHAR(1) default '0'," + "component	CHAR(2)," + "short		VARCHAR(80),"
+			+ "synonyms   VARCHAR(250)," + "icd10		    TEXT," + "txt			TEXT," + "criteria		TEXT,"
+			+ "inclusion 		TEXT," + "exclusion		TEXT," + "consider		TEXT," + "note			TEXT);"
+			+ "create index " + TABLENAME + "_IDX1 ON " + TABLENAME + " (component);"
+			+ "INSERT INTO " + TABLENAME + " (ID,txt) VALUES ('ver','" + VERSION + "');";
 	
 	private static Tree root;
 	private String realCode;
@@ -53,10 +44,10 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 		addMapping(TABLENAME, "component", "text=txt", "short", "icd10", "criteria", "inclusion",
 			"exclusion", "consider", "note", "synonyms");
 		IcpcCode ver = IcpcCode.load("ver");
-		if(!ver.exists()){
-			try{
-				createOrModifyTable("DROP TABLE "+TABLENAME);
-			}catch (Exception e){
+		if (!ver.exists()) {
+			try {
+				createOrModifyTable("DROP TABLE " + TABLENAME);
+			} catch (Exception e) {
 				// janusode
 			}
 			createOrModifyTable(createDB);
@@ -97,7 +88,6 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 		return realCode + " " + get("short");
 	}
 	
-	
 	public void setLabel(String l){
 		realCode = l;
 	}
@@ -134,23 +124,23 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 	}
 	
 	public static final String[] classes =
-	{
-		Messages.IcpcCode_class_A, Messages.IcpcCode_class_B, Messages.IcpcCode_class_D,
-		Messages.IcpcCode_class_F, Messages.IcpcCode_class_H, Messages.IcpcCode_class_K,
-		Messages.IcpcCode_class_L, Messages.IcpcCode_class_N, Messages.IcpcCode_class_P,
-		Messages.IcpcCode_class_R, Messages.IcpcCode_class_S, Messages.IcpcCode_class_T,
-		Messages.IcpcCode_class_U, Messages.IcpcCode_class_W, Messages.IcpcCode_class_X,
-		Messages.IcpcCode_class_Y, Messages.IcpcCode_class_Z
-	};
+		{
+			Messages.IcpcCode_class_A, Messages.IcpcCode_class_B, Messages.IcpcCode_class_D,
+			Messages.IcpcCode_class_F, Messages.IcpcCode_class_H, Messages.IcpcCode_class_K,
+			Messages.IcpcCode_class_L, Messages.IcpcCode_class_N, Messages.IcpcCode_class_P,
+			Messages.IcpcCode_class_R, Messages.IcpcCode_class_S, Messages.IcpcCode_class_T,
+			Messages.IcpcCode_class_U, Messages.IcpcCode_class_W, Messages.IcpcCode_class_X,
+			Messages.IcpcCode_class_Y, Messages.IcpcCode_class_Z
+		};
 	/*
 	 * public static final String[] components_de={ };
 	 */
 	public static final String[] components =
-	{
-		Messages.IcpcCode_comp_1, Messages.IcpcCode_comp_2, Messages.IcpcCode_comp_3,
-		Messages.IcpcCode_comp_4, Messages.IcpcCode_comp_5, Messages.IcpcCode_comp_6,
-		Messages.IcpcCode_comp_7
-	};
+		{
+			Messages.IcpcCode_comp_1, Messages.IcpcCode_comp_2, Messages.IcpcCode_comp_3,
+			Messages.IcpcCode_comp_4, Messages.IcpcCode_comp_5, Messages.IcpcCode_comp_6,
+			Messages.IcpcCode_comp_7
+		};
 	
 	@SuppressWarnings("unchecked")
 	public static void reload(){

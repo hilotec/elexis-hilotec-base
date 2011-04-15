@@ -107,8 +107,8 @@ public class HL7 {
 			return new Result<Object>("OK"); //$NON-NLS-1$
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-			return new Result<Object>(SEVERITY.ERROR, 2, Messages.HL7_ExceptionWhileReading,
-				ex.getMessage(), true);
+			return new Result<Object>(SEVERITY.ERROR, 2, Messages.HL7_ExceptionWhileReading, ex
+				.getMessage(), true);
 		}
 		
 	}
@@ -220,8 +220,8 @@ public class HL7 {
 				qbe.clear();
 				qbe.add(Person.NAME, Query.EQUALS, StringTool.normalizeCase(nachname));
 				qbe.add(Person.FIRSTNAME, Query.EQUALS, StringTool.normalizeCase(vorname));
-				qbe.add(Person.BIRTHDATE, Query.EQUALS,
-					new TimeTool(gebdat).toString(TimeTool.DATE_COMPACT));
+				qbe.add(Person.BIRTHDATE, Query.EQUALS, new TimeTool(gebdat)
+					.toString(TimeTool.DATE_COMPACT));
 				list = qbe.execute();
 				if ((list != null) && (list.size() == 1)) {
 					pat = list.get(0);
@@ -244,7 +244,9 @@ public class HL7 {
 							if (adr.length > 1) {
 								an.setOrt(adr[1]);
 								if (adr.length > 2) {
-									an.setPlz(adr[2].length() > 5 ? adr[2].substring(0, 4) : adr[2]);
+									an
+										.setPlz(adr[2].length() > 5 ? adr[2].substring(0, 4)
+												: adr[2]);
 									if (adr.length > 3) {
 										an.setLand(adr[3]);
 									}
@@ -271,7 +273,8 @@ public class HL7 {
 				if (nachname.length() != 0 && vorname.length() != 0) {
 					if (!KontaktMatcher.isSame(pat, nachname, vorname, gebdat)) {
 						StringBuilder sb = new StringBuilder();
-						sb.append(Messages.HL7_NameConflictWithID)
+						sb
+							.append(Messages.HL7_NameConflictWithID)
 							.append(pid)
 							.append(":\n") //$NON-NLS-1$
 							.append(Messages.HL7_Lab).append(nachname).append(StringTool.space)
@@ -299,9 +302,9 @@ public class HL7 {
 	 * 
 	 * @return Date of the HL7 message
 	 */
-	public TimeTool getDate() {
+	public TimeTool getDate(){
 		String[] msh = getElement("MSH", 0);
-		if(msh.length > 9) {
+		if (msh.length > 9) {
 			return new TimeTool(msh[6]);
 		}
 		return new TimeTool();

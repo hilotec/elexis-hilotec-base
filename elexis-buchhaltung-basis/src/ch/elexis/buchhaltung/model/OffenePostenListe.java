@@ -37,8 +37,9 @@ import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
 
 /**
  * Find all bills that are payable at a given date
+ * 
  * @author user
- *
+ * 
  */
 public class OffenePostenListe extends AbstractDataProvider {
 	private static final String OFFENE_RECHNUNGEN_PER = Messages.OffenePostenListe_OpenBillsPer;
@@ -46,9 +47,9 @@ public class OffenePostenListe extends AbstractDataProvider {
 	private static final String ANALYSIERE_RECHNUNGEN = Messages.OffenePostenListe_AnalyzingBills;
 	private static final String DATENBANKABFRAGE = Messages.OffenePostenListe_DatabaseQuery;
 	private static final String NAME = OFFENE_POSTEN;
-	private static final String FIELD_ACTMANDATOR="Nur aktueller Mandant"; //$NON-NLS-1$
-	private static final String FIELD_AUSGANGSDATUM="Ausgangsdatum"; //$NON-NLS-1$
-	private static final String FIELD_STICHTAG="Stichtag"; //$NON-NLS-1$
+	private static final String FIELD_ACTMANDATOR = "Nur aktueller Mandant"; //$NON-NLS-1$
+	private static final String FIELD_AUSGANGSDATUM = "Ausgangsdatum"; //$NON-NLS-1$
+	private static final String FIELD_STICHTAG = "Stichtag"; //$NON-NLS-1$
 	
 	private TimeTool stichtag = new TimeTool();
 	private TimeTool startTag = new TimeTool();
@@ -56,8 +57,8 @@ public class OffenePostenListe extends AbstractDataProvider {
 	
 	public OffenePostenListe(){
 		super(NAME);
-		startTag.set(TimeTool.MONTH,TimeTool.JANUARY);
-		startTag.set(TimeTool.DAY_OF_MONTH,1);
+		startTag.set(TimeTool.MONTH, TimeTool.JANUARY);
+		startTag.set(TimeTool.DAY_OF_MONTH, 1);
 	}
 	
 	public void setStartTag(TimeTool starttag){
@@ -75,14 +76,15 @@ public class OffenePostenListe extends AbstractDataProvider {
 	public TimeTool getStichtag(){
 		return new TimeTool(stichtag);
 	}
-	@GetProperty(name= FIELD_ACTMANDATOR, widgetType= WidgetTypes.BUTTON_CHECKBOX)
+	
+	@GetProperty(name = FIELD_ACTMANDATOR, widgetType = WidgetTypes.BUTTON_CHECKBOX)
 	public boolean getOnlyActiveMandator(){
 		return bOnlyActiveMandator;
 	}
 	
 	@SetProperty(name = FIELD_ACTMANDATOR)
 	public void setOnlyActiveMandator(boolean val){
-		bOnlyActiveMandator=val;
+		bOnlyActiveMandator = val;
 	}
 	
 	@GetProperty(name = FIELD_AUSGANGSDATUM, widgetType = WidgetTypes.TEXT_DATE)
@@ -116,14 +118,14 @@ public class OffenePostenListe extends AbstractDataProvider {
 		Query<Rechnung> qbe = new Query<Rechnung>(Rechnung.class);
 		qbe.add("RnDatum", "<=", getStichtag().toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
 		qbe.add("RnDatum", ">=", getStartTag().toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
-		if(bOnlyActiveMandator){
+		if (bOnlyActiveMandator) {
 			qbe.add("MandantID", "=", Hub.actMandant.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		List<Rechnung> rnn = qbe.execute();
 		monitor.worked(1000);
 		final ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
-		int size=rnn.size();
-		if(size==0){
+		int size = rnn.size();
+		if (size == 0) {
 			monitor.done();
 			this.dataSet.setContent(result);
 			return Status.OK_STATUS;
@@ -131,7 +133,7 @@ public class OffenePostenListe extends AbstractDataProvider {
 		int step = totalwork / size;
 		monitor.subTask(ANALYSIERE_RECHNUNGEN);
 		TimeTool now = getStichtag();
-		PatientIdFormatter pif=new PatientIdFormatter(8);
+		PatientIdFormatter pif = new PatientIdFormatter(8);
 		for (Rechnung rn : rnn) {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;

@@ -23,13 +23,14 @@ import ch.rgw.tools.Result;
 
 /**
  * Helper class to adapt Result's into Eclipse structures.
+ * 
  * @author Gerry
- *
+ * 
  */
 public class ResultAdapter {
 	
 	private static final String PLUGIN_ID = "ch.elexis"; //$NON-NLS-1$
-
+	
 	/**
 	 * Den Status als Eclipse IStatus bzw. MultiStatus abholen
 	 * 
@@ -51,8 +52,8 @@ public class ResultAdapter {
 				Result.msg r = list.get(0);
 				for (Result.msg m : list) {
 					as.add(new org.eclipse.core.runtime.Status(
-						getSeverityAsStatus(m.getSeverity()),
-						PLUGIN_ID, m.getCode(), m.getText(), null)); //$NON-NLS-1$
+						getSeverityAsStatus(m.getSeverity()), PLUGIN_ID, m.getCode(), m.getText(),
+						null)); //$NON-NLS-1$
 					if (m.getSeverity().ordinal() > r.getSeverity().ordinal()) {
 						r = m;
 					}

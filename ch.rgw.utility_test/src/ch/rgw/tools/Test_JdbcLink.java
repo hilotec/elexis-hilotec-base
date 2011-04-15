@@ -10,38 +10,38 @@ import org.junit.Test;
 import ch.rgw.tools.JdbcLink.Stm;
 
 public class Test_JdbcLink {
-
+	
 	@Test
-	public void testConnect() {
+	public void testConnect(){
 		JdbcLink link = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:test_mem ", "");
 		link.connect("", "");
 		link.disconnect();
 	}
 	
 	@Test
-	public void testConnectDriverFail() {
+	public void testConnectDriverFail(){
 		JdbcLink link = new JdbcLink("", "", "");
 		try {
 			link.connect("", "");
 			fail("Expected Exception not thrown!");
 		} catch (JdbcLinkException pe) {
-			
+
 		}
 	}
 	
 	@Test
-	public void testConnectDatabaseConnectFail() {
+	public void testConnectDatabaseConnectFail(){
 		JdbcLink link = new JdbcLink("org.h2.Driver", "", "");
 		try {
 			link.connect("", "");
 			fail("Expected Exception not thrown!");
 		} catch (JdbcLinkException je) {
-			
+
 		}
 	}
-
+	
 	@Test
-	public void testGetStatement() {
+	public void testGetStatement(){
 		JdbcLink link = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:test_mem", "");
 		link.connect("", "");
 		Stm stm = link.getStatement();
@@ -50,18 +50,18 @@ public class Test_JdbcLink {
 	}
 	
 	@Test
-	public void testGetStatementConnectFail() {
+	public void testGetStatementConnectFail(){
 		JdbcLink link = new JdbcLink("org.h2.Driver", "", "");
 		try {
 			link.getStatement();
 			fail("Expected Exception not thrown!");
 		} catch (JdbcLinkException je) {
-			
+
 		}
 	}
 	
 	@Test
-	public void testPrepareStatement() {
+	public void testPrepareStatement(){
 		JdbcLink link = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:test_mem", "");
 		link.connect("", "");
 		PreparedStatement stm = link.prepareStatement("");
@@ -70,27 +70,27 @@ public class Test_JdbcLink {
 	}
 	
 	@Test
-	public void testPrepareStatementConnectFail() {
+	public void testPrepareStatementConnectFail(){
 		JdbcLink link = new JdbcLink("org.h2.Driver", "", "");
 		try {
 			link.prepareStatement("");
 			fail("Expected Exception not thrown!");
 		} catch (JdbcLinkException je) {
-			
+
 		}
 	}
 	
 	@Test
-	public void testExec() {
+	public void testExec(){
 		JdbcLink link = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:test_mem", "");
 		link.connect("", "");
 		int rows = link.exec("");
 		assertEquals(0, rows);
 		link.disconnect();
 	}
-
+	
 	@Test
-	public void testExecConnectFail() {
+	public void testExecConnectFail(){
 		JdbcLink link = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:test_mem", "");
 		link.connect("", "");
 		link.disconnect();
@@ -98,12 +98,12 @@ public class Test_JdbcLink {
 			link.exec("");
 			fail("Expected Exception not thrown!");
 		} catch (JdbcLinkException je) {
-			
+
 		}
-	}	
+	}
 	
 	@Test
-	public void testStmExecConnectFail() {
+	public void testStmExecConnectFail(){
 		JdbcLink link = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:test_mem", "");
 		link.connect("", "");
 		Stm stm = link.getStatement();
@@ -114,12 +114,12 @@ public class Test_JdbcLink {
 			stm.exec("");
 			fail("Expected Exception not thrown!");
 		} catch (JdbcLinkException je) {
-			
+
 		}
 	}
 	
 	@Test
-	public void testStmQuery() {
+	public void testStmQuery(){
 		JdbcLink link = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:test_mem", "");
 		link.connect("", "");
 		Stm stm = link.getStatement();
@@ -132,7 +132,7 @@ public class Test_JdbcLink {
 	}
 	
 	@Test
-	public void testStmQueryConnectFail() {
+	public void testStmQueryConnectFail(){
 		JdbcLink link = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:test_mem", "");
 		link.connect("", "");
 		Stm stm = link.getStatement();
@@ -144,7 +144,7 @@ public class Test_JdbcLink {
 			stm.query("SELECT * FROM ABC");
 			fail("Expected Exception not thrown!");
 		} catch (JdbcLinkException je) {
-			
+
 		}
 	}
 }

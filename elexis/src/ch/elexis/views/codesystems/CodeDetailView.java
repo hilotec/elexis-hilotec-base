@@ -111,27 +111,27 @@ public class CodeDetailView extends ViewPart implements IActivationListener, ISa
 	
 	private void makeActions(){
 		importAction = new Action(Messages.getString("CodeDetailView.importActionTitle")) { //$NON-NLS-1$
-			@Override
-			public void run(){
-				CTabItem it = ctab.getSelection();
-				if (it != null) {
-					ImporterPage top = importers.get(it.getText());
-					if (top != null) {
-						ImportDialog dlg = new ImportDialog(getViewSite().getShell(), top);
-						dlg.create();
-						dlg.setTitle(top.getTitle());
-						dlg.setMessage(top.getDescription());
-						dlg.getShell().setText(
-							Messages.getString("CodeDetailView.importerCaption")); //$NON-NLS-1$
-						if (dlg.open() == Dialog.OK) {
-							top.run(false);
+				@Override
+				public void run(){
+					CTabItem it = ctab.getSelection();
+					if (it != null) {
+						ImporterPage top = importers.get(it.getText());
+						if (top != null) {
+							ImportDialog dlg = new ImportDialog(getViewSite().getShell(), top);
+							dlg.create();
+							dlg.setTitle(top.getTitle());
+							dlg.setMessage(top.getDescription());
+							dlg.getShell().setText(
+								Messages.getString("CodeDetailView.importerCaption")); //$NON-NLS-1$
+							if (dlg.open() == Dialog.OK) {
+								top.run(false);
+							}
 						}
 					}
+					
 				}
 				
-			}
-			
-		};
+			};
 		
 	}
 	
@@ -177,8 +177,10 @@ public class CodeDetailView extends ViewPart implements IActivationListener, ISa
 				ct.setData(d);
 				
 			} catch (Exception ex) {
-				ElexisStatus status = new ElexisStatus(IStatus.WARNING, Hub.PLUGIN_ID, IStatus.WARNING,
-						"Fehler beim Initialisieren von " + ce.getName(), ex, ElexisStatus.LOG_WARNINGS);
+				ElexisStatus status =
+					new ElexisStatus(IStatus.WARNING, Hub.PLUGIN_ID, IStatus.WARNING,
+						"Fehler beim Initialisieren von " + ce.getName(), ex,
+						ElexisStatus.LOG_WARNINGS);
 				StatusManager.getManager().handle(status, StatusManager.SHOW);
 			}
 		}
@@ -197,16 +199,17 @@ public class CodeDetailView extends ViewPart implements IActivationListener, ISa
 	 * Class cl = ids.getElementClass(); String o1 = obj.getClass().getName(); String o2 =
 	 * cl.getName(); if (o1.equals(o2)) { ids.display(obj); } } } }
 	 */
-	
+
 	class MasterDetailsPage extends Composite {
 		SashForm sash;
 		CommonViewer cv;
 		IDetailDisplay detailDisplay;
 		
 		ElexisEventListenerImpl eeli_div;
+		
 		MasterDetailsPage(Composite parent, CodeSelectorFactory master, IDetailDisplay detail){
 			super(parent, SWT.NONE);
-			eeli_div=new ElexisEventListenerImpl(detail.getElementClass()){
+			eeli_div = new ElexisEventListenerImpl(detail.getElementClass()) {
 				@Override
 				public void runInUi(ElexisEvent ev){
 					detailDisplay.display(ev.getObject());
@@ -216,8 +219,8 @@ public class CodeDetailView extends ViewPart implements IActivationListener, ISa
 			sash = new SashForm(this, SWT.NONE);
 			cv = new CommonViewer();
 			cv.create(master.createViewerConfigurer(cv), sash, SWT.NONE, getViewSite());
-			//cv.getViewerWidget().addSelectionChangedListener(
-			//	GlobalEventDispatcher.getInstance().getDefaultListener());
+			// cv.getViewerWidget().addSelectionChangedListener(
+			// GlobalEventDispatcher.getInstance().getDefaultListener());
 			/* Composite page= */detail.createDisplay(sash, getViewSite());
 			cv.getConfigurer().getContentProvider().startListening();
 			detailDisplay = detail;
@@ -235,8 +238,8 @@ public class CodeDetailView extends ViewPart implements IActivationListener, ISa
 		if ((ctab != null) && (!ctab.isDisposed())) {
 			for (CTabItem ct : ctab.getItems()) {
 				MasterDetailsPage page = (MasterDetailsPage) ct.getControl();
-				//page.cv.getViewerWidget().removeSelectionChangedListener(
-				//	GlobalEventDispatcher.getInstance().getDefaultListener());
+				// page.cv.getViewerWidget().removeSelectionChangedListener(
+				// GlobalEventDispatcher.getInstance().getDefaultListener());
 				page.cv.getConfigurer().getContentProvider().stopListening();
 				page.dispose();
 			}
@@ -260,7 +263,7 @@ public class CodeDetailView extends ViewPart implements IActivationListener, ISa
 	}
 	
 	public void visible(boolean mode){
-		
+
 	}
 	
 	/*

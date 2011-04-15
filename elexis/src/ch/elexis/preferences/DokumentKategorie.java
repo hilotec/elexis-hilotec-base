@@ -21,28 +21,25 @@ import ch.elexis.Hub;
 
 public class DokumentKategorie extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
-
-	public DokumentKategorie() {
+	
+	public DokumentKategorie(){
 		super(GRID);
-		 setPreferenceStore(new SettingsPreferenceStore(Hub.globalCfg));
-        setDescription(Messages.DokumentKategorie_dokumentKategorien);
-
+		setPreferenceStore(new SettingsPreferenceStore(Hub.globalCfg));
+		setDescription(Messages.DokumentKategorie_dokumentKategorien);
+		
 	}
-
+	
 	@Override
-	public void createFieldEditors() {
-		/*
-		addField(new Agenda.StringInput(
-				PreferenceConstants.DOC_CATEGORY,
-				"Dokumentkategorien",
-				getFieldEditorParent()
-				));
-				*/
+	public void createFieldEditors(){
+	/*
+	 * addField(new Agenda.StringInput( PreferenceConstants.DOC_CATEGORY, "Dokumentkategorien",
+	 * getFieldEditorParent() ));
+	 */
 	}
-
-	public void init(IWorkbench workbench) {
-		// TODO Automatisch erstellter Methoden-Stub
-
+	
+	public void init(IWorkbench workbench){
+	// TODO Automatisch erstellter Methoden-Stub
+	
 	}
-
+	
 }

@@ -33,18 +33,18 @@ public class Optifier implements IOptifier {
 				return new Result<IVerrechenbar>(code);
 			} else {
 				return new Result<IVerrechenbar>(res.getSeverity(), res.getCode(), res.toString(),
-						code, true);
+					code, true);
 			}
 		}
 		return new Result<IVerrechenbar>(SEVERITY.ERROR, 2, "No Lab2009Tariff", null, true); //$NON-NLS-1$
 	}
 	
 	public Result<Object> optify(Konsultation kons){
-		if(Hub.localCfg.get(Preferences.OPTIMIZE, true)==false){
+		if (Hub.localCfg.get(Preferences.OPTIMIZE, true) == false) {
 			return new Result<Object>(kons);
 		}
 		try {
-			boolean haveKons=false;
+			boolean haveKons = false;
 			TimeTool date = new TimeTool(kons.getDatum());
 			TimeTool deadline = new TimeTool("31.12.2011"); //$NON-NLS-1$
 			if (date.isBefore(new TimeTool("01.07.2009"))) { //$NON-NLS-1$
@@ -71,7 +71,7 @@ public class Optifier implements IOptifier {
 							z4707 = 1;
 						} else {
 							return new Result<Object>(SEVERITY.WARNING, 1,
-									"4707.00 only once per cons", v, false); //$NON-NLS-1$
+								"4707.00 only once per cons", v, false); //$NON-NLS-1$
 						}
 					} else if (cc.equals("4707.10")) { // Fachbereich C //$NON-NLS-1$
 						v470710 = v;
@@ -89,8 +89,8 @@ public class Optifier implements IOptifier {
 						}
 						z4708 += v.getZahl();
 					}
-				}else if(iv.getCode().equals("00.0010") || iv.getCode().equals("00.0060")){ // Kons erste 5 Minuten //$NON-NLS-1$ //$NON-NLS-2$
-					haveKons=true;
+				} else if (iv.getCode().equals("00.0010") || iv.getCode().equals("00.0060")) { // Kons erste 5 Minuten //$NON-NLS-1$ //$NON-NLS-2$
+					haveKons = true;
 				}
 			}
 			// reduce amendments to max. 24 TP
@@ -101,7 +101,7 @@ public class Optifier implements IOptifier {
 				z470720--;
 			}
 			
-			if (z470710 == 0 || haveKons==false) {
+			if (z470710 == 0 || haveKons == false) {
 				if (v470710 != null) {
 					v470710.delete();
 				}
@@ -112,7 +112,7 @@ public class Optifier implements IOptifier {
 				v470710.setZahl(z470710);
 			}
 			
-			if (z470720 == 0 || haveKons==false) {
+			if (z470720 == 0 || haveKons == false) {
 				if (v470720 != null) {
 					v470720.delete();
 				}
@@ -123,10 +123,10 @@ public class Optifier implements IOptifier {
 				v470720.setZahl(z470720);
 			}
 			
-			if (z4707 == 0 && ((z470710 + z470720) > 0) && haveKons==true) {
+			if (z4707 == 0 && ((z470710 + z470720) > 0) && haveKons == true) {
 				doCreate(kons, "4707.00"); //$NON-NLS-1$
 			}
-			if (z4708 > 0 && haveKons==true) {
+			if (z4708 > 0 && haveKons == true) {
 				if (v4708 == null) {
 					if (date.isBefore(deadline)) {
 						v4708 = doCreate(kons, "4708.00"); //$NON-NLS-1$
@@ -135,7 +135,7 @@ public class Optifier implements IOptifier {
 					if (date.isAfterOrEqual(deadline)) {
 						v4708.delete();
 						return new Result<Object>(SEVERITY.WARNING, 2,
-								"4708.00 only until 2011-12-31", null, false); //$NON-NLS-1$
+							"4708.00 only until 2011-12-31", null, false); //$NON-NLS-1$
 					}
 				}
 			}
@@ -146,7 +146,7 @@ public class Optifier implements IOptifier {
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			return new Result<Object>(SEVERITY.ERROR, 1, "Tariff not installed correctly", null, //$NON-NLS-1$
-					true);
+				true);
 			
 		}
 		
@@ -161,7 +161,7 @@ public class Optifier implements IOptifier {
 			return new Result<Verrechnet>(code);
 		} else {
 			return new Result<Verrechnet>(res.getSeverity(), res.getCode(), res.toString(), code,
-					true);
+				true);
 		}
 	}
 	

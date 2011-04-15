@@ -27,55 +27,60 @@ import ch.elexis.actions.GlobalActions;
 /**
  * Diese View reichtet einen Browser aufs Arzneimittel-Kompendium ein.
  */
-public class KompendiumView extends ViewPart implements ISaveablePart2{
-	public static final String ID="ch.elexis.Kompendium"; //$NON-NLS-1$
+public class KompendiumView extends ViewPart implements ISaveablePart2 {
+	public static final String ID = "ch.elexis.Kompendium"; //$NON-NLS-1$
 	static Browser browser;
 	
 	@Override
-	public void createPartControl(Composite parent) {
-		browser=new Browser(parent,SWT.NONE);
-		browser.addLocationListener(new LocationAdapter(){
-
+	public void createPartControl(Composite parent){
+		browser = new Browser(parent, SWT.NONE);
+		browser.addLocationListener(new LocationAdapter() {
+			
 			@Override
-			public void changed(LocationEvent arg0) {
-				String text=browser.getText();
-				//System.out.println(text);
+			public void changed(LocationEvent arg0){
+				String text = browser.getText();
+				// System.out.println(text);
 			}
 			
 		});
 		browser.setUrl("http://www.kompendium.ch/Search.aspx"); //$NON-NLS-1$
 		
 	}
-
+	
 	public static String getText(){
 		return browser.getText();
 	}
-	@Override
-	public void setFocus() {
-		// TODO Auto-generated method stub
-
-	}
 	
+	@Override
+	public void setFocus(){
+	// TODO Auto-generated method stub
+	
+	}
 	
 	/* ******
-	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2
-	 * Wir benötigen das Interface nur, um das Schliessen einer View zu verhindern,
-	 * wenn die Perspektive fixiert ist.
+	 * Die folgenden 6 Methoden implementieren das Interface ISaveablePart2 Wir benötigen das
+	 * Interface nur, um das Schliessen einer View zu verhindern, wenn die Perspektive fixiert ist.
 	 * Gibt es da keine einfachere Methode?
-	 */ 
-	public int promptToSaveOnClose() {
-		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL : ISaveablePart2.NO;
+	 */
+	public int promptToSaveOnClose(){
+		return GlobalActions.fixLayoutAction.isChecked() ? ISaveablePart2.CANCEL
+				: ISaveablePart2.NO;
 	}
-	public void doSave(IProgressMonitor monitor) { /* leer */ }
-	public void doSaveAs() { /* leer */}
-	public boolean isDirty() {
+	
+	public void doSave(IProgressMonitor monitor){ /* leer */}
+	
+	public void doSaveAs(){ /* leer */}
+	
+	public boolean isDirty(){
 		return true;
 	}
-	public boolean isSaveAsAllowed() {
+	
+	public boolean isSaveAsAllowed(){
 		return false;
 	}
-	public boolean isSaveOnCloseNeeded() {
+	
+	public boolean isSaveOnCloseNeeded(){
 		return true;
 	}
-
+	
 }

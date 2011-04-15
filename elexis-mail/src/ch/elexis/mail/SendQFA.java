@@ -86,8 +86,8 @@ public class SendQFA implements IWorkbenchWindowActionDelegate {
 				mailer.send(msg, Hub.localCfg.get(PreferenceConstants.MAIL_QFA_ADDRESS,
 					"errors@elexis.ch")); //$NON-NLS-1$
 			if (res.isOK()) {
-				MessageDialog.openInformation(Desk.getTopShell(),
-					Messages.SendQFA_MessageSent, Messages.SendQFA_YourMessageIsSent);
+				MessageDialog.openInformation(Desk.getTopShell(), Messages.SendQFA_MessageSent,
+					Messages.SendQFA_YourMessageIsSent);
 			} else {
 				SWTHelper.showError(Messages.SendQFA_ErrorWhileSending, res.toString());
 			}

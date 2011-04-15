@@ -74,7 +74,7 @@ public class ArtikelSelektor extends ViewPart implements ISaveablePart2 {
 						(CodeSelectorFactory) ice.createExecutableExtension("CodeSelectorFactory"); //$NON-NLS-1$
 					CTabItem ci = new CTabItem(ctab, SWT.NONE);
 					ci.setText(cs.getCodeSystemName());
-					ci.setData("csf",cs); //$NON-NLS-1$
+					ci.setData("csf", cs); //$NON-NLS-1$
 				} catch (Exception ex) {
 					ExHandler.handle(ex);
 				}
@@ -219,15 +219,16 @@ public class ArtikelSelektor extends ViewPart implements ISaveablePart2 {
 	public boolean isSaveOnCloseNeeded(){
 		return true;
 	}
-	private class TabSelectionListener extends SelectionAdapter{
-
+	
+	private class TabSelectionListener extends SelectionAdapter {
+		
 		@Override
 		public void widgetSelected(SelectionEvent e){
-			CTabItem top=ctab.getSelection();
-			if(top!=null){
-				if(top.getControl()==null){
+			CTabItem top = ctab.getSelection();
+			if (top != null) {
+				if (top.getControl() == null) {
 					CommonViewer cv = new CommonViewer();
-					CodeSelectorFactory cs=(CodeSelectorFactory) top.getData("csf"); //$NON-NLS-1$
+					CodeSelectorFactory cs = (CodeSelectorFactory) top.getData("csf"); //$NON-NLS-1$
 					ViewerConfigurer vc = cs.createViewerConfigurer(cv);
 					Composite c = new Composite(ctab, SWT.NONE);
 					c.setLayout(new GridLayout());
@@ -242,7 +243,7 @@ public class ArtikelSelektor extends ViewPart implements ISaveablePart2 {
 							
 						}
 					});
-					vc.getContentProvider().startListening();					
+					vc.getContentProvider().startListening();
 				}
 			}
 			

@@ -49,33 +49,33 @@ public class MessungBearbeiten extends TitleAreaDialog {
 	private HashMap<Messwert, Widget> widgetMap;
 	private DatePickerCombo dateWidget;
 	private String tabtitle;
-
-	public MessungBearbeiten(final Shell parent, Messung m) {
+	
+	public MessungBearbeiten(final Shell parent, Messung m){
 		super(parent);
 		messung = m;
 		widgetMap = new HashMap<Messwert, Widget>();
 	}
-
-	public MessungBearbeiten(Shell shell, Messung m, String text) {
+	
+	public MessungBearbeiten(Shell shell, Messung m, String text){
 		this(shell, m);
 		tabtitle = text;
 	}
-
+	
 	@Override
-	protected Control createDialogArea(Composite parent) {
-		ScrolledComposite scroll = new ScrolledComposite(parent, SWT.BORDER
-				| SWT.V_SCROLL | SWT.H_SCROLL);
+	protected Control createDialogArea(Composite parent){
+		ScrolledComposite scroll =
+			new ScrolledComposite(parent, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 		scroll.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		Composite comp = new Composite(scroll, SWT.NONE);
 		scroll.setContent(comp);
-
+		
 		comp.setLayout(new GridLayout());
 		comp.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-
+		
 		dateWidget = new DatePickerCombo(comp, SWT.NONE);
 		dateWidget.setDate(new TimeTool(messung.getDatum()).getTime());
 		dateWidget.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-
+		
 		for (Messwert messwert : messung.getMesswerte()) {
 			Label l = new Label(comp, SWT.NONE);
 			IMesswertTyp dft = messwert.getTyp();
@@ -84,30 +84,30 @@ public class MessungBearbeiten extends TitleAreaDialog {
 				labelText += " [" + dft.getUnit() + "]";
 			}
 			l.setText(labelText);
-
+			
 			widgetMap.put(messwert, dft.createWidget(comp, messwert));
 		}
 		comp.setSize(comp.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		return scroll;
-
+		
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
 		getShell().setText("Messung bearbeiten");
-
+		
 	}
-
+	
 	@Override
-	protected Control createContents(Composite parent) {
+	protected Control createContents(Composite parent){
 		Control contents = super.createContents(parent);
 		setTitle(tabtitle);
 		return contents;
 	}
-
+	
 	@Override
-	public void okPressed() {
+	public void okPressed(){
 		TimeTool tt = new TimeTool(dateWidget.getDate().getTime());
 		messung.setDatum(tt.toString(TimeTool.DATE_GER));
 		for (Messwert mwrt : messung.getMesswerte()) {

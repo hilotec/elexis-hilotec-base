@@ -35,21 +35,21 @@ import ch.unibe.iam.scg.archie.ui.widgets.WidgetTypes;
 
 public class ZahlungsJournal extends AbstractTimeSeries {
 	private static final String NAME = Messages.ZahlungsJournal_PaymentJournal;
-	private static final String FIELD_ACTMANDATOR="Nur aktueller Mandant"; //$NON-NLS-1$
+	private static final String FIELD_ACTMANDATOR = "Nur aktueller Mandant"; //$NON-NLS-1$
 	private boolean bOnlyActiveMandator;
 	
 	public ZahlungsJournal(){
 		super(NAME);
 	}
 	
-	@GetProperty(name= FIELD_ACTMANDATOR, widgetType= WidgetTypes.BUTTON_CHECKBOX, index=1)
+	@GetProperty(name = FIELD_ACTMANDATOR, widgetType = WidgetTypes.BUTTON_CHECKBOX, index = 1)
 	public boolean getOnlyActiveMandator(){
 		return bOnlyActiveMandator;
 	}
 	
-	@SetProperty(name = FIELD_ACTMANDATOR, index=1)
+	@SetProperty(name = FIELD_ACTMANDATOR, index = 1)
 	public void setOnlyActiveMandator(boolean val){
-		bOnlyActiveMandator=val;
+		bOnlyActiveMandator = val;
 	}
 	
 	@Override
@@ -65,16 +65,16 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 		List<AccountTransaction> transactions = qbe.execute();
 		int sum = transactions.size();
 		final ArrayList<Comparable<?>[]> result = new ArrayList<Comparable<?>[]>();
-		if(sum==0){
+		if (sum == 0) {
 			monitor.done();
 			this.dataSet.setContent(result);
 			return Status.OK_STATUS;
 		}
 		int step = total / sum;
 		monitor.worked(20 * step);
-	
-		PatientIdFormatter pif=new PatientIdFormatter(8);
-		String actMnId=Hub.actMandant.getId();
+		
+		PatientIdFormatter pif = new PatientIdFormatter(8);
+		String actMnId = Hub.actMandant.getId();
 		for (AccountTransaction at : transactions) {
 			Patient pat = at.getPatient();
 			Money amount = at.getAmount();
@@ -86,12 +86,12 @@ public class ZahlungsJournal extends AbstractTimeSeries {
 				continue;
 			}
 			if (pat != null) {
-				if(bOnlyActiveMandator){
-					Rechnung rn=at.getRechnung();
-					if(rn==null){
+				if (bOnlyActiveMandator) {
+					Rechnung rn = at.getRechnung();
+					if (rn == null) {
 						continue;
 					}
-					if(!actMnId.equals(rn.get("MandantID"))){ //$NON-NLS-1$
+					if (!actMnId.equals(rn.get("MandantID"))) { //$NON-NLS-1$
 						continue;
 					}
 				}

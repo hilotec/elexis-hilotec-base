@@ -21,15 +21,13 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
 /**
- * Ein Verrechnet ist ein realisiertes Verrechenbar. Ein Verrechenbar wird durch
- * die Zuordnung zu einer Konsultation zu einem Verrechnet. Der Preis eines
- * Verrechnet ist zunächst Taxpunkwert(TP) mal Scale (Immer in der kleinsten
- * Währungseinheit, also Rappen oder ggf. cent). Der effektive Preis kann aber
- * geändert werden (Rabatt etc.)
- * Nebst VK_Scale, welche in der Schweiz dem taxpunktwert entspricht, können noch externe
- * und interne zusätzlich Skalierungen angewendet werden. PrimaryScalefactor wird beispielsweise für
- * %-Reduktionen oder Zusschläge gemäss Tarmed verwendet, SecondaryScalefactor kann ein Rabatt oder ein 
- * Privatzuschschlag sein.
+ * Ein Verrechnet ist ein realisiertes Verrechenbar. Ein Verrechenbar wird durch die Zuordnung zu
+ * einer Konsultation zu einem Verrechnet. Der Preis eines Verrechnet ist zunächst Taxpunkwert(TP)
+ * mal Scale (Immer in der kleinsten Währungseinheit, also Rappen oder ggf. cent). Der effektive
+ * Preis kann aber geändert werden (Rabatt etc.) Nebst VK_Scale, welche in der Schweiz dem
+ * taxpunktwert entspricht, können noch externe und interne zusätzlich Skalierungen angewendet
+ * werden. PrimaryScalefactor wird beispielsweise für %-Reduktionen oder Zusschläge gemäss Tarmed
+ * verwendet, SecondaryScalefactor kann ein Rabatt oder ein Privatzuschschlag sein.
  * 
  * @author gerry
  * 
@@ -49,15 +47,14 @@ public class Verrechnet extends PersistentObject {
 	public static final String COUNT = "Zahl";
 	public static final String CLASS = "Klasse";
 	public static final String TABLENAME = "LEISTUNGEN";
-
+	
 	static {
-		addMapping(TABLENAME, "Konsultation=Behandlung", LEISTG_TXT,
-			LEISTG_CODE, CLASS, COUNT, COST_BUYING, SCALE_TP_SELLING, SCALE_SELLING,
-			PRICE_SELLING, SCALE, SCALE2, "ExtInfo=Detail");
+		addMapping(TABLENAME, "Konsultation=Behandlung", LEISTG_TXT, LEISTG_CODE, CLASS, COUNT,
+			COST_BUYING, SCALE_TP_SELLING, SCALE_SELLING, PRICE_SELLING, SCALE, SCALE2,
+			"ExtInfo=Detail");
 	}
 	
-	public Verrechnet(final IVerrechenbar iv, final Konsultation kons,
-		final int zahl){
+	public Verrechnet(final IVerrechenbar iv, final Konsultation kons, final int zahl){
 		create(null);
 		TimeTool dat = new TimeTool(kons.getDatum());
 		Fall fall = kons.getFall();
@@ -65,13 +62,12 @@ public class Verrechnet extends PersistentObject {
 		double factor = iv.getFactor(dat, fall);
 		long preis = Math.round(tp * factor);
 		set(new String[] {
-			KONSULTATION, LEISTG_TXT, LEISTG_CODE, CLASS, COUNT,
-			COST_BUYING, SCALE_TP_SELLING, SCALE_SELLING, PRICE_SELLING, SCALE, SCALE2
+			KONSULTATION, LEISTG_TXT, LEISTG_CODE, CLASS, COUNT, COST_BUYING, SCALE_TP_SELLING,
+			SCALE_SELLING, PRICE_SELLING, SCALE, SCALE2
 		}, new String[] {
 			kons.getId(), iv.getText(), iv.getId(), iv.getClass().getName(),
-			Integer.toString(zahl), iv.getKosten(dat).getCentsAsString(),
-			Integer.toString(tp), Double.toString(factor),
-			Long.toString(preis), "100","100"
+			Integer.toString(zahl), iv.getKosten(dat).getCentsAsString(), Integer.toString(tp),
+			Double.toString(factor), Long.toString(preis), "100", "100"
 		});
 		if (iv instanceof Artikel) {
 			((Artikel) iv).einzelAbgabe(1);
@@ -88,6 +84,7 @@ public class Verrechnet extends PersistentObject {
 	
 	/**
 	 * Taxpunktwert auslesen
+	 * 
 	 * @return
 	 */
 	public double getTPW(){
@@ -95,10 +92,9 @@ public class Verrechnet extends PersistentObject {
 	}
 	
 	/**
-	 * set the primary scale factor (usually system specific or "internal" to
-	 * the code system NOTE: This ist NOT identical to the multiplier or
-	 * "Taxpunkt". The final price will be calculated as VK_PREIS * VK_SCALE *
-	 * primaryScale * secondaryScale
+	 * set the primary scale factor (usually system specific or "internal" to the code system NOTE:
+	 * This ist NOT identical to the multiplier or "Taxpunkt". The final price will be calculated as
+	 * VK_PREIS * VK_SCALE * primaryScale * secondaryScale
 	 * 
 	 * @param scale
 	 *            the new scale value as x.x
@@ -116,7 +112,7 @@ public class Verrechnet extends PersistentObject {
 	 */
 	public double getPrimaryScaleFactor(){
 		int sca = checkZero(get(SCALE));
-		if(sca==0){
+		if (sca == 0) {
 			return 1.0;
 		}
 		return ((double) sca) / 100.0;
@@ -142,20 +138,21 @@ public class Verrechnet extends PersistentObject {
 	 */
 	public double getSecondaryScaleFactor(){
 		int sca = checkZero(get(SCALE2));
-		if(sca==0){
+		if (sca == 0) {
 			return 1.0;
 		}
 		return ((double) sca) / 100.0;
 	}
 	
-	
 	/**
 	 * Taxpunktpreis setzen
+	 * 
 	 * @param tp
 	 */
 	public void setTP(double tp){
-		set(SCALE_TP_SELLING,Long.toString(Math.round(tp)));
+		set(SCALE_TP_SELLING, Long.toString(Math.round(tp)));
 	}
+	
 	/**
 	 * Den effektiven Preis setzen (braucht nicht TP*Scale zu sein
 	 * 
@@ -170,7 +167,7 @@ public class Verrechnet extends PersistentObject {
 	 * Einkaufskosten
 	 */
 	public Money getKosten(){
-		//System.out.println(getText());
+		// System.out.println(getText());
 		return new Money(checkZero(get(COST_BUYING)));
 	}
 	
@@ -183,19 +180,19 @@ public class Verrechnet extends PersistentObject {
 	public Money getEffPreis(){
 		return new Money(checkZero(get(PRICE_SELLING)));
 		/*
-		 * double
-		 * amount=checkZero(get("VK_Preis"))*checkZero(get("Scale"))/100.0;
-		 * return new Money((int)Math.round(amount));
+		 * double amount=checkZero(get("VK_Preis"))*checkZero(get("Scale"))/100.0; return new
+		 * Money((int)Math.round(amount));
 		 */
 	}
 	
 	/**
 	 * Den Preis nach Anwendung sämtlicher SKalierungsfaktoren zurückgeben
+	 * 
 	 * @return
 	 */
 	public Money getNettoPreis(){
-
-		Money brutto=getBruttoPreis();
+		
+		Money brutto = getBruttoPreis();
 		brutto.multiply(getPrimaryScaleFactor());
 		brutto.multiply(getSecondaryScaleFactor());
 		return brutto;
@@ -205,17 +202,18 @@ public class Verrechnet extends PersistentObject {
 	 * Den Preis nach Anwendung des Taxpunktwerts (aber ohne sonstige Skalierungen) holen
 	 */
 	public Money getBruttoPreis(){
-		int tp=checkZero(get(SCALE_TP_SELLING));
+		int tp = checkZero(get(SCALE_TP_SELLING));
 		Konsultation k = getKons();
 		Fall fall = k.getFall();
 		TimeTool date = new TimeTool(k.getDatum());
-		IVerrechenbar v=getVerrechenbar();
-		double tpw=1.0;
-		if(v!=null){						// Unknown tax system
-			tpw=v.getFactor(date, fall); 
+		IVerrechenbar v = getVerrechenbar();
+		double tpw = 1.0;
+		if (v != null) { // Unknown tax system
+			tpw = v.getFactor(date, fall);
 		}
 		return new Money((int) Math.round(tpw * tp));
 	}
+	
 	/** Den Standardpreis holen (Ist immer TP*Scale, auf ganze Rappen gerundet) */
 	
 	public Money getStandardPreis(){
@@ -223,13 +221,13 @@ public class Verrechnet extends PersistentObject {
 		Konsultation k = getKons();
 		Fall fall = k.getFall();
 		TimeTool date = new TimeTool(k.getDatum());
-		double factor=1.0;
-		int tp=0;
-		if(v!=null){
+		double factor = 1.0;
+		int tp = 0;
+		if (v != null) {
 			factor = v.getFactor(date, fall);
 			tp = v.getTP(date, fall);
-		}else{
-			tp=checkZero(get(SCALE_TP_SELLING));
+		} else {
+			tp = checkZero(get(SCALE_TP_SELLING));
 		}
 		return new Money((int) Math.round(factor * tp));
 	}
@@ -272,15 +270,18 @@ public class Verrechnet extends PersistentObject {
 	
 	/**
 	 * Set arbitrary additional informations to a service
-	 * @param key name of the information
-	 * @param value value of the information
+	 * 
+	 * @param key
+	 *            name of the information
+	 * @param value
+	 *            value of the information
 	 */
 	@SuppressWarnings("unchecked")
 	public void setDetail(final String key, final String value){
 		Hashtable ext = getHashtable(DETAIL);
-		if(value==null){
+		if (value == null) {
 			ext.remove(key);
-		}else{
+		} else {
 			ext.put(key, value);
 		}
 		setHashtable(DETAIL, ext);
@@ -289,7 +290,9 @@ public class Verrechnet extends PersistentObject {
 	
 	/**
 	 * retrieve additional information
-	 * @param key name of the requested information
+	 * 
+	 * @param key
+	 *            name of the requested information
 	 * @return value if the information or null if no information with that name was found
 	 */
 	@SuppressWarnings("unchecked")
@@ -299,9 +302,11 @@ public class Verrechnet extends PersistentObject {
 	}
 	
 	/**
-	 * Change the count for this service or article. If it ist an Artikel, the store will be
-	 * updated accordingly
-	 * @param neuAnzahl new count this service is to be billed.
+	 * Change the count for this service or article. If it ist an Artikel, the store will be updated
+	 * accordingly
+	 * 
+	 * @param neuAnzahl
+	 *            new count this service is to be billed.
 	 */
 	public void changeAnzahl(int neuAnzahl){
 		int vorher = getZahl();
@@ -337,8 +342,7 @@ public class Verrechnet extends PersistentObject {
 			CLASS, LEISTG_CODE
 		}, res);
 		try {
-			return (IVerrechenbar) Hub.poFactory.createFromString(res[0] + "::"
-				+ res[1]);
+			return (IVerrechenbar) Hub.poFactory.createFromString(res[0] + "::" + res[1]);
 		} catch (Exception ex) {
 			log.log("Fehlerhafter Leistungscode " + getLabel(), Log.ERRORS);
 		}

@@ -22,8 +22,7 @@ import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.LimitSizeStack;
 
 /**
- * A Panel to display ActiveControls as views to fields of a single
- * PersistentObject
+ * A Panel to display ActiveControls as views to fields of a single PersistentObject
  * 
  * @author gerry
  * 
@@ -31,34 +30,32 @@ import ch.rgw.tools.LimitSizeStack;
 public class DisplayPanel extends Composite implements ActiveControlListener {
 	private boolean bCeaseFire, bExclusive, bAutosave;
 	private LinkedList<ActiveControlListener> listeners = new LinkedList<ActiveControlListener>();
-	private LimitSizeStack<TraceElement> undoList = new LimitSizeStack<TraceElement>(
-			50);
+	private LimitSizeStack<TraceElement> undoList = new LimitSizeStack<TraceElement>(50);
 	private Composite cFields;
 	private ToolBarManager tActions;
 	private ToolBar tb;
 	private IAction aClr;
 	private PersistentObject actObject;
-
-	public DisplayPanel(Composite parent,
-			FieldDescriptor<? extends PersistentObject>[] fields, int minCols,
-			int maxCols, IAction... actions) {
+	
+	public DisplayPanel(Composite parent, FieldDescriptor<? extends PersistentObject>[] fields,
+		int minCols, int maxCols, IAction... actions){
 		super(parent, SWT.NONE);
-		bAutosave=false;
+		bAutosave = false;
 		setBackground(parent.getBackground());
 		FormLayout layout = new FormLayout();
 		layout.marginLeft = 0;
 		layout.marginRight = 0;
 		setLayout(layout);
 		tActions = new ToolBarManager(SWT.FLAT | SWT.HORIZONTAL | SWT.WRAP);
-
+		
 		aClr = new Action(Messages.SelectorPanel_clearFields) {
 			{
 				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_CLEAR));
 			}
-
+			
 			@Override
-			public void run() {
-				// clearValues();
+			public void run(){
+			// clearValues();
 			}
 		};
 		tActions.add(aClr);
@@ -80,12 +77,12 @@ public class DisplayPanel extends Composite implements ActiveControlListener {
 		fd.top = new FormAttachment(0, 0);
 		fd.right = new FormAttachment(100, 0);
 		cFields.setLayoutData(fd);
-
+		
 		ColumnLayout cl = new ColumnLayout();
 		cl.minNumColumns = minCols > 0 ? minCols : 1;
 		cl.maxNumColumns = maxCols > minCols ? maxCols : minCols + 2;
 		cFields.setLayout(cl);
-
+		
 		for (FieldDescriptor<? extends PersistentObject> field : fields) {
 			ActiveControl ac = null;
 			switch (field.getFieldType()) {
@@ -99,10 +96,9 @@ public class DisplayPanel extends Composite implements ActiveControlListener {
 			case DATE:
 				ac = new DateField(cFields, 0, field.getLabel());
 				break;
-
+			
 			case COMBO:
-				ac = new ComboField(cFields, 0, field.getLabel(),
-						(String[]) field.getExtension());
+				ac = new ComboField(cFields, 0, field.getLabel(), (String[]) field.getExtension());
 				break;
 			case INT:
 				ac = new IntegerField(cFields, 0, field.getLabel());
@@ -113,16 +109,16 @@ public class DisplayPanel extends Composite implements ActiveControlListener {
 			pack();
 		}
 	}
-
+	
 	/**
 	 * Set the Object to display
 	 * 
 	 * @param po
-	 *            a PersistentObject that must have all fields defined, that are
-	 *            referenced by ActiveControls of this Panel
+	 *            a PersistentObject that must have all fields defined, that are referenced by
+	 *            ActiveControls of this Panel
 	 */
-	public void setObject(PersistentObject po) {
-		actObject=po;
+	public void setObject(PersistentObject po){
+		actObject = po;
 		List<ActiveControl> ctls = getControls();
 		for (ActiveControl ac : ctls) {
 			String field = ac.getProperty(ActiveControl.PROP_FIELDNAME);
@@ -130,29 +126,32 @@ public class DisplayPanel extends Composite implements ActiveControlListener {
 		}
 		layout();
 	}
-
+	
 	/**
 	 * Set autosave behaviour
-	 * @param doSave if true: changed fields are written back to the database. false: No weiting occurs
+	 * 
+	 * @param doSave
+	 *            if true: changed fields are written back to the database. false: No weiting occurs
 	 */
 	public void setAutosave(boolean doSave){
-		bAutosave=doSave;
+		bAutosave = doSave;
 	}
+	
 	/**
 	 * Add a field to the panel
 	 * 
 	 * @param ac
 	 */
-	public void addField(ActiveControl ac) {
+	public void addField(ActiveControl ac){
 		ac.addListener(this);
 	}
-
+	
 	/**
 	 * Add a number of fields to the Panel
 	 * 
 	 * @param activeControls
 	 */
-	public void addFields(ActiveControl... activeControls) {
+	public void addFields(ActiveControl... activeControls){
 		ActiveControl last = null;
 		for (ActiveControl ac : activeControls) {
 			ac.addListener(this);
@@ -166,18 +165,17 @@ public class DisplayPanel extends Composite implements ActiveControlListener {
 		}
 		layout();
 	}
-
-
-	public void contentsChanged(ActiveControl ac) {
+	
+	public void contentsChanged(ActiveControl ac){
 		if (ac != null) {
 			new TraceElement(ac);
 		}
 		if (!bCeaseFire) {
 			bCeaseFire = true;
-			if(bAutosave){
-				if(actObject!=null){
+			if (bAutosave) {
+				if (actObject != null) {
 					String field = ac.getProperty(ActiveControl.PROP_FIELDNAME);
-					actObject.set(field,ac.getText());
+					actObject.set(field, ac.getText());
 				}
 			}
 			for (ActiveControlListener lis : listeners) {
@@ -186,39 +184,38 @@ public class DisplayPanel extends Composite implements ActiveControlListener {
 			bCeaseFire = false;
 		}
 	}
-
-	public void invalidContents(ActiveControl field) {
+	
+	public void invalidContents(ActiveControl field){
 		aClr.setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ACHTUNG));
 		aClr.setToolTipText((String) field.getData(ActiveControl.PROP_ERRMSG));
-
+		
 	}
-
+	
 	/**
-	 * Add a listener to the list of listeners that will be notified, if one of
-	 * the fields has been changed
+	 * Add a listener to the list of listeners that will be notified, if one of the fields has been
+	 * changed
 	 * 
 	 * @param l
 	 */
-	public void addSelectorListener(ActiveControlListener l) {
+	public void addSelectorListener(ActiveControlListener l){
 		listeners.add(l);
 	}
-
+	
 	/**
 	 * Remove a listener from the list of SelectorListeners
 	 * 
 	 * @param l
 	 */
-	public void removeSelectorListener(ActiveControlListener l) {
+	public void removeSelectorListener(ActiveControlListener l){
 		listeners.remove(l);
 	}
-
+	
 	/**
-	 * From ActiveControlListener: Notify that the user clicked the label of a
-	 * field This will in turn notify the SelectorListeners attached to this
-	 * panel
+	 * From ActiveControlListener: Notify that the user clicked the label of a field This will in
+	 * turn notify the SelectorListeners attached to this panel
 	 */
-
-	public void titleClicked(final ActiveControl field) {
+	
+	public void titleClicked(final ActiveControl field){
 		if (!bCeaseFire) {
 			bCeaseFire = true;
 			for (ActiveControlListener lis : listeners) {
@@ -226,15 +223,15 @@ public class DisplayPanel extends Composite implements ActiveControlListener {
 			}
 			bCeaseFire = true;
 		}
-
+		
 	}
-
+	
 	/**
 	 * Return all ActiveControls attached to this panel
 	 * 
 	 * @return al List that might be empty but is never null
 	 */
-	public List<ActiveControl> getControls() {
+	public List<ActiveControl> getControls(){
 		LinkedList<ActiveControl> ret = new LinkedList<ActiveControl>();
 		for (Control c : cFields.getChildren()) {
 			if (c instanceof ActiveControl) {
@@ -244,16 +241,16 @@ public class DisplayPanel extends Composite implements ActiveControlListener {
 		}
 		return ret;
 	}
-
+	
 	private class TraceElement {
 		ActiveControl control;
 		String value;
-
-		TraceElement(ActiveControl ac) {
+		
+		TraceElement(ActiveControl ac){
 			control = ac;
 			value = ac.getText();
 			undoList.push(this);
 		}
 	}
-
+	
 }

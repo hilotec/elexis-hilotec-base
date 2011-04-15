@@ -45,8 +45,7 @@ import ch.rgw.tools.TimeTool;
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 public class EditReminderDialog extends TitleAreaDialog {
-	private static final String TX_ALL = Messages
-			.getString("EditReminderDialog.all"); //$NON-NLS-1$
+	private static final String TX_ALL = Messages.getString("EditReminderDialog.all"); //$NON-NLS-1$
 	Reminder mine;
 	Text text;
 	Label pat;
@@ -56,23 +55,21 @@ public class EditReminderDialog extends TitleAreaDialog {
 	List lUser;
 	Patient actPatient;
 	java.util.List<Anwender> users;
-
-	public EditReminderDialog(final Shell parentShell, final Reminder rem) {
+	
+	public EditReminderDialog(final Shell parentShell, final Reminder rem){
 		super(parentShell);
 		mine = rem;
 	}
-
+	
 	@Override
-	protected Control createDialogArea(final Composite parent) {
+	protected Control createDialogArea(final Composite parent){
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout(2, false));
-		new Label(ret, SWT.NONE).setText(Messages
-				.getString("EditReminderDialog.assigTo")); //$NON-NLS-1$
+		new Label(ret, SWT.NONE).setText(Messages.getString("EditReminderDialog.assigTo")); //$NON-NLS-1$
 		Composite cTopright = new Composite(ret, SWT.NONE);
 		cTopright.setLayout(new RowLayout(SWT.HORIZONTAL));
-		new Label(cTopright, SWT.NONE).setText(Messages
-				.getString("EditReminderDialog.betrifft")); //$NON-NLS-1$
+		new Label(cTopright, SWT.NONE).setText(Messages.getString("EditReminderDialog.betrifft")); //$NON-NLS-1$
 		pat = new Label(cTopright, SWT.NONE);
 		pat.setText(Messages.getString("EditReminderDialog.noPatient")); //$NON-NLS-1$
 		bNoPatient = new Button(cTopright, SWT.CHECK);
@@ -86,24 +83,22 @@ public class EditReminderDialog extends TitleAreaDialog {
 		lUser.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		text = SWTHelper.createText(ret, 5, SWT.NONE);
 		((GridData) lUser.getLayoutData()).heightHint = text.getLineHeight() * 5 + 10;
-
-		new Label(ret, SWT.NONE).setText(Messages
-				.getString("EditReminderDialog.actionwhenDue")); //$NON-NLS-1$
-
+		
+		new Label(ret, SWT.NONE).setText(Messages.getString("EditReminderDialog.actionwhenDue")); //$NON-NLS-1$
+		
 		cbType = new Combo(ret, SWT.SINGLE);
 		for (String s : Reminder.TypText) {
 			cbType.add(s);
 		}
 		cbType.addSelectionListener(new SelectionAdapter() {
-
+			
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e){
 				// We check wether a letter reminder is selected and if so we
 				// let the user choose the template
-				if (cbType.getText().equals(
-						Reminder.TypText[Reminder.Typ.brief.ordinal()])) {
-					DocumentSelectDialog dsl = new DocumentSelectDialog(
-							getShell(), Hub.actMandant,
+				if (cbType.getText().equals(Reminder.TypText[Reminder.Typ.brief.ordinal()])) {
+					DocumentSelectDialog dsl =
+						new DocumentSelectDialog(getShell(), Hub.actMandant,
 							DocumentSelectDialog.TYPE_LOAD_TEMPLATE);
 					if (dsl.open() == Dialog.OK) {
 						mine.set("Params", dsl.getSelectedDocument().getId()); //$NON-NLS-1$
@@ -114,16 +109,15 @@ public class EditReminderDialog extends TitleAreaDialog {
 		Composite dates = new Composite(ret, SWT.NONE);
 		dates.setLayout(new GridLayout(4, false));
 		dates.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-
-		new Label(dates, SWT.NONE).setText(Messages
-				.getString("EditReminderDialog.dueOn")); //$NON-NLS-1$
+		
+		new Label(dates, SWT.NONE).setText(Messages.getString("EditReminderDialog.dueOn")); //$NON-NLS-1$
 		Label lbStatus = new Label(dates, SWT.NONE);
 		lbStatus.setText(Messages.getString("EditReminderDialog.state")); //$NON-NLS-1$
 		lbStatus.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
 		dpDue = new DatePickerCombo(dates, SWT.NONE);
 		dpDue.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e){
 				setLabels();
 			}
 		});
@@ -133,24 +127,24 @@ public class EditReminderDialog extends TitleAreaDialog {
 		bDone.setText(Messages.getString("EditReminderDialog.fixed")); //$NON-NLS-1$
 		bRejected = new Button(dates, SWT.RADIO);
 		bRejected.setText(Messages.getString("EditReminderDialog.wontFix")); //$NON-NLS-1$
-
+		
 		initialize();
 		setLabels();
-
+		
 		return ret;
 	}
-
+	
 	/**
 	 * Set initial values of controls
 	 */
-	private void initialize() {
+	private void initialize(){
 		if (mine == null) {
 			// new reminder
-
+			
 			actPatient = ElexisEventDispatcher.getSelectedPatient();
 			text.setText(StringTool.leer);
 			cbType.select(1);
-
+			
 			// select current user as responsible
 			int index = 0;
 			String usr = Hub.actUser.getLabel();
@@ -161,24 +155,23 @@ public class EditReminderDialog extends TitleAreaDialog {
 				}
 			}
 			lUser.select(index);
-
+			
 			dpDue.setDate(new Date());
 			bDue.setSelection(true);
 		} else {
 			// existing reminder
-
+			
 			actPatient = mine.getKontakt();
 			text.setText(mine.get(Reminder.MESSAGE));
 			cbType.select(mine.getTyp().ordinal());
-
+			
 			// select responsible
 			int index = 0;
 			String uid = mine.get(Reminder.RESPONSIBLE);
 			java.util.List<Anwender> responsibles = mine.getResponsibles();
 			if (responsibles.size() > 0) { // new method
 				for (Anwender a : responsibles) {
-					int idx = StringTool.getIndex(lUser.getItems(), a
-							.getLabel());
+					int idx = StringTool.getIndex(lUser.getItems(), a.getLabel());
 					if (idx != -1) {
 						lUser.select(idx);
 					}
@@ -193,9 +186,9 @@ public class EditReminderDialog extends TitleAreaDialog {
 				}
 				lUser.select(index);
 			}
-
+			
 			dpDue.setDate(mine.getDateDue().getTime());
-
+			
 			// update current selection depending on the status
 			Reminder.Status s = mine.getStatus();
 			if (s.equals(Reminder.Status.STATE_DONE)) {
@@ -206,26 +199,25 @@ public class EditReminderDialog extends TitleAreaDialog {
 				bDue.setSelection(true);
 			}
 		}
-
+		
 		if (actPatient == null) {
-			pat.setText(Messages
-					.getString("EditReminderDialog.noPatientSelected")); //$NON-NLS-1$
+			pat.setText(Messages.getString("EditReminderDialog.noPatientSelected")); //$NON-NLS-1$
 		} else {
 			pat.setText("  " + actPatient.getLabel() + "  "); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-
+	
 	/**
 	 * Update label of bDue depending on the selected time
 	 */
-	private void setLabels() {
+	private void setLabels(){
 		if (mine == null) {
 			// new reminder
 			bDue.setText(Messages.getString("EditReminderDialog.scheduled")); //$NON-NLS-1$
 		} else {
 			TimeTool today = new TimeTool();
 			TimeTool tSelected = new TimeTool(dpDue.getDate().getTime());
-
+			
 			if (today.isSameDay(tSelected)) {
 				bDue.setText(Messages.getString("EditReminderDialog.due")); //$NON-NLS-1$
 			} else if (today.isBefore(tSelected)) {
@@ -235,12 +227,11 @@ public class EditReminderDialog extends TitleAreaDialog {
 			}
 		}
 	}
-
+	
 	@Override
-	public void create() {
+	public void create(){
 		super.create();
-		String shelltitle = Messages
-				.getString("EditReminderDialog.reminderShellTitle"); //$NON-NLS-1$
+		String shelltitle = Messages.getString("EditReminderDialog.reminderShellTitle"); //$NON-NLS-1$
 		if (mine == null) {
 			setTitle(Messages.getString("EditReminderDialog.createReminder")); //$NON-NLS-1$
 		} else {
@@ -252,19 +243,17 @@ public class EditReminderDialog extends TitleAreaDialog {
 				shelltitle += " (" + o.getLabel() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
-		setMessage(Messages
-				.getString("EditReminderDialog.enterDataForReminder")); //$NON-NLS-1$
+		setMessage(Messages.getString("EditReminderDialog.enterDataForReminder")); //$NON-NLS-1$
 		getShell().setText(shelltitle);
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
-
+	
 	@Override
-	protected void okPressed() {
+	protected void okPressed(){
 		if (bNoPatient.getSelection()) {
 			actPatient = null;
 		}
-		String due = new TimeTool(dpDue.getDate().getTime())
-				.toString(TimeTool.DATE_GER);
+		String due = new TimeTool(dpDue.getDate().getTime()).toString(TimeTool.DATE_GER);
 		int typidx = cbType.getSelectionIndex();
 		if (typidx == -1) {
 			typidx = 0;
@@ -273,10 +262,11 @@ public class EditReminderDialog extends TitleAreaDialog {
 		if (mine == null) {
 			mine = new Reminder(actPatient, due, typ, "", text.getText()); //$NON-NLS-1$
 		} else {
-			mine.set(new String[] { Reminder.KONTAKT_ID, Reminder.DUE,
-					Reminder.TYPE, Reminder.MESSAGE }, new String[] {
-					actPatient.getId(), due,
-					Byte.toString((byte) typ.ordinal()), text.getText() });
+			mine.set(new String[] {
+				Reminder.KONTAKT_ID, Reminder.DUE, Reminder.TYPE, Reminder.MESSAGE
+			}, new String[] {
+				actPatient.getId(), due, Byte.toString((byte) typ.ordinal()), text.getText()
+			});
 		}
 		if (bDone.getSelection()) {
 			mine.setStatus(Reminder.Status.STATE_DONE);
@@ -307,5 +297,5 @@ public class EditReminderDialog extends TitleAreaDialog {
 		}
 		super.okPressed();
 	}
-
+	
 }

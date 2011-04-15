@@ -88,7 +88,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 		body.setBackground(parent.getBackground());
 		body.setLayout(new GridLayout(2, false));
 		tk
-		.createLabel(body, Messages.getString("BlockDetailDisplay.name")).setBackground(parent.getBackground()); //$NON-NLS-1$
+			.createLabel(body, Messages.getString("BlockDetailDisplay.name")).setBackground(parent.getBackground()); //$NON-NLS-1$
 		tName = tk.createText(body, "", SWT.BORDER); //$NON-NLS-1$
 		tName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		tk.createLabel(body, StringConstants.MANDATOR).setBackground(parent.getBackground());
@@ -178,7 +178,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 					if (dropped instanceof ICodeElement) {
 						Leistungsblock lb =
 							(Leistungsblock) ElexisEventDispatcher
-							.getSelected(Leistungsblock.class);
+								.getSelected(Leistungsblock.class);
 						if (lb != null) {
 							lb.addElement((ICodeElement) dropped);
 							lLst.refresh();
@@ -190,8 +190,8 @@ public class BlockDetailDisplay implements IDetailDisplay {
 			}
 			
 			public void dropAccept(final DropTargetEvent event){
-				// TODO Automatisch erstellter Methoden-Stub
-				
+			// TODO Automatisch erstellter Methoden-Stub
+			
 			}
 			
 		});
@@ -206,9 +206,10 @@ public class BlockDetailDisplay implements IDetailDisplay {
 				try {
 					site.getPage().showView(LeistungenView.ID);
 				} catch (Exception ex) {
-					ElexisStatus status = new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
-							"Fehler beim Starten des Leistungscodes " + ex.getMessage(),
-							ex, ElexisStatus.LOG_ERRORS);
+					ElexisStatus status =
+						new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+							"Fehler beim Starten des Leistungscodes " + ex.getMessage(), ex,
+							ElexisStatus.LOG_ERRORS);
 					StatusManager.getManager().handle(status, StatusManager.SHOW);
 				}
 			}
@@ -324,7 +325,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 			tVK = new Text(ret, SWT.BORDER);
 			tVK.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			new Label(ret, SWT.NONE)
-			.setText(Messages.getString("BlockDetailDisplay.timeInMinutes")); //$NON-NLS-1$
+				.setText(Messages.getString("BlockDetailDisplay.timeInMinutes")); //$NON-NLS-1$
 			tTime = new Text(ret, SWT.BORDER);
 			tTime.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			if (result instanceof Eigenleistung) {
@@ -358,47 +359,47 @@ public class BlockDetailDisplay implements IDetailDisplay {
 	
 	private void makeActions(){
 		removeLeistung = new Action(Messages.getString("BlockDetailDisplay.remove")) { //$NON-NLS-1$
-			@Override
-			public void run(){
-				Leistungsblock lb =
-					(Leistungsblock) ElexisEventDispatcher.getSelected(Leistungsblock.class);
-				if (lb != null) {
-					IStructuredSelection sel = (IStructuredSelection) lLst.getSelection();
-					Object o = sel.getFirstElement();
-					if (o != null) {
-						lb.removeElement((ICodeElement) o);
-						lLst.refresh();
+				@Override
+				public void run(){
+					Leistungsblock lb =
+						(Leistungsblock) ElexisEventDispatcher.getSelected(Leistungsblock.class);
+					if (lb != null) {
+						IStructuredSelection sel = (IStructuredSelection) lLst.getSelection();
+						Object o = sel.getFirstElement();
+						if (o != null) {
+							lb.removeElement((ICodeElement) o);
+							lLst.refresh();
+						}
 					}
 				}
-			}
-		};
+			};
 		moveUpAction = new Action(Messages.getString("BlockDetailDisplay.moveUp")) { //$NON-NLS-1$
-			@Override
-			public void run(){
-				moveElement(-1);
-			}
-		};
+				@Override
+				public void run(){
+					moveElement(-1);
+				}
+			};
 		moveDownAction = new Action(Messages.getString("BlockDetailDisplay.moveDown")) { //$NON-NLS-1$
-			@Override
-			public void run(){
-				moveElement(1);
-			}
-		};
+				@Override
+				public void run(){
+					moveElement(1);
+				}
+			};
 		editAction = new Action(Messages.getString("BlockDetailDisplay.changeAction")) { //$NON-NLS-1$
-			{
-				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
-				setToolTipText(Messages.getString("BlockDetailDisplay.changeActionTooltip")); //$NON-NLS-1$
-			}
-			
-			@Override
-			public void run(){
-				IVerrechenbar iv =
-					(IVerrechenbar) ((IStructuredSelection) lLst.getSelection())
-					.getFirstElement();
-				EigenLeistungDlg eld = new EigenLeistungDlg(site.getShell(), iv);
-				eld.open();
-			}
-		};
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
+					setToolTipText(Messages.getString("BlockDetailDisplay.changeActionTooltip")); //$NON-NLS-1$
+				}
+				
+				@Override
+				public void run(){
+					IVerrechenbar iv =
+						(IVerrechenbar) ((IStructuredSelection) lLst.getSelection())
+							.getFirstElement();
+					EigenLeistungDlg eld = new EigenLeistungDlg(site.getShell(), iv);
+					eld.open();
+				}
+			};
 	}
 	
 	private void moveElement(final int off){

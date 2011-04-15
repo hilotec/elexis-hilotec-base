@@ -103,8 +103,8 @@ public class RnOutputDialog extends TitleAreaDialog {
 		if (num > 1) {
 			getShell().setText(Messages.getString("RnOutputDialog.outputCaption")); //$NON-NLS-1$
 			setTitle(num + Messages.getString("RnOutputDialog.outputTitle")); //$NON-NLS-1$
-			setMessage(MessageFormat.format(
-				Messages.getString("RnOutputDialog.outputMessage"), num)); //$NON-NLS-1$
+			setMessage(MessageFormat
+				.format(Messages.getString("RnOutputDialog.outputMessage"), num)); //$NON-NLS-1$
 			
 		} else {
 			getShell().setText(Messages.getString("RnOutputDialog.outputBillCaption")); //$NON-NLS-1$
@@ -120,20 +120,22 @@ public class RnOutputDialog extends TitleAreaDialog {
 		if (idx != -1) {
 			IRnOutputter rop = lo.get(idx);
 			rop.saveComposite();
-			Iterator<Rechnung> it=rnn.iterator();
-			boolean bFlag=false;
-			while(it.hasNext()){
-				Rechnung r=it.next();
-				if(r.getStatus()==RnStatus.STORNIERT){
+			Iterator<Rechnung> it = rnn.iterator();
+			boolean bFlag = false;
+			while (it.hasNext()) {
+				Rechnung r = it.next();
+				if (r.getStatus() == RnStatus.STORNIERT) {
 					it.remove();
-					bFlag=true;
+					bFlag = true;
 				}
 			}
-			if(bFlag){
-				SWTHelper.alert("Stornierte Rechnungen in Liste", "Stornierte Rechnungen werden nicht ausgegeben.");
+			if (bFlag) {
+				SWTHelper.alert("Stornierte Rechnungen in Liste",
+					"Stornierte Rechnungen werden nicht ausgegeben.");
 			}
-			/* Result<Rechnung> result= */rop.doOutput(bCopy.getSelection()
-				? IRnOutputter.TYPE.COPY : IRnOutputter.TYPE.ORIG, rnn, new Properties());
+			/* Result<Rechnung> result= */rop.doOutput(
+				bCopy.getSelection() ? IRnOutputter.TYPE.COPY : IRnOutputter.TYPE.ORIG, rnn,
+				new Properties());
 		}
 		super.okPressed();
 	}

@@ -33,24 +33,24 @@ public class EncounterView extends ViewPart implements IActivationListener {
 	
 	private final ElexisEventListenerImpl eeli_pat =
 		new ElexisEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED) {
-		
-		@Override
-		public void runInUi(ElexisEvent ev){
-			display.setEncounter(null);
-		}
-		
-	};
+			
+			@Override
+			public void runInUi(ElexisEvent ev){
+				display.setEncounter(null);
+			}
+			
+		};
 	
 	private final ElexisEventListenerImpl eeli_enc =
 		new ElexisEventListenerImpl(Encounter.class, ElexisEvent.EVENT_SELECTED) {
-		@Override
-		public void runInUi(ElexisEvent ev){
-			display.setEncounter((Encounter) ev.getObject());
-		}
-	};
+			@Override
+			public void runInUi(ElexisEvent ev){
+				display.setEncounter((Encounter) ev.getObject());
+			}
+		};
 	
 	public EncounterView(){
-		// TODO Auto-generated constructor stub
+	// TODO Auto-generated constructor stub
 	}
 	
 	@Override
@@ -69,12 +69,12 @@ public class EncounterView extends ViewPart implements IActivationListener {
 	
 	@Override
 	public void setFocus(){
-		// TODO Auto-generated method stub
-		
+	// TODO Auto-generated method stub
+	
 	}
 	
 	public void activation(boolean mode){
-		
+
 	}
 	
 	public void visible(boolean mode){
@@ -87,8 +87,8 @@ public class EncounterView extends ViewPart implements IActivationListener {
 	}
 	
 	public void clearEvent(Class template){
-		// TODO Auto-generated method stub
-		
+	// TODO Auto-generated method stub
+	
 	}
 	
 	public void selectionEvent(PersistentObject obj){

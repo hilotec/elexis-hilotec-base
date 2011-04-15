@@ -33,28 +33,26 @@ import gnu.io.PortInUseException;
  * purposes.
  */
 
-
 public class SerialConnectionException extends Exception {
-
-    /**
-     * Constructs a <code>SerialConnectionException</code>
-     * with the specified detail message.
-     *
-     * @param   s   the detail message.
-     */
-    public SerialConnectionException(final String str) {
-        super(str);
-    }
-
-    /**
-     * Constructs a <code>SerialConnectionException</code>
-     * with no detail message.
-     */
-    public SerialConnectionException() {
-        super();
-    }
-
-	public SerialConnectionException(String message, PortInUseException e) {
+	
+	/**
+	 * Constructs a <code>SerialConnectionException</code> with the specified detail message.
+	 * 
+	 * @param s
+	 *            the detail message.
+	 */
+	public SerialConnectionException(final String str){
+		super(str);
+	}
+	
+	/**
+	 * Constructs a <code>SerialConnectionException</code> with no detail message.
+	 */
+	public SerialConnectionException(){
+		super();
+	}
+	
+	public SerialConnectionException(String message, PortInUseException e){
 		super(message, e);
 	}
 }

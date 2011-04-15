@@ -36,32 +36,30 @@ import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
 
-public class DocHandle extends PersistentObject implements IOpaqueDocument{
+public class DocHandle extends PersistentObject implements IOpaqueDocument {
 	public static final String TABLENAME = "CH_ELEXIS_OMNIVORE_DATA"; //$NON-NLS-1$
 	public static final String DBVERSION = "1.2.1"; //$NON-NLS-1$
-	public static final String createDB=
-		"CREATE TABLE "+TABLENAME+" ("+ //$NON-NLS-1$ //$NON-NLS-2$
-		"ID				VARCHAR(25) primary key,"+ //$NON-NLS-1$
-		"lastupdate     BIGINT,"+ //$NON-NLS-1$
-		"deleted        CHAR(1) default '0',"+ //$NON-NLS-1$
-		"PatID			VARCHAR(25),"+ //$NON-NLS-1$
-		"Datum			CHAR(8),"+ //$NON-NLS-1$
-		"Title 			VARCHAR(80),"+	 //$NON-NLS-1$
-		"Mimetype		VARCHAR(255),"+ //$NON-NLS-1$
-		"Keywords		VARCHAR(255),"+ //$NON-NLS-1$
-		"Path			VARCHAR(255),"+ //$NON-NLS-1$
-		"Doc			BLOB);"+ //$NON-NLS-1$
-		"CREATE INDEX OMN1 ON "+TABLENAME+" (PatID);"+ //$NON-NLS-1$ //$NON-NLS-2$
-		"CREATE INDEX OMN2 ON "+TABLENAME+" (Keywords);" + //$NON-NLS-1$ //$NON-NLS-2$
-		"INSERT INTO "+TABLENAME+" (ID, TITLE) VALUES ('1','"+DBVERSION+"');"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		
-	public static final String upd120=
-		"ALTER TABLE "+TABLENAME+" MODIFY Mimetype VARCHAR(255);"+ //$NON-NLS-1$ //$NON-NLS-2$
-		"ALTER TABLE "+TABLENAME+" MODIFY Keywords VARCHAR(255);"+ //$NON-NLS-1$ //$NON-NLS-2$
-		"ALTER TABLE "+TABLENAME+" Modify Path VARCHAR(255);"; //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String createDB = "CREATE TABLE " + TABLENAME + " (" + //$NON-NLS-1$ //$NON-NLS-2$
+		"ID				VARCHAR(25) primary key," + //$NON-NLS-1$
+		"lastupdate     BIGINT," + //$NON-NLS-1$
+		"deleted        CHAR(1) default '0'," + //$NON-NLS-1$
+		"PatID			VARCHAR(25)," + //$NON-NLS-1$
+		"Datum			CHAR(8)," + //$NON-NLS-1$
+		"Title 			VARCHAR(80)," + //$NON-NLS-1$
+		"Mimetype		VARCHAR(255)," + //$NON-NLS-1$
+		"Keywords		VARCHAR(255)," + //$NON-NLS-1$
+		"Path			VARCHAR(255)," + //$NON-NLS-1$
+		"Doc			BLOB);" + //$NON-NLS-1$
+		"CREATE INDEX OMN1 ON " + TABLENAME + " (PatID);" + //$NON-NLS-1$ //$NON-NLS-2$
+		"CREATE INDEX OMN2 ON " + TABLENAME + " (Keywords);" + //$NON-NLS-1$ //$NON-NLS-2$
+		"INSERT INTO " + TABLENAME + " (ID, TITLE) VALUES ('1','" + DBVERSION + "');"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	
-	private static final String upd121=
-		"ALTER TABLE "+TABLENAME+" ADD lastupdate BIGINT;"; //$NON-NLS-1$ //$NON-NLS-2$
+	public static final String upd120 =
+		"ALTER TABLE " + TABLENAME + " MODIFY Mimetype VARCHAR(255);" + //$NON-NLS-1$ //$NON-NLS-2$
+			"ALTER TABLE " + TABLENAME + " MODIFY Keywords VARCHAR(255);" + //$NON-NLS-1$ //$NON-NLS-2$
+			"ALTER TABLE " + TABLENAME + " Modify Path VARCHAR(255);"; //$NON-NLS-1$ //$NON-NLS-2$
+	
+	private static final String upd121 = "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;"; //$NON-NLS-1$ //$NON-NLS-2$
 	
 	static {
 		addMapping(TABLENAME, "PatID", "Datum=S:D:Datum", "Titel=Title", "Keywords", "Path", "Doc", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
@@ -76,12 +74,12 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument{
 					getConnection().exec(
 						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';"); //$NON-NLS-1$ //$NON-NLS-2$
 					start.set("Titel", DBVERSION); //$NON-NLS-1$
-				} 
+				}
 				if (vi.isOlder("1.2.0")) { //$NON-NLS-1$
 					createOrModifyTable(upd120);
 					start.set("Titel", DBVERSION); //$NON-NLS-1$
-				} 
-				if(vi.isOlder("1.2.1")){ //$NON-NLS-1$
+				}
+				if (vi.isOlder("1.2.1")) { //$NON-NLS-1$
 					createOrModifyTable(upd121);
 					start.set("Titel", DBVERSION); //$NON-NLS-1$
 				}
@@ -133,16 +131,17 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument{
 		return super.delete();
 	}
 	
-	public byte[] getContentsAsBytes() {
+	public byte[] getContentsAsBytes(){
 		byte[] ret = getBinary("Doc"); //$NON-NLS-1$
 		return ret;
 	}
 	
 	public InputStream getContentsAsStream(){
-		byte[] bytes=getContentsAsBytes();
-		ByteArrayInputStream bais=new ByteArrayInputStream(bytes);
+		byte[] bytes = getContentsAsBytes();
+		ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
 		return bais;
 	}
+	
 	public void execute(){
 		try {
 			String ext = ""; //$NON-NLS-1$
@@ -197,14 +196,14 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument{
 	public static void assimilate(String f){
 		Patient act = ElexisEventDispatcher.getSelectedPatient();
 		if (act == null) {
-			SWTHelper
-				.showError(Messages.DocHandle_noPatientSelected,
-					Messages.DocHandle_pleaseSelectPatien);
+			SWTHelper.showError(Messages.DocHandle_noPatientSelected,
+				Messages.DocHandle_pleaseSelectPatien);
 			return;
 		}
 		File file = new File(f);
 		if (!file.canRead()) {
-			SWTHelper.showError(Messages.DocHandle_cantReadCaption, MessageFormat.format(Messages.DocHandle_cantReadMessage,f));
+			SWTHelper.showError(Messages.DocHandle_cantReadCaption, MessageFormat.format(
+				Messages.DocHandle_cantReadMessage, f));
 			return;
 		}
 		FileImportDialog fid = new FileImportDialog(file.getName());
@@ -233,29 +232,29 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument{
 		}
 		
 	}
-
+	
 	@Override
-	public String getTitle() {
+	public String getTitle(){
 		return checkNull(get("Titel")); //$NON-NLS-1$
 	}
-
+	
 	@Override
-	public String getMimeType() {
+	public String getMimeType(){
 		return checkNull(get("Mimetype")); //$NON-NLS-1$
 	}
-
+	
 	@Override
-	public String getKeywords() {
+	public String getKeywords(){
 		return checkNull(get("Keywords")); //$NON-NLS-1$
 	}
-
+	
 	@Override
-	public String getCategory() {
+	public String getCategory(){
 		return ""; //$NON-NLS-1$
 	}
-
+	
 	@Override
-	public String getCreationDate() {
+	public String getCreationDate(){
 		return get("Datum"); //$NON-NLS-1$
 	}
 	
@@ -263,9 +262,9 @@ public class DocHandle extends PersistentObject implements IOpaqueDocument{
 	public Patient getPatient(){
 		return Patient.load(get("PatID")); //$NON-NLS-1$
 	}
-
+	
 	@Override
-	public String getGUID() {
+	public String getGUID(){
 		return getId();
 	}
 	
