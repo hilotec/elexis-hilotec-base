@@ -50,8 +50,10 @@ import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.StringConstants;
 import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.admin.AccessControl;
 import ch.elexis.data.Xid.XIDException;
 import ch.elexis.data.cache.IPersistentObjectCache;
 import ch.elexis.data.cache.SoftCache;
@@ -142,6 +144,8 @@ public abstract class PersistentObject implements ISelectable {
 	private static String tracetable;
 	protected static int default_lifetime;
 	private static boolean showDeleted = false;
+	private static boolean runningAsTest = false;
+	private static String testDB = null;
 
 	static {
 		mapping = new Hashtable<String, String>();
@@ -220,6 +224,7 @@ public abstract class PersistentObject implements ISelectable {
 				j = JdbcLink.createH2Link(new File(dbDir, "h2db")
 						.getAbsolutePath());
 				try {
+					runningAsTest = true;
 					getConnection().connect("sa", StringTool.leer);
 					return connect(getConnection());
 				} catch (JdbcLinkException je) {
@@ -232,6 +237,23 @@ public abstract class PersistentObject implements ISelectable {
 			} catch (IOException ex) {
 				ExHandler.handle(ex);
 				System.exit(-5);
+			}
+		} else if ("RunFromScratch".equals(System
+				.getProperty("elexis-run-mode"))) {
+			try {
+				File dbFile = File.createTempFile("elexis", "db");
+				j = JdbcLink.createH2Link(dbFile.getAbsolutePath());
+				if (getConnection().connect("sa", StringTool.leer)) {
+					runningAsTest = true;
+					testDB = dbFile.getAbsolutePath();
+					return connect(getConnection());
+				} else {
+					log.log("can't create test database", Log.FATALS);
+					System.exit(-6);
+				}
+			} catch (Exception ex) {
+				log.log("can't create test database", Log.FATALS);
+				System.exit(-7);
 			}
 		}
 
@@ -332,10 +354,32 @@ public abstract class PersistentObject implements ISelectable {
 					Mandant.init();
 					Hub.pin.initializeGrants();
 					Hub.pin.initializeGlobalPreferences();
-					new ErsterMandantDialog(Hub.getActiveShell()).open();
+					if (runningAsTest) {
+						Mandant m = new Mandant("007", "topsecret");
+						m.set(new String[] { Person.NAME, Person.FIRSTNAME,
+								Person.TITLE, Person.SEX, Person.FLD_E_MAIL,
+								Person.FLD_PHONE1, Person.FLD_FAX,
+								Kontakt.FLD_STREET, Kontakt.FLD_ZIP,
+								Kontakt.FLD_PLACE }, "Bond", "James",
+								"Dr. med.", Person.MALE, "james@bond.uk",
+								"0061 555 55 55", "0061 555 55 56",
+								"10, Baker Street", "9999", "Elexikon");
+						String gprs = m.getInfoString(AccessControl.KEY_GROUPS); //$NON-NLS-1$
+						gprs = StringConstants.ROLE_ADMIN + ","
+								+ StringConstants.ROLE_USERS;
+						m.setInfoElement(AccessControl.KEY_GROUPS, gprs);
+
+					} else {
+						new ErsterMandantDialog(Hub.getActiveShell()).open();
+					}
 					Hub.globalCfg.flush();
 					Hub.localCfg.flush();
 					disconnect();
+					if (runningAsTest) {
+						JdbcLink jReconnect = JdbcLink.createH2Link(testDB);
+						jReconnect.connect("sa", "");
+						return connect(jReconnect);
+					}
 					MessageDialog
 							.openInformation(
 									null,
