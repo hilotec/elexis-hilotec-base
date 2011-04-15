@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: PatientenListeView.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -73,6 +73,7 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 	private ViewMenus menus;
 	private IAction filterAction, newPatAction;
 	private Patient actPatient;
+	private boolean initiated = false;
 	PatListFilterBox plfb;
 	PatListeContentProvider plcp;
 	Composite parent;
@@ -125,6 +126,7 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 		
 		cv = new CommonViewer();
 		ArrayList<String> fields = new ArrayList<String>();
+		initiated = !("".equals(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWPATNR, "")));
 		if (Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWPATNR, false)) {
 			fields.add(Patient.FLD_PATID + Query.EQUALS
 				+ Messages.getString("PatientenListeView.PatientNr")); //$NON-NLS-1$
@@ -400,6 +402,8 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 	}
 	
 	public void UserChanged(){
+		if (!initiated)
+			SWTHelper.reloadViewPart(PatientenListeView.ID);
 		if (!cv.getViewerWidget().getControl().isDisposed()) {
 			cv.getViewerWidget().getControl().setFont(
 				Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
