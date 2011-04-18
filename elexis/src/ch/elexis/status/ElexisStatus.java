@@ -18,6 +18,8 @@ public class ElexisStatus extends Status {
 	public static final int LOG_DEBUGMSG = 5;
 	public static final int LOG_TRACE = 6;
 	
+	public static final int CODE_NOFEEDBACK = 1;
+	
 	private int logLevel;
 	
 	public ElexisStatus(int severity, String pluginId, int code, String message, Exception exception){
