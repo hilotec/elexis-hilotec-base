@@ -87,7 +87,7 @@ public class DBConnectWizard extends Wizard {
 			j.connect(user, pwd);
 		} catch (JdbcLinkException je) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, Messages
+				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NOFEEDBACK, Messages
 					.getString("DBConnectWizard.couldntConnect"), je);
 			StatusManager.getManager().handle(status, StatusManager.BLOCK);
 			return false;
