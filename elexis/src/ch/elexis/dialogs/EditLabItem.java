@@ -88,7 +88,12 @@ public class EditLabItem extends TitleAreaDialog {
 		Query<Labor> qbe = new Query<Labor>(Labor.class);
 		List<Labor> list = qbe.execute();
 		int idx = 0, i = 0;
-		String al = actLabor.getLabel();
+		String al;
+		if(actLabor != null) {
+			al = actLabor.getLabel();
+		} else {
+			al = "";
+		}
 		for (Labor o : list) {
 			String lb = o.getLabel();
 			lablist.put(lb, (Labor) o);
