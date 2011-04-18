@@ -145,10 +145,12 @@ public class DiagnosenDisplay extends Composite implements ISelectionRenderer {
 		@Override
 		public void widgetSelected(final SelectionEvent e){
 			int sel = tDg.getSelectionIndex();
-			TableItem ti = tDg.getItem(sel);
-			((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class))
-				.removeDiagnose((IDiagnose) ti.getData());
-			tDg.remove(sel);
+			if ( sel != -1 ) {
+				TableItem ti = tDg.getItem(sel);
+				((Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class))
+					.removeDiagnose((IDiagnose) ti.getData());
+				tDg.remove(sel);
+			}
 			// setBehandlung(actBehandlung);
 		}
 	}
