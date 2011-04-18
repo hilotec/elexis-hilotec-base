@@ -13,9 +13,10 @@
 
 package ch.elexis.actions;
 
-import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -59,16 +60,16 @@ public class Heartbeat {
 	private Timer pacer;
 	private boolean isSuspended;
 	private static Heartbeat theHeartbeat;
-	private LinkedList<HeartListener> highFrequencyListeners;
-	private LinkedList<HeartListener> mediumFrequencyListeners;
-	private LinkedList<HeartListener> lowFrequencyListeners;
+	private CopyOnWriteArrayList<HeartListener> highFrequencyListeners;
+	private CopyOnWriteArrayList<HeartListener> mediumFrequencyListeners;
+	private CopyOnWriteArrayList<HeartListener> lowFrequencyListeners;
 	private static Log log = Log.get("Heartbeat"); //$NON-NLS-1$
 	
 	private Heartbeat(){
 		theBeat = new beat();
-		highFrequencyListeners = new LinkedList<HeartListener>();
-		mediumFrequencyListeners = new LinkedList<HeartListener>();
-		lowFrequencyListeners = new LinkedList<HeartListener>();
+		highFrequencyListeners = new CopyOnWriteArrayList<HeartListener>();
+		mediumFrequencyListeners = new CopyOnWriteArrayList<HeartListener>();
+		lowFrequencyListeners = new CopyOnWriteArrayList<HeartListener>();
 		pacer = new Timer(true);
 		int interval = Hub.localCfg.get(PreferenceConstants.ABL_HEARTRATE, 30); //$NON-NLS-1$
 		isSuspended = true;
