@@ -6,7 +6,9 @@
          <meta.schema plugin="ch.elexis" id="LaborOrder" name="LaborOrder"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         This Extension Point implements a Drop Down Icon on the &quot;Laborblatt&quot;, where this Drop Down Icom represents an Icon with a Drop Down functionality. If the respective Icon is pressed directly the last Action is being executed. The Drop Down also supports selection for other Actions (implemented by the respective extension to this point). The functionality can be compared to the &quot;Run Start&quot; Button in Eclipse. By using this functionality orders to external laboratories are realized.
+
+Wird diese Extension implementiert, dann erscheint eine DropDownIcon auf dem Laborblatt. Mit DropDownIcon meine ich ein Icon mit einem DropDown Funktionalität. Wird direkt auf das Icon geklickt, dann wird die letzte Aktion ausgeführt. Über das Dropdown können andere Aktionen (Implementation der Extension) ausgewählt werden (vgl. &quot;Run Start&quot; in Eclipse). Mit dieser Funktionalität werden Aufträge an externe Labors geschrieben.
       </documentation>
    </annotation>
 
