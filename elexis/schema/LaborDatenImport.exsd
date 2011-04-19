@@ -3,10 +3,12 @@
 <schema targetNamespace="ch.elexis" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="ch.elexis" id="LaborOrder" name="LaborOrder"/>
+         <meta.schema plugin="ch.elexis" id="LaborDatenImport" name="Labordaten import"/>
       </appInfo>
       <documentation>
-         [Enter description of this extension point.]
+         This Extension Point provides a point of contact for an import of external laboratory values within the register of the &quot;Laborimport&quot;-Dialog, accessible as an action within the &quot;Laborimport&quot; view toolbar.
+
+Wird diese Extension implementiert, dann erscheint ein der Import als Register im Laborimport-Dialog (Dreiecksmenu oben rechts im Laborblatt | Import). Mit dieser Funktionalität werden Daten aus externen Labors importiert.Falls das ToolbarAction Element vorhanden ist, kann der Import direkt über ein Icon gestartet werden (cf. LaborOrder Extension Point).
       </documentation>
    </annotation>
 
@@ -54,6 +56,16 @@
                <documentation>
                   
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="Class" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="java" basedOn="ch.elexis.util.ImporterPage:"/>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="ToolbarAction" type="string">
