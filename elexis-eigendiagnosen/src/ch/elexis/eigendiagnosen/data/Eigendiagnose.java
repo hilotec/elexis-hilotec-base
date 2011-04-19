@@ -124,7 +124,7 @@ public class Eigendiagnose extends PersistentObject implements IDiagnose {
 		JdbcLink link = PersistentObject.getConnection();
 		String theText = get("Text");
 		int numOfChildren =
-			link.queryInt("select count(*) from " + TABLENAME + " where deleted = 0 and parent = "
+			link.queryInt("SELECT count(*) FROM " + TABLENAME + " WHERE deleted = '0' AND parent = "
 				+ JdbcLink.wrap(theText));
 		if (numOfChildren > 0) {
 			return true;
