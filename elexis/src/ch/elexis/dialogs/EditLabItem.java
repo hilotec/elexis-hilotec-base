@@ -175,6 +175,7 @@ public class EditLabItem extends TitleAreaDialog {
 		iPrio = new Text(ret, SWT.BORDER);
 		iPrio.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		iPrio.setToolTipText(Messages.LaborPrefs_52);
+		iPrio.setTextLimit(3);
 		if (result != null) {
 			iKuerzel.setText(result.getKuerzel());
 			iTitel.setText(result.getName());
