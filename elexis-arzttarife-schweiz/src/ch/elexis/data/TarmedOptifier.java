@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: TarmedOptifier.java 6141 2010-02-14 16:21:10Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -21,6 +21,7 @@ import ch.elexis.Hub;
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.tarmedprefs.PreferenceConstants;
+import ch.elexis.tarmedprefs.RechnungsPrefs;
 import ch.elexis.util.IOptifier;
 import ch.rgw.tools.Result;
 import ch.rgw.tools.StringTool;
@@ -45,6 +46,7 @@ public class TarmedOptifier implements IOptifier {
 	public static final int LEISTUNGSTYP = 6;
 	public static final int NOTYETVALID = 7;
 	public static final int NOMOREVALID = 8;
+	
 	boolean bOptify = true;
 	
 	/**
@@ -248,6 +250,23 @@ public class TarmedOptifier implements IOptifier {
 				 * double scale=-0.4; check.setDetail("scale", Double.toString(scale));
 				 * sum=sumfactor/100.0; check.setPreis(new Money(sum));
 				 */
+			}
+			
+			// Zuschlag Kinder
+			else if(tcid.equals("00.0010") || tcid.equals("00.0060")){
+				if(Hub.mandantCfg.get(RechnungsPrefs.PREF_ADDCHILDREN, false)){
+				Fall f=kons.getFall();
+				if(f!=null){
+					Patient p=f.getPatient();
+					if(p!=null){
+						String alter=p.getAlter();
+						if(Integer.parseInt(alter)<6){
+							TarmedLeistung tl=TarmedLeistung.load("00.0040");
+							add(tl,kons);
+						}
+					}
+				}
+				}
 			}
 
 			// Zuschläge für Insellappen 50% auf AL und TL bei 1910,20,40,50
