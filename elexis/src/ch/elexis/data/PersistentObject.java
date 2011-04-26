@@ -47,6 +47,7 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -571,7 +572,7 @@ public abstract class PersistentObject implements ISelectable {
 	 * Bedingungen für dieses Objekt setzen
 	 */
 	protected void setConstraint(){
-	/* Standardimplementation ist leer */
+		/* Standardimplementation ist leer */
 	}
 	
 	/** Einen menschenlesbaren Identifikationsstring für dieses Objet liefern */
@@ -819,8 +820,8 @@ public abstract class PersistentObject implements ISelectable {
 	 * 
 	 * @return a List of Sticker objects
 	 */
-	private static String queryStickersString =
-		"SELECT etikette FROM " + Sticker.LINKTABLE + " WHERE obj=?";
+	private static String queryStickersString = "SELECT etikette FROM " + Sticker.LINKTABLE
+		+ " WHERE obj=?";
 	private static PreparedStatement queryStickers = null;
 	
 	/**
@@ -873,8 +874,8 @@ public abstract class PersistentObject implements ISelectable {
 			ret.remove(et);
 		}
 		StringBuilder sb = new StringBuilder();
-		sb.append("DELETE FROM ").append(Sticker.LINKTABLE).append(" WHERE obj=").append(
-			getWrappedId()).append(" AND etikette=").append(et.getWrappedId());
+		sb.append("DELETE FROM ").append(Sticker.LINKTABLE).append(" WHERE obj=")
+			.append(getWrappedId()).append(" AND etikette=").append(et.getWrappedId());
 		getConnection().exec(sb.toString());
 	}
 	
@@ -1046,6 +1047,13 @@ public abstract class PersistentObject implements ISelectable {
 				} else {
 					return "?invalid field? " + mapped;
 				}
+			} catch (NoSuchMethodException nmex) {
+				log.log("Fehler bei Felddefinition " + field, Log.WARNINGS);
+				ElexisStatus status =
+					new ElexisStatus(IStatus.WARNING, Hub.PLUGIN_ID, ElexisStatus.CODE_NOFEEDBACK,
+						"Fehler bei Felddefinition", nmex);
+				StatusManager.getManager().handle(status, StatusManager.LOG);
+				return mapped;
 			} catch (Exception ex) {
 				// ignore the exceptions calling functions look for MAPPING_ERROR_MARKER
 				ExHandler.handle(ex);
@@ -1285,8 +1293,9 @@ public abstract class PersistentObject implements ISelectable {
 		
 		if (value == null) {
 			cache.remove(key);
-			sql.append("UPDATE ").append(table).append(" SET ").append(mapped).append(
-				"=NULL, lastupdate=" + Long.toString(ts) + " WHERE ID=").append(getWrappedId());
+			sql.append("UPDATE ").append(table).append(" SET ").append(mapped)
+				.append("=NULL, lastupdate=" + Long.toString(ts) + " WHERE ID=")
+				.append(getWrappedId());
 			getConnection().exec(sql.toString());
 			return true;
 		}
@@ -1466,8 +1475,8 @@ public abstract class PersistentObject implements ISelectable {
 				StringBuffer tail = new StringBuffer(100);
 				head.append("INSERT INTO ").append(m[3]).append("(ID,").append(m[2]).append(",")
 					.append(m[1]);
-				tail.append(") VALUES (").append(JdbcLink.wrap(StringTool.unique("aij"))).append(
-					",").append(getWrappedId()).append(",").append(JdbcLink.wrap(oID));
+				tail.append(") VALUES (").append(JdbcLink.wrap(StringTool.unique("aij")))
+					.append(",").append(getWrappedId()).append(",").append(JdbcLink.wrap(oID));
 				if (extra != null) {
 					for (String s : extra) {
 						String[] def = s.split("=");
@@ -1531,8 +1540,8 @@ public abstract class PersistentObject implements ISelectable {
 			if (m.length > 3) {
 				StringBuilder sql = new StringBuilder(200);
 				sql.append("DELETE FROM ").append(m[3]).append(" WHERE ").append(m[2]).append("=")
-					.append(getWrappedId()).append(" AND ").append(m[1]).append("=").append(
-						JdbcLink.wrap(oID));
+					.append(getWrappedId()).append(" AND ").append(m[1]).append("=")
+					.append(JdbcLink.wrap(oID));
 				if (tracetable != null) {
 					String sq = sql.toString();
 					doTrace(sq);
@@ -1558,8 +1567,8 @@ public abstract class PersistentObject implements ISelectable {
 			id = customID;
 		}
 		StringBuffer sql = new StringBuffer(300);
-		sql.append("INSERT INTO ").append(getTableName()).append("(ID) VALUES (").append(
-			getWrappedId()).append(")");
+		sql.append("INSERT INTO ").append(getTableName()).append("(ID) VALUES (")
+			.append(getWrappedId()).append(")");
 		if (getConnection().exec(sql.toString()) != 0) {
 			setConstraint();
 			ElexisEventDispatcher.getInstance().fire(
@@ -2189,8 +2198,8 @@ public abstract class PersistentObject implements ISelectable {
 		if (current.equals(main)) {
 			// current thread is main thread, so use ProgressService
 			try {
-				PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
-					new IRunnableWithProgress() {
+				PlatformUI.getWorkbench().getProgressService()
+					.busyCursorWhile(new IRunnableWithProgress() {
 						public void run(IProgressMonitor moni){
 							moni.beginTask("Führe Datenbankmodifikation aus",
 								IProgressMonitor.UNKNOWN);
