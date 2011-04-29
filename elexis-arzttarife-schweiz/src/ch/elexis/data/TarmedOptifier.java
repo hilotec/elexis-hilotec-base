@@ -251,21 +251,21 @@ public class TarmedOptifier implements IOptifier {
 				 * sum=sumfactor/100.0; check.setPreis(new Money(sum));
 				 */
 			}
-			
+
 			// Zuschlag Kinder
-			else if(tcid.equals("00.0010") || tcid.equals("00.0060")){
-				if(Hub.mandantCfg.get(RechnungsPrefs.PREF_ADDCHILDREN, false)){
-				Fall f=kons.getFall();
-				if(f!=null){
-					Patient p=f.getPatient();
-					if(p!=null){
-						String alter=p.getAlter();
-						if(Integer.parseInt(alter)<6){
-							TarmedLeistung tl=TarmedLeistung.load("00.0040");
-							add(tl,kons);
+			else if (tcid.equals("00.0010") || tcid.equals("00.0060")) {
+				if (Hub.mandantCfg.get(RechnungsPrefs.PREF_ADDCHILDREN, false)) {
+					Fall f = kons.getFall();
+					if (f != null) {
+						Patient p = f.getPatient();
+						if (p != null) {
+							String alter = p.getAlter();
+							if (Integer.parseInt(alter) < 6) {
+								TarmedLeistung tl = TarmedLeistung.load("00.0040");
+								add(tl, kons);
+							}
 						}
 					}
-				}
 				}
 			}
 
