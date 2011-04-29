@@ -20,8 +20,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
@@ -29,6 +33,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
@@ -170,6 +176,22 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 		plcp.startListening();
 		ElexisEventDispatcher.getInstance().addListeners(eeli_user);
 		GlobalEventDispatcher.addActivationListener(this, this);
+		
+		// PropertyPages Support - descher@medevit.at
+		StructuredViewer viewer = cv.getViewerWidget();
+		viewer.addDoubleClickListener(new IDoubleClickListener() {
+			
+			@Override
+			public void doubleClick(DoubleClickEvent event){
+				PropertyDialogAction pdAction = new PropertyDialogAction(new SameShellProvider(parent),
+				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart().getSite().getSelectionProvider());
+
+				if (pdAction.isApplicableForSelection())
+				    pdAction.run();
+			}
+		});
+		getSite().setSelectionProvider(viewer);
+		// ---------------------
 		
 	}
 	
