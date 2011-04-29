@@ -75,7 +75,7 @@ CREATE TABLE KONTAKT_ADRESS_JOINT(
 	deleted		CHAR(1) default '0',
 	myID		VARCHAR(25),					# ID of a KONTAKT 
 	otherID		VARCHAR(25),					# ID of a KONTAKT that ist related to myID
-	Bezug		VARCHAR(30)						# Dscription of the relationship
+	Bezug		VARCHAR(80)						# Dscription of the relationship
 );
 
 CREATE INDEX aij1 on KONTAKT_ADRESS_JOINT (myId);
@@ -615,6 +615,6 @@ CREATE TABLE DBIMAGE (
 CREATE INDEX DBIMAGE1 on DBIMAGE(Title);  
             
 
-INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.6');
+INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.8');
 INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','2.1.0');
 

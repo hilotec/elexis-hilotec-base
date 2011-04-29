@@ -271,7 +271,10 @@ public class DBUpdate {
 				+ "CREATE INDEX eol1 on ETIKETTEN_OBJCLASS_LINK(objclass);",
 
 			// 1.8.7
-			"ALTER TABLE LOGS MODIFY station VARCHAR(40);"
+			"ALTER TABLE LOGS MODIFY station VARCHAR(40);",
+			
+			// 1.8.8
+			"ALTER TABLE KONTAKT_ADRESS_JOINT MODIFY Bezug VARCHAR(80);"
 		
 		};
 	static Log log = Log.get("DBUpdate");
