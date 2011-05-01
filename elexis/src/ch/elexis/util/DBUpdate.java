@@ -38,7 +38,7 @@ public class DBUpdate {
 			"1.3.9", "1.3.10", "1.3.11", "1.3.12", "1.3.13", "1.4.0", "1.4.1", "1.4.2", "1.4.3",
 			"1.4.4", "1.4.5", "1.4.6", "1.5.0", "1.6.0", "1.6.1", "1.6.2", "1.6.3", "1.6.4",
 			"1.7.0", "1.7.1", "1.7.2", "1.8.0", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5",
-			"1.8.6"
+			"1.8.6", "1.8.7", "1.8.8", "1.8.9"
 		};
 	static final String[] cmds =
 		{
@@ -274,8 +274,10 @@ public class DBUpdate {
 			"ALTER TABLE LOGS MODIFY station VARCHAR(40);",
 			
 			// 1.8.8
-			"ALTER TABLE KONTAKT_ADRESS_JOINT MODIFY Bezug VARCHAR(80);"
+			"ALTER TABLE KONTAKT_ADRESS_JOINT MODIFY Bezug VARCHAR(80);",
 		
+			// 1.8.9
+			"ALTER TABLE LABORITEMS ADD EXPORT VARCHAR(100);"
 		};
 	static Log log = Log.get("DBUpdate");
 	

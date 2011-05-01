@@ -21,7 +21,6 @@ import ch.elexis.ElexisException;
 import ch.elexis.StringConstants;
 import ch.elexis.scripting.Interpreter;
 import ch.elexis.text.TextContainer;
-import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
@@ -45,6 +44,7 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 	public static final String LAB_ID = "LaborID";
 	public static final String TITLE = "titel";
 	public static final String SHORTNAME = "kuerzel";
+	public static final String EXPORT = "export";
 	private static final String LABITEMS = "LABORITEMS";
 	private static final Pattern varPattern = Pattern.compile(TextContainer.MATCH_TEMPLATE);
 	
@@ -55,7 +55,7 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 	
 	static {
 		addMapping(LABITEMS, SHORTNAME, TITLE, LAB_ID, REF_MALE, REF_FEMALE_OR_TEXT, UNIT, TYPE,
-			GROUP, PRIO);
+			GROUP, PRIO, EXPORT);
 	}
 	
 	public enum typ {
@@ -155,6 +155,14 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 	
 	public Labor getLabor(){
 		return Labor.load(get(LAB_ID));
+	}
+	
+	public String getExport(){
+		return checkNull(get(EXPORT));
+	}
+	
+	public void setExport(String export){
+		set(EXPORT, export);
 	}
 	
 	public typ getTyp(){

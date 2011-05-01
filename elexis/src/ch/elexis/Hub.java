@@ -75,8 +75,8 @@ public class Hub extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "ch.elexis"; //$NON-NLS-1$
 	public static final String COMMAND_PREFIX = PLUGIN_ID + ".commands."; //$NON-NLS-1$
 	static final String neededJRE = "1.6.0"; //$NON-NLS-1$
- public static final String Version = "2.1.5.x"; //$NON-NLS-1$
-	public static final String DBVersion = "1.8.8"; //$NON-NLS-1$
+	public static final String Version = "2.1.5.x"; //$NON-NLS-1$
+	public static final String DBVersion = "1.8.9"; //$NON-NLS-1$
 	public static final String SWTBOTTEST_KEY = "ch.elexis.swtbottest.key"; //$NON-NLS-1$
 	static final String[] mine = {
 		"ch.elexis", "ch.rgw"}; //$NON-NLS-1$ //$NON-NLS-2$
@@ -274,8 +274,9 @@ public class Hub extends AbstractUIPlugin {
 		
 		// Java Version prüfen
 		VersionInfo vI = new VersionInfo(System.getProperty("java.version", "0.0.0")); //$NON-NLS-1$ //$NON-NLS-2$
-		log.log(getId() + "; Java: " + vI.version() + "\nencoding: "
-			+ System.getProperty("file.encoding"), Log.SYNCMARK);
+		log.log(
+			getId() + "; Java: " + vI.version() + "\nencoding: "
+				+ System.getProperty("file.encoding"), Log.SYNCMARK);
 		
 		if (vI.isOlder(neededJRE)) {
 			String msg = Messages.Hub_21 + neededJRE;
@@ -408,10 +409,10 @@ public class Hub extends AbstractUIPlugin {
 	
 	public static String getId(){
 		StringBuilder sb = new StringBuilder();
-		sb.append(APPLICATION_NAME).append(" v.").append(Version).append("\n").append(
-			getRevision(true)).append("\n").append(System.getProperty("os.name")).append(
-			StringConstants.SLASH).append(System.getProperty("os.version")).append(
-			StringConstants.SLASH).append(System.getProperty("os.arch")); //$NON-NLS-1$
+		sb.append(APPLICATION_NAME).append(" v.").append(Version).append("\n")
+			.append(getRevision(true)).append("\n").append(System.getProperty("os.name"))
+			.append(StringConstants.SLASH).append(System.getProperty("os.version"))
+			.append(StringConstants.SLASH).append(System.getProperty("os.arch")); //$NON-NLS-1$
 		return sb.toString();
 	}
 	

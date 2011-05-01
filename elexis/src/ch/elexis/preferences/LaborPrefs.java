@@ -56,12 +56,11 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 	private TableViewer tv;
 	private Table table;
 	int sortC = 1;
-	private String[] headers =
-		{
-			Messages.LaborPrefs_lab, Messages.LaborPrefs_name, Messages.LaborPrefs_short,
-			Messages.LaborPrefs_type, Messages.LaborPrefs_unit, Messages.LaborPrefs_refM,
-			Messages.LaborPrefs_refF, Messages.LaborPrefs_sortmode
-		};
+	private String[] headers = {
+		Messages.LaborPrefs_lab, Messages.LaborPrefs_name, Messages.LaborPrefs_short,
+		Messages.LaborPrefs_type, Messages.LaborPrefs_unit, Messages.LaborPrefs_refM,
+		Messages.LaborPrefs_refF, Messages.LaborPrefs_sortmode
+	};
 	private int[] colwidth = {
 		100, 100, 50, 50, 50, 100, 100, 100
 	};
@@ -247,6 +246,8 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 					return Messages.LaborPrefs_numeric;
 				} else if (typ == LabItem.typ.TEXT) {
 					return Messages.LaborPrefs_alpha;
+				} else if (typ == LabItem.typ.FORMULA) {
+					return Messages.LaborPrefs_formula;
 				} else if (typ == LabItem.typ.DOCUMENT) {
 					return Messages.LaborPrefs_document;
 				}
@@ -267,7 +268,7 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 	};
 	
 	public void init(IWorkbench workbench){
-	// Nothing to initialize
+		// Nothing to initialize
 	}
 	
 }

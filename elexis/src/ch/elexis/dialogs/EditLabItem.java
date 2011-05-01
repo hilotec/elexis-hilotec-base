@@ -35,7 +35,7 @@ public class EditLabItem extends TitleAreaDialog {
 	// private String[]
 	// fields={"Kürzel","Titel","Typ","Referenzbereich","Einheit"};
 	Text iKuerzel, iTitel, iRef, iRfF, iUnit, iPrio;
-	Combo cGroup;
+	Combo cGroup, cExportTag;
 	Button alph, numeric, abs, formula, document;
 	String formel;
 	org.eclipse.swt.widgets.List labors;
@@ -43,11 +43,13 @@ public class EditLabItem extends TitleAreaDialog {
 	Labor actLabor;
 	LabItem result;
 	ArrayList<String> groups;
+	ArrayList<String> exportTags;
 	
 	public EditLabItem(Shell parentShell, LabItem act){
 		super(parentShell);
 		
 		groups = new ArrayList<String>();
+		exportTags = new ArrayList<String>();
 		result = act;
 		if (act == null) {
 			String al =
@@ -89,7 +91,7 @@ public class EditLabItem extends TitleAreaDialog {
 		List<Labor> list = qbe.execute();
 		int idx = 0, i = 0;
 		String al;
-		if(actLabor != null) {
+		if (actLabor != null) {
 			al = actLabor.getLabel();
 		} else {
 			al = "";
@@ -159,13 +161,18 @@ public class EditLabItem extends TitleAreaDialog {
 		
 		List<LabItem> labItems = LabItem.getLabItems();
 		groups.clear();
+		exportTags.clear();
 		for (LabItem li : (List<LabItem>) labItems) {
-			if (groups.contains(li.getGroup())) {
-				continue;
+			if (li.getExport() != null && li.getExport().length() > 0
+				&& !exportTags.contains(li.getExport())) {
+				exportTags.add(li.getExport());
 			}
-			groups.add(li.getGroup());
+			if (!groups.contains(li.getGroup())) {
+				groups.add(li.getGroup());
+			}
 		}
 		Collections.sort(groups);
+		Collections.sort(exportTags);
 		
 		cGroup = new Combo(ret, SWT.SINGLE | SWT.DROP_DOWN);
 		cGroup.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -176,6 +183,12 @@ public class EditLabItem extends TitleAreaDialog {
 		iPrio.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		iPrio.setToolTipText(Messages.LaborPrefs_52);
 		iPrio.setTextLimit(3);
+		WidgetFactory.createLabel(ret, Messages.LaborPrefs_lblExportTag);
+		cExportTag = new Combo(ret, SWT.SINGLE | SWT.DROP_DOWN);
+		cExportTag.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		cExportTag.setToolTipText(Messages.LaborPrefs_hintExportTag);
+		cExportTag.setItems(exportTags.toArray(new String[0]));
+		
 		if (result != null) {
 			iKuerzel.setText(result.getKuerzel());
 			iTitel.setText(result.getName());
@@ -192,10 +205,11 @@ public class EditLabItem extends TitleAreaDialog {
 				formula.setSelection(true);
 			}
 			iUnit.setText(result.getEinheit());
-			iRef.setText(result.get(Messages.LaborPrefs_53));
+			iRef.setText(result.get(LabItem.REF_MALE));
 			iRfF.setText(result.getRefW());
 			cGroup.setText(result.getGroup());
 			iPrio.setText(result.getPrio());
+			cExportTag.setText(result.getExport());
 			formel = result.getFormula();
 		}
 		return ret;
@@ -232,25 +246,26 @@ public class EditLabItem extends TitleAreaDialog {
 		}
 		if (result == null) {
 			result =
-				new LabItem(iKuerzel.getText(), iTitel.getText(), actLabor, iRef.getText(), iRfF
-					.getText(), iUnit.getText(), typ, cGroup.getText(), iPrio.getText());
+				new LabItem(iKuerzel.getText(), iTitel.getText(), actLabor, iRef.getText(),
+					iRfF.getText(), iUnit.getText(), typ, cGroup.getText(), iPrio.getText());
 		} else {
-			String t = "0";
+			String t = "0"; //$NON-NLS-1$
 			if (typ == LabItem.typ.TEXT) {
-				t = "1";
+				t = "1"; //$NON-NLS-1$
 			} else if (typ == LabItem.typ.ABSOLUTE) {
-				t = "2";
+				t = "2"; //$NON-NLS-1$
 			} else if (typ == LabItem.typ.FORMULA) {
-				t = "3";
+				t = "3"; //$NON-NLS-1$
 			} else if (typ == LabItem.typ.DOCUMENT) {
-				t = "4";
+				t = "4"; //$NON-NLS-1$
 			}
 			result.set(new String[] {
-				Messages.LaborPrefs_58, Messages.LaborPrefs_59, Messages.LaborPrefs_60,
-				Messages.LaborPrefs_61, Messages.LaborPrefs_62, Messages.LaborPrefs_63,
-				Messages.LaborPrefs_64, Messages.LaborPrefs_65, Messages.LaborPrefs_66
-			}, iKuerzel.getText(), iTitel.getText(), actLabor.getId(), iRef.getText(), iRfF
-				.getText(), iUnit.getText(), t, cGroup.getText(), iPrio.getText());
+				LabItem.SHORTNAME, LabItem.TITLE, LabItem.LAB_ID, LabItem.REF_MALE,
+				LabItem.REF_FEMALE_OR_TEXT, LabItem.UNIT, LabItem.TYPE, LabItem.GROUP,
+				LabItem.PRIO, LabItem.EXPORT
+			}, iKuerzel.getText(), iTitel.getText(), actLabor.getId(), iRef.getText(),
+				iRfF.getText(), iUnit.getText(), t, cGroup.getText(), iPrio.getText(),
+				cExportTag.getText());
 		}
 		if (!StringTool.isNothing(formel)) {
 			result.setFormula(formel);
