@@ -633,7 +633,7 @@ public abstract class PersistentObject implements ISelectable {
 	 * wieder aus der Datenbank erstellt werden kann. Dies funktioniert nur innerhalb derselben
 	 * Datenbank.
 	 * 
-	 * @return der code-String, aus dem mit createFromCode wieder das Objekt erstellt werden kann
+	 * @return der code-String, aus dem mit {@link PersistentObjectFactory}.createFromString wieder das Objekt erstellt werden kann
 	 */
 	public String storeToString(){
 		StringBuilder sb = new StringBuilder();
