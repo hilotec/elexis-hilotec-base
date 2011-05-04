@@ -3,7 +3,7 @@ package ch.elexis.eigenartikel;
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
-	private static final String BUNDLE_NAME = "ch.elexis.views.artikel.messages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "ch.elexis.eigenartikel.messages"; //$NON-NLS-1$
 	public static String ArtikelContextMenu_create;
 	public static String ArtikelContextMenu_deleteAction;
 	public static String ArtikelContextMenu_deleteActionConfirmCaption;
