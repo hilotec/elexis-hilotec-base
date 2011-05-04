@@ -15,7 +15,6 @@ package ch.elexis.eigenartikel;
 
 import org.eclipse.swt.SWT;
 
-import ch.elexis.data.Eigenartikel;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.DefaultControlFieldProvider;
