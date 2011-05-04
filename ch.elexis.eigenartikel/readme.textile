@@ -1,0 +1,5 @@
+h1. Elexis Eigenartikel
+
+Diese Plugin verwaltet Eigenartikel innerhalb von Elexis.
+
+Der beinhaltete Code wurde aus dem Kernplugin (ch.elexis) extrahiert.
