@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
+ * Copyright (c) 2006-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ * 	  M. Descher - extracted Eigenartikel to ch.elexis.eigenartikel
  * 
- * $Id: ArtikelView.java 6042 2010-02-01 14:22:36Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
@@ -65,9 +66,6 @@ public class ArtikelView extends ViewPart implements IActivationListener, ISavea
 		parent.setLayout(new FillLayout());
 		ctab = new CTabFolder(parent, SWT.NONE);
 		importers = new Hashtable<String, ImporterPage>();
-		// List<IDetailDisplay>
-		// list=Extensions.getClasses("ch.elexis.Diagnosecode","CodeDetailDisplay");
-		addCustomBlocksPage();
 		addPagesFor("ch.elexis.Verrechnungscode"); //$NON-NLS-1$
 		if (ctab.getItemCount() > 0) {
 			ctab.setSelection(0);
@@ -119,27 +117,6 @@ public class ArtikelView extends ViewPart implements IActivationListener, ISavea
 		
 	}
 	
-	private void addCustomBlocksPage(){
-		/*
-		 * BlockSelector cs=new BlockSelector(); BlockDetailDisplay bdd=new BlockDetailDisplay();
-		 * 
-		 * MasterDetailsPage page=new MasterDetailsPage(ctab,cs,bdd); CTabItem ct=new
-		 * CTabItem(ctab,SWT.NONE); ct.setText(bdd.getTitle()); ct.setControl(page);
-		 * ct.setData(bdd); page.sash.setWeights(new int[]{30,70});
-		 */
-		EigenartikelSelektor es = new EigenartikelSelektor();
-		EigenartikelDisplay ead = new EigenartikelDisplay();
-		MasterDetailsPage page = new MasterDetailsPage(ctab, es, ead);
-		CTabItem ct = new CTabItem(ctab, SWT.NONE);
-		ct.setText(ead.getTitle());
-		ct.setControl(page);
-		ct.setData(ead);
-		page.sash.setWeights(new int[] {
-			30, 70
-		});
-		
-	}
-	
 	private void makeActions(){
 		importAction = new Action(Messages.ArtikelView_importAction) {
 			@Override
@@ -162,7 +139,6 @@ public class ArtikelView extends ViewPart implements IActivationListener, ISavea
 			}
 			
 		};
-		
 	}
 	
 	private class ImportDialog extends TitleAreaDialog {
@@ -188,18 +164,35 @@ public class ArtikelView extends ViewPart implements IActivationListener, ISavea
 	
 	private void addPagesFor(String point){
 		List<IConfigurationElement> list = Extensions.getExtensions(point);
-		for (IConfigurationElement ce : list) {
+		IDetailDisplay d;
+		boolean headerDone = false;
+		for (int i = 0; i < list.size(); i++) {
+			IConfigurationElement ce = list.get(i);
 			try {
-				// System.out.println(ce.getName());
-				if (!"Artikel".equals(ce.getName())) { //$NON-NLS-1$
+				if (!"Artikel".equals(ce.getName()))
+					continue;
+				// The first page initializes the screen
+				if (!headerDone) {
+					d = (IDetailDisplay) ce.createExecutableExtension("CodeDetailDisplay");
+					CodeSelectorFactory csf =
+						(CodeSelectorFactory) ce.createExecutableExtension("CodeSelectorFactory");
+					MasterDetailsPage page = new MasterDetailsPage(ctab, csf, d);
+					CTabItem ct = new CTabItem(ctab, SWT.None);
+					ct.setText(d.getTitle());
+					ct.setControl(page);
+					ct.setData(d);
+					page.sash.setWeights(new int[] {
+						30, 70
+					});
+					headerDone=true;
 					continue;
 				}
-				IDetailDisplay d =
-					(IDetailDisplay) ce.createExecutableExtension("CodeDetailDisplay"); //$NON-NLS-1$
+				d = (IDetailDisplay) ce.createExecutableExtension("CodeDetailDisplay");
 				CTabItem ct = new CTabItem(ctab, SWT.NONE);
 				ct.setText(d.getTitle());
 				ct.setData(KEY_CE, ce);
 				ct.setData(KEY_DETAIL, d);
+				
 			} catch (Exception ex) {
 				MessageBox mb = new MessageBox(getViewSite().getShell(), SWT.ICON_ERROR | SWT.OK);
 				mb.setText(Messages.ArtikelView_errorCaption);
@@ -207,6 +200,7 @@ public class ArtikelView extends ViewPart implements IActivationListener, ISavea
 					+ ex.getLocalizedMessage());
 				mb.open();
 			}
+			
 		}
 	}
 	

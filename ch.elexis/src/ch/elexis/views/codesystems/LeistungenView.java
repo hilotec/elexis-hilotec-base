@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
+ * Copyright (c) 2006-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    M. Descher - extracted Eigenartikel to ch.elexis.eigenartikel
  * 
- *  $Id: LeistungenView.java 6164 2010-02-26 18:17:09Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.views.codesystems;
@@ -30,11 +31,9 @@ import ch.elexis.actions.CodeSelectorHandler;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
-import ch.elexis.data.Eigenartikel;
 import ch.elexis.data.ICodeElement;
 import ch.elexis.data.Leistungsblock;
 import ch.elexis.util.SWTHelper;
-import ch.elexis.views.artikel.EigenartikelSelektor;
 import ch.elexis.views.codesystems.CodeSelectorFactory.cPage;
 import ch.rgw.tools.StringTool;
 
@@ -94,13 +93,7 @@ public class LeistungenView extends ViewPart implements IActivationListener, ISa
 		// cPage page=new cPage(ctab, getViewSite(),ics,cs);
 		BlockSelector.bsPage bspage = new BlockSelector.bsPage(ctab, cs);
 		ct.setControl(bspage);
-		cs = new EigenartikelSelektor();
-		ct = new CTabItem(ctab, SWT.NONE);
-		ics = (ICodeElement) Hub.poFactory.createTemplate(Eigenartikel.class);
-		ct.setText(ics.getCodeSystemName());
-		ct.setData(ics);
-		cPage page = new cPage(ctab, ics, cs);
-		ct.setControl(page);
+		
 		CodeSelectorFactory.makeTabs(ctab, getViewSite(), "ch.elexis.Verrechnungscode"); //$NON-NLS-1$
 		GlobalEventDispatcher.addActivationListener(this, this);
 	}

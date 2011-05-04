@@ -31,19 +31,7 @@ public class Messages extends NLS {
 	public static String ArtikelView_errorText;
 	public static String ArtikelView_importAction;
 	public static String ArtikelView_importCaption;
-	public static String EigenartikelDisplay_actualOnStockPacks;
-	public static String EigenartikelDisplay_actualOnStockPieces;
-	public static String EigenartikelDisplay_buyPrice;
-	public static String EigenartikelDisplay_dealer;
-	public static String EigenartikelDisplay_displayTitle;
-	public static String EigenartikelDisplay_group;
-	public static String EigenartikelDisplay_maxOnStock;
-	public static String EigenartikelDisplay_minOnStock;
-	public static String EigenartikelDisplay_PiecesPerDose;
-	public static String EigenartikelDisplay_PiecesPerPack;
-	public static String EigenartikelDisplay_pleaseChooseDealer;
-	public static String EigenartikelDisplay_sellPrice;
-	public static String EigenartikelDisplay_typ;
+	
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
