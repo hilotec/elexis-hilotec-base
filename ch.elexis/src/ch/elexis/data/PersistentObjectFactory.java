@@ -141,4 +141,19 @@ public class PersistentObjectFactory implements IExecutableExtension {
 
 	}
 	
+	/**
+	 * Ask the plug-in local classloader to return an instance of a Class as given by the first
+	 * part of the storeToString (e.g. ch.elexis.eigenartikel.Eigenartikel::392393253959)
+	 * @param fullyQualifiedClassName
+	 * @return Class if found, else null
+	 */
+	public Class getClassforName(String fullyQualifiedClassName) {
+		Class ret = null;
+		try {
+			ret = Class.forName(fullyQualifiedClassName);
+			return ret;
+		} catch ( ClassNotFoundException e ) {
+			return ret;
+		}
+	}
 }
