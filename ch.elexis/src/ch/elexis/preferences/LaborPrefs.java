@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    M. Descher - adapted layout
  *    
- *  $Id: LaborPrefs.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -16,7 +17,9 @@ package ch.elexis.preferences;
 import java.util.List;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -30,8 +33,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -53,7 +57,7 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 	// DynamicListDisplay params;
 	// Composite definition;
 	// FormToolkit tk;
-	private TableViewer tv;
+	private TableViewer tableViewer;
 	private Table table;
 	int sortC = 1;
 	private String[] headers =
@@ -63,31 +67,35 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 			Messages.LaborPrefs_refF, Messages.LaborPrefs_sortmode
 		};
 	private int[] colwidth = {
-		100, 100, 50, 50, 50, 100, 100, 100
+		18, 16, 6, 6, 6, 16, 16, 16
 	};
 	
 	public LaborPrefs(){
 		super(Messages.LaborPrefs_labTitle);
+
 	}
 	
 	protected Control createContents(Composite parn){
-		// parn.setLayout(new FillLayout());
 		noDefaultAndApplyButton();
 		
-		Composite ret = new Composite(parn, SWT.NONE);
-		ret.setLayout(new GridLayout());
-		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		table = new Table(ret, SWT.SINGLE | SWT.V_SCROLL | SWT.FULL_SELECTION);
+		Composite tableComposite = new Composite(parn, SWT.NONE);
+		GridData gd = new GridData();
+		tableComposite.setLayoutData(gd);
+		TableColumnLayout tableColumnLayout = new TableColumnLayout();
+		tableComposite.setLayout(tableColumnLayout);
+		tableViewer = new TableViewer(tableComposite, SWT.BORDER | SWT.FULL_SELECTION); 	
+		table = tableViewer.getTable();
+
 		for (int i = 0; i < headers.length; i++) {
 			TableColumn tc = new TableColumn(table, SWT.LEFT);
 			tc.setText(headers[i]);
-			tc.setWidth(colwidth[i]);
+			tableColumnLayout.setColumnData(tc, new ColumnWeightData(colwidth[i], true));
 			tc.setData(i);
 			tc.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e){
 					sortC = (Integer) ((TableColumn) e.getSource()).getData();
-					tv.refresh(true);
+					tableViewer.refresh(true);
 				}
 				
 			});
@@ -95,8 +103,7 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		tv = new TableViewer(table);
-		tv.setContentProvider(new IStructuredContentProvider() {
+		tableViewer.setContentProvider(new IStructuredContentProvider() {
 			
 			public Object[] getElements(Object inputElement){
 				return LabItem.getLabItems().toArray();
@@ -107,24 +114,24 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 			public void inputChanged(Viewer viewer, Object oldInput, Object newInput){}
 			
 		});
-		tv.setLabelProvider(new LabListLabelProvider());
-		tv.addDoubleClickListener(new IDoubleClickListener() {
+		tableViewer.setLabelProvider(new LabListLabelProvider());
+		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			
 			public void doubleClick(DoubleClickEvent event){
-				IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
+				IStructuredSelection sel = (IStructuredSelection) tableViewer.getSelection();
 				Object o = sel.getFirstElement();
 				if (o instanceof LabItem) {
 					LabItem li = (LabItem) o;
 					EditLabItem eli = new EditLabItem(getShell(), li);
 					eli.create();
 					if (eli.open() == Dialog.OK) {
-						tv.refresh();
+						tableViewer.refresh();
 					}
 				}
 			}
 			
 		});
-		tv.setSorter(new ViewerSorter() {
+		tableViewer.setSorter(new ViewerSorter() {
 			
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2){
@@ -160,68 +167,8 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 			}
 			
 		});
-		tv.setInput(this);
-		Composite buttons = new Composite(ret, SWT.BORDER);
-		RowLayout rl = new RowLayout();
-		rl.justify = true;
-		buttons.setLayout(rl);
-		Button bNewItem = new Button(buttons, SWT.PUSH);
-		bNewItem.setText(Messages.LaborPrefs_labValue);
-		bNewItem.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e){
-				EditLabItem eli = new EditLabItem(getShell(), null);
-				eli.create();
-				if (eli.open() == Dialog.OK) {
-					tv.refresh();
-				}
-			}
-			
-		});
-		Button bDelItem = new Button(buttons, SWT.PUSH);
-		bDelItem.setText(Messages.LaborPrefs_deleteItem);
-		bDelItem.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e){
-				IStructuredSelection sel = (IStructuredSelection) tv.getSelection();
-				Object o = sel.getFirstElement();
-				if (o instanceof LabItem) {
-					LabItem li = (LabItem) o;
-					Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
-					qbe.add("ItemID", "=", li.getId()); //$NON-NLS-1$ //$NON-NLS-2$
-					List<LabResult> list = qbe.execute();
-					for (LabResult po : list) {
-						po.delete();
-					}
-					li.delete();
-					tv.remove(o);
-				}
-			}
-		});
-		Button bDelAllItems = new Button(buttons, SWT.PUSH);
-		bDelAllItems.setText(Messages.LaborPrefs_deleteAllItems);
-		bDelAllItems.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e){
-				if (SWTHelper.askYesNo(Messages.LaborPrefs_deleteReallyAllItems,
-					Messages.LaborPrefs_deleteAllExplain)) {
-					Query<LabItem> qbli = new Query<LabItem>(LabItem.class);
-					List<LabItem> items = qbli.execute();
-					for (LabItem li : items) {
-						Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
-						qbe.add("ItemID", "=", li.getId()); //$NON-NLS-1$ //$NON-NLS-2$
-						List<LabResult> list = qbe.execute();
-						for (LabResult po : list) {
-							po.delete();
-						}
-						li.delete();
-					}
-					tv.refresh();
-				}
-			}
-		});
-		if (Hub.acl.request(AccessControlDefaults.DELETE_LABITEMS) == false) {
-			bDelAllItems.setEnabled(false);
-		}
-		return ret;
+		tableViewer.setInput(this);
+		return tableComposite;
 	}
 	
 	static class LabListLabelProvider extends LabelProvider implements ITableLabelProvider {
@@ -266,8 +213,76 @@ public class LaborPrefs extends PreferencePage implements IWorkbenchPreferencePa
 		
 	};
 	
+	@Override
+	protected void contributeButtons(Composite parent){
+		((GridLayout) parent.getLayout()).numColumns++;
+		Button bNewItem = new Button(parent, SWT.PUSH);
+		bNewItem.setText(Messages.LaborPrefs_labValue);
+		bNewItem.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				EditLabItem eli = new EditLabItem(getShell(), null);
+				eli.create();
+				if (eli.open() == Dialog.OK) {
+					tableViewer.refresh();
+				}
+			}
+			
+		});
+		((GridLayout) parent.getLayout()).numColumns++;
+		Button bDelItem = new Button(parent, SWT.PUSH);
+		bDelItem.setText(Messages.LaborPrefs_deleteItem);
+		bDelItem.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e){
+				IStructuredSelection sel = (IStructuredSelection) tableViewer.getSelection();
+				Object o = sel.getFirstElement();
+				if (o instanceof LabItem) {
+					LabItem li = (LabItem) o;
+					Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
+					qbe.add("ItemID", "=", li.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+					List<LabResult> list = qbe.execute();
+					for (LabResult po : list) {
+						po.delete();
+					}
+					li.delete();
+					tableViewer.remove(o);
+				}
+			}
+		});
+		((GridLayout) parent.getLayout()).numColumns++;
+		Button bDelAllItems = new Button(parent, SWT.PUSH);
+		bDelAllItems.setText(Messages.LaborPrefs_deleteAllItems);
+		bDelAllItems.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e){
+				if (SWTHelper.askYesNo(Messages.LaborPrefs_deleteReallyAllItems,
+					Messages.LaborPrefs_deleteAllExplain)) {
+					Query<LabItem> qbli = new Query<LabItem>(LabItem.class);
+					List<LabItem> items = qbli.execute();
+					for (LabItem li : items) {
+						Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
+						qbe.add("ItemID", "=", li.getId()); //$NON-NLS-1$ //$NON-NLS-2$
+						List<LabResult> list = qbe.execute();
+						for (LabResult po : list) {
+							po.delete();
+						}
+						li.delete();
+					}
+					tableViewer.refresh();
+				}
+			}
+		});
+		if (Hub.acl.request(AccessControlDefaults.DELETE_LABITEMS) == false) {
+			bDelAllItems.setEnabled(false);
+		}
+	}
+
 	public void init(IWorkbench workbench){
 	// Nothing to initialize
 	}
-	
+
+	@Override
+	public Point computeSize(){
+		// TODO Auto-generated method stub
+		return new Point(350, 350);
+	}
 }
