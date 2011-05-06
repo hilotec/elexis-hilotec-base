@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.*;
 
 import ch.elexis.data.Prescription;
 import ch.elexis.util.SWTHelper;
+import org.eclipse.swt.layout.GridData;
 
 public class MediDetailDialog extends TitleAreaDialog {
 	Prescription art;
@@ -38,7 +39,11 @@ public class MediDetailDialog extends TitleAreaDialog {
 		ret.setLayout(new GridLayout());
 		new Label(ret, SWT.NONE).setText(Messages.getString("MediDetailDialog.dosage")); //$NON-NLS-1$
 		dosis = new Text(ret, SWT.BORDER);
+		GridData gd_dosis = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+		gd_dosis.widthHint = 80;
+		dosis.setLayoutData(gd_dosis);
 		dosis.setText(art.getDosis());
+		dosis.setTextLimit(10);
 		new Label(ret, SWT.NONE).setText(Messages.getString("MediDetailDialog.prescription")); //$NON-NLS-1$
 		einnahme = new Text(ret, SWT.MULTI);
 		einnahme.setText(art.getBemerkung());

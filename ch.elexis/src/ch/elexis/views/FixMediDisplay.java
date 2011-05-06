@@ -219,6 +219,8 @@ public class FixMediDisplay extends ListDisplay<Prescription> {
 				return 0.25F;
 			if (n.equalsIgnoreCase("1½"))
 				return 1.5F;
+			if(n.equalsIgnoreCase("⅓"))
+				return 0.33F;
 			
 			if (n.indexOf('/') != -1) {
 				String[] bruch = n.split(StringConstants.SLASH);
