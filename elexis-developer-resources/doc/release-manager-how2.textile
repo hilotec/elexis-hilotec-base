@@ -1,0 +1,76 @@
+h1. HowTo for the release manager
+
+p(klein). (c) 2011 by Niklaus Giger
+
+Here we document how the release manager works.
+
+The release-manager does all his release relevant work
+in a separate eclipse workspace which he never, never 
+should use for anything like fixing a bug or working on a feature!
+
+In the following discussion we assume that he his working on the 2.1.5.x
+release branch.
+
+Each time he gets a pull request or patch submitted he does the following:
+
+h2. Receiving a pull request
+
+The process starts with a a mail, called "Pull request":http://sourceforge.net/mailarchive/forum.php?thread_name=30D917A4-8792-4141-8492-565F6124F7BB%40medevit.at&forum_name=elexis-develop
+
+bc. hg checkout --clean 2.1.5.x
+hg pull https://medevit.medelexis.ch/hg/elexis-base
+
+Then the release manager runs the following small ruby snippet to generate a patch for each commit id.
+
+bc. #!/usr/bin/ruby
+input = %(
+changeset 4623  aad7d2c058cc
+changeset 4625  38640fc73166
+)
+input.each{
+  |x|
+  next if x.split.size !=3 or !/changeset/.match(x)
+  next if /^#/.match(x)
+  patchFile = "#{x.split[1]}.patch"
+  cmd = "hg export -r #{x.split[2]} >#{patchFile}"
+  system(cmd)
+}
+
+Then he revises all the patch files he received.
+
+When he is happy with the changes he imports the patches calling 
+
+bc. hg patch *.patch
+
+If it fails, e.g. with the patch 9a62e7b5fb3e he changes the patch slightly (by changing the paths to the messaages from ch.elexis/ to elexis/) and patches and commits with the following commands (to preserve marco as author)
+
+bc. patch -p1 <4656.patch
+hg commit --user marco --message="Ticket #293: Eclipse Log Status messages"
+
+Then he tries to push everything to the public SourceForge repository.
+
+bc. hg push ssh://release-manager@hg.sourceforge.net/hgroot/elexis/elexis-base --branch 2.1.5
+
+(It is important to specify --branch, as we want to avoid creating new branches on the SourceForge repository).
+
+If he is unable to push (because it would create new heads), he simply clones the SourceForge repository to a new directory and reapplies the patch-files there.
+
+Sometimes he also only pushes a single revision to the repository, by calling
+
+bc. hg push -r <rev-id>
+
+To see all logs in the branch in a short format he uses
+
+bc. hg log --branch 2.1.5.x --template '{rev}: {date|shortdate}: {author|person}: {desc}\n'
+
+h1. Preparing for a release
+
+He maintains a "checklist":http://wiki.medelexis.ch/index.php/Checkliste_f%C3%BCr_Versionsabschluss.
+
+
+h2. Tagging
+
+When he is ready to tag a release, he checks out the "Elexis Bootstrap":https://ngiger@bitbucket.org/ngiger/elexis-bootstrap project.
+
+There he uses the script *makeTag.rb* to create tags in all Mercurial repositories (sub-folders) of his current workspace.
+

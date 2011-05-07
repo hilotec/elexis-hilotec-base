@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: RechnungsPrefs.java 6143 2010-02-15 20:52:17Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.tarmedprefs;
@@ -22,6 +22,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
@@ -48,6 +49,7 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 	private static final int FONT_MIN_INDEX = 0;
 	private static final int FONT_NORMAL_INDEX = 1;
 	private static final int FONT_BOLD_INDEX = 2;
+	public static final String PREF_ADDCHILDREN = "tarmed/addchildrentp";
 	
 	Combo cbMands;
 	HashMap<String, Mandant> hMandanten;
@@ -255,7 +257,8 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			@Override
 			public void widgetSelected(SelectionEvent e){
 				TarmedRequirements.setTC(actMandant, cbTC.getText());
-				// actMandant.setInfoElement(PreferenceConstants.TARMEDTC, cbTC.getText());
+				// actMandant.setInfoElement(PreferenceConstants.TARMEDTC,
+				// cbTC.getText());
 			}
 			
 		});
@@ -272,17 +275,17 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 			}
 		});
 		/*
-		 * bUseEDA=new Button(gTC,SWT.CHECK);
-		 * bUseEDA.setText(Messages.getString("RechnungsPrefs.TrustCewntereDA")); //$NON-NLS-1$
-		 * bUseEDA.addSelectionListener(new SelectionAdapter(){
+		 * bUseEDA=new Button(gTC,SWT.CHECK); bUseEDA.setText(Messages.getString(
+		 * "RechnungsPrefs.TrustCewntereDA")); //$NON-NLS-1$ bUseEDA.addSelectionListener(new
+		 * SelectionAdapter(){
 		 * 
 		 * @Override public void widgetSelected(SelectionEvent e) {
 		 * actMandant.setInfoElement(PreferenceConstants.USEEDA, bUseEDA.getSelection()==true ? "1"
 		 * : "0"); //$NON-NLS-1$ //$NON-NLS-2$ }
 		 * 
-		 * }); bWithImage=new Button(gTC,SWT.CHECK);
-		 * bWithImage.setText(Messages.getString("RechnungsPrefs.ImagesToTrustCenter"));
-		 * //$NON-NLS-1$ bWithImage.addSelectionListener(new SelectionAdapter(){
+		 * }); bWithImage=new Button(gTC,SWT.CHECK); bWithImage.setText(Messages.
+		 * getString("RechnungsPrefs.ImagesToTrustCenter")); //$NON-NLS-1$
+		 * bWithImage.addSelectionListener(new SelectionAdapter(){
 		 * 
 		 * @Override public void widgetSelected(SelectionEvent e) {
 		 * actMandant.setInfoElement(PreferenceConstants.TCWITHIMAGE,
@@ -292,6 +295,29 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		 */
 
 		// OCR font
+		
+		addFontsGroup(ret);
+		
+		Group gAuto = new Group(ret, SWT.NONE);
+		gAuto.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		gAuto.setLayout(new FillLayout());
+		final Button bAddChildren = new Button(gAuto, SWT.CHECK);
+		bAddChildren.setText("Kinderzuschläge automatisch verrechnen");
+		bAddChildren.addSelectionListener(new SelectionAdapter() {
+			
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				Hub.mandantCfg.set(PREF_ADDCHILDREN, bAddChildren.getSelection());
+			}
+			
+		});
+		bAddChildren.setSelection(Hub.mandantCfg.get(PREF_ADDCHILDREN, false));
+		cbMands.select(0);
+		setMandant((Mandant) hMandanten.get(cbMands.getItem(0)));
+		return ret;
+	}
+	
+	private void addFontsGroup(Composite ret){
 		Group fonts = new Group(ret, SWT.NONE);
 		fonts.setText(Messages.getString("RechnungsPrefs.FontSlip")); //$NON-NLS-1$
 		fonts.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -363,10 +389,6 @@ public class RechnungsPrefs extends PreferencePage implements IWorkbenchPreferen
 		
 		// set the initial font values
 		setFontsTextValues();
-		
-		cbMands.select(0);
-		setMandant((Mandant) hMandanten.get(cbMands.getItem(0)));
-		return ret;
 	}
 	
 	public void init(IWorkbench workbench){

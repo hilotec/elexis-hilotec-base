@@ -201,26 +201,6 @@ public class Messages extends NLS {
 	
 	public static String LaborPrefs_52;
 	
-	public static String LaborPrefs_53;
-	
-	public static String LaborPrefs_58;
-	
-	public static String LaborPrefs_59;
-	
-	public static String LaborPrefs_60;
-	
-	public static String LaborPrefs_61;
-	
-	public static String LaborPrefs_62;
-	
-	public static String LaborPrefs_63;
-	
-	public static String LaborPrefs_64;
-	
-	public static String LaborPrefs_65;
-	
-	public static String LaborPrefs_66;
-	
 	public static String LaborPrefs_absolute;
 	
 	public static String LaborPrefs_alpha;
@@ -237,6 +217,8 @@ public class Messages extends NLS {
 	
 	public static String LaborPrefs_enterNewLabParam;
 	
+	public static String LaborPrefs_hintExportTag;
+	
 	public static String LaborPrefs_lab;
 	
 	public static String LaborPrefs_labParam;
@@ -246,6 +228,8 @@ public class Messages extends NLS {
 	public static String LaborPrefs_labTitle;
 	
 	public static String LaborPrefs_labValue;
+	
+	public static String LaborPrefs_lblExportTag;
 	
 	public static String LaborPrefs_name;
 	
@@ -269,6 +253,8 @@ public class Messages extends NLS {
 	
 	public static String LaborPrefs_unkown;
 	
+	public static String LaborPrefs_formula;
+
 	public static String LaborPrefs2_LabItemsAndGroups;
 	
 	public static String LabSettings_frequencyNewLabvalues;

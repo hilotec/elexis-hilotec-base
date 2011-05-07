@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: AccessControl.java 6279 2010-04-18 16:15:18Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -420,18 +420,15 @@ public class AccessControl {
 		flush();
 	}
 	
-	public String getDBUID(boolean bCreate) throws InsufficientRightsException{
-		if (request(AccessControlDefaults.ADMIN_ACE)) {
-			ACE dbuid = acls.get(DB_UID);
-			if (bCreate || dbuid == null) {
-				dbuid = new ACE(ACE.ACE_ROOT, DB_UID, StringTool.unique("db%id"));
-				rights.put(DB_UID, dbuid);
-				flush();
-			}
-			return dbuid.getLocalizedName();
-		} else {
-			throw new InsufficientRightsException(
-				"You don't have sufficient rights for the requested operation");
+	
+	public String getDBUID(boolean bCreate){
+		ACE dbuid = acls.get(DB_UID);
+		if (bCreate && dbuid == null) {
+			dbuid = new ACE(ACE.ACE_ROOT, DB_UID, StringTool.unique("db%id"));
+			rights.put(DB_UID, dbuid);
+			flush();
 		}
+		return dbuid.getLocalizedName();
 	}
+
 }

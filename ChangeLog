@@ -1,10 +1,40 @@
-Offene Probleme, welche bis zum rc1 (29. April) gelöst werden sollten:
-- Galexis wird nicht unterstützt (Library-Problem)
-- Changeset 4571 by Tony PatientenListeView initalizing optimized. Works now also when View is visible at startup. 
+Offene Probleme, welche bis zum rc3 (Ende Mail) gelöst werden sollten:
 - UnitTest von trunk sind noch nicht migriert
-- WindowTester läuft noch nicht (runFromScratch)
+- WindowTester läuft noch nicht
 - SmokeTest nicht klar definiert
 - Feature #48: Laboritems zusammenfassen (Dokumentation muss ergänzt werden)
+
+Changelog für 2.1.5.rc2
+Gerry Weirich: Ticket #352: Feld Bezug in Zusatzadressen zu kurz
+marco: Ticket #293: Eclipse Log Status messages
+marco: Ticket #67: java.lang.NoSuchMethodException
+marco: Ticket #84: ch.rgw.tools.JdbcLinkSyntaxException: ERROR: operator does not exist: character = integer
+marco: Ticket #142: Executable extension definition for "Class" not found; LaborDatenImport and LaborOrder extension points
+marco: Ticket #337: ch.elexis.data.PersistenceException: Fehler bei UPDATE LABORITEMS SET
+thomashu: Ticket: #102 - added possibility to create Status with severity ERROR which will be ignored by the QF handler
+marco: Ticket #348: java.lang.NullPointerException at ch.elexis.dialogs.EditLabItem.createDialogArea
+marco: Ticket #199: Failed to execute runnable (java.util.ConcurrentModificationException)
+thomashu: Ticket: #112 - fix for referenced part error message
+Gerry Weirich: Ticket #376: Tarmed-Kinderzuschläge automatisch verrechnen
+Gerry Weirich: Fehler #341: selling partial packages of medicaments
+Niklaus Giger: Fehler #342: Port of fix by Tony PatientenListeView initalizing optimized. Works now also when View is visible at startup.
+Niklaus Giger: ElexisFormat konsequent angewendet
+Niklaus Giger: Ticket 70: Integrationstest, added runFromScratch
+marco: Ticket #328: Funktionsfehler bei Auswertung von Formeln im Laborview
+thomas: Ticket: none - fixed setSelectedLab method of EditLabItem dialog
+thomashu: Ticket: #70 - fixed access to disposed widget on dispose
+marco: Ticket #259: java.lang.IllegalArgumentException: Argument not valid
+marco: Ticket #251: NPE at ch.elexis.dialogs.TerminDialog.linkActivated
+marco: Ticket #270: NPE at ch.elexis.views.KonsDetailView.widgetSelected
+marco: Ticket #239: NPE at ch.elexis.views.FallDetailView.runInUi
+thomas: added more tests for LabItem
+thomas: added LabItem test to AllTests
+thomas: Ticket: #23 - reworked getLabItems method, concerning empty string parameters
+thomas: added tests for LabItem
+Niklaus Giger: Ticket #101: Fixed Linux build by upgrading to Helio 3.6.2
+
+Changelog für 2.1.5.rc1
+Niklaus Giger: Fixed various build errors (Version contained illegal '-')
 
 Changelog für 2.1.5-rc0
 
