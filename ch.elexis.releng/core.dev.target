@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.6"?>
+
+<target name="core.dev">
+<locations>
+<location includeAllPlatforms="true" includeMode="slicer" type="InstallableUnit">
+<unit id="org.eclipse.pde.junit.runtime.standalone.feature.group" version="1.0.0.v20100831"/>
+<repository location="http://download.eclipse.org/releases/helios"/>
+</location>
+<location includeAllPlatforms="true" includeMode="slicer" type="InstallableUnit">
+<unit id="org.apache.commons.lang.source" version="2.4.0.v201005080502"/>
+<unit id="org.apache.commons.lang" version="2.4.0.v201005080502"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/S20110124210048/repository/"/>
+</location>
+<location includeAllPlatforms="true" includeMode="slicer" type="InstallableUnit">
+<unit id="org.eclipse.platform.feature.group" version="3.6.1.r361_v20100909-9gF78GrkFqw7GrsZnvz0JWNTeb6fue6896L"/>
+<unit id="org.eclipse.equinox.executable.feature.group" version="3.4.1.R36x_v20100823-7M7K7JF90dnJ-WLf3cf4yi"/>
+<unit id="org.eclipse.equinox.executable" version="3.4.1.R36x_v20100823-7M7K7JF90dnJ-WLf3cf4yi"/>
+<unit id="org.eclipse.platform.sdk" version="3.6.1.M20100909-0800"/>
+<repository location="http://download.eclipse.org/eclipse/updates/3.6"/>
+</location>
+</locations>
+</target>
