@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.plugins.disk__usage.DiskUsageProperty/>
+  </properties>
+  <scm class="hudson.plugins.mercurial.MercurialSCM">
+    <source>/srv/www/repo.medelexis.ch-SSL/medelexis-trunk</source>
+    <modules></modules>
+    <branch>Release_2.1.1</branch>
+    <clean>false</clean>
+    <forest>false</forest>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers class="vector">
+    <hudson.triggers.SCMTrigger>
+      <spec>*/15 * * * *</spec>
+    </hudson.triggers.SCMTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.plugins.buckminster.EclipseBuckminsterBuilder>
+      <installationName>Fetch Buckminster-remote</installationName>
+      <commands>importtargetdefinition -A &apos;${WORKSPACE}/at.medevit.medelexis.releng/core.dev.target&apos;</commands>
+      <logLevel>info</logLevel>
+      <params></params>
+      <targetPlatformName>None</targetPlatformName>
+      <userTemp></userTemp>
+      <userOutput></userOutput>
+      <userCommand></userCommand>
+      <userWorkspace></userWorkspace>
+      <globalPropertiesFile></globalPropertiesFile>
+      <equinoxLauncherArgs></equinoxLauncherArgs>
+    </hudson.plugins.buckminster.EclipseBuckminsterBuilder>
+  </builders>
+  <publishers>
+    <hudson.plugins.buckminster.targetPlatform.TargetPlatformPublisher>
+      <artifacts>.metadata/.plugins/org.eclipse.pde.core/.bundle_pool</artifacts>
+      <latestOnly>false</latestOnly>
+      <targetPlatformName>Elexis Core Target</targetPlatformName>
+    </hudson.plugins.buckminster.targetPlatform.TargetPlatformPublisher>
+  </publishers>
+  <buildWrappers/>
+</project>
