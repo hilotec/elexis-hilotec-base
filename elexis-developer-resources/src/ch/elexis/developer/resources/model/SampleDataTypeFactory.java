@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    M. Descher - added getClassforName()
  * 
- *    $Id: SampleDataTypeFactory.java 6119 2010-02-12 06:16:14Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.developer.resources.model;
@@ -57,6 +58,27 @@ public class SampleDataTypeFactory extends PersistentObjectFactory {
 		} catch (Exception ex) {
 			// ExHandler.handle(ex);
 			return null;
+		}
+	}
+	
+	/**
+	 * Return an instance of a class managed by the plug-in as described by
+	 * {@link PersistentObject}.storeToString. This can be used to create an
+	 * instance of {@link ch.elexis.data.Query} without direct access to the
+	 * respective data type.
+	 * 
+	 * @param fullyQualifiedClassName the first part of a {@link PersistentObject}.storeToString() representation<br>
+	 * e.g. {@code ch.elexis.data.Eigenartikel[::ID]}
+	 * @return a class object of the referenced data type
+	 */
+	@Override
+	public Class getClassforName(String fullyQualifiedClassName) {
+		Class ret = null;
+		try {
+			ret = Class.forName(fullyQualifiedClassName);
+			return ret;
+		} catch ( ClassNotFoundException e ) {
+			return ret;
 		}
 	}
 }
