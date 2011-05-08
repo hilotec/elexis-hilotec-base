@@ -16,6 +16,7 @@ package ch.elexis.dialogs;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -30,12 +31,22 @@ import ch.elexis.util.SWTHelper;
 
 public class DisplayTextDialog extends TitleAreaDialog {
 	String t, m, cnt;
+	Boolean hS = true;
+	Font f = null;
 	
 	public DisplayTextDialog(Shell parentShell, String title, String message, String content){
 		super(parentShell);
 		t = title;
 		m = message;
 		cnt = content;
+	}
+	
+	public void setWhitespaceNormalized(Boolean hideSpaces){
+		hS = hideSpaces;
+	}
+	
+	public void setFont(Font font){
+		f = font;
 	}
 	
 	@Override
@@ -62,6 +73,15 @@ public class DisplayTextDialog extends TitleAreaDialog {
 			cnt = cnt.replaceAll("\\n\\n", "\\n");
 			
 			ret = Desk.getToolkit().createFormText(form.getBody(), false);
+			((FormText) ret).setWhitespaceNormalized(hS);
+			if (f != null)
+				try {
+					((FormText) ret).setFont(f);
+				} catch (Exception ex) {
+					// Do nothing -> Use System Default font
+				} finally {
+					// Do nothing
+				}
 			// ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 			((FormText) ret).setText("<form><p>" + cnt + "</p></form>", true, true);
 		}

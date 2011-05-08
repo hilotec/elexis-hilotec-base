@@ -46,6 +46,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridLayout;
@@ -161,8 +162,8 @@ public class LaborView extends ViewPart implements IActivationListener, ISaveabl
 	};
 	
 	private ElexisEventListener eeli_labitem = new ElexisEventListener() {
-		private final ElexisEvent eetmpl =
-			new ElexisEvent(null, LabItem.class, ElexisEvent.EVENT_RELOAD);
+		private final ElexisEvent eetmpl = new ElexisEvent(null, LabItem.class,
+			ElexisEvent.EVENT_RELOAD);
 		
 		public ElexisEvent getElexisEventFilter(){
 			return eetmpl;
@@ -299,8 +300,30 @@ public class LaborView extends ViewPart implements IActivationListener, ISaveabl
 				if (lr != null) {
 					LabItem li = lr.getItem();
 					if (li.getTyp().equals(LabItem.typ.TEXT) || (lr.getComment().length() > 0)) {
-						new DisplayTextDialog(getViewSite().getShell(), Messages
-							.getString("LaborView.textResultTitle"), li.getName(), lr.getComment()).open(); //$NON-NLS-1$
+						DisplayTextDialog dlg =
+							new DisplayTextDialog(
+								getViewSite().getShell(),
+								Messages.getString("LaborView.textResultTitle"), li.getName(), lr.getComment()); //$NON-NLS-1$
+						Font font = null;
+						// HL7 Befunde enthalten oft mit Leerzeichen formatierte Bemerkungen,
+						// die nur mit nicht-proportionalen Fonts dargestellt werden können
+						// Wir versuchen also, die Anzeige mit Courier New, ohne zu wissen ob die
+						// auf Mac und Linux auch drauf sind.
+						// Falls der Font nicht geladen werden kann, wird der System-Default Font
+						// verwendet
+						// Hier die Fonts, welche getestet worden sind:
+						// Windows: Courier New (getestet=
+						// Mac: nicht getestet
+						// Linux: nicht getestet
+						try {
+							font = new Font(null, "Courier New", 9, SWT.NORMAL); //$NON-NLS-1$
+						} catch (Exception ex) {
+							// Do nothing -> Use System Default font
+						} finally {
+							dlg.setFont(font);
+						}
+						dlg.setWhitespaceNormalized(false);
+						dlg.open();
 					} else if (li.getTyp().equals(LabItem.typ.DOCUMENT)) {
 						Patient patient = ElexisEventDispatcher.getSelectedPatient();
 						if (patient != null) {
@@ -526,8 +549,8 @@ public class LaborView extends ViewPart implements IActivationListener, ISaveabl
 	
 	@Override
 	public void setFocus(){
-	// TODO Automatisch erstellter Methoden-Stub
-	
+		// TODO Automatisch erstellter Methoden-Stub
+		
 	}
 	
 	public void selectionEvent(final PersistentObject obj){
@@ -826,8 +849,8 @@ public class LaborView extends ViewPart implements IActivationListener, ISaveabl
 							TimeTool dat = dsl.getSelectedDate();
 							String nDat = dat.toString(TimeTool.DATE_COMPACT);
 							Query<LabResult> qbe = new Query<LabResult>(LabResult.class);
-							qbe.add(LabResult.DATE, Query.EQUALS, dOld
-								.toString(TimeTool.DATE_COMPACT));
+							qbe.add(LabResult.DATE, Query.EQUALS,
+								dOld.toString(TimeTool.DATE_COMPACT));
 							qbe.add(LabResult.PATIENT_ID, Query.EQUALS, actPatient.getId());
 							for (LabResult lr : qbe.execute()) {
 								lr.set(LabResult.DATE, nDat);
