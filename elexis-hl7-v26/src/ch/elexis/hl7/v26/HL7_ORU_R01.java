@@ -334,23 +334,6 @@ public class HL7_ORU_R01 extends HL7Parser {
 		if (labwert.getKommentar() != null && labwert.getKommentar().length() > 0) {
 			fillNTE(orderObservation.getNTE(), labwert);
 		}
-// // Kommentar wird nur bei Nicht-Text hinzugefügt
-// if (labItem.getTyp().equals(Typ.TEXT)) {
-//			StringTokenizer tokenizer = new StringTokenizer(labwert.getKommentar(), "\n"); //$NON-NLS-1$
-// int index = 0;
-// while (tokenizer.hasMoreElements()) {
-// fillOBX_TX(orderObservation.getOBSERVATION(index).getOBX(), index,
-// tokenizer.nextToken());
-// index++;
-// }
-// } else {
-// fillOBX(orderObservation.getOBSERVATION().getOBX(), patient, labItem, labwert);
-// // Kommentar wird nur bei Nicht-Text hinzugefügt
-// if (labwert.getKommentar() != null && labwert.getKommentar().length() > 0) {
-// fillNTE(orderObservation.getNTE(), labwert);
-// }
-// }
-		
 		// Now, let's encode the message and look at the output
 		Parser parser = new PipeParser();
 		return parser.encode(oru);
@@ -534,7 +517,7 @@ public class HL7_ORU_R01 extends HL7Parser {
 			if (doubleObj != null) {
 				// Numerisch
 				NM numericType = new NM(null);
-				numericType.setValue(laborWert.getResultat());
+				numericType.setValue(laborWert.getResultat().trim());
 				type = numericType;
 			} else {
 				obx.getObx2_ValueType().setValue(HL7Constants.OBX_VALUE_TYPE_TX);
@@ -609,10 +592,14 @@ public class HL7_ORU_R01 extends HL7Parser {
 		// OBX-6: Units <LabItems.EINHEIT>
 		obx.getObx6_Units().getCwe1_Identifier().setValue(laborItem.getEinheit());
 		// OBX-7: References Range <LabItems.REFMANN>, bzw <LabItems.REFFRAU> je nach Geschlecht
+		String refRange = "";
 		if (patient.isMale()) {
-			obx.getObx7_ReferencesRange().setValue(laborItem.getRefMann());
+			refRange = laborItem.getRefMann();
 		} else {
-			obx.getObx7_ReferencesRange().setValue(laborItem.getRefFrau());
+			refRange = laborItem.getRefFrau();
+		}
+		if (refRange != null) {
+			obx.getObx7_ReferencesRange().setValue(refRange.trim());
 		}
 		// OBX-8: Abnormal flags "L" (Low), bzw "H" (High) bei Zahlen. Sonst "N"
 		obx.getObx8_AbnormalFlags(0).setValue(getAbnormalFlag(patient, laborItem, laborWert));

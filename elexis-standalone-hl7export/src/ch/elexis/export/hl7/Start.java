@@ -123,8 +123,12 @@ public class Start {
 			} else {
 				File[] tmpInhalt = tempDirectory.listFiles();
 				if (tmpInhalt.length > 0) {
-					Logger.logInfo("WARN: Alte Dateien aus Tmp-Verzeichnis sichern..");
-					String backupDirectoryPathname = exportPath + "\\backup\\";
+					Logger
+						.logInfo("WARN: Alte Dateien aus Tmp-Verzeichnis ins Export Verzeichnis bereitstellen ..");
+					// Nachtrag 9.5.2011
+					// backup ist keine gute Idee, weil damit Messwerte "verloren" gehen, bis diese
+					// jemand persönlich anschaut. Wir schieben diese Dateien demzufolge in den Exportpfad (Teilresultat).
+					String backupDirectoryPathname = exportPath; // + "\\backup\\"
 					File backupDirectory = new File(backupDirectoryPathname);
 					if (!backupDirectory.exists()) {
 						backupDirectory.mkdirs();
@@ -147,7 +151,7 @@ public class Start {
 							+ filename), content);
 						tmpFile.delete();
 					}
-					Logger.logInfo("WARN: Alte Dateien aus Tmp-Verzeichnis sichern abgeschlossen");
+					Logger.logInfo("WARN: Alte Dateien aus Tmp-Verzeichnis ins Export Verzeichnis bereitstellen: abgeschlossen");
 				}
 			}
 			
