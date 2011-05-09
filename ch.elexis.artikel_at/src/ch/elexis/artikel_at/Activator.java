@@ -5,6 +5,7 @@ import org.osgi.framework.BundleContext;
 
 import ch.elexis.Hub;
 import ch.elexis.artikel_at.data.Artikel_AT_Cache;
+import ch.rgw.io.Settings;
 
 public class Activator extends AbstractUIPlugin {
 	
@@ -19,11 +20,13 @@ public class Activator extends AbstractUIPlugin {
 	 */
 	@Override
 	public void start(BundleContext context) throws Exception{
-		if (Hub.globalCfg.get(PreferenceConstants.ARTIKEL_AT_CACHEUPDATE_TIME, "invalid")
-			.equalsIgnoreCase("invalid")) {
-			Artikel_AT_Cache.updateCache();
+		Settings globalCfg = Hub.globalCfg;
+		if (globalCfg != null) {
+			if (Hub.globalCfg.get(PreferenceConstants.ARTIKEL_AT_CACHEUPDATE_TIME, "invalid")
+				.equalsIgnoreCase("invalid")) {
+				Artikel_AT_Cache.updateCache();
+			}
 		}
-		
 	}
 	
 	@Override
