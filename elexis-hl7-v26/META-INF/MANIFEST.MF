@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis HL7 V2.6 Export Utilities
 Bundle-SymbolicName: ch.elexis.hl7.v26;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 2.1.5
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ClassPath: lib/commons-codec.jar,
  lib/commons-logging-1.0.4.jar,
