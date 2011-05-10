@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="medshare-licenceKey build script" default="build" basedir=".">
+
+	<!-- ================================================================== -->
+	<!-- Properties                                                         -->
+	<!-- ================================================================== -->
+	<property name="build.dir" value="classes-ant" />
+	<property name="src.dir" value="src" />
+	<property name="lib.dir" value="lib" />
+	<property name="jar.file" value="elexis-hl7-v26.jar" />
+
+	<!-- ================================================================== -->
+	<!-- Compile                                                            -->
+	<!-- ================================================================== -->
+	
+	<target name="build">
+		 <copy todir="${build.dir}">
+		   <fileset dir="${src.dir}" includes="**/*.*"/>
+		</copy>
+		<javac destdir="${build.dir}" source="1.5" encoding="ISO-8859-1" debug="true">
+			<src path="${build.dir}"/>
+			<classpath>
+				<fileset dir="${lib.dir}" includes="*.jar" />
+			</classpath>
+		</javac>
+		<jar basedir="${build.dir}" destfile="${jar.file}"/>
+		<delete dir="${build.dir}"/>
+	</target>
+</project>
+

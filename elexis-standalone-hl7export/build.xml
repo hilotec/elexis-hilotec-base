@@ -29,6 +29,7 @@ under the License.
 	<!-- ================================================================== -->
 	<!-- Properties                                                         -->
 	<!-- ================================================================== -->
+	<property name="prerequisite1" value="../elexis-hl7-v26/elexis-hl7-v26.jar" />
 	<property name="build.dir" value="classes-ant" />
 	<property name="src.dir" value="src" />
 	<property name="jar.file" value="hl7export-${DSTAMP}.jar" />
@@ -38,6 +39,9 @@ under the License.
 	<!-- Compile                                                            -->
 	<!-- ================================================================== -->
 	<target name="build">
+		<copy todir="lib">
+			<fileset file="${prerequisite1}" />
+		</copy>
 		<copy todir="${build.dir}">
 			<fileset dir="${src.dir}" includes="**/*.*" />
 		</copy>
@@ -50,7 +54,7 @@ under the License.
 		<jar basedir="${build.dir}" jarfile="${jar.file}">
 			<manifest>
 				<attribute name="Main-Class" value="ch.elexis.export.hl7.Start" />
-				<attribute name="Class-Path" value="h2.jar hsqldb.jar mysql-connector-java.jar postgresql.jar ch.elexis.hl7.v26_1.0.0.jar commons-logging-1.0.4.jar hapi-base-1.1.jar hapi-structures-v26-1.1.jar" />
+				<attribute name="Class-Path" value="h2.jar hsqldb.jar mysql-connector-java.jar postgresql.jar elexis-hl7-v26.jar commons-logging-1.0.4.jar hapi-base-1.1.jar hapi-structures-v26-1.1.jar" />
 			</manifest>
 		</jar>
 

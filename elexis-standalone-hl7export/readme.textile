@@ -46,6 +46,12 @@ h2. Abhängigkeiten
 Das Projekt verwendet das elexis-hl7-v26.jar. 
 Dieses kann aus dem Plugin elexis-hl7-v26 gebuildet werden (Ant-Script: build.xml)
 
+h2. Bedieneranleitung
+
+Die aktuelle Bedieneranleitung kann hier heruntergeladen werden:
+"http://www.medelexis.ch/fileadmin/dox/Elexis_HL7Export_Anleitung.pdf":http://www.medelexis.ch/fileadmin/dox/Elexis_HL7Export_Anleitung.pdf
+Dieser Link kann auch den Benutzern angegeben werden und bei Bedarf in ein medelexis.xml eingetragen werden.
+
 Change-History  
 Michael Imhof, 26.04.2011
 Tony Schaller, 08.05.2011
