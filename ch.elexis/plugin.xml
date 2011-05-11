@@ -733,5 +733,14 @@
          </variable>
       </sourceProvider>
    </extension>
+   <extension
+         point="ch.elexis.Verrechnungscode">
+      <Leistung
+            CodeDetailDisplay="ch.elexis.eigenleistung.EigenleistungDetailDisplay"
+            CodeSelectorFactory="ch.elexis.eigenleistung.EigenleistungCodeSelectorFactory"
+            ElementFactory="ch.elexis.data.PersistentObjectFactory"
+            name="Eigenleistung">
+      </Leistung>
+   </extension>
 
 </plugin>
