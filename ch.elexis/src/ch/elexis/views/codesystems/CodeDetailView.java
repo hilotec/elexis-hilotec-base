@@ -107,6 +107,9 @@ public class CodeDetailView extends ViewPart implements IActivationListener, ISa
 		page.sash.setWeights(new int[] {
 			30, 70
 		});
+		
+		getSite().registerContextMenu(cs.getMgr(), cs.getCv().getViewerWidget());
+		getSite().setSelectionProvider(cs.getCv().getViewerWidget());
 	}
 	
 	private void makeActions(){
