@@ -121,4 +121,10 @@ bq. Buckminster headless can then be installed using the following command:
 # Unpacking http://download.eclipse.org/tools/buckminster/products/director_latest.zip to /var/lib/jenkins/tools/Buckminster on Jenkins
 cd /opt/director
 ./director -r http://download.eclipse.org/tools/buckminster/headless-3.6 -d ../tmp-buckminster -p Buckminster -installIU "org.eclipse.equinox.p2.director.feature.feature.group,org.eclipse.buckminster.pde.headless.feature.feature.group,org.eclipse.buckminster.cmdline.product,org.eclipse.buckminster.core.headless.feature.feature.group"
-  
+
+@/opt/buckminster/buckminster --loglevel debug importtargetdefinition -A /path/to/elexis-base/ch.elexis.releng/buckminster/core.dev.target@ erzeugt eine Target platform im Unterverzeichnis workspace
+
+Damit emma gebraucht werden kann muss Buckminster Version 3.6 installiert sein
+
+/opt/buckminster/buckminster importtargetdefinition -A core.dev.target
+
