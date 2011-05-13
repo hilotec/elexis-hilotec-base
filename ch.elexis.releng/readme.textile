@@ -74,6 +74,11 @@ Das andere property file ist für das site.p2 target und gibt vor das für alle 
   
 h2. Buckminster auf Hudson/Jenkins
 
+h3. Buckminster Installation
+
+Das Plugin-Buckminster via Jenkins..Konfiguration..Plugins verwalten installieren. Details siehe "Wiki":https://wiki.jenkins-ci.org/display/JENKINS/Buckminster+PlugIn
+Dann im Jenkins..Konfigurations-Dialog unter "Buckminster" die Option "Automatisch installieren" aktivieren und als Version "Buckminster 3.6" für Helios  wählen. Danach mit Drücken auf "Buckminster hinzufügen" Buckminster erstellen.
+
 Es gibt hier vor allem 2 Szenarien build mit dem ausführbaren Artefakten als Ergebnis, und build mit anschliessenden Tests als Ergebnis.
 
 Generell muss um ein Buckminster build auf dem Server auszuführen spezifiziert werden welches feature die zu buildenden features und plugins enthäl(ch.elexis.releng/buckminster/*.cquery) und wo buckminster nach den entsprechenden features und plugins suchen kann (*.rmap). Damit Buckminster diese auch findet müssen diese zusätzlich in Vereichnisen liegen deren Name ihrer ID entspiricht (ch.elexis_test -> /ch.elexis_test). 
@@ -103,12 +108,17 @@ Die Installation ist im Appendix A von "Buckminster: The definitive Guide" erkl�
 
 bq. 1. Check if Buckminster is already available for install. Buckminster is part of the Eclipse release trains and if you are using a packaged Eclipse downloaded from eclipse.org then chances are that you can install directly from the repository for the release train. Check under Help → Install New Software... for the Buckminster category. If you can’t find the Buckminster category, you need to add a repository location. (You may also want to do this to get the latest updates as the release train sites are updated only infrequently).
 
-Um auf der Kommandozeile zu arbeiten, muss man den "@director@":http://www.eclipse.org/downloads/download.php?file=/tools/buckminster/products/director_latest.zip holen und installieren.
+Um auf der Kommandozeile zu arbeiten, muss man den "@director@":http://download.eclipse.org/tools/buckminster/products/director_latest.zip holen und installieren.
 
 bq. Buckminster headless can then be installed using the following command:
 	director
 	-r http://download.cloudsmith.com/buckminster/external-3.6
 	-d <buckminster install folder>
 	-p Buckminster
-	-i org.eclipse.buckminster.cmdline.product
+#	-i org.eclipse.buckminster.cmdline.product
+#ssh://niklaus@ng-hp//opt/elexis-buckminster/repos/elexis-base
+
+# Unpacking http://download.eclipse.org/tools/buckminster/products/director_latest.zip to /var/lib/jenkins/tools/Buckminster on Jenkins
+cd /opt/director
+./director -r http://download.eclipse.org/tools/buckminster/headless-3.6 -d ../tmp-buckminster -p Buckminster -installIU "org.eclipse.equinox.p2.director.feature.feature.group,org.eclipse.buckminster.pde.headless.feature.feature.group,org.eclipse.buckminster.cmdline.product,org.eclipse.buckminster.core.headless.feature.feature.group"
   
