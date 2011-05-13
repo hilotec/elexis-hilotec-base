@@ -4,8 +4,8 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/elexis"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/elexis-utilities"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/elexis-importer"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ch.rgw.utility"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ch.elexis.importer.div"/>
 	<classpathentry kind="lib" path="/elexis-utilities/lib/bcprov-jdk15-140.jar"/>
 	<classpathentry kind="src" path="/Laborimport-TeamW"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/ngiger-utilities-comm"/>
