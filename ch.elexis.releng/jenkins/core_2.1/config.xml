@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Build Elexis Core (at.medevit.medelexis.core.feature) and create artifacts for platforms.</description>
+  <description>Build Elexis Core (ch.elexis.core.feature) and create artifacts for platforms.</description>
   <logRotator>
     <daysToKeep>-1</daysToKeep>
     <numToKeep>4</numToKeep>
@@ -13,14 +13,11 @@
     <hudson.plugins.disk__usage.DiskUsageProperty/>
   </properties>
   <scm class="hudson.plugins.mercurial.MercurialSCM">
-    <source>http://elexis.hg.sourceforge.net:8000/hgroot/elexis/elexis-base</source>
+    <source>https://bitbucket.org/ngiger/elexis-base</source>
     <modules></modules>
-    <branch>Release_2.1.1</branch>
+    <branch>2.1.buckminster</branch>
     <clean>false</clean>
     <forest>false</forest>
-    <browser class="hudson.plugins.mercurial.browser.HgWeb">
-      <url>http://elexis.hg.sourceforge.net:8000/hgroot/elexis/elexis-base/</url>
-    </browser>
   </scm>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
@@ -33,32 +30,14 @@
   </triggers>
   <concurrentBuild>false</concurrentBuild>
   <builders>
-    <hudson.tasks.Shell>
-      <command>echo &quot;=== Beziehe Abhängigkeiten&quot;
-mkdir tmp
-hg clone -u Release_2.1.1 /srv/www/repo.medelexis.ch-SSL/medelexis-trunk ./tmp
-cp -r ./tmp/* .
-rm -r ./tmp
-
-echo &quot;=== Fix component dirname/buildname mismatch&quot;
-/usr/local/bin/renameEclipseProject.sh elexis ch.elexis
-/usr/local/bin/renameEclipseProject.sh elexis-utilities ch.rgw.utility
-/usr/local/bin/renameEclipseProject.sh h2-adapter ch.elexis.h2.connector
-/usr/local/bin/renameEclipseProject.sh hsql-adapter ch.elexis.hsql.connector
-/usr/local/bin/renameEclipseProject.sh mysql-adapter ch.elexis.mysql.connector
-/usr/local/bin/renameEclipseProject.sh postgresql-adapter ch.elexis.postgresql.connector
-
-/usr/local/bin/renameEclipseProject.sh elexis-importer ch.elexis.importer.div
-</command>
-    </hudson.tasks.Shell>
     <hudson.plugins.buckminster.EclipseBuckminsterBuilder>
-      <installationName>Fetch Buckminster-remote</installationName>
-      <commands>import &apos;${WORKSPACE}/at.medevit.medelexis.releng/buckminster/local.core.cquery&apos;
+      <installationName>Buckminster</installationName>
+      <commands>import &apos;${WORKSPACE}/ch.elexis.releng/buckminster/local.core.cquery&apos;
 build  -c
-perform -D target.os=linux -D target.ws=gtk -D target.arch=x86_64 at.medevit.medelexis.core.feature#create.product.zip
-perform -D target.os=linux -D target.ws=gtk -D target.arch=x86 at.medevit.medelexis.core.feature#create.product.zip
-perform -D encoding=UTF-8 -D target.os=macosx -D target.ws=cocoa -D target.arch=x86_64 at.medevit.medelexis.core.feature#create.product.zip
-perform -D target.os=win32 -D target.ws=win32 -D target.arch=x86 at.medevit.medelexis.core.feature#create.product.zip</commands>
+perform -D target.os=linux -D target.ws=gtk -D target.arch=x86_64 ch.elexis.core.feature#create.product.zip
+perform -D target.os=linux -D target.ws=gtk -D target.arch=x86 ch.elexis.core.feature#create.product.zip
+perform -D encoding=UTF-8 -D target.os=macosx -D target.ws=cocoa -D target.arch=x86_64 ch.elexis.core.feature#create.product.zip
+perform -D target.os=win32 -D target.ws=win32 -D target.arch=x86 ch.elexis.core.feature#create.product.zip</commands>
       <logLevel>info</logLevel>
       <params></params>
       <targetPlatformName>Elexis Core Target</targetPlatformName>
@@ -72,7 +51,7 @@ perform -D target.os=win32 -D target.ws=win32 -D target.arch=x86 at.medevit.mede
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>buckminster.output/at.medevit.medelexis.core.feature_1.0.0-eclipse.feature/*.zip</artifacts>
+      <artifacts>buckminster.output/ch.elexis.core.feature_1.0.0-eclipse.feature/*.zip</artifacts>
       <latestOnly>false</latestOnly>
     </hudson.tasks.ArtifactArchiver>
   </publishers>
