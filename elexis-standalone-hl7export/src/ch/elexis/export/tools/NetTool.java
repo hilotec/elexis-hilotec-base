@@ -1,4 +1,4 @@
-// $Id: NetTool.java 3862 2008-05-05 16:14:14Z rgw_ch $
+// $Id$
 package ch.elexis.export.tools;
 
 import java.io.IOException;

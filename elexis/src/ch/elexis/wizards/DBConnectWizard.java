@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: DBConnectWizard.java 5313 2009-05-17 17:07:36Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 
 package ch.elexis.wizards;

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Eigendiagnose.java 6422 2010-06-11 11:34:21Z marlovitsh $
+ *    $Id$
  *******************************************************************************/
 package ch.elexis.eigendiagnosen.data;
 

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: LaborPrefs.java 3862 2008-05-05 16:14:14Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.preferences;
