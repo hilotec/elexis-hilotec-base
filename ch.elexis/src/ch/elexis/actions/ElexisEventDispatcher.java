@@ -192,8 +192,8 @@ public final class ElexisEventDispatcher extends Job {
 					if (sps == null)
 						sps =
 							(ISourceProviderService) PlatformUI.getWorkbench()
-								.getActiveWorkbenchWindow()
 								.getService(ISourceProviderService.class);
+				
 					((PatientSelectionStatus) sps
 						.getSourceProvider(PatientSelectionStatus.PATIENTACTIVE)).setState(true);
 				}
