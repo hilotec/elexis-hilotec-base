@@ -21,7 +21,8 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses( {
 	ch.elexis.data.Test_PersistentObject.class, ch.elexis.data.Test_LabItem.class,
-	ch.elexis.data.Test_DBImage.class, ch.elexis.data.Test_Query.class
+	ch.elexis.data.Test_DBImage.class, ch.elexis.data.Test_Query.class,
+	ch.elexis.util.Test_DBUpdate.class
 })
 public class AllTests {
 	public static Test suite() throws ClassNotFoundException{
