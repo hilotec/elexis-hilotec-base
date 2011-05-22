@@ -534,6 +534,9 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener, IAc
 		if (actKons != null) {
 			actKons.updateEintrag(text.getContentsAsXML(), false);
 			log.log("saved.", Log.DEBUGMSG); //$NON-NLS-1$
+			setKons(actKons);
+		} else {
+			log.log(getClass().getName()+" save() actKons == null", Log.WARNINGS);
 		}
 	}
 	

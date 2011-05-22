@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: DBUpdate.java 6178 2010-03-01 17:25:51Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.util;

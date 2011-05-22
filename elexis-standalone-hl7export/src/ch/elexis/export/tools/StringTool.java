@@ -1,4 +1,4 @@
-// $Id: StringTool.java 4442 2008-09-25 20:30:29Z rgw_ch $
+// $Id$
 
 package ch.elexis.export.tools;
 

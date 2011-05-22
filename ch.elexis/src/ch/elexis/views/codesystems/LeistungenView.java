@@ -50,7 +50,7 @@ public class LeistungenView extends ViewPart implements IActivationListener, ISa
 	
 	@Override
 	public void createPartControl(final Composite parent){
-		
+
 		parent.setLayout(new GridLayout());
 		ctab = new CTabFolder(parent, SWT.BOTTOM);
 		ctab.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -78,7 +78,8 @@ public class LeistungenView extends ViewPart implements IActivationListener, ISa
 			}
 			
 		});
-		CodeSelectorFactory cs = new BlockSelector();
+		
+		BlockSelector cs = new BlockSelector();
 		CTabItem ct = new CTabItem(ctab, SWT.NONE);
 		ICodeElement ics = (ICodeElement) Hub.poFactory.createTemplate(Leistungsblock.class);
 		if (ics == null) {
@@ -93,6 +94,9 @@ public class LeistungenView extends ViewPart implements IActivationListener, ISa
 		// cPage page=new cPage(ctab, getViewSite(),ics,cs);
 		BlockSelector.bsPage bspage = new BlockSelector.bsPage(ctab, cs);
 		ct.setControl(bspage);
+		
+		getSite().registerContextMenu(cs.getMgr(), cs.getCv().getViewerWidget());
+		getSite().setSelectionProvider(cs.getCv().getViewerWidget());
 		
 		CodeSelectorFactory.makeTabs(ctab, getViewSite(), "ch.elexis.Verrechnungscode"); //$NON-NLS-1$
 		GlobalEventDispatcher.addActivationListener(this, this);

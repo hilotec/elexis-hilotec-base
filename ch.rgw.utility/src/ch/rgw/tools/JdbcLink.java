@@ -104,8 +104,9 @@ public class JdbcLink {
 	}
 	
 	/**
-	 * Bequemlichkeitsmethode, um einen Link auf eine H2-Datenbank zu bekommen. Da H2 einen
-	 * mysql-compatibility-mode hat, kann man mysql als flavor angeben.
+	 * Bequemlichkeitsmethode, um einen Link auf eine H2-Datenbank zu bekommen.
+	 * Da der mysql-compatibility-mode für ALTER commands nicht korrekt funktioniert,
+	 * wird ein h2 DBFlavor für die übersetzung der Statements übergeben.
 	 * 
 	 * @param database
 	 * @return
@@ -117,8 +118,8 @@ public class JdbcLink {
 		if (database.contains(".zip!")) {
 			prefix += "zip:";
 		}
-		String connect = prefix + database + ";MODE=MySQL";
-		return new JdbcLink(driver, connect, "mysql");
+		String connect = prefix + database;
+		return new JdbcLink(driver, connect, "h2");
 	}
 	
 	/**
@@ -971,7 +972,7 @@ public class JdbcLink {
 			sql = sql.replaceAll("DROP INDEX (.+?) ON .+?;", "DROP INDEX $1;");
 			sql = sql.replaceAll("MODIFY\\s+(\\w+)\\s+(.+)", "ALTER COLUMN $1 TYPE $2");
 			sql = sql.replaceAll("SIGNED", "INT");
-		} else if (DBFlavor.startsWith("hsqldb")) {
+		} else if (DBFlavor.startsWith("hsqldb") || DBFlavor.startsWith("h2")) {
 			sql = sql.replaceAll("TEXT", "LONGVARCHAR");
 			sql = sql.replaceAll("BLOB", "LONGVARBINARY");
 			sql = sql.replaceAll("CREATE +TABLE", "CREATE CACHED TABLE");

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BestellPerspektive.java 5194 2009-02-24 16:31:36Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis;

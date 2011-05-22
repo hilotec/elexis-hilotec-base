@@ -22,6 +22,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -31,6 +32,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.ui.IWorkbenchActionConstants;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -57,13 +59,15 @@ import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
 public class BlockSelector extends CodeSelectorFactory {
 	IAction deleteAction, renameAction, createAction, exportAction;
 	CommonViewer cv;
+	MenuManager mgr;
 	
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
 		this.cv = cv;
 		makeActions();
-		MenuManager mgr = new MenuManager();
+		mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);
+		mgr.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		mgr.addMenuListener(new IMenuListener() {
 			
 			public void menuAboutToShow(IMenuManager manager){
@@ -310,6 +314,14 @@ public class BlockSelector extends CodeSelectorFactory {
 	@Override
 	public String getCodeSystemName(){
 		return "Block";
+	}
+	
+	public MenuManager getMgr(){
+		return mgr;
+	}
+	
+	public CommonViewer getCv(){
+		return cv;
 	}
 	
 }
