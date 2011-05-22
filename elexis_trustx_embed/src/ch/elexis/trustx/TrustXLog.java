@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TrustXLog.java 1750 2007-02-06 21:05:01Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.trustx;

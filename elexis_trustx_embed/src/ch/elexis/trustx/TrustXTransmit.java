@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: TrustXTransmit.java 4876 2008-12-30 09:56:26Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.trustx;
