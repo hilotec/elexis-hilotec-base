@@ -21,11 +21,12 @@ public class Test_Query extends AbstractPersistentObjectTest {
 	public void setUp(){
 		link = initDB();
 		// create a instance of an PersistentObject ex. Organisation to test the query
-		Organisation org = new Organisation("orgname", "orgzusatz1");
+		new Organisation("orgname", "orgzusatz1");
 	}
 	
 	@After
 	public void tearDown(){
+		link.exec("DROP ALL OBJECTS");
 		link.disconnect();
 	}
 	
@@ -45,16 +46,14 @@ public class Test_Query extends AbstractPersistentObjectTest {
 	@Test
 	public void testConstructorFail(){
 		try {
-			Query<PersistentObjectImpl> query =
-				new Query<PersistentObjectImpl>(PersistentObjectImpl.class);
+			new Query<PersistentObjectImpl>(PersistentObjectImpl.class);
 			fail("Expected Exception not thrown!");
 		} catch (PersistenceException pe) {
 
 		}
 		
 		try {
-			Query<PersistentObjectImpl> query =
-				new Query<PersistentObjectImpl>(PersistentObjectImpl.class, "", "");
+			new Query<PersistentObjectImpl>(PersistentObjectImpl.class, "", "");
 			fail("Expected Exception not thrown!");
 		} catch (PersistenceException pe) {
 
@@ -80,6 +79,7 @@ public class Test_Query extends AbstractPersistentObjectTest {
 	
 	private class PersistentObjectImpl extends PersistentObject {
 		
+		@SuppressWarnings("unused")
 		public String getTestGet(){
 			return "test";
 		}

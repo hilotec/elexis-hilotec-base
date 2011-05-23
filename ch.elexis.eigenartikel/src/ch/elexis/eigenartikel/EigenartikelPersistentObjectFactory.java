@@ -11,7 +11,12 @@ public class EigenartikelPersistentObjectFactory extends PersistentObjectFactory
 	public PersistentObject createFromString(String code){
 		try {
 			String[] ci = code.split("::"); //$NON-NLS-1$
-			Class<?> clazz = Class.forName(ci[0]);
+			Class<?> clazz = null;
+			if(ci[0].equals("ch.elexis.data.Eigenartikel")) {
+				clazz = Class.forName("ch.elexis.eigenartikel.Eigenartikel");
+			} else {
+				clazz = Class.forName(ci[0]);
+			}
 			Method load = clazz.getMethod("load", new Class[] { String.class}); //$NON-NLS-1$
 			return (PersistentObject) (load.invoke(null, new Object[] {
 				ci[1]
@@ -34,6 +39,7 @@ public class EigenartikelPersistentObjectFactory extends PersistentObjectFactory
 	public Class getClassforName(String fullyQualifiedClassName) {
 		Class ret = null;
 		try {
+			if(fullyQualifiedClassName.equals("ch.elexis.data.Eigenartikel")) return Class.forName("ch.elexis.eigenartikel.Eigenartikel");
 			ret = Class.forName(fullyQualifiedClassName);
 			return ret;
 		} catch ( ClassNotFoundException e ) {

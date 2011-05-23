@@ -68,8 +68,8 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 	
 	private static final JdbcLink j = getConnection();
 	static {
-		String checkExist = j.queryString("SELECT * FROM TARMED WHERE ID LIKE '10%'");
-		if (checkExist == null) {
+		TarmedLeistung version = load("Version");
+		if (!version.exists()) {
 			String filepath =
 				PlatformHelper.getBasePath("ch.elexis.arzttarife_ch") + File.separator
 					+ "createDB.script";

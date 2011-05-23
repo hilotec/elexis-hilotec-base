@@ -1,81 +1,52 @@
 package ch.elexis.data;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import org.eclipse.ui.statushandlers.StatusManager;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Matchers;
 import org.powermock.api.mockito.PowerMockito;
 
 import ch.elexis.Hub;
-import ch.elexis.ResourceManager;
-import ch.elexis.preferences.PreferenceInitializer;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLinkException;
 
 public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	
-	@Test
-	public void testFirstConnect(){
-		ResourceManager rsc = ResourceManager.getInstance();
-		String pluginPath = rsc.getResourceLocationByName("/createDB.script");
-		int end = pluginPath.lastIndexOf('/');
-		end = pluginPath.lastIndexOf('/', end - 1);
-		pluginPath = pluginPath.substring(0, end);
-		
-		PowerMockito.mockStatic(Hub.class);
-		PowerMockito.when(Hub.getBasePath()).thenReturn(pluginPath);
-		PowerMockito.when(Hub.getCfgVariant()).thenReturn("default");
-		
-		JdbcLink link = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:test_mem", "");
-		assertNotNull(link);
-		link.connect("", "");
-		boolean ret = PersistentObject.connect(link);
-		assertFalse(ret);
-		link.disconnect();
+	private JdbcLink link;
+
+	@Before
+	public void setUp(){
+		link = initDB();
+	}
+	
+	@After
+	public void tearDown(){
+		try {
+			link.exec("DROP ALL OBJECTS");		
+			link.disconnect();
+		} catch (JdbcLinkException je) {
+			// just tell what happend and resume
+			// excpetion is allowed for tests which get rid of the connection on their own
+			// for example testConnect(), ...
+			je.printStackTrace();
+		}
 	}
 	
 	@Test
 	public void testConnect(){
-		ResourceManager rsc = ResourceManager.getInstance();
-		String pluginPath = rsc.getResourceLocationByName("/createDB.script");
-		int end = pluginPath.lastIndexOf('/');
-		end = pluginPath.lastIndexOf('/', end - 1);
-		pluginPath = pluginPath.substring(0, end);
-		
-		PowerMockito.mockStatic(PreferenceInitializer.class);
-		PowerMockito.when(PreferenceInitializer.getDefaultDBPath()).thenReturn(pluginPath);
-		
-		JdbcLink link = initDB();
 		boolean ret = PersistentObject.connect(link);
 		assertTrue(ret);
 		PersistentObject.disconnect();
-		link.disconnect();
 	}
 	
 	@Test
 	public void testConnectFail(){
-		ResourceManager rsc = ResourceManager.getInstance();
-		PowerMockito.mockStatic(Hub.class);
-		PowerMockito.when(Hub.getBasePath()).thenReturn(
-			rsc.getResourceLocationByName("/createDB.script"));
-		PowerMockito.when(Hub.getCfgVariant()).thenReturn("default");
-		PowerMockito.mockStatic(PreferenceInitializer.class);
-		PowerMockito.when(PreferenceInitializer.getDefaultDBPath()).thenReturn("");
-		
-		JdbcLink link = initDB();
-		link.disconnect();
-		// direct connect with disconnected JdbcLink
-		try {
-			PersistentObject.connect(link);
-			fail("Expected Exception not thrown!");
-		} catch (JdbcLinkException je) {
-
-		}
-		
 		// this connect methods opens its own JdbcLink by all means
 		// it is looking for a demo db:
 		// File demo = new File(base.getParentFile().getParent() + "/demoDB");
@@ -107,29 +78,52 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	
 	@Test
 	public void testGet(){
-		JdbcLink link = initDB();
-		
 		PersistentObjectImpl impl = new PersistentObjectImpl();
 		String ret = impl.get("TestGet");
 		assertNotNull(ret);
 		assertEquals("test", ret);
-		link.disconnect();
 	}
 	
 	@Test
 	public void testState(){
-		JdbcLink link = initDB();
-		
 		PersistentObjectImpl impl = new PersistentObjectImpl();
 		impl.tablename = "abc";
 		int ret = impl.state();
 		assertEquals(PersistentObject.INEXISTENT, ret);
-		link.disconnect();
+	}
+	
+	@Test
+	public void testStoreToString(){
+		PersistentObjectImpl impl = new PersistentObjectImpl();
+		String ret = impl.storeToString();
+		assertNotNull(ret);
+		assertTrue(ret.startsWith("ch.elexis.data.Test_PersistentObject"));
+	}
+	
+	@Test
+	public void testGetXid(){
+		PersistentObjectImpl impl = new PersistentObjectImpl();
+		Xid ret = impl.getXid();
+		assertNotNull(ret);
+	}
+	
+	@Test
+	public void testAddXid(){
+		PersistentObjectImpl impl = new PersistentObjectImpl();
+		Xid.localRegisterXIDDomain("test", "test", 1);
+		boolean ret = impl.addXid("test", "addXid", false);
+		assertTrue(ret);
+		Xid id = impl.getXid();
+		assertNotNull(id);
 	}
 	
 	@Test
 	public void testGetFail(){
-		JdbcLink link = initDB();
+		// mock a status manager for ignoring the error status
+		StatusManager statusMock = PowerMockito.mock(StatusManager.class);
+		PowerMockito.mockStatic(StatusManager.class);
+		PowerMockito.when(StatusManager.getManager()).thenReturn(
+				statusMock);
 		
 		PersistentObjectImpl impl = new PersistentObjectImpl();
 		try {
@@ -145,18 +139,16 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 		try {
 			impl.get("ID");
 			fail("Expected Exception not thrown!");
-			link.disconnect();
 		} catch (PersistenceException pe) {
 
 		}
-		
-		link.disconnect();
 	}
 	
 	private class PersistentObjectImpl extends PersistentObject {
 		
 		String tablename;
 		
+		@SuppressWarnings("unused")
 		public String getTestGet(){
 			return "test";
 		}

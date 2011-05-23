@@ -2,6 +2,7 @@ package ch.elexis.data;
 
 import static org.junit.Assert.assertNotNull;
 
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
@@ -16,7 +17,7 @@ import ch.rgw.tools.JdbcLink;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {
-	Hub.class, PreferenceInitializer.class, JdbcLink.class
+	Hub.class, PreferenceInitializer.class, JdbcLink.class, StatusManager.class
 })
 public abstract class AbstractPersistentObjectTest {
 	
@@ -39,7 +40,10 @@ public abstract class AbstractPersistentObjectTest {
 		PowerMockito.when(Hub.getBasePath()).thenReturn(pluginPath);
 		PowerMockito.when(Hub.getCfgVariant()).thenReturn("default");
 		
-		JdbcLink link = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:test_mem", "");
+		PowerMockito.mockStatic(PreferenceInitializer.class);
+		PowerMockito.when(PreferenceInitializer.getDefaultDBPath()).thenReturn(pluginPath);
+		
+		JdbcLink link = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:test_mem", "hsql");
 		assertNotNull(link);
 		link.connect("", "");
 		PersistentObject.connect(link);

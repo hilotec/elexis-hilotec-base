@@ -43,4 +43,16 @@ public class ArzttarifFactory extends PersistentObjectFactory {
 		}
 	}
 	
+	@Override
+	public Class getClassforName(String fullyQualifiedClassName) {
+		Class ret = null;
+		try {
+			ret = Class.forName(fullyQualifiedClassName);
+			return ret;
+		} catch ( ClassNotFoundException e ) {
+			e.printStackTrace();
+			return ret;
+		}
+	}
+	
 }
