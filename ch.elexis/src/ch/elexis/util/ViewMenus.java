@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    M. Descher - Declarative access to the contextMenu
  *    
- *    $Id: ViewMenus.java 5321 2009-05-28 12:06:28Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -30,6 +31,7 @@ import ch.elexis.actions.RestrictedAction;
  */
 public class ViewMenus {
 	IViewSite site;
+	MenuManager contextMenu = null;
 	
 	// IAction[] actions;
 	public ViewMenus(IViewSite s){
@@ -102,15 +104,23 @@ public class ViewMenus {
 	 *            the actions to be shown in the menu
 	 */
 	public void createControlContextMenu(Control control, final IAction... actions){
-		MenuManager menuMgr = new MenuManager();
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
+		contextMenu = new MenuManager();
+		contextMenu.setRemoveAllWhenShown(true);
+		contextMenu.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager){
 				fillContextMenu(manager, actions);
 			}
 		});
-		Menu menu = menuMgr.createContextMenu(control);
+		Menu menu = contextMenu.createContextMenu(control);
 		control.setMenu(menu);
+	}
+	
+	/**
+	 * Return the context menu for registration with the selectionProvider
+	 * @return MenuManager for the contextMenu
+	 */
+	public MenuManager getContextMenu() {
+		return contextMenu;
 	}
 	
 	/**
@@ -118,20 +128,20 @@ public class ViewMenus {
 	 * can be used to construct dynamic menus that change contents depending of state.
 	 */
 	public void createControlContextMenu(Control control, final IMenuPopulator populator){
-		final MenuManager menuMgr = new MenuManager();
-		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
+		contextMenu = new MenuManager();
+		contextMenu.setRemoveAllWhenShown(true);
+		contextMenu.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager){
 				for (IAction ac : populator.fillMenu()) {
 					if (ac == null) {
-						menuMgr.add(new Separator());
+						contextMenu.add(new Separator());
 					} else {
-						menuMgr.add(ac);
+						contextMenu.add(ac);
 					}
 				}
 			}
 		});
-		Menu menu = menuMgr.createContextMenu(control);
+		Menu menu = contextMenu.createContextMenu(control);
 		control.setMenu(menu);
 	}
 	

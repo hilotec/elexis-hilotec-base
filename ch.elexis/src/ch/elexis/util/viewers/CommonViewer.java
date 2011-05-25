@@ -345,4 +345,8 @@ public class CommonViewer implements ISelectionChangedListener, IDoubleClickList
 		}
 		
 	}
+	
+	public MenuManager getMgr() {
+		return mgr;
+	}
 }

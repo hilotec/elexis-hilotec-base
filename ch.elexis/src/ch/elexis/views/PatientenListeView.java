@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    M. Descher - Declarative access to the contextMenu
  *    
  * $Id$
  *******************************************************************************/
@@ -24,7 +25,6 @@ import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ITableColorProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -177,7 +177,6 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 		ElexisEventDispatcher.getInstance().addListeners(eeli_user);
 		GlobalEventDispatcher.addActivationListener(this, this);
 		
-		// PropertyPages Support - descher@medevit.at
 		StructuredViewer viewer = cv.getViewerWidget();
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 			
@@ -190,9 +189,8 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 				    pdAction.run();
 			}
 		});
+		getSite().registerContextMenu(menus.getContextMenu(), viewer);
 		getSite().setSelectionProvider(viewer);
-		// ---------------------
-		
 	}
 	
 	public PatListeContentProvider getContentProvider(){
