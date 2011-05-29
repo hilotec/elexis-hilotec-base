@@ -99,7 +99,7 @@ public class Test_HL7_parser {
 			if (f.getName().equalsIgnoreCase("01TEST5005.hl7")
 				|| f.getName().equalsIgnoreCase("1_Kunde_20090612083757162_10009977_.HL7")) {
 				if (!alsoFailing) {
-					//System.out.println("Skipping " + name);
+					// System.out.println("Skipping " + name);
 					return;
 				}
 			}
@@ -129,14 +129,17 @@ public class Test_HL7_parser {
 	
 	private void parseAllHL7files(File directory){
 		File[] files = directory.listFiles();
+		int nrFiles = 0;
 		for (int i = 0; i < files.length; i++) {
 			File file = files[i];
 			if (file.isDirectory()) {
 				parseAllHL7files(file);
 			} else {
 				parseOneHL7file(file, true, false);
+				nrFiles += 1;
 			}
 		}
+		System.out.println("testHL7files: " + nrFiles + " files in " + directory.toString());
 	}
 	
 	/**
