@@ -47,6 +47,7 @@ public class MediDetailDialog extends TitleAreaDialog {
 		new Label(ret, SWT.NONE).setText(Messages.getString("MediDetailDialog.prescription")); //$NON-NLS-1$
 		einnahme = new Text(ret, SWT.MULTI);
 		einnahme.setText(art.getBemerkung());
+		einnahme.setTextLimit(80);
 		einnahme.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return ret;
 	}

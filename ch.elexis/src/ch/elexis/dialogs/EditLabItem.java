@@ -109,9 +109,12 @@ public class EditLabItem extends TitleAreaDialog {
 		WidgetFactory.createLabel(ret, Messages.LaborPrefs_38);
 		iKuerzel = new Text(ret, SWT.BORDER);
 		iKuerzel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		iKuerzel.setTextLimit(80);
+		
 		WidgetFactory.createLabel(ret, Messages.LaborPrefs_39);
 		iTitel = new Text(ret, SWT.BORDER);
 		iTitel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		iTitel.setTextLimit(80);
 		
 		WidgetFactory.createLabel(ret, Messages.LaborPrefs_40);
 		Group grp = new Group(ret, SWT.NONE);
@@ -151,12 +154,15 @@ public class EditLabItem extends TitleAreaDialog {
 		
 		iRef = new Text(ret, SWT.BORDER);
 		iRef.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		iRef.setTextLimit(80);
 		WidgetFactory.createLabel(ret, Messages.LaborPrefs_47);
 		iRfF = new Text(ret, SWT.BORDER);
 		iRfF.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		iRfF.setTextLimit(80);
 		WidgetFactory.createLabel(ret, Messages.LaborPrefs_48);
 		iUnit = new Text(ret, SWT.BORDER);
 		iUnit.setLayoutData(SWTHelper.getFillGridData(3, true, 1, false));
+		iUnit.setTextLimit(25);
 		WidgetFactory.createLabel(ret, Messages.LaborPrefs_49);
 		
 		List<LabItem> labItems = LabItem.getLabItems();

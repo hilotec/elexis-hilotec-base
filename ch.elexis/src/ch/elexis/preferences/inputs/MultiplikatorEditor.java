@@ -18,26 +18,21 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 
 import ch.elexis.data.PersistentObject;
+import ch.elexis.dialogs.AddMultiplikatorDialog;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
-import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.JdbcLink.Stm;
-
-import com.tiff.common.ui.datepicker.DatePickerCombo;
+import ch.rgw.tools.TimeTool;
 
 public class MultiplikatorEditor extends Composite {
 	// String myClass;
@@ -58,8 +53,8 @@ public class MultiplikatorEditor extends Composite {
 			public void widgetSelected(final SelectionEvent e){
 				AddMultiplikatorDialog amd = new AddMultiplikatorDialog(getShell());
 				if (amd.open() == Dialog.OK) {
-					TimeTool t = amd.begindate;
-					String mul = amd.mult;
+					TimeTool t = amd.getBegindate();
+					String mul = amd.getMult();
 					String datestring = JdbcLink.wrap(t.toString(TimeTool.DATE_COMPACT));
 					stm
 						.exec("UPDATE VK_PREISE SET DATUM_BIS=" + datestring + " WHERE DATUM_BIS='99991231' AND TYP=" + JdbcLink.wrap(typeName)); //$NON-NLS-1$ //$NON-NLS-2$
@@ -73,7 +68,6 @@ public class MultiplikatorEditor extends Composite {
 			}
 			
 		});
-		
 		reload(clazz);
 	}
 	
@@ -116,48 +110,6 @@ public class MultiplikatorEditor extends Composite {
 			
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-		} finally {
-
-		}
+		} 
 	}
-	
-	class AddMultiplikatorDialog extends TitleAreaDialog {
-		DatePickerCombo dpc;
-		Text multi;
-		TimeTool begindate;
-		String mult;
-		
-		AddMultiplikatorDialog(final Shell shell){
-			super(shell);
-		}
-		
-		@Override
-		protected Control createDialogArea(final Composite parent){
-			Composite ret = new Composite(parent, SWT.NONE);
-			ret.setLayout(new GridLayout(2, false));
-			ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-			dpc = new DatePickerCombo(ret, SWT.BORDER);
-			dpc.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			multi = new Text(ret, SWT.BORDER);
-			multi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-			return ret;
-		}
-		
-		@Override
-		public void create(){
-			super.create();
-			setTitle(Messages.getString("MultiplikatorEditor.BegiNDate")); //$NON-NLS-1$
-			setMessage(Messages.getString("MultiplikatorEditor.PleaseEnterBeginDate")); //$NON-NLS-1$
-			getShell().setText(Messages.getString("MultiplikatorEditor.NewMultipilcator")); //$NON-NLS-1$
-		}
-		
-		@Override
-		protected void okPressed(){
-			begindate = new TimeTool(dpc.getDate().getTime());
-			mult = multi.getText();
-			super.okPressed();
-		}
-		
-	};
-	
 }

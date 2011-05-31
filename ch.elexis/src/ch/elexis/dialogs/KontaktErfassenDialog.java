@@ -151,6 +151,7 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 		tName = new Text(ret, SWT.BORDER);
 		tName.setText(fld[KontaktSelektor.HINT_NAME]);
 		tName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tName.setTextLimit(80);
 		
 		lVorname = new Label(ret, SWT.NONE);
 		lVorname.setText(Messages.getString("KontaktErfassenDialog.firstName")); //$NON-NLS-1$
@@ -158,6 +159,7 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 		tVorname
 			.setText(fld[KontaktSelektor.HINT_FIRSTNAME] == null ? "" : fld[KontaktSelektor.HINT_FIRSTNAME]); //$NON-NLS-1$
 		tVorname.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tVorname.setTextLimit(80);
 		
 		lZusatz = new Label(ret, SWT.NONE);
 		lZusatz.setText(Messages.getString("KontaktErfassenDialog.zusatz")); //$NON-NLS-1$
@@ -186,6 +188,7 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 		tGebDat
 			.setText(fld[KontaktSelektor.HINT_BIRTHDATE] == null ? "" : fld[KontaktSelektor.HINT_BIRTHDATE]); //$NON-NLS-1$
 		tGebDat.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tGebDat.setTextLimit(8);
 		
 		new Label(ret, SWT.NONE).setText(Messages.getString("PatientErfassenDialog.street")); //$NON-NLS-1$
 		tStrasse = new Text(ret, SWT.BORDER);
@@ -193,32 +196,38 @@ public class KontaktErfassenDialog extends TitleAreaDialog {
 			.setText(fld.length > KontaktSelektor.HINT_STREET ? fld[KontaktSelektor.HINT_STREET]
 					: ""); //$NON-NLS-1$
 		tStrasse.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tStrasse.setTextLimit(80);
 		
 		new Label(ret, SWT.NONE).setText(Messages.getString("PatientErfassenDialog.zip")); //$NON-NLS-1$
 		tPlz = new Text(ret, SWT.BORDER);
 		tPlz.setText(fld.length > KontaktSelektor.HINT_ZIP ? fld[KontaktSelektor.HINT_ZIP] : ""); //$NON-NLS-1$
 		tPlz.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tPlz.setTextLimit(6);
 		
 		new Label(ret, SWT.NONE).setText(Messages.getString("PatientErfassenDialog.city")); //$NON-NLS-1$
 		tOrt = new Text(ret, SWT.BORDER);
 		tOrt
 			.setText(fld.length > KontaktSelektor.HINT_PLACE ? fld[KontaktSelektor.HINT_PLACE] : ""); //$NON-NLS-1$
 		tOrt.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tOrt.setTextLimit(50);
 		
 		new Label(ret, SWT.NONE).setText(Messages.getString("PatientErfassenDialog.phone")); //$NON-NLS-1$
 		tTel = new Text(ret, SWT.BORDER);
 		tTel.setText(fld.length > 6 ? fld[6] : ""); //$NON-NLS-1$
 		tTel.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tTel.setTextLimit(30);
 		
 		new Label(ret, SWT.NONE).setText(Messages.getString("KontaktErfassenDialog.fax")); //$NON-NLS-1$
 		tFax = new Text(ret, SWT.BORDER);
 		tFax.setText(fld.length > 8 ? fld[8] : ""); //$NON-NLS-1$
 		tFax.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tFax.setTextLimit(30);
 		
 		new Label(ret, SWT.NONE).setText(Messages.getString("KontaktErfassenDialog.email")); //$NON-NLS-1$
 		tEmail = new Text(ret, SWT.BORDER);
 		tEmail.setText(fld.length > 9 ? fld[9] : ""); //$NON-NLS-1$
 		tEmail.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		tEmail.setTextLimit(80);
 		new Label(ret, SWT.NONE).setText(Messages.getString("KontaktErfassenDialog.postanschrift")); //$NON-NLS-1$
 		hlAnschrift =
 			Desk.getToolkit().createHyperlink(ret,
