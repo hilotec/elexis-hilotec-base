@@ -10,13 +10,6 @@
       </page>
    </extension>
    <extension
-         point="ch.elexis.PersistentReference">
-      <Factory
-            Class="ch.elexis.privatrechnung2.data.LeistungsFactory"
-            name="Privatrechnung 2">
-      </Factory>
-   </extension>
-   <extension
          point="ch.elexis.RechnungsManager">
       <Rechnung
             name="Privatrechnung 2"
