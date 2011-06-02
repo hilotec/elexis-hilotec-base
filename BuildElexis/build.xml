@@ -61,7 +61,7 @@
 		
 -->
 <project name="elexis" default="all">
-          <property name="version" value="2.1.5.x" />
+	<property name="version" value="2.1.5.x" />
 	<property name="javatarget" value="1.6" />
 	<property name="debug" value="true" />
 	<property name="optimize" value="off" />
@@ -318,11 +318,9 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 
 	<target name="linux" depends="initialize">
 		<property name="os" value="linux" />
-		<copy todir="${dist}" verbose="true">
-			<fileset dir="${platform-runtime}">
-				<include name="plugins/org.eclipse.equinox.launcher.gtk*/*" />
-				<include name="plugins/org.eclipse.swt.gtk.linux.x86_*.jar" />
-				<include name="*.so" />
+		<copy todir="${dist}">
+			<fileset dir="${rsc}/${os}">
+				<include name="**/*" />
 			</fileset>
 		</copy>
 		<copy tofile="${dist}/elexis" file="${platform-runtime}/eclipse" preservelastmodified="true" verbose="true" />
@@ -331,7 +329,20 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<antcall target="installer" inheritrefs="true" inheritall="true" />
 	</target>
 
-	<target name="installer">
+	<target name="linux.x86_64" depends="initialize">
+		<property name="os" value="linux.x86_64" />
+		<copy todir="${dist}">
+			<fileset dir="${rsc}/${os}">
+				<include name="**/*" />
+			</fileset>
+		</copy>
+		<copy tofile="${dist}/elexis" file="${platform-runtime}/eclipse" preservelastmodified="true" verbose="true" />
+		<chmod file="${dist}/elexis" perm="ugo+rx" />
+		<antcall target="create-default" />
+		<antcall target="installer" inheritrefs="true" inheritall="true" />
+	</target>
+
+	<target name="installer" depends="doc,doc-plugins">
 		<echo message="preparing files for izpack installer" />
 		<wikitext-to-html markupLanguage="Textile" overwrite="true" multipleOutputFiles="false" formatOutput="true">
 			<fileset dir="${rsc}">
@@ -341,6 +352,9 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		</wikitext-to-html>
 
 		<copy todir="${dist}">
+			<fileset dir="${dist}/doc">
+				<include name="elexis.pdf" />
+			</fileset>
 			<fileset dir="${rsc}">
 				<include name="info.html" />
 				<include name="license.html" />
@@ -354,9 +368,6 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 				<include name="${rsc}/*.*" />
 			</fileset>
 		</copy>
-		<!-- copy todir="${dist}">
-			<fileset dir="${rsc}" includes="*.ico *.png *.icns *.xpm" />
-		</copy -->
 		<delete file="${rsc}/info.html" />
 		<delete file="${rsc}/license.html" />
 		<echo message="Running IzPack to build the installer..." />
@@ -518,10 +529,10 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 	</target>
 
 	<target name="texify" unless="skip_texify">
-		<exec executable="${texify}" dir="${sourcedir}" failonerror="false">
-			<arg line="${texifyArgs} doc/${dirname}.tex" />
+		<exec executable="${texify}" dir="${sourcedir}/doc" failonerror="false">
+			<arg line="${texifyArgs} ${dirname}.tex" />
 		</exec>
-		<copy file="${sourcedir}/${dirname}.pdf" todir="${dist}/doc" failonerror="false" />
+		<copy file="${sourcedir}/doc/${dirname}.pdf" todir="${dist}/doc" failonerror="false" />
 	</target>
 
 	<target name="doc-plugins" unless="skip_texify" depends="initialize">
@@ -530,12 +541,20 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<for param="plugin" list="${buildlist}" delimiter=",">
 			<sequential>
 				<pluginID dir="@{plugin}" />
-				<antcall target="texify">
-					<param name="dirname" value="${DirName}" />
-					<param name="sourcedir" value="@{plugin}" />
-					<param name="plugin" value="@{plugin}" />
-					<param name="cp" value="varcp" />
-				</antcall>
+				<if>
+					<available file="@{plugin}/doc/${DirName}.tex" type="file" />
+					<then>
+						<antcall target="texify">
+							<param name="dirname" value="${DirName}" />
+							<param name="sourcedir" value="@{plugin}" />
+							<param name="plugin" value="@{plugin}" />
+							<param name="cp" value="varcp" />
+						</antcall>
+					</then>
+					<else>
+						<echo message="Skipping, as @{plugin}/doc/${DirName}.tex not found" />
+					</else>
+				</if>
 			</sequential>
 		</for>
 	</target>
