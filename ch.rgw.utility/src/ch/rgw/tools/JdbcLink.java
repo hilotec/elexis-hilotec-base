@@ -385,7 +385,7 @@ public class JdbcLink {
 	private Stm createStatement(){
 		try {
 			return new Stm();
-		} catch (Exception ex) {
+		} catch (SQLException ex) {
 			lastErrorCode = CONNECTION_CANT_CREATE_STATEMENT;
 			lastErrorString = ex.getMessage();
 			throw JdbcLinkExceptionTranslation.translateException(lastErrorString, ex);
@@ -658,13 +658,13 @@ public class JdbcLink {
 			}
 		}
 		
-		Stm() throws Exception{
+		Stm() throws SQLException {
 			checkConn();
 			try {
 				stm = conn.createStatement();
 			} catch (SQLException se) {
 				if (!reconnect()) {
-					throw (new Exception("Stm() failed " + lastErrorString));
+					throw se;
 				}
 			}
 		}
