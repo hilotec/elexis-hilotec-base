@@ -2382,15 +2382,18 @@ public abstract class PersistentObject implements ISelectable {
 			if(je instanceof JdbcLinkResourceException) {
 				status.setCode(ElexisStatus.CODE_RESTART | ElexisStatus.CODE_NOFEEDBACK);
 				status.setMessage(status.getMessage() + "\nACHTUNG: Elexis wird neu gestarted!\n");
+				status.setLogLevel(ElexisStatus.LOG_FATALS);
+				// TODO throw PersistenceException to UI code ...
+				// calling StatusManager directly here was not intended,
+				// but throwing the exception without handling it apropreately
+				// in the UI code makes it impossible for the status handler
+				// to display a blocking error dialog 
+				// (this is executed in a Runnable where Exception handling is not blocking UI thread)
+				StatusManager.getManager().handle(status);
+			} else {
+				status.setLogLevel(ElexisStatus.LOG_FATALS);
+				throw new PersistenceException(status);
 			}
-			status.setLogLevel(ElexisStatus.LOG_FATALS);
-			// TODO throw PersistenceException to UI code ...
-			// calling StatusManager directly here was not intended,
-			// but throwing the exception without handling it apropreately
-			// in the UI code makes it impossible for the status handler
-			// to display a blocking error dialog 
-			// (this is executed in a Runnable where Exception handling is not blocking UI thread)
-			StatusManager.getManager().handle(status);
 	    } finally {
 			getConnection().releaseStatement(stm);
 		}
