@@ -18,7 +18,10 @@ public class ElexisStatus extends Status {
 	public static final int LOG_DEBUGMSG = 5;
 	public static final int LOG_TRACE = 6;
 	
-	public static final int CODE_NOFEEDBACK = 1;
+	// defined values can be combined with or operator
+	public static final int CODE_NONE = 0x00;
+	public static final int CODE_NOFEEDBACK = 0x01;
+	public static final int CODE_RESTART = 0x02;
 	
 	private int logLevel;
 	
@@ -38,7 +41,21 @@ public class ElexisStatus extends Status {
 		this.logLevel = logLevel;
 	}
 	
-	public int getLogLevel(){
+	public int getLogLevel() {
 		return logLevel;
+	}
+
+	public void setLogLevel(int logLevel) {
+		this.logLevel = logLevel;
+	}
+	
+	@Override
+	public void setCode(int code){
+		super.setCode(code);
+	}
+
+	@Override
+	public void setMessage(String message){
+		super.setMessage(message);
 	}
 }

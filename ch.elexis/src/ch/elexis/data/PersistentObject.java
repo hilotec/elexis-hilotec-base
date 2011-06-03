@@ -73,7 +73,9 @@ import ch.rgw.io.SqlSettings;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
+import ch.rgw.tools.JdbcLinkConcurrencyException;
 import ch.rgw.tools.JdbcLinkException;
+import ch.rgw.tools.JdbcLinkResourceException;
 import ch.rgw.tools.JdbcLinkSyntaxException;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
@@ -191,13 +193,9 @@ public abstract class PersistentObject implements ISelectable {
 				getConnection().connect("sa", StringTool.leer);
 				return connect(getConnection());
 			} catch (JdbcLinkException je) {
-				ElexisStatus status =
-					new ElexisStatus(
-						IStatus.ERROR,
-						Hub.PLUGIN_ID,
-						IStatus.ERROR,
-						"Fehler mit Demo-Datenbank: Es wurde zwar ein demoDB-Verzeichnis gefunden, aber dort ist keine verwendbare Datenbank",
-						je);
+				ElexisStatus status = translateJdbcException(je);
+				status.setMessage(status.getMessage() + 
+					" Fehler mit Demo-Datenbank: Es wurde zwar ein demoDB-Verzeichnis gefunden, aber dort ist keine verwendbare Datenbank");
 				throw new PersistenceException(status);
 			}
 		} else if ("SWTBot".equals(System.getProperty("elexis-run-mode"))) {
@@ -219,9 +217,10 @@ public abstract class PersistentObject implements ISelectable {
 					getConnection().connect("sa", StringTool.leer);
 					return connect(getConnection());
 				} catch (JdbcLinkException je) {
-					ElexisStatus status =
-						new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
-							"Can't connect to Test_Database", je, ElexisStatus.LOG_FATALS);
+					ElexisStatus status = translateJdbcException(je);
+					status.setMessage(status.getMessage() + 
+						" Konnte keine Verbindung zur Test_Database herstellen");
+					status.setLogLevel(ElexisStatus.LOG_FATALS);
 					throw new PersistenceException(status);
 				}
 				
@@ -302,9 +301,8 @@ public abstract class PersistentObject implements ISelectable {
 		try {
 			getConnection().connect(user, pwd);
 		} catch (JdbcLinkException je) {
-			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, "Persistence error",
-					je, ElexisStatus.LOG_FATALS);
+			ElexisStatus status = translateJdbcException(je);
+			status.setLogLevel(ElexisStatus.LOG_FATALS);
 			throw new PersistenceException(status);
 		}
 		log.log("Verbunden mit " + getConnection().dbDriver() + ", " + connectstring, Log.SYNCMARK);
@@ -1062,11 +1060,10 @@ public abstract class PersistentObject implements ISelectable {
 		}
 		sql.append("SELECT ").append(mapped).append(" FROM ").append(table).append(" WHERE ID='")
 			.append(id).append("'");
+		
+		ResultSet rs = executeSqlQuery(sql.toString());
 		String res = null;
-		Stm stm = null;
 		try {
-			stm = getConnection().getStatement();
-			ResultSet rs = stm.query(sql.toString());
 			if ((rs != null) && (rs.next() == true)) {
 				if (decrypt) {
 					res = decode(field, rs);
@@ -1080,15 +1077,6 @@ public abstract class PersistentObject implements ISelectable {
 			}
 		} catch (SQLException ex) {
 			ExHandler.handle(ex);
-		} catch (JdbcLinkException je) {
-			ExHandler.handle(je);
-			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, "Persistence error",
-					je, ElexisStatus.LOG_ERRORS);
-			throw new PersistenceException(status);
-		} finally {
-			if (stm != null)
-				getConnection().releaseStatement(stm);
 		}
 		return res;
 	}
@@ -1111,16 +1099,13 @@ public abstract class PersistentObject implements ISelectable {
 		sql.append("SELECT ").append(mapped).append(" FROM ").append(table).append(" WHERE ID='")
 			.append(id).append("'");
 		
-		Stm stm = getConnection().getStatement();
-		ResultSet res = stm.query(sql.toString());
+		ResultSet res = executeSqlQuery(sql.toString());
 		try {
 			if ((res != null) && (res.next() == true)) {
 				return res.getBytes(mapped);
 			}
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
-		} finally {
-			getConnection().releaseStatement(stm);
 		}
 		return null;
 	}
@@ -1243,8 +1228,7 @@ public abstract class PersistentObject implements ISelectable {
 			sql.append(" FROM ").append(abfr[3]).append(" WHERE ").append(abfr[2]).append("=")
 				.append(getWrappedId());
 			
-			Stm stm = getConnection().getStatement();
-			ResultSet rs = stm.query(sql.toString());
+			ResultSet rs = executeSqlQuery(sql.toString());
 			LinkedList<String[]> list = new LinkedList<String[]>();
 			try {
 				while ((rs != null) && rs.next()) {
@@ -1263,9 +1247,6 @@ public abstract class PersistentObject implements ISelectable {
 					new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
 						"Fehler beim Lesen der Liste ", ex, ElexisStatus.LOG_ERRORS);
 				throw new PersistenceException(status);
-			} finally {
-				getConnection().releaseStatement(stm);
-				
 			}
 		} else {
 			log.log("Fehlerhaftes Mapping " + mapped, Log.ERRORS);
@@ -1752,8 +1733,8 @@ public abstract class PersistentObject implements ISelectable {
 		}
 		sql.delete(sql.length() - 1, 1000);
 		sql.append(" FROM ").append(getTableName()).append(" WHERE ID=").append(getWrappedId());
-		Stm stm = getConnection().getStatement();
-		ResultSet res = stm.query(sql.toString());
+		
+		ResultSet res = executeSqlQuery(sql.toString());
 		try {
 			if ((res != null) && res.next()) {
 				for (int i = 0; i < values.length; i++) {
@@ -1772,12 +1753,9 @@ public abstract class PersistentObject implements ISelectable {
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 			return false;
-		} finally {
-			getConnection().releaseStatement(stm);
 		}
-		
 	}
-	
+
 	/**
 	 * Apply some magic to the input parameters, and return a decoded string object. TODO describe
 	 * magic
@@ -2381,5 +2359,57 @@ public abstract class PersistentObject implements ISelectable {
 	 */
 	public String exportData(){
 		return XML2Database.exportData(this);
+	}
+	
+	/**
+	 * Execute the sql string and handle exceptions appropriately.
+	 * <p>
+	 * <b>ATTENTION:</b> JdbcLinkResourceException will trigger a restart
+	 * of Elexis in at.medevit.medelexis.ui.statushandler.
+	 * </p>
+	 * @param sql
+	 * @return
+	 */
+	private ResultSet executeSqlQuery(String sql) {
+		Stm stm = null;
+		ResultSet res = null;
+		try {
+			stm = getConnection().getStatement();
+			res = stm.query(sql);
+		} catch (JdbcLinkException je) {
+			ElexisStatus status = translateJdbcException(je);
+			// trigger restart for severe communication error
+			if(je instanceof JdbcLinkResourceException) {
+				status.setCode(ElexisStatus.CODE_RESTART | ElexisStatus.CODE_NOFEEDBACK);
+				status.setMessage(status.getMessage() + "\nACHTUNG: Elexis wird neu gestarted!\n");
+			}
+			status.setLogLevel(ElexisStatus.LOG_FATALS);
+			// TODO throw PersistenceException to UI code ...
+			// calling StatusManager directly here was not intended,
+			// but throwing the exception without handling it apropreately
+			// in the UI code makes it impossible for the status handler
+			// to display a blocking error dialog 
+			// (this is executed in a Runnable where Exception handling is not blocking UI thread)
+			StatusManager.getManager().handle(status);
+	    } finally {
+			getConnection().releaseStatement(stm);
+		}
+	    return res;
+	}
+	
+	private static ElexisStatus translateJdbcException(JdbcLinkException jdbc) {
+		if(jdbc instanceof JdbcLinkSyntaxException) {
+			return new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
+				"Fehler in der Datenbanksyntax.", jdbc, ElexisStatus.LOG_ERRORS);
+		} else if(jdbc instanceof JdbcLinkConcurrencyException) {
+			return new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
+				"Fehler bei einer Datenbanktransaktion.", jdbc, ElexisStatus.LOG_ERRORS);			
+		} else if(jdbc instanceof JdbcLinkResourceException) {
+			return new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
+				"Fehler bei der Datenbankkommunikation.", jdbc, ElexisStatus.LOG_ERRORS);	
+		} else {
+			return new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
+				"Fehler in der Datenbankschnittstelle.", jdbc, ElexisStatus.LOG_ERRORS);
+		}
 	}
 }
