@@ -1,19 +1,32 @@
+/*******************************************************************************
+ * Copyright (c) 2010, G. Weirich
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    G. Weirich - initial implementation
+ *    
+ *
+ * $Id$
+ *    
+ *******************************************************************************/
 package elexis_db_shaker.actions;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.LinkedList;
 import java.util.List;
 
+import ch.elexis.util.PlatformHelper;
 import ch.elexis.util.SWTHelper;
 
 public class Namen {
-	static final String VORNAMEN_FILE = "vornamen.txt";
-	static final String NACHNAMEN_FILE = "nachnamen.txt";
 	
 	List<String> vornamen;
 	List<String> nachnamen;
@@ -21,9 +34,10 @@ public class Namen {
 	public Namen(){
 		try {
 			vornamen = new LinkedList<String>();
-			
-			InputStream instreamvn = getClass().getResourceAsStream("/vornamen.txt");
-			InputStreamReader infilevn = new InputStreamReader(instreamvn);
+			String base = PlatformHelper.getBasePath("ch.elexis.support.dbshaker");
+			File rsc = new File(base, "rsc");
+			File fFirstnames = new File(rsc, "vornamen.txt");
+			Reader infilevn = new FileReader(fFirstnames);
 			BufferedReader vn = new BufferedReader(infilevn);
 			String line;
 			while ((line = vn.readLine()) != null) {
@@ -32,8 +46,8 @@ public class Namen {
 			vn.close();
 			
 			nachnamen = new LinkedList<String>();
-			InputStream instreamnn = getClass().getResourceAsStream("/nachnamen.txt");
-			InputStreamReader infilenn = new InputStreamReader(instreamnn);
+			File fLastNames = new File(rsc, "nachnamen.txt");
+			Reader infilenn = new FileReader(fLastNames);
 			BufferedReader nn = new BufferedReader(infilenn);
 			while ((line = nn.readLine()) != null) {
 				nachnamen.add(line);
