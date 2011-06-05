@@ -1,8 +1,41 @@
-Offene Probleme, welche bis zum rc3 (Ende Mail) gelöst werden sollten:
-- UnitTest von trunk sind noch nicht migriert
-- WindowTester läuft noch nicht
+Offene Probleme
+- Tests von agenda, arzttarife von trunk sind noch nicht migriert
+- WindowTester läuft noch nicht, wäre Jubula bessere Alternative?
 - SmokeTest nicht klar definiert
 - Feature #48: Laboritems zusammenfassen (Dokumentation muss ergänzt werden)
+- Diverse Tickets im Redmine
+- HL7-Testdateien von Unilabs-St.Gallen und IKMI-IKCH weisen auf mögliche Fehler bei zu langen Kommentaren hin
+
+Changelog für 2.1.5.rc3
+
+Benutzersicht
+tony: Neue Version Medics Plugin (Importer und Exporter)
+tony: Laborview wird so erweitert, dass Bemerkungen zu Laborwerten mit einem proportionalen Font und ohne Unterdrückung der Leerzeichen dargestellt werden
+niklaus: db-shaker mit Korrekturen aus Trunk zum Laufen gebracht
+marco & thomas: diverse kleine Bug-Fixes
+marco & thomas: Länge von Textfeldern werden bei der Eingabe überprüft
+
+Wichtige changesets
+7119c0bbcc0f: 2011-05-31: mdescher: Ticket #104: ch.elexis.privatrechnung2 was unable to load class ch.elexis.privatrechnung2.data.LeistungsFactory
+663b002c8727: 2011-05-31: mdescher: Ticket #405: Maximale Länge von Eingaben in Dialogen
+a4efd4081dd5: 2011-05-23: marco: Ticket #389: Eigenleistung
+7ec6d9afa92c: 2011-05-22: rgw@macbook: fixed broken classpaths and manifests
+75df2a5c043b: 2011-05-22: rgw@macbook: TrustX changes
+5006ef0874a5: 2011-05-16: marco: Ticket #80: Fix for NPE on call of ElexisEventDispatcher.fire() from Non-UI-Thread
+6f1af336aad4: 2011-05-16: marco: Ticket #412: Verschwindende Konsultationseintraege
+680b42b20417: 2011-05-13: marco: Ticket #72: Add declarative access to Leistungsblock Viewer in LeistungenView and CodeDetailView
+8777acb68e6c: 2011-05-11: marco: Ticket #389: Eigenleistung
+e5070a300478: 2011-05-09: thomas: update to db version 1.8.8
+9bb5d238543b: 2011-05-09: thomas: removed unnecessary version constraints
+6d2a4f8d84b3: 2011-05-09: marco: Fix NPE in ch.elexis.artikel_at
+c6e8c1f8ca49: 2011-05-10: thomas: Ticket: #404 - fixed by changing translateFlavor to treat h2 db like hsql db statements
+9f2ea938c0b0: 2011-05-16: Niklaus Giger: Merged changes from 2.1.5.rc2.dev
+38640fc73166: 2011-04-18: marco: Ticket #199: Failed to execute runnable (java.util.ConcurrentModificationException)
+c9456c1c3c67: 2011-04-18: marco: Ticket #331: java.lang.IllegalArgumentException: Index out of bounds
+d18b58bf219b: 2011-05-14: rgw@iMac: apply formatting
+e3bd6c4a8c0b: 2011-05-14: rgw@iMac: use default JRE
+d2a6dd76ff8d: 2011-05-06: Niklaus Giger: Ticket #399: DBUID auch ohne Adminrechte auslesbar
+9255561a6918: 2011-05-01: tony: EXPORT Tags bei Laborwerten hinzugefügt für HL7 Exporter (Einstellungen und DB)
 
 Changelog für 2.1.5.rc2
 Gerry Weirich: Ticket #352: Feld Bezug in Zusatzadressen zu kurz
