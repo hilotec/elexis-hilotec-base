@@ -14,6 +14,8 @@ package ch.elexis.preferences;
 
 import java.util.LinkedList;
 
+import org.eclipse.core.runtime.preferences.DefaultScope;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -28,14 +30,38 @@ import ch.rgw.io.Settings;
  * @author Gerry
  */
 public class SettingsPreferenceStore implements IPreferenceStore {
+	/**
+	 * The default context is the context where getDefault and setDefault
+	 * methods will search. This context is also used in the search.
+	 */
+	private IScopeContext defaultContext = null;
 	
 	private static final String _DEFAULT = "_default"; //$NON-NLS-1$
 	Settings base;
 	private LinkedList<IPropertyChangeListener> listeners =
 		new LinkedList<IPropertyChangeListener>();
 	
+	/**
+	 * Default constructor for the SettingsPreferenceStore.
+	 * ATTENTION initializers (org.eclipse.core.runtime.preferences) will not be executed. 
+	 * 
+	 * @param base
+	 */
 	public SettingsPreferenceStore(Settings base){
 		this.base = base;
+	}
+	
+	/**
+	 * Constructor for the SettingsPreferenceStore 
+	 * registered initializers (org.eclipse.core.runtime.preferences) will be executed.
+	 * 
+	 * @param base
+	 * @param pluginId
+	 */
+	public SettingsPreferenceStore(Settings base, String pluginId){
+		this.base = base;
+		defaultContext = new DefaultScope();
+		defaultContext.getNode(pluginId);
 	}
 	
 	public Settings getBase(){
@@ -232,5 +258,4 @@ public class SettingsPreferenceStore implements IPreferenceStore {
 		firePropertyChangeEvent(name, getBoolean(name), value);
 		set(name, Boolean.toString(value));
 	}
-	
 }
