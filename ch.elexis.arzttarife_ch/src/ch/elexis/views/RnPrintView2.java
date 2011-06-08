@@ -544,8 +544,8 @@ public class RnPrintView2 extends ViewPart {
 		footer.setLength(0);
 		footer
 			.append("■ 0\t0\t\t").append(df.format(mwst0)).append("\t 0.00\n") //$NON-NLS-1$ //$NON-NLS-2$
-			.append("■ 1\t7.6\t\t").append(df.format(mwst1)).append("\t").append(df.format(0.074 * mwst1)).append("\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			.append("■ 2\t2.4\t\t").append(df.format(mwst2)).append("\t").append(df.format(0.024 * mwst2)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			.append("■ 1\t8\t\t").append(df.format(mwst1)).append("\t").append(df.format(0.08 * mwst1)).append("\n") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			.append("■ 2\t2.5\t\t").append(df.format(mwst2)).append("\t").append(df.format(0.025 * mwst2)).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		cursor = print(cursor, tp, false, footer.toString());
 		cursor = print(cursor, tp, true, "\n Total\t\t\t"); //$NON-NLS-1$
 		footer.setLength(0);
