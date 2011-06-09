@@ -21,7 +21,7 @@
   <concurrentBuild>false</concurrentBuild>
   <builders>
     <hudson.plugins.buckminster.EclipseBuckminsterBuilder>
-      <installationName>Buckminster</installationName>
+      <installationName>Buckminster-3.6</installationName>
       <commands>importtargetdefinition -A &apos;${WORKSPACE}/ch.elexis.releng/core.dev.target&apos;</commands>
       <logLevel>info</logLevel>
       <params></params>

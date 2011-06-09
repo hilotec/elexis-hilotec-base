@@ -147,5 +147,15 @@ fn3. Hier werden alle Build ausgeführt, ua. alle *.java-Dateien kompiliert
 
 fn4. Hier werden die JUnit-Tests durchgeführt, Test-Reports und Auswertungen der Code-Abdeckung erstellt
 
-Leider können im Moment noch keine PDE-Unit-Tests laufen gelassen werden.
+h2. PDE-Builds unter Jenkins
+
+Damit ein sogenanter headless build für PDE-Unit-Tests unter jenkins laufen sind noch folgende Schritte notwendig.
+
+* vncserver installieren, z.B. via @"sudo apt-get install tightvncserver"@
+* Einen Window-Manager installieren, z.B. via @"sudo aptitude install metacity"@
+* Als Benutzer Jenkins einmal den vncserver starten und ein beliebiges Passwort eingeben und den gestarten vncserver wieder stoppen
+** @sudo -u jenkins -s -H@
+** @jenkins: cd $HOME && vncserver@
+** @jenkins: killall vncserver@
+* Im Jenkins die Erweiterung (Plug-In) xvnc installieren
   
