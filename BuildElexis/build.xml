@@ -352,9 +352,6 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		</wikitext-to-html>
 
 		<copy todir="${dist}">
-			<fileset dir="${dist}/doc">
-				<include name="elexis.pdf" />
-			</fileset>
 			<fileset dir="${rsc}">
 				<include name="info.html" />
 				<include name="license.html" />
@@ -519,6 +516,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 			<arg value="elexis.tex" />
 		</exec>
 		<copy file="${repositories}/elexis-base/dokumentation/elexis.pdf" todir="${dist}/doc" />
+		<copy file="${repositories}/elexis-base/dokumentation/elexis.pdf" todir="${dist}" />
 	</target>
 
 	<target name="doc_fr" unless="skip_texify" depends="initialize">
