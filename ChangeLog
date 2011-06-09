@@ -3,8 +3,18 @@ Offene Probleme
 - WindowTester läuft noch nicht, wäre Jubula bessere Alternative?
 - SmokeTest nicht klar definiert
 - Feature #48: Laboritems zusammenfassen (Dokumentation muss ergänzt werden)
-- Diverse Tickets im Redmine
 - HL7-Testdateien von Unilabs-St.Gallen und IKMI-IKCH weisen auf mögliche Fehler bei zu langen Kommentaren hin
+
+Changelog für 2.1.5.rc4
+628965e4ee0c,"Ticket #51: Corrected copy of elexis.pdf",Niklaus Giger,2011-06-09 09:27 +0200
+f901e29fd164,"Ticket #74: HL7-Test via buckminster/Jenkins zum Laufen gebracht",Niklaus Giger,2011-06-09 11:26 +0200
+4be452d8d332,"Ticket #72: Declarative access to Patient Liste",mdescher,2011-05-25 13:22 +0200
+c9516195ecef,"Ticket #51: Dokumentation verbessert",Niklaus Giger,2011-06-09 12:33 +0200
+5784cfa1aa02,"Ticket: #434 - added method to execute a sql string and handle exceptions appropriately to PersitentObject
+- added possibility to create an ElexisStatus which will trigger a restart of the app",thomashu,2011-06-03 15:05 +0200
+bb2693c953bc,"Ticket: #434 - minor change making exception handling more specific",thomashu,2011-06-03 15:07 +0200
+d758fa8461e2,"Ticket: #434 - only create blocking error with restart on connection problems",thomashu,2011-06-03 16:31 +0200
+2351ce1bafa6,"added constructor to SettingsPreferenceStore which allows usage of org.eclipse.core.runtime.preferences initializer extension point",thomas,2011-06-07 18:17
 
 Changelog für 2.1.5.rc3
 
