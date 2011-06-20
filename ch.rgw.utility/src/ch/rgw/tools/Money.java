@@ -13,8 +13,11 @@
 
 package ch.rgw.tools;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.text.ParsePosition;
 import java.util.Locale;
 
 /**
@@ -27,6 +30,11 @@ import java.util.Locale;
  * 
  */
 public class Money extends Number implements Comparable<Money> {
+	
+	private final static String formatPattern = "#,##0.00";
+	
+	private final static DecimalFormatSymbols symbols = new DecimalFormatSymbols();
+	
 	private static final long serialVersionUID = 7466555366749958L;
 	private static NumberFormat nf = NumberFormat.getInstance(Locale.getDefault());
 	private int cents; // The value of this money
@@ -91,23 +99,24 @@ public class Money extends Number implements Comparable<Money> {
 	}
 	
 	private static Double parse(String raw) throws ParseException{
-		if (raw.matches("-?[0-9]+")) {
-			return Double.parseDouble(raw);
-		}
-		if (raw.matches("-?[0-9]+[\\.,][0-9]{1,2}")) {
-			String[] vals = raw.split("[\\.,]");
-			if (vals[1].length() == 1) {
-				vals[1] += "0";
-			}
-			int fac = 1;
-			if (vals[0].startsWith("-")) {
-				vals[0] = vals[0].substring(1);
-				fac = -1;
-			}
-			int cents = fac * (100 * Integer.parseInt(vals[0]) + Integer.parseInt(vals[1]));
-			double d = cents / 100.0;
-			return d;
-		}
+		// try ch format 123'456.789
+		ParsePosition parsePosition = new ParsePosition(0);
+		symbols.setDecimalSeparator('.');
+		symbols.setGroupingSeparator('\'');
+		DecimalFormat format = new DecimalFormat(formatPattern, symbols);
+		Number ret = format.parse(raw, parsePosition);
+		if(ret != null && parsePosition.getIndex() == raw.length())
+			return ret.doubleValue();
+		// try de format 123.456,789
+		parsePosition = new ParsePosition(0);
+		symbols.setDecimalSeparator(',');
+		symbols.setGroupingSeparator('.');
+		format = new DecimalFormat(formatPattern, symbols);
+		ret = format.parse(raw, parsePosition);
+		if(ret != null && parsePosition.getIndex() == raw.length())
+			return ret.doubleValue();
+		
+		// the string could not be parsed by the known formats
 		throw new ParseException(raw, 1);
 	}
 	
