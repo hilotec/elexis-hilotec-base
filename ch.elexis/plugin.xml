@@ -742,5 +742,22 @@
             name="Eigenleistung">
       </Leistung>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            allPopups="false"
+            locationURI="toolbar:org.eclipse.ui.main.toolbar">
+         <toolbar
+               id="ch.elexis.toolbar1">
+            <command
+                  commandId="org.eclipse.ui.views.showView"
+                  icon="rsc/new_wiz.gif"
+                  label="Views anzeigen"
+                  style="push"
+                  tooltip="%command.showViews">
+            </command>
+         </toolbar>
+      </menuContribution>
+   </extension>
 
 </plugin>
