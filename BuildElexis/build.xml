@@ -79,6 +79,7 @@
 	<property name="repositories" value="${base}/repositories" />
 	<property name="additions" value="${output}/additions" />
 	<property name="rsc" value="${repositories}/elexis-base/BuildElexis/rsc" />
+	<property name="fop.home" value="${lib}/fop-1.0" />
 	<condition property="nopull">
 		<isset property="unplugged" />
 	</condition>
@@ -97,6 +98,9 @@
 		<get src="http://team.medelexis.ch/build/ant-contrib-1.0b3.jar" dest="${lib}/ant-contrib.jar" usetimestamp="true" />
 		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-compiler.jar" dest="${lib}/scala-compiler.jar" usetimestamp="true" />
 		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-library.jar" dest="${lib}/scala-library.jar" usetimestamp="true" />
+		<get src="http://apache.mirror.testserver.li/xmlgraphics/fop/binaries/fop-1.0-bin.zip" dest="${lib}/fop-1.0-bin.zip" usetimestamp="true" />
+		<unzip src="${lib}/fop-1.0-bin.zip" dest="${lib}" overwrite="false" />
+		<chmod file="${lib}/fop-1.0/fop" perm="0755" />
 	</target>
 
 	<target name="initialize" depends="downloads">
@@ -552,6 +556,34 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 					<else>
 						<echo message="Skipping, as @{plugin}/doc/${DirName}.tex not found" />
 					</else>
+				</if>
+				<if>
+					<available file="@{plugin}/doc" type="dir" />
+					<then>
+						<echo message="building html/pdf from textile in @{plugin}/doc" />
+						<wikitext-to-html markupLanguage="Textile" overwrite="true" multipleOutputFiles="false" formatOutput="true">
+							<fileset dir="@{plugin}/doc">
+								<include name="*.textile" />
+							</fileset>
+						</wikitext-to-html>
+						<wikitext-to-xslfo markupLanguage="Textile">
+							<fileset dir="@{plugin}/doc">
+								<include name="*.textile" />
+							</fileset>
+						</wikitext-to-xslfo>
+						<apply executable="${fop.home}/fop" dir="@{plugin}/doc" relative="true" verbose="true" dest="@{plugin}/doc" logError="true">
+							<arg value="-r" />
+							<srcfile />
+							<targetfile />
+							<fileset dir="@{plugin}/doc" includes="*.fo" />
+							<mapper from="*.fo" to="*.pdf" type="glob" />
+						</apply>
+					</then>
+				</if>
+				<if>
+					<available file="@{plugin}/doc" type="dir" />
+					<then>
+					</then>
 				</if>
 			</sequential>
 		</for>
