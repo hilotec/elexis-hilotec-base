@@ -241,13 +241,13 @@ For the example here we created the empty hg repositories /opt/gerry/A and /opt/
 Now we start our first instance of eclipse to open our **workspace B** , e.g.  @eclipse -data /opt/gerry/B@.
 
 Select the menu "File..Import..".  In the "Import" dialog we choose "Clone Existing Mercurial Repository" and press "Next"
-!images/hg_clone_1.png!
+!images/elexis_hg_1.png!
 After choosing the right "remote" repository "/opt/gerry/RemoteServer" in the "Mecurial clone repository wizard". Note that we choose the local directory clone, where our repository will live. Press "Next" to continue.
-!images/hg_clone_2.png!
+!images/elexis_hg_2.png!
 By pressing several times "Next" we have a new workspace populated by the project "BuildElexis".
-!images/hg_clone_3.png!
-!images/hg_clone_4.png!
-!images/hg_clone_5.png!
+!images/elexis_hg_3.png!
+!images/elexis_hg_4.png!
+!images/elexis_hg_5.png!
 
 Now we open a second eclipse **workspace A**, e.g.  @eclipse -data /opt/gerry/A@. Use "File..Import..Existing projects" to import the "BuildElexis" project.
 
@@ -257,7 +257,6 @@ Add a comment line to the file "options.cmd". In the "Package Explorer" you noti
 !images/hg_change_C1_1.png!
 
 In the "Package Explorer" view select the "BuildElexis" project. Using the context menu choose "Team..Commit..". In the "Commit changes to local Mercurial repository" add a decent commit message. Then press "OK".
-!images/hg_change_C1_2.png!
 
 As we are pleased with our work we will pull it to the remote server.
 In the "Package Explorer" view select the "BuildElexis" project. Using the context menu choose "Team..Push..". In the "Push changes to a repository" dialog enter the URL of the RemoteServer. Then press "Next".

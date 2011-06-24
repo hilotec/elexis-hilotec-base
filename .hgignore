@@ -5,6 +5,7 @@ workspace
 .git
 .svn
 *~
+*.fo
 *.class
 bin
 .DS_Store
