@@ -396,7 +396,7 @@ public class Importer extends ImporterPage {
 		}
 		Result<String> result = new Result<String>("OK");
 		
-		String downloadDirPath = Hub.localCfg.get(PreferencePage.DL_DIR, System.getenv("temp"));
+		String downloadDirPath = Hub.localCfg.get(PreferencePage.DL_DIR, Hub.getTempDir().toString());
 		String iniPath = Hub.localCfg.get(PreferencePage.INI_PATH, null);
 		
 		int res = -1;

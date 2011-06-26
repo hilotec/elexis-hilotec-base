@@ -114,7 +114,7 @@ public class NamedBlob extends PersistentObject {
 	 */
 	public static boolean exists(final String id){
 		StringBuilder path = new StringBuilder();
-		path.append(System.getenv("TEMP"));
+		path.append(Hub.getTempDir());
 		path.append(File.separator);
 		String idr = id.replaceAll("\\:", "\\\\");
 		path.append(idr);

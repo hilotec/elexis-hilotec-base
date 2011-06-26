@@ -35,8 +35,8 @@ public class TestSAT extends TestCase {
 	private static final String alicepwd = "alicepwd";
 	private static final String bobpwd = "bobpwd";
 	
-	private static final String datafile = System.getenv("temp") + File.separator + "data.ttx";
-	private static final String keyfile = System.getenv("temp") + File.separator + "key.ttx";
+	private static final String datafile = System.getProperty("java.io.tmpdir") + File.separator + "data.ttx";
+	private static final String keyfile = System.getProperty("java.io.tmpdir") + File.separator + "key.ttx";
 	
 	public void testModule() throws Exception{
 		Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider()); // Add
