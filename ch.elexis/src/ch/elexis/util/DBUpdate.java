@@ -13,12 +13,17 @@
 
 package ch.elexis.util;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.eclipse.core.runtime.AssertionFailedException;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Hub;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
+import ch.elexis.status.ElexisStatus;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
@@ -292,7 +297,6 @@ public class DBUpdate {
 	 * <li>eine ; getrennte Liste von SQL-Befehlen</li>
 	 */
 	public static void doUpdate(){
-		final JdbcLink j = PersistentObject.getConnection();
 		String dbv = Hub.globalCfg.get("dbversion", null);
 		if (dbv == null) {
 			log.log("Kann keine Version lesen", Log.ERRORS);
@@ -302,44 +306,28 @@ public class DBUpdate {
 		} else {
 			vi = new VersionInfo(dbv);
 		}
-		Stm stm = j.getStatement();
+
+		List<String> sqlStrings = new ArrayList<String>();
 		for (int i = 0; i < versions.length; i++) {
 			if (vi.isOlder(versions[i])) {
 				String[] cmd = cmds[i].split(";");
-				log.log("Update auf " + versions[i], Log.WARNINGS);
-				for (int c = 0; c < cmd.length; c++) {
-					if (cmd[c].matches("S[0-9]+")) {
-						int cnum = Integer.parseInt(cmd[c].substring(1));
-						switch (cnum) {
-						case 1: {
-							Query<Rechnung> qbe = new Query<Rechnung>(Rechnung.class);
-							List<Rechnung> alle = qbe.execute();
-							for (Rechnung rn : alle) {
-								List<String> traces = rn.getTrace(Rechnung.STATUS_CHANGED);
-								if (traces.isEmpty()) {
-									rn.set("StatusDatum", rn.getDatumRn());
-									
-								} else {
-									String trace = traces.get(traces.size() - 1);
-									String[] split = trace.split(", *");
-									TimeTool tim = new TimeTool(split[0]);
-									rn.set("StatusDatum", tim.toString(TimeTool.DATE_GER));
-								}
-							}
-							break;
-						}
-						}
-						
-					} else { // direkt SQL-Kommando
-						stm.exec(j.translateFlavor(cmd[c]));
-					}
-				}
+				for(int cmdIdx = 0; cmdIdx < cmd.length; cmdIdx++)
+					sqlStrings.add(cmd[cmdIdx]);
 			}
 		}
-		Hub.globalCfg.set("dbversion", Hub.DBVersion);
-		Hub.globalCfg.set("ElexisVersion", Hub.Version);
-		Hub.globalCfg.flush();
-		PersistentObject.getConnection().releaseStatement(stm);
+		// create log message
+		log.log("Start DBUpdate from Version " + dbv + " to Version " + versions[versions.length-1], Log.INFOS);
+		
+		SqlWithUiRunner runner = new SqlWithUiRunner(sqlStrings.toArray(new String[0]), Hub.PLUGIN_ID);
+		// update version if all updates are successful
+		if(runner.runSql()) {
+			Hub.globalCfg.set("dbversion", Hub.DBVersion);
+			Hub.globalCfg.set("ElexisVersion", Hub.Version);
+			Hub.globalCfg.flush();
+			// create log message
+			log.log("DBUpdate from Version " + dbv + " to Version " + versions[versions.length-1] + " successful.", Log.INFOS);
+		} else {
+			log.log("DBUpdate from Version " + dbv + " to Version " + versions[versions.length-1] + " failed.", Log.ERRORS);
+		}
 	}
-	
 }

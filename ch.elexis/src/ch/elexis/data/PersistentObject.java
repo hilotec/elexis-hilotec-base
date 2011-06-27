@@ -65,6 +65,7 @@ import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.DBUpdate;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.SqlWithUiRunner;
 import ch.elexis.wizards.DBConnectWizard;
 import ch.rgw.compress.CompEx;
 import ch.rgw.io.FileTool;
@@ -2171,50 +2172,10 @@ public abstract class PersistentObject implements ISelectable {
 	 *            create string
 	 */
 	protected static void createOrModifyTable(final String sqlScript){
-		Thread current = Thread.currentThread();
-		Thread main = Desk.getDisplay().getThread();
-		if (current.equals(main)) {
-			// current thread is main thread, so use ProgressService
-			try {
-				PlatformUI.getWorkbench().getProgressService()
-					.busyCursorWhile(new IRunnableWithProgress() {
-						public void run(IProgressMonitor moni){
-							moni.beginTask("Führe Datenbankmodifikation aus",
-								IProgressMonitor.UNKNOWN);
-							try {
-								final ByteArrayInputStream bais;
-								bais = new ByteArrayInputStream(sqlScript.getBytes("UTF-8"));
-								if (getConnection().execScript(bais, true, false) == false) {
-									SWTHelper.showError("Datenbank-Fehler",
-										"Konnte Datenbank-Script nicht ausführen");
-									log.log("Cannot execute db script: " + sqlScript, Log.WARNINGS);
-								}
-								moni.done();
-							} catch (UnsupportedEncodingException e) {
-								// should really never happen
-								e.printStackTrace();
-							}
-						}
-					});
-			} catch (Exception e) {
-				SWTHelper.showError("Interner-Fehler", "Konnte Datenbank-Script nicht ausführen");
-				log.log(e, "Cannot execute db script: " + sqlScript, Log.ERRORS);
-			}
-		} else {
-			// current thread is not main thread, so don't use ProgressService
-			try {
-				final ByteArrayInputStream bais;
-				bais = new ByteArrayInputStream(sqlScript.getBytes("UTF-8"));
-				if (getConnection().execScript(bais, true, false) == false) {
-					SWTHelper.showError("Datenbank-Fehler",
-						"Konnte Datenbank-Script nicht ausführen");
-					log.log("Cannot execute db script: " + sqlScript, Log.WARNINGS);
-				}
-			} catch (UnsupportedEncodingException e) {
-				// should really never happen
-				e.printStackTrace();
-			}
-		}
+		String[] sql = new String[1];
+		sql[0] = sqlScript;
+		SqlWithUiRunner runner = new SqlWithUiRunner(sql , "");
+		runner.runSql();
 	}
 	
 	/*

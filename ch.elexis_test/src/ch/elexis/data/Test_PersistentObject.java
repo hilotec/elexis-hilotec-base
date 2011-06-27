@@ -15,6 +15,7 @@ import org.powermock.api.mockito.PowerMockito;
 import ch.elexis.Hub;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLinkException;
+import ch.rgw.tools.JdbcLink.Stm;
 
 public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	
@@ -142,6 +143,39 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 		} catch (PersistenceException pe) {
 
 		}
+	}
+	
+	@Test
+	public void testCreateOrModifyTable() {
+		/** Definition of the database table */
+		String version = "1.0.0";
+		String createTable =
+			"CREATE TABLE Dummy"
+				+ "("
+				+ "ID VARCHAR(25) primary key," // This field must always be present
+				+ "lastupdate BIGINT," // This field must always be present
+				+ "deleted CHAR(1) default '0'," // This field must always be present
+				+ "PatientID VARCHAR(25),"
+				+ "Title      VARCHAR(50)," // Use VARCHAR, CHAR, TEXT and BLOB
+				+ "FunFactor VARCHAR(6)," // No numeric fields
+				+ "BoreFactor	VARCHAR(6)," // VARCHARS can be read as integrals
+				+ "Date		CHAR(8)," // use always this for dates
+				+ "Remarks	TEXT," + "FunnyStuff BLOB);"
+				+ "CREATE INDEX idx1 on Dummy (FunFactor);"
+				// Do not forget to insert some version information
+				+ "INSERT INTO Dummy (ID, Title) VALUES ('VERSION'," + JdbcLink.wrap(version) + ");";
+		String modifyTable = "ALTER TABLE Dummy MODIFY BoreFactor VARCHAR(12);";
+		PersistentObject.getConnection().DBFlavor = "h2";
+		// create
+		PersistentObject.createOrModifyTable(createTable);
+		// modify
+		PersistentObject.createOrModifyTable(modifyTable);
+		// test the JdbcException thrown by the statement if FunFactor was still VARCHAR(6)
+		// will stop the test if one of the createOrModifyTable failed ...
+		JdbcLink link = PersistentObject.getConnection();
+		Stm statement = link.getStatement();
+		statement.exec("INSERT INTO Dummy (ID, BoreFactor) VALUES ('TEST', '1234567890');");
+		link.releaseStatement(statement);
 	}
 	
 	private class PersistentObjectImpl extends PersistentObject {
