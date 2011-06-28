@@ -38,7 +38,7 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 		"ExtInfo  BLOB);" + //$NON-NLS-1$
 		"CREATE INDEX icd1 ON ICD10 (parent);" + //$NON-NLS-1$
 		"CREATE INDEX icd2 ON ICD10 (ICDCode);" + //$NON-NLS-1$
-		"INSERT INTO " + TABLENAME + " (ID,ICDTxt) VALUES ('VERSION'," + JdbcLink.wrap(VERSION) + ");";
+		"INSERT INTO " + TABLENAME + " (ID,ICDTxt) VALUES ('1'," + JdbcLink.wrap(VERSION) + ");";
 	
 	public static void initialize(){
 		createOrModifyTable(create);
