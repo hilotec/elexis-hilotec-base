@@ -78,7 +78,7 @@ public class Stammdatenexport {
 				return "Der Export wurde efrolgreich abgeschlossen";
 			} catch (Exception ex) {
 				ElexisStatus status =
-					new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+					new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 						"Fehler beim Export: " + ex.getMessage(), ex);
 				throw new ScriptingException(status);
 			}

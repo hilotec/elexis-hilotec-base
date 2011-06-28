@@ -67,7 +67,7 @@ public class KGDrucker {
 			
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, Messages
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE, Messages
 					.getString("KGDrucker.errorPrinting")
 					+ ": " + Messages.getString("KGDrucker.couldntShow"), ex);
 			StatusManager.getManager().handle(status);

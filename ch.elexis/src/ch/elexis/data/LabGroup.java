@@ -138,7 +138,7 @@ public class LabGroup extends PersistentObject implements Comparable<LabGroup> {
 			rs.close();
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, "Persistence error: "
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE, "Persistence error: "
 					+ ex.getMessage(), ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		} finally {

@@ -81,7 +81,7 @@ public class DBImage extends PersistentObject {
 			setBinary(FLD_IMAGE, baos.toByteArray());
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					"Image error: Das Bild konnte nicht geladen werden " + ex.getMessage(), ex);
 			throw new PersistenceException(status);
 		}

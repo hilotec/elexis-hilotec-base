@@ -56,7 +56,7 @@ public class PersistentObjectFactory implements IExecutableExtension {
 			}
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					"create: Konnte Objekt nicht erstellen " + ex.getMessage(), ex,
 					ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);

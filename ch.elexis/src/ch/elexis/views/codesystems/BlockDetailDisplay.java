@@ -207,7 +207,7 @@ public class BlockDetailDisplay implements IDetailDisplay {
 					site.getPage().showView(LeistungenView.ID);
 				} catch (Exception ex) {
 					ElexisStatus status =
-						new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+						new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 							"Fehler beim Starten des Leistungscodes " + ex.getMessage(), ex,
 							ElexisStatus.LOG_ERRORS);
 					StatusManager.getManager().handle(status, StatusManager.SHOW);

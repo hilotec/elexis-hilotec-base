@@ -87,7 +87,7 @@ public class DocumentExport {
 			}
 		} catch (Exception e) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					"Fehler beim Export: " + e.getMessage(), e);
 			throw new ScriptingException(status);
 		}

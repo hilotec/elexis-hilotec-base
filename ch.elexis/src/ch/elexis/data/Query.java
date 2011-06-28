@@ -82,7 +82,7 @@ public class Query<T> {
 			
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					"Query: Konnte Methode load auf " + cl.getName() + " nicht auflösen", ex,
 					ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
@@ -112,7 +112,7 @@ public class Query<T> {
 			
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					"Query: Konnte Methode load auf " + cl.getName() + " nicht auflösen", ex,
 					ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
@@ -361,7 +361,7 @@ public class Query<T> {
 			return ps;
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					"Fehler beim PreparedStatement ", ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
@@ -383,7 +383,7 @@ public class Query<T> {
 			}
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					"Fehler beim Ausführen von " + sql.toString(), ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
@@ -515,7 +515,7 @@ public class Query<T> {
 			
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					"Fehler bei Datenbankabfrage ", ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		} finally {

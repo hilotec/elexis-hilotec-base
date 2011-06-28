@@ -1049,7 +1049,7 @@ public abstract class PersistentObject implements ISelectable {
 			} catch (NoSuchMethodException nmex) {
 				log.log("Fehler bei Felddefinition " + field, Log.WARNINGS);
 				ElexisStatus status =
-					new ElexisStatus(IStatus.WARNING, Hub.PLUGIN_ID, ElexisStatus.CODE_NOFEEDBACK,
+					new ElexisStatus(ElexisStatus.WARNING, Hub.PLUGIN_ID, ElexisStatus.CODE_NOFEEDBACK,
 						"Fehler bei Felddefinition", nmex);
 				StatusManager.getManager().handle(status, StatusManager.LOG);
 				return mapped;
@@ -1245,7 +1245,7 @@ public abstract class PersistentObject implements ISelectable {
 				
 			} catch (Exception ex) {
 				ElexisStatus status =
-					new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+					new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 						"Fehler beim Lesen der Liste ", ex, ElexisStatus.LOG_ERRORS);
 				throw new PersistenceException(status);
 			}
@@ -1324,7 +1324,7 @@ public abstract class PersistentObject implements ISelectable {
 			return true;
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, "Fehler bei: " + cmd
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE, "Fehler bei: " + cmd
 					+ "(" + field + "=" + value + ")", ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
@@ -1690,7 +1690,7 @@ public abstract class PersistentObject implements ISelectable {
 				sb.append(fields[i]).append("=").append(values[i]).append("\n");
 			}
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, sb.toString(), ex,
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE, sb.toString(), ex,
 					ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
@@ -1803,7 +1803,7 @@ public abstract class PersistentObject implements ISelectable {
 			}
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, "Fehler bei decode ",
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE, "Fehler bei decode ",
 					ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
@@ -1843,7 +1843,7 @@ public abstract class PersistentObject implements ISelectable {
 			}
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					"Fehler beim String encoder", ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}

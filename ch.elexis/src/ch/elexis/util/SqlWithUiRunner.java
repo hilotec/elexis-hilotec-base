@@ -133,7 +133,7 @@ public class SqlWithUiRunner {
 				setStatus(SqlStatus.FAIL);
 				try {
 					StatusManager.getManager().handle(
-						new ElexisStatus(ElexisStatus.ERROR, pluginId, ElexisStatus.LOG_FATALS,
+						new ElexisStatus(ElexisStatus.ERROR, pluginId, ElexisStatus.CODE_NONE,
 							"Error " + e.getMessage() + " during db update", e));
 				} catch (AssertionFailedException appnotinit) {
 					log.log(e, "Error " + e.getMessage() + " during db update", Log.ERRORS);
@@ -143,7 +143,7 @@ public class SqlWithUiRunner {
 				setStatus(SqlStatus.FAIL);
 				try {
 					StatusManager.getManager().handle(
-						new ElexisStatus(ElexisStatus.ERROR, pluginId, ElexisStatus.LOG_FATALS,
+						new ElexisStatus(ElexisStatus.ERROR, pluginId, ElexisStatus.CODE_NONE,
 							"Error " + e.getMessage() + " during db update", e));
 				} catch (AssertionFailedException appnotinit) {
 					log.log(e, "Error " + e.getMessage() + " during db update", Log.ERRORS);
