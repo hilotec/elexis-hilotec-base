@@ -47,7 +47,7 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 	static {
 		addMapping("ICD10", "parent", "Code=ICDCode", "Text=ICDTxt", "encoded", "ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 
-		ICD10 check = load("VERSION");
+		ICD10 check = load("1");
 		if (check.state() < PersistentObject.DELETED) {
 			initialize();
 		} else {
