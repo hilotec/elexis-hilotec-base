@@ -154,8 +154,8 @@ public class SqlWithUiRunner {
 				if (link != null && statement != null)
 					link.releaseStatement(statement);
 			}
-			
-			setStatus(SqlStatus.SUCCESS);
+			if(getStatus() == SqlStatus.EXECUTE)
+				setStatus(SqlStatus.SUCCESS);
 		}
 		
 		public void setStatus(SqlStatus status){
