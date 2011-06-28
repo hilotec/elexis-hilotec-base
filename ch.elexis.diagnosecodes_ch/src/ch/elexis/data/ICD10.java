@@ -38,7 +38,7 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 		"ExtInfo  BLOB);" + //$NON-NLS-1$
 		"CREATE INDEX icd1 ON ICD10 (parent);" + //$NON-NLS-1$
 		"CREATE INDEX icd2 ON ICD10 (ICDCode);" + //$NON-NLS-1$
-		"INSERT INTO " + TABLENAME + " (ID,ICDTxt) VALUES ('1'," + JdbcLink.wrap(VERSION) + ");";
+		"INSERT INTO " + TABLENAME + " (ID,ICDTxt) VALUES ('VERSION'," + JdbcLink.wrap(VERSION) + ");";
 	
 	public static void initialize(){
 		createOrModifyTable(create);
@@ -46,25 +46,21 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 	
 	static {
 		addMapping("ICD10", "parent", "Code=ICDCode", "Text=ICDTxt", "encoded", "ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-		String check =
-			getConnection().queryString("SELECT ID FROM " + TABLENAME + " WHERE icdcode LIKE 'A%'");
-		ICD10 version = load("1");
-		if (check == null) {
+
+		ICD10 check = load("VERSION");
+		if (check.state() < PersistentObject.DELETED) {
 			initialize();
 		} else {
-			VersionInfo vi = new VersionInfo(version.get("Text"));
-			if (!version.exists()) {
-				version.create("1");
-			}
+			VersionInfo vi = new VersionInfo(check.get("Text"));
 			if (vi.isOlder(VERSION)) {
 				if (vi.isOlder("1.0.1")) {
 					getConnection().exec(
 						"ALTER TABLE " + TABLENAME + " ADD deleted CHAR(1) default '0';");
-					version.set("Text", VERSION);
+					check.set("Text", VERSION);
 				}
 				if (vi.isOlder("1.0.2")) {
 					getConnection().exec("ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;");
-					version.set("Text", VERSION);
+					check.set("Text", VERSION);
 				}
 			}
 		}

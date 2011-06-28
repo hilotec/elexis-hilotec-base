@@ -2174,7 +2174,7 @@ public abstract class PersistentObject implements ISelectable {
 	protected static void createOrModifyTable(final String sqlScript){
 		String[] sql = new String[1];
 		sql[0] = sqlScript;
-		SqlWithUiRunner runner = new SqlWithUiRunner(sql , "");
+		SqlWithUiRunner runner = new SqlWithUiRunner(sql , Hub.PLUGIN_ID);
 		runner.runSql();
 	}
 	
