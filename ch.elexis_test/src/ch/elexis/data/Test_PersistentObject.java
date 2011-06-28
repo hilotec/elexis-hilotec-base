@@ -5,6 +5,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.junit.After;
 import org.junit.Before;
@@ -20,7 +23,7 @@ import ch.rgw.tools.JdbcLink.Stm;
 public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	
 	private JdbcLink link;
-
+	
 	@Before
 	public void setUp(){
 		link = initDB();
@@ -29,7 +32,7 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	@After
 	public void tearDown(){
 		try {
-			link.exec("DROP ALL OBJECTS");		
+			link.exec("DROP ALL OBJECTS");
 			link.disconnect();
 		} catch (JdbcLinkException je) {
 			// just tell what happend and resume
@@ -123,8 +126,7 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 		// mock a status manager for ignoring the error status
 		StatusManager statusMock = PowerMockito.mock(StatusManager.class);
 		PowerMockito.mockStatic(StatusManager.class);
-		PowerMockito.when(StatusManager.getManager()).thenReturn(
-				statusMock);
+		PowerMockito.when(StatusManager.getManager()).thenReturn(statusMock);
 		
 		PersistentObjectImpl impl = new PersistentObjectImpl();
 		try {
@@ -146,24 +148,30 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	}
 	
 	@Test
-	public void testCreateOrModifyTable() {
+	public void testTableExists(){
+		assertTrue(PersistentObject.tableExists("CONFIG"));
+		assertTrue(PersistentObject.tableExists("KONTAKT"));
+		// SQL can be case sensitive !!
+		// assertEquals(false, PersistentObject.tableExists("kontakt"));
+		assertEquals(false, PersistentObject.tableExists("THIS_TABLE_SHOULD_NOT_EXISTS"));
+	}
+	
+	@Test
+	public void testCreateOrModifyTable(){
 		/** Definition of the database table */
 		String version = "1.0.0";
-		String createTable =
-			"CREATE TABLE Dummy"
-				+ "("
-				+ "ID VARCHAR(25) primary key," // This field must always be present
-				+ "lastupdate BIGINT," // This field must always be present
-				+ "deleted CHAR(1) default '0'," // This field must always be present
-				+ "PatientID VARCHAR(25),"
-				+ "Title      VARCHAR(50)," // Use VARCHAR, CHAR, TEXT and BLOB
-				+ "FunFactor VARCHAR(6)," // No numeric fields
-				+ "BoreFactor	VARCHAR(6)," // VARCHARS can be read as integrals
-				+ "Date		CHAR(8)," // use always this for dates
-				+ "Remarks	TEXT," + "FunnyStuff BLOB);"
-				+ "CREATE INDEX idx1 on Dummy (FunFactor);"
-				// Do not forget to insert some version information
-				+ "INSERT INTO Dummy (ID, Title) VALUES ('VERSION'," + JdbcLink.wrap(version) + ");";
+		String createTable = "CREATE TABLE Dummy" + "(" + "ID VARCHAR(25) primary key," // This
+// field must always be present
+			+ "lastupdate BIGINT," // This field must always be present
+			+ "deleted CHAR(1) default '0'," // This field must always be present
+			+ "PatientID VARCHAR(25)," + "Title      VARCHAR(50)," // Use VARCHAR, CHAR, TEXT and
+// BLOB
+			+ "FunFactor VARCHAR(6)," // No numeric fields
+			+ "BoreFactor	VARCHAR(6)," // VARCHARS can be read as integrals
+			+ "Date		CHAR(8)," // use always this for dates
+			+ "Remarks	TEXT," + "FunnyStuff BLOB);" + "CREATE INDEX idx1 on Dummy (FunFactor);"
+			// Do not forget to insert some version information
+			+ "INSERT INTO Dummy (ID, Title) VALUES ('VERSION'," + JdbcLink.wrap(version) + ");";
 		String modifyTable = "ALTER TABLE Dummy MODIFY BoreFactor VARCHAR(12);";
 		PersistentObject.getConnection().DBFlavor = "h2";
 		// create
