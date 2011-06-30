@@ -37,14 +37,13 @@ import ch.rgw.tools.JdbcLink.Stm;
  */
 public class DBUpdate {
 	
-	static final String[] versions =
-		{
-			"1.3.0", "1.3.1", "1.3.2", "1.3.3", "1.3.4", "1.3.5", "1.3.6", "1.3.7", "1.3.8",
-			"1.3.9", "1.3.10", "1.3.11", "1.3.12", "1.3.13", "1.4.0", "1.4.1", "1.4.2", "1.4.3",
-			"1.4.4", "1.4.5", "1.4.6", "1.5.0", "1.6.0", "1.6.1", "1.6.2", "1.6.3", "1.6.4",
-			"1.7.0", "1.7.1", "1.7.2", "1.8.0", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5",
-			"1.8.6", "1.8.7", "1.8.8", "1.8.9"
-		};
+	static final String[] versions = {
+		"1.3.0", "1.3.1", "1.3.2", "1.3.3", "1.3.4", "1.3.5", "1.3.6", "1.3.7", "1.3.8", "1.3.9",
+		"1.3.10", "1.3.11", "1.3.12", "1.3.13", "1.4.0", "1.4.1", "1.4.2", "1.4.3", "1.4.4",
+		"1.4.5", "1.4.6", "1.5.0", "1.6.0", "1.6.1", "1.6.2", "1.6.3", "1.6.4", "1.7.0", "1.7.1",
+		"1.7.2", "1.8.0", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5", "1.8.6", "1.8.7", "1.8.8",
+		"1.8.9", "1.8.10"
+	};
 	static final String[] cmds =
 		{
 			"CREATE TABLE EIGENLEISTUNGEN(" + "ID			VARCHAR(25) primary key,"
@@ -277,12 +276,21 @@ public class DBUpdate {
 
 			// 1.8.7
 			"ALTER TABLE LOGS MODIFY station VARCHAR(40);",
-			
+
 			// 1.8.8
 			"ALTER TABLE KONTAKT_ADRESS_JOINT MODIFY Bezug VARCHAR(80);",
-		
+
 			// 1.8.9
-			"ALTER TABLE LABORITEMS ADD EXPORT VARCHAR(100);"
+			"ALTER TABLE LABORITEMS ADD EXPORT VARCHAR(100);",
+
+			// 1.8.10
+			// Gerry Weirich in einem Mail vom 26.06.2011
+			// In früheren Elexis-Versionen wurden Formeln direkt im Feld abgelegt,
+			// aktuell sind es Scripts (Also Objekte vom typ ch.elexis.data.Script)
+			// und das Feld muss nur noch den Namen des Scripts halten.
+			"DELETE FROM LABORITEMS where length(RefFrauOrTx) > 256;"
+				+ "ALTER TABLE LABORITEMS MODIFY RefFrauOrTx VARCHAR(256);"
+				+ "ALTER TABLE LABORITEMS MODIFY RefMann     VARCHAR(256);"
 		};
 	static Log log = Log.get("DBUpdate");
 	
