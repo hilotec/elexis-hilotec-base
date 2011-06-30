@@ -1050,8 +1050,8 @@ public abstract class PersistentObject implements ISelectable {
 			} catch (NoSuchMethodException nmex) {
 				log.log("Fehler bei Felddefinition " + field, Log.WARNINGS);
 				ElexisStatus status =
-					new ElexisStatus(ElexisStatus.WARNING, Hub.PLUGIN_ID, ElexisStatus.CODE_NOFEEDBACK,
-						"Fehler bei Felddefinition", nmex);
+					new ElexisStatus(ElexisStatus.WARNING, Hub.PLUGIN_ID,
+						ElexisStatus.CODE_NOFEEDBACK, "Fehler bei Felddefinition", nmex);
 				StatusManager.getManager().handle(status, StatusManager.LOG);
 				return mapped;
 			} catch (Exception ex) {
@@ -1325,8 +1325,9 @@ public abstract class PersistentObject implements ISelectable {
 			return true;
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE, "Fehler bei: " + cmd
-					+ "(" + field + "=" + value + ")", ex, ElexisStatus.LOG_ERRORS);
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
+					"Fehler bei: " + cmd + "(" + field + "=" + value + ")", ex,
+					ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
 		
@@ -1691,8 +1692,8 @@ public abstract class PersistentObject implements ISelectable {
 				sb.append(fields[i]).append("=").append(values[i]).append("\n");
 			}
 			ElexisStatus status =
-				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE, sb.toString(), ex,
-					ElexisStatus.LOG_ERRORS);
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
+					sb.toString(), ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
 	}
@@ -1804,8 +1805,8 @@ public abstract class PersistentObject implements ISelectable {
 			}
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE, "Fehler bei decode ",
-					ex, ElexisStatus.LOG_ERRORS);
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
+					"Fehler bei decode ", ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
 		return null;
@@ -2175,7 +2176,7 @@ public abstract class PersistentObject implements ISelectable {
 	protected static void createOrModifyTable(final String sqlScript){
 		String[] sql = new String[1];
 		sql[0] = sqlScript;
-		SqlWithUiRunner runner = new SqlWithUiRunner(sql , Hub.PLUGIN_ID);
+		SqlWithUiRunner runner = new SqlWithUiRunner(sql, Hub.PLUGIN_ID);
 		runner.runSql();
 	}
 	
@@ -2381,21 +2382,34 @@ public abstract class PersistentObject implements ISelectable {
 	}
 	
 	public static boolean tableExists(String tableName){
-		boolean result = false;
+		int nrFounds = 0;
+		// Vergleich schaut nicht auf Gross/Klein-Schreibung, da thomas
+		// schon H2-DB gesehen hat, wo entweder alles gross oder alles klein war
 		try {
 			DatabaseMetaData dmd = j.getConnection().getMetaData();
 			String[] onlyTables = {
 				"TABLE"
 			};
-			if (j.DBFlavor.equalsIgnoreCase("postgresql") )
-				tableName = tableName.toLowerCase();
-			ResultSet rs2 = dmd.getTables(null, null, tableName, onlyTables);
-			if (rs2 == null) {
-				return false;
+			
+			ResultSet rs = dmd.getTables(null, null, "%", onlyTables);
+			if (rs != null) {
+				while (rs.next()) {
+					// DatabaseMetaData#getTables() specifies TABLE_NAME is in column 3
+					if (rs.getString(3).equalsIgnoreCase(tableName))
+						nrFounds++;
+				}
 			}
-			result = rs2.first();
-			return result;
-		} catch (SQLException je) {}
-		return result;
+		} catch (SQLException je) {
+			log.log(je, "Fehler beim abrufen der Datenbank Tabellen Information.", Log.ERRORS);
+		}
+		if (nrFounds > 1) {
+			// Dies kann vorkommen, wenn man eine MySQL-datenbank von Windows -> Linuz kopiert
+			// und dort nicht die System-Variable lower_case_table_names nicht gesetzt ist
+			// Anmerkung von Niklaus Giger
+			log.log("Komisch!!! Tabelle " + tableName + " " + nrFounds + "-mal gefunden!!",
+				Log.ERRORS);
+		}
+		return nrFounds == 1;
 	}
+	
 }
