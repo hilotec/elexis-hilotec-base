@@ -25,9 +25,7 @@ public class KontaktOrderManagement extends PersistentObject {
 	private static final JdbcLink j = getConnection();
 	
 	static {
-		String checkExist = j.queryString("SELECT * FROM " //$NON-NLS-1$
-			+ TABLENAME);
-		if (checkExist == null) {
+		if (!tableExists(TABLENAME)) {
 			String filepath = PlatformHelper.getBasePath("ch.elexis.laborimport.medics") //$NON-NLS-1$
 				+ File.separator + "createTable.script"; //$NON-NLS-1$
 			Stm stm = j.getStatement();
