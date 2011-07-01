@@ -1,9 +1,30 @@
 Offene Probleme
 - Tests von agenda, arzttarife von trunk sind noch nicht migriert
-- WindowTester läuft noch nicht, wäre Jubula bessere Alternative?
-- SmokeTest nicht klar definiert
-- Feature #48: Laboritems zusammenfassen (Dokumentation muss ergänzt werden)
-- HL7-Testdateien von Unilabs-St.Gallen und IKMI-IKCH weisen auf mögliche Fehler bei zu langen Kommentaren hin
+
+Changelog für 2.1.5
+
+8e98cb4bc1f4: 2011-06-30: Niklaus Giger: Ticket: #499: tableExists is no longer case-sensitive
+01608b850e5b: 2011-06-24: Niklaus Giger: Ticket #438: Added failing HL7-files
+13f9450b49d8: 2011-06-30: Niklaus Giger: Ticket: #438: Feldlänge vergrössert
+771bc0963cf9: 2011-06-30: thomashu: Ticket: #503 - ch.elexis.laborimport.medics, fixed db table initialization with elexis version 2.1.5
+8c60f85bdff3: 2011-06-28: thomashu: Ticket: #50 - fixed return value of SqlWithUiRunner, when one sql statement of a script failes the whole script is considert as failed
+3c92ee8817dc: 2011-06-28: Niklaus Giger: Ticket #499: Neue Methode PersistentObject.tableExist
+eb06fe23ad9f: 2011-06-28: thomashu: Ticket: #499 - changed ICD10 version id back to 1 for compatibility
+c1f14713febf: 2011-06-28: thomashu: Ticket: #499 - changed ICD10 version id back to 1 for compatibility
+64c86bd6efe1: 2011-06-28: thomashu: Ticket: #499 - changed static initializer of ICD10 to use state() method for test if table exists
+- changed behavior of SqlWithUiRunner to run every statement of script and not stop on first failure
+- added more meaningful value to parameter plugin id when creating a SqlWithUiRunner in PersistentObject#createOrModifyTable()
+a997d8644234: 2011-06-28: thomashu: Ticket: #499 - corrected code parameter when creating ElexisStatus objects
+88702f5e3b18: 2011-06-27: thomashu: Ticket: #3 - added SqlWithUiRunner class for executing SQL Strings on the DB system
+- changed DBUpdate#doUpdate() and PersistentObject#createOrModifyTable() to use SqlWithUiRunner now
+- added Tests for the modified methods
+f049da3abf0b: 2011-06-27: Niklaus Giger: - updated orbit repository location
+50db4525320d: 2011-06-26: Niklaus Giger: Ticket #495: Temp -> Hub.getTempDir
+8336036f2e87: 2011-06-20: thomashu: Ticket: #377 - changed Money.parse to first use ch format than de format, ignoring the locale setting.
+da4e8d493b8e: 2011-06-24: Niklaus Giger: Ticket #484: create html/pdf from *.textile
+a04b9e714942: 2011-06-24: Niklaus Giger: Ticket #484: corrected documentation
+14cd802815f8: 2011-06-21: mdescher: Ticket #392: Fenster oeffnen => Other Shortcut
+8ab7d1b8ed6a: 2011-06-21: mdescher: Ticket #72: Added external access possibility for selected date and bereich in view
 
 Changelog für 2.1.5.rc4
 628965e4ee0c,"Ticket #51: Corrected copy of elexis.pdf",Niklaus Giger,2011-06-09 09:27 +0200
