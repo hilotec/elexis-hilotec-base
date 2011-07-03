@@ -21,10 +21,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.UnsupportedEncodingException;
+import java.sql.Array;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.lang.reflect.Method;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -65,6 +68,7 @@ import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.DBUpdate;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.SqlWithUiRunner;
 import ch.elexis.wizards.DBConnectWizard;
 import ch.rgw.compress.CompEx;
 import ch.rgw.io.FileTool;
@@ -194,8 +198,9 @@ public abstract class PersistentObject implements ISelectable {
 				return connect(getConnection());
 			} catch (JdbcLinkException je) {
 				ElexisStatus status = translateJdbcException(je);
-				status.setMessage(status.getMessage() + 
-					" Fehler mit Demo-Datenbank: Es wurde zwar ein demoDB-Verzeichnis gefunden, aber dort ist keine verwendbare Datenbank");
+				status
+					.setMessage(status.getMessage()
+						+ " Fehler mit Demo-Datenbank: Es wurde zwar ein demoDB-Verzeichnis gefunden, aber dort ist keine verwendbare Datenbank");
 				throw new PersistenceException(status);
 			}
 		} else if ("SWTBot".equals(System.getProperty("elexis-run-mode"))) {
@@ -218,8 +223,8 @@ public abstract class PersistentObject implements ISelectable {
 					return connect(getConnection());
 				} catch (JdbcLinkException je) {
 					ElexisStatus status = translateJdbcException(je);
-					status.setMessage(status.getMessage() + 
-						" Konnte keine Verbindung zur Test_Database herstellen");
+					status.setMessage(status.getMessage()
+						+ " Konnte keine Verbindung zur Test_Database herstellen");
 					status.setLogLevel(ElexisStatus.LOG_FATALS);
 					throw new PersistenceException(status);
 				}
@@ -311,16 +316,11 @@ public abstract class PersistentObject implements ISelectable {
 	
 	public static boolean connect(final JdbcLink jd){
 		j = jd;
-		Hub.globalCfg = new SqlSettings(getConnection(), "CONFIG");
-		
-		String created = Hub.globalCfg.get("dbversion", null);
-		
-		if (created == null) {
-			created = Hub.globalCfg.get("created", null);
-		} else {
+		if (tableExists("CONFIG")) {
+			Hub.globalCfg = new SqlSettings(getConnection(), "CONFIG");
+			String created = Hub.globalCfg.get("created", null);
 			log.log("Database version " + created, Log.SYNCMARK);
-		}
-		if (created == null) {
+		} else {
 			log.log("No Version found. Creating new Database", Log.SYNCMARK);
 			java.io.InputStream is = null;
 			Stm stm = null;
@@ -331,6 +331,7 @@ public abstract class PersistentObject implements ISelectable {
 				stm = getConnection().getStatement();
 				if (stm.execScript(is, true, true) == true) {
 					Log.setAlertLevel(Log.FATALS);
+					Hub.globalCfg = new SqlSettings(getConnection(), "CONFIG");
 					Hub.globalCfg.undo();
 					Hub.globalCfg.set("created", new TimeTool().toString(TimeTool.FULL_GER));
 					Hub.acl.load();
@@ -631,7 +632,8 @@ public abstract class PersistentObject implements ISelectable {
 	 * wieder aus der Datenbank erstellt werden kann. Dies funktioniert nur innerhalb derselben
 	 * Datenbank.
 	 * 
-	 * @return der code-String, aus dem mit {@link PersistentObjectFactory}.createFromString wieder das Objekt erstellt werden kann
+	 * @return der code-String, aus dem mit {@link PersistentObjectFactory}.createFromString wieder
+	 *         das Objekt erstellt werden kann
 	 */
 	public String storeToString(){
 		StringBuilder sb = new StringBuilder();
@@ -1048,8 +1050,8 @@ public abstract class PersistentObject implements ISelectable {
 			} catch (NoSuchMethodException nmex) {
 				log.log("Fehler bei Felddefinition " + field, Log.WARNINGS);
 				ElexisStatus status =
-					new ElexisStatus(IStatus.WARNING, Hub.PLUGIN_ID, ElexisStatus.CODE_NOFEEDBACK,
-						"Fehler bei Felddefinition", nmex);
+					new ElexisStatus(ElexisStatus.WARNING, Hub.PLUGIN_ID,
+						ElexisStatus.CODE_NOFEEDBACK, "Fehler bei Felddefinition", nmex);
 				StatusManager.getManager().handle(status, StatusManager.LOG);
 				return mapped;
 			} catch (Exception ex) {
@@ -1244,7 +1246,7 @@ public abstract class PersistentObject implements ISelectable {
 				
 			} catch (Exception ex) {
 				ElexisStatus status =
-					new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+					new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 						"Fehler beim Lesen der Liste ", ex, ElexisStatus.LOG_ERRORS);
 				throw new PersistenceException(status);
 			}
@@ -1323,8 +1325,9 @@ public abstract class PersistentObject implements ISelectable {
 			return true;
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, "Fehler bei: " + cmd
-					+ "(" + field + "=" + value + ")", ex, ElexisStatus.LOG_ERRORS);
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
+					"Fehler bei: " + cmd + "(" + field + "=" + value + ")", ex,
+					ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
 		
@@ -1689,8 +1692,8 @@ public abstract class PersistentObject implements ISelectable {
 				sb.append(fields[i]).append("=").append(values[i]).append("\n");
 			}
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, sb.toString(), ex,
-					ElexisStatus.LOG_ERRORS);
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
+					sb.toString(), ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
 	}
@@ -1755,7 +1758,7 @@ public abstract class PersistentObject implements ISelectable {
 			return false;
 		}
 	}
-
+	
 	/**
 	 * Apply some magic to the input parameters, and return a decoded string object. TODO describe
 	 * magic
@@ -1802,8 +1805,8 @@ public abstract class PersistentObject implements ISelectable {
 			}
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, "Fehler bei decode ",
-					ex, ElexisStatus.LOG_ERRORS);
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
+					"Fehler bei decode ", ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
 		return null;
@@ -1842,7 +1845,7 @@ public abstract class PersistentObject implements ISelectable {
 			}
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					"Fehler beim String encoder", ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
@@ -2171,50 +2174,10 @@ public abstract class PersistentObject implements ISelectable {
 	 *            create string
 	 */
 	protected static void createOrModifyTable(final String sqlScript){
-		Thread current = Thread.currentThread();
-		Thread main = Desk.getDisplay().getThread();
-		if (current.equals(main)) {
-			// current thread is main thread, so use ProgressService
-			try {
-				PlatformUI.getWorkbench().getProgressService()
-					.busyCursorWhile(new IRunnableWithProgress() {
-						public void run(IProgressMonitor moni){
-							moni.beginTask("Führe Datenbankmodifikation aus",
-								IProgressMonitor.UNKNOWN);
-							try {
-								final ByteArrayInputStream bais;
-								bais = new ByteArrayInputStream(sqlScript.getBytes("UTF-8"));
-								if (getConnection().execScript(bais, true, false) == false) {
-									SWTHelper.showError("Datenbank-Fehler",
-										"Konnte Datenbank-Script nicht ausführen");
-									log.log("Cannot execute db script: " + sqlScript, Log.WARNINGS);
-								}
-								moni.done();
-							} catch (UnsupportedEncodingException e) {
-								// should really never happen
-								e.printStackTrace();
-							}
-						}
-					});
-			} catch (Exception e) {
-				SWTHelper.showError("Interner-Fehler", "Konnte Datenbank-Script nicht ausführen");
-				log.log(e, "Cannot execute db script: " + sqlScript, Log.ERRORS);
-			}
-		} else {
-			// current thread is not main thread, so don't use ProgressService
-			try {
-				final ByteArrayInputStream bais;
-				bais = new ByteArrayInputStream(sqlScript.getBytes("UTF-8"));
-				if (getConnection().execScript(bais, true, false) == false) {
-					SWTHelper.showError("Datenbank-Fehler",
-						"Konnte Datenbank-Script nicht ausführen");
-					log.log("Cannot execute db script: " + sqlScript, Log.WARNINGS);
-				}
-			} catch (UnsupportedEncodingException e) {
-				// should really never happen
-				e.printStackTrace();
-			}
-		}
+		String[] sql = new String[1];
+		sql[0] = sqlScript;
+		SqlWithUiRunner runner = new SqlWithUiRunner(sql, Hub.PLUGIN_ID);
+		runner.runSql();
 	}
 	
 	/*
@@ -2364,13 +2327,14 @@ public abstract class PersistentObject implements ISelectable {
 	/**
 	 * Execute the sql string and handle exceptions appropriately.
 	 * <p>
-	 * <b>ATTENTION:</b> JdbcLinkResourceException will trigger a restart
-	 * of Elexis in at.medevit.medelexis.ui.statushandler.
+	 * <b>ATTENTION:</b> JdbcLinkResourceException will trigger a restart of Elexis in
+	 * at.medevit.medelexis.ui.statushandler.
 	 * </p>
+	 * 
 	 * @param sql
 	 * @return
 	 */
-	private ResultSet executeSqlQuery(String sql) {
+	private ResultSet executeSqlQuery(String sql){
 		Stm stm = null;
 		ResultSet res = null;
 		try {
@@ -2379,7 +2343,7 @@ public abstract class PersistentObject implements ISelectable {
 		} catch (JdbcLinkException je) {
 			ElexisStatus status = translateJdbcException(je);
 			// trigger restart for severe communication error
-			if(je instanceof JdbcLinkResourceException) {
+			if (je instanceof JdbcLinkResourceException) {
 				status.setCode(ElexisStatus.CODE_RESTART | ElexisStatus.CODE_NOFEEDBACK);
 				status.setMessage(status.getMessage() + "\nACHTUNG: Elexis wird neu gestarted!\n");
 				status.setLogLevel(ElexisStatus.LOG_FATALS);
@@ -2387,32 +2351,65 @@ public abstract class PersistentObject implements ISelectable {
 				// calling StatusManager directly here was not intended,
 				// but throwing the exception without handling it apropreately
 				// in the UI code makes it impossible for the status handler
-				// to display a blocking error dialog 
-				// (this is executed in a Runnable where Exception handling is not blocking UI thread)
+				// to display a blocking error dialog
+				// (this is executed in a Runnable where Exception handling is not blocking UI
+// thread)
 				StatusManager.getManager().handle(status);
 			} else {
 				status.setLogLevel(ElexisStatus.LOG_FATALS);
 				throw new PersistenceException(status);
 			}
-	    } finally {
+		} finally {
 			getConnection().releaseStatement(stm);
 		}
-	    return res;
+		return res;
 	}
 	
-	private static ElexisStatus translateJdbcException(JdbcLinkException jdbc) {
-		if(jdbc instanceof JdbcLinkSyntaxException) {
+	private static ElexisStatus translateJdbcException(JdbcLinkException jdbc){
+		if (jdbc instanceof JdbcLinkSyntaxException) {
 			return new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 				"Fehler in der Datenbanksyntax.", jdbc, ElexisStatus.LOG_ERRORS);
-		} else if(jdbc instanceof JdbcLinkConcurrencyException) {
+		} else if (jdbc instanceof JdbcLinkConcurrencyException) {
 			return new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
-				"Fehler bei einer Datenbanktransaktion.", jdbc, ElexisStatus.LOG_ERRORS);			
-		} else if(jdbc instanceof JdbcLinkResourceException) {
+				"Fehler bei einer Datenbanktransaktion.", jdbc, ElexisStatus.LOG_ERRORS);
+		} else if (jdbc instanceof JdbcLinkResourceException) {
 			return new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
-				"Fehler bei der Datenbankkommunikation.", jdbc, ElexisStatus.LOG_ERRORS);	
+				"Fehler bei der Datenbankkommunikation.", jdbc, ElexisStatus.LOG_ERRORS);
 		} else {
 			return new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 				"Fehler in der Datenbankschnittstelle.", jdbc, ElexisStatus.LOG_ERRORS);
 		}
 	}
+	
+	public static boolean tableExists(String tableName){
+		int nrFounds = 0;
+		// Vergleich schaut nicht auf Gross/Klein-Schreibung, da thomas
+		// schon H2-DB gesehen hat, wo entweder alles gross oder alles klein war
+		try {
+			DatabaseMetaData dmd = j.getConnection().getMetaData();
+			String[] onlyTables = {
+				"TABLE"
+			};
+			
+			ResultSet rs = dmd.getTables(null, null, "%", onlyTables);
+			if (rs != null) {
+				while (rs.next()) {
+					// DatabaseMetaData#getTables() specifies TABLE_NAME is in column 3
+					if (rs.getString(3).equalsIgnoreCase(tableName))
+						nrFounds++;
+				}
+			}
+		} catch (SQLException je) {
+			log.log(je, "Fehler beim abrufen der Datenbank Tabellen Information.", Log.ERRORS);
+		}
+		if (nrFounds > 1) {
+			// Dies kann vorkommen, wenn man eine MySQL-datenbank von Windows -> Linuz kopiert
+			// und dort nicht die System-Variable lower_case_table_names nicht gesetzt ist
+			// Anmerkung von Niklaus Giger
+			log.log("Komisch!!! Tabelle " + tableName + " " + nrFounds + "-mal gefunden!!",
+				Log.ERRORS);
+		}
+		return nrFounds == 1;
+	}
+	
 }

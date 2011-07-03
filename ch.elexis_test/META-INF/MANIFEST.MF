@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Test fragment for the ch.elexis plugin
 Bundle-SymbolicName: ch.elexis_test
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-Vendor: elexis.ch
 Fragment-Host: ch.elexis;bundle-version="2.1.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

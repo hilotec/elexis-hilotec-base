@@ -60,7 +60,7 @@ public class ExternalLink implements IKonsExtension {
 			}
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR,
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					Messages.ExternalLink_CouldNotStartFile, ex);
 			StatusManager.getManager().handle(status);
 		}

@@ -13,12 +13,17 @@
 
 package ch.elexis.util;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import org.eclipse.core.runtime.AssertionFailedException;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Hub;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.data.Rechnung;
+import ch.elexis.status.ElexisStatus;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
@@ -32,14 +37,13 @@ import ch.rgw.tools.JdbcLink.Stm;
  */
 public class DBUpdate {
 	
-	static final String[] versions =
-		{
-			"1.3.0", "1.3.1", "1.3.2", "1.3.3", "1.3.4", "1.3.5", "1.3.6", "1.3.7", "1.3.8",
-			"1.3.9", "1.3.10", "1.3.11", "1.3.12", "1.3.13", "1.4.0", "1.4.1", "1.4.2", "1.4.3",
-			"1.4.4", "1.4.5", "1.4.6", "1.5.0", "1.6.0", "1.6.1", "1.6.2", "1.6.3", "1.6.4",
-			"1.7.0", "1.7.1", "1.7.2", "1.8.0", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5",
-			"1.8.6", "1.8.7", "1.8.8", "1.8.9"
-		};
+	static final String[] versions = {
+		"1.3.0", "1.3.1", "1.3.2", "1.3.3", "1.3.4", "1.3.5", "1.3.6", "1.3.7", "1.3.8", "1.3.9",
+		"1.3.10", "1.3.11", "1.3.12", "1.3.13", "1.4.0", "1.4.1", "1.4.2", "1.4.3", "1.4.4",
+		"1.4.5", "1.4.6", "1.5.0", "1.6.0", "1.6.1", "1.6.2", "1.6.3", "1.6.4", "1.7.0", "1.7.1",
+		"1.7.2", "1.8.0", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5", "1.8.6", "1.8.7", "1.8.8",
+		"1.8.9", "1.8.10"
+	};
 	static final String[] cmds =
 		{
 			"CREATE TABLE EIGENLEISTUNGEN(" + "ID			VARCHAR(25) primary key,"
@@ -272,12 +276,21 @@ public class DBUpdate {
 
 			// 1.8.7
 			"ALTER TABLE LOGS MODIFY station VARCHAR(40);",
-			
+
 			// 1.8.8
 			"ALTER TABLE KONTAKT_ADRESS_JOINT MODIFY Bezug VARCHAR(80);",
-		
+
 			// 1.8.9
-			"ALTER TABLE LABORITEMS ADD EXPORT VARCHAR(100);"
+			"ALTER TABLE LABORITEMS ADD EXPORT VARCHAR(100);",
+
+			// 1.8.10
+			// Gerry Weirich in einem Mail vom 26.06.2011
+			// In früheren Elexis-Versionen wurden Formeln direkt im Feld abgelegt,
+			// aktuell sind es Scripts (Also Objekte vom typ ch.elexis.data.Script)
+			// und das Feld muss nur noch den Namen des Scripts halten.
+			"DELETE FROM LABORITEMS where length(RefFrauOrTx) > 256;"
+				+ "ALTER TABLE LABORITEMS MODIFY RefFrauOrTx VARCHAR(256);"
+				+ "ALTER TABLE LABORITEMS MODIFY RefMann     VARCHAR(256);"
 		};
 	static Log log = Log.get("DBUpdate");
 	
@@ -292,7 +305,6 @@ public class DBUpdate {
 	 * <li>eine ; getrennte Liste von SQL-Befehlen</li>
 	 */
 	public static void doUpdate(){
-		final JdbcLink j = PersistentObject.getConnection();
 		String dbv = Hub.globalCfg.get("dbversion", null);
 		if (dbv == null) {
 			log.log("Kann keine Version lesen", Log.ERRORS);
@@ -302,44 +314,28 @@ public class DBUpdate {
 		} else {
 			vi = new VersionInfo(dbv);
 		}
-		Stm stm = j.getStatement();
+
+		List<String> sqlStrings = new ArrayList<String>();
 		for (int i = 0; i < versions.length; i++) {
 			if (vi.isOlder(versions[i])) {
 				String[] cmd = cmds[i].split(";");
-				log.log("Update auf " + versions[i], Log.WARNINGS);
-				for (int c = 0; c < cmd.length; c++) {
-					if (cmd[c].matches("S[0-9]+")) {
-						int cnum = Integer.parseInt(cmd[c].substring(1));
-						switch (cnum) {
-						case 1: {
-							Query<Rechnung> qbe = new Query<Rechnung>(Rechnung.class);
-							List<Rechnung> alle = qbe.execute();
-							for (Rechnung rn : alle) {
-								List<String> traces = rn.getTrace(Rechnung.STATUS_CHANGED);
-								if (traces.isEmpty()) {
-									rn.set("StatusDatum", rn.getDatumRn());
-									
-								} else {
-									String trace = traces.get(traces.size() - 1);
-									String[] split = trace.split(", *");
-									TimeTool tim = new TimeTool(split[0]);
-									rn.set("StatusDatum", tim.toString(TimeTool.DATE_GER));
-								}
-							}
-							break;
-						}
-						}
-						
-					} else { // direkt SQL-Kommando
-						stm.exec(j.translateFlavor(cmd[c]));
-					}
-				}
+				for(int cmdIdx = 0; cmdIdx < cmd.length; cmdIdx++)
+					sqlStrings.add(cmd[cmdIdx]);
 			}
 		}
-		Hub.globalCfg.set("dbversion", Hub.DBVersion);
-		Hub.globalCfg.set("ElexisVersion", Hub.Version);
-		Hub.globalCfg.flush();
-		PersistentObject.getConnection().releaseStatement(stm);
+		// create log message
+		log.log("Start DBUpdate from Version " + dbv + " to Version " + versions[versions.length-1], Log.INFOS);
+		
+		SqlWithUiRunner runner = new SqlWithUiRunner(sqlStrings.toArray(new String[0]), Hub.PLUGIN_ID);
+		// update version if all updates are successful
+		if(runner.runSql()) {
+			Hub.globalCfg.set("dbversion", Hub.DBVersion);
+			Hub.globalCfg.set("ElexisVersion", Hub.Version);
+			Hub.globalCfg.flush();
+			// create log message
+			log.log("DBUpdate from Version " + dbv + " to Version " + versions[versions.length-1] + " successful.", Log.INFOS);
+		} else {
+			log.log("DBUpdate from Version " + dbv + " to Version " + versions[versions.length-1] + " failed.", Log.ERRORS);
+		}
 	}
-	
 }

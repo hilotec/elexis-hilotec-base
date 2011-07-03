@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Search in EBM-Guidelines
 Bundle-SymbolicName: ch.medshare.ebm;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  ch.elexis,
