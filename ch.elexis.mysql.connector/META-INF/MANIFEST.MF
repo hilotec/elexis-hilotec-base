@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Datenbankverbindung zu MySQL
 Bundle-SymbolicName: ch.elexis.mysql.connector
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-ClassPath: mysql-connector-java-5.1.6-bin.jar
 Bundle-Vendor: elexis.ch
 Export-Package: com.mysql.jdbc;

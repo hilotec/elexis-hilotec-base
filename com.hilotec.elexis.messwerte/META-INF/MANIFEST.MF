@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Elexis_messwerte Plug-in
 Bundle-SymbolicName: com.hilotec.elexis.messwerte;singleton:=true
-Bundle-Version: 0.1.0
+Bundle-Version: 0.1.1
 Bundle-Activator: com.hilotec.elexis.messwerte.Activator
 Bundle-Vendor: hilotec.com
 Require-Bundle: org.eclipse.ui,

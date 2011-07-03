@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Eigenartikel
 Bundle-SymbolicName: ch.elexis.eigenartikel;singleton:=true
-Bundle-Version: 1.0.3.qualifier
+Bundle-Version: 1.0.4
 Bundle-Vendor: elexis.ch
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: ch.elexis;bundle-version="2.1.5",

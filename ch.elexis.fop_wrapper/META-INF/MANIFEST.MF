@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Wrapper Plugin around apache FOP
 Bundle-SymbolicName: ch.elexis.fop_wrapper
-Bundle-Version: 1.0.1
+Bundle-Version: 1.0.2
 Bundle-Vendor: elexis.ch
 Bundle-ClassPath: lib/avalon-framework-4.2.0.jar,
  lib/batik-all-1.6.jar,

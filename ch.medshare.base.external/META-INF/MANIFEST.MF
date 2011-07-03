@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: medshare-base-external
 Bundle-SymbolicName: ch.medshare.base.external
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-ClassPath: org.apache.commons.httpclient_3.1.0.v20080605-1935.jar,
  commons-logging-1.1.1.jar,
  commons-logging-1.1.1-javadoc.jar,
