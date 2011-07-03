@@ -181,7 +181,7 @@ public class CodeDetailView extends ViewPart implements IActivationListener, ISa
 				
 			} catch (Exception ex) {
 				ElexisStatus status =
-					new ElexisStatus(IStatus.WARNING, Hub.PLUGIN_ID, IStatus.WARNING,
+					new ElexisStatus(ElexisStatus.WARNING, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 						"Fehler beim Initialisieren von " + ce.getName(), ex,
 						ElexisStatus.LOG_WARNINGS);
 				StatusManager.getManager().handle(status, StatusManager.SHOW);

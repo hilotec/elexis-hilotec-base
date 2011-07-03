@@ -323,6 +323,7 @@ public class LabOrderAction extends Action {
 	 * @return
 	 */
 	private long getNextOrderNr(final Patient patient) throws NumberFormatException{
+		KontaktOrderManagement kontaktOrder = new KontaktOrderManagement(patient);
 		// Next order number
 		long nextOrderNr = 0;
 		JdbcLink connection = PersistentObject.getConnection();
@@ -337,9 +338,7 @@ public class LabOrderAction extends Action {
 		if (nextOrderNr < KontaktOrderManagement.FIRST_ORDER_NR) {
 			nextOrderNr = KontaktOrderManagement.FIRST_ORDER_NR;
 		}
-		
 		// Speichern
-		KontaktOrderManagement kontaktOrder = new KontaktOrderManagement(patient);
 		kontaktOrder.setOrderNr(nextOrderNr);
 		
 		return nextOrderNr;

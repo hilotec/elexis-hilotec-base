@@ -45,4 +45,10 @@
          fragment="true"
          unpack="false"/>
 
+   <plugin
+         id="at.medevit.smooks.libs"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
 </feature>

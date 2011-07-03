@@ -433,8 +433,8 @@ CREATE TABLE LABORITEMS(
 	kuerzel		VARCHAR(80),
 	titel		VARCHAR(80),
 	laborID		VARCHAR(25),                   # foreign key from KONTAKT
-	RefMann		VARCHAR(80),
-	RefFrauOrTx TEXT,
+	RefMann		VARCHAR(256),
+	RefFrauOrTx VARCHAR(256),
 	Einheit		VARCHAR(20),
 	typ			CHAR(1),
 	Gruppe		VARCHAR(25),

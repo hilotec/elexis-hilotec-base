@@ -492,7 +492,7 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 			rs1.close();
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, "Persistence error: "
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE, "Persistence error: "
 					+ ex.getMessage(), ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		} finally {

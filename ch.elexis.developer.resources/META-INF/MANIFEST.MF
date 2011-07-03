@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Resources and Samples for Elexis developers and plugin developers
 Bundle-SymbolicName: ch.elexis.developer.resources;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-Activator: ch.elexis.developer.resources.model.Activator
 Bundle-Vendor: Medelexis AG
 Require-Bundle: ch.elexis;bundle-version="2.1.0",

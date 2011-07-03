@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Datenbankverbindung zu H2
 Bundle-SymbolicName: ch.elexis.h2.connector
-Bundle-Version: 1.2.0
+Bundle-Version: 1.2.1
 Bundle-ClassPath: h2-1.2.140.jar
 Bundle-Vendor: elexis.ch
 Export-Package: org.h2,

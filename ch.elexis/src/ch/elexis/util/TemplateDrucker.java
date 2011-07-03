@@ -87,7 +87,7 @@ public class TemplateDrucker {
 			
 		} catch (Exception ex) {
 			ElexisStatus status =
-				new ElexisStatus(IStatus.ERROR, Hub.PLUGIN_ID, IStatus.ERROR, Messages
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE, Messages
 					.getString("TemplateDrucker.errorPrinting")
 					+ ": " + Messages.getString("TemplateDrucker.couldntOpen"), ex);
 			StatusManager.getManager().handle(status);
