@@ -31,7 +31,7 @@ import ch.elexis.util.LabeledInputField.AutoForm;
 import ch.elexis.views.artikel.Artikeldetail;
 
 public class ArtikelDetailDialog extends TitleAreaDialog {
-	Artikel art;
+	protected Artikel art;
 	
 	public ArtikelDetailDialog(Shell shell, PersistentObject o){
 		super(shell);

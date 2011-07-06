@@ -159,4 +159,9 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements IV
 			}
 		};
 	}
+
+	@Override
+	public VatInfo getVatInfo(){
+		return VatInfo.VAT_DEFAULT;
+	}
 }

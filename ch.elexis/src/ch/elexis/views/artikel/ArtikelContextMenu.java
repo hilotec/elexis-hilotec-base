@@ -26,6 +26,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 import ch.elexis.Desk;
 import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.commands.EditEigenartikelUi;
 import ch.elexis.data.Artikel;
 import ch.elexis.dialogs.ArtikelDetailDialog;
 import ch.elexis.util.viewers.CommonViewer;
@@ -101,9 +102,7 @@ public class ArtikelContextMenu {
 					String name = inp.getValue();
 					Artikel n = new Artikel(name, art.getCodeSystemName(), ""); //$NON-NLS-1$
 					if (add == null) {
-						ArtikelDetailDialog ad =
-							new ArtikelDetailDialog(cv.getViewerWidget().getControl().getShell(), n);
-						ad.open();
+						EditEigenartikelUi.executeWithParams(n);
 					} else {
 						add.show(n);
 					}
@@ -121,7 +120,7 @@ public class ArtikelContextMenu {
 			public void run(){
 				Artikel n = (Artikel) ElexisEventDispatcher.getSelected(art.getClass());
 				if (add == null) {
-					new ArtikelDetailDialog(cv.getViewerWidget().getControl().getShell(), n).open();
+					EditEigenartikelUi.executeWithParams(n);
 				} else {
 					add.show(n);
 				}
