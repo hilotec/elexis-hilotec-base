@@ -517,4 +517,10 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 		}
 		return "none";
 	}
+
+	@Override
+	public VatInfo getVatInfo(){
+		// TarmedLeistung is a treatment per default
+		return VatInfo.VAT_CH_ISTREATMENT;
+	}
 }
