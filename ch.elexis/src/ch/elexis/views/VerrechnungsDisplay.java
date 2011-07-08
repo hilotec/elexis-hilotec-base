@@ -44,7 +44,9 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.actions.CodeSelectorHandler;
+import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Konsultation;
@@ -117,6 +119,15 @@ public class VerrechnungsDisplay extends Composite {
 		dropTarget =
 			new PersistentObjectDropTarget(
 				Messages.getString("VerrechnungsDisplay.doBill"), tVerr, new DropReceiver()); //$NON-NLS-1$
+		// refresh the table if a update to a Verrechnet occurs
+		ElexisEventDispatcher.getInstance()
+			.addListeners(new ElexisEventListenerImpl(Verrechnet.class, ElexisEvent.EVENT_UPDATE) {
+				@Override
+				public void runInUi(ElexisEvent ev){
+					Konsultation actKons = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+					setLeistungen(actKons);
+				}
+		});
 	}
 	
 	public void clear(){

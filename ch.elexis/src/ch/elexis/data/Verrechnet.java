@@ -225,6 +225,12 @@ public class Verrechnet extends PersistentObject {
 		Money brutto = getBruttoPreis();
 		brutto.multiply(getPrimaryScaleFactor());
 		brutto.multiply(getSecondaryScaleFactor());
+		
+		// call the adjusters
+		for(IVerrechnetAdjuster adjuster : adjusters) {
+			adjuster.adjustGetNettoPreis(this, brutto);
+		}
+		
 		return brutto;
 	}
 	
