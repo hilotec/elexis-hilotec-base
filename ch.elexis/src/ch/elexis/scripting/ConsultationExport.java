@@ -47,6 +47,9 @@ public class ConsultationExport {
 			for (Patient pat : qbe.execute()) {
 				Element e = new Element("Patient");
 				e.setAttribute("ID", pat.getId());
+				e.setAttribute("Name",pat.get(Patient.FLD_NAME));
+				e.setAttribute("Vorname",pat.get(Patient.FLD_FIRSTNAME));
+				e.setAttribute("GebDat",pat.get(Patient.FLD_DOB));
 				for (Fall fall : pat.getFaelle()) {
 					Element f = new Element("Fall");
 					e.addContent(f);
