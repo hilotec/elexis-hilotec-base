@@ -57,15 +57,17 @@ public class BriefExport {
 						Brief.FLD_PATIENT_ID, Brief.FLD_PATIENT_ID };
 				writer.writeNext(header);
 				for (Brief brief : briefe) {
-					Person pat = brief.getPatient();
-					if (pat != null) {
-						if (sticker != null && pat instanceof Patient) {
-							if (pf.accept((Patient) pat, sticker) != IPatFilter.ACCEPT) {
+					Person pers = brief.getPatient();
+					if (pers != null) {
+						if(sticker!=null){
+							if(!pers.istPatient()){
+								continue;
+							}
+							if (pf.accept(Patient.load(pers.getId()), sticker) != IPatFilter.ACCEPT) {
 								continue;
 							}
 						}
-
-						String subdirname = pat.get(Patient.FLD_PATID);
+						String subdirname = pers.get(Patient.FLD_PATID);
 						if (subdirname != null) {
 							File subdir = new File(dir, subdirname);
 							subdir.mkdirs();

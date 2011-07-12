@@ -65,8 +65,8 @@ public class DocumentExport {
 				for (IOpaqueDocument doc : dox) {
 					Patient pat = doc.getPatient();
 					if (pat != null) {
-						if (sticker != null && pat instanceof Patient) {
-							if (pf.accept((Patient) pat, sticker) != IPatFilter.ACCEPT) {
+						if (sticker != null) {
+							if (pf.accept(pat, sticker) != IPatFilter.ACCEPT) {
 								continue;
 							}
 						}
