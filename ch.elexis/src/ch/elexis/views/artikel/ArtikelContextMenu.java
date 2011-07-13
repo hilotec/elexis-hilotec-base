@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Artikeldetail.java 590 2006-07-24 15:40:40Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 package ch.elexis.views.artikel;
 

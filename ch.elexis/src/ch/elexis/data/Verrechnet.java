@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Verrechnet.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.data;

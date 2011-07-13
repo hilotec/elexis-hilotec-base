@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: IVerrechenbar.java 5361 2009-06-18 12:07:37Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 package ch.elexis.data;
 
