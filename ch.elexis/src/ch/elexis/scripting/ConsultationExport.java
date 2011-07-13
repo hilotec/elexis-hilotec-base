@@ -16,6 +16,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Sticker;
+import ch.elexis.text.model.Samdas;
 import ch.elexis.views.PatFilterImpl;
 import ch.elexis.views.PatListFilterBox.IPatFilter;
 import ch.rgw.tools.IFilter;
@@ -78,7 +79,8 @@ public class ConsultationExport {
 						kel.setAttribute("ID", kons.getId());
 						kel.setAttribute("Datum", kons.getDatum());
 						kel.setAttribute("Label", kons.getVerboseLabel());
-						kel.setText(kons.getEintrag().getHead());
+						Samdas samdas=new Samdas(kons.getEintrag().getHead());
+						kel.setText(samdas.getRecordText());
 					}
 				}
 				Document doc = new Document();
