@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: TarmedLeistung.java 6142 2010-02-14 16:37:56Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.data;

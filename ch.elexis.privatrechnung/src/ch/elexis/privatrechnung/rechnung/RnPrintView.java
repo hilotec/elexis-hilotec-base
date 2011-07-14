@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: RnPrintView.java 5973 2010-01-27 17:36:06Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 package ch.elexis.privatrechnung.rechnung;
 

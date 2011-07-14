@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ArtikelSelektor.java 5330 2009-05-30 11:24:09Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 
 package ch.elexis.views.artikel;
