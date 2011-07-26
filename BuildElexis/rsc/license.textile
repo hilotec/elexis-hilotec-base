@@ -1,26 +1,26 @@
 h1. Elexis Lizenz
 
-Copyright (c) 2005-2010 G. Weirich und Elexis-Team
+Copyright (c) 2005-2011 G. Weirich und Elexis-Team
 http://www.elexis.ch
 
  
  Sie erhalten das Recht zur nicht-exklusiven Nutzung dieses Programms auf
  beliebig vielen Rechnern und zur Weitergabe an andere, nach eigenem Ermessen.
- Sie m�ssen aber diesen Text unverändert beilegen und Sie dürfen keine Copyright-
+ Sie müssen aber diesen Text unverändert beilegen und Sie dürfen keine Copyright-
  Hinweise aus dem Programm bzw. dessen Quelltexten entfernen.
  
  
  Die Veröffentlichung dieses Programms erfolgt in der Hoffnung, dass es Ihnen von
  Nutzen sein wird, aber OHNE IRGENDEINE Garantie, sogar ohne die implizite Garantie
- der MARKTREIFE oder der VERWENDBARKEIT F�R EINEN BESTIMMTEN ZWECK.
+ der MARKTREIFE oder der VERWENDBARKEIT FÜR EINEN BESTIMMTEN ZWECK.
 
  Sollten aus der Verwendung oder Nichtverwendbarkeit dieses Programms irgendwelche
- materielle oder immaterielle Sch�den entstehen, wird jede Haftung abgelehnt.
+ materielle oder immaterielle Schäden entstehen, wird jede Haftung abgelehnt.
  
- Sie d�rfen das Programm nur verwenden, wenn Sie diesen Bedingungen zustimmen.
+ Sie dürfen das Programm nur verwenden, wenn Sie diesen Bedingungen zustimmen.
 
-Im �brigen gelten die Bedingungen der  Eclipse public license, welche untenstehend im
-Original beigef�gt ist, und welche auch als epl-v10.html diesem Programmpaket beiliegt.
+Im Übrigen gelten die Bedingungen der  Eclipse public license, welche untenstehend im
+Original beigefügt ist, und welche auch als epl-v10.html diesem Programmpaket beiliegt.
 
 ---------------------------------------------------------------------------------------
 Eclipse Public License - v 1.0
