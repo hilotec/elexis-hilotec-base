@@ -17,7 +17,7 @@
 	
 	Prerequisites:
 	- Java 1.6
-	- A working eclipse Helios (3.6) instance. For Mac: 64 Bit Cocoa variant needed
+	- A working eclipse indigo (3.7) instance. For Mac: 64 Bit Cocoa variant needed
 	- ant 1.8.0
 	- an active internet connection
 	- a file named local.properties containing:
@@ -54,7 +54,7 @@
   	  with the following structure;
 	  	base=/path/to/clean/build
 		repositories=/path/to/clean/build
-		platform-runtime=/path/to/clean/build/elexis-base/helios/eclipse
+		platform-runtime=/path/to/clean/build/elexis-base/indigo/eclipse
 		rsc=/path/to/clean/build/elexis-base/BuildElexis/rsc
 		output=/path/to/clean/build/elexis-base/deploy
   	- This setup may be useful if you want to from scratch to working elexis. 
@@ -70,9 +70,9 @@
 	<record name="ant.info.log" action="start" loglevel="info" />
 	<!-- if you want more ant log files comment out linese below
 	<record name="ant.warn.log" action="start" loglevel="warn" />
-	<record name="ant.verbose.log" action="start" loglevel="verbose" />
 	<record name="ant.debug.log" action="start" loglevel="debug" />
 	-->
+	<record name="ant.verbose.log" action="start" loglevel="verbose" />
 	<property name="output" value="${base}/deploy" />
 	<property name="dox" value="${output}/dox" />
 	<property name="lib" value="${base}/lib" />
@@ -230,6 +230,7 @@
 	create all projects in all repositories
 	-->
 	<target name="create-default" depends="initialize,update">
+		<echo message="dest ${dist} run ${platform-runtime}" />
 		<concat destfile="${dist}/elexis.ini">-vmargs
 -Xms128m
 -Xmx768m
@@ -264,6 +265,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 			</fileset>
 		</copy>
 		<!-- do some magic stuff to find all the files to include -->
+		<echo message="listDependencies WITH ${platform-runtime} REPOS ${repositories} lib ist ${lib}" />
 		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins},TestElexis,TestElexisUI" />
 		<antcall target="compile-plugins" inheritrefs="true">
 			<param name="buildlist" value="${buildlist}" />

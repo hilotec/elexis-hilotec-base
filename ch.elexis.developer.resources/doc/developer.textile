@@ -25,7 +25,7 @@ h2. Prerequisites
 We assume that you have good knowledge of the Java programming language and at least a basic knowledge of the Eclipse environment. Beside this you'll need:
 * Linux, Microsoft(tm) Windows(tm) 2000(tm) or newer,  Apple(tm) MacOS-X 10.6 or newer 
 * Java jdk 1.6 or higher
-* Eclipse 3.6 (helios) plugin developer sdk for your os (<a href="http://www.eclipse.org">eclipse</a>)
+* Eclipse 3.7 (indigo) plugin developer sdk for your os (<a href="http://www.eclipse.org">eclipse</a>)
 * A mercurial client plugin for Eclipse (we recommend "MercurialEclipse 1.6 or higher":http://javaforge.com/project/HGE. Use this update Site from within eclipse: http://cbes.javaforge.com/update)
 
 h2. Clone the repository
