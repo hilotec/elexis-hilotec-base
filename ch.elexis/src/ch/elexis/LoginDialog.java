@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    
  *    
- *    $Id: LoginDialog.java 5870 2009-12-16 20:55:33Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 
 package ch.elexis;
