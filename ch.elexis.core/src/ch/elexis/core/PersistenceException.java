@@ -1,4 +1,4 @@
-package ch.elexis.data;
+package ch.elexis.core;
 
 import java.io.PrintStream;
 import java.io.PrintWriter;

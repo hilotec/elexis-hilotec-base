@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.IStatus;
 
 import ch.elexis.Hub;
+import ch.elexis.core.PersistenceException;
 import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.Log;

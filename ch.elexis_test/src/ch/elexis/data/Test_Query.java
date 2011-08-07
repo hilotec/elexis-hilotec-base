@@ -11,6 +11,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import ch.elexis.core.PersistenceException;
 import ch.rgw.tools.JdbcLink;
 
 public class Test_Query extends AbstractPersistentObjectTest {

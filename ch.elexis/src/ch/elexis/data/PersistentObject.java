@@ -58,6 +58,7 @@ import ch.elexis.StringConstants;
 import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.admin.AccessControl;
+import ch.elexis.core.PersistenceException;
 import ch.elexis.data.Xid.XIDException;
 import ch.elexis.data.cache.IPersistentObjectCache;
 import ch.elexis.data.cache.SoftCache;

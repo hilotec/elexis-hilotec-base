@@ -27,6 +27,7 @@ import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.Messages;
 import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.core.PersistenceException;
 import ch.elexis.status.ElexisStatus;
 import ch.elexis.text.model.Samdas;
 import ch.elexis.util.Log;

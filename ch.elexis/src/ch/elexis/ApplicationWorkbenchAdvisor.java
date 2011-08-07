@@ -9,7 +9,7 @@
  *    G. Weirich - initial implementation
  *    N. Giger - Bypass Login Dialog for development environments
  *    
- *  $Id: ApplicationWorkbenchAdvisor.java 6345 2010-05-09 16:35:55Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis;
@@ -28,8 +28,8 @@ import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Hub.ShutdownJob;
 import ch.elexis.actions.GlobalActions;
+import ch.elexis.core.PersistenceException;
 import ch.elexis.data.Anwender;
-import ch.elexis.data.PersistenceException;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
 import ch.elexis.wizards.DBConnectWizard;

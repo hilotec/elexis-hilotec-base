@@ -25,6 +25,7 @@ import java.util.List;
 import org.eclipse.core.runtime.IStatus;
 
 import ch.elexis.Hub;
+import ch.elexis.core.PersistenceException;
 import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;

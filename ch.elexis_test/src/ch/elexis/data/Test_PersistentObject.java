@@ -16,6 +16,7 @@ import org.mockito.Matchers;
 import org.powermock.api.mockito.PowerMockito;
 
 import ch.elexis.Hub;
+import ch.elexis.core.PersistenceException;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLinkException;
 import ch.rgw.tools.JdbcLink.Stm;

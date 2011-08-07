@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.ImageLoader;
 import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.StringConstants;
+import ch.elexis.core.PersistenceException;
 import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
