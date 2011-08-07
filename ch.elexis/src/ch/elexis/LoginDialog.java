@@ -16,7 +16,6 @@ package ch.elexis;
 
 import java.util.List;
 
-import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -30,31 +29,32 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-import ch.elexis.util.Extensions;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Query;
+import ch.elexis.util.Extensions;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.ExHandler;
 
 public class LoginDialog extends TitleAreaDialog {
 	Text usr, pwd;
 	boolean hasUsers;
 	ButtonEnabler be = new ButtonEnabler();
-	
-	public LoginDialog(Shell parentShell){
+
+	public LoginDialog(Shell parentShell) {
 		super(parentShell);
-		
+
 		Query<Anwender> qbe = new Query<Anwender>(Anwender.class);
 		List<Anwender> list = qbe.execute();
 		hasUsers = (list.size() > 1);
 	}
-	
+
 	@Override
-	protected Control createDialogArea(Composite parent){
+	protected Control createDialogArea(Composite parent) {
 		Composite ret = new Composite(parent, SWT.NONE);
 		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout(2, false));
 		Label lu = new Label(ret, SWT.NONE);
-		
+
 		lu.setText(Messages.LoginDialog_0);
 		usr = new Text(ret, SWT.BORDER);
 		usr.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
@@ -68,29 +68,38 @@ public class LoginDialog extends TitleAreaDialog {
 		// usr.addModifyListener(be);
 		// pwd.addModifyListener(be);
 		/*
-		List<IConfigurationElement> newsModules = Extensions.getExtensions("ch.elexis.LoginNews");
-		for(IConfigurationElement ice:newsModules){
-			System.out.println(ice.getAttribute("name"));
-			System.out.println(ice.getAttribute("class"));
-		}
-		*/
-		List newsModules=Extensions.getClasses("ch.elexis.LoginNews", "class");
-		
-		if(newsModules.size()>0){
-			Composite cNews=new Composite(ret,SWT.NONE);
+		 * List<IConfigurationElement> newsModules =
+		 * Extensions.getExtensions("ch.elexis.LoginNews");
+		 * for(IConfigurationElement ice:newsModules){
+		 * System.out.println(ice.getAttribute("name"));
+		 * System.out.println(ice.getAttribute("class")); }
+		 */
+		List newsModules = Extensions
+				.getClasses("ch.elexis.LoginNews", "class");
+
+		if (newsModules.size() > 0) {
+			Composite cNews = new Composite(ret, SWT.NONE);
 			cNews.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
 			cNews.setLayout(new GridLayout());
-			for(ILoginNews lm:(List<ILoginNews>)newsModules){
-				Composite comp=lm.getComposite(cNews);
+			for (ILoginNews lm : (List<ILoginNews>) newsModules) {
+				try{
+				Composite comp = lm.getComposite(cNews);
 				comp.setLayoutData(SWTHelper.getFillGridData());
+				}catch(Exception ex){
+					// Note: This is NOT a fatal error. It just means, that the Newsmodule could not
+					// load. Maybe we are offline.
+					ExHandler.handle(ex);
+					
+				}
 			}
+				
 		}
-		
+
 		return ret;
 	}
-	
+
 	@Override
-	protected void okPressed(){
+	protected void okPressed() {
 		if (Anwender.login(usr.getText(), pwd.getText()) == true) {
 			super.okPressed();
 		} else {
@@ -98,38 +107,37 @@ public class LoginDialog extends TitleAreaDialog {
 			// getButton(IDialogConstants.OK_ID).setEnabled(false);
 		}
 	}
-	
+
 	@Override
-	protected void cancelPressed(){
+	protected void cancelPressed() {
 		Hub.actUser = null;
 		Hub.actMandant = null;
 		Hub.mainActions.adaptForUser();
 		super.cancelPressed();
 	}
-	
+
 	@Override
-	public void create(){
+	public void create() {
 		super.create();
 		getButton(IDialogConstants.OK_ID).setText(Messages.LoginDialog_login);
-		getButton(IDialogConstants.CANCEL_ID).setText(Messages.LoginDialog_terminate);
-		// getButton(IDialogConstants.OK_ID).setEnabled(false); 
-		
-		
+		getButton(IDialogConstants.CANCEL_ID).setText(
+				Messages.LoginDialog_terminate);
+		// getButton(IDialogConstants.OK_ID).setEnabled(false);
+
 	}
-	
+
 	class ButtonEnabler implements ModifyListener {
-		
+
 		@Override
-		public void modifyText(ModifyEvent e){
+		public void modifyText(ModifyEvent e) {
 			if (usr.getText().length() == 0 || pwd.getText().length() == 0) {
 				// getButton(IDialogConstants.OK_ID).setEnabled(false);
 			} else {
 				// getButton(IDialogConstants.OK_ID).setEnabled(true);
 			}
-			
+
 		}
-		
+
 	}
 
-	
 }
