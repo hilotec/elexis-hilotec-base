@@ -23,7 +23,7 @@ import java.util.List;
  * Query.Terms, each connected to the previous term with a Connector (AND, OR, AND NOT, OR NOT), and
  * each consisting of a field, a comparison operator and a match expression.
  * 
- * A Query is executed by sendig to a PersistentObjectManager as argument to executeQuery();
+ * A Query is executed by sending it to a PersistentObjectManager as argument to executeQuery();
  * 
  * @author gerry
  * 

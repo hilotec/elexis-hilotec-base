@@ -22,7 +22,7 @@ package ch.elexis.core.data;
  */
 public interface IChangeListener {
 	/**
-	 * Value of the bound property is changing. Note: It is not defined wether the change happened
+	 * Value of the bound property is changing. Note: It is not defined whether the change happened
 	 * already or is about to happen.
 	 * 
 	 * @param object

@@ -23,7 +23,7 @@ public interface IEncounter extends IPersistentObject {
 	/** The date this encounter happened */
 	public static final String FLD_DATE = "encounter_date";
 	
-	/** The ICustemerRelation this encounter belongs to */
+	/** The ICustomerRelation this encounter belongs to */
 	public static final String FLD_CUSTOMER_RELATION = "encounter_customer_relation";
 	
 	/** The entry describing this encounter */
