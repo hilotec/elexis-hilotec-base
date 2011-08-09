@@ -1,5 +1,5 @@
-// (c) 2008 by G. Weirich
-// $Id: LockFile.java 4439 2008-09-25 12:17:38Z rgw_ch $
+// (c) 2008-2011 by G. Weirich
+// $Id$
 
 package ch.rgw.io;
 
@@ -74,6 +74,9 @@ public class LockFile {
 	}
 	
 	private boolean isLockValid(File file) throws IOException{
+		if(!file.canWrite()){
+			throw new IOException(("Can't write "+file.getAbsolutePath()));
+		}
 		if (!file.exists()) {
 			return false;
 		}

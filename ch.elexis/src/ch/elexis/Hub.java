@@ -214,7 +214,7 @@ public class Hub extends AbstractUIPlugin {
 				heart.addListener(lockListener, Heartbeat.FREQUENCY_LOW);
 			}
 		} catch (IOException ex) {
-			log.log("Can not aquire lock file in " + userDir, Log.ERRORS); //$NON-NLS-1$
+			log.log("Can not aquire lock file in " + userDir+"; "+ex.getMessage(), Log.ERRORS); //$NON-NLS-1$
 		}
 	}
 	
