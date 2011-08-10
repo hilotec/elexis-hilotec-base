@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: Prescription.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -17,6 +17,10 @@ import java.util.Hashtable;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.ui.statushandlers.StatusManager;
+
 import ch.elexis.Hub;
 import ch.elexis.StringConstants;
 import ch.elexis.admin.AccessControlDefaults;
@@ -24,7 +28,7 @@ import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 /**
- * Eine Verordnung. Also ein Artikel zusmamen mit einer Einnahmevorschrift, verknüpft mit einem
+ * Eine Verordnung. Also ein Artikel zusmamen mit einer Einnahmevorschrift, verkn√ºpft mit einem
  * Patienten.
  */
 public class Prescription extends PersistentObject {
@@ -45,25 +49,12 @@ public class Prescription extends PersistentObject {
 			"DatumBis=S:D:DateUntil", DOSAGE, REMARK, COUNT, FLD_EXTINFO);
 	}
 	
-	/**
-	 * Eine neue Verordnung erstellen. Also ein Artikel zusammen mit einer Einnahmevorschrift
-	 * verknüpft mit dem angegeben Patienten.
-	 * 
-	 * @param a
-	 *            Artikel
-	 * @param p
-	 *            Patient
-	 * @param d
-	 *            Dosierung
-	 * @param b
-	 *            Anmerkungen
-	 */
-	public Prescription(Artikel a, Patient p, String d, String b){
+	public Prescription(Artikel a, Patient p, String dosage, String remark){
 		create(null);
 		String article = a.storeToString();
 		set(new String[] {
 			ARTICLE, PATIENT_ID, DOSAGE, REMARK, DATE_FROM
-		}, article, p.getId(), d, b, new TimeTool().toString(TimeTool.DATE_GER));
+		}, article, p.getId(), dosage, remark, new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	
 	public Prescription(Prescription other){
@@ -155,10 +146,7 @@ public class Prescription extends PersistentObject {
 	
 	public String getBemerkung(){
 		return checkNull(get(REMARK));
-	}
-	
-	public void setBemerkung(String value){
-		set(REMARK, checkNull(value));
+		
 	}
 	
 	/**
@@ -176,7 +164,7 @@ public class Prescription extends PersistentObject {
 	}
 	
 	/**
-	 * Ein Medikament aus der Datenbank löschen
+	 * Ein Medikament aus der Datenbank l√∂schen
 	 * 
 	 * @return
 	 */
@@ -216,7 +204,7 @@ public class Prescription extends PersistentObject {
 	}
 	
 	/**
-	 * A listing of all administration periods of this prescription. This is to retrieve later when
+	 * A listing of all adinistration periods of this prescription. This is to retrieve later when
 	 * and how the article was prescribed
 	 * 
 	 * @return a Map of TimeTools and Doses (Sorted by date)
@@ -228,19 +216,71 @@ public class Prescription extends PersistentObject {
 		if (raw != null) {
 			String[] terms = raw.split(StringTool.flattenSeparator);
 			for (String term : terms) {
-				String[] flds = term.split("::");
-				if (1 > flds.length)
-					continue;
-				TimeTool date = new TimeTool(flds[0]);
-				String dose = "n/a";
-				if (flds.length > 1) {
-					dose = flds[1];
+				if (term.length() > 0) {
+					String[] flds = term.split("::");
+					if (flds != null && flds.length > 0) {
+						TimeTool date = new TimeTool(flds[0]);
+						String dose = "n/a";
+						if (flds.length > 1) {
+							dose = flds[1];
+						}
+						ret.put(date, dose);
+					}
 				}
-				ret.put(date, dose);
 			}
 		}
 		ret.put(new TimeTool(get(DATE_FROM)), get(DOSAGE));
 		return ret;
+	}
+	
+	public static float calculateTagesDosis(String dosis) throws NumberFormatException{
+		float num = 0f;
+		if (dosis != null) {
+			if (dosis.matches("[0-9]+[xX][0-9]+(/[0-9]+)?")) { //$NON-NLS-1$
+				String[] dose = dosis.split("[xX]"); //$NON-NLS-1$
+				int count = Integer.parseInt(dose[0]);
+				num = getNum(dose[1]) * count;
+			} else if (dosis.indexOf('-') != -1) {
+				String[] dos = dosis.split("-"); //$NON-NLS-1$
+				if (dos.length > 2) {
+					for (String d : dos) {
+						num += getNum(d);
+					}
+				} else {
+					num = getNum(dos[1]);
+				}
+			} else {
+				return 0f;
+			}
+		} else {
+			return 0f;
+		}
+		return num;
+	}
+	
+	private static float getNum(String num){
+		try {
+			String n = num.trim();
+			if (n.equalsIgnoreCase("½"))
+				return 0.5F;
+			if (n.equalsIgnoreCase("¼"))
+				return 0.25F;
+			if (n.equalsIgnoreCase("1½"))
+				return 1.5F;
+			
+			if (n.indexOf('/') != -1) {
+				String[] bruch = n.split(StringConstants.SLASH);
+				float zaehler = Float.parseFloat(bruch[0]);
+				float nenner = Float.parseFloat(bruch[1]);
+				return zaehler / nenner;
+			} else {
+				return Float.parseFloat(n);
+			}
+		} catch (NumberFormatException e) {
+			Status status = new Status(IStatus.INFO, Hub.PLUGIN_ID, e.getLocalizedMessage(), e);
+			StatusManager.getManager().handle(status, StatusManager.LOG);
+			return 0.0F;
+		}
 	}
 	
 	@Override
@@ -252,5 +292,4 @@ public class Prescription extends PersistentObject {
 	public boolean isDragOK(){
 		return true;
 	}
-	
 }
