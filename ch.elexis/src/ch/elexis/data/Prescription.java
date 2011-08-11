@@ -149,6 +149,10 @@ public class Prescription extends PersistentObject {
 		
 	}
 	
+	public void setBemerkung(String value){
+		set(REMARK, checkNull(value));
+	}
+	
 	/**
 	 * Ein Medikament stoppen
 	 */
