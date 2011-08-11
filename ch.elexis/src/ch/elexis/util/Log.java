@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Log.java 5852 2009-12-02 14:41:17Z michael_imhof $
+ * $Id$
  *******************************************************************************/
 package ch.elexis.util;
 
@@ -19,6 +19,7 @@ import java.io.PrintStream;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.Desk;
 import ch.rgw.tools.ExHandler;
@@ -172,7 +173,7 @@ public class Log {
 						.append(": ").append(message).toString();
 				out.println(lastError); //$NON-NLS-1$
 				out.flush();
-				if (level <= alertLevel) {
+				if (level <= alertLevel && PlatformUI.isWorkbenchRunning()) {
 					if (level != SYNCMARK) {
 						if (doAlert == null) {
 							doAlert = Desk.getTopShell();
