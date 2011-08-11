@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Log.java 5852 2009-12-02 14:41:17Z michael_imhof $
+ * $Id$
  *******************************************************************************/
 package ch.elexis.util;
 
