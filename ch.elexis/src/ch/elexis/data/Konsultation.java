@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -42,15 +41,17 @@ import ch.rgw.tools.VersionedResource;
 import ch.rgw.tools.VersionedResource.ResourceItem;
 
 /**
- * Eine Konsultation ist ein einzelner Mandant/Patient-Kontakt. Eine Konsultation gehört immer zu
- * einem Fall und zu einem Mandanten, und hat ein bestimmtes Datum. Eine Konsultation kann eine oder
- * mehrere der Fall-Diagnosen betreffen. Eine Konsultation enthält ausserdem auch einen
- * Behandlungstext, und nicht zuletzt auch einen Verrechnungs-Set. Eine Konsultation kann nicht mehr
- * geändert werden, wenn sie geschlossen ist
+ * Eine Konsultation ist ein einzelner Mandant/Patient-Kontakt. Eine
+ * Konsultation gehört immer zu einem Fall und zu einem Mandanten, und hat ein
+ * bestimmtes Datum. Eine Konsultation kann eine oder mehrere der Fall-Diagnosen
+ * betreffen. Eine Konsultation enthält ausserdem auch einen Behandlungstext,
+ * und nicht zuletzt auch einen Verrechnungs-Set. Eine Konsultation kann nicht
+ * mehr geändert werden, wenn sie geschlossen ist
  * 
  * @author gerry
  */
-public class Konsultation extends PersistentObject implements Comparable<Konsultation> {
+public class Konsultation extends PersistentObject implements
+		Comparable<Konsultation> {
 	public static final String FLD_ENTRY = "Eintrag";
 	public static final String DATE = "Datum";
 	public static final String FLD_BILL_ID = "RechnungsID";
@@ -59,27 +60,28 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 	private static final String TABLENAME = "BEHANDLUNGEN";
 	volatile int actEntry;
 	private final JdbcLink j = getConnection();
-	
-	protected String getTableName(){
+
+	protected String getTableName() {
 		return TABLENAME;
 	}
-	
+
 	static {
-		addMapping(TABLENAME, FLD_MANDATOR_ID, PersistentObject.DATE_COMPOUND, FLD_CASE_ID,
-			FLD_BILL_ID, "Eintrag=S:V:Eintrag",
-			"Diagnosen=JOINT:BehandlungsID:DiagnoseID:BEHDL_DG_JOINT");
+		addMapping(TABLENAME, FLD_MANDATOR_ID, PersistentObject.DATE_COMPOUND,
+				FLD_CASE_ID, FLD_BILL_ID, "Eintrag=S:V:Eintrag",
+				"Diagnosen=JOINT:BehandlungsID:DiagnoseID:BEHDL_DG_JOINT");
 	}
-	
-	protected Konsultation(String id){
+
+	protected Konsultation(String id) {
 		super(id);
-		
+
 	}
-	
+
 	/**
-	 * Prüfen, ob diese Konsultation gültig ist. Dies ist dann der Fall, wenn sie in der Datenbank
-	 * existiert und wenn sie einen zugeordneten Mandanten und einen zugeordeten Fall hat.
+	 * Prüfen, ob diese Konsultation gültig ist. Dies ist dann der Fall, wenn
+	 * sie in der Datenbank existiert und wenn sie einen zugeordneten Mandanten
+	 * und einen zugeordeten Fall hat.
 	 */
-	public boolean isValid(){
+	public boolean isValid() {
 		if (!super.isValid()) {
 			return false;
 		}
@@ -91,17 +93,17 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 		if ((fall == null) || (!fall.isValid())) {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	/** Den zugehörigen Fall holen */
-	public Fall getFall(){
+	public Fall getFall() {
 		return Fall.load(get(FLD_CASE_ID));
 	}
-	
+
 	/** Die Konsultation einem Fall zuordnen */
-	public void setFall(Fall f){
+	public void setFall(Fall f) {
 		if (isEditable(true)) {
 			Fall alt = getFall();
 			set(FLD_CASE_ID, f.getId());
@@ -113,61 +115,61 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 			}
 		}
 	}
-	
+
 	/** Eine neue Konsultation zu einem Fall erstellen */
-	public Konsultation(Fall fall){
+	public Konsultation(Fall fall) {
 		if (fall == null) {
 			fall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
 			if (fall == null) {
 				MessageDialog
-					.openError(null, "Kein Fall ausgewählt",
-						"Bitte zunächst einen Fall auswählen, dem die neue Konsultation zugeordnet werden soll");
+						.openError(
+								null,
+								"Kein Fall ausgewählt",
+								"Bitte zunächst einen Fall auswählen, dem die neue Konsultation zugeordnet werden soll");
 			}
 		}
 		if (fall.isOpen() == false) {
-			MessageDialog.openError(null, "Fall geschlossen",
-				"Zu einem abgeschlossenen Fall kann keine neue Konsultation erstellt werden");
+			MessageDialog
+					.openError(null, "Fall geschlossen",
+							"Zu einem abgeschlossenen Fall kann keine neue Konsultation erstellt werden");
 		} else {
 			create(null);
-			set(new String[] {
-				DATE, FLD_CASE_ID, FLD_MANDATOR_ID
-			}, new TimeTool().toString(TimeTool.DATE_GER), fall.getId(), Hub.actMandant.getId());
+			set(new String[] { DATE, FLD_CASE_ID, FLD_MANDATOR_ID },
+					new TimeTool().toString(TimeTool.DATE_GER), fall.getId(),
+					Hub.actMandant.getId());
 			fall.getPatient().setInfoElement("LetzteBehandlung", getId());
 		}
 	}
-	
+
 	/** Eine Konsultation anhand ihrer ID von der Datenbank einlesen */
-	public static Konsultation load(String id){
+	public static Konsultation load(String id) {
 		Konsultation ret = new Konsultation(id);
 		if (ret.exists()) {
 			return ret;
 		}
 		return null;
 	}
-	
-	public int getHeadVersion(){
+
+	/**
+	 * get the number of the last (highest) Version
+	 * 
+	 * @return
+	 */
+	public int getHeadVersion() {
 		VersionedResource vr = getVersionedResource(FLD_ENTRY, false);
 		return vr.getHeadVersion();
 	}
-	
-	public VersionedResource getEintrag(){
+
+	/**
+	 * get the text entry od this Konsultation
+	 * 
+	 * @return
+	 */
+	public VersionedResource getEintrag() {
 		VersionedResource vr = getVersionedResource(FLD_ENTRY, true);
 		return vr;
 	}
-	
-	/*
-	 * private void addSection(String title, int pos) { VersionedResource vr = getEintrag(); String
-	 * ntext = vr.getHead(); Samdas samdas = new Samdas(ntext); Samdas.Record record =
-	 * samdas.getRecord(); String recText = record.getText(); if ((pos == -1) || pos >
-	 * recText.length()) { pos = recText.length(); recText += title; } else { recText =
-	 * recText.substring(0, pos) + title + recText.substring(pos); } record.setText(recText);
-	 * Samdas.Section section = new Samdas.Section(pos, title.length(), title); record.add(section);
-	 * updateEintrag(samdas.toString(), true); // XRefs may always be added }
-	 * 
-	 * public void removeSection(int pos) {
-	 * 
-	 * }
-	 */
+
 	/**
 	 * Insert an XREF to the EMR text
 	 * 
@@ -180,7 +182,7 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 	 * @param text
 	 *            text to insert
 	 */
-	public void addXRef(String provider, String id, int pos, String text){
+	public void addXRef(String provider, String id, int pos, String text) {
 		VersionedResource vr = getEintrag();
 		String ntext = vr.getHead();
 		Samdas samdas = new Samdas(ntext);
@@ -197,28 +199,29 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 		record.add(xref);
 		updateEintrag(samdas.toString(), true); // XRefs may always be added
 	}
-	
-	private Samdas getEntryRaw(){
+
+	private Samdas getEntryRaw() {
 		VersionedResource vr = getEintrag();
 		String ntext = vr.getHead();
 		Samdas samdas = new Samdas(ntext);
 		return samdas;
 	}
-	
-	private void updateEntryRaw(Samdas samdas){
+
+	private void updateEntryRaw(Samdas samdas) {
 		updateEintrag(samdas.toString(), false);
 	}
-	
+
 	/**
-	 * Remove an XREF from the EMR text. Will remove all XREFS of the given provider with the given
-	 * ID from this EMR. Warning: The IKonsExtension's removeXRef method will not be called.
+	 * Remove an XREF from the EMR text. Will remove all XREFS of the given
+	 * provider with the given ID from this EMR. Warning: The IKonsExtension's
+	 * removeXRef method will not be called.
 	 * 
 	 * @param provider
 	 *            unique provider id
 	 * @param id
 	 *            item ID
 	 */
-	public void removeXRef(String provider, String id){
+	public void removeXRef(String provider, String id) {
 		VersionedResource vr = getEintrag();
 		String ntext = vr.getHead();
 		Samdas samdas = new Samdas(ntext);
@@ -227,27 +230,37 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 		List<Samdas.XRef> xrefs = record.getXrefs();
 		boolean changed = false;
 		for (Samdas.XRef xref : xrefs) {
-			if ((xref.getProvider().equals(provider)) && (xref.getID().equals(id))) {
+			if ((xref.getProvider().equals(provider))
+					&& (xref.getID().equals(id))) {
 				if (recText.length() > xref.getPos() + xref.getLength()) {
-					recText =
-						recText.substring(0, xref.getPos())
-							+ recText.substring(xref.getPos() + xref.getLength());
+					recText = recText.substring(0, xref.getPos())
+							+ recText.substring(xref.getPos()
+									+ xref.getLength());
 					record.setText(recText);
 				}
 				record.remove(xref);
 				changed = true;
 			}
-			
+
 		}
 		if (changed) {
 			updateEintrag(samdas.toString(), true);
 		}
-		
+
 	}
-	
-	private boolean isEintragEditable(){
+
+	/**
+	 * Normally, the thext of a Konsultation may only be changed, if the
+	 * Konsultation has not yet been billed. Due to customer demand, this was
+	 * weakended: A User can have the right ADMIN_KONS_EDIT_IF_BILLED and then
+	 * can edit all Konsultations, even billed ones.
+	 * 
+	 * @return
+	 */
+	private boolean isEintragEditable() {
 		boolean editable = false;
-		boolean hasRight = Hub.acl.request(AccessControlDefaults.ADMIN_KONS_EDIT_IF_BILLED);
+		boolean hasRight = Hub.acl
+				.request(AccessControlDefaults.ADMIN_KONS_EDIT_IF_BILLED);
 		if (hasRight) {
 			// user has right to change Konsultation. in this case, the user
 			// may change the text even if the Konsultation has already been
@@ -257,110 +270,119 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 			// normal case, check all
 			editable = isEditable(true, true, true);
 		}
-		
+
 		return editable;
 	}
-	
+
 	/**
-	 * Den Eintrag eintragen. Da es sich um eine VersionedResource handelt, wird nicht der alte
-	 * Eintrag gelöscht, sondern der neue wird angehängt.
+	 * Den Eintrag eintragen. Da es sich um eine VersionedResource handelt, wird
+	 * nicht der alte Eintrag gelöscht, sondern der neue wird angehängt.
 	 * 
 	 * @param force
-	 *            bei true wird der Eintrag auch dann geändert, wenn die Konsultation eigentlich
-	 *            nicht änderbar ist.
+	 *            bei true wird der Eintrag auch dann geändert, wenn die
+	 *            Konsultation eigentlich nicht änderbar ist.
 	 */
-	public void setEintrag(VersionedResource eintrag, boolean force){
+	public void setEintrag(VersionedResource eintrag, boolean force) {
 		if (force || isEintragEditable()) {
 			setVersionedResource(FLD_ENTRY, eintrag.getHead());
 		}
 	}
-	
+
 	/**
-	 * Eine Änderung des Eintrags hinzufügen (der alte Eintrag wird nicht überschrieben)
+	 * Eine Änderung des Eintrags hinzufügen (der alte Eintrag wird nicht
+	 * überschrieben)
 	 * 
 	 * @param force
-	 *            bei true wird der Eintrag auch dann geändert, wenn die Konsultation eigentlich
-	 *            nicht änderbar ist.
+	 *            bei true wird der Eintrag auch dann geändert, wenn die
+	 *            Konsultation eigentlich nicht änderbar ist.
 	 */
-	public void updateEintrag(String eintrag, boolean force){
+	public void updateEintrag(String eintrag, boolean force) {
 		if (force || isEintragEditable()) {
 			setVersionedResource(FLD_ENTRY, eintrag);
 			// ElexisEventDispatcher.update(this);
 		}
 	}
-	
-	public void purgeEintrag(){
+
+	/**
+	 * remove all but the newest version of the entry
+	 */
+	public void purgeEintrag() {
 		VersionedResource vr = getEintrag();
 		vr.purge();
 		setBinary(FLD_ENTRY, vr.serialize());
 	}
-	
+
 	/** Den zugeordneten Mandanten holen */
-	public Mandant getMandant(){
+	public Mandant getMandant() {
 		return Mandant.load(get(FLD_MANDATOR_ID));
 	}
-	
+
 	/** Die Konsultation einem Mandanten zuordnen */
-	public void setMandant(Mandant m){
+	public void setMandant(Mandant m) {
 		if (m != null) {
 			set(FLD_MANDATOR_ID, m.getId());
 		}
 	}
-	
+
 	/**
 	 * Das Behandlungsdatum setzen
 	 * 
 	 * @param force
 	 *            auch setzen, wenn Kons nicht änderbar
 	 */
-	public void setDatum(String dat, boolean force){
+	public void setDatum(String dat, boolean force) {
 		if (dat != null) {
 			if (force || isEditable(true)) {
 				set(DATE, dat);
 			}
 		}
 	}
-	
+
 	/** das Behandlungsdatum auslesen */
-	public String getDatum(){
+	public String getDatum() {
 		String ret = get(DATE);
 		return ret;
 	}
-	
-	public Rechnung getRechnung(){
+
+	public Rechnung getRechnung() {
 		return Rechnung.load(get(FLD_BILL_ID));
 	}
-	
-	public void setRechnung(Rechnung r){
+
+	public void setRechnung(Rechnung r) {
 		if (r != null) {
 			set(FLD_BILL_ID, r.getId());
 		}
 	}
-	
+
 	/**
-	 * Checks if the Konsultation can be altered. This method is internally used.
+	 * Checks if the Konsultation can be altered. This method is internally
+	 * used.
 	 * 
 	 * @param checkMandant
-	 *            checks whether the current mandant is the owner of this Konsultation
+	 *            checks whether the current mandant is the owner of this
+	 *            Konsultation
 	 * @param checkBill
 	 *            checks whether the Konsultation has already been billed
 	 * @param showError
 	 *            if true, show error messages
-	 * @return true if the Konsultation can be altered in repsect to the given checks, else
-	 *         otherwise.
+	 * @return true if the Konsultation can be altered in repsect to the given
+	 *         checks, else otherwise.
 	 */
-	private boolean isEditable(boolean checkMandant, boolean checkBill, boolean showError){
+	private boolean isEditable(boolean checkMandant, boolean checkBill,
+			boolean showError) {
 		Mandant m = getMandant();
-		
+		checkMandant = !Hub.acl
+				.request(AccessControlDefaults.LSTG_CHARGE_FOR_ALL);
 		boolean mandantOK = true;
 		boolean billOK = true;
-		
+		boolean bMandantLoggedIn = Hub.actMandant != null;
+
 		// if m is null, ignore checks (return true)
-		if (m != null) {
+		if (m != null && bMandantLoggedIn) {
 			if (checkMandant && !(m.getId().equals(Hub.actMandant.getId()))) {
 				mandantOK = false;
 			}
-			
+
 			if (checkBill) {
 				Rechnung rn = getRechnung();
 				if (rn == null || (!rn.exists())) {
@@ -375,50 +397,58 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 				}
 			}
 		}
-		
-		boolean ok = billOK && mandantOK;
+
+		boolean ok = billOK && mandantOK && bMandantLoggedIn;
 		if (ok) {
 			return true;
 		}
-		
+
 		// something is not ok
 		if (showError) {
 			String msg = "";
-			if (!billOK) {
-				msg = "Für diese Behandlung wurde bereits eine Rechnung erstellt.";
+			if (!bMandantLoggedIn) {
+				msg = "Es ist kein Mandant eingeloggt";
 			} else {
-				msg = "Diese Behandlung ist nicht von Ihnen";
+				if (!billOK) {
+					msg = "Für diese Behandlung wurde bereits eine Rechnung erstellt.";
+				} else {
+					msg = "Diese Behandlung ist nicht von Ihnen";
+				}
 			}
-			Status status = new Status(Status.WARNING, "ch.elexis", 1, msg, null);
-			ErrorDialog.openError(Desk.getTopShell(), "Konsultation kann nicht geändert werden",
-				msg, status);
+			Status status = new Status(Status.WARNING, "ch.elexis", 1, msg,
+					null);
+			ErrorDialog.openError(Desk.getTopShell(),
+					"Konsultation kann nicht geändert werden", msg, status);
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
-	 * Checks if the Konsultation can be altered.
+	 * Checks if the Konsultation can be altered. A user that has the right
+	 * LSTG_CHARGE_FOR_ALL can charge for all mandators. Others can only charge
+	 * a Konsultation that belongs to their own logged in mandator.
 	 * 
 	 * @param showError
 	 *            if true, show error messages
 	 * @return true if the Konsultation can be altered, else otherwise.
 	 */
-	public boolean isEditable(boolean showError){
+	public boolean isEditable(boolean showError) {
 		Fall fall = getFall();
 		if (fall != null) {
 			if ((!fall.isOpen()) && showError) {
-				SWTHelper.showError("Fall geschlossen",
-					"Diese Konsultation gehört zu einem abgeschlossenen Fall");
+				SWTHelper
+						.showError("Fall geschlossen",
+								"Diese Konsultation gehört zu einem abgeschlossenen Fall");
 				return false;
 			}
 		}
-		
+
 		// check mandant and bill
 		return isEditable(true, true, showError);
 	}
-	
-	public int getStatus(){
+
+	public int getStatus() {
 		Rechnung r = getRechnung();
 		if (r != null) {
 			return r.getStatus();
@@ -433,58 +463,60 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 		} else {
 			return RnStatus.NICHT_VON_IHNEN;
 		}
-		
+
 	}
-	
-	public String getStatusText(){
+
+	public String getStatusText() {
 		return RnStatus.getStatusText(getStatus());
 	}
-	
+
 	/** Eine einzeilige Beschreibung dieser Konsultation holen */
-	public String getLabel(){
+	public String getLabel() {
 		StringBuffer ret = new StringBuffer();
 		Mandant m = getMandant();
-		ret.append(getDatum()).append(" (").append(getStatusText()).append(") - ").append(
-			(m == null) ? "?" : m.getLabel());
+		ret.append(getDatum()).append(" (").append(getStatusText())
+				.append(") - ").append((m == null) ? "?" : m.getLabel());
 		return ret.toString();
 	}
-	
-	public String getVerboseLabel(){
+
+	public String getVerboseLabel() {
 		StringBuilder ret = new StringBuilder();
-		ret.append(getFall().getPatient().getName()).append(" ").append(
-			getFall().getPatient().getVorname()).append(", ").append(
-			getFall().getPatient().getGeburtsdatum()).append(" - ").append(getDatum());
+		ret.append(getFall().getPatient().getName()).append(" ")
+				.append(getFall().getPatient().getVorname()).append(", ")
+				.append(getFall().getPatient().getGeburtsdatum()).append(" - ")
+				.append(getDatum());
 		return ret.toString();
 	}
-	
+
 	/** Eine Liste der Diagnosen zu dieser Konsultation holen */
-	public ArrayList<IDiagnose> getDiagnosen(){
+	public ArrayList<IDiagnose> getDiagnosen() {
 		ArrayList<IDiagnose> ret = new ArrayList<IDiagnose>();
 		Stm stm = j.getStatement();
-		ResultSet rs1 =
-			stm
+		ResultSet rs1 = stm
 				.query("SELECT DIAGNOSEID FROM BEHDL_DG_JOINT inner join BEHANDLUNGEN on BehandlungsID=BEHANDLUNGEN.id where BEHDL_DG_JOINT.deleted='0' and BEHANDLUNGEN.deleted='0' AND BEHANDLUNGSID="
-					+ JdbcLink.wrap(getId()));
+						+ JdbcLink.wrap(getId()));
 		StringBuilder sb = new StringBuilder();
 		try {
 			while (rs1.next() == true) {
 				String dgID = rs1.getString(1);
-				
+
 				Stm stm2 = j.getStatement();
-				ResultSet rs2 =
-					stm2.query("SELECT DG_CODE,KLASSE FROM DIAGNOSEN WHERE ID="
-						+ JdbcLink.wrap(dgID));
+				ResultSet rs2 = stm2
+						.query("SELECT DG_CODE,KLASSE FROM DIAGNOSEN WHERE ID="
+								+ JdbcLink.wrap(dgID));
 				if (rs2.next()) {
 					sb.setLength(0);
 					sb.append(rs2.getString(2)).append("::");
 					sb.append(rs2.getString(1));
 					try {
-						PersistentObject dg = Hub.poFactory.createFromString(sb.toString());
+						PersistentObject dg = Hub.poFactory.createFromString(sb
+								.toString());
 						if (dg != null) {
 							ret.add((IDiagnose) dg);
 						}
 					} catch (Exception ex) {
-						log.log("Fehlerhafter Diagnosecode " + sb.toString(), Log.ERRORS);
+						log.log("Fehlerhafter Diagnosecode " + sb.toString(),
+								Log.ERRORS);
 					}
 				}
 				rs2.close();
@@ -492,72 +524,78 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 			}
 			rs1.close();
 		} catch (Exception ex) {
-			ElexisStatus status =
-				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE, "Persistence error: "
-					+ ex.getMessage(), ex, ElexisStatus.LOG_ERRORS);
+			ElexisStatus status = new ElexisStatus(ElexisStatus.ERROR,
+					Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
+					"Persistence error: " + ex.getMessage(), ex,
+					ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		} finally {
 			j.releaseStatement(stm);
 		}
 		return ret;
 	}
-	
+
 	/** Eine weitere Diagnose dieser Konsultation zufügen */
-	public void addDiagnose(IDiagnose dg){
+	public void addDiagnose(IDiagnose dg) {
 		if (!isEditable(true)) {
 			return;
 		}
-		String exists =
-			j.queryString("SELECT ID FROM DIAGNOSEN WHERE KLASSE="
+		String exists = j.queryString("SELECT ID FROM DIAGNOSEN WHERE KLASSE="
 				+ JdbcLink.wrap(dg.getClass().getName()) + " AND DG_CODE="
 				+ JdbcLink.wrap(dg.getCode()));
 		StringBuilder sql = new StringBuilder(200);
 		if (StringTool.isNothing(exists)) {
 			exists = StringTool.unique("bhdl");
-			sql.append("INSERT INTO DIAGNOSEN (ID, DG_CODE, DG_TXT, KLASSE) VALUES (").append(
-				JdbcLink.wrap(exists)).append(",").append(JdbcLink.wrap(dg.getCode())).append(",")
-				.append(JdbcLink.wrap(dg.getText())).append(",").append(
-					JdbcLink.wrap(dg.getClass().getName())).append(")");
+			sql.append(
+					"INSERT INTO DIAGNOSEN (ID, DG_CODE, DG_TXT, KLASSE) VALUES (")
+					.append(JdbcLink.wrap(exists)).append(",")
+					.append(JdbcLink.wrap(dg.getCode())).append(",")
+					.append(JdbcLink.wrap(dg.getText())).append(",")
+					.append(JdbcLink.wrap(dg.getClass().getName())).append(")");
 			j.exec(sql.toString());
 			sql.setLength(0);
 		}
-		sql.append("INSERT INTO BEHDL_DG_JOINT (ID,BEHANDLUNGSID,DIAGNOSEID) VALUES (").append(
-			JdbcLink.wrap(StringTool.unique("bhdx"))).append(",").append(getWrappedId())
-			.append(",").append(JdbcLink.wrap(exists)).append(")");
+		sql.append(
+				"INSERT INTO BEHDL_DG_JOINT (ID,BEHANDLUNGSID,DIAGNOSEID) VALUES (")
+				.append(JdbcLink.wrap(StringTool.unique("bhdx"))).append(",")
+				.append(getWrappedId()).append(",")
+				.append(JdbcLink.wrap(exists)).append(")");
 		j.exec(sql.toString());
-		
+
 		// Statistik nachführen
 		getFall().getPatient().countItem(dg);
 		Hub.actUser.countItem(dg);
-		
+
 	}
-	
+
 	/** Eine Diagnose aus der Diagnoseliste entfernen */
-	public void removeDiagnose(IDiagnose dg){
+	public void removeDiagnose(IDiagnose dg) {
 		if (isEditable(true)) {
 			StringBuilder sql = new StringBuilder();
-			sql.append("SELECT ID FROM DIAGNOSEN WHERE DG_CODE=").append(
-				JdbcLink.wrap(dg.getCode())).append(" AND ").append("KLASSE=").append(
-				JdbcLink.wrap(dg.getClass().getName()));
+			sql.append("SELECT ID FROM DIAGNOSEN WHERE DG_CODE=")
+					.append(JdbcLink.wrap(dg.getCode())).append(" AND ")
+					.append("KLASSE=")
+					.append(JdbcLink.wrap(dg.getClass().getName()));
 			String dgid = j.queryString(sql.toString());
-			
+
 			sql.setLength(0);
-			sql.append("DELETE FROM BEHDL_DG_JOINT WHERE BEHANDLUNGSID=").append(getWrappedId())
-				.append(" AND ").append("DIAGNOSEID=").append(JdbcLink.wrap(dgid));
+			sql.append("DELETE FROM BEHDL_DG_JOINT WHERE BEHANDLUNGSID=")
+					.append(getWrappedId()).append(" AND ")
+					.append("DIAGNOSEID=").append(JdbcLink.wrap(dgid));
 			j.exec(sql.toString());
 		}
 	}
-	
+
 	/** Die zu dieser Konsultation gehörenden Leistungen holen */
 	@SuppressWarnings("unchecked")
-	public List<Verrechnet> getLeistungen(){
+	public List<Verrechnet> getLeistungen() {
 		Query qbe = new Query(Verrechnet.class);
 		qbe.add(Verrechnet.KONSULTATION, Query.EQUALS, getId());
 		qbe.orderBy(false, Verrechnet.CLASS, Verrechnet.LEISTG_CODE);
 		List ret = qbe.execute();
 		return ret;
 	}
-	
+
 	/**
 	 * Eine Verrechenbar aus der Konsultation entfernen
 	 * 
@@ -565,8 +603,8 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 	 *            die Verrechenbar
 	 * @return Ein Optifier- Resultat
 	 */
-	
-	public Result<Verrechnet> removeLeistung(Verrechnet ls){
+
+	public Result<Verrechnet> removeLeistung(Verrechnet ls) {
 		if (isEditable(true)) {
 			IVerrechenbar v = ls.getVerrechenbar();
 			int z = ls.getZahl();
@@ -580,42 +618,45 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 			return result;
 		}
 		return new Result<Verrechnet>(Result.SEVERITY.WARNING, 3,
-			"Behandlung geschlossen oder nicht von Ihnen", null, false);
+				"Behandlung geschlossen oder nicht von Ihnen", null, false);
 	}
-	
+
 	/**
 	 * Eine Verrechenbar zu dieser Konsultation zufügen
 	 * 
 	 * @return ein Verifier-Resultat.
 	 */
-	public Result<IVerrechenbar> addLeistung(IVerrechenbar l){
+	public Result<IVerrechenbar> addLeistung(IVerrechenbar l) {
 		if (isEditable(false)) {
 			Result<IVerrechenbar> result = l.getOptifier().add(l, this);
 			if (result.isOK()) {
 				// Statistik nachführen
 				getFall().getPatient().countItem(l);
 				Hub.actUser.countItem(l);
-				Hub.actUser.statForString("LeistungenMFU", l.getCodeSystemName());
+				Hub.actUser.statForString("LeistungenMFU",
+						l.getCodeSystemName());
 				if (l instanceof Artikel) {
 					Artikel art = (Artikel) l;
 					// art.einzelAbgabe(1); -> this is done by the optifier now
-					Prescription p = new Prescription(art, getFall().getPatient(), "", "");
+					Prescription p = new Prescription(art, getFall()
+							.getPatient(), "", "");
 					p.set(Prescription.REZEPT_ID, "Direktabgabe");
 				}
 			}
 			return result;
 		}
 		return new Result<IVerrechenbar>(Result.SEVERITY.WARNING, 2,
-			"Behandlung geschlossen oder nicht von Ihnen", null, false);
+				"Behandlung geschlossen oder nicht von Ihnen", null, false);
 	}
-	
+
 	/**
-	 * Returns the author of the latest version of a consultation entry. Each consultation always
-	 * only has one author, and that's the one saved in the last version of a consultation entry.
+	 * Returns the author of the latest version of a consultation entry. Each
+	 * consultation always only has one author, and that's the one saved in the
+	 * last version of a consultation entry.
 	 * 
 	 * @return Username of the author or an empty string.
 	 */
-	public String getAuthor(){
+	public String getAuthor() {
 		String author = "";
 		VersionedResource resource = this.getEintrag();
 		if (resource != null) {
@@ -623,23 +664,24 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 			if (item != null) {
 				return item.remark;
 			}
-			
+
 		}
 		return author;
 	}
-	
+
 	/** Wieviel hat uns diese Konsultation gekostet? */
-	public int getKosten(){
+	public int getKosten() {
 		int sum = 0;
 		/*
-		 * TimeTool mine=new TimeTool(getDatum()); List<Verrechenbar> l=getLeistungen();
-		 * for(Verrechenbar v:l){ sum+=(v.getZahl()v.getKosten(mine)); }
+		 * TimeTool mine=new TimeTool(getDatum()); List<Verrechenbar>
+		 * l=getLeistungen(); for(Verrechenbar v:l){
+		 * sum+=(v.getZahl()v.getKosten(mine)); }
 		 */
 		Stm stm = j.getStatement();
 		try {
-			ResultSet res =
-				stm.query("SELECT EK_KOSTEN FROM LEISTUNGEN WHERE deleted='0' AND BEHANDLUNG="
-					+ getWrappedId());
+			ResultSet res = stm
+					.query("SELECT EK_KOSTEN FROM LEISTUNGEN WHERE deleted='0' AND BEHANDLUNG="
+							+ getWrappedId());
 			while ((res != null) && res.next()) {
 				sum += res.getInt(1);
 			}
@@ -650,11 +692,11 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 			j.releaseStatement(stm);
 		}
 		return sum;
-		
+
 	}
-	
+
 	/** Wieviel Zeit können wir für diese Konsultation anrechnen? */
-	public int getMinutes(){
+	public int getMinutes() {
 		int sum = 0;
 		List<Verrechnet> l = getLeistungen();
 		for (Verrechnet v : l) {
@@ -664,23 +706,22 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 			}
 		}
 		return sum;
-		
+
 	}
-	
+
 	/**
 	 * Wieviel Umsatz (in Rappen) bringt uns diese Konsultation ein?
 	 * 
 	 * @deprecated not accurate. use getLeistungen()
 	 * */
 	@Deprecated
-	public double getUmsatz(){
+	public double getUmsatz() {
 		double sum = 0.0;
 		Stm stm = j.getStatement();
 		try {
-			ResultSet res =
-				stm
+			ResultSet res = stm
 					.query("SELECT VK_PREIS,ZAHL,SCALE FROM LEISTUNGEN WHERE deleted='0' AND BEHANDLUNG="
-						+ getWrappedId());
+							+ getWrappedId());
 			while ((res != null) && res.next()) {
 				double scale = res.getDouble(3) / 100.0;
 				sum += (res.getDouble(1) * res.getDouble(2)) * scale;
@@ -692,93 +733,116 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 			j.releaseStatement(stm);
 		}
 		return sum;
-		
+
 	}
-	
+
 	/**
 	 * Wieviel vom Umsatz bleibt uns von dieser Konsultation?
 	 * 
 	 * */
 	@Deprecated
-	public double getGewinn(){
+	public double getGewinn() {
 		return getUmsatz() - getKosten();
 	}
-	
-	public void changeScale(IVerrechenbar v, int scale){
+
+	public void changeScale(IVerrechenbar v, int scale) {
 		if (isEditable(true)) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("UPDATE LEISTUNGEN SET SCALE='").append(scale).append("' WHERE BEHANDLUNG=")
-				.append(getWrappedId()) /*
-										 * .append(" AND " ) .append("KLASSE=" ) .append(JdbcLink .
-										 * wrap(v.getClass ( ).getName()))
-										 */
-				.append(" AND LEISTG_CODE=").append(JdbcLink.wrap(v.getId()));
-			
+			sb.append("UPDATE LEISTUNGEN SET SCALE='").append(scale)
+					.append("' WHERE BEHANDLUNG=").append(getWrappedId()) /*
+																		 * .append
+																		 * (
+																		 * " AND "
+																		 * )
+																		 * .append
+																		 * (
+																		 * "KLASSE="
+																		 * )
+																		 * .append
+																		 * (
+																		 * JdbcLink
+																		 * .
+																		 * wrap
+																		 * (v
+																		 * .getClass
+																		 * (
+																		 * ).getName
+																		 * ()))
+																		 */
+					.append(" AND LEISTG_CODE=")
+					.append(JdbcLink.wrap(v.getId()));
+
 			j.exec(sb.toString());
 		}
 	}
-	
+
 	/** Zahl einer Leistung ändern */
-	public void changeZahl(IVerrechenbar v, int nz){
+	public void changeZahl(IVerrechenbar v, int nz) {
 		if (isEditable(true)) {
 			StringBuilder sql = new StringBuilder();
 			sql.append("UPDATE LEISTUNGEN SET ZAHL=").append(nz)
 			/*
-			 * .append(" WHERE KLASSE=").append(JdbcLink.wrap(v.getClass().getName ()))
+			 * .append(" WHERE KLASSE=").append(JdbcLink.wrap(v.getClass().getName
+			 * ()))
 			 */
-			.append(" WHERE LEISTG_CODE=").append(JdbcLink.wrap(v.getId())).append(
-				" AND BEHANDLUNG=").append(getWrappedId());
+			.append(" WHERE LEISTG_CODE=").append(JdbcLink.wrap(v.getId()))
+					.append(" AND BEHANDLUNG=").append(getWrappedId());
 			j.exec(sql.toString());
 		}
 	}
-	
+
 	@Override
-	public boolean delete(){
+	public boolean delete() {
 		return delete(true);
 	}
-	
-	public boolean delete(boolean forced){
+
+	public boolean delete(boolean forced) {
 		if (forced || isEditable(true)) {
 			List<Verrechnet> vv = getLeistungen();
 			// VersionedResource vr=getEintrag();
-			if ((vv.size() == 0) || (forced == true)
-				&& (Hub.acl.request(AccessControlDefaults.DELETE_FORCED) == true)) {
+			if ((vv.size() == 0)
+					|| (forced == true)
+					&& (Hub.acl.request(AccessControlDefaults.DELETE_FORCED) == true)) {
 				delete_dependent();
 				return super.delete();
 			}
 		}
 		return false;
 	}
-	
-	private boolean delete_dependent(){
-		for (Verrechnet vv : new Query<Verrechnet>(Verrechnet.class, Verrechnet.KONSULTATION,
-			getId()).execute()) {
+
+	private boolean delete_dependent() {
+		for (Verrechnet vv : new Query<Verrechnet>(Verrechnet.class,
+				Verrechnet.KONSULTATION, getId()).execute()) {
 			vv.delete();
 		}
-		j.exec("DELETE FROM BEHDL_DG_JOINT WHERE BEHANDLUNGSID=" + getWrappedId());
+		j.exec("DELETE FROM BEHDL_DG_JOINT WHERE BEHANDLUNGSID="
+				+ getWrappedId());
 		return true;
 	}
-	
+
 	/** Interface Comparable, um die Behandlungen nach Datum sortieren zu können */
-	public int compareTo(Konsultation b){
+	public int compareTo(Konsultation b) {
 		TimeTool me = new TimeTool(getDatum());
 		TimeTool other = new TimeTool(b.getDatum());
 		return me.compareTo(other);
 	}
-	
+
 	/**
-	 * Helper: Get the "active" cons. Normally, it is the actually selected cons. if the actually
-	 * selected cons does not match the actually selected patient, then it is rather the latest cons
-	 * of the actually selected patient.
+	 * Helper: Get the "active" cons. Normally, it is the actually selected
+	 * cons. if the actually selected cons does not match the actually selected
+	 * patient, then it is rather the latest cons of the actually selected
+	 * patient.
 	 * 
 	 * @return the active Kons
 	 * @author gerry new concept due to some obscure selection problems
 	 */
-	public static Konsultation getAktuelleKons(){
-		Konsultation ret = (Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+	public static Konsultation getAktuelleKons() {
+		Konsultation ret = (Konsultation) ElexisEventDispatcher
+				.getSelected(Konsultation.class);
 		Patient pat = ElexisEventDispatcher.getSelectedPatient();
 		if ((ret != null)
-			&& ((pat == null) || (ret.getFall().getPatient().getId().equals(pat.getId())))) {
+				&& ((pat == null) || (ret.getFall().getPatient().getId()
+						.equals(pat.getId())))) {
 			return ret;
 		}
 		if (pat != null) {
@@ -786,20 +850,21 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 			return ret;
 		}
 		SWTHelper.showError("Kein Patient ausgewählt",
-			"Bitte wählen Sie zuerst einen Patienten aus");
+				"Bitte wählen Sie zuerst einen Patienten aus");
 		return null;
 	}
-	
-	protected Konsultation(){}
-	
+
+	protected Konsultation() {
+	}
+
 	static class BehandlungsComparator implements Comparator<Konsultation> {
 		boolean rev;
-		
-		BehandlungsComparator(boolean reverse){
+
+		BehandlungsComparator(boolean reverse) {
 			rev = reverse;
 		}
-		
-		public int compare(Konsultation b1, Konsultation b2){
+
+		public int compare(Konsultation b1, Konsultation b2) {
 			TimeTool t1 = new TimeTool(b1.getDatum());
 			TimeTool t2 = new TimeTool(b2.getDatum());
 			if (rev == true) {
@@ -808,32 +873,34 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 				return t1.compareTo(t2);
 			}
 		}
-		
+
 	}
-	
+
 	@Override
-	public boolean isDragOK(){
+	public boolean isDragOK() {
 		return true;
 	}
-	
+
 	/*
-	 * public interface Listener { public boolean creatingKons(Konsultation k); }
+	 * public interface Listener { public boolean creatingKons(Konsultation k);
+	 * }
 	 */
 
 	/**
 	 * Creates a new Konsultation object, with an optional initial text.
 	 * 
 	 * @param initialText
-	 *            the initial text to be set, or null if no initial text should be set.
+	 *            the initial text to be set, or null if no initial text should
+	 *            be set.
 	 */
-	public static void neueKons(final String initialText){
+	public static void neueKons(final String initialText) {
 		Patient actPatient = ElexisEventDispatcher.getSelectedPatient();
 		Fall actFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
 		if (actFall == null) {
 			if (actPatient == null) {
 				SWTHelper
-					.showError(
-						Messages.getString("GlobalActions.CantCreateKons"), Messages.getString("GlobalActions.DoSelectPatient")); //$NON-NLS-1$ //$NON-NLS-2$
+						.showError(
+								Messages.getString("GlobalActions.CantCreateKons"), Messages.getString("GlobalActions.DoSelectPatient")); //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 			if (actFall == null) {
@@ -842,16 +909,17 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 					actFall = k.getFall();
 					if (actFall == null) {
 						SWTHelper
-							.showError(
-								Messages.getString("GlobalActions.CantCreateKons"), Messages.getString("GlobalActions.DoSelectCase")); //$NON-NLS-1$ //$NON-NLS-2$
+								.showError(
+										Messages.getString("GlobalActions.CantCreateKons"), Messages.getString("GlobalActions.DoSelectCase")); //$NON-NLS-1$ //$NON-NLS-2$
 						return;
 					}
 				} else {
 					Fall[] faelle = actPatient.getFaelle();
 					if ((faelle == null) || (faelle.length == 0)) {
-						actFall =
-							actPatient.neuerFall(Fall.getDefaultCaseLabel(), Fall
-								.getDefaultCaseReason(), Fall.getDefaultCaseLaw());
+						actFall = actPatient.neuerFall(
+								Fall.getDefaultCaseLabel(),
+								Fall.getDefaultCaseReason(),
+								Fall.getDefaultCaseLaw());
 					} else {
 						actFall = faelle[0];
 					}
@@ -862,8 +930,8 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 				Konsultation lk = actPatient.getLetzteKons(false);
 				if (lk == null) {
 					SWTHelper
-						.showError(
-							Messages.getString("GlobalActions.CantCreateKons"), Messages.getString("GlobalActions.DoSelectCase")); //$NON-NLS-1$ //$NON-NLS-2$
+							.showError(
+									Messages.getString("GlobalActions.CantCreateKons"), Messages.getString("GlobalActions.DoSelectCase")); //$NON-NLS-1$ //$NON-NLS-2$
 					return;
 				} else {
 					actFall = lk.getFall();
@@ -872,15 +940,16 @@ public class Konsultation extends PersistentObject implements Comparable<Konsult
 		}
 		if (!actFall.isOpen()) {
 			SWTHelper.showError(Messages.getString("GlobalActions.casclosed"), //$NON-NLS-1$
-				Messages.getString("GlobalActions.caseclosedexplanation")); //$NON-NLS-1$
+					Messages.getString("GlobalActions.caseclosedexplanation")); //$NON-NLS-1$
 			return;
 		}
 		Konsultation actLetzte = actFall.getLetzteBehandlung();
 		if ((actLetzte != null)
-			&& actLetzte.getDatum().equals(new TimeTool().toString(TimeTool.DATE_GER))) {
-			if (MessageDialog.openQuestion(Desk.getTopShell(), Messages
-				.getString("GlobalActions.SecondForToday"), //$NON-NLS-1$
-				Messages.getString("GlobalActions.SecondForTodayQuestion")) == false) { //$NON-NLS-1$
+				&& actLetzte.getDatum().equals(
+						new TimeTool().toString(TimeTool.DATE_GER))) {
+			if (MessageDialog.openQuestion(Desk.getTopShell(),
+					Messages.getString("GlobalActions.SecondForToday"), //$NON-NLS-1$
+					Messages.getString("GlobalActions.SecondForTodayQuestion")) == false) { //$NON-NLS-1$
 				return;
 			}
 		}
