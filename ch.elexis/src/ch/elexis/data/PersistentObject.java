@@ -1322,6 +1322,10 @@ public abstract class PersistentObject implements ISelectable {
 					"Fehler bei: " + cmd + "(" + field + "=" + value + ")", ex,
 					ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
+		} finally {
+			try {
+				pst.close();
+			} catch (SQLException e) {}
 		}
 		
 	}
@@ -1396,6 +1400,10 @@ public abstract class PersistentObject implements ISelectable {
 			log.log("Fehler beim Ausführen der Abfrage " + cmd, Log.ERRORS);
 			SWTHelper.showError("setBytes", "Schreibfehler",
 				"Es trat ein Fehler beim Schreiben auf. Eventuell war der Datensatz zu gross.");
+		} finally {
+			try {
+				stm.close();
+			} catch (SQLException e) {}
 		}
 		return 0;
 	}
@@ -1688,6 +1696,10 @@ public abstract class PersistentObject implements ISelectable {
 				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					sb.toString(), ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
+		} finally {
+			try {
+				pst.close();
+			} catch (SQLException e) {}
 		}
 	}
 	
