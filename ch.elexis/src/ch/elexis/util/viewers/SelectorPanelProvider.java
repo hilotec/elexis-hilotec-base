@@ -181,7 +181,7 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 			String name = field.getFieldname();
 			String value = vals.get(name);
 			if (!StringTool.isNothing(value)) {
-				q.add(name, Query.LIKE, value + "%", true);
+				q.add(name, Query.LIKE, "%" + value + "%", true);
 			}
 		}
 	}
