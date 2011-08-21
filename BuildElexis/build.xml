@@ -266,7 +266,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		</copy>
 		<!-- do some magic stuff to find all the files to include -->
 		<echo message="listDependencies WITH ${platform-runtime} REPOS ${repositories} lib ist ${lib}" />
-		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins},TestElexis,TestElexisUI" />
+		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins},TestElexis,TestElexisUI" report="${output}"/>
 		<antcall target="compile-plugins" inheritrefs="true">
 			<param name="buildlist" value="${buildlist}" />
 		</antcall>
