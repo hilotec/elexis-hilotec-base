@@ -1245,7 +1245,10 @@ public abstract class PersistentObject implements ISelectable {
 				ElexisStatus status =
 					new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 						"Fehler beim Lesen der Liste ", ex, ElexisStatus.LOG_ERRORS);
-				throw new PersistenceException(status);
+				// This is not an exception but a misconfiguration. No need to stop program flow. Just return null 
+				// as the documentation of the method states.
+				// throw new PersistenceException(status);
+				return null;
 			}
 		} else {
 			log.log("Fehlerhaftes Mapping " + mapped, Log.ERRORS);
