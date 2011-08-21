@@ -363,7 +363,7 @@ public class Query<T> {
 		} catch (Exception ex) {
 			ElexisStatus status =
 				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
-					"Fehler beim PreparedStatement ", ex, ElexisStatus.LOG_ERRORS);
+					"Fehler beim PreparedStatement "+ex.getMessage(), ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
 	}
@@ -517,7 +517,8 @@ public class Query<T> {
 		} catch (Exception ex) {
 			ElexisStatus status =
 				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
-					"Fehler bei Datenbankabfrage ", ex, ElexisStatus.LOG_ERRORS);
+					"Fehler bei Datenbankabfrage "+ex.getMessage(), ex, ElexisStatus.LOG_ERRORS);
+			log.log("Fehler bei Datenbankabfrage: "+ex.getMessage(), Log.WARNINGS);
 			throw new PersistenceException(status);
 		} finally {
 			PersistentObject.getConnection().releaseStatement(stm);
