@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -414,7 +414,7 @@ public abstract class PersistentObject implements ISelectable {
 	}
 	
 	/**
-	 * Return the Object containing the connection. This should only in very specific conditions be
+	 * Return the Object containing the cdecodeonnection. This should only in very specific conditions be
 	 * neccessary, if one needs a direkt access to the database. It is strongly recommended to use
 	 * this only very carefully, as callers must ensure for themselves that their code works with
 	 * different database engines equally.
@@ -1328,7 +1328,8 @@ public abstract class PersistentObject implements ISelectable {
 				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					"Fehler bei: " + cmd + "(" + field + "=" + value + ")", ex,
 					ElexisStatus.LOG_ERRORS);
-			throw new PersistenceException(status);
+			throw new PersistenceException(status); // See api doc. check this whether it breaks existing code.
+			//return false; // See api doc. Return false on errors.
 		} finally {
 			try {
 				pst.close();
@@ -1702,7 +1703,9 @@ public abstract class PersistentObject implements ISelectable {
 			ElexisStatus status =
 				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					sb.toString(), ex, ElexisStatus.LOG_ERRORS);
-			throw new PersistenceException(status);
+			// DONT Throw an Exception. The API doc states: return false on errors!!
+			// throw new PersistenceException(status);
+			return false;
 		} finally {
 			try {
 				pst.close();
@@ -1777,8 +1780,7 @@ public abstract class PersistentObject implements ISelectable {
 	 * 
 	 * @param field
 	 * @param rs
-	 * @return decoded string
-	 * @throws PersistenceException
+	 * @return decoded string or null if decode was not possible
 	 */
 	private String decode(final String field, final ResultSet rs){
 		
@@ -1819,7 +1821,13 @@ public abstract class PersistentObject implements ISelectable {
 			ElexisStatus status =
 				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					"Fehler bei decode ", ex, ElexisStatus.LOG_ERRORS);
-			throw new PersistenceException(status);
+			
+			log.log("Fehler bei decode ", Log.ERRORS);
+
+			// Dont throw an exception. Null is an acceptable (and normally testes) 
+			// return value if something went wrong.
+			//throw new PersistenceException(status);
+			
 		}
 		return null;
 	}
@@ -1859,7 +1867,11 @@ public abstract class PersistentObject implements ISelectable {
 			ElexisStatus status =
 				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					"Fehler beim String encoder", ex, ElexisStatus.LOG_ERRORS);
-			throw new PersistenceException(status);
+			// Dont throw an exeption. returning the original value is an acceptable way if encoding is not possible. Frequently it's just
+			// a configuration problem, so just log it and let the user decide if they want to fix it later.
+			// DONT throw new PersistenceException(status);
+			log.log("Fehler beim String encoder: " + ex.getMessage(), Log.ERRORS);
+
 		}
 		return ret;
 	}
