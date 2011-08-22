@@ -6,9 +6,10 @@ Bundle-Version: 2.1.6.dev
 Bundle-Activator: ch.elexis.Hub
 Bundle-Vendor: %Bundle-Vendor.0
 Bundle-Localization: plugin
-Require-Bundle: ch.rgw.utility,
- org.eclipse.help.ui,
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.ui,
  org.eclipse.ui.forms,
+ ch.rgw.utility,
  ch.elexis.core;bundle-version="0.0.2"
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
