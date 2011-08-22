@@ -27,8 +27,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -37,6 +39,8 @@ import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -2416,5 +2420,33 @@ public abstract class PersistentObject implements ISelectable {
 		}
 		return nrFounds == 1;
 	}
+	
+	
+	/** 
+	 * Convert an arbitrary value into the database format
+	 * @author Marco Descher
+	 * @since 2.1.6
+	 * @param in {@link Object}
+	 * @return String representing the value in database storage conform format
+	 */
+	public static String ts(Object in){
+		if(in==null) return "";
+		if(in instanceof String) return (String) in;
+		if(in instanceof Boolean) {
+			return ((Boolean) in) ? "1" : "0";
+		}
+		if(in instanceof Long) return Long.toString((Long)in);
+		if(in instanceof Integer) return Integer.toString((Integer) in);
+		if(in instanceof Double) return Double.toString((Double) in);
+		if(in instanceof Date) {
+			return new SimpleDateFormat("dd.MM.yyyy").format((Date) in);
+		}
+		if(in instanceof XMLGregorianCalendar) {
+			XMLGregorianCalendar dt = (XMLGregorianCalendar) in;
+			return new SimpleDateFormat("dd.MM.yyyy").
+					format(dt.toGregorianCalendar().getTime());
+		}
+		return "";
+	}	
 	
 }
