@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: KontaktBlatt.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -39,6 +39,7 @@ import ch.elexis.actions.ElexisEventListener;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.core.data.IXid;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.Organisation;
 import ch.elexis.data.PersistentObject;
@@ -48,10 +49,10 @@ import ch.elexis.data.Xid.XIDDomain;
 import ch.elexis.dialogs.AnschriftEingabeDialog;
 import ch.elexis.dialogs.KontaktExtDialog;
 import ch.elexis.util.LabeledInputField;
-import ch.elexis.util.SWTHelper;
 import ch.elexis.util.LabeledInputField.AutoForm;
 import ch.elexis.util.LabeledInputField.InputData;
 import ch.elexis.util.LabeledInputField.InputData.Typ;
+import ch.elexis.util.SWTHelper;
 
 public class KontaktBlatt extends Composite implements ElexisEventListener, IActivationListener {
 	private static final String MOBIL = Messages.getString("KontaktBlatt.MobilePhone"); //$NON-NLS-1$
@@ -109,7 +110,7 @@ public class KontaktBlatt extends Composite implements ElexisEventListener, IAct
 				
 					public void displayContent(PersistentObject po, InputData ltf){
 						StringBuilder sb = new StringBuilder();
-						Xid xid = po.getXid();
+						IXid xid = po.getXid();
 						String dom = Xid.getSimpleNameForXIDDomain(xid.getDomain());
 						sb.append(dom).append(": ").append(xid.getDomainId()); //$NON-NLS-1$
 						ltf.setText(sb.toString());

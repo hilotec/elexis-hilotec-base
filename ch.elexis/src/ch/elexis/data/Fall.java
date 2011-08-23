@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: Fall.java 6141 2010-02-14 16:21:10Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 
 package ch.elexis.data;
 
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -22,7 +23,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 
 import ch.elexis.Hub;
 import ch.elexis.admin.AccessControlDefaults;
-import ch.elexis.dialogs.KontaktExtDialog.ExtInfoTable;
 import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Extensions;
@@ -615,36 +615,36 @@ public class Fall extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public String getInfoString(final String name){
-		Hashtable extinfo = getHashtable(FLD_EXTINFO);
+		Map extinfo = getMap(FLD_EXTINFO);
 		return checkNull((String) extinfo.get(name));
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void setInfoString(final String name, final String wert){
-		Hashtable<String, String> extinfo = getHashtable(FLD_EXTINFO);
+		Map extinfo = getMap(FLD_EXTINFO);
 		extinfo.put(name, wert);
-		setHashtable(FLD_EXTINFO, extinfo);
+		setMap(FLD_EXTINFO, extinfo);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void clearInfoString(final String string){
-		Hashtable<String, String> extinfo = getHashtable(FLD_EXTINFO);
+		Map extinfo = getMap(FLD_EXTINFO);
 		extinfo.remove(string);
-		setHashtable(FLD_EXTINFO, extinfo);
+		setMap(FLD_EXTINFO, extinfo);
 		
 	}
 	
 	@SuppressWarnings("unchecked")
 	public Object getInfoElement(final String name){
-		Hashtable extinfo = getHashtable(FLD_EXTINFO);
+		Map extinfo = getMap(FLD_EXTINFO);
 		return extinfo.get(name);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void setInfoElement(final String name, final Object elem){
-		Hashtable extinfo = getHashtable(FLD_EXTINFO);
+		Map extinfo = getMap(FLD_EXTINFO);
 		extinfo.put(name, elem);
-		setHashtable(FLD_EXTINFO, extinfo);
+		setMap(FLD_EXTINFO, extinfo);
 	}
 	
 	@Override

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2009, G. Weirich and Elexis
+ * Copyright (c) 2008-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: AssignStickerDialog.java 5328 2009-05-30 06:53:39Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.dialogs;
@@ -26,16 +26,16 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-import ch.elexis.data.Sticker;
+import ch.elexis.core.data.ISticker;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
+import ch.elexis.data.Sticker;
 import ch.elexis.util.SWTHelper;
 
 public class AssignStickerDialog extends TitleAreaDialog {
 	PersistentObject mine;
 	Table table;
 	List<Sticker> alleEtiketten;
-	List<Sticker> mineEtiketten;
+	List<ISticker> mineEtiketten;
 	
 	public AssignStickerDialog(Shell shell, PersistentObject obj){
 		super(shell);

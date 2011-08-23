@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,12 +8,14 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: Anwender.java 6324 2010-05-02 11:31:51Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 package ch.elexis.data;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -29,6 +31,7 @@ import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.admin.ACE;
+import ch.elexis.core.PersistenceException;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
@@ -237,12 +240,16 @@ public class Anwender extends Person {
 			return false;
 		}
 		Anwender a = list.get(0);
-		Hashtable km = a.getHashtable(FLD_EXTINFO);
+		Map<Object,Object> km = a.getMap(FLD_EXTINFO);
 		if (km == null) {
 			log.log("Fehler in der Datenstruktur ExtInfo von " + a.getLabel(), Log.ERRORS);
 			MessageDialog.openError(null, "Interner Fehler", "Die Datenstruktur ExtInfo von "
 				+ a.getLabel() + " ist beschädigt.");
-			a.setHashtable("ExtInfo", new Hashtable());
+			try {
+				a.setMap("ExtInfo", new HashMap<Object,Object>());
+			} catch (PersistenceException e) {
+				SWTHelper.showError("Login", "Fatal error", "Can't store user map");
+			}
 		}
 		String pwd = (String) km.get("UsrPwd");
 		if (pwd == null) {

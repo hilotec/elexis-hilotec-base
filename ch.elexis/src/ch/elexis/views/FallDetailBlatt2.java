@@ -10,7 +10,7 @@
  *    H. Marlovits - added more field types (multiple lines text, styled text, combos, checkboxes, lists)
  *    				 added optional and unused/deleted fields editor
  * 
- *  $Id: FallDetailBlatt2.java 6005 2010-01-31 10:49:59Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -581,7 +581,7 @@ public class FallDetailBlatt2 extends Composite {
 			}
 		}
 		
-		Hashtable<String, String> httmp = getFall().getHashtable(PersistentObject.FLD_EXTINFO);
+		Hashtable<String, String> httmp = getFall().getMap(PersistentObject.FLD_EXTINFO);
 		Hashtable<String, String> ht = (Hashtable<String, String>) httmp.clone();
 		
 		String[] unusedHashStringArray = {};
@@ -1257,13 +1257,13 @@ public class FallDetailBlatt2 extends Composite {
 					try {
 						Fall.setDefaultCacheLifetime(0);
 						@SuppressWarnings("unchecked")
-						Hashtable<String, String> ht = f.getHashtable("extinfo"); //$NON-NLS-1$
+						Hashtable<String, String> ht = f.getMap("extinfo"); //$NON-NLS-1$
 						if (SWTHelper
 							.askYesNo(
 								StringTool.leer,
 								Messages.getString("FallDetailBlatt2.DoYouWantToDeleteThisData") + key + "/" + ht.get(key) + Messages.getString("FallDetailBlatt2.reallyFromTheCase"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							ht.remove(key);
-							f.setHashtable("extinfo", ht); //$NON-NLS-1$
+							f.setMap("extinfo", ht); //$NON-NLS-1$
 							setFall(f);
 						}
 					} finally {

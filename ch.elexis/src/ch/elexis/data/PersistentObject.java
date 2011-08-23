@@ -32,10 +32,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -43,6 +43,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.xml.datatype.XMLGregorianCalendar;
 
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -56,6 +57,11 @@ import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.admin.AccessControl;
 import ch.elexis.core.PersistenceException;
+import ch.elexis.core.data.IChangeListener;
+import ch.elexis.core.data.IPersistentObject;
+import ch.elexis.core.data.ISticker;
+import ch.elexis.core.data.IXid;
+import ch.elexis.core.data.Query.Term;
 import ch.elexis.data.Xid.XIDException;
 import ch.elexis.data.cache.IPersistentObjectCache;
 import ch.elexis.data.cache.SoftCache;
@@ -114,7 +120,7 @@ import ch.rgw.tools.net.NetTool;
  * 
  * @author gerry
  */
-public abstract class PersistentObject implements ISelectable {
+public abstract class PersistentObject implements IPersistentObject {
 	protected static final String MAPPING_ERROR_MARKER = "**ERROR:";
 	public static final String CFG_CONNECTSTRING = "connectionstring";
 	public static final String CFG_TYPE = "typ";
@@ -415,10 +421,10 @@ public abstract class PersistentObject implements ISelectable {
 	}
 	
 	/**
-	 * Return the Object containing the cdecodeonnection. This should only in very specific conditions be
-	 * neccessary, if one needs a direkt access to the database. It is strongly recommended to use
-	 * this only very carefully, as callers must ensure for themselves that their code works with
-	 * different database engines equally.
+	 * Return the Object containing the cdecodeonnection. This should only in very specific
+	 * conditions be neccessary, if one needs a direkt access to the database. It is strongly
+	 * recommended to use this only very carefully, as callers must ensure for themselves that their
+	 * code works with different database engines equally.
 	 * 
 	 * Das Objekt, das die Connection enthält zurückliefern. Sollte nur in Ausnahmefällen nötig
 	 * sein, wenn doch mal ein direkter Zugriff auf die Datenbank erforderlich ist.
@@ -712,6 +718,7 @@ public abstract class PersistentObject implements ISelectable {
 	 * @param domain
 	 * @return an identifier that may be empty but will never be null
 	 */
+	
 	public String getXid(final String domain){
 		if (domain.equals(Xid.DOMAIN_ELEXIS)) {
 			return getId();
@@ -730,8 +737,8 @@ public abstract class PersistentObject implements ISelectable {
 	 * return the "best" xid for a given object. This is the xid with the highest quality. If no xid
 	 * is given for this object, a newly created xid of local quality will be returned
 	 */
-	public Xid getXid(){
-		List<Xid> res = getXids();
+	public IXid getXid(){
+		List<IXid> res = getXids();
 		if (res.size() == 0) {
 			try {
 				return new Xid(this, Xid.DOMAIN_ELEXIS, getId());
@@ -741,8 +748,8 @@ public abstract class PersistentObject implements ISelectable {
 			}
 		}
 		int quality = 0;
-		Xid ret = null;
-		for (Xid xid : res) {
+		IXid ret = null;
+		for (IXid xid : res) {
 			if (xid.getQuality() > quality) {
 				quality = xid.getQuality();
 				ret = xid;
@@ -759,8 +766,8 @@ public abstract class PersistentObject implements ISelectable {
 	 * 
 	 * @return a List that might be empty but is never null
 	 */
-	public List<Xid> getXids(){
-		Query<Xid> qbe = new Query<Xid>(Xid.class);
+	public List<IXid> getXids(){
+		Query<IXid> qbe = new Query<IXid>(Xid.class);
 		qbe.add(Xid.FLD_OBJECT, Query.EQUALS, getId());
 		return qbe.execute();
 	}
@@ -808,8 +815,8 @@ public abstract class PersistentObject implements ISelectable {
 	 * 
 	 * @return
 	 */
-	public Sticker getSticker(){
-		List<Sticker> list = getStickers();
+	public ISticker getSticker(){
+		List<ISticker> list = getStickers();
 		return list.size() > 0 ? list.get(0) : null;
 	}
 	
@@ -828,13 +835,13 @@ public abstract class PersistentObject implements ISelectable {
 	 * @return A possibly empty list of Stickers
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Sticker> getStickers(){
+	public List<ISticker> getStickers(){
 		String ID = new StringBuilder().append("ETK").append(getId()).toString();
-		ArrayList<Sticker> ret = (ArrayList<Sticker>) cache.get(ID);
+		ArrayList<ISticker> ret = (ArrayList<ISticker>) cache.get(ID);
 		if (ret != null) {
 			return ret;
 		}
-		ret = new ArrayList<Sticker>();
+		ret = new ArrayList<ISticker>();
 		if (queryStickers == null) {
 			queryStickers = j.prepareStatement(queryStickersString);
 		}
@@ -865,7 +872,7 @@ public abstract class PersistentObject implements ISelectable {
 	 *            the Sticker to remove
 	 */
 	@SuppressWarnings("unchecked")
-	public void removeSticker(Sticker et){
+	public void removeSticker(ISticker et){
 		String ID = new StringBuilder().append("ETK").append(getId()).toString();
 		ArrayList<Sticker> ret = (ArrayList<Sticker>) cache.get(ID);
 		if (ret != null) {
@@ -873,29 +880,29 @@ public abstract class PersistentObject implements ISelectable {
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append("DELETE FROM ").append(Sticker.LINKTABLE).append(" WHERE obj=")
-			.append(getWrappedId()).append(" AND etikette=").append(et.getWrappedId());
+			.append(getWrappedId()).append(" AND etikette=").append(JdbcLink.wrap(et.getId()));
 		getConnection().exec(sb.toString());
 	}
 	
 	/**
 	 * Add a Sticker to this object
 	 * 
-	 * @param et
+	 * @param st
 	 *            the Sticker to add
 	 */
 	@SuppressWarnings("unchecked")
-	public void addSticker(Sticker et){
+	public void addSticker(ISticker st){
 		String ID = new StringBuilder().append("STK").append(getId()).toString();
-		List<Sticker> ret = (List<Sticker>) cache.get(ID);
+		List<ISticker> ret = (List<ISticker>) cache.get(ID);
 		if (ret == null) {
 			ret = getStickers();
 		}
-		if (!ret.contains(et)) {
-			ret.add(et);
+		if (!ret.contains(st)) {
+			ret.add(st);
 			Collections.sort(ret);
 			StringBuilder sb = new StringBuilder();
 			sb.append("INSERT INTO ").append(Sticker.LINKTABLE).append("(obj,etikette) VALUES (")
-				.append(getWrappedId()).append(",").append(et.getWrappedId()).append(");");
+				.append(getWrappedId()).append(",").append(JdbcLink.wrap(st.getId())).append(");");
 			getConnection().exec(sb.toString());
 		}
 	}
@@ -1017,7 +1024,7 @@ public abstract class PersistentObject implements ISelectable {
 			// mapped
 			String exi = map(FLD_EXTINFO); // Try to find it in ExtInfo
 			if (!exi.startsWith(MAPPING_ERROR_MARKER)) {
-				Hashtable ht = getHashtable(FLD_EXTINFO);
+				Map ht = getMap(FLD_EXTINFO);
 				Object res = ht.get(field);
 				if (res instanceof String) {
 					return (String) res;
@@ -1132,7 +1139,7 @@ public abstract class PersistentObject implements ISelectable {
 	 * @return eine Hashtable (ggf. leer). Nie null.
 	 */
 	@SuppressWarnings("rawtypes")
-	public Hashtable getHashtable(final String field){
+	public Map getMap(final String field){
 		String key = getKey(field);
 		Object o = cache.get(key);
 		if (o instanceof Hashtable) {
@@ -1246,7 +1253,8 @@ public abstract class PersistentObject implements ISelectable {
 				ElexisStatus status =
 					new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 						"Fehler beim Lesen der Liste ", ex, ElexisStatus.LOG_ERRORS);
-				// This is not an exception but a misconfiguration. No need to stop program flow. Just return null 
+				// This is not an exception but a misconfiguration. No need to stop program flow.
+// Just return null
 				// as the documentation of the method states.
 				// throw new PersistenceException(status);
 				return null;
@@ -1329,8 +1337,9 @@ public abstract class PersistentObject implements ISelectable {
 				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					"Fehler bei: " + cmd + "(" + field + "=" + value + ")", ex,
 					ElexisStatus.LOG_ERRORS);
-			throw new PersistenceException(status); // See api doc. check this whether it breaks existing code.
-			//return false; // See api doc. Return false on errors.
+			throw new PersistenceException(status); // See api doc. check this whether it breaks
+// existing code.
+			// return false; // See api doc. Return false on errors.
 		} finally {
 			try {
 				pst.close();
@@ -1343,25 +1352,17 @@ public abstract class PersistentObject implements ISelectable {
 	 * Eine Hashtable speichern. Diese wird zunächst in ein byte[] geplättet, und so gespeichert.
 	 * 
 	 * @param field
-	 * @param hash
+	 * @param map
 	 * @return 0 bei Fehler
 	 */
-	@SuppressWarnings("unchecked")
-	public int setHashtable(final String field, final Hashtable hash){
-		if (hash == null) {
-			return 0;
+	@Override
+	public void setMap(final String field, final Map<Object, Object> map){
+		if (map == null) {
+			throw new PersistenceException(new ElexisStatus(Status.ERROR,Hub.PLUGIN_ID,ElexisStatus.CODE_NONE,"Attempt to store Null map",null));
 		}
-		try {
-			byte[] bin = flatten(hash);
-			cache.put(getKey(field), hash, getCacheTime());
-			return setBinary(field, bin);
-		} catch (Throwable ex) {
-			log.log("Fehler beim Speichern von " + field + " von " + getLabel(), Log.ERRORS);
-			MessageDialog.openError(Hub.getActiveShell(), "Interner Fehler", "Konnte " + field
-				+ " von " + getLabel() + " nicht speichern!");
-			return 0;
-		}
-		
+		byte[] bin = flatten((Hashtable) map);
+		cache.put(getKey(field), map, getCacheTime());
+		setBinary(field, bin);
 	}
 	
 	/**
@@ -1369,25 +1370,23 @@ public abstract class PersistentObject implements ISelectable {
 	 * vermeiden, wird zunächst die aktuelle Version in der Datenbank gelesen und mit der neuen
 	 * Version überlagert.
 	 */
-	protected int setVersionedResource(final String field, final String entry){
+	protected void setVersionedResource(final String field, final String entry){
 		String lockid = lock("VersionedResource", true);
 		VersionedResource old = getVersionedResource(field, true);
-		int ret = 1;
 		if (old.update(entry, Hub.actUser.getLabel()) == true) {
 			cache.put(getKey(field), old, getCacheTime());
-			ret = setBinary(field, old.serialize());
+			setBinary(field, old.serialize());
 		}
 		unlock("VersionedResource", lockid);
-		return ret;
 	}
 	
-	protected int setBinary(final String field, final byte[] value){
+	protected void setBinary(final String field, final byte[] value){
 		String key = getKey(field);
 		cache.put(key, value, getCacheTime());
-		return setBinaryRaw(field, value);
+		setBinaryRaw(field, value);
 	}
 	
-	private int setBinaryRaw(final String field, final byte[] value){
+	private void setBinaryRaw(final String field, final byte[] value){
 		StringBuilder sql = new StringBuilder(1000);
 		sql.append("UPDATE ").append(getTableName()).append(" SET ").append(
 		/* map */(field)).append("=?, lastupdate=?").append(" WHERE ID=").append(getWrappedId());
@@ -1400,21 +1399,18 @@ public abstract class PersistentObject implements ISelectable {
 			stm.setBytes(1, value);
 			stm.setLong(2, System.currentTimeMillis());
 			stm.executeUpdate();
-			return 1;
-		} /*
-		 * we remove this because it creates a dependency on mysql catch (PacketTooBigException
-		 * pigex) { ExHandler.handle(pigex); SWTHelper.showError("setBytes", "Schreibfehler",
-		 * "Der Datensatz war zu gross zum Schreiben"); }
-		 */catch (Exception ex) {
+		} catch (Exception ex) {
 			log.log("Fehler beim Ausführen der Abfrage " + cmd, Log.ERRORS);
-			SWTHelper.showError("setBytes", "Schreibfehler",
-				"Es trat ein Fehler beim Schreiben auf. Eventuell war der Datensatz zu gross.");
+			throw new PersistenceException(new ElexisStatus(Status.ERROR,Hub.PLUGIN_ID,ElexisStatus.CODE_NONE,"setBytes: Es trat ein Fehler beim Schreiben auf. "
+				+ ex.getMessage(),ex,Log.ERRORS));
 		} finally {
 			try {
 				stm.close();
-			} catch (SQLException e) {}
+			} catch (SQLException e) {
+				ExHandler.handle(e);
+				throw new PersistenceException("Could not close statement " + e.getMessage());
+			}
 		}
-		return 0;
 	}
 	
 	/**
@@ -1824,10 +1820,10 @@ public abstract class PersistentObject implements ISelectable {
 					"Fehler bei decode ", ex, ElexisStatus.LOG_ERRORS);
 			
 			log.log("Fehler bei decode ", Log.ERRORS);
-
-			// Dont throw an exception. Null is an acceptable (and normally testes) 
+			
+			// Dont throw an exception. Null is an acceptable (and normally testes)
 			// return value if something went wrong.
-			//throw new PersistenceException(status);
+			// throw new PersistenceException(status);
 			
 		}
 		return null;
@@ -1868,11 +1864,13 @@ public abstract class PersistentObject implements ISelectable {
 			ElexisStatus status =
 				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
 					"Fehler beim String encoder", ex, ElexisStatus.LOG_ERRORS);
-			// Dont throw an exeption. returning the original value is an acceptable way if encoding is not possible. Frequently it's just
-			// a configuration problem, so just log it and let the user decide if they want to fix it later.
+			// Dont throw an exeption. returning the original value is an acceptable way if encoding
+// is not possible. Frequently it's just
+			// a configuration problem, so just log it and let the user decide if they want to fix
+// it later.
 			// DONT throw new PersistenceException(status);
 			log.log("Fehler beim String encoder: " + ex.getMessage(), Log.ERRORS);
-
+			
 		}
 		return ret;
 	}
@@ -1907,7 +1905,7 @@ public abstract class PersistentObject implements ISelectable {
 	 * @return true wenn this und other vom selben typ sind und alle interessierenden Felder genäss
 	 *         mode übereinstimmen.
 	 */
-	public boolean isMatching(final PersistentObject other, final int mode, final String... fields){
+	public boolean isMatching(final IPersistentObject other, final int mode, final String... fields){
 		if (getClass().equals(other.getClass())) {
 			String[] others = new String[fields.length];
 			other.get(fields, others);
@@ -1977,7 +1975,7 @@ public abstract class PersistentObject implements ISelectable {
 	 *            don't return false if a fieldname is not found but skip this field instead
 	 * @return true wenn dieses Objekt die entsprechenden Felder hat
 	 */
-	public boolean isMatching(final HashMap<String, String> fields, final int mode,
+	public boolean isMatching(final Map<String, String> fields, final int mode,
 		final boolean bSkipInexisting){
 		for (Entry<String, String> entry : fields.entrySet()) {
 			String mine = get(entry.getKey());
@@ -2021,6 +2019,12 @@ public abstract class PersistentObject implements ISelectable {
 			}
 		}
 		return true;
+	}
+	
+	@Override
+	public boolean isMatching(List<Term> terms){
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 	/**
@@ -2103,12 +2107,12 @@ public abstract class PersistentObject implements ISelectable {
 	 *            name of the field
 	 * @return the value of the field as integer or 0 if it was null or not nomeric.
 	 */
-	public static int checkZero(final String in){
+	public static int checkZero(final Object in){
 		if (StringTool.isNothing(in)) {
 			return 0;
 		}
 		try {
-			return Integer.parseInt(in.trim());
+			return Integer.parseInt(((String) in).trim());	// We're sure in is a String at this point
 		} catch (NumberFormatException ex) {
 			ExHandler.handle(ex);
 			return 0;
@@ -2206,23 +2210,31 @@ public abstract class PersistentObject implements ISelectable {
 	}
 	
 	/**
-	 * public helper to execute an sql script iven as file path. SQL Errors will be handeld/displayed by SqlWithUiRunner
-	 * @param filepath where the script is
-	 * @param plugin name of the originating plugin
-	 * @throws IOException file not found or not readable
+	 * public helper to execute an sql script iven as file path. SQL Errors will be
+	 * handeld/displayed by SqlWithUiRunner
+	 * 
+	 * @param filepath
+	 *            where the script is
+	 * @param plugin
+	 *            name of the originating plugin
+	 * @throws IOException
+	 *             file not found or not readable
 	 */
 	public static void executeSQLScript(String filepath, String plugin) throws IOException{
 		FileInputStream is = new FileInputStream(filepath);
-		InputStreamReader isr=new InputStreamReader(is);
-		char[] buf=new char[4096];
-		int l=0;
-		StringBuilder sb=new StringBuilder();
-		while((l=isr.read(buf))>0){
-			sb.append(buf,0,l);
+		InputStreamReader isr = new InputStreamReader(is);
+		char[] buf = new char[4096];
+		int l = 0;
+		StringBuilder sb = new StringBuilder();
+		while ((l = isr.read(buf)) > 0) {
+			sb.append(buf, 0, l);
 		}
-		new SqlWithUiRunner(new String[]{sb.toString()}, plugin).runSql();
-
+		new SqlWithUiRunner(new String[] {
+			sb.toString()
+		}, plugin).runSql();
+		
 	}
+	
 	/*
 	 * protected static void createOrModifyTable(final String sqlScript) { try {
 	 * PlatformUI.getWorkbench().getProgressService() .busyCursorWhile(new IRunnableWithProgress() {
@@ -2455,31 +2467,45 @@ public abstract class PersistentObject implements ISelectable {
 		return nrFounds == 1;
 	}
 	
-	/** 
+	/**
 	 * Convert an arbitrary value into the database format
+	 * 
 	 * @author Marco Descher
 	 * @since 2.1.6
-	 * @param in {@link Object}
+	 * @param in
+	 *            {@link Object}
 	 * @return String representing the value in database storage conform format
 	 */
 	public static String ts(Object in){
-		if(in==null) return "";
-		if(in instanceof String) return (String) in;
-		if(in instanceof Boolean) {
+		if (in == null)
+			return "";
+		if (in instanceof String)
+			return (String) in;
+		if (in instanceof Boolean) {
 			return ((Boolean) in) ? "1" : "0";
 		}
-		if(in instanceof Long) return Long.toString((Long)in);
-		if(in instanceof Integer) return Integer.toString((Integer) in);
-		if(in instanceof Double) return Double.toString((Double) in);
-		if(in instanceof Date) {
+		if (in instanceof Long)
+			return Long.toString((Long) in);
+		if (in instanceof Integer)
+			return Integer.toString((Integer) in);
+		if (in instanceof Double)
+			return Double.toString((Double) in);
+		if (in instanceof Date) {
 			return new SimpleDateFormat("dd.MM.yyyy").format((Date) in);
 		}
-		if(in instanceof XMLGregorianCalendar) {
+		if (in instanceof XMLGregorianCalendar) {
 			XMLGregorianCalendar dt = (XMLGregorianCalendar) in;
-			return new SimpleDateFormat("dd.MM.yyyy").
-					format(dt.toGregorianCalendar().getTime());
+			return new SimpleDateFormat("dd.MM.yyyy").format(dt.toGregorianCalendar().getTime());
 		}
 		return "";
-	}	
+	}
+	
+	public void addChangeListener(IChangeListener listener, String fieldToObserve){
+		
+	}
+	
+	public void removeChangeListener(IChangeListener listener, String fieldObserved){
+		
+	}
 	
 }

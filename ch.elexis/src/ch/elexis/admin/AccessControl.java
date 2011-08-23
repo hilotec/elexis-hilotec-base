@@ -176,7 +176,7 @@ public class AccessControl {
 			if (list == null) {
 				// Anwender act=Hub.actUser;
 				list = new ArrayList<String>();
-				Hashtable h = user.getHashtable("ExtInfo"); //$NON-NLS-1$
+				Hashtable h = user.getMap("ExtInfo"); //$NON-NLS-1$
 				if (h != null) {
 					String grp = (String) h.get(KEY_GROUPS);
 					if (grp != null) {

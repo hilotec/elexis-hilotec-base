@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: NamedBlob.java 5721 2009-09-14 08:38:34Z michael_imhof $
+ *  $Id$
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -45,8 +45,9 @@ public class NamedBlob extends PersistentObject {
 	 * @return the previously stored Hashtable
 	 */
 	@SuppressWarnings("unchecked")
+	// TODO weird
 	public Hashtable getHashtable(){
-		return getHashtable(CONTENTS);
+		return (Hashtable)getMap(CONTENTS);
 	}
 	
 	/**
@@ -57,7 +58,7 @@ public class NamedBlob extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public void put(final Hashtable in){
-		setHashtable(CONTENTS, in);
+		setMap(CONTENTS, in);
 		set("Datum", new TimeTool().toString(TimeTool.DATE_GER));
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009-2010, G. Weirich and Elexis
+ * Copyright (c) 2009-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: MetaXid.java 5908 2009-12-27 08:48:11Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.exchange;
@@ -19,6 +19,7 @@ import java.util.List;
 import org.jdom.Element;
 import org.jdom.Namespace;
 
+import ch.elexis.core.data.IXid;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Xid;
 import ch.elexis.exchange.elements.XidElement;
@@ -67,14 +68,14 @@ public class MetaXid {
 	 * @param obj
 	 */
 	public MetaXid(PersistentObject obj){
-		List<Xid> xids = obj.getXids();
+		List<IXid> xids = obj.getXids();
 		String bestID = obj.getId();
 		int bestQuality = Xid.ASSIGNMENT_LOCAL;
 		boolean bestIsGuid = true;
-		for (Xid xid : xids) {
+		for (IXid xid : xids) {
 			Identity i =
 				new Identity(xid.getDomain(), xid.getDomainId(), xid.getQuality(), xid.isGUID(),
-					new TimeTool(xid.getLastUpdate()).toString(TimeTool.DATE_ISO));
+					new TimeTool(((Xid)xid).getLastUpdate()).toString(TimeTool.DATE_ISO));
 			identities.add(i);
 			if (i.quality > bestQuality) {
 				if (i.isGUID) {

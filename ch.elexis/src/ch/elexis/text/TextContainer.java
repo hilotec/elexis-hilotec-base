@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
+ * Copyright (c) 2006-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,7 @@
  *    A. Kaufmann - better support for IDataAccess
  *    H. Marlovits - introduced SQL Fields
  * 
- *  $Id: TextContainer.java 6353 2010-05-13 11:38:20Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.text;
@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipInputStream;
@@ -256,14 +257,14 @@ public class TextContainer {
 				
 				plugin.findOrReplace(MATCH_TEMPLATE, new ReplaceCallback() {
 					public Object replace(final String in){
-						return replaceFields(ret, in.replaceAll(MATCH_SQUARE_BRACKET,
-							StringTool.leer));
+						return replaceFields(ret,
+							in.replaceAll(MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
 				plugin.findOrReplace(MATCH_INDIRECT_TEMPLATE, new ReplaceCallback() {
 					public Object replace(final String in){
-						return replaceIndirectFields(ret, in.replaceAll(MATCH_SQUARE_BRACKET,
-							StringTool.leer));
+						return replaceIndirectFields(ret,
+							in.replaceAll(MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
 				plugin.findOrReplace(MATCH_GENDERIZE, new ReplaceCallback() {
@@ -279,16 +280,16 @@ public class TextContainer {
 				});
 				plugin.findOrReplace(MATCH_SQLCLAUSE, new ReplaceCallback() {
 					public Object replace(final String in){
-						return replaceSQLClause(ret, in.replaceAll(MATCH_SQUARE_BRACKET,
-							StringTool.leer));
+						return replaceSQLClause(ret,
+							in.replaceAll(MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
 				plugin.findOrReplace(MATCH_SCRIPT, new ReplaceCallback() {
 					
 					@Override
 					public Object replace(String in){
-						return executeScript(ret, in.replaceAll(MATCH_SQUARE_BRACKET,
-							StringTool.leer));
+						return executeScript(ret,
+							in.replaceAll(MATCH_SQUARE_BRACKET, StringTool.leer));
 					}
 				});
 				saveBrief(ret, typ);
@@ -336,7 +337,7 @@ public class TextContainer {
 		
 			if (!(o.map(PersistentObject.FLD_EXTINFO).startsWith("**"))) { //$NON-NLS-1$
 				@SuppressWarnings("rawtypes")
-				Hashtable ext = o.getHashtable(PersistentObject.FLD_EXTINFO);
+				Map ext = o.getMap(PersistentObject.FLD_EXTINFO);
 				String an = (String) ext.get(q[1]);
 				if (an != null) {
 					return an;
@@ -609,7 +610,7 @@ public class TextContainer {
 	 * **************************************************************************
 	 * ******************************
 	 */
-
+	
 	static public String replaceSQLClause(final String b){
 		TextContainer tmpMe = new TextContainer();
 		String result = (String) tmpMe.replaceSQLClause(null, b);
@@ -824,8 +825,8 @@ public class TextContainer {
 					Messages.TextContainer_SelectAdresseeBody, Kontakt.DEFAULT_SORT);
 			if (ksl.open() == Dialog.OK) {
 				brief =
-					new Brief(Messages.TextContainer_Letter, null, Hub.actUser, (Kontakt) ksl
-						.getSelection(), Konsultation.getAktuelleKons(), typ);
+					new Brief(Messages.TextContainer_Letter, null, Hub.actUser,
+						(Kontakt) ksl.getSelection(), Konsultation.getAktuelleKons(), typ);
 			}
 		}
 		if (brief != null) {
@@ -998,10 +999,9 @@ public class TextContainer {
 	}
 	
 	static class DefaultTextPlugin implements ITextPlugin {
-		private static final String expl =
-			Messages.TextContainer_NoPlugin1 + Messages.TextContainer_NoPlugin2
-				+ Messages.TextContainer_Noplugin3 + Messages.TextContainer_NoPlugin4
-				+ Messages.TextContainer_NoPLugin5;
+		private static final String expl = Messages.TextContainer_NoPlugin1
+			+ Messages.TextContainer_NoPlugin2 + Messages.TextContainer_Noplugin3
+			+ Messages.TextContainer_NoPlugin4 + Messages.TextContainer_NoPLugin5;
 		
 		public Composite createContainer(final Composite parent, final ITextPlugin.ICallback h){
 			parent.setLayout(new FillLayout());
@@ -1059,7 +1059,7 @@ public class TextContainer {
 		}
 		
 		public void setFocus(){
-
+			
 		}
 		
 		public PageFormat getFormat(){
@@ -1067,7 +1067,7 @@ public class TextContainer {
 		}
 		
 		public void setFormat(final PageFormat f){
-
+			
 		}
 		
 		public Object insertTextAt(final int x, final int y, final int w, final int h,
@@ -1098,8 +1098,8 @@ public class TextContainer {
 		}
 		
 		public void setSaveOnFocusLost(final boolean bSave){
-		// TODO Auto-generated method stub
-		
+			// TODO Auto-generated method stub
+			
 		}
 		
 		@Override

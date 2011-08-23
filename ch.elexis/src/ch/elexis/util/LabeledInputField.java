@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,28 +8,37 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: LabeledInputField.java 5170 2009-02-21 19:44:23Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 package ch.elexis.util;
 
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.forms.widgets.ColumnLayout;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 
 import ch.elexis.Desk;
 import ch.elexis.data.PersistentObject;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.Money;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
@@ -356,9 +365,9 @@ public class LabeledInputField extends Composite {
 							if (inp.sHashname == null) {
 								act.set(inp.sFeldname, val);
 							} else {
-								Hashtable ext = act.getHashtable(inp.sFeldname);
+								Map ext = act.getMap(inp.sFeldname);
 								ext.put(inp.sHashname, val);
-								act.setHashtable(inp.sFeldname, ext);
+								act.setMap(inp.sFeldname, ext);
 							}
 						}
 					}
@@ -393,7 +402,7 @@ public class LabeledInputField extends Composite {
 					if (def[i].sHashname == null) {
 						val = o.get(def[i].sFeldname);
 					} else {
-						Hashtable ext = o.getHashtable(def[i].sFeldname);
+						Map ext = o.getMap(def[i].sFeldname);
 						val = (String) ext.get(def[i].sHashname);
 					}
 				}
