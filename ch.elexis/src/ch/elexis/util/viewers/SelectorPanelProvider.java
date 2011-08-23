@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: SelectorPanelProvider.java 5359 2009-06-16 20:13:48Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
