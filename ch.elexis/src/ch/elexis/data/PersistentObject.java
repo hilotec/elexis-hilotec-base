@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
@@ -2204,6 +2205,24 @@ public abstract class PersistentObject implements ISelectable {
 		runner.runSql();
 	}
 	
+	/**
+	 * public helper to execute an sql script iven as file path. SQL Errors will be handeld/displayed by SqlWithUiRunner
+	 * @param filepath where the script is
+	 * @param plugin name of the originating plugin
+	 * @throws IOException file not found or not readable
+	 */
+	public static void executeSQLScript(String filepath, String plugin) throws IOException{
+		FileInputStream is = new FileInputStream(filepath);
+		InputStreamReader isr=new InputStreamReader(is);
+		char[] buf=new char[4096];
+		int l=0;
+		StringBuilder sb=new StringBuilder();
+		while((l=isr.read(buf))>0){
+			sb.append(buf,0,l);
+		}
+		new SqlWithUiRunner(new String[]{sb.toString()}, plugin).runSql();
+
+	}
 	/*
 	 * protected static void createOrModifyTable(final String sqlScript) { try {
 	 * PlatformUI.getWorkbench().getProgressService() .busyCursorWhile(new IRunnableWithProgress() {
