@@ -663,6 +663,7 @@ public class JdbcLink {
 			try {
 				stm = conn.createStatement();
 			} catch (SQLException se) {
+				log.log(Level.WARNING, "need reconnect "+se.getMessage());
 				if (!reconnect()) {
 					throw se;
 				}
