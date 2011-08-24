@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
+ * Copyright (c) 2006-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    G. Weirich 1/08 - major redesign to implement IGM updates etc.
- * 
- *  $Id$
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -18,9 +16,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -175,7 +173,7 @@ public class MedikamentImporter extends ImporterPage {
 					a.set(fields, ek, vk, ean);
 				}
 				
-				Hashtable ext = a.getHashtable(Artikel.FLD_EXTINFO);
+				Map ext = a.getMap(Artikel.FLD_EXTINFO);
 				ext.put(Artikel.FLD_PHARMACODE, pk);
 				ext.put(KASSENTYP, kasse);
 				ext.put(LAGERART, lager);
@@ -183,7 +181,7 @@ public class MedikamentImporter extends ImporterPage {
 				ext.put(EAN, ean);
 				ext.put(MWST_TYP, cmws);
 				
-				a.setHashtable(Artikel.FLD_EXTINFO, ext);
+				a.setMap(Artikel.FLD_EXTINFO, ext);
 			} else if (reca.equals("10")) { // Update-Satz //$NON-NLS-1$
 				ek = new String(in.substring(10, 16));
 				vk = new String(in.substring(16, 22));

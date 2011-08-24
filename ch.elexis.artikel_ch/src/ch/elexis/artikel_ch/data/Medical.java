@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2007, G. Weirich and Elexis
+ * Copyright (c) 2006-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,72 +7,70 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id$
  *******************************************************************************/
 package ch.elexis.artikel_ch.data;
 
-import java.util.Hashtable;
+import java.util.Map;
 
 import ch.elexis.data.Artikel;
-import ch.elexis.data.IVerrechenbar.VatInfo;
 
 public class Medical extends Artikel {
 	@Override
-	protected String getConstraint(){
+	protected String getConstraint() {
 		return "Typ='Medical'"; //$NON-NLS-1$
 	}
-	
-	protected void setConstraint(){
+
+	protected void setConstraint() {
 		set("Typ", "Medical"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
-	
+
 	@Override
-	public String getCodeSystemName(){
+	public String getCodeSystemName() {
 		return "Medicals"; //$NON-NLS-1$
 	}
-	
+
 	@Override
-	public String getCode(){
+	public String getCode() {
 		return getPharmaCode();
 	}
-	
-	public static Medical load(String id){
+
+	public static Medical load(String id) {
 		return new Medical(id);
 	}
-	
-	protected Medical(String id){
+
+	protected Medical(String id) {
 		super(id);
 	}
-	
-	protected Medical(){}
-	
+
+	protected Medical() {
+	}
+
 	@Override
-	public boolean isDragOK(){
+	public boolean isDragOK() {
 		return true;
 	}
-	
-	public String getLabel(){
+
+	public String getLabel() {
 		return get("Name"); //$NON-NLS-1$
 	}
-	
+
 	@Override
 	@SuppressWarnings("rawtypes")
-	public VatInfo getVatInfo(){
+	public VatInfo getVatInfo() {
 		// MWST Info is put into ext info by MedikamentImporter
 		// Code Mehrwertsteuer (CMWS) - 1stellig
 		// 1: voller MWSt-Satz (zur Zeit 6.5%)
 		// 2: reduzierter MWSt-Satz (zur Zeit 2%)
 		// 3: von der MWSt befreit
-		Hashtable info = getHashtable(Artikel.FLD_EXTINFO);
+		Map info = getMap(Artikel.FLD_EXTINFO);
 		String typ = (String) info.get(MedikamentImporter.MWST_TYP);
-		if(typ != null && typ.equals("2"))
+		if (typ != null && typ.equals("2"))
 			return VatInfo.VAT_CH_ISMEDICAMENT;
-		else if(typ != null && typ.equals("1"))
+		else if (typ != null && typ.equals("1"))
 			return VatInfo.VAT_CH_NOTMEDICAMENT;
-		else if(typ != null && typ.equals("3"))
+		else if (typ != null && typ.equals("3"))
 			return VatInfo.VAT_NONE;
 		return VatInfo.VAT_NONE;
-		
+
 	}
 }
