@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009-2010, G. Weirich and Elexis
+ * Copyright (c) 2009-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,6 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.util.viewers;
@@ -181,7 +179,7 @@ public class SelectorPanelProvider implements ControlFieldProvider {
 			String name = field.getFieldname();
 			String value = vals.get(name);
 			if (!StringTool.isNothing(value)) {
-				q.add(name, Query.LIKE, "%" + value + "%", true);
+				q.add(name, Query.LIKE, value + "%", true);
 			}
 		}
 	}

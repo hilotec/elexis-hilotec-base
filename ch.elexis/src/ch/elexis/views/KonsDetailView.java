@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
+ * Copyright (c) 2006-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,6 +56,7 @@ import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.core.data.ISticker;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Fall;
@@ -341,12 +342,12 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener, IAc
 		actPat = pat;
 		if (pat != null) {
 			form.setText(pat.getPersonalia());
-			List<Sticker> etis = pat.getStickers();
+			List<ISticker> etis = pat.getStickers();
 			if (etis != null && etis.size() > 0) {
 				// Point size = form.getHead().getSize();
-				for (Sticker et : etis) {
+				for (ISticker et : etis) {
 					if (et != null) {
-						et.createForm(cEtiketten);
+						((Sticker)et).createForm(cEtiketten);
 					}
 				}
 			}

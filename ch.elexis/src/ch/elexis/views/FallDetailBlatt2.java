@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
+ * Copyright (c) 2006-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *    G. Weirich - initial implementation
  *    H. Marlovits - added more field types (multiple lines text, styled text, combos, checkboxes, lists)
  *    				 added optional and unused/deleted fields editor
- * 
- *  $Id: FallDetailBlatt2.java 6005 2010-01-31 10:49:59Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -18,9 +16,11 @@ package ch.elexis.views;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -581,8 +581,9 @@ public class FallDetailBlatt2 extends Composite {
 			}
 		}
 		
-		Hashtable<String, String> httmp = getFall().getHashtable(PersistentObject.FLD_EXTINFO);
-		Hashtable<String, String> ht = (Hashtable<String, String>) httmp.clone();
+		Map<String,String> httmp = getFall().getMap(PersistentObject.FLD_EXTINFO);
+		
+		HashMap<String, String> ht = new HashMap<String,String>(httmp);
 		
 		String[] unusedHashStringArray = {};
 		if (unusedHash.size() > 0) {
@@ -1257,13 +1258,13 @@ public class FallDetailBlatt2 extends Composite {
 					try {
 						Fall.setDefaultCacheLifetime(0);
 						@SuppressWarnings("unchecked")
-						Hashtable<String, String> ht = f.getHashtable("extinfo"); //$NON-NLS-1$
+						Map<Object, Object> ht = f.getMap("extinfo"); //$NON-NLS-1$
 						if (SWTHelper
 							.askYesNo(
 								StringTool.leer,
 								Messages.getString("FallDetailBlatt2.DoYouWantToDeleteThisData") + key + "/" + ht.get(key) + Messages.getString("FallDetailBlatt2.reallyFromTheCase"))) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							ht.remove(key);
-							f.setHashtable("extinfo", ht); //$NON-NLS-1$
+							f.setMap("extinfo", ht); //$NON-NLS-1$
 							setFall(f);
 						}
 					} finally {

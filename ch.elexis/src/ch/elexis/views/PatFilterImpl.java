@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2010, G. Weirich and Elexis
+ * Copyright (c) 2008-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,13 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
- * $Id: PatFilterImpl.java 5789 2009-10-30 13:39:20Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.views;
 
 import java.util.List;
 
+import ch.elexis.core.data.ISticker;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.BezugsKontakt;
 import ch.elexis.data.Fall;
@@ -30,7 +29,6 @@ import ch.elexis.data.Query;
 import ch.elexis.data.Script;
 import ch.elexis.data.Sticker;
 import ch.elexis.data.Verrechnet;
-import ch.elexis.scripting.Interpreter;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.views.PatListFilterBox.IPatFilter;
 import ch.rgw.tools.ExHandler;
@@ -98,8 +96,8 @@ public class PatFilterImpl implements IPatFilter {
 			}
 			return REJECT;
 		} else if (o instanceof Sticker) {
-			List<Sticker> etis = p.getStickers();
-			Sticker e = (Sticker) o;
+			List<ISticker> etis = p.getStickers();
+			ISticker e = (ISticker) o;
 			if (etis.contains(e)) {
 				return ACCEPT;
 			}

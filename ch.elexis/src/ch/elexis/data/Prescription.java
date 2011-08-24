@@ -13,7 +13,7 @@
 
 package ch.elexis.data;
 
-import java.util.Hashtable;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -188,7 +188,7 @@ public class Prescription extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public void addTerm(TimeTool begin, String dose){
-		Hashtable<String, Object> extInfo = getHashtable(FLD_EXTINFO);
+		Map extInfo = getMap(FLD_EXTINFO);
 		String raw = (String) extInfo.get(TERMS);
 		if (raw == null) {
 			raw = "";
@@ -199,7 +199,7 @@ public class Prescription extends PersistentObject {
 		line.append(StringTool.flattenSeparator).append(lastBegin).append("::").append(lastDose);
 		raw += line.toString();
 		extInfo.put(TERMS, raw);
-		setHashtable(FLD_EXTINFO, extInfo);
+		setMap(FLD_EXTINFO, extInfo);
 		set(DATE_FROM, begin.toString(TimeTool.DATE_GER));
 		set(DOSAGE, dose);
 		if (dose.equals("0")) {
@@ -215,7 +215,7 @@ public class Prescription extends PersistentObject {
 	 */
 	public SortedMap<TimeTool, String> getTerms(){
 		TreeMap<TimeTool, String> ret = new TreeMap<TimeTool, String>();
-		Hashtable extInfo = getHashtable(FLD_EXTINFO);
+		Map extInfo = getMap(FLD_EXTINFO);
 		String raw = (String) extInfo.get(TERMS);
 		if (raw != null) {
 			String[] terms = raw.split(StringTool.flattenSeparator);

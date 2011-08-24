@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Sticker.java 6178 2010-03-01 17:25:51Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.Desk;
+import ch.elexis.core.data.ISticker;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
@@ -39,7 +40,7 @@ import ch.rgw.tools.JdbcLink.Stm;
  * @author gerry
  * 
  */
-public class Sticker extends PersistentObject implements Comparable<Sticker> {
+public class Sticker extends PersistentObject implements Comparable<ISticker>, ISticker {
 	public static final String IMAGE_ID = "BildID";
 	public static final String BACKGROUND = "bg";
 	public static final String FOREGROUND = "vg";
@@ -276,7 +277,7 @@ public class Sticker extends PersistentObject implements Comparable<Sticker> {
 	
 	protected Sticker(){}
 	
-	public int compareTo(Sticker o){
+	public int compareTo(ISticker o){
 		if (o != null) {
 			return o.getWert() - getWert();
 		}

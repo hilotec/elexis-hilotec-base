@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    M. Descher - Declarative access to the contextMenu
- *    
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -47,6 +45,7 @@ import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
 import ch.elexis.admin.AccessControlDefaults;
+import ch.elexis.core.data.ISticker;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -212,9 +211,9 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 				if (Reminder.findRemindersDueFor(pat, Hub.actUser, false).size() > 0) {
 					return Desk.getImage(Desk.IMG_AUSRUFEZ);
 				}
-				Sticker et = pat.getSticker();
+				ISticker et = pat.getSticker();
 				Image im = null;
-				if (et != null && (im = et.getImage()) != null) {
+				if (et != null && (im = ((Sticker)et).getImage()) != null) {
 					return im;
 				} else {
 					if (pat.getGeschlecht().equals(Person.MALE)) {
@@ -231,9 +230,9 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 		public Color getBackground(final Object element, final int columnIndex){
 			if (element instanceof Patient) {
 				Patient pat = (Patient) element;
-				Sticker et = pat.getSticker();
+				ISticker et = pat.getSticker();
 				if (et != null) {
-					return et.getBackground();
+					return ((Sticker)et).getBackground();
 				}
 			}
 			return null;
@@ -242,9 +241,9 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 		public Color getForeground(final Object element, final int columnIndex){
 			if (element instanceof Patient) {
 				Patient pat = (Patient) element;
-				Sticker et = pat.getSticker();
+				ISticker et = pat.getSticker();
 				if (et != null) {
-					return et.getForeground();
+					return ((Sticker)et).getForeground();
 				}
 			}
 			

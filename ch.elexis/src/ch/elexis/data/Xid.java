@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: Xid.java 5966 2010-01-26 08:27:00Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Set;
 
 import ch.elexis.Hub;
+import ch.elexis.core.data.IXid;
 import ch.elexis.util.Log;
 import ch.rgw.tools.VersionInfo;
 
@@ -44,7 +45,7 @@ import ch.rgw.tools.VersionInfo;
  * @author Gerry
  * 
  */
-public class Xid extends PersistentObject {
+public class Xid extends PersistentObject implements IXid {
 	public static final String QUALITY = "quality";
 	public static final String ID_IN_DOMAIN = "domain_id";
 	private static final String DOMAIN = "domain";
@@ -493,4 +494,5 @@ public class Xid extends PersistentObject {
 			return r.toString();
 		}
 	}
+	
 }

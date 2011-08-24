@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,12 +16,11 @@ package ch.elexis.data;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import ch.elexis.StringConstants;
 import ch.elexis.util.MFUList;
-import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 
 /**
@@ -199,8 +198,8 @@ public class Kontakt extends PersistentObject {
 			if (!StringTool.isNothing(titel)) {
 				sb.append(titel).append(StringTool.space);
 			}
-			sb.append(p.getVorname()).append(StringTool.space).append(p.getName()).append(
-				StringTool.lf);
+			sb.append(p.getVorname()).append(StringTool.space).append(p.getName())
+				.append(StringTool.lf);
 			sb.append(an.getEtikette(false, true));
 			ret = sb.toString();
 		} else {
@@ -250,7 +249,7 @@ public class Kontakt extends PersistentObject {
 	}
 	
 	protected Kontakt(){
-	// System.out.println("Kontakt");
+		// System.out.println("Kontakt");
 	}
 	
 	public String getMailAddress(){
@@ -320,10 +319,10 @@ public class Kontakt extends PersistentObject {
 	@SuppressWarnings("unchecked")
 	public void setInfoElement(String elem, Object val){
 		// if(Hub.acl.request("Write"+elem)==true){
-		Hashtable extinfos = getHashtable(FLD_EXTINFO);
+		Map extinfos = getMap(FLD_EXTINFO);
 		if (extinfos != null) {
 			extinfos.put(elem, val);
-			setHashtable(FLD_EXTINFO, extinfos);
+			setMap(FLD_EXTINFO, extinfos);
 		}
 		/*
 		 * }else{ log.log("Unzureichende Rechte zum Schreiben von "+elem,Log.WARNINGS); }
@@ -340,8 +339,8 @@ public class Kontakt extends PersistentObject {
 	 * @return eine Hashtable, die die parameter-wert-paare enthält.
 	 */
 	@SuppressWarnings("unchecked")
-	public Hashtable getInfoStore(){
-		return getHashtable(FLD_EXTINFO);
+	public Map getInfoStore(){
+		return getMap(FLD_EXTINFO);
 		/*
 		 * if(Hub.acl.request("LoadInfoStore")==true){ return getHashtable("ExtInfo"); } else{
 		 * log.log("Unzureichende Rechte zum lesen des Infostore",Log.WARNINGS); return new
@@ -357,8 +356,8 @@ public class Kontakt extends PersistentObject {
 	 *            die zuvor mit getInfoStore() erhaltene Hashtable.
 	 */
 	@SuppressWarnings("unchecked")
-	public void flushInfoStore(Hashtable store){
-		setHashtable(FLD_EXTINFO, store);
+	public void flushInfoStore(Map store){
+		setMap(FLD_EXTINFO, store);
 		/*
 		 * if(Hub.acl.request("WriteInfoStore")==true){ setHashtable("ExtInfo",store); }else{
 		 * log.log("Unzureichende Rechte zum Schreiben des Infostore" ,Log.WARNINGS); }
@@ -401,7 +400,7 @@ public class Kontakt extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public List<String> getStatForItem(String typ){
-		Hashtable exi = getHashtable(FLD_EXTINFO);
+		Map exi = getMap(FLD_EXTINFO);
 		ArrayList<statL> al = (ArrayList<statL>) exi.get(typ);
 		ArrayList<String> ret = new ArrayList<String>(al == null ? 1 : al.size());
 		if (al != null) {
@@ -423,7 +422,7 @@ public class Kontakt extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public void statForItem(PersistentObject lst){
-		Hashtable exi = getHashtable(FLD_EXTINFO);
+		Map exi = getMap(FLD_EXTINFO);
 		String typ = lst.getClass().getName();
 		String ident = lst.storeToString();
 		// Die Rangliste für diesen Objekttyp auslesen bzw. neu anlegen.
@@ -449,7 +448,7 @@ public class Kontakt extends PersistentObject {
 		}
 		Collections.sort(l); // Liste sortieren
 		exi.put(typ, l);
-		setHashtable(FLD_EXTINFO, exi);
+		setMap(FLD_EXTINFO, exi);
 	}
 	
 	public static class statL implements Comparable<statL>, Serializable {
@@ -471,19 +470,19 @@ public class Kontakt extends PersistentObject {
 	
 	@SuppressWarnings("unchecked")
 	public void statForString(String typ, String toStat){
-		Hashtable exi = getHashtable(FLD_EXTINFO);
+		Map exi = getMap(FLD_EXTINFO);
 		MFUList<String> l = (MFUList<String>) exi.get(typ);
 		if (l == null) {
 			l = new MFUList<String>(5, 15);
 		}
 		l.count(toStat);
 		exi.put(typ, l);
-		setHashtable(FLD_EXTINFO, exi);
+		setMap(FLD_EXTINFO, exi);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public List<String> getStatForString(String typ){
-		Hashtable exi = getHashtable(FLD_EXTINFO);
+		Map exi = getMap(FLD_EXTINFO);
 		MFUList<String> al = (MFUList<String>) exi.get(typ);
 		if (al == null) {
 			al = new MFUList<String>(5, 15);
@@ -493,7 +492,7 @@ public class Kontakt extends PersistentObject {
 	
 	@SuppressWarnings("unchecked")
 	public MFUList<String> getMFU(String typ){
-		Hashtable exi = getHashtable(FLD_EXTINFO);
+		Map exi = getMap(FLD_EXTINFO);
 		MFUList<String> l = (MFUList<String>) exi.get(typ);
 		if (l == null) {
 			l = new MFUList<String>(5, 15);
@@ -503,9 +502,9 @@ public class Kontakt extends PersistentObject {
 	
 	@SuppressWarnings("unchecked")
 	public void setMFU(String typ, MFUList<String> mfu){
-		Hashtable exi = getHashtable(FLD_EXTINFO);
+		Map exi = getMap(FLD_EXTINFO);
 		exi.put(typ, mfu);
-		setHashtable(FLD_EXTINFO, exi);
+		setMap(FLD_EXTINFO, exi);
 	}
 	
 	public String getKuerzel(){

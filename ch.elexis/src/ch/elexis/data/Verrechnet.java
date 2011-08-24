@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ package ch.elexis.data;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -314,13 +315,13 @@ public class Verrechnet extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public void setDetail(final String key, final String value){
-		Hashtable ext = getHashtable(DETAIL);
+		Map ext = getMap(DETAIL);
 		if (value == null) {
 			ext.remove(key);
 		} else {
 			ext.put(key, value);
 		}
-		setHashtable(DETAIL, ext);
+		setMap(DETAIL, ext);
 		
 	}
 	
@@ -333,7 +334,7 @@ public class Verrechnet extends PersistentObject {
 	 */
 	@SuppressWarnings("unchecked")
 	public String getDetail(final String key){
-		Hashtable ext = getHashtable(DETAIL);
+		Map ext = getMap(DETAIL);
 		return (String) ext.get(key);
 	}
 	

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -572,13 +572,14 @@ public class Rechnung extends PersistentObject {
 	}
 	
 	@SuppressWarnings("unchecked")
+	// TODO weird
 	public Hashtable<String, String> loadExtension(){
-		return getHashtable(FLD_EXTINFO);
+		return (Hashtable<String,String>)getMap(FLD_EXTINFO);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void flushExtension(final Hashtable ext){
-		setHashtable(FLD_EXTINFO, ext);
+		setMap(FLD_EXTINFO, ext);
 	}
 	
 	public static Rechnung load(final String id){

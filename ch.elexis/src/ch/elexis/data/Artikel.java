@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,13 +8,13 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- * $Id: Artikel.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 package ch.elexis.data;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -65,9 +65,7 @@ public class Artikel extends VerrechenbarAdapter {
 		addMapping(TABLENAME, FLD_LIEFERANT_ID, FLD_NAME, MAXBESTAND, MINBESTAND, ISTBESTAND,
 			FLD_EK_PREIS, FLD_VK_PREIS, FLD_TYP, FLD_EXTINFO, FLD_EAN, FLD_SUB_ID,
 			"Eigenname=Name_intern", FLD_CODECLASS, "Klasse");
-		Xid
-			.localRegisterXIDDomainIfNotExists(XID_PHARMACODE, "Pharmacode",
-				Xid.ASSIGNMENT_REGIONAL);
+		Xid.localRegisterXIDDomainIfNotExists(XID_PHARMACODE, "Pharmacode", Xid.ASSIGNMENT_REGIONAL);
 	}
 	
 	/**
@@ -252,7 +250,7 @@ public class Artikel extends VerrechenbarAdapter {
 				try {
 					return Integer.parseInt(num);
 				} catch (Exception ex) {
-
+					
 				}
 			}
 		}
@@ -415,22 +413,22 @@ public class Artikel extends VerrechenbarAdapter {
 	 */
 	@SuppressWarnings("unchecked")
 	public void einzelAbgabe(final int n){
-		Hashtable<String, String> ext = getHashtable(FLD_EXTINFO);
-		int anbruch = checkZero(ext.get(ANBRUCH));
+		Map<Object, Object> ext = getMap(FLD_EXTINFO);
+		int anbruch = checkZero((String) ext.get(ANBRUCH));
 		int ve = checkZero(ext.get(VERKAUFSEINHEIT));
 		int vk = checkZero(ext.get(VERPACKUNGSEINHEIT));
 		if (vk == 0) {
 			if (ve != 0) {
 				vk = ve;
 				ext.put(VERKAUFSEINHEIT, Integer.toString(vk));
-				setHashtable(FLD_EXTINFO, ext);
+				setMap(FLD_EXTINFO, ext);
 			}
 		}
 		if (ve == 0) {
 			if (vk != 0) {
 				ve = vk;
 				ext.put(VERPACKUNGSEINHEIT, Integer.toString(ve));
-				setHashtable(FLD_EXTINFO, ext);
+				setMap(FLD_EXTINFO, ext);
 			}
 		}
 		int num = n * ve;
@@ -443,7 +441,7 @@ public class Artikel extends VerrechenbarAdapter {
 				setIstbestand(getIstbestand() - 1);
 			}
 			ext.put(ANBRUCH, Integer.toString(rest));
-			setHashtable(FLD_EXTINFO, ext);
+			setMap(FLD_EXTINFO, ext);
 		}
 	}
 	
@@ -454,7 +452,7 @@ public class Artikel extends VerrechenbarAdapter {
 	 */
 	@SuppressWarnings("unchecked")
 	public void einzelRuecknahme(final int n){
-		Hashtable<String, String> ext = getHashtable(FLD_EXTINFO);
+		Map<Object, Object> ext = getMap(FLD_EXTINFO);
 		int anbruch = checkZero(ext.get(ANBRUCH));
 		int ve = checkZero(ext.get(VERKAUFSEINHEIT));
 		int vk = checkZero(ext.get(VERPACKUNGSEINHEIT));
@@ -468,7 +466,7 @@ public class Artikel extends VerrechenbarAdapter {
 				setIstbestand(getIstbestand() + 1);
 			}
 			ext.put(ANBRUCH, Integer.toString(rest));
-			setHashtable(FLD_EXTINFO, ext);
+			setMap(FLD_EXTINFO, ext);
 		}
 	}
 	
@@ -483,7 +481,7 @@ public class Artikel extends VerrechenbarAdapter {
 	
 	@SuppressWarnings("unchecked")
 	public String getPharmaCode(){
-		Hashtable ext = getHashtable(FLD_EXTINFO);
+		Map ext = getMap(FLD_EXTINFO);
 		return checkNull((String) ext.get(FLD_PHARMACODE));
 	}
 	
@@ -497,13 +495,13 @@ public class Artikel extends VerrechenbarAdapter {
 	
 	@SuppressWarnings("unchecked")
 	public int getVerpackungsEinheit(){
-		Hashtable ext = getHashtable(FLD_EXTINFO);
+		Map ext = getMap(FLD_EXTINFO);
 		return checkZero((String) ext.get(VERPACKUNGSEINHEIT));
 	}
 	
 	@SuppressWarnings("unchecked")
 	public int getVerkaufseinheit(){
-		Hashtable ext = getHashtable(FLD_EXTINFO);
+		Map ext = getMap(FLD_EXTINFO);
 		return checkZero((String) ext.get(VERKAUFSEINHEIT));
 	}
 	
@@ -517,18 +515,18 @@ public class Artikel extends VerrechenbarAdapter {
 	
 	@SuppressWarnings("unchecked")
 	public void setExt(final String name, final String value){
-		Hashtable h = getHashtable(FLD_EXTINFO);
+		Map h = getMap(FLD_EXTINFO);
 		if (value == null) {
 			h.remove(name);
 		} else {
 			h.put(name, value);
 		}
-		setHashtable(FLD_EXTINFO, h);
+		setMap(FLD_EXTINFO, h);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public String getExt(final String name){
-		Hashtable h = getHashtable(FLD_EXTINFO);
+		Map h = getMap(FLD_EXTINFO);
 		return checkNull((String) h.get(name));
 	}
 	
@@ -557,7 +555,7 @@ public class Artikel extends VerrechenbarAdapter {
 	@SuppressWarnings("unchecked")
 	public int getPreis(final TimeTool dat, final Fall fall){
 		double vkt = checkZeroDouble(get(FLD_VK_PREIS));
-		Hashtable ext = getHashtable(FLD_EXTINFO);
+		Map ext = getMap(FLD_EXTINFO);
 		double vpe = checkZeroDouble((String) ext.get(VERPACKUNGSEINHEIT));
 		double vke = checkZeroDouble((String) ext.get(VERKAUFSEINHEIT));
 		if ((vpe > 0.0) && (vke > 0.0) && (vpe != vke)) {
@@ -571,7 +569,7 @@ public class Artikel extends VerrechenbarAdapter {
 	@Override
 	public Money getKosten(final TimeTool dat){
 		double vkt = checkZeroDouble(get(FLD_EK_PREIS));
-		Hashtable ext = getHashtable(FLD_EXTINFO);
+		Map ext = getMap(FLD_EXTINFO);
 		double vpe = checkZeroDouble((String) ext.get(VERPACKUNGSEINHEIT));
 		double vke = checkZeroDouble((String) ext.get(VERKAUFSEINHEIT));
 		if (vpe != vke) {
