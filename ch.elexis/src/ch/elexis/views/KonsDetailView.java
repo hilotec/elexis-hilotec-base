@@ -7,8 +7,6 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
- *  $Id$
  *******************************************************************************/
 
 package ch.elexis.views;
