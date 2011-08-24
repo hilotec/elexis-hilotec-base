@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2010, G. Weirich and Elexis
+ * Copyright (c) 2007-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,8 +8,6 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    A. Kaufmann - Allow extraction of single fields and of first occurance
- *    
- * $Id: DataAccessor.java 6204 2010-03-16 08:02:51Z michael_imhof $
  *******************************************************************************/
 
 package ch.elexis.befunde;
@@ -17,6 +15,7 @@ package ch.elexis.befunde;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
@@ -35,7 +34,7 @@ import ch.rgw.tools.TimeTool;
  */
 public class DataAccessor implements IDataAccess {
 	private static final String ALL = "all"; //$NON-NLS-1$
-	Hashtable<String, String> hash;
+	Map<String, String> hash;
 	Hashtable<String, String[]> columns;
 	ArrayList<String> parameters;
 	
@@ -44,7 +43,7 @@ public class DataAccessor implements IDataAccess {
 		Messwert setup = Messwert.getSetup();
 		columns = new Hashtable<String, String[]>();
 		parameters = new ArrayList<String>();
-		hash = setup.getHashtable(Messwert.FLD_BEFUNDE);
+		hash = setup.getMap(Messwert.FLD_BEFUNDE);
 		String names = hash.get(Messwert.HASH_NAMES);
 		if (!StringTool.isNothing(names)) {
 			for (String n : names.split(Messwert.SETUP_SEPARATOR)) {
@@ -104,8 +103,8 @@ public class DataAccessor implements IDataAccess {
 		Result<Object> ret = null;
 		if (!(dependentObject instanceof Patient)) {
 			ret =
-				new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS, Messages
-					.getString("DataAccessor.invalidParameter"), //$NON-NLS-1$
+				new Result<Object>(Result.SEVERITY.ERROR, IDataAccess.INVALID_PARAMETERS,
+					Messages.getString("DataAccessor.invalidParameter"), //$NON-NLS-1$
 					dependentObject, true);
 		} else {
 			Patient pat = (Patient) dependentObject;
@@ -132,7 +131,7 @@ public class DataAccessor implements IDataAccess {
 				for (Messwert m : list) {
 					String date = m.get(Messwert.FLD_DATE);
 					values[i][0] = new TimeTool(date).toString(TimeTool.DATE_GER);
-					Hashtable befs = m.getHashtable(Messages.getString("DataAccessor.0")); //$NON-NLS-1$
+					Map befs = m.getMap(Messages.getString("DataAccessor.0")); //$NON-NLS-1$
 					for (int j = 1; j < cols.length; j++) {
 						String vv = (String) befs.get(keys[j]);
 						values[i][j] = vv;
@@ -203,7 +202,7 @@ public class DataAccessor implements IDataAccess {
 			}
 			if (mwrt != null) {
 				values[1][0] = mwrt.get(Messwert.FLD_DATE);
-				Hashtable befs = mwrt.getHashtable(Messwert.FLD_BEFUNDE);
+				Map befs = mwrt.getMap(Messwert.FLD_BEFUNDE);
 				for (int j = 1; j < keys.length; j++) {
 					values[1][j] = (String) befs.get(keys[j]);
 				}
@@ -222,9 +221,10 @@ public class DataAccessor implements IDataAccess {
 							ret = new Result<Object>(values[1][index]);
 						} else {
 							ret =
-								new Result<Object>(Result.SEVERITY.ERROR,
-									IDataAccess.INVALID_PARAMETERS, Messages
-										.getString("DataAccessor.invalidFieldIndex"), fname, true); //$NON-NLS-1$
+								new Result<Object>(
+									Result.SEVERITY.ERROR,
+									IDataAccess.INVALID_PARAMETERS,
+									Messages.getString("DataAccessor.invalidFieldIndex"), fname, true); //$NON-NLS-1$
 						}
 					} else {
 						for (int j = 0; (j < keys.length) && (ret == null); j++) {
@@ -234,9 +234,10 @@ public class DataAccessor implements IDataAccess {
 						}
 						if (ret == null) {
 							ret =
-								new Result<Object>(Result.SEVERITY.ERROR,
-									IDataAccess.INVALID_PARAMETERS, Messages
-										.getString("DataAccessor.invalidFieldName"), fname, true); //$NON-NLS-1$
+								new Result<Object>(
+									Result.SEVERITY.ERROR,
+									IDataAccess.INVALID_PARAMETERS,
+									Messages.getString("DataAccessor.invalidFieldName"), fname, true); //$NON-NLS-1$
 						}
 					}
 				} else {

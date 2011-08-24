@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,11 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: Messwert.java 5190 2009-02-24 15:48:08Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.befunde;
 
 import java.io.ByteArrayInputStream;
-import java.util.Hashtable;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -112,12 +109,12 @@ public class Messwert extends PersistentObject {
 	 * @param bf
 	 *            Der Messwert in beliebige komplexer Form, wird als Black Box betrachtet
 	 */
-	public Messwert(Patient pat, String name, String date, Hashtable bf){
+	public Messwert(Patient pat, String name, String date, Map bf){
 		create(null);
 		set(new String[] {
 			FLD_PATIENT_ID, FLD_NAME, PersistentObject.FLD_DATE
 		}, pat.getId(), name, date); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		setHashtable(FLD_BEFUNDE, bf); //$NON-NLS-1$
+		setMap(FLD_BEFUNDE, bf); //$NON-NLS-1$
 	}
 	
 	public String getDate(){
@@ -140,7 +137,7 @@ public class Messwert extends PersistentObject {
 	
 	@SuppressWarnings("unchecked")
 	public String getResult(String field){
-		Hashtable<String, String> hash = getHashtable(FLD_BEFUNDE);
+		Map<String, String> hash = getMap(FLD_BEFUNDE);
 		return hash.get(field);
 	}
 	
@@ -180,15 +177,15 @@ public class Messwert extends PersistentObject {
 							Messages.getString("Messwert.valuesError"), Messages.getString("Messwert.couldNotCreateTable")); //$NON-NLS-1$ //$NON-NLS-2$
 					return null;
 				}
-				Hashtable names = setup.getHashtable(FLD_BEFUNDE);
+				Map names = setup.getMap(FLD_BEFUNDE);
 				names.put("VERSION", Integer.toString(VERSION)); //$NON-NLS-1$
-				setup.setHashtable(FLD_BEFUNDE, names);
+				setup.setMap(FLD_BEFUNDE, names);
 			} catch (Exception ex) {
 				ExHandler.handle(ex);
 			}
 		} else {
 			// Update from earlier format if necessary
-			Hashtable names = setup.getHashtable(FLD_BEFUNDE);
+			Map names = setup.getMap(FLD_BEFUNDE);
 			String v = (String) names.get("VERSION"); //$NON-NLS-1$
 			if (v == null || Integer.parseInt(v) < VERSION) {
 				if (Integer.parseInt(v) < 4) {
@@ -230,7 +227,7 @@ public class Messwert extends PersistentObject {
 					}
 				}
 				names.put("VERSION", Integer.toString(VERSION)); //$NON-NLS-1$
-				setup.setHashtable(FLD_BEFUNDE, names);
+				setup.setMap(FLD_BEFUNDE, names);
 			}
 		}
 		return setup;

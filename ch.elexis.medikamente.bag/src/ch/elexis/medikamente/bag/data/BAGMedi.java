@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007-2009, G. Weirich and Elexis
+ * Copyright (c) 2007-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,16 +7,14 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id$
  *******************************************************************************/
 package ch.elexis.medikamente.bag.data;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -47,17 +45,16 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 	public static final String IMG_ORIGINAL = "ch.elexis.medikamente.bag.original";
 	static final IOptifier bagOptifier = new BAGOptifier();
 	
-	static final String extDB =
-		"CREATE TABLE " + EXTTABLE + " (" + "ID				VARCHAR(25) primary key," + "lastupdate BIGINT,"
-			+ "deleted			CHAR(1) default '0'," + "keywords			VARCHAR(80)," + "prescription		TEXT,"
-			+ "KompendiumText	TEXT" + ");";
+	static final String extDB = "CREATE TABLE " + EXTTABLE + " ("
+		+ "ID				VARCHAR(25) primary key," + "lastupdate BIGINT,"
+		+ "deleted			CHAR(1) default '0'," + "keywords			VARCHAR(80)," + "prescription		TEXT,"
+		+ "KompendiumText	TEXT" + ");";
 	
-	static final String jointDB =
-		"CREATE TABLE " + JOINTTABLE + "(" + "ID				VARCHAR(25) primary key,"
-			+ "product			VARCHAR(25)," + "substance         VARCHAR(25)" + ");"
-			+ "CREATE INDEX CHEMBJ1 ON " + JOINTTABLE + " (product);" + "CREATE INDEX CHEMBJ2 ON "
-			+ JOINTTABLE + " (substance);" + "INSERT INTO " + JOINTTABLE
-			+ " (ID,substance) VALUES('VERSION','" + VERSION + "');";
+	static final String jointDB = "CREATE TABLE " + JOINTTABLE + "("
+		+ "ID				VARCHAR(25) primary key," + "product			VARCHAR(25),"
+		+ "substance         VARCHAR(25)" + ");" + "CREATE INDEX CHEMBJ1 ON " + JOINTTABLE
+		+ " (product);" + "CREATE INDEX CHEMBJ2 ON " + JOINTTABLE + " (substance);"
+		+ "INSERT INTO " + JOINTTABLE + " (ID,substance) VALUES('VERSION','" + VERSION + "');";
 	
 	public static final String CODESYSTEMNAME = "Medikament";
 	public static final String DOMAIN_PHARMACODE = "www.xid.ch/id/pk";
@@ -76,8 +73,8 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 			createOrModifyTable(extDB);
 		} else {
 			String v =
-					getConnection().queryString(
-						"SELECT substance FROM " + JOINTTABLE + " WHERE ID='VERSION';");			
+				getConnection().queryString(
+					"SELECT substance FROM " + JOINTTABLE + " WHERE ID='VERSION';");
 			VersionInfo vi = new VersionInfo(v);
 			if (vi.isOlder(VERSION)) {
 				if (vi.isOlder("0.1.1")) {
@@ -168,7 +165,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 			Organisation o = new Organisation(row[0], "Pharma");
 			id = o.getId();
 		}
-		Hashtable exi = getHashtable("ExtInfo");
+		Map exi = getMap("ExtInfo");
 		exi.put("HerstellerID", id);
 		set("Generikum", row[1]);
 		exi.put("Pharmacode", row[2]);
@@ -221,7 +218,7 @@ public class BAGMedi extends Artikel implements Comparable<BAGMedi> {
 		if (row.length > 12) {
 			set("Gruppe", row[12]);
 		}
-		setHashtable("ExtInfo", exi);
+		setMap("ExtInfo", exi);
 	}
 	
 	@Override

@@ -39,36 +39,29 @@ import ch.elexis.artikel_at.data.Medikament;
 import ch.elexis.artikel_at.data.Substance;
 import ch.elexis.data.Query;
 import ch.elexis.util.LabeledInputField;
-import ch.elexis.util.LabeledInputField.InputData;
 import ch.elexis.util.SWTHelper;
+import ch.elexis.util.LabeledInputField.InputData;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
 public class MedikamentDetailBlatt extends Composite {
-	InputData[] fields = new InputData[] {
-			new InputData("Pharmazentral-Nr", "ExtInfo", InputData.Typ.STRING,
-					"PhZNr"),
-			new InputData("Zulassungs-Nr", "ExtInfo", InputData.Typ.STRING,
-					"ZNr"),
+	InputData[] fields =
+		new InputData[] {
+			new InputData("Pharmazentral-Nr", "ExtInfo", InputData.Typ.STRING, "PhZNr"),
+			new InputData("Zulassungs-Nr", "ExtInfo", InputData.Typ.STRING, "ZNr"),
 			// new InputData("ZNrNum","ExtInfo",InputData.Typ.STRING,"ZNrNum"),
 			// new InputData("SUnit","ExtInfo",InputData.Typ.STRING,"SUnit"),
-			new InputData("Letzte Änderung", "ExtInfo", InputData.Typ.STRING,
-					"DoLC"),
-			// new
-			// InputData("Storage","ExtInfo",InputData.Typ.STRING,"Storage"),
-			// new
-			// InputData("Quantity","ExtInfo",InputData.Typ.STRING,"Quantity"),
+			new InputData("Letzte Änderung", "ExtInfo", InputData.Typ.STRING, "DoLC"),
+			// new InputData("Storage","ExtInfo",InputData.Typ.STRING,"Storage"),
+			// new InputData("Quantity","ExtInfo",InputData.Typ.STRING,"Quantity"),
 			// new InputData("Unit","ExtInfo",InputData.Typ.STRING,"Unit"),
-			// new
-			// InputData("EnhUnitDesc","ExtInfo",InputData.Typ.STRING,"EnhUnitDesc"),
+			// new InputData("EnhUnitDesc","ExtInfo",InputData.Typ.STRING,"EnhUnitDesc"),
 			new InputData("Kassen-VP", "ExtInfo", InputData.Typ.CURRENCY, "KVP"),
-			new InputData("Apotheken-VP", "ExtInfo", InputData.Typ.CURRENCY,
-					"AVP"),
-			new InputData("Zulassungsinhaber", "ExtInfo", InputData.Typ.STRING,
-					"ZInh"),
+			new InputData("Apotheken-VP", "ExtInfo", InputData.Typ.CURRENCY, "AVP"),
+			new InputData("Zulassungsinhaber", "ExtInfo", InputData.Typ.STRING, "ZInh"),
 			new InputData("Remb", "ExtInfo", InputData.Typ.STRING, "Remb")
-
-	};
+		
+		};
 	LabeledInputField.AutoForm fld;
 	ScrolledForm form;
 	Text fullName;
@@ -79,8 +72,8 @@ public class MedikamentDetailBlatt extends Composite {
 	Button[] bRsigns, bSsigns;
 	// Composite parent;
 	final FormToolkit tk = Desk.getToolkit();
-
-	public MedikamentDetailBlatt(Composite pr) {
+	
+	public MedikamentDetailBlatt(Composite pr){
 		super(pr, SWT.NONE);
 		setLayout(new GridLayout());
 		setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -89,8 +82,7 @@ public class MedikamentDetailBlatt extends Composite {
 		form.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ret.setLayout(new GridLayout());
 		// --- FULL Name
-		fullName = SWTHelper.createText(tk, ret, 3, SWT.BORDER | SWT.READ_ONLY
-				| SWT.WRAP);
+		fullName = SWTHelper.createText(tk, ret, 3, SWT.BORDER | SWT.READ_ONLY | SWT.WRAP);
 		fullName.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		// ----
 		Group g0 = new Group(ret, SWT.NONE);
@@ -118,8 +110,7 @@ public class MedikamentDetailBlatt extends Composite {
 		gRsigns.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		bRsigns = new Button[Medikament.RSIGNS.length];
 		for (int i = 0; i < Medikament.RSIGNS.length; i++) {
-			bRsigns[i] = tk.createButton(gRsigns, Medikament.RSIGNS[i],
-					SWT.CHECK);
+			bRsigns[i] = tk.createButton(gRsigns, Medikament.RSIGNS[i], SWT.CHECK);
 		}
 		gRsigns.setEnabled(false);
 		tk.adapt(gRsigns);
@@ -135,8 +126,7 @@ public class MedikamentDetailBlatt extends Composite {
 		bSsigns = new Button[Medikament.SSIGNS.length];
 		gSsigns.setLayout(cl2);
 		for (int i = 0; i < Medikament.SSIGNS.length; i++) {
-			bSsigns[i] = tk.createButton(gSsigns, Medikament.SSIGNS[i],
-					SWT.CHECK);
+			bSsigns[i] = tk.createButton(gSsigns, Medikament.SSIGNS[i], SWT.CHECK);
 		}
 		gSsigns.setEnabled(false);
 		tk.adapt(gSsigns);
@@ -179,34 +169,32 @@ public class MedikamentDetailBlatt extends Composite {
 		// texte=tk.createComposite(ret);
 		// texte.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		// texte.setLayout(new GridLayout());
-		// tIndikation=SWTHelper.createText(tk, texte, 4,
-		// SWT.READ_ONLY|SWT.WRAP);
+		// tIndikation=SWTHelper.createText(tk, texte, 4, SWT.READ_ONLY|SWT.WRAP);
 		// tIndikation.setText("foo");
 		// tRules=SWTHelper.createText(tk, texte, 4, SWT.READ_ONLY|SWT.WRAP);
 		// tRemarks=SWTHelper.createText(tk, texte, 4, SWT.READ_ONLY|SWT.WRAP);
 		Hyperlink hl = tk.createHyperlink(ret, "Zeichenerklärung", SWT.NONE);
 		hl.addHyperlinkListener(new HyperlinkAdapter() {
-
+			
 			@Override
-			public void linkActivated(HyperlinkEvent e) {
-				IWorkbenchPage rnPage = PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getActivePage();
+			public void linkActivated(HyperlinkEvent e){
+				IWorkbenchPage rnPage =
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				try {
 					rnPage.showView(ZeichenErklaerung.ID);
 				} catch (PartInitException e1) {
 					ExHandler.handle(e1);
 				}
 			}
-
+			
 		});
-
-		Hyperlink mkml = tk.createHyperlink(ret,
-				"Fachinformation zum Arzneimittel", SWT.NONE);
+		
+		Hyperlink mkml = tk.createHyperlink(ret, "Fachinformation zum Arzneimittel", SWT.NONE);
 		mkml.addHyperlinkListener(new HyperlinkAdapter() {
 			@Override
-			public void linkActivated(HyperlinkEvent e) {
-				IWorkbenchPage qnPage = PlatformUI.getWorkbench()
-						.getActiveWorkbenchWindow().getActivePage();
+			public void linkActivated(HyperlinkEvent e){
+				IWorkbenchPage qnPage =
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				try {
 					qnPage.showView(FachinformationArzneimittel.ID);
 				} catch (PartInitException e2) {
@@ -216,31 +204,30 @@ public class MedikamentDetailBlatt extends Composite {
 		});
 		SWTHelper.addSeparator(ret);
 		tLastUpdate = tk.createLabel(ret, "tLastUpdate");
-
+		
 	}
-
-	public void display(Medikament med) {
+	
+	public void display(Medikament med){
 		if (med.getBox().startsWith("B")) {
 			form.setText(med.getExt("SName") + " [GELÖSCHT]");
 			form.setToolTipText("Medikament wurde gelöscht!");
 		} else {
 			form.setText(med.getExt("SName"));
 		}
-
+		
 		String status = med.getExt("Status");
 		StringBuilder sbFullName = new StringBuilder();
 		if (!status.equalsIgnoreCase(""))
 			sbFullName.append("(").append(status).append(")").append(" ");
 		sbFullName.append(med.getExt("OName"));
-
+		
 		if (med.getBox().startsWith("B"))
 			sbFullName.append(" [GELÖSCHT]");
 		fullName.setText(sbFullName.toString());
-
+		
 		StringBuilder sb = new StringBuilder();
-		sb.append(med.getExt("Quantity")).append(" ")
-				.append(med.getExt("Unit")).append(" (")
-				.append(med.getExt("EnhUnitDesc")).append(")");
+		sb.append(med.getExt("Quantity")).append(" ").append(med.getExt("Unit")).append(" (")
+			.append(med.getExt("EnhUnitDesc")).append(")");
 		tUnit.setText(sb.toString());
 		tLagerung.setText(med.getExt("Storage"));
 		fld.reload(med);
@@ -249,19 +236,17 @@ public class MedikamentDetailBlatt extends Composite {
 				.get("SSigns");
 		if (ssigns != null) {
 			for (int i = 0; i < Medikament.SSIGNS.length; i++) {
-				bSsigns[i].setSelection(ssigns.get(Medikament.SSIGNS[i])
-						.equals("1"));
+				bSsigns[i].setSelection(ssigns.get(Medikament.SSIGNS[i]).equals("1"));
 			}
 		}
-		Hashtable<String, String> rsigns = (Hashtable<String, String>) extInfo
-				.get("RSigns");
+		Hashtable<String, String> rsigns = (Hashtable<String, String>) extInfo.get("RSigns");
 		if (rsigns != null) {
 			for (int i = 0; i < Medikament.RSIGNS.length; i++) {
 				String val = rsigns.get(Medikament.RSIGNS[i]);
 				bRsigns[i].setSelection(val.equals("1"));
 			}
 		}
-
+		
 		String Substances = extInfo.get("Substances").toString();
 		if (Substances != null) {
 			StringBuilder SubstanceOut = new StringBuilder();
@@ -281,24 +266,22 @@ public class MedikamentDetailBlatt extends Composite {
 			}
 			tSubstances.setText(SubstanceOut.toString());
 		}
-
+		
 		// Point s=getSize();
 		// GridData gd=(GridData)texte.getLayoutData();
 		// gd.widthHint=s.x;
 		// texte.setLayoutData(gd);
-
+		
 		String t = med.getExt("RuleText");
 		tRule.setText(t == null ? "" : t);
 		t = med.getExt("RemarkText");
 		tRemarks.setText(t == null ? "" : t);
 		t = med.getExt("INDText");
 		tIndikation.setText(t == null ? "" : t);
-
-		FachinformationArzneimittel.setActiveMedikament(med.getExt("PhZNr"),
-				med.getExt("ZNr"));
+		
+		FachinformationArzneimittel.setActiveMedikament(med.getExt("PhZNr"), med.getExt("ZNr"));
 		TimeTool ts = new TimeTool(med.getLastUpdate());
-		tLastUpdate.setText("Letztes Medikamentenupdate: "
-				+ ts.toString(TimeTool.FULL_GER));
+		tLastUpdate.setText("Letztes Medikamentenupdate: " + ts.toString(TimeTool.FULL_GER));
 	}
-
+	
 }

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Diagnosecodes Schweiz
 Bundle-SymbolicName: ch.elexis.diagnosecodes_ch; singleton:=true
-Bundle-Version: 2.0.1
+Bundle-Version: 2.0.2
 Bundle-Vendor: elexis.ch
 Bundle-Localization: plugin
 Require-Bundle: ch.elexis,
@@ -11,5 +11,6 @@ Require-Bundle: ch.elexis,
  org.eclipse.jface,
  org.eclipse.ui.forms,
  org.eclipse.ui,
- ch.rgw.utility
+ ch.rgw.utility,
+ ch.elexis.core;bundle-version="0.0.2"
 Export-Package: ch.elexis.data

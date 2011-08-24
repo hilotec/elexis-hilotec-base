@@ -7,8 +7,6 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
- *  $Id$
  *******************************************************************************/
 package ch.elexis.data;
 
@@ -207,7 +205,7 @@ public class Anwender extends Person {
 		Hub.acl.grant(admin, new ACE(ACE.ACE_IMPLICIT, "WriteInfoStore"), new ACE(ACE.ACE_IMPLICIT,
 			"LoadInfoStore"), new ACE(ACE.ACE_IMPLICIT, "WriteGroups"), new ACE(ACE.ACE_IMPLICIT,
 			"ReadGroups"));
-		Hashtable hash = admin.getInfoStore();
+		Map hash = admin.getInfoStore();
 		hash.put("UsrPwd", "admin");
 		hash.put("Groups", "Admin,Anwender");
 		admin.flushInfoStore(hash);

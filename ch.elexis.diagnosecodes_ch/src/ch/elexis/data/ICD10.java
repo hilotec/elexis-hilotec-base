@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ package ch.elexis.data;
 
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.action.IAction;
 
@@ -137,23 +138,23 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 	
 	@SuppressWarnings("unchecked")
 	public void setExt(final String name, final String value){
-		Hashtable<String, String> ext = getExtInfo();
+		Map ext = getExtInfo();
 		ext.put(name, value);
 		writeExtInfo(ext);
 	}
 	
 	public String getExt(final String name){
-		Hashtable ext = getExtInfo();
+		Map ext = getExtInfo();
 		String ret = (String) ext.get(name);
 		return checkNull(ret);
 	}
 	
-	public Hashtable getExtInfo(){
-		return getHashtable("ExtInfo"); //$NON-NLS-1$
+	public Map getExtInfo(){
+		return getMap(FLD_EXTINFO); //$NON-NLS-1$
 	}
 	
-	public void writeExtInfo(final Hashtable ext){
-		setHashtable("ExtInfo", ext); //$NON-NLS-1$
+	public void writeExtInfo(final Map ext){
+		setMap(FLD_EXTINFO, ext); //$NON-NLS-1$
 	}
 	
 	@Override

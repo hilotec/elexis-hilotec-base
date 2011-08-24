@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008-2010, G. Weirich and Elexis
+ * Copyright (c) 2008-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,14 +7,13 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
- *  $Id: PrintFindingsDialog.java 2516 2007-06-12 15:56:07Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde.xchange;
 
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -50,7 +49,7 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public class XChangeContributor implements IExchangeContributor {
-	private Hashtable<String, Object> hash;
+	private Map<String, Object> hash;
 	private final Hashtable<String, String[]> params = new Hashtable<String, String[]>();
 	private String[] paramNames;
 	private Patient actPatient = null;
@@ -64,7 +63,7 @@ public class XChangeContributor implements IExchangeContributor {
 			messwerte.clear();
 		}
 		Messwert setup = Messwert.getSetup();
-		hash = setup.getHashtable(Messwert.FLD_BEFUNDE);
+		hash = setup.getMap(Messwert.FLD_BEFUNDE);
 		String names = (String) hash.get(Messwert.HASH_NAMES);
 		if (!StringTool.isNothing(names)) {
 			paramNames = names.split(Messwert.SETUP_SEPARATOR);
@@ -126,7 +125,7 @@ public class XChangeContributor implements IExchangeContributor {
 		Patient pat = (Patient) me.getContainer().getMapping(me);
 		if (pat != null) {
 			Messwert setup = Messwert.getSetup();
-			hash = setup.getHashtable(Messwert.FLD_BEFUNDE);
+			hash = setup.getMap(Messwert.FLD_BEFUNDE);
 			String names = (String) hash.get(Messwert.HASH_NAMES);
 			if (!StringTool.isNothing(names)) {
 				paramNames = names.split(Messwert.SETUP_SEPARATOR);
@@ -161,8 +160,8 @@ public class XChangeContributor implements IExchangeContributor {
 	}
 	
 	public void importHook(XChangeContainer container, PersistentObject context){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public boolean init(MedicalElement me, boolean export){
@@ -172,7 +171,7 @@ public class XChangeContributor implements IExchangeContributor {
 	
 	public void setInitializationData(IConfigurationElement config, String propertyName, Object data)
 		throws CoreException{
-
+		
 	}
 	
 }

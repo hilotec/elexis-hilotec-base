@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2009, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,6 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
- *    $Id$
  *******************************************************************************/
 
 package ch.elexis.admin;
@@ -17,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -176,7 +175,7 @@ public class AccessControl {
 			if (list == null) {
 				// Anwender act=Hub.actUser;
 				list = new ArrayList<String>();
-				Hashtable h = user.getMap("ExtInfo"); //$NON-NLS-1$
+				Map h = user.getMap("ExtInfo"); //$NON-NLS-1$
 				if (h != null) {
 					String grp = (String) h.get(KEY_GROUPS);
 					if (grp != null) {
@@ -420,7 +419,6 @@ public class AccessControl {
 		flush();
 	}
 	
-	
 	public String getDBUID(boolean bCreate){
 		ACE dbuid = acls.get(DB_UID);
 		if (bCreate && dbuid == null) {
@@ -430,5 +428,5 @@ public class AccessControl {
 		}
 		return dbuid.getLocalizedName();
 	}
-
+	
 }

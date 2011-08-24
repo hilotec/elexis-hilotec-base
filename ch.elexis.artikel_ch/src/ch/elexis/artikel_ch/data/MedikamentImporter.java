@@ -8,6 +8,8 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    G. Weirich 1/08 - major redesign to implement IGM updates etc.
+ * 
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.data;
@@ -16,6 +18,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;

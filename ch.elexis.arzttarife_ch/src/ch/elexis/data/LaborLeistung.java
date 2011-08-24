@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2008, G. Weirich and Elexis
+ * Copyright (c) 2006-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,11 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- * $Id: LaborLeistung.java 6143 2010-02-15 20:52:17Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.data;
 
-import java.util.Hashtable;
+import java.util.Map;
 
 import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
@@ -42,10 +40,10 @@ public class LaborLeistung extends VerrechenbarAdapter {
 	LaborLeistung(final String code, String text, final String tp_vk){
 		create(null);
 		if (text.length() > 78) {
-			Hashtable<String, String> ex = getHashtable("ExtInfo"); //$NON-NLS-1$
+			Map ex = getMap("ExtInfo"); //$NON-NLS-1$
 			ex.put("FullText", text); //$NON-NLS-1$
 			text = text.substring(0, 75);
-			setHashtable("ExtInfo", ex); //$NON-NLS-1$
+			setMap("ExtInfo", ex); //$NON-NLS-1$
 		}
 		set(new String[] {
 			"Code", "Text", "VK_Preis"}, code, text.trim(), tp_vk); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$

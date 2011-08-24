@@ -28,6 +28,8 @@ public interface ISticker extends Comparable<ISticker> {
 	public static final String FOREGROUND = "vg";
 	public static final String NAME = "Name";
 	
+	public String getId();
+	
 	public abstract String getLabel();
 	
 	public abstract int getWert();

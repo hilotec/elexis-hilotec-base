@@ -5,9 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.junit.After;
 import org.junit.Before;
@@ -17,9 +14,10 @@ import org.powermock.api.mockito.PowerMockito;
 
 import ch.elexis.Hub;
 import ch.elexis.core.PersistenceException;
+import ch.elexis.core.data.IXid;
 import ch.rgw.tools.JdbcLink;
-import ch.rgw.tools.JdbcLinkException;
 import ch.rgw.tools.JdbcLink.Stm;
+import ch.rgw.tools.JdbcLinkException;
 
 public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	
@@ -108,7 +106,7 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 	@Test
 	public void testGetXid(){
 		PersistentObjectImpl impl = new PersistentObjectImpl();
-		Xid ret = impl.getXid();
+		IXid ret = impl.getXid();
 		assertNotNull(ret);
 	}
 	
@@ -118,7 +116,7 @@ public class Test_PersistentObject extends AbstractPersistentObjectTest {
 		Xid.localRegisterXIDDomain("test", "test", 1);
 		boolean ret = impl.addXid("test", "addXid", false);
 		assertTrue(ret);
-		Xid id = impl.getXid();
+		IXid id = impl.getXid();
 		assertNotNull(id);
 	}
 	

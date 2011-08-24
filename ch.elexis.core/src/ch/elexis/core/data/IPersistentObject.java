@@ -118,7 +118,7 @@ public interface IPersistentObject extends ISelectable {
 	 * @param domain
 	 * @return an identifier that might be null
 	 */
-	public abstract IXid getXid(final String domain);
+	public abstract String getXid(final String domain);
 	
 	/**
 	 * return the "best" AbstractXid for a given object. This is the AbstractXid with the highest
@@ -365,7 +365,7 @@ public interface IPersistentObject extends ISelectable {
 	 * @return true wenn this und other vom selben typ sind und alle interessierenden Felder genäss
 	 *         mode übereinstimmen.
 	 */
-	public boolean isMatching(final IPersistentObject other, final int mode, final String[] fields);
+	public boolean isMatching(final IPersistentObject other, final int mode, final String... fields);
 	
 	/**
 	 * testet, ob die angegebenen Felder den angegebenen Werten entsprechen.
@@ -378,7 +378,7 @@ public interface IPersistentObject extends ISelectable {
 	 *            die Vergleichswerte
 	 * @return true bei übereinsteimmung
 	 */
-	public boolean isMatching(final String[] fields, final int mode, final String[] others);
+	public boolean isMatching(final String[] fields, final int mode, final String... others);
 	
 	/**
 	 * Testet ob dieses Objekt den angegebenen Feldern entspricht.

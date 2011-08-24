@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2007, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,10 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: BefundePrefs.java 2825 2007-07-17 13:51:34Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
-import java.util.Hashtable;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -50,7 +48,7 @@ import ch.rgw.tools.StringTool;
  */
 public class BefundePrefs extends PreferencePage implements IWorkbenchPreferencePage {
 	
-	Hashtable<String, String> fields;
+	Map<Object, Object> fields;
 	// Combo cbNames;
 	// Text vals;
 	// String sel;
@@ -76,8 +74,8 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 		ctabs.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		ctabs.setLayout(new FillLayout());
 		setup = Messwert.getSetup();
-		fields = setup.getHashtable("Befunde"); //$NON-NLS-1$
-		names = fields.get("names"); //$NON-NLS-1$
+		fields = setup.getMap("Befunde"); //$NON-NLS-1$
+		names = (String)fields.get("names"); //$NON-NLS-1$
 		if (!StringTool.isNothing(names)) {
 			for (String f : names.split(Messwert.SETUP_SEPARATOR)) {
 				CTabItem ci = new CTabItem(ctabs, SWT.NONE);
@@ -193,7 +191,7 @@ public class BefundePrefs extends PreferencePage implements IWorkbenchPreference
 		if (idx != -1) {
 			flush(idx);
 		}
-		setup.setHashtable("Befunde", fields); //$NON-NLS-1$
+		setup.setMap("Befunde", fields); //$NON-NLS-1$
 		return super.performOk();
 	}
 	

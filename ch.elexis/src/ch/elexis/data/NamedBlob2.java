@@ -63,6 +63,7 @@ public class NamedBlob2 extends PersistentObject {
 	 * @return the previously stored Hashtable
 	 */
 	@SuppressWarnings("unchecked")
+	// TODO weird
 	public Hashtable getHashtable(){
 		return (Hashtable)getMap(FLD_CONTENTS);
 	}

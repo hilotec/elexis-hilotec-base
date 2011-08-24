@@ -1,12 +1,10 @@
 /*******************************************************************************
- * Copyright (c) 2008-2010 by G. Weirich
+ * Copyright (c) 2008-2011 by G. Weirich
  * This program is based on the Sgam-Exchange project,
  * (c) SGAM-Informatics
  * All rights resevred
  * Contributors:
  *    G. Weirich - initial implementation
- * 
- *  $Id: XidElement.java 6044 2010-02-01 15:18:50Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.exchange.elements;
@@ -14,6 +12,7 @@ package ch.elexis.exchange.elements;
 import java.util.LinkedList;
 import java.util.List;
 
+import ch.elexis.core.data.IXid;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.IVerrechenbar;
 import ch.elexis.data.Kontakt;
@@ -46,11 +45,11 @@ public class XidElement extends XChangeElement {
 		return XMLNAME;
 	}
 	
-	public static boolean isUUID(Xid xid){
+	public static boolean isUUID(IXid xid){
 		return (xid.getQuality() & 4) != 0;
 	}
 	
-	public static int getPureQuality(Xid xid){
+	public static int getPureQuality(IXid xid){
 		return (xid.getQuality() & 3);
 	}
 	
@@ -97,7 +96,7 @@ public class XidElement extends XChangeElement {
 	
 	public XidElement asExporter(XChangeExporter home, Kontakt k){
 		asExporter(home);
-		Xid best = k.getXid();
+		IXid best = k.getXid();
 		String id = XMLTool.idToXMLID(k.getId());
 		if ((best.getQuality() & 7) >= Xid.QUALITY_GUID) {
 			id = XMLTool.idToXMLID(best.getDomainId());
@@ -105,8 +104,8 @@ public class XidElement extends XChangeElement {
 			k.addXid(Xid.DOMAIN_ELEXIS, id, true);
 		}
 		setAttribute(ATTR_ID, XMLTool.idToXMLID(k.getId()));
-		List<Xid> xids = k.getXids();
-		for (Xid xid : xids) {
+		List<IXid> xids = k.getXids();
+		for (IXid xid : xids) {
 			int val = xid.getQuality();
 			int v1 = val & 3;
 			Identity ident =
@@ -119,11 +118,11 @@ public class XidElement extends XChangeElement {
 	
 	private void addIdentities(PersistentObject po, String domain, String domid, int q,
 		boolean bGuid){
-		List<Xid> xids = po.getXids();
+		List<IXid> xids = po.getXids();
 		
 		boolean bDomain = false;
 		// XChangeContainer home = getContainer();
-		for (Xid xid : xids) {
+		for (IXid xid : xids) {
 			if (xid.getDomain().equals(domain)) {
 				bDomain = true;
 			}
@@ -202,9 +201,9 @@ public class XidElement extends XChangeElement {
 			return XIDMATCH.SURE;
 		}
 		int sure = 0;
-		List<Xid> poXids = po.getXids();
+		List<IXid> poXids = po.getXids();
 		List<Identity> idents = (List<Identity>) getChildren(ELEMENT_IDENTITY, Identity.class);
-		for (Xid xid : poXids) {
+		for (IXid xid : poXids) {
 			String domain = xid.getDomain();
 			String domid = xid.getDomainId();
 			for (Identity ident : idents) {
@@ -272,7 +271,7 @@ public class XidElement extends XChangeElement {
 	public static class Identity extends XChangeElement {
 		
 		public Identity(){
-
+			
 		}
 		
 		public String getXMLName(){

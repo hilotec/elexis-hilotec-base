@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2008, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,11 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *    $Id: PrefsPage.java 4134 2008-07-13 19:13:37Z rgw_ch $
  *******************************************************************************/
 package ch.elexis.befunde;
 
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -37,13 +36,13 @@ public class PrefsPage extends Composite {
 	Text[] texts;
 	Button[] checkboxes;
 	Label[] labels;
-	Hashtable<String, String> hash;
+	Map<Object, Object> hash;
 	String name;
 	
-	PrefsPage(final Composite parent, final Hashtable<String, String> hash, final String name){
+	PrefsPage(final Composite parent, final Map<Object, Object> fields, final String name){
 		super(parent, SWT.NONE);
 		setLayout(new GridLayout(3, false));
-		this.hash = hash;
+		this.hash = fields;
 		this.name = name;
 		
 		load();
@@ -61,7 +60,7 @@ public class PrefsPage extends Composite {
 			labels = null;
 			texts = null;
 		}
-		String fields = hash.get(name + Messwert._FIELDS);
+		String fields = (String)hash.get(name + Messwert._FIELDS);
 		if (StringTool.isNothing(fields)) {
 			texts = new Text[1];
 			checkboxes = new Button[1];

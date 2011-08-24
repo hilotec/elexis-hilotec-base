@@ -4,6 +4,7 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * <p>
@@ -21,6 +22,10 @@ public class PersistenceException extends RuntimeException {
 	/** Status object. */
 	private final IStatus status;
 	
+	public PersistenceException(String message){
+		super(message);
+		status=new Status(Status.ERROR,"Persistence",message);
+	}
 	/**
 	 * Creates a new exception with the given status object. The message of the given status is used
 	 * as the exception message.

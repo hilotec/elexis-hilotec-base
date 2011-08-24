@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, G. Weirich and Elexis
+ * Copyright (c) 2006-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: FindingsView.java 5975 2010-01-28 10:59:45Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 package ch.elexis.befunde;
 
@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
@@ -61,7 +62,7 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 	public static final String ID = "elexis-befunde.findingsView"; //$NON-NLS-1$
 	private CTabFolder ctabs;
 	private ScrolledForm form;
-	private Hashtable hash;
+	private Map hash;
 	private Action newValueAction, editValueAction, deleteValueAction, printValuesAction;
 	
 	public FindingsView(){
@@ -78,7 +79,7 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 		ctabs = new CTabFolder(body, SWT.NONE);
 		ctabs.setLayout(new FillLayout());
 		Messwert setup = Messwert.getSetup();
-		hash = setup.getHashtable(Messwert.FLD_BEFUNDE);
+		hash = setup.getMap(Messwert.FLD_BEFUNDE);
 		String names = (String) hash.get(Messwert.HASH_NAMES);
 		if (!StringTool.isNothing(names)) {
 			for (String n : names.split(Messwert.SETUP_SEPARATOR)) {
@@ -243,7 +244,7 @@ public class FindingsView extends ViewPart implements IActivationListener, Elexi
 					TableItem item = new TableItem(table, SWT.NONE);
 					item.setText(0, m.get(Messwert.FLD_DATE)); //$NON-NLS-1$
 					item.setData(m);
-					Hashtable hash = m.getHashtable(Messwert.FLD_BEFUNDE); //$NON-NLS-1$
+					Map hash = m.getMap(Messwert.FLD_BEFUNDE); //$NON-NLS-1$
 					for (int i = 0; i < flds.length; i++) {
 						item.setText(i + 1, PersistentObject.checkNull((String) hash.get(flds[i])));
 					}
