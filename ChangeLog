@@ -1,6 +1,49 @@
 Offene Probleme
 - Tests von agenda, arzttarife von trunk sind noch nicht migriert
 
+Changelog für 2.1.6.rc1
+
+edc6b6adea02: 2011-08-26: Niklaus Giger: Ticket #546: Use medelexis-packager-1.0.0.jar in build.xml
+f0c36dafce28: 2011-08-26: rgw@iMac: include ch.elexis.core in build
+3058231883cc: 2011-08-26: rgw@macbook: api doc corrected
+0dde524bfe3f: 2011-08-23: Niklaus Giger: Ticket #546: Add medelexis-packager.jar to fix indigo
+3058231883cc: 2011-08-26: rgw@macbook: api doc corrected
+3c668e9ee3f8: 2011-08-25: thomashu: Ticket: #412 - added check if text changed before trying to save the Konsultation
+Various                   rgw@iMac: copied ch.elexis.core from trunk & various fixes 
+5470c95826e4: 2011-08-23: rgw@iMac: some datatype abstractions (Use interface instead of classes)
+292ab8768a29: 2011-08-23: rgw@iMac: add public method to execute sql files
+7c1de1141a8f: 2011-08-23: rgw@iMac: better message on reconnect
+936b1d095a80: 2011-08-22: mdescher: Lost method during backout
+4ca364314296: 2011-08-22: mdescher: Reverting changeset 9d02725d6771 - SelectorPanelProvider substring query
+fc4600aae081: 2011-08-22: mdescher: Replace dependency to org.eclipse.help.ui with library requirement dependency
+e6edd1b25038: 2011-08-21: Gerry Weirich (ub): Give more informations on error messages in Exception status
+ba8b2df1f8a2: 2011-08-21: Gerry Weirich (ub): removed some Exceptions that broke existing code.
+1105dd535617: 2011-08-21: Gerry Weirich (ub): removed false exception
+2f7060f99274: 2011-08-14: Gerry Weirich (ub): create report in build.xml for ListDependencies output
+a3cef6cbaa15: 2011-08-21: thomashu: Ticket: #86 - fixed NPE on creation of bill, if Rechnungssteller has no VAT_ISMANDANTVAT InfoElement
+9d02725d6771: 2011-08-16: mdescher: SelectorPanel does now support substring search; additional method for PersistentObject to easy database required value transformation
+8ec154d392ba: 2011-08-14: mdescher: Ticket #562: Multiple memory leaks in PersistentObject
+ff733db76c6c: 2011-08-11: Gerry Weirich (ub): #556: Allow billing for other mandator
+77a55a09e58c: 2011-08-11: thomas: - added Prescription#setBemerkung method
+516dc693f9bb: 2011-08-11: thomas: - usage of MessageBox in Log#log method before the Workbench is running, could lead to a Invalid thread access, fixed by testing if Workbench is already running before trying to display the MessageBox, else write the message to the log file only
+fede97449f1c: 2011-08-11: thomas: - added ch.elexis.core plugin to ch.elexis.core.feature
+5ead6e49fbd2: 2011-08-11: thomashu: Ticket: #560 - ch.elexis.medikamente.bag, fixed db table initialization with elexis version 2.1.5, and set version to 2.0.4
+1f65780616c5: 2011-08-10: rgw@iMac: backports from trunk
+b68ecce952fb: 2011-08-09: rgw@iMac: * give more informations if LockFile can't get aquired
+f639e8b39f11: 2011-08-04: Gerry Weirich (ub): copied ch.elexis.core from trunk
+5b5e1059b887: 2011-08-04: thomashu: Ticket: #412 - ix for saving text into wrong Konsultation, introduced by previous fix (changeset 4927 e712d52a9a37)
+
+Changelog für 2.1.6.rc0
+e712d52a9a37: 2011-07-28: thomashu: Ticket: #412 - fix for loosing parts of Konsultation text, by additional saving on change of Konsultation
+a2231455b59c: 2011-07-28: Niklaus Giger: Fixed problem with LoginNews
+85c1fcfcae87: 2011-07-27: rgw: Login News
+f81a52719e94: 2011-07-25: rgw@iMac: add eigenartikel to mac build
+dcd829ea01cd: 2011-07-25: rgw@iMac: remove old resources
+ea112637965e: 2011-07-25: rgw@iMac: updated mac resources
+9108cfa615c4: 2011-07-25: rgw@iMac: include eigenartikel in base package
+1a274114125a: 2011-07-15: mdescher: medelexis.xml fix
+c3669206271f: 2011-07-13: mdescher: Simple patch: Patient.loadByPatientID() method
+
 Changelog für 2.1.5.1
 
 320a9d979602: 2011-06-15: mdescher: Ticket #470: Allgemeines Refaktoring: Auslagerung der BezugsKontaktAuswahl
