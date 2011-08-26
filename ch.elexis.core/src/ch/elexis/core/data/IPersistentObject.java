@@ -17,14 +17,16 @@ import java.util.List;
 import java.util.Map;
 
 import ch.elexis.core.ElexisStorageException;
+import ch.elexis.core.PersistenceException;
 import ch.elexis.core.data.Query.Term;
 
 /**
- * An IPersistentObject is an abstract representation of an Object with a number of features:
+ * An IPersistentObject is an abstract representation of an Object with a number
+ * of features:
  * <ul>
  * <li>it persists itself</li>
- * <li>it has an unlimited number of randomly named properties, that can be accessed with
- * set(String,String) and get(String) methods</li>
+ * <li>it has an unlimited number of randomly named properties, that can be
+ * accessed with set(String,String) and get(String) methods</li>
  * <li>it has a globally unique identifier</li>
  * </ul>
  * 
@@ -34,49 +36,53 @@ import ch.elexis.core.data.Query.Term;
 public interface IPersistentObject extends ISelectable {
 	/** predefined field name for the GUID */
 	public static final String FLD_ID = "id";
-	/** predefined property to handle a fields that is a compressed HashMap */
+	/** predefined property to handle a field that is a compressed HashMap */
 	public static final String FLD_EXTINFO = "ExtInfo";
 	/** predefined property to hande a field that marks the Object as deleted */
 	public static final String FLD_DELETED = "deleted";
 	/**
-	 * predefined property that holds an automatically updated field containing the last update of
-	 * this object as long value (milliseconds as in Date())
+	 * predefined property that holds an automatically updated field containing
+	 * the last update of this object as long value (milliseconds as in Date())
 	 */
 	public static final String FLD_LASTUPDATE = "lastupdate";
 	/**
-	 * predefined property that holds the date of creation of this object in the form YYYYMMDD
+	 * predefined property that holds the date of creation of this object in the
+	 * form YYYYMMDD
 	 */
 	public static final String FLD_DATE = "Datum";
-	
+
 	/**
-	 * return a human readable identifier (not necessarily unique) for this Object
+	 * return a human readable identifier (not necessarily unique) for this
+	 * Object
 	 */
 	abstract public String getLabel();
-	
+
 	/**
-	 * Tell whether this Object is valid (measured by its own implementation dependent means)
+	 * Tell whether this Object is valid (measured by its own implementation
+	 * dependent means)
 	 * 
 	 * @return true if this Object is valid (which is not the same as "correct")
 	 */
 	public abstract boolean isValid();
-	
+
 	/**
-	 * Return an identifier for this object that is guaranteed to be globally unique
+	 * Return an identifier for this object that is guaranteed to be globally
+	 * unique.
+	 * 
+	 * @note this is a shortcut for get(FLD_ID)
 	 * 
 	 * @return the ID.
 	 */
 	public abstract String getId();
-	
+
 	/**
-	 * Objekt in einen String serialisieren. Diese Standardimplementation macht eine "cheap copy":
-	 * Es wird eine Textrepräsentation des Objektes erstellt, mit deren Hilfe das Objekt später
-	 * wieder aus der Datenbank erstellt werden kann. Dies funktioniert nur innerhalb derselben
-	 * Datenbank.
-	 * 
-	 * @return der code-String, aus dem mit createFromCode wieder das Objekt erstellt werden kann
+	 * Serialize this object into a String. The String must onbly be valid
+	 * within the same database i.e. it is not guaranteed, that the creation of
+	 * an object with this String on a different installation will yield the
+	 * same object (ar a valid object at all)
 	 */
 	public abstract String storeToString();
-	
+
 	/** An object with this ID does not exist */
 	public static final int STATE_INEXISTENT = 0;
 	/** This id is not valid */
@@ -85,116 +91,127 @@ public interface IPersistentObject extends ISelectable {
 	public static final int DELETED = 2;
 	/** This is an existing object */
 	public static final int STATE_EXISTING = 3;
-	
+
 	/**
-	 * Check the state of an object with this ID Note: This method accesses the database and
-	 * therefore is much more costly than the simple instantaniation of a PersistentObject
+	 * Check the state of an object with this ID Note: This method accesses the
+	 * database and therefore is much more costly than the simple
+	 * instantaniation of a PersistentObject
 	 * 
 	 * @return a value between INEXISTENT and EXISTING
 	 */
-	
+
 	public abstract int state();
-	
+
 	/**
-	 * Feststellen, ob ein PersistentObject bereits in der Datenbank existiert
+	 * Check whether an object exists (i.e. lives in the database and is NOT
+	 * marked as deleted)
 	 * 
-	 * @return true wenn es existiert, false wenn es nicht existiert oder gelöscht wurde
+	 * @return false if it does not exist at all, OR if it is marked as deleted
 	 */
-	
+
 	public abstract boolean exists();
-	
+
 	/**
-	 * Check whether the object exists in the database. This is the case for all objects in the
-	 * database for which state() returns neither INVALID_ID nor INEXISTENT. Note: objects marked as
-	 * deleted will also return true!
+	 * Check wether the object exists in the database. This is the case for all
+	 * objects in the database for which state() returns neither INVALID_ID nor
+	 * INEXISTENT. Note: objects marked as deleted will also return true!
 	 * 
-	 * @return true, if the object is available in the database, false otherwise
+	 * @return true, if the object is available in the database, false
+	 *         otherwise. The object might be marked as deleted. Therfore,
+	 *         exists() and isValid() could return false while isAvailable()
+	 *         returns true.
 	 */
 	public abstract boolean isAvailable();
-	
+
 	/**
-	 * Return an IXid (domain_id) for a specified domain
+	 * Return an domain_id of a XID for a specified domain
 	 * 
 	 * @param domain
 	 * @return an identifier that might be null
 	 */
 	public abstract String getXid(final String domain);
-	
+
 	/**
-	 * return the "best" AbstractXid for a given object. This is the AbstractXid with the highest
-	 * quality. If no AbstractXid is given for this object, a newly created AbstractXid of local
-	 * quality will be returned
+	 * return the "best" Xid for a given object. This is the Xid with the
+	 * highest quality. If no Xid is given for this object, a newly created Xid
+	 * of local quality will be returned
 	 */
 	public IXid getXid();
-	
+
 	/**
-	 * retrieve all AbstractXids of this object
+	 * retrieve all Xids of this object
 	 * 
 	 * @return a List that might be empty but is never null
 	 */
 	public abstract List<IXid> getXids();
-	
+
 	/**
-	 * Assign a AbstractXid to this object.
+	 * Assign a Xid to this object.
 	 * 
 	 * @param domain
 	 *            the domain whose ID will be assigned
 	 * @param domain_id
 	 *            the id out of the given domain fot this object
 	 * @param updateIfExists
-	 *            if true update values if AbstractXid with same domain and domain_id exists.
-	 *            Otherwise the method will fail if a collision occurs.
+	 *            if true update values if Xid with same domain and domain_id
+	 *            exists. Otherwise the method will fail if a collision occurs.
 	 * @return true on success, false on failure
 	 */
 	public abstract boolean addXid(final String domain, final String domain_id,
-		final boolean updateIfExists);
-	
+			final boolean updateIfExists);
+
 	/**
-	 * holt den "höchstwertigen" Sticker, falls mehrere existieren
+	 * Find the "highest" or the only Sticker of this object
 	 * 
-	 * @return
+	 * @return a Sticker or Null of no Sticker was assigned to this object
 	 */
 	public ISticker getSticker();
-	
+
 	/**
 	 * Return all Stickers attributed to this object
 	 * 
-	 * @return A possibly empty list of Stickers
+	 * @return A possibly empty list of Stickers but never null
 	 */
 	public abstract List<ISticker> getStickers();
-	
+
 	/**
-	 * Remove aAbstractStickerfrom this object
+	 * Remove a Stickerfrom this object
 	 * 
-	 * @param et
-	 *            theAbstractStickerto remove
+	 * @param st
+	 *            the Sticker to remove
 	 */
-	public abstract void removeSticker(ISticker et);
-	
+	public abstract void removeSticker(ISticker st);
+
 	/**
-	 * Add aAbstractStickerto this object
+	 * Add a Sticker to this object
 	 * 
 	 * @param et
-	 *            theAbstractStickerto add
+	 *            the Sticker to add
 	 */
 	public abstract void addSticker(ISticker et);
-	
+
 	/**
-	 * Feststellen, ob ein PersistentObject als gelöscht markiert wurde
-	 * 
-	 * @return true wenn es gelöscht ist
+	 * check wether this object is marked as deleted
+	 * @return true if this object is present in the database and is marked as deleted
+	 * @deprecated use state() 
 	 */
 	public abstract boolean isDeleted();
-	
+
 	/**
-	 * Darf dieses Objekt mit Drag&Drop verschoben werden?
-	 * 
-	 * @return true wenn ja.
+	 * check wether this object may dragged and dropped . 
+	 * @Note if the object returns true, it MUST implement a valid storeToString so that it can be 
+	 * recreated from this String
+	 * @return true if d&d is ok for this object
 	 */
 	public abstract boolean isDragOK();
-	
+
+	/**
+	 * get a named property
+	 * @param field name of the Property
+	 * @return the value of the property or null if no such property exists
+	 */
 	public abstract String get(final String field);
-	
+
 	/**
 	 * Read a property that contains a Map
 	 * 
@@ -202,65 +219,34 @@ public interface IPersistentObject extends ISelectable {
 	 *            Name of the map
 	 * @return a map that might be empty but is never null
 	 */
-	@SuppressWarnings("rawtypes")
 	public abstract Map<?, ?> getMap(final String field);
-	
+
 	/**
-	 * Bequemlichkeitsmethode zum lesen eines Integer.
-	 * 
-	 * @param field
-	 * @return einen Integer. 0 bei 0 oder unlesbar
+	 * read a property that is an Integer
+	 * @param field name of the Property
+	 * @return The value of the property. If the property does not exist or can not be expressed as
+	 * integer: return 0
 	 */
 	public abstract int getInt(final String field);
-	
+
+
 	/**
-	 * Eine 1:n Verknüpfung aus der Datenbank auslesen.
-	 * 
-	 * @param field
-	 *            das Feld, wie in der mapping-Deklaration angegeben
-	 * @param reverse
-	 *            wenn true wird rückwärts sortiert
-	 * @return eine Liste mit den IDs (String!) der verknüpften Datensätze oder null, wenn das Feld
-	 *         keine 1:n-Verknüofung ist
-	 */
-	// public List<String> getList(String field,
-	// boolean reverse);
-	
-	/**
-	 * Eine n:m - Verknüpfung auslesen
-	 * 
-	 * @param field
-	 *            Das Feld, für das ein entsprechendes mapping existiert
-	 * @param extra
-	 *            Extrafelder, die aus der joint-Tabelle ausgelesen werden sollen
-	 * @return eine Liste aus String-Arrays, welche jeweils die ID des gefundenen Objekts und den
-	 *         Inhalt der Extra-Felder enthalten. Null bei Mapping-Fehler
-	 */
-	// public abstract List<String[]> getList(final String field, String[] extra);
-	
-	/**
-	 * Ein Feld in die Datenbank übertragen. Gleichzeitig Cache-update Die Tabelle wird über
-	 * getTableName() erfragt.
-	 * 
-	 * @param field
-	 *            Name des Feldes
-	 * @param value
-	 *            Einzusetzender Wert (der vorherige Wert wird überschrieben)
-	 * @return true bei Erfolg
+	 * Store a property 
+	 * @param field name of the Property to write 
+	 * @param value value of the property. Any preexistent value will be overwritten.
+	 * @return true on success
 	 */
 	public abstract boolean set(final String field, String value);
-	
+
 	/**
-	 * store a map.
-	 * 
-	 * @param field
-	 * @param hash
-	 * @return 0 bei Fehler
+	 * store a property that is a map.
+	 * @param field Name of the map
+	 * @param map the map to store. The map will be serialized in an implementation dependent way. 
+	 * @throws PersistenceException on storage failure
 	 */
-	@SuppressWarnings("rawtypes")
-	public abstract void setMap(final String field, final Map<Object, Object> map)
-		throws ElexisStorageException;
-	
+	public abstract void setMap(final String field,
+			final Map<Object, Object> map) throws PersistenceException;
+
 	/**
 	 * Set a value of type int.
 	 * 
@@ -271,48 +257,8 @@ public interface IPersistentObject extends ISelectable {
 	 * @return true on success, false else
 	 */
 	public abstract boolean setInt(final String field, final int value);
-	
-	/**
-	 * Eine Element einer n:m Verknüpfung eintragen. Zur Tabellendefinition wird das mapping
-	 * verwendet.
-	 * 
-	 * @param field
-	 *            Das n:m Feld, für das ein neuer Eintrag erstellt werden soll.
-	 * @param oID
-	 *            ID des Zielobjekts, auf das der Eintrag zeigen soll
-	 * @param extra
-	 *            Definition der zusätzlichen Felder der Joint-Tabelle. Jeder Eintrag in der Form
-	 *            Feldname=Wert
-	 * @return 0 bei Fehler
-	 */
-	// public abstract int addToList(final String field, final String oID,
-	// final String[] extra);
-	
-	/**
-	 * Remove all relations to this object from link
-	 * 
-	 * @param field
-	 */
-	public abstract void removeFromList(String field);
-	
-	/**
-	 * Remove a relation to this object from link
-	 * 
-	 * @param field
-	 * @param oID
-	 */
-	public abstract void removeFromList(String field, String oID);
-	
-	/**
-	 * Alle Bezüge aus einer n:m-Verknüpfung zu diesem Objekt löschen
-	 * 
-	 * @param field
-	 *            Feldname, der die Liste definiert
-	 * @return
-	 */
-	public abstract boolean deleteList(final String field);
-	
-	/**
+
+		/**
 	 * Mehrere Felder auf einmal setzen (Effizienter als einzelnes set)
 	 * 
 	 * @param fields
@@ -322,7 +268,7 @@ public interface IPersistentObject extends ISelectable {
 	 * @return false bei Fehler
 	 */
 	public abstract boolean set(final String[] fields, final String[] values);
-	
+
 	/**
 	 * Mehrere Felder auf einmal auslesen
 	 * 
@@ -333,7 +279,7 @@ public interface IPersistentObject extends ISelectable {
 	 * @return true ok, values wurden gesetzt
 	 */
 	public abstract boolean get(final String[] fields, final String[] values);
-	
+
 	/** Strings must match exactly (but ignore case) */
 	public static final int MATCH_EXACT = 0;
 	/** String must start with test (ignoring case) */
@@ -351,9 +297,10 @@ public interface IPersistentObject extends ISelectable {
 	 * 
 	 */
 	public static final int MATCH_AUTO = 4;
-	
+
 	/**
-	 * Testet ob zwei Objekte bezüglich definierbarer Felder übereinstimmend sind
+	 * Testet ob zwei Objekte bezüglich definierbarer Felder übereinstimmend
+	 * sind
 	 * 
 	 * 
 	 * @param other
@@ -362,11 +309,12 @@ public interface IPersistentObject extends ISelectable {
 	 *            gleich, LIKE oder Regexp
 	 * @param fields
 	 *            die interessierenden Felder
-	 * @return true wenn this und other vom selben typ sind und alle interessierenden Felder genäss
-	 *         mode übereinstimmen.
+	 * @return true wenn this und other vom selben typ sind und alle
+	 *         interessierenden Felder genäss mode übereinstimmen.
 	 */
-	public boolean isMatching(final IPersistentObject other, final int mode, final String... fields);
-	
+	public boolean isMatching(final IPersistentObject other, final int mode,
+			final String... fields);
+
 	/**
 	 * testet, ob die angegebenen Felder den angegebenen Werten entsprechen.
 	 * 
@@ -378,34 +326,53 @@ public interface IPersistentObject extends ISelectable {
 	 *            die Vergleichswerte
 	 * @return true bei übereinsteimmung
 	 */
-	public boolean isMatching(final String[] fields, final int mode, final String... others);
-	
+	public boolean isMatching(final String[] fields, final int mode,
+			final String... others);
+
 	/**
 	 * Testet ob dieses Objekt den angegebenen Feldern entspricht.
 	 * 
 	 * @param fields
 	 *            HashMap mit name,wert paaren für die Felder
 	 * @param mode
-	 *            Testmodus (MATCH_EXACT, MATCH_BEGIN, MATCH_REGEXP, MATCH_CONTAIN oder MATCH_AUTO)
+	 *            Testmodus (MATCH_EXACT, MATCH_BEGIN, MATCH_REGEXP,
+	 *            MATCH_CONTAIN oder MATCH_AUTO)
 	 * @param bSkipInexisting
-	 *            don't return false if a fieldname is not found but skip this field instead
+	 *            don't return false if a fieldname is not found but skip this
+	 *            field instead
 	 * @return true wenn dieses Objekt die entsprechenden Felder hat
 	 */
 	public boolean isMatching(final Map<String, String> fields, final int mode,
-		final boolean bSkipInexisting);
-	
+			final boolean bSkipInexisting);
+
 	public boolean isMatching(final List<Term> terms);
-	
+
 	/**
 	 * return the time of the last update of this object
 	 * 
-	 * @return the time (as given in System.currentTimeMillis()) of the last write operation on this
-	 *         object or 0 if there was no valid lastupdate time
+	 * @return the time (as given in System.currentTimeMillis()) of the last
+	 *         write operation on this object or 0 if there was no valid
+	 *         lastupdate time
 	 */
 	public abstract long getLastUpdate();
-	
-	public void addChangeListener(IChangeListener listener, String fieldToObserve);
-	
-	public void removeChangeListener(IChangeListener listener, String fieldObserved);
-	
+
+	/**
+	 * Add a listener to this object that will be informed, if a given property gets changed.
+	 * This is more efficient than attaching an ElexisEventListener. If more Properties of the
+	 * same object should be observed, the ElexisEventListener might be more appropriate
+	 * @param listener The Listener to attach
+	 * @param propertyToObserve the name of the property to observe
+	 */
+	public void addChangeListener(IChangeListener listener,
+			String propertyToObserve);
+
+	/**
+	 * Remove a property change listener. If no such Listener was registered, nothing happens. If the same listener
+	 * was attached several times for different properties, only the one with the given property will be removed.
+	 * @param listener the listener to remove
+	 * @param propertyObserved the property that was observed by this listener.
+	 */
+	public void removeChangeListener(IChangeListener listener,
+			String propertyObserved);
+
 }

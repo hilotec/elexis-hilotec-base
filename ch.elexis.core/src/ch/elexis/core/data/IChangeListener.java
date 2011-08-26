@@ -38,9 +38,8 @@ public interface IChangeListener {
 		Object newValue);
 	
 	/**
-	 * The tracked Object gets disposed.
-	 * 
-	 * @param object
+	 * The tracked Object gets disposed. Disposal will happen immediately after this method returns. 
+	 * @param object The object that is about to dispose
 	 */
 	public void objectDisposing(IPersistentObject object);
 }
