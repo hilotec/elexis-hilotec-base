@@ -58,6 +58,7 @@
 				<include name="*"/>
 				<include name="configuration/**"/>
 				<include name="plugins/ch.elexis_*/**"/>
+				<include name="plugins/ch.elexis.core_*/**"/>
 				<include name="plugins/ch.rgw.utility_*/**"/>
 				<include name="plugins/ch.elexis.eigenartikel_*/**"/>
 				<include name="plugins/ch.elexis.mysql.connector_*/**"/>
