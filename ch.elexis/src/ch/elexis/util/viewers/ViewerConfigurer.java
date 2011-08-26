@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: ViewerConfigurer.java 5039 2009-01-25 19:49:39Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 
 package ch.elexis.util.viewers;

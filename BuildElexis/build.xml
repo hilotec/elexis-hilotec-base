@@ -94,7 +94,7 @@
 		<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.core.jar" usetimestamp="true" />
 		<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.textile.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.textile.core.jar" usetimestamp="true" />
 		<get src="http://team.medelexis.ch/build/jdom.jar" dest="${lib}/jdom.jar" usetimestamp="true" />
-		<get src="http://www.elexis.ch/files/build/medelexis-packager.jar" dest="${lib}/medelexis-packager.jar" usetimestamp="true" />
+		<get src="http://www.medelexis.ch/fileadmin/downloads/medelexis-packager-1.0.0.jar" dest="${lib}/medelexis-packager.jar" usetimestamp="true" />
 		<get src="http://team.medelexis.ch/build/ant-contrib-1.0b3.jar" dest="${lib}/ant-contrib.jar" usetimestamp="true" />
 		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-compiler.jar" dest="${lib}/scala-compiler.jar" usetimestamp="true" />
 		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-library.jar" dest="${lib}/scala-library.jar" usetimestamp="true" />
