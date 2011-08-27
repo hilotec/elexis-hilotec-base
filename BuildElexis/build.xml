@@ -61,7 +61,7 @@
 		
 -->
 <project name="elexis" default="all">
-          <property name="version" value="2.1.6" />
+	<property name="version" value="2.1.6" />
 	<property name="javatarget" value="1.6" />
 	<property name="debug" value="true" />
 	<property name="optimize" value="off" />
@@ -211,6 +211,7 @@
 				<pluginID dir="@{plugin}" />
 				<var name="plugindir" value="${dist}/plugins/${BundleId}_${version}.${DSTAMP}" />
 				<path id="varcp">
+					<dirset dir="${rsc}/${os}" />
 					<dirset dir="${dist}/plugins" />
 					<fileset dir="${dist}/plugins">
 						<include name="**/*.jar" />
@@ -266,7 +267,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		</copy>
 		<!-- do some magic stuff to find all the files to include -->
 		<echo message="listDependencies WITH ${platform-runtime} REPOS ${repositories} lib ist ${lib}" />
-		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins},TestElexis,TestElexisUI" report="${output}"/>
+		<listDependencies eclipse="${platform-runtime}" dest="${dist}/plugins" repositories="${repositories}" exclude="${skipPlugins},TestElexis,TestElexisUI" report="${output}" />
 		<antcall target="compile-plugins" inheritrefs="true">
 			<param name="buildlist" value="${buildlist}" />
 		</antcall>
