@@ -90,15 +90,15 @@
 
 	<target name="downloads" unless="unplugged">
 		<mkdir dir="${lib}" />
-		<get src="http://www.medelexis.ch/fileadmin/downloads/izpack-compiler.jar" dest="${lib}/izpack-compiler.jar" usetimestamp="true" />
-		<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.core.jar" usetimestamp="true" />
-		<get src="http://www.elexis.ch/files/build/org.eclipse.mylyn.wikitext.textile.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.textile.core.jar" usetimestamp="true" />
-		<get src="http://team.medelexis.ch/build/jdom.jar" dest="${lib}/jdom.jar" usetimestamp="true" />
-		<get src="http://www.medelexis.ch/fileadmin/downloads/medelexis-packager-1.0.0.jar" dest="${lib}/medelexis-packager.jar" usetimestamp="true" />
-		<get src="http://team.medelexis.ch/build/ant-contrib-1.0b3.jar" dest="${lib}/ant-contrib.jar" usetimestamp="true" />
-		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-compiler.jar" dest="${lib}/scala-compiler.jar" usetimestamp="true" />
-		<get src="http://www.medelexis.ch/fileadmin/downloads/scala-library.jar" dest="${lib}/scala-library.jar" usetimestamp="true" />
-		<get src="http://apache.mirror.testserver.li/xmlgraphics/fop/binaries/fop-1.0-bin.zip" dest="${lib}/fop-1.0-bin.zip" usetimestamp="true" />
+		<get src="http://ftp.medelexis.ch/downloads/develop/izpack-standalone-compiler-4.3.4.jar" dest="${lib}/izpack-compiler.jar" usetimestamp="true" />
+		<get src="http://ftp.medelexis.ch/downloads/develop/org.eclipse.mylyn.wikitext.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.core.jar" usetimestamp="true" />
+		<get src="http://ftp.medelexis.ch/downloads/develop/org.eclipse.mylyn.wikitext.textile.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.textile.core.jar" usetimestamp="true" />
+		<get src="http://ftp.medelexis.ch/downloads/develop/jdom-1.1.1.jar" dest="${lib}/jdom.jar" usetimestamp="true" />
+		<get src="http://ftp.medelexis.ch/downloads/develop/medelexis-packager.jar" dest="${lib}/medelexis-packager.jar" usetimestamp="true" />
+		<get src="http://ftp.medelexis.ch/downloads/develop/ant-contrib-1.0b3.jar" dest="${lib}/ant-contrib.jar" usetimestamp="true" />
+		<get src="http://ftp.medelexis.ch/downloads/develop/scala-compiler-2.8.0.jar" dest="${lib}/scala-compiler.jar" usetimestamp="true" />
+		<get src="http://ftp.medelexis.ch/downloads/develop/scala-library-2.8.0.final.jar" dest="${lib}/scala-library.jar" usetimestamp="true" />
+		<get src="http://ftp.medelexis.ch/downloads/develop/fop-1.0-bin.zip" dest="${lib}/fop-1.0-bin.zip" usetimestamp="true" />
 		<unzip src="${lib}/fop-1.0-bin.zip" dest="${lib}" overwrite="false" />
 		<chmod file="${lib}/fop-1.0/fop" perm="0755" />
 	</target>
@@ -378,6 +378,10 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<delete file="${rsc}/license.html" />
 		<echo message="Running IzPack to build the installer..." />
 		<izpack input="${rsc}/installer.xml" output="${output}/elexis-${os}-${version}.${DSTAMP}-install.jar" installerType="standard" inheritAll="true" basedir="${dist}" compression="deflate" compressionlevel="9" />
+		<symlink action="delete" link="${output}/elexis-${os}-install.jar" />
+		<symlink link="${output}/elexis-${os}-install.jar" resource="${output}/elexis-${os}-${version}.${DSTAMP}-install.jar" />
+
+
 	</target>
 
 	<!-- SWTbot. Needs special config.ini to start
