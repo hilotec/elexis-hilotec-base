@@ -378,7 +378,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<delete file="${rsc}/license.html" />
 		<echo message="Running IzPack to build the installer..." />
 		<izpack input="${rsc}/installer.xml" output="${output}/elexis-${os}-${version}.${DSTAMP}-install.jar" installerType="standard" inheritAll="true" basedir="${dist}" compression="deflate" compressionlevel="9" />
-		<symlink action="delete" link="${output}/elexis-${os}-install.jar" />
+		<symlink action="delete" link="${output}/elexis-${os}-install.jar" failonerror="false" />
 		<symlink link="${output}/elexis-${os}-install.jar" resource="${output}/elexis-${os}-${version}.${DSTAMP}-install.jar" />
 
 
