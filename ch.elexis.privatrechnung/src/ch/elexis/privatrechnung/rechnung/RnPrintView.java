@@ -226,7 +226,7 @@ public class RnPrintView extends ViewPart {
 			.getRechnungssteller().getInfoElement(VAT_ISMANDANTVAT);
 		
 		double value = 0.0;		
-		if(isVat) {
+		if(isVat != null && isVat) {
 			String vatScale = verrechnet.getDetail(Verrechnet.VATSCALE);
 			if(vatScale != null && vatScale.length() > 0)
 				value = Double.parseDouble(vatScale);
