@@ -345,11 +345,14 @@ public abstract class PersistentObject implements IPersistentObject {
 					Hub.pin.initializeGlobalPreferences();
 					if (runningAsTest) {
 						Mandant m = new Mandant("007", "topsecret");
+						String clientEmail = System.getProperty("ch.elexis.clientEmail");
+						if (clientEmail == null)
+							clientEmail = "james@bond.invalid";
 						m.set(new String[] {
 							Person.NAME, Person.FIRSTNAME, Person.TITLE, Person.SEX,
 							Person.FLD_E_MAIL, Person.FLD_PHONE1, Person.FLD_FAX,
 							Kontakt.FLD_STREET, Kontakt.FLD_ZIP, Kontakt.FLD_PLACE
-						}, "Bond", "James", "Dr. med.", Person.MALE, "james@bond.uk",
+						}, "Bond", "James", "Dr. med.", Person.MALE, clientEmail,
 							"0061 555 55 55", "0061 555 55 56", "10, Baker Street", "9999",
 							"Elexikon");
 						String gprs = m.getInfoString(AccessControl.KEY_GROUPS); //$NON-NLS-1$

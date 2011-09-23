@@ -951,7 +951,8 @@ public class StringTool {
 		if (StringTool.isNothing(in)) {
 			return false;
 		}
-		return in.matches("\\w[\\w|\\.\\-]+@\\w[\\w\\.\\-]+\\.[a-zA-Z]{2,4}");
+		// up to 7 characters in device for james@bond.invalid
+		return in.matches("\\w[\\w|\\.\\-]+@\\w[\\w\\.\\-]+\\.[a-zA-Z]{2,7}");
 		// oder \w[\w|\.\-]+@\w[\w\.\-]+\.[a-zA-Z]{2,4}
 	}
 	
