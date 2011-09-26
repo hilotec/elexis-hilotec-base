@@ -30,6 +30,9 @@ import ch.rgw.tools.VersionInfo;
  */
 public class Leistung extends VerrechenbarAdapter {
 	public static final String XIDDOMAIN = "www.xid.ch/id/customservice";
+	
+	private static IOptifier noObligationOptifier = new NoObligationOptifier();
+	
 	/**
 	 * Definition of the name of the table where Objects of this class should be stored the
 	 * tablename should alwas be prefixed with tghe plugin's id to avoid name clashes if a plugins
@@ -256,6 +259,6 @@ public class Leistung extends VerrechenbarAdapter {
 	
 	@Override
 	public IOptifier getOptifier(){
-		return optifier;
+		return noObligationOptifier;
 	}
 }

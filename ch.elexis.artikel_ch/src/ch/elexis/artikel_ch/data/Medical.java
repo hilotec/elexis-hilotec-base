@@ -13,9 +13,12 @@ package ch.elexis.artikel_ch.data;
 import java.util.Map;
 
 import ch.elexis.data.Artikel;
-import ch.elexis.data.IVerrechenbar.VatInfo;
+import ch.elexis.util.IOptifier;
 
 public class Medical extends Artikel {
+	
+	private static IOptifier noObligationOptifier = new NoObligationOptifier();
+	
 	@Override
 	protected String getConstraint(){
 		return "Typ='Medical'"; //$NON-NLS-1$
@@ -64,13 +67,18 @@ public class Medical extends Artikel {
 		// 3: von der MWSt befreit
 		Map info = getMap(Artikel.FLD_EXTINFO);
 		String typ = (String) info.get(MedikamentImporter.MWST_TYP);
-		if(typ != null && typ.equals("2"))
+		if (typ != null && typ.equals("2"))
 			return VatInfo.VAT_CH_ISMEDICAMENT;
-		else if(typ != null && typ.equals("1"))
+		else if (typ != null && typ.equals("1"))
 			return VatInfo.VAT_CH_NOTMEDICAMENT;
-		else if(typ != null && typ.equals("3"))
+		else if (typ != null && typ.equals("3"))
 			return VatInfo.VAT_NONE;
 		return VatInfo.VAT_NONE;
 		
+	}
+	
+	@Override
+	public IOptifier getOptifier(){
+		return noObligationOptifier;
 	}
 }

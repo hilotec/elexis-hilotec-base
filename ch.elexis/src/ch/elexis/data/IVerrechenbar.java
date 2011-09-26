@@ -18,6 +18,8 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.IFilter;
 
+import ch.elexis.Hub;
+import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.util.IOptifier;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.Result;
@@ -176,5 +178,24 @@ public interface IVerrechenbar extends ICodeElement {
 			return new Result<Verrechnet>(null);
 		}
 		
+	}
+	
+	public static class NoObligationOptifier extends DefaultOptifier {
+		@Override
+		public Result<IVerrechenbar> add(IVerrechenbar code, Konsultation kons){
+			String gesetz = kons.getFall().get("Gesetz");
+			
+			boolean forceObligation = Hub.userCfg.get(Leistungscodes.OBLIGATION, false);
+			
+			if (forceObligation && gesetz.equalsIgnoreCase("KVG")) {
+				return new Result<IVerrechenbar>(
+					Result.SEVERITY.WARNING,
+					0,
+					"Auf diesen Fall können nur Pflichtleistungen verrechnet werden. Bitte einen separaten Fall für Nichtpflichtleistungen anlegen.",
+					null, false);
+			}
+			
+			return super.add(code, kons);
+		}
 	}
 }

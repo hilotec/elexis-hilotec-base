@@ -76,6 +76,7 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 	public final static String CFG_KEY = "billing/systems"; //$NON-NLS-1$
 	public final static String BILLING_STRICT = "billing/strict"; //$NON-NLS-1$
 	public final static String OPTIFY = "billing/optify"; //$NON-NLS-1$
+	public final static String OBLIGATION = "billing/obligation"; //$NON-NLS-1$
 	private static final String DEFINITIONSDELIMITER = ";"; //$NON-NLS-1$
 	private static final String ARGUMENTSSDELIMITER = ":"; //$NON-NLS-1$
 	private static final String ITEMDELIMITER = "\t"; //$NON-NLS-1$
@@ -205,6 +206,19 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 		});
 		bOptify.setSelection(Hub.userCfg.get(OPTIFY, true));
 		bOptify.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		
+		// *** checkbox for enforcing separate Fall for obligations and non obligations
+		final Button bObligation = new Button(ret, SWT.CHECK);
+		bObligation.setText("Pflichtleistungen und Nichtpflichtleistungen trennen");
+		bObligation.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(final SelectionEvent e){
+				Hub.userCfg.set(OBLIGATION, bObligation.getSelection());
+			}
+			
+		});
+		bObligation.setSelection(Hub.userCfg.get(OBLIGATION, false));
+		bObligation.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
 		// *** populate the table with items
 		reload();

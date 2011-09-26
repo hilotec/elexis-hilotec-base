@@ -12,6 +12,7 @@
 package ch.elexis.data;
 
 import ch.elexis.tarmedprefs.PhysioPrefs;
+import ch.elexis.util.IOptifier;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -31,6 +32,8 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	private static final String TABLENAME = "CH_ELEXIS_ARZTTARIFE_CH_PHYSIO";
 	private static final String XIDDOMAIN = "www.xid.ch/id/physiotarif";
 	public static final String CODESYSTEMNAME = "Physiotherapie";
+	
+	private static IOptifier noObligationOptifier = new NoObligationOptifier();
 	
 	private static final String createDB =
 		"CREATE TABLE " + TABLENAME + " (" + "ID			VARCHAR(25) primary key," + "lastupdate BIGINT,"
@@ -123,5 +126,9 @@ public class PhysioLeistung extends VerrechenbarAdapter {
 	public boolean isDragOK(){
 		return true;
 	}
-	
+
+	@Override
+	public IOptifier getOptifier(){
+		return noObligationOptifier;
+	}
 }

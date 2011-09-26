@@ -503,14 +503,13 @@ public class GlobalActions {
 					Fall actFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
 					Mandant mnd = Hub.actMandant;
 					if (actFall != null && mnd != null) {
-						String mndid = mnd.getId();
+						String rsId = mnd.getRechnungssteller().getId();
 						Konsultation[] bhdl = actFall.getBehandlungen(false);
 						ArrayList<Konsultation> lBehdl = new ArrayList<Konsultation>(bhdl.length);
 						for (Konsultation b : bhdl) {
 							Rechnung rn = b.getRechnung();
-							if (rn == null) { // || rn.getStatus() ==
-								// RnStatus.STORNIERT) {
-								if (b.getMandant().getId().equals(mndid)) {
+							if (rn == null) {
+								if (b.getMandant().getRechnungssteller().getId().equals(rsId)) {
 									lBehdl.add(b);
 								}
 							}

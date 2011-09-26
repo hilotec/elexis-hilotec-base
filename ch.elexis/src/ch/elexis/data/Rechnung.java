@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id$
+ *  $Id: Rechnung.java 5470c95826e4 2011/08/23 18:57:01 rgw $
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -117,14 +117,10 @@ public class Rechnung extends PersistentObject {
 				m = bm;
 				ret.set(MANDATOR_ID, m.getId());
 			} else {
-				/*
-				 * if(!bm.equals(m)){ log.log("Rechnung kann nicht mit Behandlungen verschiedener
-				 * Mandanten erstellt werden",Log.ERRORS); return null; }
-				 */
-				if (!bm.getId().equals(Hub.actMandant.getId())) {
+				if (!bm.getRechnungssteller().getId().equals(m.getRechnungssteller().getId())) {
 					result =
 						result.add(Result.SEVERITY.ERROR, 2,
-							"Die Liste enthält unterschiedliche Mandanten " + b.getLabel(), ret,
+							"Die Liste enthält unterschiedliche Rechnungssteller " + b.getLabel(), ret,
 							true);
 					continue;
 				}
