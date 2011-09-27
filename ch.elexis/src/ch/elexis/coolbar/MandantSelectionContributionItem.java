@@ -45,12 +45,10 @@ import ch.elexis.preferences.PreferenceConstants;
 public class MandantSelectionContributionItem extends ContributionItem {
 	
 	/*
-	private static int[] colors = {
-		SWT.COLOR_RED, SWT.COLOR_YELLOW, SWT.COLOR_GREEN, SWT.COLOR_CYAN, SWT.COLOR_WHITE,
-		SWT.COLOR_MAGENTA
-	};
-	*/
-	//private int cl = colors.length;
+	 * private static int[] colors = { SWT.COLOR_RED, SWT.COLOR_YELLOW, SWT.COLOR_GREEN,
+	 * SWT.COLOR_CYAN, SWT.COLOR_WHITE, SWT.COLOR_MAGENTA };
+	 */
+	// private int cl = colors.length;
 	
 	private ToolItem item;
 	private Menu menu;
@@ -60,18 +58,21 @@ public class MandantSelectionContributionItem extends ContributionItem {
 	
 	private Color getColorForMandator(Mandant m){
 		return Desk.getColorFromRGB(Hub.globalCfg.get(
-			PreferenceConstants.USR_MANDATOR_COLORS_PREFIX + m.getLabel(), Desk.COL_GREY60));
+			PreferenceConstants.USR_MANDATOR_COLORS_PREFIX + m.getLabel(), Desk.COL_WHITE));
 	}
-	private ElexisEventListenerImpl eeli_mandant = new ElexisEventListenerImpl(Mandant.class, ElexisEvent.EVENT_MANDATOR_CHANGED) {
+	
+	private ElexisEventListenerImpl eeli_mandant = new ElexisEventListenerImpl(Mandant.class,
+		ElexisEvent.EVENT_MANDATOR_CHANGED) {
 		public void runInUi(ElexisEvent ev){
 			Mandant m = (Mandant) ev.getObject();
-			if(m != null) {
+			if (m != null) {
 				item.setText(m.getMandantLabel());
 				fParent.setBackground(getColorForMandator(m));
 				for (int i = 0; i < menuItems.length; i++) {
 					String id = (String) menuItems[i].getData();
-					if(m.getId().equalsIgnoreCase(id)) {
-						//fParent.setBackground(Display.getCurrent().getSystemColor(colors[i % cl]));
+					if (m.getId().equalsIgnoreCase(id)) {
+						// fParent.setBackground(Display.getCurrent().getSystemColor(colors[i %
+// cl]));
 						fParent.pack();
 						// TODO: Problem Anordnung Elemente in Coolbar speicherbar?
 						// TODO: Programmatische Anordnung Elemente coolbar
@@ -93,8 +94,8 @@ public class MandantSelectionContributionItem extends ContributionItem {
 		fParent = parent;
 		menu = new Menu(fParent);
 		item = new ToolItem(parent, SWT.DROP_DOWN);
-		item.setToolTipText("Aktuell ausgew√§hlter Mandant bzw. Mandantenauswahl");
-		item.setText("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
+		item.setToolTipText("Aktuell ausgewählter Mandant bzw. Mandantenauswahl");
+		// item.setText("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
 		
 		List<Mandant> qre = Hub.getMandantenList();
 		mandants = qre.toArray(new Mandant[] {});
@@ -104,7 +105,7 @@ public class MandantSelectionContributionItem extends ContributionItem {
 			final Mandant m = mandants[i];
 			menuItems[i] = new MenuItem(menu, SWT.RADIO);
 			menuItems[i].setText(m.getMandantLabel());
-			//menuItems[i].setImage(getBoxSWTColorImage(getColorForMandator(m)));
+			// menuItems[i].setImage(getBoxSWTColorImage(getColorForMandator(m)));
 			menuItems[i].setData(m.getId());
 			menuItems[i].addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -124,19 +125,19 @@ public class MandantSelectionContributionItem extends ContributionItem {
 					menu.setVisible(true);
 				}
 			}
-		});	
+		});
 	}
 	
-	private Image getBoxSWTColorImage(Color color) {
+	private Image getBoxSWTColorImage(Color color){
 		Display display = Display.getCurrent();
-	    Image image = new Image(display, 16, 16);
-	    GC gc = new GC(image);
-	    gc.setBackground(color);
-	    gc.fillRoundRectangle(0, 0, 16, 16, 8, 8);
-	    gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-	    gc.dispose();
-	    return image;
-	  }
+		Image image = new Image(display, 16, 16);
+		GC gc = new GC(image);
+		gc.setBackground(color);
+		gc.fillRoundRectangle(0, 0, 16, 16, 8, 8);
+		gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+		gc.dispose();
+		return image;
+	}
 	
 	@Override
 	public void dispose(){

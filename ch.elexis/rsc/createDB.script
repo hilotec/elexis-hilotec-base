@@ -38,19 +38,20 @@ CREATE TABLE KONTAKT(
 	Land			CHAR(3),					# country as ISO code
 	Geburtsdatum	CHAR(8),					# bithdate as yyyymmdd
 	Geschlecht		CHAR(1),					# sex m or w
-	TITEL			VARCHAR(20),				# title
-	Bezeichnung1	VARCHAR(80),				# name1
-	Bezeichnung2	VARCHAR(80),				# name2
-	Bezeichnung3	VARCHAR(80),				# name3
-	Strasse			VARCHAR(80),				# street
+	TITEL			VARCHAR(255),				# title
+	TitelSuffix		VARCHAR(255),
+	Bezeichnung1	VARCHAR(255),				# name1
+	Bezeichnung2	VARCHAR(255),				# name2
+	Bezeichnung3	VARCHAR(255),				# name3
+	Strasse			VARCHAR(255),				# street
 	Plz				VARCHAR(6),					# zip-code
-	Ort				VARCHAR(50),				# place (don't try Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch)
+	Ort				VARCHAR(255),				# place (don't try Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch)
 	Telefon1		VARCHAR(30),				# phone1
 	Telefon2		VARCHAR(30),				# phone2
 	Fax				VARCHAR(30),				# you'll guess it
 	NatelNr			VARCHAR(30),				# mobile
-	EMail			VARCHAR(80),				# guess 
-	Website			VARCHAR(80),
+	EMail			VARCHAR(255),				# guess 
+	Website			VARCHAR(255),
 	Gruppe			VARCHAR(10),				# mandator group
 	PatientNr		VARCHAR(40),				# external identifier
 	Anschrift		TEXT,						# postal (address sticker)
@@ -163,9 +164,9 @@ CREATE TABLE PATIENT_ARTIKEL_JOINT(
 	RezeptID		VARCHAR(25),					# prescription where this article was last given
 	DateFrom		CHAR(8),						# first date
 	DateUntil		CHAR(8),						# last date
-	Dosis			VARCHAR(10),					# number
+	Dosis			VARCHAR(255),					# number
 	Anzahl			CHAR(3),
-	Bemerkung		VARCHAR(80),
+	Bemerkung		VARCHAR(255),
 	ExtInfo			BLOB
 );
 
@@ -439,8 +440,8 @@ CREATE TABLE LABORITEMS(
 	typ			CHAR(1),
 	Gruppe		VARCHAR(25),
 	prio		CHAR(3),
-	billingcode	VARCHAR(20)						# Code for automatic billing (from e.g EAL2009)
-	
+	billingcode	VARCHAR(20),					# Code for automatic billing (from e.g EAL2009)
+	export		VARCHAR(100)
 );
 	
 CREATE INDEX labit1 on LABORITEMS(kuerzel);
@@ -615,6 +616,6 @@ CREATE TABLE DBIMAGE (
 CREATE INDEX DBIMAGE1 on DBIMAGE(Title);  
             
 
-INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.8');
-INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','2.1.0');
+INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.11');
+INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','2.1.6');
 

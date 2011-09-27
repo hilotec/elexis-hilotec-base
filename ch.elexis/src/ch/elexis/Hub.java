@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,6 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
- *    $Id: Hub.java b68ecce952fb 2011/08/09 10:44:58 rgw $
  *******************************************************************************/
 
 package ch.elexis;
@@ -75,8 +73,8 @@ public class Hub extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "ch.elexis"; //$NON-NLS-1$
 	public static final String COMMAND_PREFIX = PLUGIN_ID + ".commands."; //$NON-NLS-1$
 	static final String neededJRE = "1.6.0"; //$NON-NLS-1$
- public static final String Version = "2.1.6.dev"; //$NON-NLS-1$
-	public static final String DBVersion = "1.8.10"; //$NON-NLS-1$
+	public static final String Version = "2.1.6"; //$NON-NLS-1$
+	public static final String DBVersion = "1.8.11"; //$NON-NLS-1$
 	public static final String SWTBOTTEST_KEY = "ch.elexis.swtbottest.key"; //$NON-NLS-1$
 	static final String[] mine = {
 		"ch.elexis", "ch.rgw"}; //$NON-NLS-1$ //$NON-NLS-2$
@@ -214,7 +212,7 @@ public class Hub extends AbstractUIPlugin {
 				heart.addListener(lockListener, Heartbeat.FREQUENCY_LOW);
 			}
 		} catch (IOException ex) {
-			log.log("Can not aquire lock file in " + userDir+"; "+ex.getMessage(), Log.ERRORS); //$NON-NLS-1$
+			log.log("Can not aquire lock file in " + userDir + "; " + ex.getMessage(), Log.ERRORS); //$NON-NLS-1$
 		}
 	}
 	
@@ -436,7 +434,7 @@ public class Hub extends AbstractUIPlugin {
 	 * TimeTool(dat + "00").toString(TimeTool.FULL_GER); //$NON-NLS-1$ //$NON-NLS-2$ } } else { res
 	 * += Messages.Hub_compiletimenotknown; } } Hub.plugin.getBundle(). return res; }
 	 */
-
+	
 	public static String getRevision(final boolean withDate){
 		StringBuilder sb = new StringBuilder();
 		Bundle bundle = plugin.getBundle();

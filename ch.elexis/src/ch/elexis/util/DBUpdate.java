@@ -109,7 +109,7 @@ public class DBUpdate {
 			"CREATE TABLE LABGROUPS( ID VARCHAR(25) primary key, name VARCHAR(30));"
 				+ "CREATE TABLE LABGROUP_ITEM_JOINT(GroupID VARCHAR(25),"
 				+ "ItemID VARCHAR(25), Comment TEXT );",
-
+			
 			// 1.4.4
 			"ALTER TABLE REMINDERS ADD OriginID VARCHAR(25);"
 				+ "CREATE TABLE REMINDERS_RESPONSIBLE_LINK(" + "ID				VARCHAR(25) primary key,"
@@ -117,17 +117,17 @@ public class DBUpdate {
 				+ "CREATE INDEX rrl1 on REMINDERS_RESPONSIBLE_LINK (ReminderID);"
 				+ "CREATE INDEX rrl2 on REMINDERS_RESPONSIBLE_LINK (ResponsibleID);"
 				+ "ALTER TABLE PATIENT_ARTIKEL_JOINT ADD ExtInfo BLOB;",
-
+			
 			// 1.4.5
 			"ALTER TABLE ARTIKEL ADD Klasse VARCHAR(80);",
-
+			
 			// 1.4.6
 			"ALTER TABLE LABORITEMS MODIFY titel VARCHAR(80);"
 				+ "ALTER TABLE LABORITEMS MODIFY kuerzel VARCHAR(80);",
-
+			
 			// 1.5.0
 			"ALTER TABLE HEAP MODIFY ID VARCHAR(80);",
-
+			
 			// 1.6.0
 			"ALTER TABLE HEAP ADD datum CHAR(8);"
 				+ "ALTER TABLE KONTAKT ADD deleted CHAR(1) default '0';"
@@ -163,7 +163,7 @@ public class DBUpdate {
 				+ "CREATE TABLE LOGS(ID			VARCHAR(25) primary key," + "OID		VARCHAR(80),"
 				+ "datum		CHAR(8)," + "typ		VARCHAR(20)," + "userID		VARCHAR(25),"
 				+ "station	VARCHAR(40)," + "ExtInfo		BLOB);",
-
+			
 			// 1.6.1
 			"CREATE TABLE XID(" + "ID			VARCHAR(25) primary key," + "deleted	CHAR(1) default '0',"
 				+ "type		VARCHAR(80)," + "object		VARCHAR(25)," + "domain		VARCHAR(255),"
@@ -171,41 +171,41 @@ public class DBUpdate {
 				+ "CREATE INDEX XIDIDX1 on XID(domain);"
 				+ "CREATE INDEX XIDIDX2 on XID(domain_id);"
 				+ "CREATE INDEX XIDIDX3 on XID(object);",
-
+			
 			// 1.6.2
 			"ALTER TABLE AUF ADD DatumAUZ CHAR(8);" + "ALTER TABLE ARTIKEL ADD LastUpdate CHAR(8);",
-
+			
 			// 1.6.3.
 			"ALTER TABLE ARTIKEL ADD EAN VARCHAR(15);",
-
+			
 			// 1.6.4
 			"ALTER TABLE HEAP ADD lastupdate CHAR(14);"
 				+ "ALTER TABLE HEAP2 ADD lastupdate CHAR(14)",
-
+			
 			// 1.7.0
 			"CREATE TABLE ETIKETTEN(" + "ID          VARCHAR(25) primary key,"
 				+ "Image       VARCHAR(25)," + "deleted     CHAR(1) default '0',"
 				+ "importance	 integer," + "Name        VARCHAR(40)," + "foreground  CHAR(6),"
 				+ "background  CHAR(6)" + ");" + "CREATE INDEX ETIKETTE1 on ETIKETTEN(Name);" +
-
+				
 				"CREATE TABLE ETIKETTEN_OBJECT_LINK(" + "	obj			VARCHAR(25),"
 				+ "	etikette	VARCHAR(25)" + ");"
 				+ "CREATE INDEX ETIKETTE2 on ETIKETTEN_OBJECT_LINK(obj);"
 				+ "CREATE INDEX ETIKETTE3 on ETIKETTEN_OBJECT_LINK(etikette);" +
-
+				
 				"CREATE TABLE DBIMAGE (" + "ID				VARCHAR(25) primary key,"
 				+ "deleted		CHAR(1) default '0'," + "Datum			CHAR(8)," + "Title 			VARCHAR(80),"
 				+ "Bild			BLOB" + ");" + "CREATE INDEX DBIMAGE1 on DBIMAGE(Title);",
-
+			
 			// 1.7.1
 			"ALTER TABLE LABORITEMS MODIFY Einheit VARCHAR(20);"
 				+ "ALTER TABLE ETIKETTEN MODIFY importance VARCHAR(7);",
-
+			
 			// 1.7.2
 			"ALTER TABLE LEISTUNGEN ADD SCALE2 CHAR(4);"
 				+ "ALTER TABLE ETIKETTEN ADD classes VARCHAR(255);"
 				+ "ALTER TABLE LABORWERTE ADD zeit CHAR(6);",
-
+			
 			// 1.8.0
 			"DROP TABLE PATIENT_GARANT_JOINT;" + "DROP TABLE PLZ;"
 				+ "ALTER TABLE KONTAKT ADD lastupdate BIGINT;"
@@ -246,20 +246,20 @@ public class DBUpdate {
 				+ "ALTER TABLE DBIMAGE ADD lastupdate BIGINT;" + "CREATE TABLE ARTIKEL_DETAILS("
 				+ "ARTICLE_ID      VARCHAR(25)," + "notes           TEXT," + "image           BLOB"
 				+ ");",
-
+			
 			// 1.8.1
 			"ALTER TABLE AUF MODIFY Grund VARCHAR(50);"
 				+ "ALTER TABLE LABORITEMS ADD billingcode VARCHAR(20);",
-
+			
 			// 1.8.2
 			"ALTER TABLE PATIENT_ARTIKEL_JOINT ADD Artikel VARCHAR(80);",
-
+			
 			// 1.8.3
 			"ALTER TABLE LOGS ADD deleted CHAR(1) default '0';",
-
+			
 			// 1.8.4
 			"ALTER TABLE KONTAKT MODIFY EMail VARCHAR(80);",
-
+			
 			// 1.8.5
 			"ALTER TABLE ARTIKEL ADD ValidFrom CHAR(8);"
 				+ "ALTER TABLE ARTIKEL ADD ValidTo   CHAR(8);" + "CREATE TABLE OUTPUT_LOG("
@@ -268,30 +268,55 @@ public class DBUpdate {
 				+ "ObjectType		VARCHAR(80)," + "Datum			CHAR(8)," + "Outputter		VARCHAR(80),"
 				+ "ExtInfo		BLOB);" + "create INDEX bal_i1 ON OUTPUT_LOG (ObjectID);"
 				+ "ALTER TABLE DBIMAGE ADD Prefix VARCHAR(80);",
-
+			
 			// 1.8.6
 			"CREATE TABLE ETIKETTEN_OBJCLASS_LINK(" + "objclass VARCHAR(80),"
 				+ "sticker VARCHAR(25));"
 				+ "CREATE INDEX eol1 on ETIKETTEN_OBJCLASS_LINK(objclass);",
-
+			
 			// 1.8.7
 			"ALTER TABLE LOGS MODIFY station VARCHAR(40);",
-
+			
 			// 1.8.8
 			"ALTER TABLE KONTAKT_ADRESS_JOINT MODIFY Bezug VARCHAR(80);",
-
+			
 			// 1.8.9
 			"ALTER TABLE LABORITEMS ADD EXPORT VARCHAR(100);",
-
+			
 			// 1.8.10
 			// Gerry Weirich in einem Mail vom 26.06.2011
-			// In früheren Elexis-Versionen wurden Formeln direkt im Feld abgelegt,
-			// aktuell sind es Scripts (Also Objekte vom typ ch.elexis.data.Script)
+			// In früheren Elexis-Versionen wurden Formeln direkt im Feld
+			// abgelegt,
+			// aktuell sind es Scripts (Also Objekte vom typ
+			// ch.elexis.data.Script)
 			// und das Feld muss nur noch den Namen des Scripts halten.
 			"DELETE FROM LABORITEMS where length(RefFrauOrTx) > 256;"
 				+ "ALTER TABLE LABORITEMS MODIFY RefFrauOrTx VARCHAR(256);"
-				+ "ALTER TABLE LABORITEMS MODIFY RefMann     VARCHAR(256);"
+				+ "ALTER TABLE LABORITEMS MODIFY RefMann     VARCHAR(256);",
+			
+			// 1.8.11
+			// M. Descher (9.9.2011)
+			// Anmerkung: Der JPA Standard reserviert für jeden String-Typ ein
+			// Element vom Typ VARCHAR(255), da heutige DB Systeme keine großen
+			// Einschränkungen dadurch tragen. Es werden daher ab 9.9.2011 per
+			// Beschluss Release Meeting 14 sämtliche Felder, falls größer
+			// benötigt, standardmässig auf 255 gesetzt.
+			"ALTER TABLE KONTAKT MODIFY Bezeichnung1 VARCHAR(255);"
+				+ "ALTER TABLE KONTAKT MODIFY Bezeichnung2 VARCHAR(255);"
+				+ "ALTER TABLE KONTAKT MODIFY Bezeichnung3 VARCHAR(255);"
+				+ "ALTER TABLE KONTAKT MODIFY Strasse VARCHAR(255);"
+				+ "ALTER TABLE KONTAKT MODIFY Ort VARCHAR(255);"
+				// (please try
+				// Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch
+				// :-)
+				+ "ALTER TABLE KONTAKT MODIFY Email VARCHAR(255);"
+				+ "ALTER TABLE KONTAKT MODIFY Website VARCHAR(255);"
+				+ "ALTER TABLE KONTAKT MODIFY Titel VARCHAR(255);"
+				+ "ALTER TABLE KONTAKT ADD TitelSuffix VARCHAR(255);"
+				+ "ALTER TABLE PATIENT_ARTIKEL_JOINT MODIFY Dosis VARCHAR(255);"
+				+ "ALTER TABLE PATIENT_ARTIKEL_JOINT MODIFY Bemerkung VARCHAR(255);"
 		};
+	
 	static Log log = Log.get("DBUpdate");
 	
 	static VersionInfo vi;
@@ -314,28 +339,32 @@ public class DBUpdate {
 		} else {
 			vi = new VersionInfo(dbv);
 		}
-
+		
 		List<String> sqlStrings = new ArrayList<String>();
 		for (int i = 0; i < versions.length; i++) {
 			if (vi.isOlder(versions[i])) {
 				String[] cmd = cmds[i].split(";");
-				for(int cmdIdx = 0; cmdIdx < cmd.length; cmdIdx++)
+				for (int cmdIdx = 0; cmdIdx < cmd.length; cmdIdx++)
 					sqlStrings.add(cmd[cmdIdx]);
 			}
 		}
 		// create log message
-		log.log("Start DBUpdate from Version " + dbv + " to Version " + versions[versions.length-1], Log.INFOS);
+		log.log("Start DBUpdate from Version " + dbv + " to Version "
+			+ versions[versions.length - 1], Log.INFOS);
 		
-		SqlWithUiRunner runner = new SqlWithUiRunner(sqlStrings.toArray(new String[0]), Hub.PLUGIN_ID);
+		SqlWithUiRunner runner =
+			new SqlWithUiRunner(sqlStrings.toArray(new String[0]), Hub.PLUGIN_ID);
 		// update version if all updates are successful
-		if(runner.runSql()) {
+		if (runner.runSql()) {
 			Hub.globalCfg.set("dbversion", Hub.DBVersion);
 			Hub.globalCfg.set("ElexisVersion", Hub.Version);
 			Hub.globalCfg.flush();
 			// create log message
-			log.log("DBUpdate from Version " + dbv + " to Version " + versions[versions.length-1] + " successful.", Log.INFOS);
+			log.log("DBUpdate from Version " + dbv + " to Version " + versions[versions.length - 1]
+				+ " successful.", Log.INFOS);
 		} else {
-			log.log("DBUpdate from Version " + dbv + " to Version " + versions[versions.length-1] + " failed.", Log.ERRORS);
+			log.log("DBUpdate from Version " + dbv + " to Version " + versions[versions.length - 1]
+				+ " failed.", Log.ERRORS);
 		}
 	}
 }
