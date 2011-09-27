@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,6 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
- * $Id$
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -16,18 +14,8 @@ package ch.elexis.util;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.runtime.AssertionFailedException;
-import org.eclipse.ui.statushandlers.StatusManager;
-
 import ch.elexis.Hub;
-import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
-import ch.elexis.data.Rechnung;
-import ch.elexis.status.ElexisStatus;
-import ch.rgw.tools.JdbcLink;
-import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
-import ch.rgw.tools.JdbcLink.Stm;
 
 /**
  * Änderungen der Datenbank im Rahmen eines update durchführen.
@@ -42,7 +30,7 @@ public class DBUpdate {
 		"1.3.10", "1.3.11", "1.3.12", "1.3.13", "1.4.0", "1.4.1", "1.4.2", "1.4.3", "1.4.4",
 		"1.4.5", "1.4.6", "1.5.0", "1.6.0", "1.6.1", "1.6.2", "1.6.3", "1.6.4", "1.7.0", "1.7.1",
 		"1.7.2", "1.8.0", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5", "1.8.6", "1.8.7", "1.8.8",
-		"1.8.9", "1.8.10"
+		"1.8.9", "1.8.10", "1.8.11"
 	};
 	static final String[] cmds =
 		{
