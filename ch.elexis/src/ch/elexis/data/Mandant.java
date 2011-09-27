@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *    $Id: Mandant.java 6324 2010-05-02 11:31:51Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -85,5 +85,8 @@ public class Mandant extends Anwender {
 			StringConstants.ONE, StringConstants.ONE
 		});
 	}
-	
+
+	public String getMandantLabel(){
+		return getName()+" "+getVorname()+" ("+getLabel()+")";
+	}
 }

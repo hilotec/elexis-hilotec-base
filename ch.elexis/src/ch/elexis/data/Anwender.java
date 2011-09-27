@@ -154,6 +154,7 @@ public class Anwender extends Person {
 		return ret;
 	}
 	
+	/* Does not Work, Crash if Mandator has no firstname 
 	@Override
 	public String getKuerzel(){
 		String[] res = new String[2];
@@ -162,6 +163,7 @@ public class Anwender extends Person {
 		}, res);
 		return res[0].substring(0, 1) + res[1].substring(0, 1);
 	}
+	*/
 	
 	public static Anwender load(final String id){
 		Anwender ret = new Anwender(id);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,6 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id: Mandanten.java 6352 2010-05-12 17:04:22Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -19,13 +17,18 @@ import java.util.List;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.forms.widgets.Form;
@@ -49,17 +52,18 @@ import ch.elexis.util.SWTHelper;
 public class Mandanten extends PreferencePage implements IWorkbenchPreferencePage {
 	private LabeledInputField.AutoForm lfa;
 	private InputData[] def;
+	private Label lColor;
 	
 	private Hashtable<String, Mandant> hMandanten = new Hashtable<String, Mandant>();
 	
 	@Override
-	protected Control createContents(Composite parent){
+	protected Control createContents(final Composite parent){
 		if (Hub.acl.request(AccessControlDefaults.ACL_USERS)) {
 			FormToolkit tk = Desk.getToolkit();
 			Form form = tk.createForm(parent);
-			Composite body = form.getBody();
+			final Composite body = form.getBody();
 			body.setLayout(new GridLayout(1, false));
-			Combo mandanten = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
+			final Combo mandanten = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
 			Query<Mandant> qbe = new Query<Mandant>(Mandant.class);
 			List<Mandant> list = qbe.execute();
 			for (Mandant m : (List<Mandant>) list) {
@@ -73,6 +77,8 @@ public class Mandanten extends PreferencePage implements IWorkbenchPreferencePag
 					Combo source = (Combo) e.getSource();
 					String m = (source.getItem(source.getSelectionIndex()));
 					Mandant man = hMandanten.get(m);
+					lColor.setBackground(Desk.getColorFromRGB(Hub.globalCfg.get(
+						PreferenceConstants.USR_MANDATOR_COLORS_PREFIX + m, Desk.COL_GREY60)));
 					lfa.reload(man);
 				}
 				
@@ -83,6 +89,22 @@ public class Mandanten extends PreferencePage implements IWorkbenchPreferencePag
 			tk.adapt(mandanten);
 			lfa = new LabeledInputField.AutoForm(body, def);
 			lfa.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+			lColor = new Label(body, SWT.NONE);
+			lColor.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+			lColor.setText("Color for mandator");
+			lColor.addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseDoubleClick(MouseEvent e){
+					ColorDialog cd = new ColorDialog(getShell());
+					Label l = (Label) e.getSource();
+					RGB selected = cd.open();
+					String symbolic = Desk.createColor(selected);
+					l.setBackground(Desk.getColorFromRGB(symbolic));
+					Hub.globalCfg.set(
+						PreferenceConstants.USR_MANDATOR_COLORS_PREFIX
+							+ mandanten.getItem(mandanten.getSelectionIndex()), symbolic);
+				}
+			});
 			tk.paintBordersFor(body);
 			return form;
 		} else {

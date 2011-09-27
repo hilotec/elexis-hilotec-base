@@ -791,6 +791,13 @@
                   tooltip="%command.showViews">
             </command>
          </toolbar>
+         <toolbar
+               id="ch.elexis.coolbar.MandantSelection">
+            <dynamic
+                  class="ch.elexis.coolbar.MandantSelectionContributionItem"
+                  id="ch.elexis.coolbar.MandantSelectionContributionItem">
+            </dynamic>
+         </toolbar>
       </menuContribution>
    </extension>
 

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *    $Id: PreferenceConstants.java 5320 2009-05-27 16:51:14Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 
 package ch.elexis.preferences;
@@ -88,6 +88,7 @@ public class PreferenceConstants {
 	public static final String USR_PATLIST_SHOWNAME = "anwender/patlist/zeigename"; //$NON-NLS-1$
 	public static final String USR_PATLIST_SHOWFIRSTNAME = "anwender/patlist/zeigevorname"; //$NON-NLS-1$
 	public static final String USR_PATLIST_SHOWDOB = "anwender/patlist/zeigegebdat"; //$NON-NLS-1$
+	public static final String USR_MANDATOR_COLORS_PREFIX="mandanten/farben/"; 
 	
 	// Menu item "lock perspectives" (GlobalActions.fixLayoutAction)
 	public static final String USR_FIX_LAYOUT = "perspectives/fix_layout"; //$NON-NLS-1$
