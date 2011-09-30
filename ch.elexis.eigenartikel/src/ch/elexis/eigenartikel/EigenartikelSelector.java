@@ -21,6 +21,7 @@ import ch.elexis.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.util.viewers.ViewerConfigurer.DefaultButtonProvider;
+import ch.elexis.views.artikel.ArtikelContextMenu;
 import ch.elexis.views.artikel.ArtikelLabelProvider;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 
@@ -28,6 +29,9 @@ public class EigenartikelSelector extends CodeSelectorFactory {
 	
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
+		new ArtikelContextMenu((Eigenartikel) new EigenartikelPersistentObjectFactory().createTemplate(Eigenartikel.class), 
+			cv, null);
+		
 		EigenartikelLoader eal = new EigenartikelLoader(cv);
 		DefaultControlFieldProvider dcfp = new DefaultControlFieldProvider(cv, new String[] {
 			Eigenartikel.FLD_NAME

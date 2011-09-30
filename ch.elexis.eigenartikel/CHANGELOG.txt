@@ -7,3 +7,6 @@
 1.0.3 - 16.05.2011
 	- Modified PersistentObjectFactory to accept "ch.elexis.data.Eigenartikel" datatype
 	- Removed extension point dbcheck dependency, will be outsourced into a fragment
+1.0.4 - 1.0.6 ??? No documentation made by changing user
+1.0.7 - 30.9.2011
+	- Fix for missing context menu in Selector View
