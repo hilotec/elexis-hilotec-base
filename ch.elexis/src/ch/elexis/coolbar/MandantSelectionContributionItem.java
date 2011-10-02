@@ -13,6 +13,8 @@ package ch.elexis.coolbar;
 import java.util.List;
 
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.ICoolBarManager;
+import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -28,6 +30,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.PlatformUI;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -44,26 +47,17 @@ import ch.elexis.preferences.PreferenceConstants;
  */
 public class MandantSelectionContributionItem extends ContributionItem {
 	
-	/*
-	 * private static int[] colors = { SWT.COLOR_RED, SWT.COLOR_YELLOW, SWT.COLOR_GREEN,
-	 * SWT.COLOR_CYAN, SWT.COLOR_WHITE, SWT.COLOR_MAGENTA };
-	 */
-	// private int cl = colors.length;
 	
 	private ToolItem item;
 	private Menu menu;
 	private Mandant[] mandants;
 	private MenuItem[] menuItems;
 	private ToolBar fParent;
-	
-	private Color getColorForMandator(Mandant m){
-		return Desk.getColorFromRGB(Hub.globalCfg.get(
-			PreferenceConstants.USR_MANDATOR_COLORS_PREFIX + m.getLabel(), Desk.COL_WHITE));
-	}
-	
+		
 	private ElexisEventListenerImpl eeli_mandant = new ElexisEventListenerImpl(Mandant.class,
 		ElexisEvent.EVENT_MANDATOR_CHANGED) {
 		public void runInUi(ElexisEvent ev){
+			ICoolBarManager icb = ((ApplicationWindow) PlatformUI.getWorkbench().getActiveWorkbenchWindow()).getCoolBarManager2();
 			Mandant m = (Mandant) ev.getObject();
 			if (m != null) {
 				item.setText(m.getMandantLabel());
@@ -74,9 +68,10 @@ public class MandantSelectionContributionItem extends ContributionItem {
 						// fParent.setBackground(Display.getCurrent().getSystemColor(colors[i %
 // cl]));
 						fParent.pack();
-						// TODO: Problem Anordnung Elemente in Coolbar speicherbar?
+						// TODO: Anordnung Elemente in Coolbar speicherbar?
 						// TODO: Programmatische Anordnung Elemente coolbar
 						menuItems[i].setSelection(true);
+						icb.update(true);
 					} else {
 						menuItems[i].setSelection(false);
 					}
@@ -91,21 +86,22 @@ public class MandantSelectionContributionItem extends ContributionItem {
 	
 	@Override
 	public void fill(ToolBar parent, int index){
+		List<Mandant> qre = Hub.getMandantenList();
+		mandants = qre.toArray(new Mandant[] {});
+		if(mandants.length<2) return;
+			
 		fParent = parent;
 		menu = new Menu(fParent);
 		item = new ToolItem(parent, SWT.DROP_DOWN);
 		item.setToolTipText("Aktuell ausgewählter Mandant bzw. Mandantenauswahl");
-		// item.setText("\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t");
 		
-		List<Mandant> qre = Hub.getMandantenList();
-		mandants = qre.toArray(new Mandant[] {});
 		menuItems = new MenuItem[mandants.length];
 		
 		for (int i = 0; i < mandants.length; i++) {
 			final Mandant m = mandants[i];
 			menuItems[i] = new MenuItem(menu, SWT.RADIO);
 			menuItems[i].setText(m.getMandantLabel());
-			// menuItems[i].setImage(getBoxSWTColorImage(getColorForMandator(m)));
+			menuItems[i].setImage(getBoxSWTColorImage(getColorForMandator(m)));
 			menuItems[i].setData(m.getId());
 			menuItems[i].addSelectionListener(new SelectionAdapter() {
 				@Override
@@ -115,6 +111,7 @@ public class MandantSelectionContributionItem extends ContributionItem {
 			});
 		}
 		
+
 		item.addListener(SWT.Selection, new Listener() {
 			public void handleEvent(Event event){
 				if (event.detail == SWT.ARROW || event.type == SWT.Selection) {
@@ -139,6 +136,11 @@ public class MandantSelectionContributionItem extends ContributionItem {
 		return image;
 	}
 	
+	private Color getColorForMandator(Mandant m){
+		return Desk.getColorFromRGB(Hub.globalCfg.get(
+			PreferenceConstants.USR_MANDATOR_COLORS_PREFIX + m.getLabel(), Desk.COL_GREY60));
+	}
+
 	@Override
 	public void dispose(){
 		ElexisEventDispatcher.getInstance().removeListeners(eeli_mandant);
