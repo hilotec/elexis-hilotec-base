@@ -14,6 +14,7 @@
  *******************************************************************************/
 package elexis_db_shaker.actions;
 
+import java.io.FileNotFoundException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
@@ -135,26 +136,30 @@ public class Shake implements IWorkbenchWindowActionDelegate {
 	}
 	
 	private void doShakeKons(IProgressMonitor monitor, int workUnits){
-		monitor.subTask("Anonymisiere Konsultationen");
-		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
-		List<Konsultation> list = qbe.execute();
-		int workPerKons = (Math.round(workUnits * .8f) / list.size());
-		Lipsum lipsum = new Lipsum();
-		monitor.worked(Math.round(workUnits * .2f));
-		for (Konsultation k : list) {
-			VersionedResource vr = k.getEintrag();
-			StringBuilder par = new StringBuilder();
-			int numPars = (int) Math.round(3 * Math.random() + 1);
-			while (numPars-- > 0) {
-				par.append(lipsum.getParagraph());
+		try {
+			monitor.subTask("Anonymisiere Konsultationen");
+			Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
+			List<Konsultation> list = qbe.execute();
+			int workPerKons = (Math.round(workUnits * .8f) / list.size());
+			Lipsum lipsum = new Lipsum();
+			monitor.worked(Math.round(workUnits * .2f));
+			for (Konsultation k : list) {
+				VersionedResource vr = k.getEintrag();
+				StringBuilder par = new StringBuilder();
+				int numPars = (int) Math.round(3 * Math.random() + 1);
+				while (numPars-- > 0) {
+					par.append(lipsum.getParagraph());
+				}
+				vr.update(par.toString(), "random contents");
+				k.setEintrag(vr, true);
+				k.purgeEintrag();
+				if (monitor.isCanceled()) {
+					break;
+				}
+				monitor.worked(workPerKons);
 			}
-			vr.update(par.toString(), "random contents");
-			k.setEintrag(vr, true);
-			k.purgeEintrag();
-			if (monitor.isCanceled()) {
-				break;
-			}
-			monitor.worked(workPerKons);
+		} catch (Throwable e) {
+			SWTHelper.showError("Fehler", e.getMessage());
 		}
 	}
 	
