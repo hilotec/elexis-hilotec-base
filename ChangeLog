@@ -1,6 +1,21 @@
 Offene Probleme
 - Tests von agenda, arzttarife von trunk sind noch nicht migriert
 
+Changelog für 2.1.6.rc2
+d0393e0b2c12: 2011-09-26: thomashu: Ticket: #581 - implementation for rechnungssteller based billing, and enforcing obligation and non obligation to separate Fall
+bf898058c95f: 2011-10-03: rgw@iMac: fix consultation anonymizer
+1b9b5adbacf8: 2011-10-02: Niklaus Giger: Ticket 557: Mandantenwechsel per Knopfdruck
+0463a33facab: 2011-09-30: mdescher: Ticket 611: v1.0.7 fix for missing context menu
+afb0b241cce6: 2011-09-27: rgw@macbook: add 1.8.11 to update list
+1b52fefefa19: 2011-09-27: rgw@macbook: update createDB script to match dbUpdate. Change version informations.
+5b911aa0331e: 2011-09-27: rgw@macbook: remove dependency from scala plugin
+592e4e378f5a: 2011-09-27: rgw@macbook: port MandantSelection from 2.1.dev (#557)
+5cd08b5e5235: 2011-09-23: Niklaus Giger: Ticket #505: Use james@bond.invalid instead of james@bond.uk
+8d0a497fd6ea: 2011-09-21: thomashu: Ticket #86: fixed NPE if Mandant has no MWSt. Preference set.
+80dca8f95cd9: 2011-09-08: Niklaus Giger: Added variable for downloadsFrom. Create symlink for macosx zipfiles
+5c51bf665f9e: 2011-09-02: Niklaus Giger: Failonerror on symlink to false
+287a9ef4008f: 2011-09-02: Niklaus Giger: Fetch from ftp.medelexis. Fixes for Jubula
+
 Changelog für 2.1.6.rc1
 
 edc6b6adea02: 2011-08-26: Niklaus Giger: Ticket #546: Use medelexis-packager-1.0.0.jar in build.xml
