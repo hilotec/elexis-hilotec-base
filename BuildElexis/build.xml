@@ -325,7 +325,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 			<zipfileset file="${rsc}/macosx/starter-mac.ini" fullpath="elexis.app/Contents/MacOS/starter-mac.ini" />
 		</zip>
 		<symlink action="delete" link="${output}/elexis-${os}-install.zip" failonerror="false" />
-		<symlink link="${output}/elexis-${os}-install.zip" resource="${output}/elexis-macosx-${version}.${DSTAMP}.zip" />
+		<symlink link="${output}/elexis-${os}-install.zip" resource="./elexis-macosx-${version}.${DSTAMP}.zip" />
 	</target>
 
 	<target name="linux" depends="initialize">
@@ -382,7 +382,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<echo message="Running IzPack to build the installer..." />
 		<izpack input="${rsc}/installer.xml" output="${output}/elexis-${os}-${version}.${DSTAMP}-install.jar" installerType="standard" inheritAll="true" basedir="${dist}" compression="deflate" compressionlevel="9" />
 		<symlink action="delete" link="${output}/elexis-${os}-install.jar" failonerror="false" />
-		<symlink link="${output}/elexis-${os}-install.jar" resource="${output}/elexis-${os}-${version}.${DSTAMP}-install.jar" />
+		<symlink link="${output}/elexis-${os}-install.jar" resource="./elexis-${os}-${version}.${DSTAMP}-install.jar" />
 
 
 	</target>
