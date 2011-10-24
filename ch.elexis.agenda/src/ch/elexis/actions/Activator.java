@@ -18,6 +18,7 @@ import org.osgi.framework.BundleContext;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
@@ -99,6 +100,12 @@ public class Activator extends AbstractUIPlugin {
 	public void setActResource(final String resname){
 		actResource = resname;
 		Hub.userCfg.set(PreferenceConstants.AG_BEREICH, resname);
+		Desk.asyncExec(new Runnable() {	
+			@Override
+			public void run(){
+				BereichSelectionHandler.updateListeners();
+			}
+		});
 	}
 	
 	public TimeTool getActDate(){

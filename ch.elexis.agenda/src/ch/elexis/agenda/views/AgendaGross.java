@@ -44,6 +44,8 @@ import org.eclipse.ui.PartInitException;
 
 import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.IBereichSelectionEvent;
+import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.TagesNachricht;
@@ -77,12 +79,18 @@ public class AgendaGross extends BaseAgendaView {
 	Text terminDetail;
 	Label lbDetails;
 	Label lbDayString;
+	private static Button[] bChange;
+	
 	private static final String[] columnTitles = {
 		"von", "bis", "Typ", "Status", "Personalien", "Grund"
 	};
 	private static final int[] columnWidths = {
 		30, 30, 50, 70, 300, 200
 	};
+	
+	public AgendaGross(){
+		BereichSelectionHandler.addBereichSelectionListener(this);
+	}
 	
 	@Override
 	public void create(Composite parent){
@@ -107,12 +115,13 @@ public class AgendaGross extends BaseAgendaView {
 		String[] bereiche =
 			Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE, Messages.TagesView_14).split(","); //$NON-NLS-1$
 		ChangeBereichAdapter chb = new ChangeBereichAdapter();
-		for (String bereich : bereiche) {
-			Button bChange = new Button(cButtons, SWT.RADIO);
-			bChange.setText(bereich);
-			bChange.addSelectionListener(chb);
-			if (bereich.equals(agenda.getActResource())) {
-				bChange.setSelection(true);
+		bChange = new Button[bereiche.length];
+		for (int i = 0; i < bereiche.length; i++) {
+			bChange[i] = new Button(cButtons, SWT.RADIO);
+			bChange[i].setText(bereiche[i]);
+			bChange[i].addSelectionListener(chb);
+			if (bereiche[i].equals(agenda.getActResource())) {
+				bChange[i].setSelection(true);
 			}
 		}
 		tv = new TableViewer(ret, SWT.FULL_SELECTION | SWT.SINGLE);
@@ -397,6 +406,19 @@ public class AgendaGross extends BaseAgendaView {
 				}
 			}
 		};
+	}
+
+	@Override
+	public void bereichSelectionEvent(String bereich){
+		super.bereichSelectionEvent(bereich);
+		for (Button b : bChange) {
+			if(b.getText().equalsIgnoreCase(bereich)) {
+				b.setSelection(true);
+			} else {
+				b.setSelection(false);
+			}
+		}
+		
 	}
 	
 }

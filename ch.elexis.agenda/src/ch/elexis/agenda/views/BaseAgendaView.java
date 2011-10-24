@@ -14,6 +14,7 @@ package ch.elexis.agenda.views;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -30,6 +31,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -48,12 +50,15 @@ import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.actions.Heartbeat.HeartListener;
+import ch.elexis.actions.IBereichSelectionEvent;
+import ch.elexis.agenda.BereichSelectionHandler;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.ICalTransfer;
 import ch.elexis.agenda.data.IPlannable;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.agenda.ui.BereichMenuCreator;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Kontakt;
@@ -69,7 +74,7 @@ import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.TimeTool;
 
-public abstract class BaseAgendaView extends ViewPart implements HeartListener, IActivationListener {
+public abstract class BaseAgendaView extends ViewPart implements HeartListener, IActivationListener, IBereichSelectionEvent {
 	
 	// protected Synchronizer pinger;
 	protected SelectionListener sListen = new SelectionListener();
@@ -80,6 +85,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 	protected IAction dayLimitsAction, newViewAction, printAction, exportAction, importAction,
 			newTerminForAction;
 	protected IAction printPatientAction;
+	private BereichMenuCreator bmc = new BereichMenuCreator();
 	MenuManager menu = new MenuManager();
 	protected Log log = Log.get("Agenda"); //$NON-NLS-1$
 	Activator agenda = Activator.getDefault();
@@ -111,9 +117,12 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 				
 			}
 		};
+	private IMenuManager mgr;
+	private IAction bereichMenu;
 	
 	protected BaseAgendaView(){
 		self = this;
+		BereichSelectionHandler.addBereichSelectionListener(this);
 	}
 	
 	abstract public void create(Composite parent);
@@ -216,9 +225,6 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 	
 	public void setBereich(String b){
 		agenda.setActResource(b);
-		setPartName("Agenda " + b); //$NON-NLS-1$
-		Hub.userCfg.set(PreferenceConstants.AG_BEREICH, b);
-		eeli_termin.catchElexisEvent(new ElexisEvent(null, Termin.class, ElexisEvent.EVENT_RELOAD));
 	}
 	
 	public abstract void setTermin(Termin t);
@@ -259,7 +265,6 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 				}
 			}
 		}
-		
 	}
 	
 	protected void updateActions(){
@@ -282,6 +287,7 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 				tv.refresh(true);
 			}
 		};
+		dayLimitsAction.setId("ch.elexis.agenda.actions.dayLimitsAction");
 		
 		blockAction = new Action(Messages.TagesView_lockPeriod) {
 			@Override
@@ -464,54 +470,16 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 				ict.doImport(agenda.getActResource());
 			}
 		};
-		final IAction bereichMenu =
-			new Action(Messages.TagesView_bereich, Action.AS_DROP_DOWN_MENU) {
-				Menu mine;
-				{
-					setToolTipText(Messages.TagesView_selectBereich);
-					setMenuCreator(new IMenuCreator() {
-						
-						public void dispose(){
-							mine.dispose();
-						}
-						
-						public Menu getMenu(Control parent){
-							mine = new Menu(parent);
-							fillMenu();
-							return mine;
-						}
-						
-						public Menu getMenu(Menu parent){
-							mine = new Menu(parent);
-							fillMenu();
-							return mine;
-						}
-					});
-				}
-				
-				private void fillMenu(){
-					String[] sMandanten =
-						Hub.globalCfg.get(PreferenceConstants.AG_BEREICHE,
-							Messages.TagesView_praxis).split(","); //$NON-NLS-1$
-					for (String m : sMandanten) {
-						MenuItem it = new MenuItem(mine, SWT.NONE);
-						it.setText(m);
-						it.addSelectionListener(new SelectionAdapter() {
-							
-							@Override
-							public void widgetSelected(SelectionEvent e){
-								MenuItem mi = (MenuItem) e.getSource();
-								setBereich(mi.getText());
-								// tv.refresh();
-							}
-							
-						});
-					}
-				}
-				
-			};
+		bereichMenu = new Action(Messages.TagesView_bereich, Action.AS_DROP_DOWN_MENU) {
+			Menu mine;
+			{
+				setToolTipText(Messages.TagesView_selectBereich);
+				setMenuCreator(bmc);
+			}
+
+		};
 		
-		IMenuManager mgr = getViewSite().getActionBars().getMenuManager();
+		mgr = getViewSite().getActionBars().getMenuManager();
 		mgr.add(bereichMenu);
 		mgr.add(dayLimitsAction);
 		mgr.add(newViewAction);
@@ -521,4 +489,9 @@ public abstract class BaseAgendaView extends ViewPart implements HeartListener, 
 		mgr.add(printPatientAction);
 	}
 	
+	@Override
+	public void bereichSelectionEvent(String bereich){
+		setPartName("Agenda " + bereich);
+		eeli_termin.catchElexisEvent(new ElexisEvent(null, Termin.class, ElexisEvent.EVENT_RELOAD));
+	}
 }
