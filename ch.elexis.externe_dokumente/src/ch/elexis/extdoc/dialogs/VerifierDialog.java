@@ -9,7 +9,6 @@
  *    Daniel Lutz - initial implementation
  *    G. Weirich - small changes to follow API changes
  *    
- *  $Id: VerifierDialog.java 5639 2009-08-17 15:47:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.extdoc.dialogs;
@@ -17,11 +16,8 @@ package ch.elexis.extdoc.dialogs;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -44,10 +40,13 @@ import ch.elexis.actions.BackgroundJob;
 import ch.elexis.actions.JobPool;
 import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.data.Patient;
-import ch.elexis.data.Query;
+import ch.elexis.extdoc.Messages;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
+import ch.elexis.extdoc.util.ListFiles;
+import ch.elexis.extdoc.util.MatchPatientToPath;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
+import ch.elexis.extdoc.util.*;
 
 public class VerifierDialog extends TitleAreaDialog {
 	private Patient actPatient;
@@ -63,121 +62,15 @@ public class VerifierDialog extends TitleAreaDialog {
 			super(jobName);
 		}
 		
-		/**
-		 * Filter fuer die folgende Festlegung:
-		 * 
-		 * - Die ersten 6 Zeichen des Nachnamens. Falls kuerzer, mit Leerzeichen aufgefuellt - Der
-		 * Vorname (nur der erste, falls es mehrere gibt) - Bezeichnung, durch ein Leerzeichen
-		 * getrennt.
-		 */
-		class MyFilenameFilter implements FilenameFilter {
-			private Pattern pattern;
-			
-			MyFilenameFilter(String lastname, String firstname){
-				// only use first part of firstname
-				firstname = firstToken(firstname);
-				
-				// remove dashes, underscores and spaces
-				lastname = cleanName(lastname);
-				firstname = cleanName(firstname);
-				
-				String shortLastname;
-				
-				if (lastname.length() >= 6) {
-					// Nachname ist lang genug
-					shortLastname = lastname.substring(0, 6);
-				} else {
-					// Nachname ist zu kurz, mit Leerzeichen auffuellen
-					StringBuilder sb = new StringBuilder();
-					sb.append(lastname);
-					while (sb.length() < 6) {
-						sb.append(" ");
-					}
-					shortLastname = sb.toString();
-				}
-				
-				String regex = "^" + shortLastname + firstname + ".*$";
-				pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-			}
-			
-			public boolean accept(File dir, String name){
-				Matcher matcher = pattern.matcher(name);
-				return matcher.matches();
-			}
-			
-			private String cleanName(String name){
-				String cleanName = name.replaceAll("[-_\\p{Space}]+", "");
-				return cleanName;
-			}
-			
-			private String firstToken(String text){
-				String firstToken = text.replaceFirst("[-_\\p{Space}].*", "");
-				return firstToken;
-			}
-		}
-		
-		/*
-		 * Schauen, ob ein zur Datei passender Patient gefunden werden kann. Falls keiner gefunden,
-		 * wird die Datei akzeptiert.
-		 */
-		class PatientFilter implements FilenameFilter {
-			public boolean accept(File dir, String name){
-				if (name.length() < 6) {
-					// invliad filename, include in result
-					return true;
-				}
-				
-				String shortLastname = name.substring(0, 6);
-				shortLastname = shortLastname.replaceFirst("\\s+", "");
-				
-				Query<Patient> query = new Query<Patient>(Patient.class);
-				query.add("Name", "LIKE", shortLastname, true);
-				List<Patient> patienten = query.execute();
-				
-				boolean found = false;
-				for (Patient patient : patienten) {
-					MyFilenameFilter filter =
-						new MyFilenameFilter(patient.getName(), patient.getVorname());
-					found = filter.accept(dir, name);
-					if (found) {
-						// keine weiteren Paitenten mehr untersuchen
-						break;
-					}
-				}
-				
-				return !found;
-			}
-		}
-		
 		public IStatus execute(IProgressMonitor monitor){
-			List<File> list = new ArrayList<File>();
+			List<File> list;
 			
-			String[] paths = new String[3];
-			paths[0] = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD, "");
-			paths[1] = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD2, "");
-			paths[2] = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD3, "");
+			String[] paths = PreferenceConstants.getActiveBasePaths();
 			
 			if (actPatient != null) {
-				for (String path : paths) {
-					if (!StringTool.isNothing(path)) {
-						File mainDirectory = new File(path);
-						if (mainDirectory.isDirectory()) {
-							FilenameFilter filter = new PatientFilter();
-							File[] files = mainDirectory.listFiles(filter);
-							for (File file : files) {
-								list.add(file);
-							}
-						}
-					}
-				}
-				if (list.size() > 0) {
-					result = list;
-				} else {
-					result = "Keine Dateien gefunden";
-					
-				}
+				result = MatchPatientToPath.getFilesForPatient(actPatient, null);
 			} else {
-				result = "Kein Patient ausgewählt";
+				result = Messages.ExterneDokumente_no_patient_found;
 			}
 			
 			return Status.OK_STATUS;
@@ -189,14 +82,14 @@ public class VerifierDialog extends TitleAreaDialog {
 	}
 	
 	class VerifierContentProvider implements IStructuredContentProvider, BackgroundJobListener {
-		private static final String BASE_JOBNAME = "Externe Dokumente Verifier";
+		private String BASE_JOBNAME = Messages.VerifierDialog_verify_job_name;
 		
 		BackgroundJob job;
 		
 		public VerifierContentProvider(){
 			// TODO remove job from JobPool when it has finished.
 			// for now, we just use unique names.
-			String jobName = BASE_JOBNAME + " " + StringTool.unique(BASE_JOBNAME);
+			String jobName = BASE_JOBNAME + " " + StringTool.unique(BASE_JOBNAME); //$NON-NLS-1$
 			job = new DataLoader(jobName);
 			globalJob = job;
 			if (JobPool.getJobPool().getJob(job.getJobname()) == null) {
@@ -219,7 +112,7 @@ public class VerifierDialog extends TitleAreaDialog {
 			if (result == null) {
 				JobPool.getJobPool().activate(job.getJobname(), Job.LONG);
 				return new String[] {
-					"Lade..."
+					Messages.ExterneDokumente_loading
 				};
 			} else {
 				if (result instanceof List) {
@@ -252,7 +145,7 @@ public class VerifierDialog extends TitleAreaDialog {
 			case NAME_COLUMN:
 				return getText(obj);
 			}
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		
 		public String getText(Object obj){
@@ -262,7 +155,7 @@ public class VerifierDialog extends TitleAreaDialog {
 			} else if (obj instanceof String) {
 				return obj.toString();
 			} else {
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 		}
 		
@@ -277,7 +170,7 @@ public class VerifierDialog extends TitleAreaDialog {
 						cal.getTime());
 				return modifiedTime;
 			} else {
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 		}
 		
@@ -298,11 +191,11 @@ public class VerifierDialog extends TitleAreaDialog {
 			
 			File file = (File) obj;
 			if (file.isDirectory()) {
-				return PlatformUI.getWorkbench().getSharedImages().getImage(
-					ISharedImages.IMG_OBJ_FOLDER);
+				return PlatformUI.getWorkbench().getSharedImages()
+					.getImage(ISharedImages.IMG_OBJ_FOLDER);
 			} else {
-				return PlatformUI.getWorkbench().getSharedImages().getImage(
-					ISharedImages.IMG_OBJ_FILE);
+				return PlatformUI.getWorkbench().getSharedImages()
+					.getImage(ISharedImages.IMG_OBJ_FILE);
 			}
 		}
 	}
@@ -358,24 +251,25 @@ public class VerifierDialog extends TitleAreaDialog {
 		TableColumn tc;
 		
 		tc = new TableColumn(table, SWT.LEFT);
-		tc.setText("");
+		tc.setText(""); //$NON-NLS-1$
 		tc.setWidth(40);
 		
 		tc = new TableColumn(table, SWT.LEFT);
-		tc.setText("Datum");
+		tc.setText(Messages.ExterneDokumente_file_date);
 		tc.setWidth(120);
 		tc.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event){
-			// TODO sort by Datum
+				// TODO sort by Datum
+				// http://www.vogella.de/articles/EclipseJFaceTable/article.html#sortcolumns
 			}
 		});
 		
 		tc = new TableColumn(table, SWT.LEFT);
-		tc.setText("Name");
+		tc.setText(Messages.VerifierDialog_name);
 		tc.setWidth(200);
 		tc.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event){
-			// TODO sort by Nummer
+				// TODO sort by Nummer
 			}
 		});
 		
@@ -415,9 +309,9 @@ public class VerifierDialog extends TitleAreaDialog {
 	@Override
 	public void create(){
 		super.create();
-		setMessage("Überprüfen, ob alle Dateien einem Patienten zugeordnet werden können");
-		setTitle("Dateien überprüfen");
-		getShell().setText("Dateien überprüfen");
+		setMessage(Messages.ExterneDokumente_verify_files_Belong_to_patient);
+		setTitle(Messages.ExterneDokumente_verify_files);
+		getShell().setText(Messages.ExterneDokumente_verify_files);
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
 }
