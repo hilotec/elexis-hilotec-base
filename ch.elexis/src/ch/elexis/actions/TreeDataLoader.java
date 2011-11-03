@@ -64,18 +64,21 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 				new LazyTreeListener() {
 					@Override
 					public boolean fetchChildren(LazyTree<?> l){
-						PersistentObject p = (PersistentObject) l.contents;
-						if (l.getParent() == null) {
-							setQuery("NIL");
-						} else {
-							if (p == null) {
-								return false;
+						List<PersistentObject> children = null;
+						synchronized (qbe) {
+							PersistentObject p = (PersistentObject) l.contents;
+							if (l.getParent() == null) {
+								setQuery("NIL");
+							} else {
+								if (p == null) {
+									return false;
+								}
+								setQuery(p.getId());
 							}
-							setQuery(p.getId());
-						}
-						List<PersistentObject> children = (List<PersistentObject>) qbe.execute();
-						for (PersistentObject po : children) {
-							new LazyTree(l, po, this);
+							children = (List<PersistentObject>) qbe.execute();
+							for (PersistentObject po : children) {
+								new LazyTree(l, po, this);
+							}
 						}
 						return children.size() > 0;
 					}
@@ -90,25 +93,26 @@ public class TreeDataLoader extends PersistentObjectLoader implements ILazyTreeC
 	
 	public IStatus work(IProgressMonitor monitor, HashMap<String, Object> params){
 		monitor.beginTask(Messages.getString("TreeDataLoader.0"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
-		root.clear();
-		setQuery("NIL");
-		
-		for (PersistentObject po : qbe.execute()) {
-			new Tree<PersistentObject>(root, po);
-			if (monitor.isCanceled()) {
-				return Status.CANCEL_STATUS;
+		synchronized (qbe) {
+			root.clear();
+			setQuery("NIL");
+			
+			for (PersistentObject po : qbe.execute()) {
+				new Tree<PersistentObject>(root, po);
+				if (monitor.isCanceled()) {
+					return Status.CANCEL_STATUS;
+				}
+				monitor.worked(1);
 			}
-			monitor.worked(1);
+			monitor.done();
+			
+			Desk.asyncExec(new Runnable() {
+				public void run(){
+					((TreeViewer) cv.getViewerWidget()).setChildCount(cv.getViewerWidget()
+						.getInput(), root.getChildren().size());
+				}
+			});
 		}
-		monitor.done();
-		
-		Desk.asyncExec(new Runnable() {
-			public void run(){
-				((TreeViewer) cv.getViewerWidget()).setChildCount(cv.getViewerWidget().getInput(),
-					root.getChildren().size());
-			}
-		});
-		
 		return Status.OK_STATUS;
 	}
 	
