@@ -104,9 +104,9 @@ public class JdbcLink {
 	}
 	
 	/**
-	 * Bequemlichkeitsmethode, um einen Link auf eine H2-Datenbank zu bekommen.
-	 * Da der mysql-compatibility-mode für ALTER commands nicht korrekt funktioniert,
-	 * wird ein h2 DBFlavor für die übersetzung der Statements übergeben.
+	 * Bequemlichkeitsmethode, um einen Link auf eine H2-Datenbank zu bekommen. Da der
+	 * mysql-compatibility-mode für ALTER commands nicht korrekt funktioniert, wird ein h2 DBFlavor
+	 * für die übersetzung der Statements übergeben.
 	 * 
 	 * @param database
 	 * @return
@@ -118,7 +118,7 @@ public class JdbcLink {
 		if (database.contains(".zip!")) {
 			prefix += "zip:";
 		}
-		String connect = prefix + database;
+		String connect = prefix + database + ";AUTO_SERVER=TRUE";
 		return new JdbcLink(driver, connect, "h2");
 	}
 	
@@ -316,7 +316,7 @@ public class JdbcLink {
 			switch (in[i]) {
 			case 0:
 			case 34:
-
+				
 			case '\'':
 				if (flavor.startsWith("hsql")) {
 					out[j++] = '\'';
@@ -658,12 +658,12 @@ public class JdbcLink {
 			}
 		}
 		
-		Stm() throws SQLException {
+		Stm() throws SQLException{
 			checkConn();
 			try {
 				stm = conn.createStatement();
 			} catch (SQLException se) {
-				log.log(Level.WARNING, "need reconnect "+se.getMessage());
+				log.log(Level.WARNING, "need reconnect " + se.getMessage());
 				if (!reconnect()) {
 					throw se;
 				}
@@ -678,6 +678,9 @@ public class JdbcLink {
 			try {
 				return stm.isClosed();
 			} catch (SQLException ex) {
+				ExHandler.handle(ex);
+				return false;
+			} catch (UnsupportedOperationException ex) {
 				ExHandler.handle(ex);
 				return false;
 			}
