@@ -1,5 +1,14 @@
+hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.6
+
 Offene Probleme
 - Tests von agenda, arzttarife von trunk sind noch nicht migriert
+
+Changelog für 2.1.6.rc3
+b6061bade595: 2011-11-10: thomashu: Ticket: #620 - fixed by handling for UnsupportedOperationException in isClosed method
+- added option for running H2 db in server mode to createH2Link method
+42fe97e394b9: 2011-11-03: thomashu: Ticket: #628 - fixed by synchronizing access to query
+c704f5fe62b9: 2011-10-24: mdescher: Ticket #595: v2.1.4 - Agenda Mandantendefault - Fehldarstellung der aktuellen View in den Auswahlbuttons
+84369706235c: 2011-09-23: Niklaus Giger: Ticket #412: may start DemoDB & all DBs via properties
 
 Changelog für 2.1.6.rc2
 d0393e0b2c12: 2011-09-26: thomashu: Ticket: #581 - implementation for rechnungssteller based billing, and enforcing obligation and non obligation to separate Fall
