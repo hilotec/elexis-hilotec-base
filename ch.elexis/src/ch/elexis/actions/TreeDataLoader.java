@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009-2010, G. Weirich and Elexis
+ * Copyright (c) 2009-2011, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,6 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
- * 
- * $Id: TreeDataLoader.java 5868 2009-12-15 14:10:44Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.actions;

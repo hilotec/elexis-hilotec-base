@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: Rechnung.java 5470c95826e4 2011/08/23 18:57:01 rgw $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.data;
