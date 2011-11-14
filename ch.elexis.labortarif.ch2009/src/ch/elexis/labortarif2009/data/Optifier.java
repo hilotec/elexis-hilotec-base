@@ -1,7 +1,6 @@
 /*******************************************************************************
- * Copyright (c) 2009-2010, G. Weirich and medelexis AG
+ * Copyright (c) 2009-2011, G. Weirich and medelexis AG
  * All rights reserved.
- * $Id: Optifier.java 140 2009-06-23 20:00:16Z  $
  *******************************************************************************/
 
 package ch.elexis.labortarif2009.data;
@@ -21,6 +20,7 @@ import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.Result.SEVERITY;
 
 public class Optifier implements IOptifier {
+	private static final String DEADLINE="31.12.2012";
 	
 	/**
 	 * Add and recalculate the various possible amendments
@@ -46,7 +46,7 @@ public class Optifier implements IOptifier {
 		try {
 			boolean haveKons = false;
 			TimeTool date = new TimeTool(kons.getDatum());
-			TimeTool deadline = new TimeTool("31.12.2011"); //$NON-NLS-1$
+			TimeTool deadline = new TimeTool(DEADLINE); //$NON-NLS-1$
 			if (date.isBefore(new TimeTool("01.07.2009"))) { //$NON-NLS-1$
 				return new Result<Object>(SEVERITY.WARNING, 3, "Code not yet valid", null, false); //$NON-NLS-1$
 			}
@@ -135,7 +135,7 @@ public class Optifier implements IOptifier {
 					if (date.isAfterOrEqual(deadline)) {
 						v4708.delete();
 						return new Result<Object>(SEVERITY.WARNING, 2,
-							"4708.00 only until 2011-12-31", null, false); //$NON-NLS-1$
+							"4708.00 only until "+DEADLINE, null, false); //$NON-NLS-1$
 					}
 				}
 			}
