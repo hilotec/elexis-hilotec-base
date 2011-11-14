@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation, adapted from JavaAgenda
  * 
- *  $Id: Activator.java 6168 2010-02-28 14:55:06Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 package ch.elexis.actions;
 
