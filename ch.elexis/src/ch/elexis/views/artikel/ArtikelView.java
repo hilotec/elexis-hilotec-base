@@ -174,6 +174,14 @@ public class ArtikelView extends ViewPart implements IActivationListener, ISavea
 				// The first page initializes the screen
 				if (!headerDone) {
 					d = (IDetailDisplay) ce.createExecutableExtension("CodeDetailDisplay");
+					String a = ce.getAttribute("ImporterClass"); //$NON-NLS-1$
+					ImporterPage ip = null;
+					if (a != null) {
+						ip = (ImporterPage) ce.createExecutableExtension("ImporterClass"); //$NON-NLS-1$
+						if (ip != null) {
+							importers.put(d.getTitle(), ip);
+						}
+					}
 					CodeSelectorFactory csf =
 						(CodeSelectorFactory) ce.createExecutableExtension("CodeSelectorFactory");
 					MasterDetailsPage page = new MasterDetailsPage(ctab, csf, d);
