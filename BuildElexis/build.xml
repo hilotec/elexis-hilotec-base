@@ -80,7 +80,7 @@
 	<property name="additions" value="${output}/additions" />
 	<property name="rsc" value="${repositories}/elexis-base/BuildElexis/rsc" />
 	<property name="fop.home" value="${lib}/fop-1.0" />
-	<property name="downloadsFrom" value = "http://ftp.medelexis.ch/downloads/develop" />
+	<property name="downloadsFrom" value = "http://ftp.medelexis.ch/downloads_opensource/develop" />
 	<condition property="nopull">
 		<isset property="unplugged" />
 	</condition>
