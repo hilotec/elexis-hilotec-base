@@ -280,7 +280,7 @@ public class Presets {
 				}
 				Fall fall =
 					pat.neuerFall(Messages.Presets_Unfall, Messages.Presets_Unfall,
-						Messages.Presets_UVGAbkürzung);
+						Messages.Presets_UVGAbkuerzung);
 				fall.setGarant(k);
 				fall.setRequiredContact(INSURANCE, k);
 				fall.setRequiredString(Messages.Presets_Unfallnummer, unfallnr);
