@@ -20,7 +20,6 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IFilter;
 
 import ch.elexis.Hub;
-import ch.elexis.core.data.IReason;
 import ch.elexis.dialogs.SelectFallNoObligationDialog;
 import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.util.IOptifier;
@@ -197,8 +196,8 @@ public interface IVerrechenbar extends ICodeElement {
 					Fall noOblFall = dlg.getFall();
 					Konsultation noOblKons = noOblFall.neueKonsultation();
 					// transfer diagnoses to the new Konsultation
-					List<IReason> diagnoses = kons.getDiagnosen();
-					for (IReason diag : diagnoses)
+					List<IDiagnose> diagnoses = kons.getDiagnosen();
+					for (IDiagnose diag : diagnoses)
 						noOblKons.addDiagnose(diag);
 					// add the no obligation IVerrechenbar to the new Konsultation
 					noOblKons.addLeistung(code);
