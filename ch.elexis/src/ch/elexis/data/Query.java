@@ -22,8 +22,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.eclipse.core.runtime.IStatus;
-
 import ch.elexis.Hub;
 import ch.elexis.core.PersistenceException;
 import ch.elexis.status.ElexisStatus;
@@ -31,9 +29,9 @@ import ch.elexis.util.Log;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.IFilter;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.JdbcLink.Stm;
 
 /**
  * Query manages all database queries of PersistentObjects and derived classes
@@ -121,6 +119,34 @@ public class Query<T> {
 		
 	}
 	
+	/**
+	 * This method allows to set a custom sql query string; 
+	 * E.g. The original Query does not support the usage of INNER JOINS, to use them
+	 * nevertheless we need to provide a direct method to set query strings
+	 * @param cl the persistent object to set the query for
+	 * @param string the SQL query string
+	 * @author Marco Descher
+	 */
+	public Query(Class<? extends PersistentObject> cl, final String string){
+		try {
+			template = Hub.poFactory.createTemplate(cl);
+			// template=cl.newInstance();
+			load = cl.getMethod("load", new Class[] {
+				String.class
+			});
+			sql = new StringBuilder(500);
+			sql.append(string);
+			ordering = null;
+		} catch (Exception ex) {
+			ElexisStatus status =
+					new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
+						"Query: Konnte Methode load auf " + cl.getName() + " nicht auflösen", ex,
+						ElexisStatus.LOG_ERRORS);
+				throw new PersistenceException(status);
+		}
+
+	}
+
 	/**
 	 * Abfrage löschen, beispielsweise um dasselbe Query-Objekt für eine neue Abfrage zu verwenden.
 	 */
