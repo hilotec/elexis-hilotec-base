@@ -13,7 +13,7 @@ import ch.elexis.util.SWTHelper;
 public class TextTemplatePreferences extends FieldEditorPreferencePage implements
 		IWorkbenchPreferencePage {
 	
-	public static final String SUFFIX_FÜR_DIESE_STATION =
+	public static final String SUFFIX_FOR_THIS_STATION =
 		Messages.TextTemplatePreferences_suffixForStation;
 	public static final String BRANCH = "document_templates/"; //$NON-NLS-1$
 	public static final String SUFFIX_STATION = BRANCH + "suffix_station"; //$NON-NLS-1$
@@ -30,7 +30,7 @@ public class TextTemplatePreferences extends FieldEditorPreferencePage implement
 			+ Messages.TextTemplatePreferences_ExplanationLine2
 			+ Messages.TextTemplatePreferences_ExplanationLine3);
 		expl.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
-		addField(new StringFieldEditor(SUFFIX_STATION, SUFFIX_FÜR_DIESE_STATION,
+		addField(new StringFieldEditor(SUFFIX_STATION, SUFFIX_FOR_THIS_STATION,
 			getFieldEditorParent()));
 		/*
 		 * IExtensionRegistry exr = Platform.getExtensionRegistry(); IExtensionPoint exp =
