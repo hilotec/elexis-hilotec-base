@@ -16,9 +16,12 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.viewers.IFilter;
 
 import ch.elexis.Hub;
+import ch.elexis.core.data.IReason;
+import ch.elexis.dialogs.SelectFallNoObligationDialog;
 import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.util.IOptifier;
 import ch.rgw.tools.Money;
@@ -188,6 +191,20 @@ public interface IVerrechenbar extends ICodeElement {
 			boolean forceObligation = Hub.userCfg.get(Leistungscodes.OBLIGATION, false);
 			
 			if (forceObligation && gesetz.equalsIgnoreCase("KVG")) {
+				SelectFallNoObligationDialog dlg = new SelectFallNoObligationDialog(kons.getFall());
+
+				if (dlg.open() == Dialog.OK) {
+					Fall noOblFall = dlg.getFall();
+					Konsultation noOblKons = noOblFall.neueKonsultation();
+					// transfer diagnoses to the new Konsultation
+					List<IReason> diagnoses = kons.getDiagnosen();
+					for (IReason diag : diagnoses)
+						noOblKons.addDiagnose(diag);
+					// add the no obligation IVerrechenbar to the new Konsultation
+					noOblKons.addLeistung(code);
+					// return ok
+					return new Result<IVerrechenbar>(code);
+				}
 				return new Result<IVerrechenbar>(
 					Result.SEVERITY.WARNING,
 					0,
