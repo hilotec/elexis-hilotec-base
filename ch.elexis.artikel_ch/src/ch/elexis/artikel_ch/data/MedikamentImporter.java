@@ -110,6 +110,8 @@ public class MedikamentImporter extends ImporterPage {
 			// String id=qbe.findSingle(SUBID, EQUALS, pk);
 			qbe.clear();
 			qbe.add(SUBID, EQUALS, pk);
+			qbe.or();
+			qbe.add(SUBID, EQUALS, phar);
 			List<Artikel> lArt = qbe.execute();
 			if (lArt.size() > 1) {
 				// Duplikate entfernen, genau einen gültigen und existierenden

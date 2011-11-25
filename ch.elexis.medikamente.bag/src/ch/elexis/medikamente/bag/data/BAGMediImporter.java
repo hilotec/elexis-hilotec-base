@@ -132,6 +132,8 @@ public class BAGMediImporter extends ImporterPage {
 			
 			qbe.clear();
 			qbe.add(Artikel.FLD_SUB_ID, "=", pharmacode);
+			qbe.or();
+			qbe.add(Artikel.FLD_SUB_ID, Query.EQUALS, row[2].trim());
 			List<Artikel> lArt = qbe.executeWithDeleted();
 			if (lArt == null) {
 				throw new ElexisException(BAGMediImporter.class,
