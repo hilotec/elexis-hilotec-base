@@ -128,7 +128,7 @@ public class Importer extends ImporterPage {
 				LabResult lr;
 				Query<LabResult> qr = new Query<LabResult>(LabResult.class);
 				qr.add("PatientID", "=", pat.getId()); //$NON-NLS-1$ //$NON-NLS-2$
-				qr.add("Datum", "=", obx.getDate().toString(TimeTool.DATE_GER)); //$NON-NLS-1$ //$NON-NLS-2$
+				qr.add("Datum", "=", obr.getDate().toString(TimeTool.DATE_GER)); //$NON-NLS-1$ //$NON-NLS-2$
 				qr.add("ItemID", "=", li.getId()); //$NON-NLS-1$ //$NON-NLS-2$
 				if (qr.execute().size() != 0) {
 					if (SWTHelper.askYesNo(ch.elexis.laborimport.teamw.Messages
@@ -143,11 +143,11 @@ public class Importer extends ImporterPage {
 					}
 				}
 				if (obx.isFormattedText()) {
-					lr = new LabResult(pat, obx.getDate(), li, "text", obx //$NON-NLS-1$
+					lr = new LabResult(pat, obr.getDate(), li, "text", obx //$NON-NLS-1$
 						.getResultValue());
 				} else {
 					lr =
-						new LabResult(pat, obx.getDate(), li, obx.getResultValue(), obx
+						new LabResult(pat, obr.getDate(), li, obx.getResultValue(), obx
 							.getComment());
 				}
 				
