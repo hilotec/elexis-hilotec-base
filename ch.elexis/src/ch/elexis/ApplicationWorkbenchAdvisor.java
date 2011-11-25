@@ -15,22 +15,24 @@
 package ch.elexis;
 
 import java.io.File;
+import java.util.List;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
-import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Hub.ShutdownJob;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.core.PersistenceException;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.data.Reminder;
 import ch.elexis.util.Log;
 import ch.elexis.wizards.DBConnectWizard;
 import ch.rgw.io.FileTool;
@@ -130,6 +132,20 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 			PersistentObject.disconnect();
 			System.exit(0);
 		}
+		
+		List<Reminder> reminderList = Reminder.findToShowOnStartup(Hub.actUser);
+		if(reminderList.size() > 0) {
+			StringBuilder sb = new StringBuilder();
+			for (Reminder reminder : reminderList) {
+				sb.append(reminder.getMessage()).append("\n\n"); //$NON-NLS-1$		
+			}
+
+			MessageDialog.openInformation(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getShell(),
+				ch.elexis.views.Messages.getString("ReminderView.importantRemindersOnLogin"),
+				sb.toString());
+		}
+		
 	}
 	
 	@Override
