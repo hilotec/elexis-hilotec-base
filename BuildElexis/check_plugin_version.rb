@@ -5,23 +5,27 @@
 require 'optparse'
 require 'tempfile'
 
-if File.exists?("#{Dir.pwd}/.hg")
-  @@root = Dir.pwd
-else
-  @@root = File.dirname(File.dirname(File.dirname(File.expand_path(__FILE__))))
-end
-
 options = {}
 options[:oldVersion] = '2.1.5.4'
 options[:newVersion] = nil
+if File.exists?("#{Dir.pwd}/.hg")
+  options[:root] = Dir.pwd
+else
+  options[:root] = File.dirname(File.dirname(File.dirname(File.expand_path(__FILE__))))
+end
+
 OptionParser.new do |opts|
   opts.banner = "Usage: #{File.basename(__FILE__)} [options]\n" +
-      "Check wheter all plugins with changed files (since oldVersion) have a new plugin version."
+      "Check wheter all plugins with changed files (since oldVersion) have a new plugin version.\n"+
+      "Will look for all plugins under #{options[:root]} which don't have 'svn' in theirs names (excluding archie repository)"
   opts.on("-o", "--oldVersion version", "changes since this version.") do |v|
     options[:oldVersion] = v
   end
   opts.on("-n", "--newVersion version", "changes up to this version. Default to current revision") do |v|
     options[:newVersion] = v
+  end
+  opts.on("-r", "--root root", "Look for plugins here instead of #{options[:root]}") do |v|
+   options[:root] = File.expand_path(v)
   end
   opts.on("-h", "--help", "Show this help") do |v|
     puts opts
@@ -31,7 +35,7 @@ end.parse!
 
 BundleVersion =/Bundle-Version\:/
 ShowNew = options[:newVersion] ? options[:newVersion] : " tip of branch"
-puts "Checking versions of all plugins under #{@@root} between Mercurial version #{options[:oldVersion] } and #{ShowNew}"
+puts "Checking versions of all plugins under #{options[:root]} between Mercurial version #{options[:oldVersion] } and #{ShowNew}"
 RequireAtLeast_1_0 = false
 if RequireAtLeast_1_0
   puts "All plug-ins must have at least Version 1.0"
@@ -50,16 +54,22 @@ def getPlugInVersion(baseDir, whichVersion=nil)
     puts "Was ist hier los? #{mf} müsste existieren"
     exit 3
   end
-  cmd = "hg cat #{mf}"
-  cmd += " -r #{whichVersion} " if whichVersion 
-  cmd += " > #{TempName}"
-  res = system(cmd)
-  Dir.chdir(saved)
-  if !res && whichVersion == nil then
-    puts "running #{cmd} failed"
-    exit 2 
+  fileToRead = nil
+  if whichVersion == nil
+    fileToRead = mf
+  else
+    fileToRead = TempName
+    cmd = "hg cat #{mf}"
+    cmd += " -r #{whichVersion} " if whichVersion 
+    cmd += " > #{TempName}"
+    res = system(cmd)
+    Dir.chdir(saved)
+    if !res && whichVersion == nil then
+      puts "running #{cmd} failed"
+      exit 2 
+    end
   end
-  IO.readlines(TempName).each {
+  IO.readlines(fileToRead).each {
     |line|
       return line.split(': ')[1].chomp if BundleVersion.match(line)
   }
@@ -91,8 +101,8 @@ end
 
 
 nrPlugins=0
-path = "#{@@root}/*/plugin.xml"
-path = "#{@@root}/*/*/plugin.xml" if Dir.glob("#{@@root}/*/.hg").size > 0
+path = "#{options[:root]}/*/plugin.xml"
+path = "#{options[:root]}/*/*/plugin.xml" if Dir.glob("#{options[:root]}/*/.hg").size > 0
 
 
 def handlePlugin(path, oldVersion, newVersion)
@@ -115,5 +125,5 @@ each {
     handlePlugin(y, options[:oldVersion], options[:newVersion])
     nrPlugins += 1
 }
-puts "Checked #{nrPlugins} plugins"
+puts "Checked #{nrPlugins} plugins (searched for #{path})"
 
