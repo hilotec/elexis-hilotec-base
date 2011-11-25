@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -369,7 +370,7 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener, IAc
 	 */
 	private void setKons(final Konsultation b){
 		
-		if(actKons != null && actKons != b && text.isDirty()) {
+		if(actKons != null && text.isDirty()) {
 			actKons.updateEintrag(text.getContentsAsXML(), false);
 		}
 		
