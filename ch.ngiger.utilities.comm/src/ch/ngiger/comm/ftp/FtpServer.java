@@ -9,6 +9,8 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
 import ch.elexis.util.FileUtility;
+import ch.elexis.util.Log;
+import ch.elexis.util.SWTHelper;
 
 /**
  * This is a basic wrapper around the sun.net.ftp.FtpClient class, which is included with Sun Java
@@ -22,6 +24,8 @@ import ch.elexis.util.FileUtility;
 public class FtpServer extends FTPClient {
 	
 	private String fullSemaName;
+	private String serverAddress;
+	protected static Log log = Log.get("ch.ngiger.comm.ftp.FtpServer"); //$NON-NLS-1$
 	
 	private void setWorkingDirectory(String serverFile) throws IOException{
 		String path = FileUtility.getFilepath(serverFile);
@@ -56,7 +60,7 @@ public class FtpServer extends FTPClient {
 	/*
 	 * Delete file on the FTP server
 	 * 
-	 * @name of the file to delet
+	 * @name of the file to delete
 	 */
 	public boolean deleteFile(String name) throws IOException{
 		return super.deleteFile(name);
@@ -122,6 +126,7 @@ public class FtpServer extends FTPClient {
 		
 		if (!isConnected()) {
 			connect(host);
+			serverAddress = host;
 			mode(FtpServer.BINARY_FILE_TYPE);
 		}
 		
@@ -170,11 +175,20 @@ public class FtpServer extends FTPClient {
 	}
 	
 	/**
-	 * praxis.sem auf FTP Server l�schen
+	 * praxis.sem auf FTP Server loeschen
 	 */
 	public void removeSemaphore() throws IOException{
-		super.deleteFile(fullSemaName);
-		fullSemaName = null;
+		boolean res = super.deleteFile(fullSemaName);
+		if (res) {
+			log.log(
+				String.format("Deleted semaphore %s on %s", fullSemaName, serverAddress), //$NON-NLS-1$
+				Log.INFOS);			
+		} else 
+		{
+			log.log(
+				String.format("Unable to delete semaphore %s on %s", fullSemaName, serverAddress), //$NON-NLS-1$
+				Log.ERRORS);			
+			SWTHelper.showError("FTP Semaphore delete error",String.format("Unable to delete semaphore %s on %s", fullSemaName, serverAddress));
+		}
 	}
-	
 }
