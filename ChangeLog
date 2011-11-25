@@ -1,7 +1,23 @@
 hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.6
 
-Offene Probleme
-- Tests von agenda, arzttarife von trunk sind noch nicht migriert
+Changelog für 2.1.6.0
+73e0f1644bfd: 2011-11-25: Niklaus Giger: Ticket #546: Corrected check_plugin_version.rb and some plugin versions
+5329af77af22: 2011-11-25: thomashu: Ticket #412: Fix verschwindende Konsultationstexte
+4630ded7de88: 2011-11-25: mdescher: Ticket #537: doppelte Medikamente (nur lastUpdate verschieden), fix für inkorrektes parsen
+34d29a5c1792: 2011-11-25: thomashu: Ticket: #654 - fixed problem with "money value higher than", and changed Konsultationen filter from Mandant to Rechnungssetller
+996499d7ef31: 2011-11-25: mdescher: Ticket #695: Fix für Funktion 'Popup beim Einloggen' funktioniert nicht.
+75b0afb727bb: 2011-11-25: Niklaus Giger: Ticket #701: Entnahme-Datum anstelle des Analyse-Datums beim Import verwenden
+874966a190d3: 2011-11-25: Niklaus Giger: Ticket #546: Added script to check plug-in version
+50a7b8a6bd43: 2011-11-25: Niklaus Giger: Ticket #680: Added TeamW Test-HL7
+2a386f31823a: 2011-11-25: Niklaus Giger: Ticket #670: Logging für Löschen des Semaphores
+ec9662f4f97d: 2011-11-24: Niklaus Giger: Ticket: #697 - IReason -> IDiagnose fuer 2.1.6. Niklaus sollte zuerst kompilieren vor dem pushen!
+5159af919f56: 2011-11-24: mdescher: Ticket #546: Fix for Umlaute
+62727929c4eb: 2011-11-24: mdescher: Ticket #616: Neue Klasse für Query
+abd67d2501cc: 2011-11-24: thomashu: Ticket: #697 - added new dialog for creating or selecting a Fall for no obligation Verrechenbar, active only if force obligation option selected
+c8df5c7c1a10: 2011-11-17: Niklaus Giger: Ticket #546: use new downloads_opensource FTP-location
+21d8415432e1: 2011-11-15: mdescher: Ticket #525: Importer des ersten Tab-Elements Artikel funktioniert nicht mehr
+8668b954a009: 2011-11-14: rgw@iMac: extend uebergangszuschlag until 31.12.2012
+3d9c8a57dfb3: 2011-11-14: rgw@iMac: removed id lines from copyright message
 
 Changelog für 2.1.6.rc3
 b6061bade595: 2011-11-10: thomashu: Ticket: #620 - fixed by handling for UnsupportedOperationException in isClosed method
