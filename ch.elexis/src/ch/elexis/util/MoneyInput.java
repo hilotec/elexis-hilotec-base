@@ -113,10 +113,6 @@ public class MoneyInput extends Composite {
 			}
 		}
 		try {
-			char s = Money.getSeparator();
-			if (t.indexOf(s) == -1) {
-				t += s + "00"; //$NON-NLS-1$
-			}
 			return new Money(t);
 		} catch (ParseException px) {
 			ExHandler.handle(px);

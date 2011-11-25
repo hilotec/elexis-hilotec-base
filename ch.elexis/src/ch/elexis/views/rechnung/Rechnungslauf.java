@@ -79,11 +79,18 @@ public class Rechnungslauf implements IRunnableWithProgress {
 		String kMandantID = Hub.actMandant.getId();
 		Query<Konsultation> qbe = new Query<Konsultation>(Konsultation.class);
 		qbe.add(Konsultation.FLD_BILL_ID, StringConstants.EMPTY, null);
-		qbe.add(Konsultation.FLD_MANDATOR_ID, Query.EQUALS, kMandantID);
 		monitor.beginTask(
 			Messages.getString("Rechnungslauf.analyzingConsultations"), IProgressMonitor.UNKNOWN); //$NON-NLS-1$
 		monitor.subTask(Messages.getString("Rechnungslauf.readingConsultations")); //$NON-NLS-1$
-		List<Konsultation> list = qbe.execute();
+		List<Konsultation> dblist = qbe.execute();
+		// filter the list of Konsultationen based on the Rechnungssteller of the current Mandant
+		String rsId = Hub.actMandant.getRechnungssteller().getId();
+		ArrayList<Konsultation> list = new ArrayList<Konsultation>();
+		for (Konsultation kons : dblist) {
+			if (kons.getMandant().getRechnungssteller().getId().equals(rsId)) {
+				list.add(kons);
+			}
+		}
 		ArrayList<Konsultation> listbasic = new ArrayList<Konsultation>(list);
 		HashMap<Fall, Object> hSkipCase = new HashMap<Fall, Object>();
 		TimeTool now = new TimeTool();
@@ -115,8 +122,7 @@ public class Rechnungslauf implements IRunnableWithProgress {
 					while (i2.hasNext()) {
 						Konsultation k2 = i2.next();
 						String fid = k2.get(Konsultation.FLD_CASE_ID);
-						String mid = k2.get(Konsultation.FLD_MANDATOR_ID);
-						if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
+						if ((fid != null) && (fid.equals(kfID))) {
 							hKons.put(k2, kPatient);
 							i2.remove();
 						}
@@ -131,8 +137,7 @@ public class Rechnungslauf implements IRunnableWithProgress {
 					while (i2.hasNext()) {
 						Konsultation k2 = i2.next();
 						String fid = k2.get(Konsultation.FLD_CASE_ID);
-						String mid = k2.get(Konsultation.FLD_MANDATOR_ID);
-						if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
+						if ((fid != null) && (fid.equals(kfID))) {
 							hKons.put(k2, kPatient);
 							i2.remove();
 						}
@@ -147,8 +152,7 @@ public class Rechnungslauf implements IRunnableWithProgress {
 					while (i2.hasNext()) {
 						Konsultation k2 = i2.next();
 						String fid = k2.get(Konsultation.FLD_CASE_ID);
-						String mid = k2.get(Konsultation.FLD_MANDATOR_ID);
-						if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
+						if ((fid != null) && (fid.equals(kfID))) {
 							cmp.set(k2.getDatum());
 							if (cmp.isAfter(ttLastBefore)) {
 								hSkipCase.put(kFall, "1"); //$NON-NLS-1$
@@ -167,8 +171,7 @@ public class Rechnungslauf implements IRunnableWithProgress {
 				Map<Konsultation, Patient> list2 = new HashMap<Konsultation, Patient>(100);
 				for (Konsultation k2 : list) {
 					String fid = k2.get(Konsultation.FLD_CASE_ID);
-					String mid = k2.get(Konsultation.FLD_MANDATOR_ID);
-					if ((fid != null) && (fid.equals(kfID)) && (mid.equals(kMandantID))) {
+					if ((fid != null) && (fid.equals(kfID))) {
 						list2.put(k2, kPatient);
 						List<Verrechnet> lstg = k2.getLeistungen();
 						for (Verrechnet v : lstg) {
