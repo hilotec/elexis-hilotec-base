@@ -33,6 +33,7 @@ import ch.rgw.tools.TimeTool;
 public class Artikel extends VerrechenbarAdapter {
 	public static final String FLD_EAN = "EAN";
 	public static final String FLD_CODECLASS = "Codeclass";
+	public static final String FLD_KLASSE = "Klasse";
 	public static final String XID_PHARMACODE = "www.xid.ch/id/pharmacode/ch";
 	public static final String FLD_SUB_ID = "SubID";
 	public static final String ARTIKEL = "Artikel";
@@ -64,7 +65,7 @@ public class Artikel extends VerrechenbarAdapter {
 	static {
 		addMapping(TABLENAME, FLD_LIEFERANT_ID, FLD_NAME, MAXBESTAND, MINBESTAND, ISTBESTAND,
 			FLD_EK_PREIS, FLD_VK_PREIS, FLD_TYP, FLD_EXTINFO, FLD_EAN, FLD_SUB_ID,
-			"Eigenname=Name_intern", FLD_CODECLASS, "Klasse");
+			"Eigenname=Name_intern", FLD_CODECLASS, FLD_KLASSE);
 		Xid.localRegisterXIDDomainIfNotExists(XID_PHARMACODE, "Pharmacode", Xid.ASSIGNMENT_REGIONAL);
 	}
 	
@@ -80,7 +81,7 @@ public class Artikel extends VerrechenbarAdapter {
 		if (!ret.exists()) {
 			return ret;
 		}
-		String clazz = ret.get("Klasse");
+		String clazz = ret.get(FLD_KLASSE);
 		if (!StringTool.isNothing(clazz)) {
 			try {
 				ret = (Artikel) Hub.poFactory.createFromString(clazz + "::" + id);
@@ -590,7 +591,7 @@ public class Artikel extends VerrechenbarAdapter {
 	@Override
 	protected String[] getExportFields(){
 		return new String[] {
-			FLD_EAN, FLD_SUB_ID, FLD_LIEFERANT_ID, "Klasse", FLD_NAME, MAXBESTAND, MINBESTAND,
+			FLD_EAN, FLD_SUB_ID, FLD_LIEFERANT_ID, FLD_KLASSE, FLD_NAME, MAXBESTAND, MINBESTAND,
 			ISTBESTAND, FLD_EK_PREIS, FLD_VK_PREIS, FLD_TYP, FLD_CODECLASS, FLD_EXTINFO
 		};
 	}
