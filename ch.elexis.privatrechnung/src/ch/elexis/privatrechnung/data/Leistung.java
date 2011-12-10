@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistung.java 5180 2009-02-24 15:46:54Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
