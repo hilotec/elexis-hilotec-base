@@ -55,6 +55,22 @@ public class Test_externe_dokumente {
 	static String base_2;
 	static String base_3;
 	
+	private static void createFiles(String[] names)
+	{
+		for (int j=0; j < names.length; j++)
+		{
+			File file = new File(names[j]);
+			try {
+				file.createNewFile();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			assertTrue(file.exists());
+			file.deleteOnExit();
+		}
+	}
+	
 	@Before
 	public void setUp(){
 		try {
@@ -235,18 +251,8 @@ public class Test_externe_dokumente {
 			base_2 +"/GiezenWerner 1980-12-30/kurz",
 			base_2 +"/GiezenWerner 1980-12-30/Meier Fritz   TestDatei.xx"
 		};
-		for (int j=0; j < wernerFiles.length; j++)
-		{
-			File file = new File(wernerFiles[j]);
-			try {
-				file.createNewFile();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			assertTrue(file.exists());
-			file.deleteOnExit();
-		}
+		createFiles(wernerFiles);
+
 		Object allFiles = MatchPatientToPath.getFilesForPatient(werner, null);
 		assertEquals("class java.util.ArrayList", allFiles.getClass().toString());
 		ArrayList<String> tst = (ArrayList<String>) allFiles;
@@ -269,4 +275,48 @@ public class Test_externe_dokumente {
 			assertTrue("Did not find file "+name, found);
 		}
 	}
+		
+	@Test
+	public void testPatientenMitGleichemNamenUndVornamen(){
+		Patient peter1 = new Patient("Mustermann", "Peter", "04.01.1981", "m");
+		Patient peter2 = new Patient("Mustermann", "Peter", "04.01.1955", "m");
+		String[] peterFiles= {
+			base_2 +"/MusterFritz Brief wegen Vater",
+			base_2 +"/MusterFritz Brief wegen Sohn"
+		};
+		createFiles(peterFiles);
+
+		/* Test für Peter1 */
+		Object allFiles = MatchPatientToPath.getFilesForPatient(peter1, null);
+		assertEquals("class java.util.ArrayList", allFiles.getClass().toString());
+		ArrayList<String> tst = (ArrayList<String>) allFiles;
+		assertEquals("Fuer Peter1 müssen wir zwei Dateien finden", tst.size(), 2);
+		List<File> oldFiles = MatchPatientToPath.getAllOldConventionFiles();
+		assertEquals("Fuer Peter1 müssen wir zwei alte Dateien finden", oldFiles.size(), 2);
+		
+		/* Test für Peter2 */
+		allFiles = MatchPatientToPath.getFilesForPatient(peter2, null);
+		assertEquals("class java.util.ArrayList", allFiles.getClass().toString());
+		tst = (ArrayList<String>) allFiles;
+		assertEquals("Fuer Peter1 müssen wir zwei Dateien finden", tst.size(), 2);
+		oldFiles = MatchPatientToPath.getAllOldConventionFiles();
+		assertEquals("Fuer Peter1 müssen wir zwei alte Dateien finden", oldFiles.size(), 2);
+		
+		/* Jetzt versuchen wir sie in ein Unterverzeichnis zu schieben */
+		/* Dies muss fehlschlagen, da es mehrer Möglichkeiten gibt */
+		MatchPatientToPath m = new MatchPatientToPath(peter1);
+		oldFiles = MatchPatientToPath.getAllOldConventionFiles();
+		assertEquals(oldFiles.size(),2);
+		Iterator<File> iterator = oldFiles.iterator();
+		while (iterator.hasNext()) {
+			MatchPatientToPath.MoveIntoSubDir(iterator.next().getAbsolutePath());
+		}
+		/* Es muessen immer noch zwei alte Dateien vorhanden sein */
+		allFiles = MatchPatientToPath.getFilesForPatient(peter2, null);
+		assertEquals("class java.util.ArrayList", allFiles.getClass().toString());
+		assertEquals("Fuer Peter1 müssen wir immer noch zwei Dateien finden", tst.size(), 2);
+		oldFiles = MatchPatientToPath.getAllOldConventionFiles();
+		assertEquals("Fuer Peter1 müssen wir immer noch zwei alte Dateien finden", oldFiles.size(),2);
+
+	}	
 }

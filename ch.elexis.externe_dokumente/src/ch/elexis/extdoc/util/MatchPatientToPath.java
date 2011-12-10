@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import ch.elexis.data.Patient;
@@ -61,7 +62,7 @@ public class MatchPatientToPath {
 	static public boolean MoveIntoSubDir(String path){
 		Patient pat = MatchPatientToPath.filenameBelongsToSomePatient(path);
 		if (pat == null) {
-			logAndConsole("No patient found for " + path, ch.rgw.tools.Log.WARNINGS); //$NON-NLS-1$
+			logAndConsole("No unique patient found for " + path, ch.rgw.tools.Log.WARNINGS); //$NON-NLS-1$
 			return false;
 		} else {
 			MatchPatientToPath m = new MatchPatientToPath(pat);
@@ -146,7 +147,7 @@ public class MatchPatientToPath {
 		List<Patient> patienten = getPatient(names[0], names[1]);
 		if (patienten.size() == 0) {
 			logAndConsole(
-				String.format("No patient found for %1s => %2s %3s", fullPathname, names[0], //$NON-NLS-1$
+				String.format("No unique patient found for %1s => %2s %3s", fullPathname, names[0], //$NON-NLS-1$
 					names[1]), Log.WARNINGS);
 			return null;
 		} else
@@ -169,6 +170,11 @@ public class MatchPatientToPath {
 		FilenameFilter filter = new FileFilters(actPatient.getName(), actPatient.getVorname());
 		List<File> list =
 			ListFiles.getList(activePaths, actPatient.getName(), actPatient.getVorname(), actPatient.getGeburtsdatum(), filter);
+		List<File> oldFiles =getAllOldConventionFiles();
+		Iterator<File> iterator = oldFiles.iterator();
+		while (iterator.hasNext()) {
+			list.add(iterator.next());
+		}
 		if (list.size() > 0) {
 			result = list;
 		} else {
