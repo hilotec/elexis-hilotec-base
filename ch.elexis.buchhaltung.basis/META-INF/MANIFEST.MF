@@ -10,4 +10,5 @@ Require-Bundle: ch.elexis,
  org.eclipse.ui,
  org.eclipse.core.runtime,
  ch.unibe.iam.scg.archie,
- ch.rgw.utility;bundle-version="1.0.0"
+ ch.rgw.utility;bundle-version="1.0.0",
+ ch.elexis.core

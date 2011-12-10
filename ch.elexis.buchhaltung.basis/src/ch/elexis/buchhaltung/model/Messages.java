@@ -15,6 +15,11 @@ public class Messages extends NLS {
 	public static String FakturaJournal_ST;
 	public static String FakturaJournal_Text;
 	public static String FakturaJournal_Type;
+	public static String FakturaJournalDetail_Beschreibung;
+	public static String FakturaJournalDetail_Name;
+	public static String FakturaJournalDetail_Patient;
+	public static String FakturaJournalDetail_Rechnungsempfaenger;
+	public static String FakturaJournalDetail_Rechnungssteller;
 	public static String ListeNachFaelligkeit_Amount;
 	public static String ListeNachFaelligkeit_AnalyzingBills;
 	public static String ListeNachFaelligkeit_BillNr;
