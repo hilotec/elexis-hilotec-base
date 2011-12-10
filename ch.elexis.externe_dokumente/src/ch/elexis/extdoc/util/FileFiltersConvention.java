@@ -13,6 +13,8 @@ public class FileFiltersConvention {
 
 	private String shortName;
 	
+	public final static String BirthdayNotKnown = "1111-11-11";  //$NON-NLS-1$
+	
 	public FileFiltersConvention(String lastname, String firstname){
 		firstname = MatchPatientToPath.firstToken(firstname);
 		

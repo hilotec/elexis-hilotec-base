@@ -20,8 +20,9 @@ import ch.elexis.extdoc.util.MatchPatientToPath;
 public class Test_externe_dokumente {
 	private Patient helena;
 	private Patient werner;
-	private Patient fritz;
+	private Patient fritz; // Hat kein Geburtsdatum
 	private Patient anneCecile;
+	private Patient meier; // Hat weder Vornamen noch Geburtsdatum
 	
 	static class PathToFirstAndFamily {
 		public String path;
@@ -80,43 +81,53 @@ public class Test_externe_dokumente {
 			if (anneCecile == null) {
 				anneCecile = new Patient("Beck", "Anne-Cécile", "01.07.2002", "f");
 				fritz = new Patient("Meier", "Fritz", "04.01.1981", "m");
+				fritz.set("Geburtsdatum", "");
 				helena = new Patient("Duck", "Helena", "01.01.2001", "f");
 				werner = new Patient("Giezendanner", "Werner", "30.12.1980", "m");
+				meier = new Patient("Meyer","", "30.12.1970", "m");
+				meier.set("Geburtsdatum", "");
 			}
 			PatOldNew[] valid =
 				{
 					new PatOldNew(anneCecile, base_1 + "/Beck  Anne-Cécile Pers.tif", base_1
 						+ "/Beck  Annecécile 2002-07-01/Beck  Anne-Cécile Pers.tif", 2),
-					new PatOldNew(anneCecile, base_1 + "/Beck  Anne-Cécile zweites dokument.txt", base_1
-						+ "/Beck  Annecécile 2002-07-01/Beck  Anne-Cécile zweites dokument.txt", 2),
+					new PatOldNew(anneCecile, base_1 + "/Beck  Anne-Cécile", base_1
+						+ "/Beck  Annecécile 2002-07-01/Beck  Anne-Cécile", 2),
 					new PatOldNew(helena, base_1 + "/Duck  Helena Pers.tif", base_1
 						+ "/Duck  Helena 2001-01-01/Duck  Helena Pers.tif", 2),
 					new PatOldNew(helena, base_1 + "/Duck  Helena.tif", base_1
 						+ "/Duck  Helena 2001-01-01/Duck  Helena.tif", 2),
 					new PatOldNew(fritz, base_1 + "/Meier Fritz PilonFxR_StnOSME RoeKSL.pdf",
-						base_1 + "/Meier Fritz 1981-01-04/Meier Fritz PilonFxR_StnOSME RoeKSL.pdf", 1),
+						base_1 + "/Meier Fritz 1111-11-11/Meier Fritz PilonFxR_StnOSME RoeKSL.pdf", 1),
 					new PatOldNew(werner, base_1 + "/GiezenWerner Antikoagulation.xls", base_1
 						+ "/GiezenWerner 1980-12-30/GiezenWerner Antikoagulation.xls", 4),
 					new PatOldNew(werner, base_2 + "/GiezenWerner Antikoagulation.txt", base_2
 						+ "/GiezenWerner 1980-12-30/GiezenWerner Antikoagulation.txt", 4),
 					new PatOldNew(werner, base_3 + "/GiezenWerner Antikoagulation.txt", base_3
 						+ "/GiezenWerner 1980-12-30/GiezenWerner Antikoagulation.txt", 4),
-					new PatOldNew(werner, base_3 + "/GiezenWerner test.txt", base_3
-						+ "/GiezenWerner 1980-12-30/GiezenWerner test.txt", 4)
-				};
+						new PatOldNew(werner, base_3 + "/GiezenWerner test.txt", base_3
+							+ "/GiezenWerner 1980-12-30/GiezenWerner test.txt", 4),
+					new PatOldNew(meier, base_1 + "/Meyer ", base_1
+						+ "/Meyer  1111-11-11/Meyer ", 1)
+			};
 			validExamples = valid;
 			File temp = File.createTempFile("abc", "b");
 			String dirName = temp.getAbsolutePath();
 			File dir = new File(dirName);
-			dir.mkdir();
-			dir.deleteOnExit();
+			dir.mkdir();		
 		} catch (Exception ex) {
 			System.out.println(ex.toString());
 		}
 	}
 	
 	@After
-	public void tearDown(){}
+	public void tearDown(){
+		for (int j = 0; j < validExamples.length; j++) {
+			File file = new File(validExamples[j].neu);
+			file.delete();
+			file.getParentFile().deleteOnExit();
+		}
+	}
 	
 	@Test
 	public void testSplitValid(){
@@ -166,7 +177,6 @@ public class Test_externe_dokumente {
 	@Test
 	public void testMoveIntoSubDir(){
 		for (int j = 0; j < validExamples.length; j++) {
-			System.out.format("alt: %1s  => \nneu: %2s", validExamples[j].alt, validExamples[j].neu);
 			// create old file
 			File file = new File(validExamples[j].alt);
 			try {
@@ -184,7 +194,7 @@ public class Test_externe_dokumente {
 			MatchPatientToPath m = new MatchPatientToPath(validExamples[j].p);
 			String should = m.ShouldBeMovedToThisSubDir(validExamples[j].alt, validExamples[j].p.getGeburtsdatum());
 			if (!validExamples[j].neu.equals(should))
-				System.out.format("alt: %s => \nneu: %s should be equal \nshd: %s\n", validExamples[j].alt,
+				System.out.format("\nalt: '%s' => \nneu: '%s' should be equal \nshd: '%s'\n", validExamples[j].alt,
 					validExamples[j].neu, should);
 			assertEquals(validExamples[j].neu, should);
 			if (!file.exists()) {
@@ -216,6 +226,47 @@ public class Test_externe_dokumente {
 			if (tst.size() != validExamples[j].nrFiles)
 				System.out.format("validExamples %d %s: allFiles %d should match size of %d\n", j, validExamples[j].alt, validExamples[j].nrFiles, tst.size());
 			assertTrue( tst.size() <= validExamples[j].nrFiles );
+		}
+	}
+	
+	@Test
+	public void testMatchesAllFilesInSubDir(){
+		String[] wernerFiles = {
+			base_2 +"/GiezenWerner 1980-12-30/kurz",
+			base_2 +"/GiezenWerner 1980-12-30/Meier Fritz   TestDatei.xx"
+		};
+		for (int j=0; j < wernerFiles.length; j++)
+		{
+			File file = new File(wernerFiles[j]);
+			try {
+				file.createNewFile();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			assertTrue(file.exists());
+			file.deleteOnExit();
+		}
+		Object allFiles = MatchPatientToPath.getFilesForPatient(werner, null);
+		assertEquals("class java.util.ArrayList", allFiles.getClass().toString());
+		ArrayList<String> tst = (ArrayList<String>) allFiles;
+		for (int j=0; j < wernerFiles.length; j++)
+		{
+			boolean found = false;
+			String name = wernerFiles[j];
+			Iterator<String> iterator = tst.iterator();
+			while (iterator.hasNext()) {
+				Object o = iterator.next();
+				File f = new File(o.toString());
+				if (f.getAbsolutePath().equals(name))
+				{
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+				System.out.format("Search for  %s found in tst ? %s\n", name, found);
+			assertTrue("Did not find file "+name, found);
 		}
 	}
 }

@@ -67,21 +67,15 @@ public class MatchPatientToPath {
 			MatchPatientToPath m = new MatchPatientToPath(pat);
 			String dest = m.ShouldBeMovedToThisSubDir(path, pat.getGeburtsdatum());
 			File destDir = new File(dest).getParentFile();
-			logAndConsole(String.format("destDir %1s destDir %2s", destDir, destDir.exists()), //$NON-NLS-1$
-				ch.rgw.tools.Log.INFOS);
 			if (!destDir.exists() && !destDir.mkdir()) {
 				logAndConsole(String.format("Could not create subdir %1s created for patient %2s", //$NON-NLS-1$
 					destDir.getAbsolutePath(), pat.toString()), ch.rgw.tools.Log.WARNINGS);
 				return false;
 			}
-			logAndConsole(String.format("dest exists?: renameTo %1s", dest), ch.rgw.tools.Log.INFOS); //$NON-NLS-1$
 			
 			logAndConsole(String.format("MoveIntoSubDir: %1s renameTo %2s", path, dest), //$NON-NLS-1$
 				ch.rgw.tools.Log.INFOS);
 			boolean success = new File(path).renameTo(new File(dest));
-			logAndConsole(
-				String.format("MoveIntoSubDir: success %1s %2s  renameTo %3s", success, path, dest), //$NON-NLS-1$
-				ch.rgw.tools.Log.INFOS);
 			return true;
 		}
 	}
@@ -189,6 +183,8 @@ public class MatchPatientToPath {
 	 * @return name with dashes, underscores removed
 	 */
 	public static String cleanName(String name){
+		if (name.length() ==0)
+			return name;
 		name = name.replaceAll("-", "").replaceAll("_", "");
 		String clean = name.split("[. \\s]", 0)[0].toLowerCase(); //$NON-NLS-1$
 		clean = clean.substring(0,1).toUpperCase() + clean.substring(1);
@@ -215,7 +211,7 @@ public class MatchPatientToPath {
 	public static String geburtsDatumToCanonical(String geburtsDatum)
 	{		
 		if (geburtsDatum == null || geburtsDatum.length() == 0 )
-			return "1900-12-31";
+			return FileFiltersConvention.BirthdayNotKnown;
 		String sortableDate = geburtsDatum.substring(6);
 		if (sortableDate.length() != 4)
 			sortableDate = "XX";
@@ -256,9 +252,6 @@ public class MatchPatientToPath {
 				File[] files = dir.listFiles(fileFilter);
 				if (files != null)
 					for (int k = 0; k < files.length; k++) {
-						logAndConsole(String.format(
-							"K %1d %2s %3s", k, files[k], files[k].getClass().toString()), //$NON-NLS-1$
-							Log.WARNINGS);
 						allFiles.add(files[k]);
 					}
 			}
