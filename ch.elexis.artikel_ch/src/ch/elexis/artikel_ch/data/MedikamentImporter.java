@@ -164,8 +164,10 @@ public class MedikamentImporter extends ImporterPage {
 				if (a == null) {
 					if (cmws.equals("1")) { //$NON-NLS-1$
 						a = new Artikel(titel, MEDICAL, pk);
+						a.set(Artikel.FLD_KLASSE, Medical.class.getName());
 					} else {
 						a = new Artikel(titel, MEDIKAMENT, pk);
+						a.set(Artikel.FLD_KLASSE, Medikament.class.getName());
 					}
 				}
 				if (vk.matches("0+")) { //$NON-NLS-1$
