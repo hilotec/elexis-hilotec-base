@@ -81,7 +81,7 @@ public class Medikament extends Artikel {
 	 */
 	public Medikament(String name, String typ, String subid){
 		super(name, typ, subid);
-		set("Klasse", getClass().getName());
+		set(Artikel.FLD_KLASSE, getClass().getName());
 	}
 	
 	@Override

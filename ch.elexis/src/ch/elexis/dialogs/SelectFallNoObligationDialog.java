@@ -9,6 +9,7 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -25,24 +26,28 @@ import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.data.Fall;
+import ch.elexis.data.IVerrechenbar;
 
 public class SelectFallNoObligationDialog extends TitleAreaDialog {
 	
+	private static Fall lastSelectedFall;
+	
+	private IVerrechenbar noOblCode;
 	private Fall oblFall;
 	private Fall fall;
 	private ComboViewer noOblFallCombo;
 	
-	public SelectFallNoObligationDialog(Fall oblFall){
+	public SelectFallNoObligationDialog(Fall oblFall, IVerrechenbar code){
 		super(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell());
 		this.oblFall = oblFall;
+		this.noOblCode = code;
 	}
 	
 	@Override
 	public void create(){
 		super.create();
-		setTitle("Fall für Nicht-Pflichtleistungen"); //$NON-NLS-1$
-		setMessage("Auf diesen Fall können nur Pflichtleitungen verrechnet werden.\n"
-			+ "Erstellen bzw. wählen Sie einen Fall für Nicht-Pflichtleistungen aus."); //$NON-NLS-1$
+		setTitle("Auf diesen Fall können nur Pflichtleitungen verrechnet werden."); //$NON-NLS-1$
+		setMessage("Erstellen bzw. wählen Sie einen Fall für die Nicht-Pflichtleistung:\n" + noOblCode.getText()); //$NON-NLS-1$
 		getShell().setText("Fall für Nicht-Pflichtleistungen"); //$NON-NLS-1$
 	}
 	
@@ -88,6 +93,9 @@ public class SelectFallNoObligationDialog extends TitleAreaDialog {
 			}
 		});
 		
+		if (lastSelectedFall != null)
+			noOblFallCombo.setSelection(new StructuredSelection(lastSelectedFall));
+
 		ElexisEventDispatcher.getInstance().addListeners(
 			new UpdateFallComboListener(noOblFallCombo, Fall.class, 0xff));
 
@@ -109,7 +117,7 @@ public class SelectFallNoObligationDialog extends TitleAreaDialog {
 		ArrayList<Fall> ret = new ArrayList<Fall>();
 		Fall[] faelle = oblFall.getPatient().getFaelle();
 		for (Fall f : faelle) {
-			String gesetz = f.get("Gesetz");
+			String gesetz = f.getRequiredString("Gesetz");
 			if (!gesetz.equalsIgnoreCase("KVG"))
 				ret.add(f);
 		}
@@ -121,6 +129,7 @@ public class SelectFallNoObligationDialog extends TitleAreaDialog {
 		Object obj = ((IStructuredSelection) noOblFallCombo.getSelection()).getFirstElement();
 		if (obj instanceof Fall) {
 			fall = (Fall) obj;
+			lastSelectedFall = fall;
 			super.okPressed();
 		}
 		if (this.getShell() != null && !this.getShell().isDisposed())
@@ -143,8 +152,10 @@ public class SelectFallNoObligationDialog extends TitleAreaDialog {
 		
 		@Override
 		public void runInUi(ElexisEvent ev){
-			viewer.setInput(getNoObligationFaelle());
-			viewer.refresh();
+			if (viewer != null && viewer.getControl() != null && !viewer.getControl().isDisposed()) {
+				viewer.setInput(getNoObligationFaelle());
+				viewer.refresh();
+			}
 		}
 	}
 }

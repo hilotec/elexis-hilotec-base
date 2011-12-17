@@ -185,20 +185,26 @@ public interface IVerrechenbar extends ICodeElement {
 	public static class NoObligationOptifier extends DefaultOptifier {
 		@Override
 		public Result<IVerrechenbar> add(IVerrechenbar code, Konsultation kons){
-			String gesetz = kons.getFall().get("Gesetz");
+			String gesetz = kons.getFall().getRequiredString("Gesetz");
 			
 			boolean forceObligation = Hub.userCfg.get(Leistungscodes.OBLIGATION, false);
 			
 			if (forceObligation && gesetz.equalsIgnoreCase("KVG")) {
-				SelectFallNoObligationDialog dlg = new SelectFallNoObligationDialog(kons.getFall());
+				SelectFallNoObligationDialog dlg =
+					new SelectFallNoObligationDialog(kons.getFall(), code);
 
 				if (dlg.open() == Dialog.OK) {
 					Fall noOblFall = dlg.getFall();
-					Konsultation noOblKons = noOblFall.neueKonsultation();
-					// transfer diagnoses to the new Konsultation
-					List<IDiagnose> diagnoses = kons.getDiagnosen();
-					for (IDiagnose diag : diagnoses)
-						noOblKons.addDiagnose(diag);
+					// check if there is a Konsultation in the selected Fall on the same date
+					Konsultation noOblKons = getKonsFromFallByDate(noOblFall, kons.getDatum());
+					// create new Konsultation if there is none matching
+					if (noOblKons == null) {
+						noOblKons = noOblFall.neueKonsultation();
+						// transfer diagnoses to the Konsultation
+						List<IDiagnose> diagnoses = kons.getDiagnosen();
+						for (IDiagnose diag : diagnoses)
+							noOblKons.addDiagnose(diag);
+					}
 					// add the no obligation IVerrechenbar to the new Konsultation
 					noOblKons.addLeistung(code);
 					// return ok
@@ -212,6 +218,17 @@ public interface IVerrechenbar extends ICodeElement {
 			}
 			
 			return super.add(code, kons);
+		}
+		
+		private Konsultation getKonsFromFallByDate(Fall fall, String date){
+			Konsultation[] konsen = fall.getBehandlungen(false);
+			for (int i = 0; i < konsen.length; i++) {
+				Konsultation kons = konsen[i];
+				if (kons.getDatum().equals(date)) {
+					return kons;
+				}
+			}
+			return null;
 		}
 	}
 }

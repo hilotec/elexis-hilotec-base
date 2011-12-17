@@ -1,5 +1,14 @@
 hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.6
 
+Dummy change to make branch active again!
+
+Changelog für 2.1.6.1
+aedac41fd1d7: 2011-12-11: mdescher: Simple refactoring of string "Klasse" to static constant
+28aa32fb4d10: 2011-12-11: mdescher: Ticket #704: artikel_ch v2.0.4 - Importer now adds class type to table
+6f0c6ac2af20: 2011-12-10: thomashu: Ticket: #697 - reworked selection of Fall for no obligation Verrechenbar
+70ffbd2929e0: 2011-12-10: thomashu: Ticket: #710 - added "Faktura Journal detailliert" statistics
+225733d657f5: 2011-12-09: mdescher: Ticket #704: Refactoring
+
 Changelog für 2.1.6.0
 73e0f1644bfd: 2011-11-25: Niklaus Giger: Ticket #546: Corrected check_plugin_version.rb and some plugin versions
 5329af77af22: 2011-11-25: thomashu: Ticket #412: Fix verschwindende Konsultationstexte

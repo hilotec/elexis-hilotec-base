@@ -348,7 +348,7 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 				<include name="**/*" />
 			</fileset>
 		</copy>
-		<copy tofile="${dist}/elexis" file="${platform-runtime}/eclipse" preservelastmodified="true" verbose="true" />
+		<copy tofile="${dist}/elexis" file="${rsc}/${os}/eclipse" preservelastmodified="true" verbose="true" />
 		<chmod file="${dist}/elexis" perm="ugo+rx" />
 		<antcall target="create-default" />
 		<antcall target="installer" inheritrefs="true" inheritall="true" />
