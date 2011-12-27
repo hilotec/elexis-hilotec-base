@@ -65,18 +65,18 @@ end
 def generiere_externe_dokumente
 
    begin
-	 @@dbh = DBI.connect("DBI:Mysql:#{MyDb}:#{Host}", User, Pass)
+	 $dbh = DBI.connect("DBI:Mysql:#{MyDb}:#{Host}", User, Pass)
      # get server version string and display it
-     row = @@dbh.select_one("SELECT VERSION()")
+     row = $dbh.select_one("SELECT VERSION()")
      puts "Server version: " + row[0]
      j=0
-     sth = @@dbh.execute("SELECT bezeichnung1, bezeichnung2 FROM kontakt where istpatient = '1' order by bezeichnung1")
+     sth = $dbh.execute("SELECT bezeichnung1, bezeichnung2 FROM kontakt where istpatient = '1' order by bezeichnung1")
        sth.fetch do |row|
 	 j +=1
 	 name = row[0]
 	 vorname = row[1]
 	 printf "j %d bezeichnung1: %s bezeichnung1: %s\n", j, name, vorname
-	 1.upto(DokumentsPerPatient).each{ |id| genDokument(name, vorname, id) }
+	 1.upto(DokumentsPerPatient).each{ |id| genDokument(name, vorname, 'datei', id) }
 	 break if j >= MaxPatients
      end
      sth.finish
@@ -86,7 +86,7 @@ def generiere_externe_dokumente
      puts "Error message: #{e.errstr}"
    ensure
      # disconnect from server
-     dbh.disconnect if dbh
+     $dbh.disconnect if $dbh
    end
 
 end

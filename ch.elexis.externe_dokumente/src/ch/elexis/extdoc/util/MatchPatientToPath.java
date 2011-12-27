@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import ch.elexis.data.Patient;
@@ -145,13 +144,14 @@ public class MatchPatientToPath {
 	public static Patient filenameBelongsToSomePatient(String fullPathname){
 		String[] names = getFirstAndFamilyNameFromPathOldConvention(fullPathname);
 		List<Patient> patienten = getPatient(names[0], names[1]);
-		if (patienten.size() == 0) {
-			logAndConsole(
-				String.format("No unique patient found for %1s => %2s %3s", fullPathname, names[0], //$NON-NLS-1$
-					names[1]), Log.WARNINGS);
-			return null;
-		} else
+		if (patienten.size() == 1)
 			return patienten.get(0);
+		else {
+			logAndConsole(String.format(
+				"No unique patient found for %1s => %2s %3s (found %d) ", fullPathname, names[0], //$NON-NLS-1$
+				names[1], patienten.size()), Log.WARNINGS);
+			return null;
+		}
 	}
 	
 	/***
@@ -162,19 +162,18 @@ public class MatchPatientToPath {
 	 *            or null to search on all
 	 * @return a list of files or an error String
 	 */
-	public static Object getFilesForPatient(Patient actPatient,
-		String[] activePaths){
+	public static Object getFilesForPatient(Patient actPatient, String[] activePaths){
 		Object result;
 		if (activePaths == null)
 			activePaths = PreferenceConstants.getActiveBasePaths();
 		FilenameFilter filter = new FileFilters(actPatient.getName(), actPatient.getVorname());
 		List<File> list =
-			ListFiles.getList(activePaths, actPatient.getName(), actPatient.getVorname(), actPatient.getGeburtsdatum(), filter);
-		List<File> oldFiles =getAllOldConventionFiles();
-		Iterator<File> iterator = oldFiles.iterator();
-		while (iterator.hasNext()) {
-			list.add(iterator.next());
-		}
+			ListFiles.getList(activePaths, actPatient.getName(), actPatient.getVorname(),
+				actPatient.getGeburtsdatum(), filter);
+		/*
+		 * List<File> oldFiles = getAllOldConventionFilesWithFilter(filter); Iterator<File> iterator
+		 * = oldFiles.iterator(); while (iterator.hasNext()) { list.add(iterator.next()); }
+		 */
 		if (list.size() > 0) {
 			result = list;
 		} else {
@@ -189,11 +188,11 @@ public class MatchPatientToPath {
 	 * @return name with dashes, underscores removed
 	 */
 	public static String cleanName(String name){
-		if (name.length() ==0)
+		if (name.length() == 0)
 			return name;
 		name = name.replaceAll("-", "").replaceAll("_", "");
 		String clean = name.split("[. \\s]", 0)[0].toLowerCase(); //$NON-NLS-1$
-		clean = clean.substring(0,1).toUpperCase() + clean.substring(1);
+		clean = clean.substring(0, 1).toUpperCase() + clean.substring(1);
 		return clean;
 	}
 	
@@ -214,9 +213,8 @@ public class MatchPatientToPath {
 		return s;
 	}
 	
-	public static String geburtsDatumToCanonical(String geburtsDatum)
-	{		
-		if (geburtsDatum == null || geburtsDatum.length() == 0 )
+	public static String geburtsDatumToCanonical(String geburtsDatum){
+		if (geburtsDatum == null || geburtsDatum.length() == 0)
 			return FileFiltersConvention.BirthdayNotKnown;
 		String sortableDate = geburtsDatum.substring(6);
 		if (sortableDate.length() != 4)
@@ -225,6 +223,7 @@ public class MatchPatientToPath {
 		sortableDate += "-" + geburtsDatum.substring(0, 2);
 		return sortableDate;
 	}
+	
 	/***
 	 * Returns a pathname where the file should be stored according to the new convention
 	 * 
