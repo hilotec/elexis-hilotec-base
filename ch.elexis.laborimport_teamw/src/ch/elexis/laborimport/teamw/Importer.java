@@ -1,5 +1,5 @@
 /**
- * (c) 2007-2010 by G. Weirich
+ * (c) 2007-2011 by G. Weirich
  * All rights reserved
  * 
  * Adapted from Viollier to Bioanalytica by Daniel Lutz <danlutz@watz.ch>
@@ -13,8 +13,6 @@
  * Changes:
  * -  Improved detection of Patient ID by evaluation the fields PATIENT_ID and PLACER_ORDER_NUMBER
  * -  Improved matching of Names to the database
- * 
- * $Id: Importer.java 396 2007-12-17 05:37:27Z Gerry $
  */
 
 package ch.elexis.laborimport.teamw;
@@ -138,8 +136,8 @@ public class Importer extends ImporterPage {
 						obx = obr.nextOBX(obx);
 						continue;
 					} else {
-						return new Result<String>(ch.elexis.laborimport.teamw.Messages
-							.getString("Importer.cancelled")); //$NON-NLS-1$
+						return new Result<String>(
+							ch.elexis.laborimport.teamw.Messages.getString("Importer.cancelled")); //$NON-NLS-1$
 					}
 				}
 				if (obx.isFormattedText()) {
@@ -147,8 +145,8 @@ public class Importer extends ImporterPage {
 						.getResultValue());
 				} else {
 					lr =
-						new LabResult(pat, obr.getDate(), li, obx.getResultValue(), obx
-							.getComment());
+						new LabResult(pat, obr.getDate(), li, obx.getResultValue(),
+							obx.getComment());
 				}
 				
 				if (obx.isPathologic()) {
@@ -324,14 +322,14 @@ public class Importer extends ImporterPage {
 			}
 			
 			String header =
-				MessageFormat.format(ch.elexis.laborimport.teamw.Messages
-					.getString("Importer.import.header"), //$NON-NLS-1$
+				MessageFormat.format(
+					ch.elexis.laborimport.teamw.Messages.getString("Importer.import.header"), //$NON-NLS-1$
 					new Object[] {
 						MY_LAB
 					});
 			String question =
-				MessageFormat.format(ch.elexis.laborimport.teamw.Messages
-					.getString("Importer.import.message"), //$NON-NLS-1$
+				MessageFormat.format(
+					ch.elexis.laborimport.teamw.Messages.getString("Importer.import.message"), //$NON-NLS-1$
 					new Object[] {
 						hl7FileList.size(), downloadDir
 					});
@@ -343,12 +341,12 @@ public class Importer extends ImporterPage {
 			}
 		} catch (IOException e) {
 			result = new Result<String>(SEVERITY.ERROR, 1, e.getMessage(), MY_LAB, true);
-			ResultAdapter.displayResult(result, ch.elexis.laborimport.teamw.Messages
-				.getString("Importer.error.import")); //$NON-NLS-1$
+			ResultAdapter.displayResult(result,
+				ch.elexis.laborimport.teamw.Messages.getString("Importer.error.import")); //$NON-NLS-1$
 		} catch (FtpSemaException e) {
 			result = new Result<String>(SEVERITY.WARNING, 1, e.getMessage(), MY_LAB, true);
-			ResultAdapter.displayResult(result, ch.elexis.laborimport.teamw.Messages
-				.getString("Importer.error.import")); //$NON-NLS-1$
+			ResultAdapter.displayResult(result,
+				ch.elexis.laborimport.teamw.Messages.getString("Importer.error.import")); //$NON-NLS-1$
 		}
 		
 		return result;
@@ -365,8 +363,8 @@ public class Importer extends ImporterPage {
 				PreferencePage.DEFAULT_DL_DIR));
 		
 		if (batchFile == null || batchFile.length() == 0) {
-			return new Result<String>(SEVERITY.ERROR, 1, ch.elexis.laborimport.teamw.Messages
-				.getString("Importer.leereBatchdatei.error"), //$NON-NLS-1$
+			return new Result<String>(SEVERITY.ERROR, 1,
+				ch.elexis.laborimport.teamw.Messages.getString("Importer.leereBatchdatei.error"), //$NON-NLS-1$
 				MY_LAB, true);
 		}
 		
@@ -379,8 +377,10 @@ public class Importer extends ImporterPage {
 				log.log(e.getMessage(), Log.INFOS);
 			}
 			if (exitValue != 0) {
-				return new Result<String>(SEVERITY.ERROR, 1, ch.elexis.laborimport.teamw.Messages
-					.getString("Importer.batchFehler.error") + process.exitValue(), //$NON-NLS-1$
+				return new Result<String>(
+					SEVERITY.ERROR,
+					1,
+					ch.elexis.laborimport.teamw.Messages.getString("Importer.batchFehler.error") + process.exitValue(), //$NON-NLS-1$
 					MY_LAB, true);
 			}
 			
@@ -397,14 +397,14 @@ public class Importer extends ImporterPage {
 			}
 			
 			String header =
-				MessageFormat.format(ch.elexis.laborimport.teamw.Messages
-					.getString("Importer.import.header"), //$NON-NLS-1$
+				MessageFormat.format(
+					ch.elexis.laborimport.teamw.Messages.getString("Importer.import.header"), //$NON-NLS-1$
 					new Object[] {
 						MY_LAB
 					});
 			String question =
-				MessageFormat.format(ch.elexis.laborimport.teamw.Messages
-					.getString("Importer.import.message"), //$NON-NLS-1$
+				MessageFormat.format(
+					ch.elexis.laborimport.teamw.Messages.getString("Importer.import.message"), //$NON-NLS-1$
 					new Object[] {
 						hl7FileList.size(), downloadDir
 					});
@@ -416,8 +416,8 @@ public class Importer extends ImporterPage {
 			}
 		} catch (IOException e) {
 			result = new Result<String>(SEVERITY.ERROR, 1, e.getMessage(), MY_LAB, true);
-			ResultAdapter.displayResult(result, ch.elexis.laborimport.teamw.Messages
-				.getString("Importer.error.import")); //$NON-NLS-1$
+			ResultAdapter.displayResult(result,
+				ch.elexis.laborimport.teamw.Messages.getString("Importer.error.import")); //$NON-NLS-1$
 		}
 		
 		return result;

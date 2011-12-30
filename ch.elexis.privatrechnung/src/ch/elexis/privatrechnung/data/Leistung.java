@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: Leistung.java 5180 2009-02-24 15:46:54Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.privatrechnung.data;
@@ -49,35 +49,33 @@ public class Leistung extends VerrechenbarAdapter {
 	 * should use this as explained here. The create script must make sure that it can run
 	 * successful on any sql compliant database
 	 */
-	private static final String createDB =
-		"CREATE TABLE "
-			+ TABLENAME
-			+ "("
-			+ "ID	VARCHAR(25) primary key," // This field must always be present
-			+ "lastupdate BIGINT," // This field must always be present
-			+ "deleted		CHAR(1) default '0'," // This field must always be present
-			+ "parent			VARCHAR(80),"
-			+ "name			VARCHAR(499),"
-			+ "short			VARCHAR(80),"
-			+ "cost			CHAR(8),"
-			+ // use always fixed char fields for amounts
-			"price			CHAR(8),"
-			+ // amounts are always in cents/rp
-			"time			CHAR(4)," + "subsystem		VARCHAR(25),"
-			+ "valid_from		CHAR(8),"
-			+ // use always char(8) for dates
-			"valid_until	CHAR(8),"
-			+ "ExtInfo		BLOB);"
-			+ // An ExtInfo field can be used to store arbitrary data
-			"INSERT INTO " + TABLENAME + " (ID,name) VALUES ('VERSION','" + VERSION + "');"
-			+ "CREATE INDEX chelpr_idx1 on " + TABLENAME + "(parent,name);"
-			+ "CREATE INDEX chelpr_idx2 on " + TABLENAME + "(valid_from);";
+	private static final String createDB = "CREATE TABLE "
+		+ TABLENAME
+		+ "("
+		+ "ID	VARCHAR(25) primary key," // This field must always be present
+		+ "lastupdate BIGINT," // This field must always be present
+		+ "deleted		CHAR(1) default '0'," // This field must always be present
+		+ "parent			VARCHAR(80),"
+		+ "name			VARCHAR(499),"
+		+ "short			VARCHAR(80),"
+		+ "cost			CHAR(8),"
+		+ // use always fixed char fields for amounts
+		"price			CHAR(8),"
+		+ // amounts are always in cents/rp
+		"time			CHAR(4)," + "subsystem		VARCHAR(25),"
+		+ "valid_from		CHAR(8),"
+		+ // use always char(8) for dates
+		"valid_until	CHAR(8),"
+		+ "ExtInfo		BLOB);"
+		+ // An ExtInfo field can be used to store arbitrary data
+		"INSERT INTO " + TABLENAME + " (ID,name) VALUES ('VERSION','" + VERSION + "');"
+		+ "CREATE INDEX chelpr_idx1 on " + TABLENAME + "(parent,name);"
+		+ "CREATE INDEX chelpr_idx2 on " + TABLENAME + "(valid_from);";
 	
-	private static final String UPDATE_030 =
-		"ALTER TABLE " + TABLENAME + " MODIFY name VARCHAR(499);" + "ALTER TABLE " + TABLENAME
-			+ " MODIFY short VARCHAR(80);" + "ALTER TABLE " + TABLENAME + " MODIFY cost CHAR(8);"
-			+ "ALTER TABLE " + TABLENAME + " MODIFY price CHAR(8);" + "ALTER TABLE " + TABLENAME
-			+ " MODIFY parent VARCHAR(80);";
+	private static final String UPDATE_030 = "ALTER TABLE " + TABLENAME
+		+ " MODIFY name VARCHAR(499);" + "ALTER TABLE " + TABLENAME + " MODIFY short VARCHAR(80);"
+		+ "ALTER TABLE " + TABLENAME + " MODIFY cost CHAR(8);" + "ALTER TABLE " + TABLENAME
+		+ " MODIFY price CHAR(8);" + "ALTER TABLE " + TABLENAME + " MODIFY parent VARCHAR(80);";
 	
 	private static final String UPDATE_031 = "ALTER TABLE " + TABLENAME + " ADD lastupdate BIGINT;";
 	/**
