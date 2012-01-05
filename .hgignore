@@ -26,6 +26,8 @@ local.properties
 ^BuildElexis/local\.properties\.hudson
 ^BuildElexis/local\.properties
 patches
+target
+reports
 
 syntax: regexp
 ^BuildElexis/local\.properties\.hudson$
