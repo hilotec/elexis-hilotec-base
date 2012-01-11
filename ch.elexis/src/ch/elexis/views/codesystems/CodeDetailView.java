@@ -17,7 +17,6 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -46,13 +45,10 @@ import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.status.ElexisStatus;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.ImporterPage;
-import ch.elexis.util.Log;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.IDetailDisplay;
-import ch.elexis.wizards.Messages;
-import ch.rgw.tools.ExHandler;
 
 public class CodeDetailView extends ViewPart implements IActivationListener, ISaveablePart2 {
 	public final static String ID = "ch.elexis.codedetailview"; //$NON-NLS-1$
