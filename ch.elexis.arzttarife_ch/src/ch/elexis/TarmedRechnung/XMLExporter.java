@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id$
+ * $Id: XMLExporter.java a3cef6cbaa15 2011/08/21 08:21:35 thomashu $
  *******************************************************************************/
 
 /*  BITTE KEINE ÄNDERUNGEN AN DIESEM FILE OHNE RÜCKSPRACHE MIT MIR weirich@elexis.ch */
@@ -80,10 +80,10 @@ import ch.elexis.data.PhysioLeistung;
 import ch.elexis.data.RFE;
 import ch.elexis.data.Rechnung;
 import ch.elexis.data.RnStatus;
+import ch.elexis.data.RnStatus.REJECTCODE;
 import ch.elexis.data.TarmedLeistung;
 import ch.elexis.data.TrustCenters;
 import ch.elexis.data.Verrechnet;
-import ch.elexis.data.RnStatus.REJECTCODE;
 import ch.elexis.labortarif2009.data.Labor2009Tarif;
 import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.preferences.PreferenceInitializer;
@@ -814,9 +814,9 @@ public class XMLExporter implements IRnOutputter {
 					Money preis = vv.getNettoPreis();
 					Money mAmountLocal = new Money(preis);
 					// new as of 3/2011: Correct handling of package fractions
-//					Money preis = vv.getBruttoPreis();
-//					preis.multiply(vv.getPrimaryScaleFactor());
-//					
+					Money einzelpreis = vv.getBruttoPreis();
+					einzelpreis.multiply(vv.getPrimaryScaleFactor());
+
 					double cnt = vv.getSecondaryScaleFactor();
 					if (cnt != 1.0) {
 						zahl *= cnt;
@@ -825,7 +825,7 @@ public class XMLExporter implements IRnOutputter {
 					}
 					
 					// end corrections
-					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(preis));
+					el.setAttribute(ATTR_UNIT, XMLTool.moneyToXmlDouble(einzelpreis));
 					el.setAttribute(ATTR_UNIT_FACTOR, XMLTool.doubleToXmlDouble(mult, 2));
 					el.setAttribute(ATTR_TARIFF_TYPE, "400"); // Pharmacode-basiert //$NON-NLS-1$
 					String pk = ((Artikel) v).getPharmaCode();
