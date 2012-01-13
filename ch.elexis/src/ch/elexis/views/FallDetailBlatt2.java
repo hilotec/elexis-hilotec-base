@@ -1216,9 +1216,6 @@ public class FallDetailBlatt2 extends Composite {
 		ddc.setDates(bt);
 		form.reflow(true);
 		form.redraw();
-		if (actFall != null && !actFall.equals(ElexisEventDispatcher.getSelected(Fall.class))) {
-			ElexisEventDispatcher.fireSelectionEvent(actFall);
-		}
 	}
 	
 	/**
