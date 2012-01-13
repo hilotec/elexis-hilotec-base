@@ -1,0 +1,3 @@
+2.1.4 - Original Version - G. Weirich
+2.1.5 - 12.1.2012 - M. Descher
+	- Update auf ical4j 1.0.1, siehe Ticket 730
