@@ -43,11 +43,11 @@ public class MediDetailDialog extends TitleAreaDialog {
 		gd_dosis.widthHint = 80;
 		dosis.setLayoutData(gd_dosis);
 		dosis.setText(art.getDosis());
-		dosis.setTextLimit(10);
+		dosis.setTextLimit(254);
 		new Label(ret, SWT.NONE).setText(Messages.getString("MediDetailDialog.prescription")); //$NON-NLS-1$
 		einnahme = new Text(ret, SWT.MULTI);
 		einnahme.setText(art.getBemerkung());
-		einnahme.setTextLimit(80);
+		einnahme.setTextLimit(254);
 		einnahme.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		return ret;
 	}
