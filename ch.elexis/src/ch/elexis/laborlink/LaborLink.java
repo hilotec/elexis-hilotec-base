@@ -400,11 +400,8 @@ public class LaborLink implements IKonsExtension {
 		}
 		
 		private boolean hasResult(LabItem labItem, TimeTool date){
-			Query<LabResult> query = new Query<LabResult>(LabResult.class);
-			query.add("Datum", "=", date.toString(TimeTool.DATE_ISO));
-			query.add("ItemID", "=", labItem.getId());
-			List<LabResult> list = query.execute();
-			if (list != null && list.size() > 0) {
+			LabResult result = LabResult.getForDate(patient, date, labItem);
+			if (result != null) {
 				return true;
 			} else {
 				return false;
