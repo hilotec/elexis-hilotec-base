@@ -55,6 +55,12 @@ public class NeuerFallDialog extends TitleAreaDialog {
 	}
 	
 	@Override
+	protected void okPressed(){
+		ElexisEventDispatcher.reload(Fall.class);
+		super.okPressed();
+	}
+
+	@Override
 	protected void cancelPressed(){
 		fall.delete();
 		ElexisEventDispatcher.reload(Fall.class);
