@@ -212,6 +212,8 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 		// menus.createToolbar(newRpAction, addLineAction, printAction );
 		menus.createMenu(newRpAction, addLineAction, printAction, deleteRpAction);
 		menus.createViewerContextMenu(lvRpLines, removeLineAction, changeMedicationAction);
+		// make selection of prescription viewer available for commands of context menu
+		getSite().setSelectionProvider(lvRpLines);
 		IToolBarManager tm = getViewSite().getActionBars().getToolBarManager();
 		List<IAction> importers =
 			Extensions.getClasses(Extensions.getExtensions("ch.elexis.RezeptHook"), //$NON-NLS-1$
