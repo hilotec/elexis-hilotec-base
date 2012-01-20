@@ -92,6 +92,7 @@
 	<target name="downloads" unless="unplugged">
 		<mkdir dir="${lib}" />
 		<get src="${downloadsFrom}/izpack-standalone-compiler-4.3.4.jar" dest="${lib}/izpack-compiler.jar" usetimestamp="true" />
+		<get src="${downloadsFrom}/demoDB_elexis_2.1.5.4.zip" dest="${lib}/demoDB_elexis_2.1.5.4.zip" 		usetimestamp="true" />
 		<get src="${downloadsFrom}/org.eclipse.mylyn.wikitext.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.core.jar" usetimestamp="true" />
 		<get src="${downloadsFrom}/org.eclipse.mylyn.wikitext.textile.core.jar" dest="${lib}/org.eclipse.mylyn.wikitext.textile.core.jar" usetimestamp="true" />
 		<get src="${downloadsFrom}/jdom-1.1.1.jar" dest="${lib}/jdom.jar" usetimestamp="true" />
@@ -359,13 +360,12 @@ osgi.bundles=org.eclipse.equinox.common@2:start,org.eclipse.update.configurator@
 		<wikitext-to-html markupLanguage="Textile" overwrite="true" multipleOutputFiles="false" formatOutput="true">
 			<fileset dir="${rsc}">
 				<include name="*.textile" />
-			</fileset>
-			<!-- stylesheet url="styles/main.css" / -->
+			</fileset>		  
 		</wikitext-to-html>
-
+		<echo file="${rsc}/TargetPanel.txt">$SYSTEM_user_home/Elexis/bin/Elexis-${version}</echo> 
 		<copy todir="${dist}">
 			<fileset dir="${rsc}">
-				<include name="info.html" />
+				<include name="info*.html" />
 				<include name="license.html" />
 			</fileset>
 			<filterset begintoken="&lt;?" endtoken="?&gt;">

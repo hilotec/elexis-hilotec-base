@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="iso-8859-1" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 	<!--
 		* Copyright (c) 2010, Medelexis AG, Baden * This file is intellectual
 		property of Medelexis AG * All rights reserved. * Do not copy or use
@@ -27,21 +27,26 @@
 	</locale>
 	<variables>
 		<variable name="appversion" value="@{version}"/>
-		<variable name="UserPathPanelVariable" value="$SYSTEM_user_home/elexis"/>
-		
 	</variables>
 	<native type="izpack" name="ShellLink.dll" />
 
 	<resources>
+		<res id="BSFActionsSpec.xml" src="@{rsc}/BSFActionsSpec.xml"/>
+		<res id="copyConfiguration.bsh" src="@{rsc}/copyConfiguration.bsh"/>
+		<res id="unzipDemoDB.bsh" src="@{rsc}/unzipDemoDB.bsh"/>
+		<res id="TargetPanel.dir" src="@{rsc}/TargetPanel.txt" />	  
+		<res id="packsLang.xml_eng" src="@{rsc}/i18n/packsLang.xml_eng"/>
+		<res id="packsLang.xml_fra" src="@{rsc}/i18n/packsLang.xml_fra"/>
 		<res id="HTMLLicencePanel.licence" src="@{dist}/license.html" />
 		<res id="HTMLInfoPanel.info" src="@{dist}/info.html" />
+		<res id="HTMLInfoPanel.info_fra" src="@{dist}/info_fra.html" />
+		<res id="HTMLInfoPanel.info_eng" src="@{dist}/info_eng.html" />
 		<res id="medelexis-logo.png" src="@{rsc}/elexis-logo.png" />
 		<res id="Win_shortcutSpec.xml" src="@{rsc}/Shortcuts_Windows.xml" />
 		<res id="Unix_shortcutSpec.xml" src="@{rsc}/Shortcuts_Linux.xml" />
 	</resources>
 
 	<panels>
-		<!--   panel classname="HelloPanel"/ -->
 		<panel classname="HTMLInfoPanel" />
 		<panel classname="HTMLLicencePanel" />
 		<panel classname="TargetPanel" />
@@ -90,6 +95,23 @@
 				<include name="plugins/ch.elexis.noatext_*/**"/>
 			</fileset>
 		</pack>
+		<pack name="DemoDB" id="DemoDB" required="no" preselected="no" >
+		  <description>DemoDB. Nützlich, um Elexis kennen zu lernen.</description>
+		  <singlefile src="@{lib}/demoDB_elexis_2.1.5.4.zip" target="$INSTALL_PATH/demoDB.zip" /> 
+		</pack>
 	</packs>
+
+  <jar src="@{repositories}/elexis-base/at.medevit.smooks.libs/commons-logging-1.1.jar" stage="both"/>
+  <jar src="@{rsc}/deps/bsh/bsh/2.0b4/bsh-2.0b4.jar" stage="both"/>
+  <jar src="@{rsc}/deps/apache/bsf/2.4.0/bsf-2.4.0.jar" stage="both"/>
+  <jar src="@{rsc}/deps/apache/commons-io/1.4/commons-io-1.4.jar" stage="both"/>
+
+  <listeners>
+    <listener installer="BSFInstallerListener" uninstaller="BSFUninstallerListener"/>
+  </listeners>
+
+    <summarylogfilepath>
+        $INSTALL_PATH/Uninstaller/MySummary.htm
+    </summarylogfilepath>
 
 </installation>
