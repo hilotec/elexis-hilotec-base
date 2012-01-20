@@ -59,7 +59,7 @@ public class MandantSelectionContributionItem extends ContributionItem {
 		public void runInUi(ElexisEvent ev){
 			ICoolBarManager icb = ((ApplicationWindow) PlatformUI.getWorkbench().getActiveWorkbenchWindow()).getCoolBarManager2();
 			Mandant m = (Mandant) ev.getObject();
-			if (m != null && m.getMandantLabel() != null) {
+			if (m != null && m.getMandantLabel() != null && item != null) {
 				item.setText(m.getMandantLabel());
 				fParent.setBackground(getColorForMandator(m));
 				for (int i = 0; i < menuItems.length; i++) {
