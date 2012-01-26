@@ -13,5 +13,5 @@ Require-Bundle: ch.rgw.utility,
  ch.ngiger.utilities.comm,
  ch.elexis.core;bundle-version="0.0.2"
 Bundle-ClassPath: .,
- bin/
+ bin
 Export-Package: ch.elexis.laborimport.analytica

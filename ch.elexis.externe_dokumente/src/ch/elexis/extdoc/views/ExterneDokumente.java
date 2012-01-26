@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2010, Daniel Lutz and Elexis
+ * Copyright (c) 2006-2011, Daniel Lutz and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,19 +8,20 @@
  * Contributors:
  *    Daniel Lutz - initial implementation
  *    G. Weirich - small changes to follow API changes
+ *    Niklaus Giger - Added new layout and support for drop
  * 
- *  $Id: ExterneDokumente.java 6043 2010-02-01 14:34:06Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.extdoc.views;
 
 import java.io.File;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.text.MessageFormat;
 import java.util.Calendar;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -42,6 +43,11 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.DropTargetAdapter;
+import org.eclipse.swt.dnd.DropTargetEvent;
+import org.eclipse.swt.dnd.FileTransfer;
+import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -49,7 +55,10 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IActionBars;
@@ -70,12 +79,16 @@ import ch.elexis.actions.BackgroundJob.BackgroundJobListener;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
+import ch.elexis.extdoc.Messages;
 import ch.elexis.extdoc.dialogs.FileEditDialog;
 import ch.elexis.extdoc.dialogs.VerifierDialog;
 import ch.elexis.extdoc.preferences.PreferenceConstants;
+import ch.elexis.extdoc.util.FileFilters;
+import ch.elexis.extdoc.util.ListFiles;
+import ch.elexis.extdoc.util.MatchPatientToPath;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.StringTool;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.TimeTool;
 
 /**
@@ -84,20 +97,17 @@ import ch.rgw.tools.TimeTool;
  * ausgewaehlt ist, wird nach einem bestimmten Schema nach diesem Patienten gefiltert.
  */
 
-// TODO datum
-
 public class ExterneDokumente extends ViewPart implements IActivationListener {
 	// private static final String NONE = "Keine Dokumente";
 	
 	// Erwartete Anzahl Dokumente falls noch nicht bekannt
 	private static final int DEFAULT_SIZE = 1;
+	private Button[] pathCheckBoxes = {
+		null, null, null, null
+	};
 	
-	private Button path1CheckBox;
-	private Button path2CheckBox;
-	private Button path3CheckBox;
-	
-	private final String[] paths = {
-		null, null, null
+	private final String[] activePaths = {
+		null, null, null, null
 	};
 	
 	/*
@@ -108,6 +118,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	private Action openAction;
 	private Action editAction;
 	private Action renameAction;
+	private Action moveIntoSubDirsActions;
 	private Action deleteAction;
 	private Action verifyAction;
 	
@@ -115,7 +126,10 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	/*
 	 * private String actPath = null;
 	 */
-
+	
+	private TimestampComparator timeComparator;
+	private FilenameComparator nameComparator;
+	
 	// work-around to get the job
 	// TODO cleaner design
 	BackgroundJob globalJob;
@@ -123,118 +137,30 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	// letzte bekannte Anzahl Dokumente (fuer getSize())
 	int lastSize = DEFAULT_SIZE;
 	
-	private final Log log = Log.get("Externe Dokumente");
+	private final static Log log = Log.get("Externe Dokumente"); //$NON-NLS-1$
 	
-	private final ElexisEventListenerImpl eeli_pat =
-		new ElexisEventListenerImpl(Patient.class, ElexisEvent.EVENT_SELECTED) {
-			@Override
-			public void runInUi(ElexisEvent ev){
-				actPatient = (Patient) ev.getObject();
-				refresh();
-			}
-		};
+	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class,
+		ElexisEvent.EVENT_SELECTED) {
+		@Override
+		public void runInUi(ElexisEvent ev){
+			actPatient = (Patient) ev.getObject();
+			refresh();
+		}
+	};
 	
 	class DataLoader extends BackgroundJob {
 		public DataLoader(String jobName){
 			super(jobName);
 		}
 		
-		/**
-		 * Filter fuer die folgende Festlegung:
-		 * 
-		 * - Die ersten 6 Zeichen des Nachnamens. Falls kuerzer, mit Leerzeichen aufgefuellt - Der
-		 * Vorname (nur der erste, falls es mehrere gibt) - Bezeichnung, durch ein Leerzeichen
-		 * getrennt.
-		 */
-		class MyFilenameFilter implements FilenameFilter {
-			private final Pattern pattern;
-			
-			MyFilenameFilter(String lastname, String firstname){
-				// only use first part of firstname
-				firstname = firstToken(firstname);
-				
-				// remove dashes, underscores and spaces
-				lastname = cleanName(lastname);
-				firstname = cleanName(firstname);
-				
-				String shortLastname;
-				
-				if (lastname.length() >= 6) {
-					// Nachname ist lang genug
-					shortLastname = lastname.substring(0, 6);
-				} else {
-					// Nachname ist zu kurz, mit Leerzeichen auffuellen
-					StringBuilder sb = new StringBuilder();
-					sb.append(lastname);
-					while (sb.length() < 6) {
-						sb.append(" ");
-					}
-					shortLastname = sb.toString();
-				}
-				
-				String regex = "^" + shortLastname + firstname + ".*$";
-				pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-			}
-			
-			public boolean accept(File dir, String name){
-				Matcher matcher = pattern.matcher(name);
-				return matcher.matches();
-			}
-			
-			private String cleanName(String name){
-				String cleanName = name.replaceAll("[-_\\p{Space}]+", "");
-				return cleanName;
-			}
-			
-			private String firstToken(String text){
-				String firstToken = text.replaceFirst("[-_\\p{Space}].*", "");
-				return firstToken;
-			}
-		}
-		
 		public IStatus execute(IProgressMonitor monitor){
 			if (actPatient != null) {
-				List<File> list = new ArrayList<File>();
-				
-				list.addAll(loadFiles(paths[0]));
-				list.addAll(loadFiles(paths[1]));
-				list.addAll(loadFiles(paths[2]));
-				
-				if (list.size() > 0) {
-					result = list;
-				} else {
-					result = "Keine Dateien gefunden";
-				}
+				result = MatchPatientToPath.getFilesForPatient(actPatient, activePaths);
 			} else {
-				result = "Kein Patient ausgewählt";
+				result = Messages.ExterneDokumente_no_patient_found;
 			}
 			
 			return Status.OK_STATUS;
-		}
-		
-		/**
-		 * Load files
-		 * 
-		 * @param path
-		 *            the path from where to load files; may be null
-		 * @return a list of files (maybe empty)
-		 */
-		private List<File> loadFiles(String path){
-			List<File> list = new ArrayList<File>();
-			
-			if (!StringTool.isNothing(path)) {
-				File mainDirectory = new File(path);
-				if (mainDirectory.isDirectory()) {
-					MyFilenameFilter filter =
-						new MyFilenameFilter(actPatient.getName(), actPatient.getVorname());
-					File[] files = mainDirectory.listFiles(filter);
-					for (File file : files) {
-						list.add(file);
-					}
-				}
-			}
-			
-			return list;
 		}
 		
 		public int getSize(){
@@ -246,7 +172,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		BackgroundJob job;
 		
 		public ViewContentProvider(){
-			job = new DataLoader("Externe Dokumente");
+			job = new DataLoader(Messages.ExterneDokumente_externe_dokumente);
 			globalJob = job;
 			if (JobPool.getJobPool().getJob(job.getJobname()) == null) {
 				JobPool.getJobPool().addJob(job);
@@ -267,7 +193,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			if (result == null) {
 				JobPool.getJobPool().activate(job.getJobname(), Job.LONG);
 				return new String[] {
-					"Lade..."
+					Messages.ExterneDokumente_loading
 				};
 			} else {
 				if (result instanceof List) {
@@ -300,7 +226,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			case NAME_COLUMN:
 				return getText(obj);
 			}
-			return "";
+			return ""; //$NON-NLS-1$
 		}
 		
 		public String getText(Object obj){
@@ -310,7 +236,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			} else if (obj instanceof String) {
 				return obj.toString();
 			} else {
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 		}
 		
@@ -322,10 +248,11 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 				cal.setTimeInMillis(modified);
 				TimeTool tl = new TimeTool(cal.getTimeInMillis());
 				String modifiedTime =
-					tl.toString(TimeTool.DATE_ISO) + " " + tl.toString(TimeTool.TIME_SMALL);
+					String.format(Messages.ExterneDokumente_modified_time,
+						tl.toString(TimeTool.DATE_ISO), tl.toString(TimeTool.TIME_SMALL));
 				return modifiedTime;
 			} else {
-				return "";
+				return ""; //$NON-NLS-1$
 			}
 		}
 		
@@ -344,22 +271,33 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			
 			File file = (File) obj;
 			if (file.isDirectory()) {
-				return PlatformUI.getWorkbench().getSharedImages().getImage(
-					ISharedImages.IMG_OBJ_FOLDER);
+				return PlatformUI.getWorkbench().getSharedImages()
+					.getImage(ISharedImages.IMG_OBJ_FOLDER);
 			} else {
-				return PlatformUI.getWorkbench().getSharedImages().getImage(
-					ISharedImages.IMG_OBJ_FILE);
+				return PlatformUI.getWorkbench().getSharedImages()
+					.getImage(ISharedImages.IMG_OBJ_FILE);
 			}
 		}
 	}
 	
 	class TimestampComparator extends ViewerComparator {
+		private static final int DESCENDING = 1;
+		private int direction = DESCENDING;
+		
+		public TimestampComparator(){
+			direction = DESCENDING;
+		}
+		
+		public void changeSortOrder(){
+			direction = -direction;
+		}
+		
 		public int compare(Viewer viewer, Object e1, Object e2){
 			if (e1 == null) {
-				return 1;
+				return direction;
 			}
 			if (e2 == null) {
-				return -1;
+				return -direction;
 			}
 			
 			File file1 = (File) e1;
@@ -369,9 +307,9 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			long modified2 = file2.lastModified();
 			
 			if (modified1 < modified2) {
-				return -1;
+				return -direction;
 			} else if (modified1 > modified2) {
-				return 1;
+				return direction;
 			} else {
 				return 0;
 			}
@@ -379,10 +317,68 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		}
 	}
 	
+	class FilenameComparator extends ViewerComparator {
+		private static final int DESCENDING = 1;
+		private int direction = DESCENDING;
+		
+		public FilenameComparator(){
+			direction = DESCENDING;
+		}
+		
+		public void changeSortOrder(){
+			direction = -direction;
+		}
+		
+		public int compare(Viewer viewer, Object e1, Object e2){
+			if (e1 == null) {
+				return direction;
+			}
+			if (e2 == null) {
+				return -direction;
+			}
+			
+			File file1 = (File) e1;
+			File file2 = (File) e2;
+			return direction * file1.compareTo(file2);
+		}
+	}
+	
 	/**
 	 * The constructor.
 	 */
 	public ExterneDokumente(){}
+	
+	public static void addFile(String f){
+		Patient act = ElexisEventDispatcher.getSelectedPatient();
+		if (act == null) {
+			SWTHelper.showError(Messages.ExterneDokumente_no_patient_found,
+				Messages.ExterneDokumente_select_patient_first);
+			return;
+		}
+		File file = new File(f);
+		if (!file.canRead()) {
+			SWTHelper.showError(Messages.ExterneDokumente_read_errpor,
+				MessageFormat.format(Messages.ExterneDokumente_could_not_read_File, f));
+			return;
+		}
+		try {
+			InputStream in = new FileInputStream(f);
+			OutputStream out = new FileOutputStream(MatchPatientToPath.getSubDirPath(act));
+			// Transfer bytes from in to out
+			byte[] buf = new byte[1024];
+			int len;
+			while ((len = in.read(buf)) > 0) {
+				out.write(buf, 0, len);
+			}
+			in.close();
+			out.close();
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+			SWTHelper.showError(Messages.ExterneDokumente_import_failed,
+				Messages.ExterneDokumente_exception_while_copying);
+		}
+		log.log(Messages.ExterneDokumente_imported + file.getAbsolutePath(), Log.INFOS);
+	}
 	
 	/**
 	 * This is a callback that will allow us to create the viewer and initialize it.
@@ -403,16 +399,10 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		bottomArea.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		bottomArea.setLayout(new GridLayout());
 		
-		// path list
-		
-		String item1 = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD, "");
-		String item2 = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD2, "");
-		String item3 = Hub.localCfg.get(PreferenceConstants.BASIS_PFAD3, "");
-		
 		// check boxes
 		
 		Composite pathArea = new Composite(topArea, SWT.NONE);
-		pathArea.setLayout(new GridLayout(3, false));
+		pathArea.setLayout(new GridLayout(4, false));
 		
 		SelectionAdapter checkBoxListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e){
@@ -420,19 +410,28 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 			}
 		};
 		
-		path1CheckBox = new Button(pathArea, SWT.CHECK);
-		path1CheckBox.setText(item1);
-		path1CheckBox.setSelection(true);
-		paths[0] = item1;
-		path1CheckBox.addSelectionListener(checkBoxListener);
-		
-		path2CheckBox = new Button(pathArea, SWT.CHECK);
-		path2CheckBox.setText(item2);
-		path2CheckBox.addSelectionListener(checkBoxListener);
-		
-		path3CheckBox = new Button(pathArea, SWT.CHECK);
-		path3CheckBox.setText(item3);
-		path3CheckBox.addSelectionListener(checkBoxListener);
+		PreferenceConstants.PathElement[] prefs = PreferenceConstants.getPrefenceElements();
+		for (int j = 0; j < prefs.length; j++) {
+			PreferenceConstants.PathElement cur = prefs[j];
+			boolean emptyPath =
+				(cur.name == null || cur.name.length() == 0 || cur.baseDir == null || cur.baseDir
+					.length() == 0);
+			if (j == 0 || !emptyPath) {
+				pathCheckBoxes[j] = new Button(pathArea, SWT.CHECK);
+				// Show the logical short name
+				pathCheckBoxes[j].setText(cur.name);
+				pathCheckBoxes[j].setSelection(PreferenceConstants.pathIsSelected(j));
+				pathCheckBoxes[j].addSelectionListener(checkBoxListener);
+				if (emptyPath) {
+					pathCheckBoxes[j]
+						.setToolTipText(Messages.ExterneDokumente_not_defined_in_preferences);
+				} else {
+					String dirName = "";
+					if (!emptyPath)
+						pathCheckBoxes[j].setToolTipText(cur.baseDir);
+				}
+			}
+		}
 		
 		// combo box
 		
@@ -442,7 +441,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		 * pathCombo.addSelectionListener(new SelectionAdapter() { public void
 		 * widgetSelected(SelectionEvent e) { actPath = pathCombo.getText(); refresh(); } });
 		 */
-
+		
 		// table
 		
 		viewer =
@@ -457,34 +456,67 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		table.setLinesVisible(false);
 		
 		TableColumn tc;
+		timeComparator = new TimestampComparator();
+		nameComparator = new FilenameComparator();
 		
 		tc = new TableColumn(table, SWT.LEFT);
-		tc.setText("Datum");
+		tc.setText(Messages.ExterneDokumente_file_date);
 		tc.setWidth(120);
+		tc.setToolTipText(Messages.ExterneDokumente_click_to_sort_by_date);
 		tc.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event){
-			// TODO sort by Datum
+			public void widgetSelected(SelectionEvent e){
+				if (viewer.getComparator() == timeComparator)
+					timeComparator.changeSortOrder();
+				else
+					viewer.setComparator(timeComparator);
+				viewer.refresh();
 			}
 		});
 		
 		tc = new TableColumn(table, SWT.LEFT);
-		tc.setText("Name");
+		tc.setText(Messages.ExterneDokumente_file_name);
 		tc.setWidth(400);
+		tc.setToolTipText(Messages.ExterneDokumente_click_to_sort_by_name);
 		tc.addSelectionListener(new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent event){
-			// TODO sort by Name
+			public void widgetSelected(SelectionEvent e){
+				if (viewer.getComparator() == nameComparator)
+					nameComparator.changeSortOrder();
+				else
+					viewer.setComparator(nameComparator);
+				viewer.refresh();
 			}
 		});
 		
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.setComparator(new TimestampComparator());
+		viewer.setComparator(timeComparator);
 		viewer.setInput(getViewSite());
 		
 		makeActions();
 		hookContextMenu();
 		hookDoubleClickAction();
 		contributeToActionBars();
+		Transfer[] transferTypes = new Transfer[] {
+			FileTransfer.getInstance()
+		};
+		viewer.addDropSupport(DND.DROP_COPY, transferTypes, new DropTargetAdapter() {
+			
+			@Override
+			public void dragEnter(DropTargetEvent event){
+				event.detail = DND.DROP_COPY;
+			}
+			
+			@Override
+			public void drop(DropTargetEvent event){
+				String[] files = (String[]) event.data;
+				for (String file : files) {
+					addFile(file);
+					viewer.refresh();
+				}
+				
+			}
+			
+		});
 		
 		// Welcher Patient ist im aktuellen WorkbenchWindow selektiert?
 		actPatient = (Patient) ElexisEventDispatcher.getSelected(Patient.class);
@@ -493,7 +525,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	}
 	
 	private void hookContextMenu(){
-		MenuManager menuMgr = new MenuManager("#PopupMenu");
+		MenuManager menuMgr = new MenuManager(Messages.ExterneDokumente_pop_menu);
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager manager){
@@ -516,6 +548,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		manager.add(renameAction);
 		manager.add(editAction);
 		manager.add(verifyAction);
+		manager.add(moveIntoSubDirsActions);
 	}
 	
 	private void fillContextMenu(IMenuManager manager){
@@ -523,6 +556,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 		manager.add(renameAction);
 		manager.add(editAction);
 		manager.add(deleteAction);
+		manager.add(moveIntoSubDirsActions);
 		// Other plug-ins can contribute there actions here
 		manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 	}
@@ -541,14 +575,13 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 					if (element instanceof File) {
 						File file = (File) element;
 						String path = file.getAbsolutePath();
-						
 						Program.launch(path);
 					}
 				}
 			}
 		};
-		openAction.setText("Öffnen");
-		openAction.setToolTipText("Datei öffnen");
+		openAction.setText(Messages.ExterneDokumente_open);
+		openAction.setToolTipText(Messages.ExterneDokumente_OpenFileTip);
 		
 		doubleClickAction = new Action() {
 			public void run(){
@@ -567,8 +600,8 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 				}
 			}
 		};
-		editAction.setText("Eigenschaften");
-		editAction.setToolTipText("Datei umbenennen oder Zeit der letzten Änderung setzen");
+		editAction.setText(Messages.ExterneDokumente_propeties);
+		editAction.setToolTipText(Messages.ExterneDokumente_rename_or_change_date);
 		editAction.setActionDefinitionId(GlobalActions.PROPERTIES_COMMAND);
 		GlobalActions.registerActionHandler(this, editAction);
 		
@@ -580,11 +613,9 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 					if (element instanceof File) {
 						File file = (File) element;
 						
-						if (SWTHelper.askYesNo("Dokument löschen", "Soll das Dokument "
-							+ file.getName() + " wirklich gelöscht werden?"
-							+ " (Achtung: Diese Aktion kann nicht rückgängig gemacht werden!)")) {
-							
-							log.log("Datei Löschen: " + file.getAbsolutePath(), Log.INFOS);
+						if (SWTHelper.askYesNo(Messages.ExterneDokumente_delete_doc,
+							Messages.ExterneDokumente_shold_doc_be_delted + file.getName())) {
+							log.log("Datei Löschen: " + file.getAbsolutePath(), Log.INFOS); //$NON-NLS-1$
 							file.delete();
 							refresh();
 						}
@@ -592,8 +623,8 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 				}
 			}
 		};
-		deleteAction.setText("Löschen");
-		deleteAction.setToolTipText("Datei löschen");
+		deleteAction.setText(Messages.ExterneDokumente_delete);
+		deleteAction.setToolTipText(Messages.ExterneDokumente_delete_files);
 		deleteAction.setActionDefinitionId(GlobalActions.DELETE_COMMAND);
 		GlobalActions.registerActionHandler(this, deleteAction);
 		
@@ -608,8 +639,8 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 				}
 			}
 		};
-		renameAction.setText("Datei umbenennen");
-		renameAction.setToolTipText("Datei umbenennen");
+		renameAction.setText(Messages.ExterneDokumente_renaming_file);
+		renameAction.setToolTipText(Messages.ExterneDokumente_renaming_file);
 		renameAction.setActionDefinitionId(GlobalActions.RENAME_COMMAND);
 		GlobalActions.registerActionHandler(this, renameAction);
 		
@@ -621,9 +652,11 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 				refresh();
 			}
 		};
-		verifyAction.setText("Dateien überprüfen");
-		verifyAction
-			.setToolTipText("Überprüfen, ob alle Dateien einem Patienten zugeordnet werden können");
+		verifyAction.setText(Messages.ExterneDokumente_verify_files);
+		verifyAction.setToolTipText(Messages.ExterneDokumente_verify_files_Belong_to_patient);
+		moveIntoSubDirsActions = new ch.elexis.extdoc.dialogs.MoveIntoSubDirsDialog();
+		moveIntoSubDirsActions.setText(Messages.ExterneDokumente_move_into_subdir);
+		moveIntoSubDirsActions.setToolTipText(Messages.ExterneDokumente_move_into_subdir_tooltip);
 	}
 	
 	private void hookDoubleClickAction(){
@@ -635,20 +668,18 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	}
 	
 	private void refresh(){
-		paths[0] = null;
-		paths[1] = null;
-		paths[2] = null;
-		
-		if (path1CheckBox.getSelection()) {
-			paths[0] = path1CheckBox.getText();
+		PreferenceConstants.PathElement[] prefs = PreferenceConstants.getPrefenceElements();
+		for (int j = 0; j < prefs.length; j++) {
+			if (pathCheckBoxes[j] != null && pathCheckBoxes[j].getSelection()) {
+				activePaths[j] = prefs[j].baseDir;
+				PreferenceConstants.pathSetSelected(j, true);
+			} else
+			{
+				activePaths[j] = null;
+				PreferenceConstants.pathSetSelected(j, false);
+			}
 		}
-		if (path2CheckBox.getSelection()) {
-			paths[1] = path2CheckBox.getText();
-		}
-		if (path3CheckBox.getSelection()) {
-			paths[2] = path3CheckBox.getText();
-		}
-		
+		PreferenceConstants.saveSelected();
 		globalJob.invalidate();
 		viewer.refresh(true);
 	}
@@ -657,7 +688,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	 * private void showMessage(String message) { MessageDialog.openInformation(
 	 * viewer.getControl().getShell(), "Externe Dokumente", message); }
 	 */
-
+	
 	private void openFileEditorDialog(File file){
 		FileEditDialog fed = new FileEditDialog(getViewSite().getShell(), file);
 		fed.open();
@@ -691,7 +722,7 @@ public class ExterneDokumente extends ViewPart implements IActivationListener {
 	 * Die View wird aktiviert (z.B angeklickt oder mit Tab)
 	 */
 	public void activation(boolean mode){
-	/* Interessiert uns nicht */
+		/* Interessiert uns nicht */
 	}
 	
 	/**

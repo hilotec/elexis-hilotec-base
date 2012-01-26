@@ -13,7 +13,7 @@ Require-Bundle: org.eclipse.core.runtime,
  ch.elexis.core;bundle-version="0.0.2"
 Eclipse-LazyStart: true
 Bundle-ClassPath: .,
- bin/
+ bin
 Export-Package: .,
  ch.elexis;
   uses:="ch.elexis.actions,
