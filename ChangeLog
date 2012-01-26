@@ -1,6 +1,20 @@
 hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.6
 
-Changelog for 2.1.7
+Changelog für 2.1.6.2
+05cca30d070e: 2012-01-20: Niklaus Giger: Ticket #778: alte reflotron plug-in löschen
+845a700d057d: 2012-01-20: Niklaus Giger: Fix NPE when RunFromScratch
+a2435936beea: 2012-01-20: Niklaus Giger: Ticket #670: Fix name of semaphore to delete
+46f16f2ea3ce: 2012-01-20: Niklaus Giger: Elexis Installer mit DemoDB, Kopieren Einstellungen, Übersetzungen
+abded96ef9b7: 2012-01-19: Niklaus Giger: Ticket #624: ch.elexis.core braucht noch ein medelexis.xml
+d49db3635c44: 2012-01-19: Niklaus Giger: Ticket #482: setSelectionProvider
+45be6ef2c27b: 2012-01-19: thomashu: Ticket: #482 - enabled access to viewer selection for commands in RezepteView
+c6680874a98e: 2012-01-19: marcode79: Ticket #618: Fix für Länge Dosierung
+d810de3ea972: 2012-01-19: thomashu: Ticket: #697 - make sure new Fall will be displayed correct in NPFL combo, only open Fall displayed in NPFL combo
+2d10f959a9b0: 2012-01-19: thomashu: Ticket: #776 - fixed issue with ordering same labresult on different patients by using LabResult#getForDate() method
+e63f56f04035: 2012-01-13: thomashu: Ticket: #719 - fixed Fall change loop in FallDetailBlatt2
+98285fb05bb3: 2012-01-13: thomashu: Ticket: #736 - wrong Messages class was imported, corrected imports
+1cf651577c46: 2012-01-13: marcode79: Ticket #730: Fix for ical import
+2d1f6ca94485: 2011-12-23: thomashu: Ticket #734: Tarmedrechnung bei Bruckteilen korrekt erstellen.
 
 Changelog für 2.1.6.1
 aedac41fd1d7: 2011-12-11: mdescher: Simple refactoring of string "Klasse" to static constant
