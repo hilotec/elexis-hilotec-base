@@ -534,4 +534,11 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 	public boolean isSaveOnCloseNeeded(){
 		return true;
 	}
+
+	/**
+	 * @return the current defined {@link Bestellung} in this view
+	 */
+	public Bestellung getActBestellung() {
+		return actBestellung;
+	}
 }
