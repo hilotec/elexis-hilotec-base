@@ -178,17 +178,18 @@ public class FtpServer extends FTPClient {
 	 * praxis.sem auf FTP Server loeschen
 	 */
 	public void removeSemaphore() throws IOException{
-		boolean res = super.deleteFile(fullSemaName);
+		String name = new File(fullSemaName).getName();
+		boolean res = super.deleteFile(name);
 		if (res) {
 			log.log(
-				String.format("Deleted semaphore %s on %s", fullSemaName, serverAddress), //$NON-NLS-1$
+				String.format("Deleted semaphore %s on %s", name, serverAddress), //$NON-NLS-1$
 				Log.INFOS);			
 		} else 
 		{
 			log.log(
-				String.format("Unable to delete semaphore %s on %s", fullSemaName, serverAddress), //$NON-NLS-1$
+				String.format("Unable to delete semaphore %s on %s", name, serverAddress), //$NON-NLS-1$
 				Log.ERRORS);			
-			SWTHelper.showError("FTP Semaphore delete error",String.format("Unable to delete semaphore %s on %s", fullSemaName, serverAddress));
+			SWTHelper.showError("FTP Semaphore delete error",String.format("Unable to delete semaphore %s on %s", name, serverAddress));
 		}
 	}
 }
