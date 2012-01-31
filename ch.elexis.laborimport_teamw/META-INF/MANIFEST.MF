@@ -5,7 +5,7 @@ Bundle-SymbolicName: ch.elexis.laborimport_teamw;singleton:=true
 Bundle-Version: 1.2.4
 Bundle-Vendor: elexis.ch
 Bundle-ClassPath: .,
- bin/
+ bin
 Require-Bundle: ch.rgw.utility;bundle-version="2.0.0",
  ch.ngiger.utilities.comm;bundle-version="1.0.0",
  ch.elexis;bundle-version="2.1.0",

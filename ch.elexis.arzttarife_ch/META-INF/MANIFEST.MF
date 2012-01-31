@@ -20,6 +20,6 @@ Export-Package: ch.elexis.TarmedRechnung,
  ch.elexis.data,
  ch.elexis.tarmedprefs,
  ch.elexis.views
-Bundle-ClassPath: bin/,
+Bundle-ClassPath: bin,
  .
 Import-Package: org.jdom

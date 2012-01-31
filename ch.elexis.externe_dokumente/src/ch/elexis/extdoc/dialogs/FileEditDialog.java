@@ -9,7 +9,6 @@
  *    Daniel Lutz - initial implementation
  *    G. Weirich - small changes to follow API changes
  *    
- *  $Id: FileEditDialog.java 5639 2009-08-17 15:47:53Z rgw_ch $
  *******************************************************************************/
 
 package ch.elexis.extdoc.dialogs;
@@ -31,6 +30,8 @@ import ch.elexis.Desk;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
+import ch.elexis.extdoc.Messages;
+import ch.elexis.extdoc.util.*;
 
 import com.tiff.common.ui.datepicker.DatePickerCombo;
 
@@ -53,10 +54,10 @@ public class FileEditDialog extends TitleAreaDialog {
 	@Override
 	protected Control createDialogArea(Composite parent){
 		String fileName = file.getName();
-		String fileExtension = "";
+		String fileExtension = ""; //$NON-NLS-1$
 		
 		// extract name and extension
-		Pattern p = Pattern.compile("^(.+)\\.([^.]+)$");
+		Pattern p = Pattern.compile("^(.+)\\.([^.]+)$"); //$NON-NLS-1$
 		Matcher m = p.matcher(fileName);
 		if (m.matches()) {
 			// replace fileName with prefix and fileExtension with suffix
@@ -75,25 +76,26 @@ public class FileEditDialog extends TitleAreaDialog {
 		// filename text (without extension)
 		
 		label = new Label(area, SWT.NONE);
-		label.setText("Dateiname");
+		label.setText(Messages.FileEditDialog_file_name + file.getParent());
 		label.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		
 		tDateiname = new Text(area, SWT.BORDER);
 		tDateiname.setText(fileName);
 		tDateiname.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
+		
 		SWTHelper.setSelectOnFocus(tDateiname);
 		
 		// date label
 		label = new Label(area, SWT.NONE);
-		label.setText("Datum" + " ("
-			+ new TimeTool(file.lastModified()).toString(TimeTool.DATE_GER) + ")");
+		label.setText(String.format(Messages.FileEditDialog_file_date_and_explanation,
+			new TimeTool(file.lastModified()).toString(TimeTool.DATE_GER)));
 		gd = SWTHelper.getFillGridData(1, true, 1, false);
 		gd.verticalIndent = WIDGET_SPACE;
 		label.setLayoutData(gd);
 		
 		// extension label
 		label = new Label(area, SWT.NONE);
-		label.setText("Extension");
+		label.setText(Messages.FileEditDialog_extension);
 		gd = SWTHelper.getFillGridData(1, true, 1, false);
 		gd.verticalIndent = WIDGET_SPACE;
 		label.setLayoutData(gd);
@@ -122,9 +124,9 @@ public class FileEditDialog extends TitleAreaDialog {
 	@Override
 	public void create(){
 		super.create();
-		setMessage("Datei umbenennen oder Datum der letzten Änderung setzen");
-		setTitle("Datei-Eigenschaften");
-		getShell().setText("Datei-Eigenschaften");
+		setMessage(Messages.ExterneDokumente_rename_or_change_date);
+		setTitle(Messages.FileEditDialog_file_properties);
+		getShell().setText(Messages.FileEditDialog_file_properties);
 		setTitleImage(Desk.getImage(Desk.IMG_LOGO48));
 	}
 	
@@ -138,7 +140,7 @@ public class FileEditDialog extends TitleAreaDialog {
 			dateiname = fileName;
 		} else {
 			// re-assemble prefix and suffix
-			dateiname = fileName + "." + fileExtension;
+			dateiname = fileName + "." + fileExtension; //$NON-NLS-1$
 		}
 		
 		Date datum = dp.getDate();
@@ -152,20 +154,34 @@ public class FileEditDialog extends TitleAreaDialog {
 			cal.set(Calendar.SECOND, 0);
 			Long newTime = cal.getTimeInMillis();
 			
-			System.out.println("new time: " + newTime + " (" + file.lastModified() + ")");
+			System.out.println("new time: " + newTime + " (" + file.lastModified() + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			file.setLastModified(newTime);
 		}
 		
 		if (!file.getName().equals(dateiname)) {
 			File newFile = new File(file.getParent(), dateiname);
-			System.out.println("new filiename: " + newFile.getAbsolutePath() + " ( "
-				+ file.getAbsolutePath() + ")");
+			
+			System.out.format("rename %1s ->%2s (%3s)", file.getAbsolutePath(), //$NON-NLS-1$
+				newFile.getAbsolutePath(), file.getName());
+			String oldShort = MatchPatientToPath.firstToken(file.getName());
+			String newShort = MatchPatientToPath.firstToken(newFile.getName());
+			if (!oldShort.equals(newShort)) {
+				if (SWTHelper.askYesNo(Messages.FileEditDialog_attribute_to_new_patient, String
+					.format(Messages.FileEditDialog_really_attribute_to_new_patient, oldShort,
+						newShort))) {
+					System.out.format("okPressed move %1s -> %2s", oldShort, newShort); //$NON-NLS-1$
+				} else {
+					System.out.format("cancelPressed move %1s -> %2s", oldShort, newShort); //$NON-NLS-1$
+					super.cancelPressed();
+					return;
+				}
+			}
 			if (file.renameTo(newFile)) {
 				// seems to be required on Windows
 				// newFile.setLastModified(file.lastModified());
 			} else {
-				MessageDialog.openError(getShell(), "Datei-Eigenschaften: Fehler",
-					"Die Datei konnte nicht umbenannt werden.");
+				MessageDialog.openError(getShell(), Messages.FileEditDialog_17,
+					Messages.FileEditDialog_18);
 			}
 		}
 		

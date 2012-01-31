@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Systemunabhängige Utilities
 Bundle-SymbolicName: ch.rgw.utility
 Bundle-Version: 2.0.5
-Bundle-ClassPath: bin/,
+Bundle-ClassPath: bin,
  .,
  lib/jdom.jar,
  lib/bcprov-jdk15-140.jar,
