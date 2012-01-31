@@ -95,6 +95,12 @@
 				<include name="plugins/ch.elexis.noatext_*/**"/>
 			</fileset>
 		</pack>
+		<pack name="Medelexis Text-Templator" required="no">
+		<description>Flexible Ausgabe für LibreOffice und andere Textprogramme</description>
+			<fileset dir="@{dist}" targetdir="$INSTALL_PATH">
+				<include name="plugins/ch.medelexis.text.templator_*/**"/>
+			</fileset>
+		</pack>
 		<pack name="DemoDB" id="DemoDB" required="no" preselected="no" >
 		  <description>DemoDB. Nützlich, um Elexis kennen zu lernen.</description>
 		  <singlefile src="@{lib}/demoDB_elexis_2.1.5.4.zip" target="$INSTALL_PATH/demoDB.zip" /> 
