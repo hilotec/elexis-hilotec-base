@@ -18,7 +18,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 
-import ch.elexis.Images;
+import ch.elexis.Desk;
 import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListenerImpl;
@@ -62,7 +62,7 @@ public class Labor2009ControlFieldProvider implements ControlFieldProvider {
 			@Override
 			protected Control createControl(Composite parent){
 				final Button button = new Button(parent, SWT.TOGGLE);
-				button.setImage(Images.IMG_FILTER.getImage());
+				button.setImage(Desk.getImage(Desk.IMG_FILTER));
 				button.setToolTipText("Nach Datum der aktuellen Konsultation filtern");
 				
 				button.addSelectionListener(new SelectionAdapter() {
