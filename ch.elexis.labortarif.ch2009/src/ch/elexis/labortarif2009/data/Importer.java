@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.Hub;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.Query;
 import ch.elexis.importers.ExcelWrapper;
 import ch.elexis.preferences.PreferenceConstants;
@@ -156,6 +157,7 @@ public class Importer extends ImporterPage {
 					closeAllOlder();
 					if (monitor != null)
 						monitor.done();
+					ElexisEventDispatcher.reload(Labor2009Tarif.class);
 					return Status.OK_STATUS;
 				}
 			} finally {
