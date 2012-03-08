@@ -9,7 +9,6 @@ package ch.elexis.labortarif2009.data;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -257,9 +256,8 @@ public class Importer extends ImporterPage {
 	private void fillImportedValues2012(String[] line){
 		importedValues.clear();
 		importedValues.put(Labor2009Tarif.FLD_CHAPTER, StringTool.getSafe(line, 0));
-		// convert code to same value as used in 2011 format
-		String code = StringTool.getSafe(line, 2);
-		code = NumberFormat.getNumberInstance().format(Double.parseDouble(code));
+		// convert code to nnnn.mm
+		String code = convertCodeString(StringTool.getSafe(line, 2));
 
 		importedValues.put(Labor2009Tarif.FLD_CODE, code);
 		importedValues.put(Labor2009Tarif.FLD_TP, StringTool.getSafe(line, 3));
@@ -272,12 +270,34 @@ public class Importer extends ImporterPage {
 	private void fillImportedValues2011(String[] line){
 		importedValues.clear();
 		importedValues.put(Labor2009Tarif.FLD_CHAPTER, StringTool.getSafe(line, 0));
-		importedValues.put(Labor2009Tarif.FLD_CODE, StringTool.getSafe(line, 2));
+		// convert code to nnnn.mm
+		String code = convertCodeString(StringTool.getSafe(line, 2));
+
+		importedValues.put(Labor2009Tarif.FLD_CODE, code);
 		importedValues.put(Labor2009Tarif.FLD_TP, StringTool.getSafe(line, 3));
 		importedValues.put(Labor2009Tarif.FLD_NAME,
 			StringTool.limitLength(StringTool.getSafe(line, 4), 254));
 		importedValues.put(Labor2009Tarif.FLD_LIMITATIO, StringTool.getSafe(line, 5));
 		importedValues.put(Labor2009Tarif.FLD_FACHBEREICH, StringTool.getSafe(line, 6));
+	}
+
+	private String convertCodeString(String code){
+		// split by all possible delimiters after reading for xls
+		String[] parts = code.split("[\\.,]");
+		StringBuilder sb = new StringBuilder();
+		for (String part : parts) {
+			sb.append(part);
+			// at one point we should reach nnnn -> then add the '.' delimiter
+			if (sb.length() == 4)
+				sb.append(".");
+		}
+		// if there was no "sub number" add "00"
+		if (sb.length() == 5)
+			sb.append("00");
+		else if (sb.length() == 6)
+			sb.append("0");
+		
+		return sb.toString();
 	}
 
 	int getFormatYear(String[] line){

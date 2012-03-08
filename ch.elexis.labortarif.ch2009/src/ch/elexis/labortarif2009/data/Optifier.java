@@ -39,7 +39,8 @@ public class Optifier implements IOptifier {
 					return new Result<IVerrechenbar>(Result.SEVERITY.ERROR, 2, code.getCode()
 						+ " (" + validFrom.toString(TimeTool.DATE_GER) + "-"
 						+ validTo.toString(TimeTool.DATE_GER)
-						+ ") Gültigkeit beinhaltet nich das Konsultationsdatum " + kons.getDatum(),
+							+ ") Gültigkeit beinhaltet nicht das Konsultationsdatum "
+							+ kons.getDatum(),
 						null, false);
 				}
 			}
