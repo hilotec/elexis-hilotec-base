@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  * 
- *  $Id: PatientErfassenDialog.java 6044 2010-02-01 15:18:50Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.dialogs;
