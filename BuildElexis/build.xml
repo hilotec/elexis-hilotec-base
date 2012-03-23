@@ -182,7 +182,7 @@
 			<fileset dir="${sourcedir}/src" includes="**/*.properties" />
 		</copy>
 		<fsc srcdir="${sourcedir}" destdir="${plugindir}" excludes="Tests/**" encoding="UTF-8" classpathref="${cp}" classpath="${lib}/scala-library.jar" />
-		<javac memoryMaximumSize="2048m" srcdir="${sourcedir}" destdir="${plugindir}" excludes="Tests/**" debug="${debug}" optimize="${optimize}" target="${javatarget}" includeantruntime="false" encoding="UTF-8" classpathref="${cp}" />
+		<javac memoryMaximumSize="2048m" fork="true" srcdir="${sourcedir}" destdir="${plugindir}" excludes="Tests/**" debug="${debug}" optimize="${optimize}" target="${javatarget}" includeantruntime="false" encoding="UTF-8" classpathref="${cp}" />
 		<packager plugindir="${plugindir}" dest="${additions}" skipOnMissing="true" targetVersion="${version}" />
 		<mkdir dir="${dox}/${dirname}" />
 		<copy todir="${dox}/${dirname}" failonerror="false">
