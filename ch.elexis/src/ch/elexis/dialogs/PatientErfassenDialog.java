@@ -145,8 +145,10 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 			ret[6] = tOrt.getText();
 			ret[7] = tTel.getText();
 			Query<Kontakt> qbe = new Query<Kontakt>(Kontakt.class);
-			qbe.add("Bezeichnung1", Query.EQUALS, ret[0], true);
-			qbe.add("Bezeichnung2", Query.EQUALS, ret[1], true);
+			qbe.add(IPartner.FLD_NAME1, Query.EQUALS, ret[0], true);
+			qbe.add(IPartner.FLD_NAME2, Query.EQUALS, ret[1], true);
+			if (check != null)
+				qbe.add(IPerson.FLD_BIRTHDATE, Query.EQUALS, check.toDBString(false), true);
 			List<Kontakt> list = qbe.execute();
 			if ((list != null) && (!list.isEmpty())) {
 				Kontakt k = list.get(0);
