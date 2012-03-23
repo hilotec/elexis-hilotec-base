@@ -90,7 +90,7 @@ public class MiGelDetailDisplay implements IDetailDisplay {
 	}
 	
 	public String getTitle(){
-		return "MiGeL"; //$NON-NLS-1$
+		return MiGelArtikel.MIGEL_NAME; //$NON-NLS-1$
 	}
 	
 }

@@ -13,20 +13,14 @@
 
 package ch.elexis.artikel_ch.views;
 
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 
-import ch.elexis.actions.AbstractDataLoaderJob;
-import ch.elexis.actions.JobPool;
-import ch.elexis.actions.ListLoader;
 import ch.elexis.artikel_ch.data.ArtikelFactory;
 import ch.elexis.artikel_ch.data.MiGelArtikel;
 import ch.elexis.artikel_ch.model.MigelLoader;
-import ch.elexis.data.Query;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.util.viewers.DefaultLabelProvider;
-import ch.elexis.util.viewers.LazyContentProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.artikel.ArtikelContextMenu;
@@ -68,7 +62,7 @@ public class MiGelSelector extends CodeSelectorFactory {
 	
 	@Override
 	public String getCodeSystemName(){
-		return "MiGeL"; //$NON-NLS-1$
+		return MiGelArtikel.MIGEL_NAME; //$NON-NLS-1$
 	}
 	
 }

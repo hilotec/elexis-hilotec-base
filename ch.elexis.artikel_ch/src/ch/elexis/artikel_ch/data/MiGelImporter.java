@@ -45,7 +45,7 @@ public class MiGelImporter extends ImporterPage {
 	
 	@Override
 	public String getTitle(){
-		return "MiGel"; //$NON-NLS-1$
+		return MiGelArtikel.MIGEL_NAME; //$NON-NLS-1$
 	}
 	
 	@Override
