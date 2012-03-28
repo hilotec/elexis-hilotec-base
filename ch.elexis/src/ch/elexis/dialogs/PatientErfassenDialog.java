@@ -129,6 +129,14 @@ public class PatientErfassenDialog extends TitleAreaDialog {
 		ret[1] = tVorname.getText();
 		int idx = cbSex.getSelectionIndex();
 		if (idx == -1) {
+			char sex = cbSex.getText().charAt(0);
+			if (sex == 'w' || sex == 'W' || sex == 'f' || sex == 'F') {
+				idx = 1;
+			} else if (sex == 'm' || sex == 'M') {
+				idx = 0;
+			}
+		}
+		if (idx == -1) {
 			SWTHelper.showError("Bitte Geschlecht angeben",
 				"Die Angabe des Geschlechts ist erforderlich");
 			return;
