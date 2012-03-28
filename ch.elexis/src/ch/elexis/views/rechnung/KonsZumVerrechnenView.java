@@ -31,8 +31,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.dnd.DND;
@@ -160,22 +158,11 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 		left.setText(Messages.getString("KonsZumVerrechnenView.allOpenCons")); //$NON-NLS-1$
 		cLeft.setLayout(new GridLayout());
 		cv.create(vc, cLeft, SWT.NONE, tAll);
-		cv.getViewerWidget().setSorter(new ViewerSorter() {
-			
-			@SuppressWarnings("unchecked")
-			@Override
-			public int compare(final Viewer viewer, final Object e1, final Object e2){
-				PersistentObject o1 = (PersistentObject) ((Tree) e1).contents;
-				PersistentObject o2 = (PersistentObject) ((Tree) e2).contents;
-				return o1.getLabel().compareTo(o2.getLabel());
-			}
-			
-		});
+		cv.getViewerWidget().setComparator(new KonsZumVerrechnenViewViewerComparator());
 		right = tk.createForm(sash);
 		Composite cRight = right.getBody();
 		right.setText(Messages.getString("KonsZumVerrechnenView.selected")); //$NON-NLS-1$
 		cRight.setLayout(new GridLayout());
-		
 		tvSel = new TreeViewer(cRight, SWT.V_SCROLL);
 		// tvSel.getControl().setLayoutData(SWTHelper.getFillGridData(1,true,t,true));
 		tvSel.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -188,6 +175,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 			}
 			
 		});
+		tvSel.setComparator(new KonsZumVerrechnenViewViewerComparator());
 		tvSel.addDropSupport(DND.DROP_MOVE | DND.DROP_COPY, new Transfer[] {
 			TextTransfer.getInstance()
 		}, new DropTargetAdapter() {
