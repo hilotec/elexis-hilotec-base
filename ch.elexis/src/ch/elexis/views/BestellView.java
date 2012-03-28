@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: BestellView.java 6278 2010-04-18 16:14:15Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.views;
