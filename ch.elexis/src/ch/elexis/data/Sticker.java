@@ -15,8 +15,8 @@ package ch.elexis.data;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -235,11 +235,11 @@ public class Sticker extends PersistentObject implements Comparable<ISticker>, I
 	 * @return
 	 */
 	public static List<Sticker> getStickersForClass(Class<?> clazz){
-		List<Sticker> ret = cache.get(clazz);
+ 		List<Sticker> ret = cache.get(clazz);
 		if (ret != null) {
 			return ret;
 		}
-		ret = new ArrayList<Sticker>();
+		HashSet<Sticker> uniqueRet = new HashSet<Sticker>();
 		if (queryStickers == null) {
 			queryStickers = getConnection().prepareStatement(queryStickerClassString);
 		}
@@ -250,7 +250,7 @@ public class Sticker extends PersistentObject implements Comparable<ISticker>, I
 			while (res != null && res.next()) {
 				Sticker et = Sticker.load(res.getString(1));
 				if (et != null && et.exists()) {
-					ret.add(Sticker.load(res.getString(1)));
+					uniqueRet.add(Sticker.load(res.getString(1)));
 				}
 			}
 			res.close();
@@ -258,9 +258,8 @@ public class Sticker extends PersistentObject implements Comparable<ISticker>, I
 			ExHandler.handle(ex);
 			return ret;
 		}
-		Collections.sort(ret);
-		cache.put(clazz, ret);
-		return ret;
+		cache.put(clazz, new ArrayList<Sticker>(uniqueRet));
+		return new ArrayList<Sticker>(uniqueRet);
 	}
 	
 	public static Sticker load(String id){
