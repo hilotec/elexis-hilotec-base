@@ -9,7 +9,7 @@
  *    D. Lutz - initial implementation
  *    G. Weirich - Adapted for API changes
  * 
- *    $Id: LaborLink.java 6194 2010-03-14 12:13:27Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 
 package ch.elexis.laborlink;
