@@ -281,6 +281,7 @@
       <view
             category="ch.elexis.datenKategorie"
             class="ch.elexis.views.BestellBlatt"
+            icon="rsc/printer.png"
             id="ch.elexis.BestellBlatt"
             name="%elexis.orderPrintView"/>
       <view

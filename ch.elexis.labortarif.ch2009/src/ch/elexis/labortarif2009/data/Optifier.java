@@ -13,11 +13,12 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Query;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.labortarif2009.ui.Preferences;
+import ch.elexis.preferences.Leistungscodes;
 import ch.elexis.util.IOptifier;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.Result;
-import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.Result.SEVERITY;
+import ch.rgw.tools.TimeTool;
 
 public class Optifier implements IOptifier {
 	private static final String DEADLINE="31.12.2012";
@@ -26,7 +27,24 @@ public class Optifier implements IOptifier {
 	 * Add and recalculate the various possible amendments
 	 */
 	public Result<IVerrechenbar> add(IVerrechenbar code, Konsultation kons){
+		boolean bOptify = Hub.userCfg.get(Leistungscodes.OPTIFY, true);
 		if (code instanceof Labor2009Tarif) {
+			// Gültigkeit gemäss Datum prüfen
+			if (bOptify) {
+				TimeTool date = new TimeTool(kons.getDatum());
+				Labor2009Tarif tarif = ((Labor2009Tarif) code);
+				if (!tarif.isValidOn(date)) {
+					TimeTool validFrom = new TimeTool(tarif.get(Labor2009Tarif.FLD_GUELTIG_VON));
+					TimeTool validTo = new TimeTool(tarif.get(Labor2009Tarif.FLD_GUELTIG_BIS));
+					return new Result<IVerrechenbar>(Result.SEVERITY.ERROR, 2, code.getCode()
+						+ " (" + validFrom.toString(TimeTool.DATE_GER) + "-"
+						+ validTo.toString(TimeTool.DATE_GER)
+							+ ") Gültigkeit beinhaltet nicht das Konsultationsdatum "
+							+ kons.getDatum(),
+						null, false);
+				}
+			}
+
 			new Verrechnet(code, kons, 1);
 			Result<Object> res = optify(kons);
 			if (res.isOK()) {

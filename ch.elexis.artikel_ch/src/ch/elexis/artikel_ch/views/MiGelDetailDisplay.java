@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MiGelDetailDisplay.java 5932 2010-01-14 22:30:04Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.artikel_ch.views;
@@ -90,7 +90,7 @@ public class MiGelDetailDisplay implements IDetailDisplay {
 	}
 	
 	public String getTitle(){
-		return "MiGeL"; //$NON-NLS-1$
+		return MiGelArtikel.MIGEL_NAME; //$NON-NLS-1$
 	}
 	
 }

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-	This build.xml compiles all plugins within the same java virtual machine. If you experience out-of-memory
-	exceptions or want faster compilation on multicore machines, try build-fork.xml.
-
-	Copyright (c) 2010 By G. Weirich and Elexis
+	this file is a copy of build.xml as of 2012-03-28, except that it runs javac and scalac with fork(). As such it runs
+	faster on multicore machines and avoids out-of-memory exceptions under some conditions.
+	If this does not work for you, however, use the original build.xml
+	
+	Copyright (c) 2010-2012 By G. Weirich and Elexis
 	some parts borrowed from N. Giger's hudson build for Elexis
 	
 	This is a new Buildscript (as of 6/2010), based on the new mercurial repository structure. 
@@ -64,7 +65,7 @@
 		
 -->
 <project name="elexis" default="all">
-	<property name="version" value="2.1.7.dev" />
+	<property name="version" value="2.1.6.dev-qualifier" />
 	<property name="javatarget" value="1.6" />
 	<property name="debug" value="true" />
 	<property name="optimize" value="off" />
@@ -184,8 +185,8 @@
 			<fileset dir="${sourcedir}/src" includes="**/*.script" />
 			<fileset dir="${sourcedir}/src" includes="**/*.properties" />
 		</copy>
-		<scalac srcdir="${sourcedir}" destdir="${plugindir}" excludes="Tests/**" encoding="UTF-8" classpathref="${cp}" classpath="${lib}/scala-library.jar" />
-		<javac srcdir="${sourcedir}" destdir="${plugindir}" excludes="Tests/**" debug="${debug}" optimize="${optimize}" target="${javatarget}" includeantruntime="false" encoding="UTF-8" classpathref="${cp}" />
+		<scalac fork="true" srcdir="${sourcedir}" destdir="${plugindir}" excludes="Tests/**" encoding="UTF-8" classpathref="${cp}" classpath="${lib}/scala-library.jar" />
+		<javac fork="true" srcdir="${sourcedir}" destdir="${plugindir}" excludes="Tests/**" debug="${debug}" optimize="${optimize}" target="${javatarget}" includeantruntime="false" encoding="UTF-8" classpathref="${cp}" />
 		<packager plugindir="${plugindir}" dest="${additions}" skipOnMissing="true" targetVersion="${version}" />
 		<mkdir dir="${dox}/${dirname}" />
 		<copy todir="${dox}/${dirname}" failonerror="false">

@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- *  $Id: MiGelArtikel.java 5932 2010-01-14 22:30:04Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 package ch.elexis.artikel_ch.data;
 
@@ -20,10 +20,13 @@ import ch.rgw.tools.Money;
 import ch.rgw.tools.StringTool;
 
 public class MiGelArtikel extends Artikel {
+	
+	public static final String MIGEL_NAME = "MiGeL";
+	
 	static Pattern pattern = Pattern.compile("([a-z0-9A-Z])([A-Z][a-z])");
 	
 	public MiGelArtikel(String code, String text, String unit, Money price){
-		create("MiGeL" + code); //$NON-NLS-1$
+		create(MIGEL_NAME + code); //$NON-NLS-1$
 		String shortname = StringTool.getFirstLine(text, 120);
 		Matcher matcher = pattern.matcher(shortname);
 		StringBuffer sb = new StringBuffer();
@@ -33,7 +36,10 @@ public class MiGelArtikel extends Artikel {
 		matcher.appendTail(sb);
 		shortname = sb.toString();
 		set(new String[] {
-			"Name", "Typ", "SubID"}, new String[] { shortname, "MiGeL", code}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			Artikel.FLD_NAME, Artikel.FLD_TYP, Artikel.FLD_SUB_ID, Artikel.FLD_KLASSE
+		}, new String[] {
+			shortname, MIGEL_NAME, code, MiGelArtikel.class.getName()
+		}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		setExt("FullText", text); //$NON-NLS-1$
 		setExt("unit", unit == null ? "-" : unit); //$NON-NLS-1$ //$NON-NLS-2$
 		set("VK_Preis", price.getCentsAsString()); //$NON-NLS-1$
@@ -45,7 +51,7 @@ public class MiGelArtikel extends Artikel {
 	}
 	
 	protected void setConstraint(){
-		set("Typ", "MiGeL"); //$NON-NLS-1$ //$NON-NLS-2$
+		set("Typ", MIGEL_NAME); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 	
 	@Override
@@ -60,7 +66,7 @@ public class MiGelArtikel extends Artikel {
 	
 	@Override
 	public String getCodeSystemName(){
-		return "MiGeL"; //$NON-NLS-1$
+		return MIGEL_NAME; //$NON-NLS-1$
 	}
 	
 	public static MiGelArtikel load(String id){

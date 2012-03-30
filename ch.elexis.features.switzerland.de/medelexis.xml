@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<service:service category="feature" id="ch.elexis.features.switzerland.de" name="Elexis Schweiz (deutsch)" provider="support@medelexis.ch" type="Basis-System" version="2.0.7" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+<service:service category="feature" id="ch.elexis.features.switzerland.de" name="Elexis Schweiz (deutsch)" provider="support@medelexis.ch" type="Basis-System" version="2.0.8" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
   <service:conditions validFrom="2001-01-01" validUntil="2010-31-12">
   	<service:roles>
   		<service:role available="true" daysperpayment="365"

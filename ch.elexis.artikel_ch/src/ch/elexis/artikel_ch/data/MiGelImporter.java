@@ -8,7 +8,7 @@
  * Contributors:
  *    G. Weirich - initial implementation
  *    
- * $Id: MiGelImporter.java 5932 2010-01-14 22:30:04Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 package ch.elexis.artikel_ch.data;
 
@@ -45,7 +45,7 @@ public class MiGelImporter extends ImporterPage {
 	
 	@Override
 	public String getTitle(){
-		return "MiGel"; //$NON-NLS-1$
+		return MiGelArtikel.MIGEL_NAME; //$NON-NLS-1$
 	}
 	
 	@Override
