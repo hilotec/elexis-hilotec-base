@@ -30,7 +30,7 @@ public class DBUpdate {
 		"1.3.10", "1.3.11", "1.3.12", "1.3.13", "1.4.0", "1.4.1", "1.4.2", "1.4.3", "1.4.4",
 		"1.4.5", "1.4.6", "1.5.0", "1.6.0", "1.6.1", "1.6.2", "1.6.3", "1.6.4", "1.7.0", "1.7.1",
 		"1.7.2", "1.8.0", "1.8.1", "1.8.2", "1.8.3", "1.8.4", "1.8.5", "1.8.6", "1.8.7", "1.8.8",
-		"1.8.9", "1.8.10", "1.8.11", "1.8.12"
+		"1.8.9", "1.8.10", "1.8.11", "1.8.12", "1.8.13"
 	};
 	static final String[] cmds =
 		{
@@ -303,12 +303,18 @@ public class DBUpdate {
 				+ "ALTER TABLE KONTAKT ADD TitelSuffix VARCHAR(255);"
 				+ "ALTER TABLE PATIENT_ARTIKEL_JOINT MODIFY Dosis VARCHAR(255);"
 				+ "ALTER TABLE PATIENT_ARTIKEL_JOINT MODIFY Bemerkung VARCHAR(255);",
-				
+			
 			// 1.8.12
 			// M. Descher (23.3.2012)
 			// Due to Ticket #712 - Insufficient length of multiplicator
 			"ALTER TABLE VK_PREISE MODIFY MULTIPLIKATOR VARCHAR(8);"
-				+ "ALTER TABLE EK_PREISE MODIFY MULTIPLIKATOR VARCHAR(8);"
+				+ "ALTER TABLE EK_PREISE MODIFY MULTIPLIKATOR VARCHAR(8);",
+			
+			// 1.8.13
+			// M. Descher (30.3.2012)
+			// Due to Ticket #838 - Leistungen, "teurer" als 9999.99 Fr.
+			"ALTER TABLE LEISTUNGEN MODIFY VK_TP VARCHAR(8);"
+				+ "ALTER TABLE LEISTUNGEN MODIFY VK_SCALE VARCHAR(8);"
 		};
 	
 	static Log log = Log.get("DBUpdate");
