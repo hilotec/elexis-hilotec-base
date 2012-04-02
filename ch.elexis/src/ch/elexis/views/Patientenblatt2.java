@@ -13,9 +13,15 @@
 
 package ch.elexis.views;
 
+import java.awt.Desktop;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -40,6 +46,7 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -90,7 +97,6 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 	private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
 		public void runInUi(ElexisEvent ev){
 			setPatient(ElexisEventDispatcher.getSelectedPatient());
-			
 		}
 	};
 	
@@ -159,9 +165,27 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 		fields
 			.add(new InputData(
 				Messages.getString("Patientenblatt2.fax"), Patient.FLD_FAX, InputData.Typ.STRING, null)); //$NON-NLS-1$
-		fields
-			.add(new InputData(
-				Messages.getString("Patientenblatt2.email"), Patient.FLD_E_MAIL, InputData.Typ.STRING, null)); //$NON-NLS-1$
+		fields.add(new InputData(Messages.getString("Patientenblatt2.email"), Patient.FLD_E_MAIL, //$NON-NLS-1$
+			new LabeledInputField.IExecLinkProvider() {	
+				@Override
+				public void executeString(InputData ltf){
+					if(ltf.getText().length() == 0) return;
+					try {
+						URI uriMailTo = new URI("mailto", ltf.getText(), null);
+						Desktop.getDesktop().mail(uriMailTo);
+					} catch (URISyntaxException e1) {
+						Status status =
+							new Status(IStatus.WARNING, Hub.PLUGIN_ID,
+								"Error in using mail address "+ltf);
+						StatusManager.getManager().handle(status, StatusManager.SHOW);
+					} catch (IOException e2) {
+						Status status =
+								new Status(IStatus.WARNING, Hub.PLUGIN_ID,
+									"Error in using mail address "+ltf);
+							StatusManager.getManager().handle(status, StatusManager.SHOW);
+					}
+				}
+			}));
 		fields
 			.add(new InputData(
 				Messages.getString("Patientenblatt2.group"), Patient.FLD_GROUP, InputData.Typ.STRING, null)); //$NON-NLS-1$
@@ -171,7 +195,6 @@ public class Patientenblatt2 extends Composite implements IActivationListener {
 				
 					public void displayContent(PersistentObject po, InputData ltf){
 						ltf.setText(actPatient.getKontostand().getAmountAsString());
-						
 					}
 					
 					public void reloadContent(PersistentObject po, InputData ltf){

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2011, G. Weirich and Elexis
+ * Copyright (c) 2005-2012, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ * 	  M. Descher - added executable link type
  *    
  * $Id$
  *******************************************************************************/
@@ -51,7 +52,7 @@ import com.tiff.common.ui.datepicker.DatePickerCombo;
  */
 public class LabeledInputField extends Composite {
 	static public enum Typ {
-		TEXT, BOOL, LIST, LINK, DATE, MONEY, COMBO
+		TEXT, BOOL, LIST, LINK, DATE, MONEY, COMBO, EXECLINK
 	};
 	
 	Label lbl;
@@ -91,6 +92,11 @@ public class LabeledInputField extends Composite {
 		case COMBO:
 			ctl = new Combo(this, SWT.SINGLE | SWT.BORDER);
 			ctl.setLayoutData(new GridData(GridData.FILL_BOTH/* |GridData.GRAB_VERTICAL */));
+			break;
+		case EXECLINK:
+			lbl.setForeground(Desk.getColorRegistry().get(Desk.COL_BLUE));
+			ctl = tk.createText(this, "", SWT.BORDER);
+			ctl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 			break;
 		default:
 			break;
@@ -192,7 +198,7 @@ public class LabeledInputField extends Composite {
 	
 	public static class InputData {
 		public enum Typ {
-			STRING, INT, CURRENCY, LIST, HYPERLINK, DATE, COMBO
+			STRING, INT, CURRENCY, LIST, HYPERLINK, DATE, COMBO, EXECSTRING
 		};
 		
 		String sAnzeige, sFeldname, sHashname;
@@ -205,7 +211,6 @@ public class LabeledInputField extends Composite {
 			sFeldname = feldname;
 			tFeldTyp = feldtyp;
 			sHashname = hashname;
-			
 		}
 		
 		public InputData(String all){
@@ -220,6 +225,23 @@ public class LabeledInputField extends Composite {
 			sFeldname = feldname;
 			ext = cp;
 			tFeldTyp = Typ.HYPERLINK;
+		}
+		
+		/**
+		 * Provide an executable link input field; that is, on click on the resp. label
+		 * (like the hyperlink), an executable can be called by a callback on cp
+		 * @param anzeige the name of the label (will be clickable, calling cp)
+		 * @param feldname the field name
+		 * @param feldtyp the field type
+		 * @param cp executable callback
+		 * @author M. Descher
+		 */
+		public InputData(String anzeige, String feldname, IExecLinkProvider cp) {
+			sAnzeige = anzeige;
+			sFeldname = feldname;
+			sHashname = null;
+			ext = cp;
+			tFeldTyp = Typ.EXECSTRING;
 		}
 		
 		public InputData(String anzeige, String feldname, String hashname, String[] choices){
@@ -306,6 +328,18 @@ public class LabeledInputField extends Composite {
 				} else if (typ == InputData.Typ.COMBO) {
 					ltf = addComponent(def[i].sAnzeige, LabeledInputField.Typ.COMBO);
 					((Combo) ltf.getControl()).setItems((String[]) def[i].ext);
+				} else if (typ == InputData.Typ.EXECSTRING) {
+					ltf = addComponent(def[i].sAnzeige, LabeledInputField.Typ.EXECLINK);
+					ltf.lbl.setData(i);
+					ltf.lbl.addMouseListener(new MouseAdapter() {
+						@Override
+						public void mouseDown(MouseEvent e){
+							Label l = (Label) e.getSource();
+							int i = (Integer) l.getData();
+							((IExecLinkProvider) def[i].ext).executeString(def[i]);
+							super.mouseDown(e);
+						}
+					});
 				} else {
 					if (typ == InputData.Typ.HYPERLINK) {
 						ltf = addComponent(def[i].sAnzeige, LabeledInputField.Typ.LINK);
@@ -342,6 +376,7 @@ public class LabeledInputField extends Composite {
 							case STRING:
 							case COMBO:
 							case INT:
+							case EXECSTRING:
 							case DATE:
 								val = inp.getText();
 								break;
@@ -411,6 +446,7 @@ public class LabeledInputField extends Composite {
 				case INT:
 				case LIST:
 				case COMBO:
+				case EXECSTRING:
 				case DATE:
 					if (StringTool.isNothing(val)) {
 						val = StringTool.leer;
@@ -435,5 +471,10 @@ public class LabeledInputField extends Composite {
 		
 		/** Let the user modify the content and load in in po and ltf */
 		public void reloadContent(PersistentObject po, InputData ltf);
+	}
+	
+	public interface IExecLinkProvider {
+		/** Execute the string within the InputData */
+		public void executeString(InputData ltf);
 	}
 }
