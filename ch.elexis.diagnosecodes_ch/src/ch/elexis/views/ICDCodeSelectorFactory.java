@@ -13,30 +13,23 @@
 
 package ch.elexis.views;
 
-import java.util.List;
-
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
-import ch.elexis.diagnosecodes_schweiz.Messages;
-import ch.elexis.Desk;
+
 import ch.elexis.actions.JobPool;
-import ch.elexis.actions.LazyTreeLoader;
 import ch.elexis.data.ICD10;
 import ch.elexis.data.Query;
-import ch.elexis.util.*;
 import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
-import ch.elexis.util.viewers.TreeContentProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.views.codesystems.CodeSelectorFactory;
 
 public class ICDCodeSelectorFactory extends CodeSelectorFactory {
-	LazyTreeLoader dataloader;
+	ICD10LazyTreeLoader dataloader;
 	
 	public ICDCodeSelectorFactory(){
-		dataloader = (LazyTreeLoader) JobPool.getJobPool().getJob("ICD"); //$NON-NLS-1$
+		dataloader = (ICD10LazyTreeLoader) JobPool.getJobPool().getJob("ICD"); //$NON-NLS-1$
 		if (dataloader == null) {
 			
 			Query<ICD10> check = new Query<ICD10>(ICD10.class);
@@ -48,14 +41,15 @@ public class ICDCodeSelectorFactory extends CodeSelectorFactory {
 			 * ,Messages.ICDCodeSelectorFactory_couldntCreate); } check.clear(); }
 			 */
 			dataloader =
-				new LazyTreeLoader<ICD10>("ICD", check, "parent", new String[] { "Code", "Text"}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				new ICD10LazyTreeLoader<ICD10>(
+					"ICD", check, "parent", new String[] { ICD10.FLD_CODE, ICD10.FLD_TEXT}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			JobPool.getJobPool().addJob(dataloader);
 		}
 		JobPool.getJobPool().activate("ICD", Job.SHORT); //$NON-NLS-1$
 	}
 	
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
-		return new ViewerConfigurer(new TreeContentProvider(cv, dataloader),
+		return new ViewerConfigurer(new ICD10TreeContentProvider(cv, dataloader),
 			new ViewerConfigurer.TreeLabelProvider(), new DefaultControlFieldProvider(cv,
 				new String[] {
 					"Code", "Text"}), //$NON-NLS-1$ //$NON-NLS-2$

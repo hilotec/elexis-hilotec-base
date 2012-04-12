@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2011, G. Weirich and Elexis
+ * Copyright (c) 2006-2012, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    M. Descher / MEDEVIT - minor refactorings
  *    
  *    $Id$
  *******************************************************************************/
@@ -25,6 +26,9 @@ import ch.rgw.tools.VersionInfo;
 public class ICD10 extends PersistentObject implements IDiagnose {
 	public static final String VERSION = "1.0.2";
 	public static final String TABLENAME = "ICD10";
+	
+	public static final String FLD_CODE = "Code";
+	public static final String FLD_TEXT = "Text";
 	
 	static final String create = "DROP INDEX icd1;" + //$NON-NLS-1$
 		"DROP INDEX icd2;" + //$NON-NLS-1$
@@ -46,8 +50,8 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 	}
 	
 	static {
-		addMapping("ICD10", "parent", "Code=ICDCode", "Text=ICDTxt", "encoded", "ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
-
+		addMapping("ICD10", "parent", FLD_CODE+"=ICDCode", FLD_TEXT+"=ICDTxt", "encoded", "ExtInfo"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+		
 		ICD10 check = load("1");
 		if (check.state() < PersistentObject.DELETED) {
 			initialize();
@@ -125,11 +129,11 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 	}
 	
 	public String getCode(){
-		return get("Code"); //$NON-NLS-1$
+		return get(FLD_CODE); //$NON-NLS-1$
 	}
 	
 	public String getText(){
-		return get("Text"); //$NON-NLS-1$
+		return get(FLD_TEXT); //$NON-NLS-1$
 	}
 	
 	public String getCodeSystemName(){
