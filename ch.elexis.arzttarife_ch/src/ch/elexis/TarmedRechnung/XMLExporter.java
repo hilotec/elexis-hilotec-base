@@ -1785,7 +1785,7 @@ public class XMLExporter implements IRnOutputter {
 			
 			void add(double amount) {
 				this.sumamount += amount;
-				sumvat += (amount / (100.0 + scale)) * scale;
+				sumvat += (amount / (100.0)) * scale;
 			}
 			
 			public int compareTo(VatRateElement other) {
@@ -1808,7 +1808,7 @@ public class XMLExporter implements IRnOutputter {
 				rates.put(new Double(scale), element);
 			}
 			element.add(amount);
-			sumvat += (amount / (100.0 + scale)) * scale;
+			sumvat += (amount / (100.0)) * scale;
 		}
 	}
 	
@@ -1821,16 +1821,12 @@ public class XMLExporter implements IRnOutputter {
 	 * @param el
 	 */
 	private void setVatAttribute(Verrechnet verrechnet, Money amount, Element el, VatRateSum vatsum) {
-		
-		Boolean isVat = (Boolean) verrechnet.getKons().getMandant()
-			.getRechnungssteller().getInfoElement(VAT_ISMANDANTVAT);
-		
 		double value = 0.0;		
-		if(isVat != null && isVat) {
-			String vatScale = verrechnet.getDetail(Verrechnet.VATSCALE);
-			if(vatScale != null && vatScale.length() > 0)
-				value = Double.parseDouble(vatScale);
-		}
+
+		String vatScale = verrechnet.getDetail(Verrechnet.VATSCALE);
+		if (vatScale != null && vatScale.length() > 0)
+			value = Double.parseDouble(vatScale);
+
 		el.setAttribute(ATTR_VAT_RATE, Double.toString(value)); //$NON-NLS-1$
 		
 		vatsum.add(value, amount.doubleValue());
