@@ -13,6 +13,7 @@
 package ch.elexis.views;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -441,7 +442,7 @@ public class RnPrintView2 extends ViewPart {
 				sb.append("1\t"); //$NON-NLS-1$
 				sumNpfl += dLine;
 			}
-			sb.append(getValue(s, "vat_rate")).append("\t"); //$NON-NLS-1$
+			sb.append(Integer.toString(guessVatCode(getValue(s, "vat_rate")))).append("\t"); //$NON-NLS-1$
 			
 			sb.append(am);
 			seitentotal += dLine;
@@ -527,26 +528,56 @@ public class RnPrintView2 extends ViewPart {
 		String vatNumber = getValue(vat, "vat_number");
 		if(vatNumber.equals(" "))
 			vatNumber = "keine";
-			
+
 		footer.append("\n\n■ MwSt.Nr. \t\t"); //$NON-NLS-1$
 		cursor = print(cursor, tp, true, footer.toString());
 		cursor = print(cursor, tp, false, vatNumber + "\n\n"); //$NON-NLS-1$
-		cursor = print(cursor, tp, true, "  Satz\t\tBetrag\tMwSt\n"); //$NON-NLS-1$
-		tp.setFont("Helvetica", SWT.NORMAL, 9); //$NON-NLS-1$
-		footer.setLength(0);
 		
-		List<Element>rates = vat.getChildren();
-		
-		for(Element rate : rates) {
-			footer.append("■ ").append(getValue(rate, "vat_rate")).append("\t\t")
-				.append(getValue(rate, "amount")).append("\t")
-				.append(getValue(rate, "vat")).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		Boolean isVat =
+			(Boolean) mnd.getRechnungssteller().getInfoElement(XMLExporter.VAT_ISMANDANTVAT);
+		if (isVat != null && isVat) {
+			cursor = print(cursor, tp, true, "  Code\tSatz\tBetrag\tMwSt\n"); //$NON-NLS-1$
+			tp.setFont("Helvetica", SWT.NORMAL, 9); //$NON-NLS-1$
+			footer.setLength(0);
+			
+			List<Element>rates = vat.getChildren();
+			
+			// get vat lines ordered by code
+			List<String> vatLines = new ArrayList<String>();
+			for(Element rate : rates) {
+				StringBuilder vatBuilder = new StringBuilder();
+				int code = guessVatCode(getValue(rate, "vat_rate"));
+				
+				vatBuilder.append("■ ").append(Integer.toString(code)).append("\t")
+					.append(getValue(rate, "vat_rate")).append("\t")
+					.append(getValue(rate, "amount")).append("\t")
+					.append(getValue(rate, "vat")).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				// insert according to code
+				if (code == 0) {
+					vatLines.add(0, vatBuilder.toString());
+				} else if (code == 1) {
+					if (vatLines.size() == 2)
+						vatLines.add(1, vatBuilder.toString());
+					else
+						vatLines.add(vatBuilder.toString());
+				} else if (code == 2) {
+					vatLines.add(vatBuilder.toString());
+				}
+			}
+			for (String string : vatLines) {
+				footer.append(string);
+			}
+			
+			cursor = print(cursor, tp, false, footer.toString());
+			cursor = print(cursor, tp, true, "\n Total\t\t"); //$NON-NLS-1$
+			footer.setLength(0);
+			footer.append(mDue.getAmountAsString()).append("\t").append(getValue(vat, "vat")); //$NON-NLS-1$
+		} else {
+			cursor = print(cursor, tp, true, "\n Total\t\t"); //$NON-NLS-1$
+			footer.setLength(0);
+			footer.append(mDue.getAmountAsString()); //$NON-NLS-1$
 		}
 		
-		cursor = print(cursor, tp, false, footer.toString());
-		cursor = print(cursor, tp, true, "\n Total\t\t"); //$NON-NLS-1$
-		footer.setLength(0);
-		footer.append(mDue.getAmountAsString()).append("\t").append(getValue(vat, "vat")); //$NON-NLS-1$
 		tp.setFont("Helvetica", SWT.BOLD, 9); //$NON-NLS-1$
 		tp.insertText(cursor, footer.toString(), SWT.LEFT);
 		if (tcCode != null) {
@@ -701,4 +732,24 @@ public class RnPrintView2 extends ViewPart {
 		}
 	}
 	
+	/**
+	 * Make a guess for the correct code value for the provided vat rate. Guessing is necessary as
+	 * the correct code is not part of the XML invoice.
+	 * 
+	 * @param vatRate
+	 * @return
+	 */
+	private int guessVatCode(String vatRate){
+		if (vatRate != null && !vatRate.isEmpty()) {
+			double scale = Double.parseDouble(vatRate);
+			// make a guess for the correct code
+			if (scale == 0)
+				return 0;
+			else if (scale < 7)
+				return 2;
+			else
+				return 1;
+		}
+		return 0;
+	}
 }
