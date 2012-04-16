@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006-2009, G. Weirich and Elexis
+ * Copyright (c) 2006-2012, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    M. Descher - orders are now persisted into own table 
  *    
- *    $Id: Bestellung.java 5317 2009-05-24 15:00:37Z rgw_ch $
+ *    $Id$
  *******************************************************************************/
 
 package ch.elexis.data;
@@ -16,20 +17,68 @@ package ch.elexis.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import ch.elexis.core.PersistenceException;
+import ch.elexis.util.Log;
+import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 
 public class Bestellung extends PersistentObject {
-	private static final String ITEM_FIELD = "Liste"; //$NON-NLS-1$
-	private static final String TABLENAME = "HEAP2"; //$NON-NLS-1$
+	public static final String VERSION = "1.0.0";
+	private static final String FLD_ITEMS = "Liste"; //$NON-NLS-1$
+	private static final String TABLENAME = "BESTELLUNGEN"; //$NON-NLS-1$
 	private List<Item> alItems;
+	
+	private static Log logger = Log.get(Bestellung.class.getName());
 	
 	public enum ListenTyp {
 		PHARMACODE, NAME, VOLL
 	};
 	
+	static final String create =
+			"CREATE TABLE "+TABLENAME+" (" +
+			"ID       	VARCHAR(80) primary key, " +
+			"lastupdate BIGINT," + 
+			"deleted  	CHAR(1) default '0'," +
+			"datum      CHAR(8),"+
+			"Contents 	BLOB);" +
+			"INSERT INTO " + TABLENAME + " (ID,datum,deleted) VALUES ('1'," + JdbcLink.wrap(VERSION) + ",'1');";
+	
+	public static void initialize(){
+		createOrModifyTable(create);
+		
+		// Starting with 2.1.7.rc0 orders are excavated from the HEAP2 table into an own table,
+		// the following lines move the respective entries into the new table
+		Query<NamedBlob2> eoq = new Query<NamedBlob2>(NamedBlob2.class);
+		List<NamedBlob2> eor = eoq.execute();
+		for (NamedBlob2 nb2 : eor) {
+			String[] entry = nb2.getId().split(":");
+			if (entry.length == 3) {
+				Bestellung b = new Bestellung();
+				if (b.create(nb2.getId())) {
+					b.set(FLD_ITEMS, nb2.get(NamedBlob2.FLD_CONTENTS));
+					logger.log("Moved order " + nb2.getId() + " from HEAP2 to " + TABLENAME,
+						Log.INFOS);
+					nb2.delete();
+				} else {
+					logger.log("Error creating " + nb2.getId() + " in table " + TABLENAME,
+						Log.INFOS);
+				}
+			}
+		}
+	}
+	
 	static {
 		addMapping(TABLENAME, "Liste=S:C:Contents"); //$NON-NLS-1$
+		
+		try {
+			// Starting with 2.1.7.rc0 orders are excavated from the HEAP2 table, here
+			// we check whether the table is existing (new method), else we need to call
+			// the merge code
+			load("1");
+		} catch (PersistenceException e) {
+			initialize();
+		}
 	}
 	
 	public Bestellung(String name, Anwender an){
@@ -98,11 +147,11 @@ public class Bestellung extends PersistentObject {
 		for (Item i : alItems) {
 			sb.append(i.art.getId()).append(",").append(i.num).append(";"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		set(ITEM_FIELD, sb.toString());
+		set(FLD_ITEMS, sb.toString());
 	}
 	
 	public void load(){
-		String[] it = checkNull(get(ITEM_FIELD)).split(";"); //$NON-NLS-1$
+		String[] it = checkNull(get(FLD_ITEMS)).split(";"); //$NON-NLS-1$
 		if (alItems == null) {
 			alItems = new ArrayList<Item>();
 		} else {
