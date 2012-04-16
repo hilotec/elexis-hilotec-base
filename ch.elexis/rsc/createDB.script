@@ -546,11 +546,11 @@ CREATE TABLE LOGS(
 	ID			VARCHAR(25) primary key,	# log entry's id
 	lastupdate  BIGINT,
 	deleted     char(1) default '0',
-	OID			VARCHAR(80),				# foreign key on modified object
+	OID			VARCHAR(255),				# foreign key on modified object
 	datum		CHAR(8),					# date of modification
 	typ			VARCHAR(20),				
 	userID		VARCHAR(25),				# foreign key on modifying user
-	station		VARCHAR(40),				# modifying workstation name
+	station		VARCHAR(255),				# modifying workstation name
 	ExtInfo		BLOB
 );
 
