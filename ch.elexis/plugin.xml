@@ -790,6 +790,13 @@
                   label="Views anzeigen"
                   style="push"
                   tooltip="%command.showViews">
+               <visibleWhen
+                     checkEnabled="false">
+                  <test
+                        args="AC_SHOWVIEW"
+                        property="ch.elexis.commands.propertyTester.ACE">
+                  </test>
+               </visibleWhen>
             </command>
          </toolbar>
          <toolbar
@@ -800,6 +807,16 @@
             </dynamic>
          </toolbar>
       </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="ch.elexis.commands.propertyTester.ACETester"
+            id="ch.elexis.commands.propertyTester.ACETester"
+            namespace="ch.elexis.commands.propertyTester"
+            properties="ACE"
+            type="java.lang.Object">
+      </propertyTester>
    </extension>
 
 </plugin>
