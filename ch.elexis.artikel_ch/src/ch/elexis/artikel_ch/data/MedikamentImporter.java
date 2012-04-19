@@ -18,7 +18,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +81,8 @@ public class MedikamentImporter extends ImporterPage {
 			.beginTask(Messages.MedikamentImporter_MedikamentImportTitle + mode, (int) (l / 100));
 		Query<Artikel> qbe = new Query<Artikel>(Artikel.class);
 		int counter = 0;
+		int createdCount = 0;
+		int updatedCount = 0;
 		String titel, ek, vk, kasse, cmws;
 		while ((in = br.readLine()) != null) {
 			// Recordart (RECA) - 2stellig
@@ -133,6 +134,8 @@ public class MedikamentImporter extends ImporterPage {
 				if (cmut.equals("3") || (!reca.equals("11"))) { // ausser handel //$NON-NLS-1$ //$NON-NLS-2$
 					// oder kein
 					// Stammsatz
+					monitor.worked(1);
+					updatedCount++;
 					continue; // Dann Artikel nicht neu erstellen, falls er
 					// nicht existiert
 				}
@@ -140,6 +143,8 @@ public class MedikamentImporter extends ImporterPage {
 				if (cmut.equals("3")) { // Wenn er existiert, muss er gelöscht //$NON-NLS-1$
 					// werden
 					a.delete();
+					monitor.worked(1);
+					updatedCount++;
 					continue;
 				}
 			}
@@ -169,6 +174,9 @@ public class MedikamentImporter extends ImporterPage {
 						a = new Artikel(titel, MEDIKAMENT, pk);
 						a.set(Artikel.FLD_KLASSE, Medikament.class.getName());
 					}
+					createdCount++;
+				} else {
+					updatedCount++;
 				}
 				if (vk.matches("0+")) { //$NON-NLS-1$
 					a.set(EK_PREIS, ek);
@@ -202,7 +210,7 @@ public class MedikamentImporter extends ImporterPage {
 					};
 					a.set(fields, ek, vk);
 				}
-				
+				updatedCount++;
 			} else {
 				SWTHelper.showError(Messages.MedikamentImporter_BadFileFormat,
 					Messages.MedikamentImporter_OnlyIGM10AndIGM11);
@@ -227,6 +235,8 @@ public class MedikamentImporter extends ImporterPage {
 		}
 		monitor.done();
 		PersistentObject.setDefaultCacheLifetime(cachetime);
+		SWTHelper.showInfo(Messages.MedikamentImporter_SuccessTitel,
+			String.format(Messages.MedikamentImporter_SuccessContent, createdCount, updatedCount));
 		return Status.OK_STATUS;
 	}
 	
