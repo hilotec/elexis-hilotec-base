@@ -13,6 +13,7 @@
 package ch.elexis.preferences.inputs;
 
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -55,18 +56,14 @@ public class MultiplikatorEditor extends Composite {
 				if (amd.open() == Dialog.OK) {
 					TimeTool t = amd.getBegindate();
 					String mul = amd.getMult();
-					String datestring = JdbcLink.wrap(t.toString(TimeTool.DATE_COMPACT));
-					stm
-						.exec("UPDATE VK_PREISE SET DATUM_BIS=" + datestring + " WHERE DATUM_BIS='99991231' AND TYP=" + JdbcLink.wrap(typeName)); //$NON-NLS-1$ //$NON-NLS-2$
-					stm
-						.exec("INSERT INTO VK_PREISE (DATUM_VON,DATUM_BIS,MULTIPLIKATOR,TYP) VALUES (" //$NON-NLS-1$
-							+ t.toString(TimeTool.DATE_COMPACT) + ",'99991231'," //$NON-NLS-1$
-							+ JdbcLink.wrap(mul) + "," + JdbcLink.wrap(typeName) + ");"); //$NON-NLS-1$ //$NON-NLS-2$
+					
+					MultiplikatorList multis = new MultiplikatorList("VK_PREISE", typeName);
+					multis.insertMultiplikator(t, mul);
+
 					list
 						.add(Messages.getString("MultiplikatorEditor.from") + t.toString(TimeTool.DATE_GER) + Messages.getString("MultiplikatorEditor.14") + mul); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
-			
 		});
 		reload(clazz);
 	}
@@ -111,5 +108,128 @@ public class MultiplikatorEditor extends Composite {
 		} catch (Exception ex) {
 			ExHandler.handle(ex);
 		} 
+	}
+	
+	/**
+	 * Class for manipulation of Multiplikator. <br>
+	 * <b>ATTENTION</b> remember to call dispose to release the DB Statement.
+	 * 
+	 * @author thomashu
+	 * 
+	 */
+	public static class MultiplikatorList {
+		private ResultSet multiRes;
+		private String typ;
+		private String table;
+
+		public MultiplikatorList(String table, String typ){
+			this.typ = typ;
+			this.table = table;
+		}
+		
+		/**
+		 * Update multiRes with ResultSet of all existing Multiplikators
+		 */
+		private void fetchResultSet(){
+			Stm statement = PersistentObject.getConnection().getStatement();
+			StringBuilder sql = new StringBuilder();
+			sql.append("SELECT * FROM ").append(table).append(" WHERE TYP=")
+				.append(JdbcLink.wrap(typ));
+			multiRes = statement.query(sql.toString());
+			PersistentObject.getConnection().releaseStatement(statement);
+		}
+		
+		public void insertMultiplikator(TimeTool dateFrom, String value){
+			TimeTool dateTo = null;
+			Stm statement = PersistentObject.getConnection().getStatement();
+			try {
+				fetchResultSet();
+				// update existing multiplier for that date
+				while (multiRes.next()) {
+					TimeTool fromDate = new TimeTool(multiRes.getString("DATUM_VON"));
+					TimeTool toDate = new TimeTool(multiRes.getString("DATUM_BIS"));
+					if (dateFrom.isAfter(fromDate) && dateFrom.isBefore(toDate)) { // if contains update the to value of the existing multiplikator
+						StringBuilder sql = new StringBuilder();
+						// update the old to date
+						TimeTool newToDate = new TimeTool(dateFrom);
+						newToDate.addDays(-1);
+						sql.append("UPDATE ")
+							.append(table)
+							.append(
+								" SET DATUM_BIS="
+									+ JdbcLink.wrap(newToDate.toString(TimeTool.DATE_COMPACT))
+									+ " WHERE DATUM_VON="
+									+ JdbcLink.wrap(fromDate.toString(TimeTool.DATE_COMPACT))
+									+ " AND TYP=" + JdbcLink.wrap(typ));
+						statement.exec(sql.toString());
+						// set to date of new multiplikator to to date of old multiplikator
+						dateTo = new TimeTool(toDate);
+					} else if (dateFrom.isEqual(fromDate)) { // if from equals update the value
+						StringBuilder sql = new StringBuilder();
+						// update the value and return
+						TimeTool newToDate = new TimeTool(dateFrom);
+						newToDate.addDays(-1);
+						sql.append("UPDATE ")
+							.append(table)
+							.append(
+								" SET MULTIPLIKATOR="
+									+ JdbcLink.wrap(value)
+									+ " WHERE DATUM_VON="
+									+ JdbcLink.wrap(fromDate.toString(TimeTool.DATE_COMPACT))
+									+ " AND TYP=" + JdbcLink.wrap(typ));
+						statement.exec(sql.toString());
+						return;
+					}
+				}
+				// if we have not found a to Date yet search for oldest existing
+				if(dateTo == null) {
+					fetchResultSet();
+					dateTo = new TimeTool("99991231");
+					while (multiRes.next()) {
+						TimeTool fromDate = new TimeTool(multiRes.getString("DATUM_VON"));
+						if(fromDate.isBefore(dateTo)) {
+							dateTo.set(fromDate);
+							dateTo.addDays(-1);
+						}
+					}
+				}
+				// create a new entry
+				StringBuilder sql = new StringBuilder();
+				sql.append("INSERT INTO ")
+				.append(table)
+					.append(
+						" (DATUM_VON,DATUM_BIS,MULTIPLIKATOR,TYP) VALUES ("
+							+ JdbcLink.wrap(dateFrom.toString(TimeTool.DATE_COMPACT)) + ","
+							+ JdbcLink.wrap(dateTo.toString(TimeTool.DATE_COMPACT)) + ","
+							+ JdbcLink.wrap(value) + "," + JdbcLink.wrap(typ) + ");");
+				statement.exec(sql.toString());
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				PersistentObject.getConnection().releaseStatement(statement);
+			}
+		}
+		
+		public double getMultiplikator(TimeTool date){
+			// get Mutliplikator for date
+			fetchResultSet();
+			try {
+				while (multiRes.next()) {
+					TimeTool fromDate = new TimeTool(multiRes.getString("DATUM_VON"));
+					TimeTool toDate = new TimeTool(multiRes.getString("DATUM_BIS"));
+					if (date.isAfterOrEqual(fromDate) && date.isBeforeOrEqual(toDate)) {
+						String value = multiRes.getString("MULTIPLIKATOR");
+						if (value != null && !value.isEmpty()) {
+							return Double.parseDouble(value);
+						}
+					}
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return 1.0;
+		}
 	}
 }
