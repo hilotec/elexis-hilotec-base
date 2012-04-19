@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Test
+Bundle-SymbolicName: ch.elexis.labortarif.ch2009_test
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: medevit.at
+Fragment-Host: ch.elexis.labortarif.ch2009;bundle-version="1.0.4"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Require-Bundle: org.junit;bundle-version="4.8.2"
