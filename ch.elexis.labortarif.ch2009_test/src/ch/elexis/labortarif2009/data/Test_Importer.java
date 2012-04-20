@@ -59,11 +59,12 @@ public class Test_Importer {
 		importer.doImport(null);
 		
 		Query<Labor2009Tarif> query = new Query<Labor2009Tarif>(Labor2009Tarif.class);
+		query.add(Labor2009Tarif.FLD_CODE, "=", "1000.00");
 		List<Labor2009Tarif> importedTarif = query.execute();
 		assertTrue(importedTarif.size() > 0);
 		
 		// test imported values of FLD_CHAPTER, FLD_CODE, FLD_TP, FLD_NAME, FLD_LIMITATIO,
-		// FLD_FACHBEREICH, FLD_FACHSPEC on second object as first one is the table version
+		// FLD_FACHBEREICH, FLD_FACHSPEC
 		Labor2009Tarif testTarif = importedTarif.get(0);
 		assertEquals("1", testTarif.get(Labor2009Tarif.FLD_CHAPTER));
 		assertEquals("1000.00", testTarif.get(Labor2009Tarif.FLD_CODE));
@@ -72,6 +73,19 @@ public class Test_Importer {
 		assertEquals("", testTarif.get(Labor2009Tarif.FLD_LIMITATIO));
 		assertEquals("C", testTarif.get(Labor2009Tarif.FLD_FACHBEREICH));
 		assertEquals("-1", testTarif.get(Labor2009Tarif.FLD_FACHSPEC));
+		
+		query = new Query<Labor2009Tarif>(Labor2009Tarif.class);
+		query.add(Labor2009Tarif.FLD_CODE, "=", "1012.00");
+		importedTarif = query.execute();
+		assertTrue(importedTarif.size() > 0);
+		
+		testTarif = importedTarif.get(0);
+		assertEquals("5.1.3.06", testTarif.get(Labor2009Tarif.FLD_CHAPTER));
+		assertEquals("1012.00", testTarif.get(Labor2009Tarif.FLD_CODE));
+		assertEquals("17.1", testTarif.get(Labor2009Tarif.FLD_TP));
+		
+		int tp = testTarif.getTP(null, null);
+		assertEquals(1710, tp);
 	}
 	
 	@Test
@@ -84,18 +98,32 @@ public class Test_Importer {
 		importer.doImport(null);
 		
 		Query<Labor2009Tarif> query = new Query<Labor2009Tarif>(Labor2009Tarif.class);
+		query.add(Labor2009Tarif.FLD_CODE, "=", "1000.00");
 		List<Labor2009Tarif> importedTarif = query.execute();
 		assertTrue(importedTarif.size() > 0);
 		// test imported values of FLD_CHAPTER, FLD_CODE, FLD_TP, FLD_NAME, FLD_LIMITATIO,
-		// FLD_FACHBEREICH, FLD_FACHSPEC on second object as first one is the table version
-		Labor2009Tarif testTarif = importedTarif.get(1);
-		assertEquals("1,2", testTarif.get(Labor2009Tarif.FLD_CHAPTER));
+		// FLD_FACHBEREICH, FLD_FACHSPEC
+		Labor2009Tarif testTarif = importedTarif.get(0);
+		assertEquals("1.2", testTarif.get(Labor2009Tarif.FLD_CHAPTER));
 		assertEquals("1000.00", testTarif.get(Labor2009Tarif.FLD_CODE));
 		assertEquals("85", testTarif.get(Labor2009Tarif.FLD_TP));
 		assertEquals("1,25-Dihydroxycholecalciferol", testTarif.get(Labor2009Tarif.FLD_NAME));
 		assertEquals("", testTarif.get(Labor2009Tarif.FLD_LIMITATIO));
 		assertEquals("C", testTarif.get(Labor2009Tarif.FLD_FACHBEREICH));
 		assertEquals("-1", testTarif.get(Labor2009Tarif.FLD_FACHSPEC));
+		
+		query = new Query<Labor2009Tarif>(Labor2009Tarif.class);
+		query.add(Labor2009Tarif.FLD_CODE, "=", "1012.00");
+		importedTarif = query.execute();
+		assertTrue(importedTarif.size() > 0);
+		
+		testTarif = importedTarif.get(0);
+		assertEquals("5.1.3.2.6", testTarif.get(Labor2009Tarif.FLD_CHAPTER));
+		assertEquals("1012.00", testTarif.get(Labor2009Tarif.FLD_CODE));
+		assertEquals("17.1", testTarif.get(Labor2009Tarif.FLD_TP));
+		
+		int tp = testTarif.getTP(null, null);
+		assertEquals(1710, tp);
 	}
 	
 	@Test

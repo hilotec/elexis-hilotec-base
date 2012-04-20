@@ -257,12 +257,13 @@ public class Importer extends ImporterPage {
 
 	private void fillImportedValues2012(String[] line){
 		importedValues.clear();
-		importedValues.put(Labor2009Tarif.FLD_CHAPTER, StringTool.getSafe(line, 0));
+		String chapter = convertChapterString(StringTool.getSafe(line, 0));
+		importedValues.put(Labor2009Tarif.FLD_CHAPTER, chapter);
 		// convert code to nnnn.mm
 		String code = convertCodeString(StringTool.getSafe(line, 2));
-
 		importedValues.put(Labor2009Tarif.FLD_CODE, code);
-		importedValues.put(Labor2009Tarif.FLD_TP, StringTool.getSafe(line, 3));
+		String taxpoint = convertNumericString(StringTool.getSafe(line, 3));
+		importedValues.put(Labor2009Tarif.FLD_TP, taxpoint);
 		importedValues.put(Labor2009Tarif.FLD_NAME,
 			StringTool.limitLength(StringTool.getSafe(line, 4), 254));
 		importedValues.put(Labor2009Tarif.FLD_LIMITATIO, StringTool.getSafe(line, 5));
@@ -271,12 +272,13 @@ public class Importer extends ImporterPage {
 
 	private void fillImportedValues2011(String[] line){
 		importedValues.clear();
-		importedValues.put(Labor2009Tarif.FLD_CHAPTER, StringTool.getSafe(line, 0));
+		String chapter = convertChapterString(StringTool.getSafe(line, 0));
+		importedValues.put(Labor2009Tarif.FLD_CHAPTER, chapter);
 		// convert code to nnnn.mm
 		String code = convertCodeString(StringTool.getSafe(line, 2));
-
 		importedValues.put(Labor2009Tarif.FLD_CODE, code);
-		importedValues.put(Labor2009Tarif.FLD_TP, StringTool.getSafe(line, 3));
+		String taxpoint = convertNumericString(StringTool.getSafe(line, 3));
+		importedValues.put(Labor2009Tarif.FLD_TP, taxpoint);
 		importedValues.put(Labor2009Tarif.FLD_NAME,
 			StringTool.limitLength(StringTool.getSafe(line, 4), 254));
 		importedValues.put(Labor2009Tarif.FLD_LIMITATIO, StringTool.getSafe(line, 5));
@@ -284,8 +286,8 @@ public class Importer extends ImporterPage {
 	}
 
 	private String convertCodeString(String code){
-		// split by all possible delimiters after reading for xls
-		String[] parts = code.split("[\\.,]");
+		// split by all possible delimiters after reading from xls
+		String[] parts = code.split("[\\.,']");
 		StringBuilder sb = new StringBuilder();
 		for (String part : parts) {
 			sb.append(part);
@@ -299,6 +301,30 @@ public class Importer extends ImporterPage {
 		else if (sb.length() == 6)
 			sb.append("0");
 		
+		return sb.toString();
+	}
+
+	private String convertNumericString(String code){
+		// split by all possible delimiters after reading from xls
+		String[] parts = code.split("[\\.,']");
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < parts.length; i++) {
+			if (i > 0 && (i == (parts.length - 1)))
+				sb.append(".");
+			sb.append(parts[i]);
+		}
+		return sb.toString();
+	}
+
+	private String convertChapterString(String code){
+		// split by all possible delimiters after reading from xls
+		String[] parts = code.split("[\\.,']");
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < parts.length; i++) {
+			if (i > 0)
+				sb.append(".");
+			sb.append(parts[i]);
+		}
 		return sb.toString();
 	}
 

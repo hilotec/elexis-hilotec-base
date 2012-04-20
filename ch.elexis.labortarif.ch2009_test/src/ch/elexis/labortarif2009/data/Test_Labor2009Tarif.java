@@ -77,6 +77,6 @@ public class Test_Labor2009Tarif {
 		}
 		
 		assertEquals("4.1", lt2011.get(Labor2009Tarif.FLD_CHAPTER));
-		assertEquals("4,2", lt2012.get(Labor2009Tarif.FLD_CHAPTER));
+		assertEquals("4.2", lt2012.get(Labor2009Tarif.FLD_CHAPTER));
 	}
 }
