@@ -25,6 +25,8 @@ import org.eclipse.jface.viewers.IFilter;
 import ch.elexis.Desk;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.dialogs.AddElementToBlockDialog;
+import ch.elexis.preferences.inputs.MultiplikatorEditor;
+import ch.elexis.preferences.inputs.MultiplikatorEditor.MultiplikatorList;
 import ch.elexis.util.IOptifier;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.Money;
@@ -112,16 +114,9 @@ public abstract class VerrechenbarAdapter extends PersistentObject implements IV
 	}
 	
 	private double getMultiplikator(final TimeTool date, final String table, final String typ){
-		String actdat = JdbcLink.wrap(date.toString(TimeTool.DATE_COMPACT));
-		StringBuilder sql = new StringBuilder();
-		sql.append("SELECT MULTIPLIKATOR FROM ").append(table).append(" WHERE TYP=").append(
-			JdbcLink.wrap(typ)).append(" AND DATUM_VON <=").append(actdat).append(
-			" AND DATUM_BIS >").append(actdat);
-		String res = getConnection().queryString(sql.toString() + " AND ID=" + getWrappedId());
-		if (res == null) {
-			res = getConnection().queryString(sql.toString());
-		}
-		return res == null ? 1.0 : Double.parseDouble(res);
+		MultiplikatorList multis = new MultiplikatorEditor.MultiplikatorList(table, typ);
+
+		return multis.getMultiplikator(date);
 	}
 	
 	public Money getKosten(final TimeTool dat){

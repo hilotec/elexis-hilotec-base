@@ -62,6 +62,7 @@ import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Fall;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.preferences.inputs.MultiplikatorEditor;
+import ch.elexis.preferences.inputs.MultiplikatorEditor.MultiplikatorList;
 import ch.elexis.util.Extensions;
 import ch.elexis.util.ListDisplay;
 import ch.elexis.util.Log;
@@ -240,12 +241,9 @@ public class Leistungscodes extends PreferencePage implements IWorkbenchPreferen
 				it.setText(1, Hub.globalCfg.get(cfgkey + "leistungscodes", "?")); //$NON-NLS-1$
 				it.setText(2, Hub.globalCfg.get(cfgkey + "standardausgabe", "?")); //$NON-NLS-1$ //$NON-NLS-2$
 				StringBuilder sql = new StringBuilder();
-				String actdat = new TimeTool().toString(TimeTool.DATE_COMPACT);
-				sql.append("SELECT MULTIPLIKATOR FROM ").append("VK_PREISE").append(" WHERE TYP=") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					.append(JdbcLink.wrap(name))
-					.append(" AND DATUM_VON <=").append(JdbcLink.wrap(actdat)) //$NON-NLS-1$
-					.append(" AND DATUM_BIS >").append(JdbcLink.wrap(actdat)); //$NON-NLS-1$
-				String tp = PersistentObject.getConnection().queryString(sql.toString());
+				TimeTool actdat = new TimeTool();
+				MultiplikatorList multis = new MultiplikatorList("VK_PREISE", name);
+				String tp = Double.toString(multis.getMultiplikator(actdat));
 				if (StringTool.isNothing(tp)) {
 					if (Hub.getSystemLogLevel() > Log.INFOS) {
 						SWTHelper.alert(Messages.Leistungscodes_didNotFindMulitplier,
