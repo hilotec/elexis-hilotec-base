@@ -12,6 +12,8 @@ public class Messages extends NLS {
 	public static String MedikamentImporter_OnlyIGM10AndIGM11;
 	public static String MedikamentImporter_PleaseChoseFile;
 	public static String MedikamentImporter_WindowTitleMedicaments;
+	public static String MedikamentImporter_SuccessTitel;
+	public static String MedikamentImporter_SuccessContent;
 	public static String MiGelImporter_ClearAllData;
 	public static String MiGelImporter_ModeCreateNew;
 	public static String MiGelImporter_ModeUpdateAdd;
