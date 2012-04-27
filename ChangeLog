@@ -1,5 +1,30 @@
 hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.6
 
+Changelog für 2.1.6.3
+5b3680a01aad: 2012-04-20: thomashu: Ticket: #807 - fixed problems with numeric values from xls due to locale settings
+bf8221aefced: 2012-04-19: thomashu: Ticket: #791 - skipping konsultation with invalid mandant when creating rechnungslauf
+95e96a965bd9: 2012-04-19: Niklaus Giger: Ticket #807: Added UnitTests
+babe0f1677d2: 2012-04-19: marcode79: Ticket #836: ACL Viewauswahl und Mandantenwechsel
+22611ed6008a: 2012-04-19: thomashu: Ticket: #823 - fixed Multiplikator creation and selection based on valid from date
+24f1b962d20b: 2012-04-19: thomashu: Ticket: #864 - added info message with statistic on success
+b216ef20aa8c: 2012-04-19: thomashu: Ticket: #779 - added dynamic tabs when writing vat rates to tarmed bills
+0c7f18c6c4a3: 2012-04-19: thomashu: Ticket: #886 - reworked writing of vat rates to tarmed bills
+b8c8ad947f58: 2012-04-12: thomashu: Ticket: #886 - reworked vat rates on tarmed bills
+b34892a3c825: 2012-04-12: marcode79: Ticket #739: diagnosecodes_ch v2.0.3 - ICD-Codierung search for positions
+7e8ed555d6cd: 2012-03-29: rgw@iMac: Merge with d6dc6c6989795440dff19570b2f221a99bda575f
+7f2afa668f75: 2012-03-28: rgw@iMac: remove references to 2.2 version of IPartner
+e42a1c0dada5: 2012-03-23: rgw@iMac: revert to scalac due to errors in fsc
+e41ffa445ca3: 2012-03-28: marcode79: Ticket #822: View Rechnungsvorschlag => alphabetisch sortieren / Kons nach Datum
+020b6f363fb5: 2012-03-28: marcode79: Ticket #787: Sticker mehrfache Darstellung
+1f47878f9df5: 2012-03-23: marcode79: Ticket #839: "Doppelte Patienten"
+57fa15bd094c: 2012-03-23: marcode79: Ticket #876: Artikel CH v2.0.5
+33f73ff27750: 2012-03-23: marcode79: Ticket #871: zweimal View-Bezeichnung "Bestellung"
+7d828ee3c7ae: 2012-03-08: Niklaus Giger: Ticket: #807 - Adapt Image to 2.1.6
+bafa11e01852: 2012-03-08: Niklaus Giger: Ticket #816: IDs korrigiert, Version auf 2.0.8 erhöht
+6471f41a2e14: 2012-03-08: thomashu: Ticket: #807 - trigger reload of EAL Selector via ElexisEventDispatcher
+222b7b042bed: 2012-03-08: thomashu: Ticket: #807 - fixed format of code to nnnn.mm
+ac0716eb72de: 2012-03-08: thomashu: Ticket: #807 - added incremental import for EAL, added check for matching date with Konsultation, added filter for valid date to CodeSelector, changed version to 1.0.5
+
 Changelog für 2.1.6.2
 05cca30d070e: 2012-01-20: Niklaus Giger: Ticket #778: alte reflotron plug-in löschen
 845a700d057d: 2012-01-20: Niklaus Giger: Fix NPE when RunFromScratch
