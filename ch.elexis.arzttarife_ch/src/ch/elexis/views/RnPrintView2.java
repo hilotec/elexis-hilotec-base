@@ -536,7 +536,7 @@ public class RnPrintView2 extends ViewPart {
 		Boolean isVat =
 			(Boolean) mnd.getRechnungssteller().getInfoElement(XMLExporter.VAT_ISMANDANTVAT);
 		if (isVat != null && isVat) {
-			cursor = print(cursor, tp, true, "  Code\tSatz\tBetrag\tMwSt\n"); //$NON-NLS-1$
+			cursor = print(cursor, tp, true, "  Code\tSatz\t\tBetrag\t\tMwSt\n"); //$NON-NLS-1$
 			tp.setFont("Helvetica", SWT.NORMAL, 9); //$NON-NLS-1$
 			footer.setLength(0);
 			
@@ -549,8 +549,8 @@ public class RnPrintView2 extends ViewPart {
 				int code = guessVatCode(getValue(rate, "vat_rate"));
 				
 				vatBuilder.append("■ ").append(Integer.toString(code)).append("\t")
-					.append(getValue(rate, "vat_rate")).append("\t")
-					.append(getValue(rate, "amount")).append("\t")
+					.append(getValue(rate, "vat_rate")).append("\t\t")
+					.append(getValue(rate, "amount")).append("\t\t")
 					.append(getValue(rate, "vat")).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				// insert according to code
 				if (code == 0) {
@@ -569,9 +569,9 @@ public class RnPrintView2 extends ViewPart {
 			}
 			
 			cursor = print(cursor, tp, false, footer.toString());
-			cursor = print(cursor, tp, true, "\n Total\t\t"); //$NON-NLS-1$
+			cursor = print(cursor, tp, true, "\n Total\t\t\t"); //$NON-NLS-1$
 			footer.setLength(0);
-			footer.append(mDue.getAmountAsString()).append("\t").append(getValue(vat, "vat")); //$NON-NLS-1$
+			footer.append(mDue.getAmountAsString()).append("\t\t").append(getValue(vat, "vat")); //$NON-NLS-1$
 		} else {
 			cursor = print(cursor, tp, true, "\n Total\t\t"); //$NON-NLS-1$
 			footer.setLength(0);
