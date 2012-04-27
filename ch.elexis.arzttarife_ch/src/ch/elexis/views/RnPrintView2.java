@@ -547,10 +547,14 @@ public class RnPrintView2 extends ViewPart {
 			for(Element rate : rates) {
 				StringBuilder vatBuilder = new StringBuilder();
 				int code = guessVatCode(getValue(rate, "vat_rate"));
-				
+				// set amount of tabs needed according, use 7
+				String amount = getValue(rate, "amount");
+				String tabs = "\t\t";
+				if (amount.length() > 7)
+					tabs = "\t";
+
 				vatBuilder.append("■ ").append(Integer.toString(code)).append("\t")
-					.append(getValue(rate, "vat_rate")).append("\t\t")
-					.append(getValue(rate, "amount")).append("\t\t")
+					.append(getValue(rate, "vat_rate")).append("\t\t").append(amount).append(tabs)
 					.append(getValue(rate, "vat")).append("\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				// insert according to code
 				if (code == 0) {
@@ -570,8 +574,14 @@ public class RnPrintView2 extends ViewPart {
 			
 			cursor = print(cursor, tp, false, footer.toString());
 			cursor = print(cursor, tp, true, "\n Total\t\t\t"); //$NON-NLS-1$
+			// set amount of tabs needed according to amount, use 8 as font is bold
+			String amount = mDue.getAmountAsString();
+			String tabs = "\t\t";
+			if (amount.length() > 8)
+				tabs = "\t";
+
 			footer.setLength(0);
-			footer.append(mDue.getAmountAsString()).append("\t\t").append(getValue(vat, "vat")); //$NON-NLS-1$
+			footer.append(amount).append(tabs).append(getValue(vat, "vat")); //$NON-NLS-1$
 		} else {
 			cursor = print(cursor, tp, true, "\n Total\t\t"); //$NON-NLS-1$
 			footer.setLength(0);
