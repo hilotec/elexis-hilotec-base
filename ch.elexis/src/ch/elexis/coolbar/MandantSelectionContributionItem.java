@@ -37,6 +37,7 @@ import ch.elexis.Hub;
 import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListenerImpl;
+import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Mandant;
 import ch.elexis.preferences.PreferenceConstants;
 
@@ -57,11 +58,19 @@ public class MandantSelectionContributionItem extends ContributionItem {
 	private ElexisEventListenerImpl eeli_mandant = new ElexisEventListenerImpl(Mandant.class,
 		ElexisEvent.EVENT_MANDATOR_CHANGED) {
 		public void runInUi(ElexisEvent ev){
-			ICoolBarManager icb = ((ApplicationWindow) PlatformUI.getWorkbench().getActiveWorkbenchWindow()).getCoolBarManager2();
+			ICoolBarManager icb =
+				((ApplicationWindow) PlatformUI.getWorkbench().getActiveWorkbenchWindow())
+					.getCoolBarManager2();
 			Mandant m = (Mandant) ev.getObject();
-			if (m != null && m.getMandantLabel() != null && item != null) {
+			if (m != null && item != null) {
 				item.setText(m.getMandantLabel());
 				fParent.setBackground(getColorForMandator(m));
+				if(menuItems == null) {
+					// We have a read-only coolbar item entry
+					fParent.pack();
+					icb.update(true);
+					return;
+				}
 				for (int i = 0; i < menuItems.length; i++) {
 					String id = (String) menuItems[i].getData();
 					if (m.getId().equalsIgnoreCase(id)) {
@@ -86,43 +95,51 @@ public class MandantSelectionContributionItem extends ContributionItem {
 	
 	@Override
 	public void fill(ToolBar parent, int index){
-		List<Mandant> qre = Hub.getMandantenList();
-		mandants = qre.toArray(new Mandant[] {});
-		if(mandants.length<2) return;
-			
 		fParent = parent;
 		menu = new Menu(fParent);
-		item = new ToolItem(parent, SWT.DROP_DOWN);
-		item.setToolTipText("Aktuell ausgewählter Mandant bzw. Mandantenauswahl");
 		
-		menuItems = new MenuItem[mandants.length];
-		
-		for (int i = 0; i < mandants.length; i++) {
-			final Mandant m = mandants[i];
-			menuItems[i] = new MenuItem(menu, SWT.RADIO);
-			menuItems[i].setText(m.getMandantLabel());
-			menuItems[i].setImage(getBoxSWTColorImage(getColorForMandator(m)));
-			menuItems[i].setData(m.getId());
-			menuItems[i].addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e){
-					Hub.setMandant(m);
+		boolean rightToChange = Hub.acl.request(AccessControlDefaults.AC_CHANGEMANDANT);
+
+		if(rightToChange) {
+			List<Mandant> qre = Hub.getMandantenList();
+			mandants = qre.toArray(new Mandant[] {});
+			if (mandants.length < 2)
+				return;		
+			
+			item = new ToolItem(parent, SWT.DROP_DOWN);
+			item.setToolTipText("Aktuell ausgewählter Mandant bzw. Mandantenauswahl");
+			
+			menuItems = new MenuItem[mandants.length];
+			
+			for (int i = 0; i < mandants.length; i++) {
+				final Mandant m = mandants[i];
+				menuItems[i] = new MenuItem(menu, SWT.RADIO);
+				menuItems[i].setText(m.getMandantLabel());
+				menuItems[i].setImage(getBoxSWTColorImage(getColorForMandator(m)));
+				menuItems[i].setData(m.getId());
+				menuItems[i].addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e){
+						Hub.setMandant(m);
+					}
+				});
+			}
+			
+			item.addListener(SWT.Selection, new Listener() {
+				public void handleEvent(Event event){
+					if (event.detail == SWT.ARROW || event.type == SWT.Selection) {
+						Rectangle rect = item.getBounds();
+						Point pt = new Point(rect.x, rect.y + rect.height);
+						pt = fParent.toDisplay(pt);
+						menu.setLocation(pt.x, pt.y);
+						menu.setVisible(true);
+					}
 				}
 			});
+		} else {
+			item = new ToolItem(parent, SWT.None);
+			item.setToolTipText("Aktuell ausgewählter Mandant bzw. Mandantenauswahl");
 		}
-		
-
-		item.addListener(SWT.Selection, new Listener() {
-			public void handleEvent(Event event){
-				if (event.detail == SWT.ARROW || event.type == SWT.Selection) {
-					Rectangle rect = item.getBounds();
-					Point pt = new Point(rect.x, rect.y + rect.height);
-					pt = fParent.toDisplay(pt);
-					menu.setLocation(pt.x, pt.y);
-					menu.setVisible(true);
-				}
-			}
-		});
 	}
 	
 	private Image getBoxSWTColorImage(Color color){
@@ -140,7 +157,7 @@ public class MandantSelectionContributionItem extends ContributionItem {
 		return Desk.getColorFromRGB(Hub.globalCfg.get(
 			PreferenceConstants.USR_MANDATOR_COLORS_PREFIX + m.getLabel(), Desk.COL_GREY60));
 	}
-
+	
 	@Override
 	public void dispose(){
 		ElexisEventDispatcher.getInstance().removeListeners(eeli_mandant);
