@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Hub;
 import ch.elexis.StringConstants;
@@ -32,6 +33,7 @@ import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.data.Verrechnet;
+import ch.elexis.status.ElexisStatus;
 import ch.rgw.tools.Money;
 import ch.rgw.tools.TimeTool;
 
@@ -87,6 +89,17 @@ public class Rechnungslauf implements IRunnableWithProgress {
 		String rsId = Hub.actMandant.getRechnungssteller().getId();
 		ArrayList<Konsultation> list = new ArrayList<Konsultation>();
 		for (Konsultation kons : dblist) {
+			// skip kons if it has no valid mandant
+			if (kons.getMandant() == null) {
+				ElexisStatus status =
+					new ElexisStatus(ElexisStatus.WARNING, "ch.elexis",
+						ElexisStatus.CODE_NOFEEDBACK,
+						Messages.getString("Rechnungslauf.warnInvalidMandant"),
+						ElexisStatus.LOG_ERRORS);
+				StatusManager.getManager().handle(status);
+				continue;
+			}
+
 			if (kons.getMandant().getRechnungssteller().getId().equals(rsId)) {
 				list.add(kons);
 			}
