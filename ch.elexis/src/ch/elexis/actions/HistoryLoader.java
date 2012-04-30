@@ -59,7 +59,7 @@ public class HistoryLoader extends BackgroundJob {
 		final boolean multiline){
 		super(Messages.getString("HistoryLoader.LoadKonsMessage")); //$NON-NLS-1$
 		this.sb = sb;
-		this.lKons = lKons;
+		this.lKons = new ArrayList<Konsultation>(lKons);
 		this.multiline = multiline;
 		this.setPriority(Job.DECORATE);
 		this.setUser(false);
