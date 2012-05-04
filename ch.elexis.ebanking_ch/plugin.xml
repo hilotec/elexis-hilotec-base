@@ -14,13 +14,6 @@
             id="ch.elexis.banking.ESRView2"
             name="ESR Tabelle">
       </view>
-      <view
-            category="ch.elexis.abrechnungKategorie"
-            class="ch.elexis.banking.ESRView3"
-            id="ch.elexis.ebanking_ch.esrview3"
-            name="ESR"
-            restorable="true">
-      </view>
    </extension>
 
 </plugin>
