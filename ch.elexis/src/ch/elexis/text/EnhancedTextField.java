@@ -510,7 +510,7 @@ public class EnhancedTextField extends Composite implements IRichTextDisplay {
 					qbe.startGroup();
 					qbe.add(Leistungsblock.MANDANT_ID, Query.EQUALS, Hub.actMandant.getId());
 					qbe.or();
-					qbe.add(Leistungsblock.MANDANT_ID, StringTool.leer, null);
+					qbe.add(Leistungsblock.MANDANT_ID, Query.EQUALS, StringTool.leer);
 					qbe.endGroup();
 					List<Leistungsblock> list = qbe.execute();
 					if ((list != null) && (list.size() > 0) && (actKons != null)) {
