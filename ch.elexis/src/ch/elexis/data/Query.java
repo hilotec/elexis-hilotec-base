@@ -538,6 +538,7 @@ public class Query<T> {
 				}
 				
 			}
+			res.close();
 			return ret;
 			
 		} catch (Exception ex) {

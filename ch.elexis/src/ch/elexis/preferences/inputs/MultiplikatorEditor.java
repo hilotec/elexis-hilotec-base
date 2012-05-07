@@ -17,6 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -59,7 +60,6 @@ public class MultiplikatorEditor extends Composite {
 					
 					MultiplikatorList multis = new MultiplikatorList("VK_PREISE", typeName);
 					multis.insertMultiplikator(t, mul);
-
 					list
 						.add(Messages.getString("MultiplikatorEditor.from") + t.toString(TimeTool.DATE_GER) + Messages.getString("MultiplikatorEditor.14") + mul); //$NON-NLS-1$ //$NON-NLS-2$
 				}
@@ -112,13 +112,12 @@ public class MultiplikatorEditor extends Composite {
 	
 	/**
 	 * Class for manipulation of Multiplikator. <br>
-	 * <b>ATTENTION</b> remember to call dispose to release the DB Statement.
 	 * 
 	 * @author thomashu
 	 * 
 	 */
 	public static class MultiplikatorList {
-		private ResultSet multiRes;
+		private java.util.List<MultiplikatorInfo> list;
 		private String typ;
 		private String table;
 
@@ -135,8 +134,30 @@ public class MultiplikatorEditor extends Composite {
 			StringBuilder sql = new StringBuilder();
 			sql.append("SELECT * FROM ").append(table).append(" WHERE TYP=")
 				.append(JdbcLink.wrap(typ));
-			multiRes = statement.query(sql.toString());
-			PersistentObject.getConnection().releaseStatement(statement);
+			ResultSet res = statement.query(sql.toString());
+			try {
+				list = new ArrayList<MultiplikatorEditor.MultiplikatorList.MultiplikatorInfo>();
+				while (res.next()) {
+					list.add(new MultiplikatorInfo(res.getString("DATUM_VON"), res
+						.getString("DATUM_BIS"), res.getString("MULTIPLIKATOR")));
+				}
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				if (statement != null)
+					PersistentObject.getConnection().releaseStatement(statement);
+
+				if (res != null) {
+					try {
+						res.close();
+						res = null;
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
 		}
 		
 		public void insertMultiplikator(TimeTool dateFrom, String value){
@@ -144,10 +165,12 @@ public class MultiplikatorEditor extends Composite {
 			Stm statement = PersistentObject.getConnection().getStatement();
 			try {
 				fetchResultSet();
+				Iterator<MultiplikatorInfo> iter = list.iterator();
 				// update existing multiplier for that date
-				while (multiRes.next()) {
-					TimeTool fromDate = new TimeTool(multiRes.getString("DATUM_VON"));
-					TimeTool toDate = new TimeTool(multiRes.getString("DATUM_BIS"));
+				while (iter.hasNext()) {
+					MultiplikatorInfo info = iter.next();
+					TimeTool fromDate = new TimeTool(info.validFrom);
+					TimeTool toDate = new TimeTool(info.validTo);
 					if (dateFrom.isAfter(fromDate) && dateFrom.isBefore(toDate)) { // if contains update the to value of the existing multiplikator
 						StringBuilder sql = new StringBuilder();
 						// update the old to date
@@ -184,9 +207,11 @@ public class MultiplikatorEditor extends Composite {
 				// if we have not found a to Date yet search for oldest existing
 				if(dateTo == null) {
 					fetchResultSet();
+					iter = list.iterator();
 					dateTo = new TimeTool("99991231");
-					while (multiRes.next()) {
-						TimeTool fromDate = new TimeTool(multiRes.getString("DATUM_VON"));
+					while (iter.hasNext()) {
+						MultiplikatorInfo info = iter.next();
+						TimeTool fromDate = new TimeTool(info.validFrom);
 						if(fromDate.isBefore(dateTo)) {
 							dateTo.set(fromDate);
 							dateTo.addDays(-1);
@@ -203,33 +228,39 @@ public class MultiplikatorEditor extends Composite {
 							+ JdbcLink.wrap(dateTo.toString(TimeTool.DATE_COMPACT)) + ","
 							+ JdbcLink.wrap(value) + "," + JdbcLink.wrap(typ) + ");");
 				statement.exec(sql.toString());
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			} finally {
 				PersistentObject.getConnection().releaseStatement(statement);
 			}
 		}
 		
-		public double getMultiplikator(TimeTool date){
+		public synchronized double getMultiplikator(TimeTool date){
 			// get Mutliplikator for date
 			fetchResultSet();
-			try {
-				while (multiRes.next()) {
-					TimeTool fromDate = new TimeTool(multiRes.getString("DATUM_VON"));
-					TimeTool toDate = new TimeTool(multiRes.getString("DATUM_BIS"));
-					if (date.isAfterOrEqual(fromDate) && date.isBeforeOrEqual(toDate)) {
-						String value = multiRes.getString("MULTIPLIKATOR");
-						if (value != null && !value.isEmpty()) {
-							return Double.parseDouble(value);
-						}
+			Iterator<MultiplikatorInfo> iter = list.iterator();
+			while (iter.hasNext()) {
+				MultiplikatorInfo info = iter.next();
+				TimeTool fromDate = new TimeTool(info.validFrom);
+				TimeTool toDate = new TimeTool(info.validTo);
+				if (date.isAfterOrEqual(fromDate) && date.isBeforeOrEqual(toDate)) {
+					String value = info.multiplikator;
+					if (value != null && !value.isEmpty()) {
+						return Double.parseDouble(value);
 					}
 				}
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 			return 1.0;
+		}
+		
+		private static class MultiplikatorInfo {
+			String validFrom;
+			String validTo;
+			String multiplikator;
+			
+			MultiplikatorInfo(String validFrom, String validTo, String multiplikator){
+				this.validFrom = validFrom;
+				this.validTo = validTo;
+				this.multiplikator = multiplikator;
+			}
 		}
 	}
 }
