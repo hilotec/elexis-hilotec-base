@@ -124,6 +124,7 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 				tActions.add(new Separator());
 			}
 		}
+		tActions.update(true);
 	}
 	
 	/**
