@@ -21,7 +21,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +37,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
 import ch.elexis.Hub;
+import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.arzttarife_schweiz.Messages;
 import ch.elexis.importers.AccessWrapper;
 import ch.elexis.preferences.PreferenceConstants;
@@ -229,12 +233,12 @@ public class TarmedImporter extends ImporterPage {
 			TimeTool validFrom = new TimeTool();
 			while (res.next() == true) {
 				validFrom.set(res.getString("GUELTIG_VON"));
-				String id = res.getString("LNR") + "-" + validFrom.toString(TimeTool.DATE_COMPACT); //$NON-NLS-1$
+				String id = res.getString("LNR") + "-" + validFrom.toString(TimeTool.DATE_COMPACT); //$NON-NLS-1$			
 // System.out.println("IMPORT id: " + id);
 
 				TarmedLeistung tl = TarmedLeistung.load(id);
 				if (tl.exists()) {
-					System.out.println("ERROR EXISTS");
+					continue;
 				} else {
 					tl = new TarmedLeistung(id, res.getString("LNR"), res.getString("KNR"), //$NON-NLS-1$
 						"0000", convert(res, "QT_DIGNITAET"), convert(res, "Sparte")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -248,55 +252,82 @@ public class TarmedImporter extends ImporterPage {
 				}, tsValid.from.toString(TimeTool.DATE_COMPACT),
 					tsValid.until.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
 				Stm sub = pj.getStatement();
-				String dqua =
-					sub.queryString(String
-						.format(
-							"SELECT QL_DIGNITAET FROM %sLEISTUNG_DIGNIQUALI WHERE LNR=%s", ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
-				String kurz = ""; //$NON-NLS-1$
+				
+				// get QL_DIGNITAET
+				String dqua = "";
 				ResultSet rsub =
-					sub.query(String
-						.format(
-							"SELECT * FROM %sLEISTUNG_TEXT WHERE SPRACHE=%s AND LNR=%s", ImportPrefix, lang, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
-				if (rsub.next() == true) {
-					kurz = convert(rsub, "BEZ_255"); //$NON-NLS-1$
-					String med = convert(rsub, "MED_INTERPRET"); //$NON-NLS-1$
-					String tech = convert(rsub, "TECH_INTERPRET"); //$NON-NLS-1$
+					sub.query(String.format("SELECT * FROM %sLEISTUNG_DIGNIQUALI WHERE LNR=%s",
+						ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+				List<Map<String, String>> validResults = getValidValueMaps(rsub, validFrom);
+				if (!validResults.isEmpty()) {
+					dqua = validResults.get(0).get("QL_DIGNITAET");
+				}
+				rsub.close();
+				
+				// get BEZ_255, MED_INTERPRET, TECH_INTERPRET
+				String kurz = ""; //$NON-NLS-1$
+				rsub =
+					sub.query(String.format(
+						"SELECT * FROM %sLEISTUNG_TEXT WHERE SPRACHE=%s AND LNR=%s", ImportPrefix,
+						lang, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+				validResults = getValidValueMaps(rsub, validFrom);
+				if (!validResults.isEmpty()) {
+					Map<String, String> row = validResults.get(0);
+					kurz = row.get("BEZ_255"); //$NON-NLS-1$
+					String med = row.get("MED_INTERPRET"); //$NON-NLS-1$
+					String tech = row.get("TECH_INTERPRET"); //$NON-NLS-1$
 					preps_extension.setString(1, med);
 					preps_extension.setString(2, tech);
-					preps_extension.setString(3, tl.getCode());
+					preps_extension.setString(3, tl.getId());
 					preps_extension.execute();
 				}
 				rsub.close();
 				tl.set(new String[] {
 					"DigniQuali", "Text"}, dqua, kurz); //$NON-NLS-1$ //$NON-NLS-2$
+
 				Hashtable<String, String> ext = tl.loadExtension();
 				put(ext, res, "LEISTUNG_TYP", "SEITE", "SEX", "ANAESTHESIE", "K_PFL", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					"BEHANDLUNGSART", "TP_AL", "TP_ASSI", "TP_TL", "ANZ_ASSI", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					"LSTGIMES_MIN", "VBNB_MIN", "BEFUND_MIN", "RAUM_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					"WECHSEL_MIN", "F_AL", "F_TL"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				
+				// get LNR_MASTER
 				rsub =
-					sub.query(String
-						.format(
-							"SELECT LNR_MASTER FROM %sLEISTUNG_HIERARCHIE WHERE LNR_SLAVE=%s", ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
-				if (rsub.next()) {
-					ext.put("Bezug", rsub.getString(1)); //$NON-NLS-1$
+					sub.query(String.format(
+						"SELECT * FROM %sLEISTUNG_HIERARCHIE WHERE LNR_SLAVE=%s",
+						ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+				validResults = getValidValueMaps(rsub, validFrom);
+				if (!validResults.isEmpty()) {
+					// importing all bezugs ziffer will mess up tarmed bill -> just import 1st
+// StringBuilder sb = new StringBuilder();
+// for (Map<String, String> map : validResults) {
+// if (sb.length() == 0)
+// sb.append(map.get("LNR_MASTER"));
+// else
+// sb.append(", " + map.get("LNR_MASTER"));
+// }
+					ext.put("Bezug", validResults.get(0).get("LNR_MASTER")); //$NON-NLS-1$
 				}
 				rsub.close();
+				
+				// get LNR_SLAVE, TYP
 				rsub =
-					sub.query(String
-						.format(
-							"SELECT LNR_SLAVE,TYP FROM %sLEISTUNG_KOMBINATION WHERE LNR_MASTER=%s", ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+					sub.query(String.format(
+						"SELECT * FROM %sLEISTUNG_KOMBINATION WHERE LNR_MASTER=%s",
+						ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
 				String kombination_and = ""; //$NON-NLS-1$
 				String kombination_or = ""; //$NON-NLS-1$
-				while (rsub.next()) {
-					String typ = rsub.getString(2);
-					String slave = rsub.getString(1);
-					if (typ != null) {
-						if (typ.equals("and")) { //$NON-NLS-1$
-							kombination_and += slave + ","; //$NON-NLS-1$
-						} else if (typ.equals("or")) { //$NON-NLS-1$
-							kombination_or += slave + ","; //$NON-NLS-1$
+				validResults = getValidValueMaps(rsub, validFrom);
+				if (!validResults.isEmpty()) {
+					for (Map<String, String> map : validResults) {
+						String typ = map.get("TYP");
+						String slave = map.get("LNR_SLAVE");
+						if (typ != null) {
+							if (typ.equals("and")) { //$NON-NLS-1$
+								kombination_and += slave + ","; //$NON-NLS-1$
+							} else if (typ.equals("or")) { //$NON-NLS-1$
+								kombination_or += slave + ","; //$NON-NLS-1$
+							}
 						}
 					}
 				}
@@ -309,23 +340,28 @@ public class TarmedImporter extends ImporterPage {
 					String k = kombination_or.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
 					ext.put("kombination_or", k); //$NON-NLS-1$
 				}
+				
+				// get LNR_SLAVE, TYP
 				rsub =
-					sub.query(String
-						.format(
-							"SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER=%s", ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+					sub.query(String.format(
+						"SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER=%s", ImportPrefix,
+						JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
 				String exclusion = ""; //$NON-NLS-1$
 				String inclusion = ""; //$NON-NLS-1$
 				String exclusive = ""; //$NON-NLS-1$
-				while (rsub.next()) {
-					String typ = rsub.getString("typ"); //$NON-NLS-1$
-					String slave = rsub.getString("LNR_SLAVE"); //$NON-NLS-1$
-					if (typ != null) {
-						if (typ.equals("E")) { //$NON-NLS-1$
-							exclusion += slave + ","; //$NON-NLS-1$
-						} else if (typ.equals("I")) { //$NON-NLS-1$
-							inclusion += slave + ","; //$NON-NLS-1$
-						} else if (typ.equals("X")) { //$NON-NLS-1$
-							exclusive += slave + ","; //$NON-NLS-1$
+				validResults = getValidValueMaps(rsub, validFrom);
+				if (!validResults.isEmpty()) {
+					for (Map<String, String> map : validResults) {
+						String typ = map.get("TYP"); //$NON-NLS-1$
+						String slave = map.get("LNR_SLAVE"); //$NON-NLS-1$
+						if (typ != null) {
+							if (typ.equals("E")) { //$NON-NLS-1$
+								exclusion += slave + ","; //$NON-NLS-1$
+							} else if (typ.equals("I")) { //$NON-NLS-1$
+								inclusion += slave + ","; //$NON-NLS-1$
+							} else if (typ.equals("X")) { //$NON-NLS-1$
+								exclusive += slave + ","; //$NON-NLS-1$
+							}
 						}
 					}
 				}
@@ -342,19 +378,23 @@ public class TarmedImporter extends ImporterPage {
 					String k = exclusive.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
 					ext.put("exclusive", k); //$NON-NLS-1$
 				}
+				
+				// get OPERATOR, MENGE, ZR_ANZAHL, PRO_NACH, ZR_EINHEIT
 				rsub =
-					sub.query(String
-						.format(
-							"SELECT * FROM %sLEISTUNG_MENGEN_ZEIT WHERE LNR=%s", ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+					sub.query(String.format("SELECT * FROM %sLEISTUNG_MENGEN_ZEIT WHERE LNR=%s",
+						ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
 				String limits = ""; //$NON-NLS-1$
-				while (rsub.next()) {
-					StringBuilder sb = new StringBuilder();
-					sb.append(rsub.getString("Operator")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
-					sb.append(rsub.getString("Menge")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
-					sb.append(rsub.getString("ZR_ANZAHL")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
-					sb.append(rsub.getString("PRO_NACH")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
-					sb.append(rsub.getString("ZR_EINHEIT")).append("#"); //$NON-NLS-1$ //$NON-NLS-2$
-					limits += sb.toString();
+				validResults = getValidValueMaps(rsub, validFrom);
+				if (!validResults.isEmpty()) {
+					for (Map<String, String> map : validResults) {
+						StringBuilder sb = new StringBuilder();
+						sb.append(map.get("OPERATOR")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
+						sb.append(map.get("MENGE")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
+						sb.append(map.get("ZR_ANZAHL")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
+						sb.append(map.get("PRO_NACH")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
+						sb.append(map.get("ZR_EINHEIT")).append("#"); //$NON-NLS-1$ //$NON-NLS-2$
+						limits += sb.toString();
+					}
 				}
 				rsub.close();
 				if (!limits.equals("")) { //$NON-NLS-1$
@@ -397,7 +437,6 @@ public class TarmedImporter extends ImporterPage {
 		return Status.CANCEL_STATUS;
 	}
 	
-	
 	void updateExistingIDs(){
 		Query<Verrechnet> vQuery = new Query<Verrechnet>(Verrechnet.class);
 		vQuery.add(Verrechnet.CLASS, "=", TarmedLeistung.class.getName());
@@ -406,15 +445,24 @@ public class TarmedImporter extends ImporterPage {
 			// make sure code and date of consultation are available
 			String code = verrechnet.get(Verrechnet.LEISTG_CODE);
 			TimeTool date = null;
-			Thread.yield();
 			Konsultation kons = verrechnet.getKons();
 			if (kons != null && kons.getDatum() != null)
 				date = new TimeTool(kons.getDatum());
 			if (code != null && date != null) {
 				TarmedLeistung leistung = (TarmedLeistung) TarmedLeistung.getFromCode(code, date);
 				// update the id
-				if (leistung != null)
+				if (leistung != null) {
 					verrechnet.set(Verrechnet.LEISTG_CODE, leistung.getId());
+					// try to run attached ElexisEvents immediately
+					// else unpredictable errors (deadlock, exceptions, ...) occur
+					try {
+						ElexisEventDispatcher.getInstance().schedule();
+						Thread.sleep(55);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
 			}
 		}
 		// update old tarmed ids in statistics
@@ -505,5 +553,49 @@ public class TarmedImporter extends ImporterPage {
 			sb.append((char) c);
 		}
 		return sb.toString();
+	}
+	
+	/**
+	 * Get a List of Maps containing the rows of the ResultSet with a matching valid date
+	 * information. This is needed as we can not make constraints on a date represented as string in
+	 * the db.
+	 * 
+	 * @param input
+	 * @param validFrom
+	 * @return
+	 * @throws SQLException
+	 */
+	private List<Map<String, String>> getValidValueMaps(ResultSet input, TimeTool validFrom)
+		throws Exception{
+		List<Map<String, String>> ret = new ArrayList<Map<String, String>>();
+		
+		// build list of column names
+		ArrayList<String> headers = new ArrayList<String>();
+		ResultSetMetaData meta = input.getMetaData();
+		int metaLength = meta.getColumnCount();
+		for (int i = 1; i <= metaLength; i++) {
+			headers.add(meta.getColumnName(i));
+		}
+		
+		TimeTool from = new TimeTool();
+		TimeTool to = new TimeTool();
+		
+		// find rows with matching valid date information
+		while (input.next()) {
+			from.set(input.getString("GUELTIG_VON"));
+			to.set(input.getString("GUELTIG_BIS")); //$NON-NLS-1$
+			// is this the correct result
+			if (validFrom.isAfterOrEqual(from) && validFrom.isBeforeOrEqual(to)) {
+				HashMap<String, String> valuesMap = new HashMap<String, String>();
+				// put all the columns with values into valuesMap
+				for (String columnName : headers) {
+					String value = convert(input, columnName);
+					valuesMap.put(columnName, value);
+				}
+				// add map to list of matching maps
+				ret.add(valuesMap);
+			}
+		}
+		return ret;
 	}
 }
