@@ -1,5 +1,17 @@
 hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.6
 
+Changelog für 2.1.6.4
+a9e3312dfc29: 2012-05-12: Niklaus Giger: Ticket #964: Ugly workaround, as ant script does not respect build.properties
+adf4fc06128a: 2012-05-09: thomashu: Ticket: #738 - reworked Tarmed importer implementation
+d41c7abeafac: 2012-05-08: thomashu: Ticket: #738 - reworked Tarmed implementation for code system version 1.08
+4b2c26076fb0: 2012-05-07: thomashu: Ticket: #738 - reworked MultiplikatorEditor, make sure JDBC ResultSet gets closed
+6c89540f4129: 2012-05-07: thomashu: Ticket: #738 - update the toolbar of SelectorPanel after adding Actions
+9d9661ca2bda: 2012-05-07: thomashu: Ticket: #738 - fixed memory consumption when importing from access
+3f6927f65d3c: 2012-05-06: marcode79: Ticket #855: Bloecke im Konsfenster via $ (Makrozeichen) verrechnen
+3c268d48968d: 2012-05-04: marcode79: Ticket #955: ebanking_ch v2.0.3 - Removal of ESRView3
+c88b7025f42c: 2012-05-03: Niklaus Giger: Ticket #964: Tarmed: Direkter Import via Access MDB-Datei
+c98fa08ae62f: 2012-05-03: Niklaus Giger: Updated to version 1.2.7 of jackcess
+
 Changelog für 2.1.6.3
 5b3680a01aad: 2012-04-20: thomashu: Ticket: #807 - fixed problems with numeric values from xls due to locale settings
 bf8221aefced: 2012-04-19: thomashu: Ticket: #791 - skipping konsultation with invalid mandant when creating rechnungslauf
@@ -97,7 +109,7 @@ f0c36dafce28: 2011-08-26: rgw@iMac: include ch.elexis.core in build
 0dde524bfe3f: 2011-08-23: Niklaus Giger: Ticket #546: Add medelexis-packager.jar to fix indigo
 3058231883cc: 2011-08-26: rgw@macbook: api doc corrected
 3c668e9ee3f8: 2011-08-25: thomashu: Ticket: #412 - added check if text changed before trying to save the Konsultation
-Various                   rgw@iMac: copied ch.elexis.core from trunk & various fixes 
+Various                   rgw@iMac: copied ch.elexis.core from trunk & various fixes
 5470c95826e4: 2011-08-23: rgw@iMac: some datatype abstractions (Use interface instead of classes)
 292ab8768a29: 2011-08-23: rgw@iMac: add public method to execute sql files
 7c1de1141a8f: 2011-08-23: rgw@iMac: better message on reconnect
@@ -239,11 +251,11 @@ Changelog für 2.1.5-rc0
 
 Diverses:
 Michael Imhof: "NullPointer abgefangen" from Trunk (Platzhalter/ElexisEvent)
-Tony Schaller: Agenda DataAccessor implementiert für Platzhalter Termin.BeiWem 
+Tony Schaller: Agenda DataAccessor implementiert für Platzhalter Termin.BeiWem
 Dani Lutz:     Changing consultation's date: notify listeners about change
-Michael Imhof: BugFix: Document-Typ fehlt in Laborprefs-Liste 
+Michael Imhof: BugFix: Document-Typ fehlt in Laborprefs-Liste
 Michael Imhof: Typ=DOCUMENT added to LaborPrefs
-Gerry Weirich: Article counter 
+Gerry Weirich: Article counter
 
 Redmine Tickets:
 -  Fehler #2: Pendenzen SQL-Statement
@@ -251,18 +263,18 @@ Redmine Tickets:
 - Fehler #15: Adress-Suche geht nicht mehr
   Korrigert die Adress-Suche (ch.medshare.elexis-adresssuche)
 - Fehler #32: Patientennummer in Patienten-View
-  In der Patientenview ist es möglich, sich bei der Auswahl der Patienten folgende vier Angaben 
+  In der Patientenview ist es möglich, sich bei der Auswahl der Patienten folgende vier Angaben
   des Patienten zeigen zu lassen:
   - Name
   - Vorname
   - Geburtsdatum
   - Patientennummer
-  Die Einstellungen können unter Datei => Einstellungen => Anwender => Ansicht eingestellt werden. 
-  Die View oder die Einstellungsseite wurde so anpasst, dass die gewünschten Änderungen 
+  Die Einstellungen können unter Datei => Einstellungen => Anwender => Ansicht eingestellt werden.
+  Die View oder die Einstellungsseite wurde so anpasst, dass die gewünschten Änderungen
   beim Speichern übernommen werden.
 - Fehler #33: negativ Beträge in der Buchhaltung
-  In der Elexis-Buchhaltung ist es von Zeit zu Zeit, wenn Patienten aus Versehen zu viel Geld überweisen, 
-  der Fall, dass der zuviel bezahlte Betrag zurückerstattet werden muss, was dazu führt, dass 
+  In der Elexis-Buchhaltung ist es von Zeit zu Zeit, wenn Patienten aus Versehen zu viel Geld überweisen,
+  der Fall, dass der zuviel bezahlte Betrag zurückerstattet werden muss, was dazu führt, dass
   in Elexis ein negativer Betrag erfasst werden muss.
   Bis anhin hatte das funktioniert, seit dem 31.12.2010 ist dies nicht mehr der Fall.
 - Fehler #35: Konstexte verschwinden
@@ -273,14 +285,14 @@ Redmine Tickets:
 - Fehler #57: ICPC Codes einspielen
   Fehler bei Misslingen eines elexis-updates abgefangen. Feld synonyms fehlte.
 - Fehler #62: Platzhalter Fall.BetriebsNummer
-  seit dem letzten Update wird der Platzhalter 'Fall.BetriebsNummer' welcher in der Vorlage 
-  'Tarmedrechnung_S1' benötigt wird, nicht mehr korrekt befüllt und das System meldet beim 
+  seit dem letzten Update wird der Platzhalter 'Fall.BetriebsNummer' welcher in der Vorlage
+  'Tarmedrechnung_S1' benötigt wird, nicht mehr korrekt befüllt und das System meldet beim
   Rechnungsdruck einen Fehler und bricht denselben ab.
 - Fehler #63: TarmedLoader geht nicht mehr
 - Fehler #66: java.lang.NumberFormatException
   Der Fehler entsteht, weil die Fixmedikationsanzeige für die Berechnung der Tageskosten
   versucht, Brüche zu analysieren, indem bei einem Ausdruck wie 1/2 (drei Zeichen) Zähler
-  und Nenner separat mit Integer.parseInt geparsed werden. 
+  und Nenner separat mit Integer.parseInt geparsed werden.
   Das Zeichen 1/2 (Ein Zeichen) wird bisher nicht als Zahl erkannt.
   Wenn ein Ausdruck nicht geparsed werden kann, zeigt die Fixmedikationsanzeige
   die Tageskosten nicht genau an, sondern schreibt etwas wie ">2.50". Das ist also nicht besonders kritisch.
