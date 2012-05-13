@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -37,15 +38,17 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
 
 import ch.elexis.Hub;
-import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.arzttarife_schweiz.Messages;
+import ch.elexis.core.PersistenceException;
 import ch.elexis.importers.AccessWrapper;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.compress.CompEx;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
 import ch.rgw.tools.JdbcLink.Stm;
+import ch.rgw.tools.JdbcLinkException;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
 
@@ -81,7 +84,8 @@ public class TarmedImporter extends ImporterPage {
 	private static final String ImportPrefix = "TARMED_IMPORT_";
 	private int count = 0; // Our counter for the progress monitor. Twice. Once for Access import,
 // then real import
-	
+	private boolean updateBlockWarning = false;
+
 	public TarmedImporter(){}
 	
 	@Override
@@ -260,7 +264,7 @@ public class TarmedImporter extends ImporterPage {
 						ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
 				List<Map<String, String>> validResults = getValidValueMaps(rsub, validFrom);
 				if (!validResults.isEmpty()) {
-					dqua = validResults.get(0).get("QL_DIGNITAET");
+					dqua = getLatestMap(validResults).get("QL_DIGNITAET");
 				}
 				rsub.close();
 				
@@ -272,7 +276,7 @@ public class TarmedImporter extends ImporterPage {
 						lang, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
 				validResults = getValidValueMaps(rsub, validFrom);
 				if (!validResults.isEmpty()) {
-					Map<String, String> row = validResults.get(0);
+					Map<String, String> row = getLatestMap(validResults);
 					kurz = row.get("BEZ_255"); //$NON-NLS-1$
 					String med = row.get("MED_INTERPRET"); //$NON-NLS-1$
 					String tech = row.get("TECH_INTERPRET"); //$NON-NLS-1$
@@ -294,8 +298,8 @@ public class TarmedImporter extends ImporterPage {
 				// get LNR_MASTER
 				rsub =
 					sub.query(String.format(
-						"SELECT * FROM %sLEISTUNG_HIERARCHIE WHERE LNR_SLAVE=%s",
-						ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+						"SELECT * FROM %sLEISTUNG_HIERARCHIE WHERE LNR_SLAVE=%s", ImportPrefix,
+						JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
 				validResults = getValidValueMaps(rsub, validFrom);
 				if (!validResults.isEmpty()) {
 					// importing all bezugs ziffer will mess up tarmed bill -> just import 1st
@@ -313,8 +317,8 @@ public class TarmedImporter extends ImporterPage {
 				// get LNR_SLAVE, TYP
 				rsub =
 					sub.query(String.format(
-						"SELECT * FROM %sLEISTUNG_KOMBINATION WHERE LNR_MASTER=%s",
-						ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+						"SELECT * FROM %sLEISTUNG_KOMBINATION WHERE LNR_MASTER=%s", ImportPrefix,
+						JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
 				String kombination_and = ""; //$NON-NLS-1$
 				String kombination_or = ""; //$NON-NLS-1$
 				validResults = getValidValueMaps(rsub, validFrom);
@@ -411,11 +415,17 @@ public class TarmedImporter extends ImporterPage {
 			res.close();
 			
 			if (updateIDs) {
-				monitor.subTask("Updating existing IDs");
-				updateExistingIDs();
+				updateExistingIDs(monitor);
 			}
 
 			monitor.done();
+			String message = Messages.TarmedImporter_successMessage;
+			if(updateBlockWarning) {
+				message = message + "\n" + Messages.TarmedImporter_updateBlockWarning;
+			}
+			
+			SWTHelper.showInfo(Messages.TarmedImporter_successTitle,
+				message);
 			return Status.OK_STATUS;
 			
 		} catch (Exception ex) {
@@ -437,35 +447,94 @@ public class TarmedImporter extends ImporterPage {
 		return Status.CANCEL_STATUS;
 	}
 	
-	void updateExistingIDs(){
-		Query<Verrechnet> vQuery = new Query<Verrechnet>(Verrechnet.class);
-		vQuery.add(Verrechnet.CLASS, "=", TarmedLeistung.class.getName());
-		List<Verrechnet> verrechnete = vQuery.execute();
-		for (Verrechnet verrechnet : verrechnete) {
-			// make sure code and date of consultation are available
-			String code = verrechnet.get(Verrechnet.LEISTG_CODE);
-			TimeTool date = null;
-			Konsultation kons = verrechnet.getKons();
-			if (kons != null && kons.getDatum() != null)
-				date = new TimeTool(kons.getDatum());
-			if (code != null && date != null) {
-				TarmedLeistung leistung = (TarmedLeistung) TarmedLeistung.getFromCode(code, date);
-				// update the id
-				if (leistung != null) {
-					verrechnet.set(Verrechnet.LEISTG_CODE, leistung.getId());
-					// try to run attached ElexisEvents immediately
-					// else unpredictable errors (deadlock, exceptions, ...) occur
-					try {
-						ElexisEventDispatcher.getInstance().schedule();
-						Thread.sleep(55);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+	void updateExistingIDs(final IProgressMonitor monitor){
+		PreparedStatement ps = null;
+		// update existing ids of Verrechnet
+		try {
+			ps = pj.prepareStatement("UPDATE leistungen SET leistg_code=? WHERE id=?"); //$NON-NLS-1$
+
+			Query<Verrechnet> vQuery = new Query<Verrechnet>(Verrechnet.class);
+			vQuery.add(Verrechnet.CLASS, "=", TarmedLeistung.class.getName());
+			List<Verrechnet> verrechnete = vQuery.execute();
+			for (Verrechnet verrechnet : verrechnete) {
+				// make sure code and date of consultation are available
+				String code = verrechnet.get(Verrechnet.LEISTG_CODE);
+				TimeTool date = null;
+				Konsultation kons = verrechnet.getKons();
+				if (kons != null && kons.getDatum() != null)
+					date = new TimeTool(kons.getDatum());
+				if (code != null && date != null) {
+					monitor.subTask(Messages.TarmedImporter_updateVerrechnet + " " + code + " "
+						+ date.toString(TimeTool.DATE_COMPACT));
+					TarmedLeistung leistung =
+						(TarmedLeistung) TarmedLeistung.getFromCode(code, date);
+					// update the id
+					if (leistung != null) {
+						ps.setString(1, leistung.getId());
+						ps.setString(2, verrechnet.getId());
+						ps.execute();
 					}
+				}
+				Thread.yield();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}
-		// update old tarmed ids in statistics
+		
+		// update existing ids of Leistungsblock
+		try {
+			Query<Leistungsblock> lQuery = new Query<Leistungsblock>(Leistungsblock.class);
+			List<Leistungsblock> blocks = lQuery.execute();
+			for (Leistungsblock block : blocks) {
+				StringBuilder newCodes = new StringBuilder();
+				// get blob
+				byte[] compressed = getBinaryRaw("leistungen", "leistungsblock", block.getId());
+				if (compressed != null) {
+					// get String representing all contained leistungen
+					String storable = new String(CompEx.expand(compressed), "UTF-8"); //$NON-NLS-1$
+					// rebuild a String containing all leistungen but update TarmedLeistungen
+					for (String p : storable.split(",")) {
+						if (p != null && !p.isEmpty()) {
+							String[] parts = p.split("::");
+							if (parts[0].equals(TarmedLeistung.class.getName())) {
+								monitor.subTask(Messages.TarmedImporter_updateBlock + " "
+									+ parts[1]);
+								TarmedLeistung leistung =
+									(TarmedLeistung) TarmedLeistung.getFromCode(parts[1]);
+								if (leistung != null) {
+									if (newCodes.length() > 0)
+										newCodes.append(",");
+									newCodes.append(leistung.storeToString());
+								} else {
+									updateBlockWarning = true;
+								}
+							} else {
+								if (newCodes.length() > 0)
+									newCodes.append(",");
+								newCodes.append(p);
+							}
+						}
+					}
+					// write the updated String back
+					setBinaryRaw("leistungen", "leistungsblock", block.getId(),
+						CompEx.Compress(newCodes.toString(), CompEx.ZIP));
+				}
+			}
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		// update existing ids in statistics
 		Query<Kontakt> kQuery = new Query<Kontakt>(Kontakt.class);
 		List<Kontakt> kontakte = kQuery.execute();
 		for (Kontakt kontakt : kontakte) {
@@ -555,6 +624,20 @@ public class TarmedImporter extends ImporterPage {
 		return sb.toString();
 	}
 	
+	private Map<String, String> getLatestMap(List<Map<String, String>> list){
+		TimeTool currFrom = new TimeTool("19000101");
+		TimeTool from = new TimeTool();
+		Map<String, String> ret = null;
+		for (Map<String, String> map : list) {
+			from.set(map.get("GUELTIG_VON"));
+			if (from.isAfter(currFrom)) {
+				currFrom.set(from);
+				ret = map;
+			}
+		}
+		return ret;
+	}
+
 	/**
 	 * Get a List of Maps containing the rows of the ResultSet with a matching valid date
 	 * information. This is needed as we can not make constraints on a date represented as string in
@@ -597,5 +680,82 @@ public class TarmedImporter extends ImporterPage {
 			}
 		}
 		return ret;
+	}
+	
+	/**
+	 * Copy of method from PersistentObject to get access to a binary field
+	 * 
+	 * @param field
+	 * @return
+	 */
+	private byte[] getBinaryRaw(final String field, String tablename, String id){
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT ").append(field).append(" FROM ").append(tablename)
+			.append(" WHERE ID='").append(id).append("'");
+		
+		ResultSet res = executeSqlQuery(sql.toString());
+		try {
+			if ((res != null) && (res.next() == true)) {
+				return res.getBytes(field);
+			}
+		} catch (Exception ex) {
+			ExHandler.handle(ex);
+		}
+		return null;
+	}
+	
+	/**
+	 * Copy of method from PersistentObject to get access to a binary field
+	 * 
+	 * @param field
+	 * @return
+	 */
+	private void setBinaryRaw(final String field, String tablename, String id, final byte[] value){
+		StringBuilder sql = new StringBuilder(1000);
+		sql.append("UPDATE ").append(tablename).append(" SET ").append((field)).append("=?")
+			.append(" WHERE ID='").append(id).append("'");
+		String cmd = sql.toString();
+		
+		PreparedStatement stm = pj.prepareStatement(cmd);
+		try {
+			stm.setBytes(1, value);
+			stm.executeUpdate();
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		} finally {
+			try {
+				stm.close();
+			} catch (SQLException e) {
+				ExHandler.handle(e);
+				throw new PersistenceException("Could not close statement " + e.getMessage());
+			}
+		}
+	}
+	
+	/**
+	 * Execute the sql string and handle exceptions appropriately.
+	 * <p>
+	 * <b>ATTENTION:</b> JdbcLinkResourceException will trigger a restart of Elexis in
+	 * at.medevit.medelexis.ui.statushandler.
+	 * </p>
+	 * 
+	 * @param sql
+	 * @return
+	 */
+	private ResultSet executeSqlQuery(String sql){
+		JdbcLink conn = null;
+		Stm stm = null;
+		ResultSet res = null;
+		try {
+			conn = PersistentObject.getConnection();
+			stm = conn.getStatement();
+			res = stm.query(sql);
+		} catch (JdbcLinkException je) {
+			je.printStackTrace();
+		} finally {
+			if (stm != null)
+				conn.releaseStatement(stm);
+		}
+		return res;
 	}
 }

@@ -116,6 +116,12 @@ public class Messages extends NLS {
 	
 	public static String TarmedImporter_singleLst;
 	public static String TarmedImporter_enterSource;
+	public static String TarmedImporter_successTitle;
+	public static String TarmedImporter_successMessage;
+	public static String TarmedImporter_updateVerrechnet;
+	public static String TarmedImporter_updateBlock;
+	public static String TarmedImporter_updateBlockWarning;
+
 	public static String LaborleistungImporter_AnalyseImport;
 	public static String LaborleistungImporter_AnalyzeTariff;
 	public static String LaborleistungImporter_pleseEnterFilename;
