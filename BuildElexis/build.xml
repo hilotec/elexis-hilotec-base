@@ -176,6 +176,8 @@
 				<include name="icons/**/*.*" />
 				<include name="rsc/**/*.*" />
 				<include name="lib/**/*.*" />
+				<!-- Next line needed to fix Tarmed-Importer of ch.elexis.importer.div -->
+				<include name="com/healthmarketscience/jackcess/*.txt" />
 				<include name="META-INF/MANIFEST.MF" />
 				<include name="meta-inf/manifest.mf" />
 			</fileset>
