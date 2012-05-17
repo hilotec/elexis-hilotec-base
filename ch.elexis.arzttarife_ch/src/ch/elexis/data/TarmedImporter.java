@@ -24,14 +24,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Composite;
-
-import com.healthmarketscience.jackcess.Database;
 
 import ch.elexis.Hub;
 import ch.elexis.arzttarife_schweiz.Messages;
@@ -41,9 +41,11 @@ import ch.elexis.util.ImporterPage;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
-import ch.rgw.tools.JdbcLink.Stm;
+
+import com.healthmarketscience.jackcess.Database;
 
 /**
  * Import des Tarmed-Tarifsystems aus der Datenbank der ZMT. We use Gerry AccessWrapper to
@@ -115,9 +117,9 @@ public class TarmedImporter extends ImporterPage {
 				tablename = iter.next();
 				totRows += mdbDB.getTable(tablename).getRowCount();
 			}
-			monitor.beginTask(Messages.TarmedImporter_importLstg,
-				(int) (totRows*weight) + mdbDB.getTable("LEISTUNG").getRowCount()
-					+ mdbDB.getTable("KAPITEL_TEXT").getRowCount());
+			monitor.beginTask(Messages.TarmedImporter_importLstg, (int) (totRows * weight)
+				+ mdbDB.getTable("LEISTUNG").getRowCount()
+				+ mdbDB.getTable("KAPITEL_TEXT").getRowCount());
 			
 			int j = 0;
 			iter = cachedDbTables.iterator();
@@ -131,7 +133,7 @@ public class TarmedImporter extends ImporterPage {
 				monitor.subTask(msg);
 				try {
 					int nrRows = aw.convertTable(tablename, pj);
-					monitor.worked((int)(nrRows*weight));
+					monitor.worked((int) (nrRows * weight));
 				} catch (SQLException e) {
 					System.out.println("Failed to import table " + tablename);//$NON-NLS-1$
 					e.printStackTrace();
@@ -173,11 +175,15 @@ public class TarmedImporter extends ImporterPage {
 			cachedDbTables = null;
 			return Status.CANCEL_STATUS;
 		}
-		
+
 		pj = PersistentObject.getConnection();
 		lang = JdbcLink.wrap(Hub.localCfg.get(PreferenceConstants.ABL_LANGUAGE, "d").toUpperCase()); //$NON-NLS-1$
 		monitor.subTask(Messages.TarmedImporter_connecting);
 		
+		// if there are old ids in the database we have to convert to new ids
+		TarmedLeistung leistung = new TarmedLeistung("00.0010");
+		boolean updateIDs = leistung.exists();
+
 		try {
 			source = pj.getStatement();
 			dest = pj.getStatement();
@@ -195,6 +201,7 @@ public class TarmedImporter extends ImporterPage {
 			ResultSet res =
 				source.query(String.format(
 					"SELECT * FROM %sKAPITEL_TEXT WHERE SPRACHE=%s", ImportPrefix, lang)); //$NON-NLS-1$
+			
 			while (res != null && res.next()) {
 				String code = res.getString("KNR"); //$NON-NLS-1$
 				
@@ -219,150 +226,155 @@ public class TarmedImporter extends ImporterPage {
 			res = source.query(String.format("SELECT * FROM %sLEISTUNG", ImportPrefix)); //$NON-NLS-1$
 			PreparedStatement preps_extension =
 				pj.prepareStatement("UPDATE TARMED_EXTENSION SET MED_INTERPRET=?,TECH_INTERPRET=? WHERE CODE=?"); //$NON-NLS-1$
-			TimeTool ttToday = new TimeTool();
+			TimeTool validFrom = new TimeTool();
 			while (res.next() == true) {
-				String cc = res.getString("LNR"); //$NON-NLS-1$
-				// System.out.println(cc);
-				TarmedLeistung tl = TarmedLeistung.load(cc);
+				validFrom.set(res.getString("GUELTIG_VON"));
+				String id = res.getString("LNR") + "-" + validFrom.toString(TimeTool.DATE_COMPACT); //$NON-NLS-1$
+// System.out.println("IMPORT id: " + id);
+
+				TarmedLeistung tl = TarmedLeistung.load(id);
 				if (tl.exists()) {
-					tl.set("DigniQuanti", convert(res, "QT_DIGNITAET")); //$NON-NLS-1$ //$NON-NLS-2$
-					tl.set("Sparte", convert(res, "Sparte")); //$NON-NLS-1$ //$NON-NLS-2$
+					System.out.println("ERROR EXISTS");
 				} else {
-					tl = new TarmedLeistung(cc, res.getString("KNR"), //$NON-NLS-1$
+					tl = new TarmedLeistung(id, res.getString("LNR"), res.getString("KNR"), //$NON-NLS-1$
 						"0000", convert(res, "QT_DIGNITAET"), convert(res, "Sparte")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 				TimeSpan tsValid =
 					new TimeSpan(new TimeTool(res.getString("GUELTIG_VON")), new TimeTool(
 						res.getString("GUELTIG_BIS")));
 				// System.out.println(tsValid.dump());
-				if (tsValid.contains(ttToday)) {
-					tl.set(new String[] {
-						"GueltigVon", "GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
-					}, tsValid.from.toString(TimeTool.DATE_COMPACT),
-						tsValid.until.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
-					Stm sub = pj.getStatement();
-					String dqua =
-						sub.queryString(String
-							.format(
-								"SELECT QL_DIGNITAET FROM %sLEISTUNG_DIGNIQUALI WHERE LNR=%s", ImportPrefix, tl.getWrappedId())); //$NON-NLS-1$
-					String kurz = ""; //$NON-NLS-1$
-					ResultSet rsub =
-						sub.query(String
-							.format(
-								"SELECT * FROM %sLEISTUNG_TEXT WHERE SPRACHE=%s AND LNR=%s", ImportPrefix, lang, tl.getWrappedId())); //$NON-NLS-1$
-					if (rsub.next() == true) {
-						kurz = convert(rsub, "BEZ_255"); //$NON-NLS-1$
-						String med = convert(rsub, "MED_INTERPRET"); //$NON-NLS-1$
-						String tech = convert(rsub, "TECH_INTERPRET"); //$NON-NLS-1$
-						preps_extension.setString(1, med);
-						preps_extension.setString(2, tech);
-						preps_extension.setString(3, tl.getId());
-						preps_extension.execute();
-					}
-					rsub.close();
-					tl.set(new String[] {
-						"DigniQuali", "Text"}, dqua, kurz); //$NON-NLS-1$ //$NON-NLS-2$
-					Hashtable<String, String> ext = tl.loadExtension();
-					put(ext, res, "LEISTUNG_TYP", "SEITE", "SEX", "ANAESTHESIE", "K_PFL", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-						"BEHANDLUNGSART", "TP_AL", "TP_ASSI", "TP_TL", "ANZ_ASSI", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
-						"LSTGIMES_MIN", "VBNB_MIN", "BEFUND_MIN", "RAUM_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-						"WECHSEL_MIN", "F_AL", "F_TL"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					
-					rsub =
-						sub.query(String
-							.format(
-								"SELECT LNR_MASTER FROM %sLEISTUNG_HIERARCHIE WHERE LNR_SLAVE=%s", ImportPrefix, tl.getWrappedId())); //$NON-NLS-1$
-					if (rsub.next()) {
-						ext.put("Bezug", rsub.getString(1)); //$NON-NLS-1$
-					}
-					rsub.close();
-					rsub =
-						sub.query(String
-							.format(
-								"SELECT LNR_SLAVE,TYP FROM %sLEISTUNG_KOMBINATION WHERE LNR_MASTER=%s", ImportPrefix, tl.getWrappedId())); //$NON-NLS-1$
-					String kombination_and = ""; //$NON-NLS-1$
-					String kombination_or = ""; //$NON-NLS-1$
-					while (rsub.next()) {
-						String typ = rsub.getString(2);
-						String slave = rsub.getString(1);
-						if (typ != null) {
-							if (typ.equals("and")) { //$NON-NLS-1$
-								kombination_and += slave + ","; //$NON-NLS-1$
-							} else if (typ.equals("or")) { //$NON-NLS-1$
-								kombination_or += slave + ","; //$NON-NLS-1$
-							}
-						}
-					}
-					rsub.close();
-					if (!kombination_and.equals("")) { //$NON-NLS-1$
-						String k = kombination_and.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-						ext.put("kombination_and", k); //$NON-NLS-1$
-					}
-					if (!kombination_or.equals("")) { //$NON-NLS-1$
-						String k = kombination_or.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-						ext.put("kombination_or", k); //$NON-NLS-1$
-					}
-					rsub =
-						sub.query(String
-							.format(
-								"SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER=%s", ImportPrefix, tl.getWrappedId())); //$NON-NLS-1$
-					String exclusion = ""; //$NON-NLS-1$
-					String inclusion = ""; //$NON-NLS-1$
-					String exclusive = ""; //$NON-NLS-1$
-					while (rsub.next()) {
-						String typ = rsub.getString("typ"); //$NON-NLS-1$
-						String slave = rsub.getString("LNR_SLAVE"); //$NON-NLS-1$
-						if (typ != null) {
-							if (typ.equals("E")) { //$NON-NLS-1$
-								exclusion += slave + ","; //$NON-NLS-1$
-							} else if (typ.equals("I")) { //$NON-NLS-1$
-								inclusion += slave + ","; //$NON-NLS-1$
-							} else if (typ.equals("X")) { //$NON-NLS-1$
-								exclusive += slave + ","; //$NON-NLS-1$
-							}
-						}
-					}
-					rsub.close();
-					if (!exclusion.equals("")) { //$NON-NLS-1$
-						String k = exclusion.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-						ext.put("exclusion", k); //$NON-NLS-1$
-					}
-					if (!inclusion.equals("")) { //$NON-NLS-1$
-						String k = inclusion.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-						ext.put("inclusion", k); //$NON-NLS-1$
-					}
-					if (!exclusive.equals("")) { //$NON-NLS-1$
-						String k = exclusive.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
-						ext.put("exclusive", k); //$NON-NLS-1$
-					}
-					rsub =
-						sub.query(String
-							.format(
-								"SELECT * FROM %sLEISTUNG_MENGEN_ZEIT WHERE LNR=%s", ImportPrefix, tl.getWrappedId())); //$NON-NLS-1$
-					String limits = ""; //$NON-NLS-1$
-					while (rsub.next()) {
-						StringBuilder sb = new StringBuilder();
-						sb.append(rsub.getString("Operator")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
-						sb.append(rsub.getString("Menge")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
-						sb.append(rsub.getString("ZR_ANZAHL")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
-						sb.append(rsub.getString("PRO_NACH")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
-						sb.append(rsub.getString("ZR_EINHEIT")).append("#"); //$NON-NLS-1$ //$NON-NLS-2$
-						limits += sb.toString();
-					}
-					rsub.close();
-					if (!limits.equals("")) { //$NON-NLS-1$
-						ext.put("limits", limits); //$NON-NLS-1$
-					}
-					tl.flushExtension();
-					pj.releaseStatement(sub);
-					
+				tl.set(new String[] {
+					"GueltigVon", "GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
+				}, tsValid.from.toString(TimeTool.DATE_COMPACT),
+					tsValid.until.toString(TimeTool.DATE_COMPACT)); //$NON-NLS-1$ //$NON-NLS-2$
+				Stm sub = pj.getStatement();
+				String dqua =
+					sub.queryString(String
+						.format(
+							"SELECT QL_DIGNITAET FROM %sLEISTUNG_DIGNIQUALI WHERE LNR=%s", ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+				String kurz = ""; //$NON-NLS-1$
+				ResultSet rsub =
+					sub.query(String
+						.format(
+							"SELECT * FROM %sLEISTUNG_TEXT WHERE SPRACHE=%s AND LNR=%s", ImportPrefix, lang, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+				if (rsub.next() == true) {
+					kurz = convert(rsub, "BEZ_255"); //$NON-NLS-1$
+					String med = convert(rsub, "MED_INTERPRET"); //$NON-NLS-1$
+					String tech = convert(rsub, "TECH_INTERPRET"); //$NON-NLS-1$
+					preps_extension.setString(1, med);
+					preps_extension.setString(2, tech);
+					preps_extension.setString(3, tl.getCode());
+					preps_extension.execute();
 				}
+				rsub.close();
+				tl.set(new String[] {
+					"DigniQuali", "Text"}, dqua, kurz); //$NON-NLS-1$ //$NON-NLS-2$
+				Hashtable<String, String> ext = tl.loadExtension();
+				put(ext, res, "LEISTUNG_TYP", "SEITE", "SEX", "ANAESTHESIE", "K_PFL", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					"BEHANDLUNGSART", "TP_AL", "TP_ASSI", "TP_TL", "ANZ_ASSI", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+					"LSTGIMES_MIN", "VBNB_MIN", "BEFUND_MIN", "RAUM_MIN", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+					"WECHSEL_MIN", "F_AL", "F_TL"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				
+				rsub =
+					sub.query(String
+						.format(
+							"SELECT LNR_MASTER FROM %sLEISTUNG_HIERARCHIE WHERE LNR_SLAVE=%s", ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+				if (rsub.next()) {
+					ext.put("Bezug", rsub.getString(1)); //$NON-NLS-1$
+				}
+				rsub.close();
+				rsub =
+					sub.query(String
+						.format(
+							"SELECT LNR_SLAVE,TYP FROM %sLEISTUNG_KOMBINATION WHERE LNR_MASTER=%s", ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+				String kombination_and = ""; //$NON-NLS-1$
+				String kombination_or = ""; //$NON-NLS-1$
+				while (rsub.next()) {
+					String typ = rsub.getString(2);
+					String slave = rsub.getString(1);
+					if (typ != null) {
+						if (typ.equals("and")) { //$NON-NLS-1$
+							kombination_and += slave + ","; //$NON-NLS-1$
+						} else if (typ.equals("or")) { //$NON-NLS-1$
+							kombination_or += slave + ","; //$NON-NLS-1$
+						}
+					}
+				}
+				rsub.close();
+				if (!kombination_and.equals("")) { //$NON-NLS-1$
+					String k = kombination_and.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+					ext.put("kombination_and", k); //$NON-NLS-1$
+				}
+				if (!kombination_or.equals("")) { //$NON-NLS-1$
+					String k = kombination_or.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+					ext.put("kombination_or", k); //$NON-NLS-1$
+				}
+				rsub =
+					sub.query(String
+						.format(
+							"SELECT * FROM %sLEISTUNG_KUMULATION WHERE LNR_MASTER=%s", ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+				String exclusion = ""; //$NON-NLS-1$
+				String inclusion = ""; //$NON-NLS-1$
+				String exclusive = ""; //$NON-NLS-1$
+				while (rsub.next()) {
+					String typ = rsub.getString("typ"); //$NON-NLS-1$
+					String slave = rsub.getString("LNR_SLAVE"); //$NON-NLS-1$
+					if (typ != null) {
+						if (typ.equals("E")) { //$NON-NLS-1$
+							exclusion += slave + ","; //$NON-NLS-1$
+						} else if (typ.equals("I")) { //$NON-NLS-1$
+							inclusion += slave + ","; //$NON-NLS-1$
+						} else if (typ.equals("X")) { //$NON-NLS-1$
+							exclusive += slave + ","; //$NON-NLS-1$
+						}
+					}
+				}
+				rsub.close();
+				if (!exclusion.equals("")) { //$NON-NLS-1$
+					String k = exclusion.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+					ext.put("exclusion", k); //$NON-NLS-1$
+				}
+				if (!inclusion.equals("")) { //$NON-NLS-1$
+					String k = inclusion.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+					ext.put("inclusion", k); //$NON-NLS-1$
+				}
+				if (!exclusive.equals("")) { //$NON-NLS-1$
+					String k = exclusive.replaceFirst(",$", ""); //$NON-NLS-1$ //$NON-NLS-2$
+					ext.put("exclusive", k); //$NON-NLS-1$
+				}
+				rsub =
+					sub.query(String
+						.format(
+							"SELECT * FROM %sLEISTUNG_MENGEN_ZEIT WHERE LNR=%s", ImportPrefix, JdbcLink.wrap(tl.getCode()))); //$NON-NLS-1$
+				String limits = ""; //$NON-NLS-1$
+				while (rsub.next()) {
+					StringBuilder sb = new StringBuilder();
+					sb.append(rsub.getString("Operator")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
+					sb.append(rsub.getString("Menge")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
+					sb.append(rsub.getString("ZR_ANZAHL")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
+					sb.append(rsub.getString("PRO_NACH")).append(","); //$NON-NLS-1$ //$NON-NLS-2$
+					sb.append(rsub.getString("ZR_EINHEIT")).append("#"); //$NON-NLS-1$ //$NON-NLS-2$
+					limits += sb.toString();
+				}
+				rsub.close();
+				if (!limits.equals("")) { //$NON-NLS-1$
+					ext.put("limits", limits); //$NON-NLS-1$
+				}
+				tl.flushExtension();
+				pj.releaseStatement(sub);
+
 				monitor.worked(1);
 				if (monitor.isCanceled()) {
 					return Status.CANCEL_STATUS;
 				}
 			}
 			res.close();
+			
+			if (updateIDs) {
+				monitor.subTask("Updating existing IDs");
+				updateExistingIDs();
+			}
+
 			monitor.done();
 			return Status.OK_STATUS;
 			
@@ -383,6 +395,53 @@ public class TarmedImporter extends ImporterPage {
 			mdbDB = null;
 		}
 		return Status.CANCEL_STATUS;
+	}
+	
+	
+	void updateExistingIDs(){
+		Query<Verrechnet> vQuery = new Query<Verrechnet>(Verrechnet.class);
+		vQuery.add(Verrechnet.CLASS, "=", TarmedLeistung.class.getName());
+		List<Verrechnet> verrechnete = vQuery.execute();
+		for (Verrechnet verrechnet : verrechnete) {
+			// make sure code and date of consultation are available
+			String code = verrechnet.get(Verrechnet.LEISTG_CODE);
+			TimeTool date = null;
+			Thread.yield();
+			Konsultation kons = verrechnet.getKons();
+			if (kons != null && kons.getDatum() != null)
+				date = new TimeTool(kons.getDatum());
+			if (code != null && date != null) {
+				TarmedLeistung leistung = (TarmedLeistung) TarmedLeistung.getFromCode(code, date);
+				// update the id
+				if (leistung != null)
+					verrechnet.set(Verrechnet.LEISTG_CODE, leistung.getId());
+			}
+		}
+		// update old tarmed ids in statistics
+		Query<Kontakt> kQuery = new Query<Kontakt>(Kontakt.class);
+		List<Kontakt> kontakte = kQuery.execute();
+		for (Kontakt kontakt : kontakte) {
+			Map exi = kontakt.getMap(Kontakt.FLD_EXTINFO);
+			String typ = TarmedLeistung.class.getName();
+			// get list of type
+			List l = (List) exi.get(typ);
+			if (l != null) {
+				// we dont have access to statL.v member so update is not possible
+// for (Kontakt.statL statL : l) {
+// String[] ci = statL.v.split("::");
+// if (ci.length == 2) {
+// TarmedLeistung leistung =
+// (TarmedLeistung) TarmedLeistung.getFromCode(ci[1]);
+// if (leistung != null)
+// statL.v = leistung.storeToString();
+// }
+// }
+				// clear existing statistics
+				l.clear();
+				exi.put(typ, l);
+				kontakt.setMap(Kontakt.FLD_EXTINFO, exi);
+			}
+		}
 	}
 	
 	private void put(final Hashtable<String, String> h, final ResultSet r, final String... vv)

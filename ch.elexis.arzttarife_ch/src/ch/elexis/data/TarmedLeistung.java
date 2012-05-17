@@ -32,10 +32,10 @@ import ch.elexis.util.SWTHelper;
 import ch.elexis.views.TarmedDetailDialog;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.JdbcLink;
+import ch.rgw.tools.JdbcLink.Stm;
 import ch.rgw.tools.StringTool;
 import ch.rgw.tools.TimeTool;
 import ch.rgw.tools.VersionInfo;
-import ch.rgw.tools.JdbcLink.Stm;
 
 /**
  * Implementation des Tarmed-Systems. Besteht aus den eigentlichen Leistungen, statischen Methoden
@@ -45,6 +45,7 @@ import ch.rgw.tools.JdbcLink.Stm;
  * 
  */
 public class TarmedLeistung extends VerrechenbarAdapter {
+	private static final String FLD_CODE = "code";
 	private static final String FLD_GUELTIG_BIS = "GueltigBis";
 	private static final String FLD_GUELTIG_VON = "GueltigVon";
 	private static final String FLD_TP_TL = "TP_TL";
@@ -59,15 +60,26 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 	private static final String VERSION_000 = "0.0.0";
 	private static final String VERSION_110 = "1.1.0";
 	private static final String VERSION_111 = "1.1.1";
+	private static final String VERSION_120 = "1.2.0";
 	public static final TarmedComparator tarmedComparator;
 	public static final TarmedOptifier tarmedOptifier;
 	public static final TimeTool INFINITE = new TimeTool("19991231");
 	public static final String SIDE = "Seite";
 	public static final String PFLICHTLEISTUNG = "obligation";
 	private static final String upd110 = "ALTER TABLE TARMED ADD lastupdate BIGINT";
+	private static final String upd120 = "ALTER TABLE TARMED ADD code VARCHAR(25);"
+		+ " ALTER TABLE TARMED MODIFY ID VARCHAR(25);"
+		+ " ALTER TABLE TARMED_EXTENSION MODIFY CODE VARCHAR(25);";
 	
 	private static final JdbcLink j = getConnection();
 	static {
+		createTables();
+		tarmedComparator = new TarmedComparator();
+		tarmedOptifier = new TarmedOptifier();
+		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Tarmed", Xid.ASSIGNMENT_LOCAL);
+	}
+	
+	static void createTables(){
 		TarmedLeistung version = load("Version");
 		if (!version.exists()) {
 			String filepath =
@@ -86,7 +98,7 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 			}
 			
 		}
-		addMapping("TARMED", "Parent", FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		addMapping("TARMED", FLD_CODE, "Parent", FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			FLD_SPARTE, "Text=tx255", "Name=tx255", "Nick=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			"GueltigVon=S:D:GueltigVon", "GueltigBis=S:D:GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
 		);
@@ -104,9 +116,10 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 			createOrModifyTable("Update TARMED set gueltigbis='20993112' where id='39.0305'");
 			tlv.set(FLD_NICK, VERSION_111);
 		}
-		tarmedComparator = new TarmedComparator();
-		tarmedOptifier = new TarmedOptifier();
-		Xid.localRegisterXIDDomainIfNotExists(XIDDOMAIN, "Tarmed", Xid.ASSIGNMENT_LOCAL);
+		if (vi.isOlder(VERSION_120)) {
+			createOrModifyTable(upd120);
+			tlv.set(FLD_NICK, VERSION_120);
+		}
 	}
 	
 	public String getXidDomain(){
@@ -182,6 +195,15 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 				"Parent", FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, FLD_SPARTE}, parent, DigniQuali, DigniQuanti, sparte); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	}
 	
+	/** Konstruktor wird nur vom Importer gebraucht */
+	public TarmedLeistung(final String id, final String code, final String parent,
+		final String DigniQuali, final String DigniQuanti, final String sparte){
+		create(id);
+		j.exec("INSERT INTO TARMED_EXTENSION (CODE) VALUES (" + getWrappedId() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+		set(new String[] {
+			FLD_CODE, "Parent", FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, FLD_SPARTE}, code, parent, DigniQuali, DigniQuanti, sparte); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	}
+
 	/*
 	 * public String[] getDisplayedFields(){ return new String[] { "ID", "Text"}; //$NON-NLS-1$
 	 * //$NON-NLS-2$ }
@@ -189,7 +211,7 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 
 	@Override
 	public String getLabel(){
-		return getId() + " " + getText(); //$NON-NLS-1$
+		return getCode() + " " + getText();
 	}
 	
 	@Override
@@ -200,7 +222,11 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 	/** Code liefern */
 	@Override
 	public String getCode(){
-		return getId();
+		String code = get(FLD_CODE);
+		if (code != null && !code.isEmpty())
+			return code;
+		else
+			return getId();
 	}
 	
 	/** Text liefern */
@@ -332,9 +358,23 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 		return new TarmedLeistung(id);
 	}
 	
+ 	/** Eine Position vom code einlesen */
+ 	public static IVerrechenbar getFromCode(final String code){
+		return getFromCode(code, new TimeTool());
+ 	}
+ 	
 	/** Eine Position vom code einlesen */
-	public static IVerrechenbar getFromCode(final String code){
-		return new TarmedLeistung(code);
+	public static IVerrechenbar getFromCode(final String code, TimeTool date){
+		Query<TarmedLeistung> query = new Query<TarmedLeistung>(TarmedLeistung.class);
+		query.add(FLD_CODE, "=", code);
+		List<TarmedLeistung> leistungen = query.execute();
+		for (TarmedLeistung tarmedLeistung : leistungen) {
+			TimeTool validFrom = tarmedLeistung.getGueltigVon();
+			TimeTool validTo = tarmedLeistung.getGueltigBis();
+			if (date.isAfterOrEqual(validFrom) && date.isBeforeOrEqual(validTo))
+				return tarmedLeistung;
+		}
+		return null;
 	}
 	
 	/**

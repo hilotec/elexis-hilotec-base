@@ -16,7 +16,6 @@ package ch.elexis.views;
 import org.eclipse.swt.SWT;
 
 import ch.elexis.actions.ReadOnceTreeLoader;
-import ch.elexis.actions.TreeDataLoader;
 import ch.elexis.data.Query;
 import ch.elexis.data.TarmedLeistung;
 import ch.elexis.selectors.FieldDescriptor;
@@ -45,7 +44,7 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	@Override
 	public ViewerConfigurer createViewerConfigurer(CommonViewer cv){
 		this.cv = cv;
-		slp = new SelectorPanelProvider(fields, true);
+		slp = new TarmedSelectorPanelProvider(cv, fields, true);
 		tdl =
 			new ReadOnceTreeLoader(cv, new Query<TarmedLeistung>(TarmedLeistung.class), "Parent",
 				"ID");
@@ -72,5 +71,4 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	public String getCodeSystemName(){
 		return "Tarmed"; //$NON-NLS-1$
 	}
-	
 }
