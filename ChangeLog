@@ -1,6 +1,7 @@
 hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.6
 
-Changelog für 2.1.6.4
+Changelog für 2.1.6.4 (retagged on May 13)
+d29146ae7763: 2012-05-13: thomashu: Ticket: #738 - added update of TarmedLeistung in Leistungsblock
 a9e3312dfc29: 2012-05-12: Niklaus Giger: Ticket #964: Ugly workaround, as ant script does not respect build.properties
 adf4fc06128a: 2012-05-09: thomashu: Ticket: #738 - reworked Tarmed importer implementation
 d41c7abeafac: 2012-05-08: thomashu: Ticket: #738 - reworked Tarmed implementation for code system version 1.08
