@@ -107,6 +107,7 @@ public class AccessWrapper {
 				ps.setObject(i++, row.get(key));
 			}
 			ps.execute();
+			ps.close();
 		}
 		return nrRows;
 	}
