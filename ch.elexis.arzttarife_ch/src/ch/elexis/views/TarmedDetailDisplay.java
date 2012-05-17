@@ -20,7 +20,11 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.forms.widgets.*;
+import org.eclipse.ui.forms.widgets.FormText;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.Desk;
 import ch.elexis.arzttarife_schweiz.Messages;
@@ -175,7 +179,7 @@ public class TarmedDetailDisplay implements IDetailDisplay {
 			}
 			validity.setText(text, false, false);
 			
-			form.reflow(false);
+			form.reflow(true);
 		}
 		
 	}
