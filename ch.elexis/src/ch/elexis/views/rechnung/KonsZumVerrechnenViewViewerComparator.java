@@ -16,14 +16,14 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
-import ch.rgw.tools.LazyTree;
 import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.Tree;
 
 public class KonsZumVerrechnenViewViewerComparator extends ViewerComparator {
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2){
-		LazyTree lt1 = (LazyTree) e1;
-		LazyTree lt2 = (LazyTree) e2;
+		Tree lt1 = (Tree) e1;
+		Tree lt2 = (Tree) e2;
 		
 		if (lt1.contents instanceof Patient && lt2.contents instanceof Patient) {
 			Patient p1 = (Patient) lt1.contents;
