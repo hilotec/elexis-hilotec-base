@@ -112,7 +112,11 @@ public class Utilities {
 				Prescription prescription = (Prescription) iterator.next();
 				noOfPrescriptions++;
 				currArtikel = prescription.getArtikel();
-				//
+				// NPE ?
+				if(currArtikel == null) {
+					pen.println(prescription.getId()+":[ERR]:"+"Null Pointer for currArtikel");
+					continue;
+				}
 				String PhZNr = currArtikel.get(Artikel.FLD_SUB_ID);
 				
 				if (PhZNr != "" && PhZNr != null) {
