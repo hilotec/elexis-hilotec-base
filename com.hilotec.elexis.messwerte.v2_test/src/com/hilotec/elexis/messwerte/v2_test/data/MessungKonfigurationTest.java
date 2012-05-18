@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2007-2009, A. Kaufmann and Elexis
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *    A. Kaufmann - initial implementation 
+ *    P. Chaubert - adapted to Messwerte V2
+ *    medshare GmbH - adapted to Messwerte V2.1 in February 2012
+ *    
+ *******************************************************************************/
+
 package com.hilotec.elexis.messwerte.v2_test.data;
 
 import static org.junit.Assert.assertEquals;
@@ -5,18 +19,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
-import java.net.URL;
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.junit.Test;
-import org.osgi.framework.Bundle;
 
-import ch.rgw.tools.ExHandler;
+import ch.elexis.util.PlatformHelper;
 
 import com.hilotec.elexis.messwerte.v2.data.MessungKonfiguration;
 import com.hilotec.elexis.messwerte.v2.data.MessungTyp;
@@ -52,29 +61,14 @@ public class MessungKonfigurationTest {
 	private static String TC3_SCALE = "tc3_scale";
 	private static String TC3_STR = "tc3_str";
 	
-	public static String getPluginDirectory(){
-		String filePath = null;
-		Bundle bundle = Platform.getBundle("com.hilotec.elexis.messwerte.v2_test"); //$NON-NLS-1$
-		if (bundle != null) {
-			Path path = new Path("/");
-			URL url = FileLocator.find(bundle, path, null);
-			
-			try {
-				filePath = FileLocator.toFileURL(url).getPath();
-				filePath = filePath.substring(1);
-			} catch (IOException e) {
-				ExHandler.handle(e);
-			}
-		}
-		return filePath;
-	}
-	
 	@Test
 	public void testReadFromXML(){
 		
 		try {
-			String testXML = getPluginDirectory() + TEST_XML;
-			
+			String testXML =
+				PlatformHelper.getBasePath("com.hilotec.elexis.messwerte.v2_test") + File.separator
+					+ TEST_XML;
+			System.out.println(testXML);
 			MessungKonfiguration testConfig = MessungKonfiguration.getInstance();
 			assertFalse("read eines nicht existierenden files darf nicht true zurückgeben...",
 				testConfig.readFromXML("dummy.xml"));

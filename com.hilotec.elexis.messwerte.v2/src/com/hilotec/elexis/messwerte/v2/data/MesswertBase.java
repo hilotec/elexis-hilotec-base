@@ -391,7 +391,9 @@ public abstract class MesswertBase {
 				MessageFormat
 					.format(Messages.MesswertBase_Failure2, formula.trim(), e.getMessage());
 			log.log(message, Log.ERRORS);
-			SWTHelper.showError(Messages.DataAccessor_Title, message);
+			if (System.getProperty("com.hilotec.unitests") == null
+				|| !System.getProperty("com.hilotec.unitests").equals("1"))
+				SWTHelper.showError(Messages.DataAccessor_Title, message);
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
