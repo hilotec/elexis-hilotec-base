@@ -1,5 +1,9 @@
 hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.6
 
+Changelog für 2.1.6.4.1
+9b1fef8a2427: 2012-05-18: marcode79: Fix for NPE in Importer
+0e35ba880ea0: 2012-05-18: marcode79: Ticket #985: Rechnungs-Vorschlag (Zauberstab) funktioniert nicht mehr korrekt
+
 Changelog für 2.1.6.4 (retagged on May 13)
 d29146ae7763: 2012-05-13: thomashu: Ticket: #738 - added update of TarmedLeistung in Leistungsblock
 a9e3312dfc29: 2012-05-12: Niklaus Giger: Ticket #964: Ugly workaround, as ant script does not respect build.properties
