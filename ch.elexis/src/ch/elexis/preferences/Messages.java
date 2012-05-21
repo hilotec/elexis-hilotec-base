@@ -557,6 +557,8 @@ public class Messages extends NLS {
 	
 	public static String UserCasePreferences_DefaultReason;
 	
+	public static String UserCasePreferences_DefaultDiagnose;
+	
 	public static String UserPreferences_14;
 	
 	public static String UserPreferences_3;

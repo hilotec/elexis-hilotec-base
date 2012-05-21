@@ -27,6 +27,7 @@ import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.Messages;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.core.PersistenceException;
+import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.status.ElexisStatus;
 import ch.elexis.text.model.Samdas;
 import ch.elexis.util.Log;
@@ -958,7 +959,19 @@ public class Konsultation extends PersistentObject implements
 		if (initialText != null) {
 			n.updateEintrag(initialText, false);
 		}
+		if (getDefaultDiagnose() != null)
+			n.addDiagnose(getDefaultDiagnose());
+
 		ElexisEventDispatcher.fireSelectionEvent(actFall);
 		ElexisEventDispatcher.fireSelectionEvent(n);
+	}
+	
+	public static IDiagnose getDefaultDiagnose(){
+		IDiagnose ret = null;
+		String diagnoseId = Hub.userCfg.get(PreferenceConstants.USR_DEFDIAGNOSE, "");
+		if (diagnoseId.length() > 1) {
+			ret = (IDiagnose) Hub.poFactory.createFromString(diagnoseId);
+		}
+		return ret;
 	}
 }

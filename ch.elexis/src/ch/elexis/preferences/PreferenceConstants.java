@@ -76,6 +76,7 @@ public class PreferenceConstants {
 	public static final String USR_DEFCASEREASON = "fall/std_grund"; //$NON-NLS-1$
 	public static final String USR_DEFCASEREASON_DEFAULT = Messages.PreferenceConstants_illness;
 	public static final String USR_DEFLAW = "fall/std_gesetz"; //$NON-NLS-1$
+	public static final String USR_DEFDIAGNOSE = "fall/std_diagnose"; //$NON-NLS-1$
 	public static final String USR_REMINDERCOLORS = "reminder/colors"; //$NON-NLS-1$
 	public static final String USR_REMINDERSOPEN = "reminder/onlyopen"; //$NON-NLS-1$
 	public static final String USR_REMINDEROWN = "reminder/originator"; //$NON-NLS-1$
