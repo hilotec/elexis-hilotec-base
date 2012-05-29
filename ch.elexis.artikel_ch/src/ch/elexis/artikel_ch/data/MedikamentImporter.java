@@ -33,7 +33,6 @@ import ch.elexis.data.Query;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.Log;
 import ch.elexis.util.SWTHelper;
-import ch.rgw.tools.ExHandler;
 
 /**
  * Importing articles from an IGM-10 or IGM-11 file.
@@ -42,23 +41,18 @@ import ch.rgw.tools.ExHandler;
  * 
  */
 public class MedikamentImporter extends ImporterPage {
-	static final String EQUALS = "="; //$NON-NLS-1$
 	public static final String MWST_TYP = "MWSt-Typ"; //$NON-NLS-1$
-	private static final String EAN = "EAN"; //$NON-NLS-1$
 	private static final String HERSTELLER = "Hersteller"; //$NON-NLS-1$
 	private static final String LAGERART = "Lagerart"; //$NON-NLS-1$
 	public static final String KASSENTYP = "Kassentyp"; //$NON-NLS-1$
-	private static final String VK_PREIS = "VK_Preis"; //$NON-NLS-1$
+	private static final String EMPTY_PHARMACODE = "0000000";
+	final static String MEDIKAMENT = "Medikament"; //$NON-NLS-1$
+	final static String MEDICAL = "Medical"; //$NON-NLS-1$
 	
 	// Button bClear;
 	// boolean bDelete;
-	public MedikamentImporter(){}
 	
-	final static String SUBID = "SubID"; //$NON-NLS-1$
-	final static String NAME = "Name"; //$NON-NLS-1$
-	final static String MEDIKAMENT = "Medikament"; //$NON-NLS-1$
-	final static String MEDICAL = "Medical"; //$NON-NLS-1$
-	final static String EK_PREIS = "EK_Preis"; //$NON-NLS-1$
+	public MedikamentImporter(){}
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -83,8 +77,10 @@ public class MedikamentImporter extends ImporterPage {
 		int counter = 0;
 		int createdCount = 0;
 		int updatedCount = 0;
+		int lineNo = 0;
 		String titel, ek, vk, kasse, cmws;
 		while ((in = br.readLine()) != null) {
+			lineNo++;
 			// Recordart (RECA) - 2stellig
 			// 11: Stamm-Satz (mit Mehrwertsteuer-Code)
 			String reca = new String(in.substring(0, 2));
@@ -98,21 +94,41 @@ public class MedikamentImporter extends ImporterPage {
 			// Pharmacode (PHAR) - 7stellig
 			String phar = new String(in.substring(3, 10)).trim();
 			
+			// EAN - 13stellig
+			String ean = new String(in.substring(83, 96)); // EAN
+			String eanCode = null;
+			
 			// String ckzl = new String(in.substring(7,8)); // Kassenpflicht
-			String pk = "0"; //$NON-NLS-1$
+			String pk = null; //$NON-NLS-1$
 			try {
 				long pkl = Long.parseLong(phar); // führende Nullen entfernen
-				pk = Long.toString(pkl);
-			} catch (Exception ex) {
-				ExHandler.handle(ex);
-				log.log(Messages.MedikamentImporter_BadPharmaCode, Log.ERRORS);
+				if (pkl > 0)
+					pk = Long.toString(pkl);
+			} catch (NumberFormatException ex) {}
+			
+			try {
+				long eank = Long.parseLong(ean);
+				if (eank > 0)
+					eanCode = Long.toString(eank);
+			} catch (NumberFormatException ex) {}
+			
+			if (pk == null && eanCode == null) {
+				log.log(Messages.MedikamentImporter_BadArticleEntry + lineNo, Log.ERRORS);
+				continue;
 			}
 			
 			// String id=qbe.findSingle(SUBID, EQUALS, pk);
 			qbe.clear();
-			qbe.add(SUBID, EQUALS, pk);
-			qbe.or();
-			qbe.add(SUBID, EQUALS, phar);
+			if (!(pk == null)) {
+				qbe.add(Artikel.FLD_SUB_ID, Query.EQUALS, pk);
+				qbe.or();
+				qbe.add(Artikel.FLD_SUB_ID, Query.EQUALS, phar);
+			} else {
+				qbe.add(Artikel.FLD_EAN, Query.EQUALS, ean);
+				qbe.or();
+				qbe.add(Artikel.FLD_EAN, Query.EQUALS, eanCode);
+			}
+			
 			List<Artikel> lArt = qbe.execute();
 			if (lArt.size() > 1) {
 				// Duplikate entfernen, genau einen gültigen und existierenden
@@ -131,11 +147,9 @@ public class MedikamentImporter extends ImporterPage {
 			}
 			Artikel a = lArt.size() > 0 ? lArt.get(0) : null;
 			if ((a == null) || (!a.exists())) {
-				if (cmut.equals("3") || (!reca.equals("11"))) { // ausser handel //$NON-NLS-1$ //$NON-NLS-2$
-					// oder kein
-					// Stammsatz
+				if (cmut.equals("3") || (!reca.equals("11"))) { //$NON-NLS-1$ //$NON-NLS-2$
+					// ausser handel oder kein Stammsatz
 					monitor.worked(1);
-					updatedCount++;
 					continue; // Dann Artikel nicht neu erstellen, falls er
 					// nicht existiert
 				}
@@ -158,7 +172,6 @@ public class MedikamentImporter extends ImporterPage {
 				String hix = new String(in.substring(75, 76)); // iks-listencode
 				String ithe = new String(in.substring(76, 83)); // index
 				// therapeuticus
-				String ean = new String(in.substring(83, 96)); // EAN
 				
 				// Code Mehrwertsteuer (CMWS) - 1stellig
 				// 1: voller MWSt-Satz (zur Zeit 6.5%)
@@ -168,10 +181,10 @@ public class MedikamentImporter extends ImporterPage {
 				
 				if (a == null) {
 					if (cmws.equals("1")) { //$NON-NLS-1$
-						a = new Artikel(titel, MEDICAL, pk);
+						a = new Artikel(titel, MEDICAL, (pk == null) ? EMPTY_PHARMACODE : pk);
 						a.set(Artikel.FLD_KLASSE, Medical.class.getName());
 					} else {
-						a = new Artikel(titel, MEDIKAMENT, pk);
+						a = new Artikel(titel, MEDIKAMENT, (pk == null) ? EMPTY_PHARMACODE : pk);
 						a.set(Artikel.FLD_KLASSE, Medikament.class.getName());
 					}
 					createdCount++;
@@ -179,21 +192,21 @@ public class MedikamentImporter extends ImporterPage {
 					updatedCount++;
 				}
 				if (vk.matches("0+")) { //$NON-NLS-1$
-					a.set(EK_PREIS, ek);
-					a.set(EAN, ean);
+					a.set(Artikel.FLD_EK_PREIS, ek);
+					a.set(Artikel.FLD_EAN, ean);
 				} else {
 					String[] fields = {
-						EK_PREIS, VK_PREIS, EAN
+						Artikel.FLD_EK_PREIS, Artikel.FLD_VK_PREIS, Artikel.FLD_EAN
 					};
 					a.set(fields, ek, vk, ean);
 				}
 				
 				Map ext = a.getMap(Artikel.FLD_EXTINFO);
-				ext.put(Artikel.FLD_PHARMACODE, pk);
+				ext.put(Artikel.FLD_PHARMACODE, (pk == null) ? EMPTY_PHARMACODE : pk);
 				ext.put(KASSENTYP, kasse);
 				ext.put(LAGERART, lager);
 				ext.put(HERSTELLER, hix);
-				ext.put(EAN, ean);
+				ext.put(Artikel.FLD_EAN, ean);
 				ext.put(MWST_TYP, cmws);
 				
 				a.setMap(Artikel.FLD_EXTINFO, ext);
@@ -203,10 +216,10 @@ public class MedikamentImporter extends ImporterPage {
 				kasse = new String(in.substring(22, 23));
 				cmws = new String(in.substring(23, 24));
 				if (vk.matches("0+")) { //$NON-NLS-1$
-					a.set(EK_PREIS, ek);
+					a.set(Artikel.FLD_EK_PREIS, ek);
 				} else {
 					String[] fields = {
-						EK_PREIS, VK_PREIS
+						Artikel.FLD_EK_PREIS, Artikel.FLD_VK_PREIS
 					};
 					a.set(fields, ek, vk);
 				}
