@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2010, G. Weirich and Elexis
+ * Copyright (c) 2005-2012, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    M. Descher - fix for wrong case being set if eeli_fall listener not active
  * 
- *  $Id: FallDetailView.java 6005 2010-01-31 10:49:59Z rgw_ch $
+ *  $Id$
  *******************************************************************************/
 
 package ch.elexis.views;
@@ -76,7 +77,10 @@ public class FallDetailView extends ViewPart implements ISaveablePart2, IActivat
 	}
 	
 	@Override
-	public void setFocus(){}
+	public void setFocus(){
+		Fall f = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+		fdb.setFall(f);
+	}
 	
 	@Override
 	public void dispose(){
