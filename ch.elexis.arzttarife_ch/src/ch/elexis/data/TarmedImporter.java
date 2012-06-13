@@ -25,6 +25,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -35,7 +36,11 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.Hub;
 import ch.elexis.arzttarife_schweiz.Messages;
@@ -53,6 +58,7 @@ import ch.rgw.tools.TimeSpan;
 import ch.rgw.tools.TimeTool;
 
 import com.healthmarketscience.jackcess.Database;
+import com.tiff.common.ui.datepicker.DatePickerCombo;
 
 /**
  * Import des Tarmed-Tarifsystems aus der Datenbank der ZMT. We use Gerry AccessWrapper to
@@ -77,6 +83,7 @@ public class TarmedImporter extends ImporterPage {
 	JdbcLink pj;
 	Stm source, dest;
 	// Text tDb;
+	private TimeTool blockUpdateDate; // Date to update Leistungsblocks to
 	private String lang;
 	private Database mdbDB;
 	private String mdbFilename;
@@ -183,21 +190,17 @@ public class TarmedImporter extends ImporterPage {
 			cachedDbTables = null;
 			return Status.CANCEL_STATUS;
 		}
-
+		
 		pj = PersistentObject.getConnection();
 		lang = JdbcLink.wrap(Hub.localCfg.get(PreferenceConstants.ABL_LANGUAGE, "d").toUpperCase()); //$NON-NLS-1$
 		monitor.subTask(Messages.TarmedImporter_connecting);
 		
-		// if there are old ids in the database we have to convert to new ids
-		TarmedLeistung leistung = new TarmedLeistung("00.0010");
-		boolean updateIDs = leistung.exists();
-
 		try {
 			source = pj.getStatement();
 			dest = pj.getStatement();
 			monitor.subTask(Messages.TarmedImporter_deleteOldData);
 			
-			pj.exec("DELETE FROM TARMED"); //$NON-NLS-1$
+			pj.exec("DELETE FROM TARMED WHERE ID NOT LIKE 'Version'"); //$NON-NLS-1$
 			pj.exec("DELETE FROM TARMED_DEFINITIONEN"); //$NON-NLS-1$
 			pj.exec("DELETE FROM TARMED_EXTENSION"); //$NON-NLS-1$
 			monitor.subTask(Messages.TarmedImporter_definitions);
@@ -414,9 +417,7 @@ public class TarmedImporter extends ImporterPage {
 			}
 			res.close();
 			
-			if (updateIDs) {
-				updateExistingIDs(monitor);
-			}
+			updateExistingIDs(monitor);
 
 			monitor.done();
 			String message = Messages.TarmedImporter_successMessage;
@@ -451,7 +452,7 @@ public class TarmedImporter extends ImporterPage {
 		PreparedStatement ps = null;
 		// update existing ids of Verrechnet
 		try {
-			ps = pj.prepareStatement("UPDATE leistungen SET leistg_code=? WHERE id=?"); //$NON-NLS-1$
+			ps = pj.prepareStatement("UPDATE LEISTUNGEN SET leistg_code=? WHERE id=?"); //$NON-NLS-1$
 
 			Query<Verrechnet> vQuery = new Query<Verrechnet>(Verrechnet.class);
 			vQuery.add(Verrechnet.CLASS, "=", TarmedLeistung.class.getName());
@@ -494,10 +495,11 @@ public class TarmedImporter extends ImporterPage {
 		try {
 			Query<Leistungsblock> lQuery = new Query<Leistungsblock>(Leistungsblock.class);
 			List<Leistungsblock> blocks = lQuery.execute();
+			TimeTool date = blockUpdateDate;
 			for (Leistungsblock block : blocks) {
 				StringBuilder newCodes = new StringBuilder();
 				// get blob
-				byte[] compressed = getBinaryRaw("leistungen", "leistungsblock", block.getId());
+				byte[] compressed = getBinaryRaw("Leistungen", "LEISTUNGSBLOCK", block.getId());
 				if (compressed != null) {
 					// get String representing all contained leistungen
 					String storable = new String(CompEx.expand(compressed), "UTF-8"); //$NON-NLS-1$
@@ -509,7 +511,7 @@ public class TarmedImporter extends ImporterPage {
 								monitor.subTask(Messages.TarmedImporter_updateBlock + " "
 									+ parts[1]);
 								TarmedLeistung leistung =
-									(TarmedLeistung) TarmedLeistung.getFromCode(parts[1]);
+									(TarmedLeistung) TarmedLeistung.getFromCode(parts[1], date);
 								if (leistung != null) {
 									if (newCodes.length() > 0)
 										newCodes.append(",");
@@ -525,7 +527,7 @@ public class TarmedImporter extends ImporterPage {
 						}
 					}
 					// write the updated String back
-					setBinaryRaw("leistungen", "leistungsblock", block.getId(),
+					setBinaryRaw("Leistungen", "LEISTUNGSBLOCK", block.getId(),
 						CompEx.Compress(newCodes.toString(), CompEx.ZIP));
 				}
 			}
@@ -605,9 +607,24 @@ public class TarmedImporter extends ImporterPage {
 	public Composite createPage(final Composite parent){
 		
 		Composite ret = new ImporterPage.FileBasedImporter(parent, this);
-		ret.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		return ret;
+		ret.setLayoutData(SWTHelper.getFillGridData(2, true, 1, true));
 		
+		Label lDate = new Label(parent, 0);
+		lDate.setText("Datum Leistungsblocks:");
+		lDate.setLayoutData(SWTHelper.getFillGridData(1, false, 1, false));
+		
+		blockUpdateDate = new TimeTool();
+		final DatePickerCombo dpc = new DatePickerCombo(parent, SWT.NONE);
+		dpc.setDate(new Date());
+		dpc.setLayoutData(SWTHelper.getFillGridData(
+				1, false, 1, false));
+		dpc.addModifyListener(new ModifyListener() {
+			@Override
+			public void modifyText(ModifyEvent e) {
+				blockUpdateDate.set(new TimeTool(dpc.getDate().getTime()));
+			}});
+		
+		return ret;
 	}
 	
 	private String convert(ResultSet res, String field) throws Exception{
