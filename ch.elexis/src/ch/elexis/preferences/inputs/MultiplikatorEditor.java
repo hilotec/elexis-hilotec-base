@@ -244,7 +244,12 @@ public class MultiplikatorEditor extends Composite {
 				if (date.isAfterOrEqual(fromDate) && date.isBeforeOrEqual(toDate)) {
 					String value = info.multiplikator;
 					if (value != null && !value.isEmpty()) {
-						return Double.parseDouble(value);
+						try {
+							return Double.parseDouble(value);
+						} catch (NumberFormatException nfe) {
+							ExHandler.handle(nfe);
+							return 0.0;
+						}
 					}
 				}
 			}
