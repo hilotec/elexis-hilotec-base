@@ -65,9 +65,15 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 	private Form form;
 	private Action briefNeuAction, briefLadenAction, editNameAction;
 	private Action deleteAction;
+	private Action sortUmkehrAction;
 	private ViewMenus menus;
 	private ArrayList<sPage> pages = new ArrayList<sPage>();
 	CTabFolder ctab;
+	
+	/**
+	 * Gibt an ob die Anzeigereihenfolge umgekehrt ist (i.e. aelteste zuoberst).
+	 */
+	boolean sortUmkehren = false;
 	
 	// private ViewMenus menu;
 	// private IAction delBriefAction;
@@ -124,7 +130,8 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 		
 		GlobalEventDispatcher.addActivationListener(this, this);
 		menus.createMenu(briefNeuAction, briefLadenAction, editNameAction, deleteAction);
-		menus.createToolbar(briefNeuAction, briefLadenAction, deleteAction);
+		menus.createToolbar(briefNeuAction, briefLadenAction, deleteAction,
+				sortUmkehrAction);
 		ctab.setSelection(0);
 		relabel();
 	}
@@ -191,6 +198,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 							} else {
 								qbe.add(Brief.FLD_TYPE, Query.EQUALS, cat);
 							}
+							qbe.orderBy(!sortUmkehren, Brief.FLD_DATE);
 							cv.getConfigurer().getControlFieldProvider().setQuery(qbe);
 							
 							List<Brief> list = qbe.execute();
@@ -331,6 +339,19 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 					}
 				}
 			};
+		sortUmkehrAction = new Action("Sortierung umkehren",
+				Action.AS_CHECK_BOX)
+		{
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_ARROWUP));
+				setToolTipText("Sortierung umkehren, neuste zuoberst");
+			}
+			@Override
+			public void run() {
+				sortUmkehren = isChecked();
+				relabel();
+			}
+		};
 		/*
 		 * importAction=new Action("Importieren..."){ public void run(){
 		 * 
