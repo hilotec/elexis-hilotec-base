@@ -260,6 +260,7 @@ public class Anwender extends Person {
 			String MandantLabel = (String) km.get("Mandant");
 			String MandantID = null;
 			if (!StringTool.isNothing(MandantLabel)) {
+				MandantLabel = MandantLabel.split(",")[0];
 				MandantID =
 					new Query<Mandant>(Mandant.class).findSingle(LABEL, StringTool.equals,
 						MandantLabel);
