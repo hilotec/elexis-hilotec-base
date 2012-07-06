@@ -35,7 +35,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
@@ -62,7 +61,6 @@ import ch.elexis.agenda.util.Plannables;
 import ch.elexis.agenda.util.TimeInput;
 import ch.elexis.agenda.util.TimeInput.TimeInputListener;
 import ch.elexis.data.Kontakt;
-import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.util.Log;
 import ch.elexis.util.NumberInput;
@@ -102,7 +100,7 @@ public class TerminDialog extends TitleAreaDialog {
 	Button bLocked, bSerie;
 	Button bSave, bDelete, bChange, bPrint, bFuture;
 	Slider slider;
-	dayOverview dayBar;
+	DayOverview dayBar;
 	
 	Kontakt actKontakt;
 	IPlannable actPlannable;
@@ -146,10 +144,75 @@ public class TerminDialog extends TitleAreaDialog {
 		ret.setLayout(new GridLayout());
 		Composite topRow = new Composite(ret, SWT.BORDER);
 		topRow.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		topRow.setLayout(new GridLayout(3, false));
+		topRow.setLayout(new GridLayout(3, true));
 		// oben links
 		dp = new DatePicker(topRow, SWT.NONE);
+		dp.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		dp.setDate(agenda.getActDate().getTime());
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
+		new Label(dp, SWT.NONE);
 		// actDate.setTime(dp.getDate());
 		dp.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -164,8 +227,9 @@ public class TerminDialog extends TitleAreaDialog {
 		// oben mitte
 		Composite topCenter = new Composite(topRow, SWT.NONE);
 		topCenter.setLayout(new GridLayout(3, true));
+		topCenter.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 		tiVon = new TimeInput(topCenter, Messages.TerminDialog_startTime);
-		tiVon.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		tiVon.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 		tiVon.addListener(new TimeInputListener() {
 			public void changed(){
 				slider.set();
@@ -173,6 +237,7 @@ public class TerminDialog extends TitleAreaDialog {
 			
 		});
 		niDauer = new NumberInput(topCenter, Messages.TerminDialog_duration);
+		niDauer.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 		niDauer.getControl().addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e){
@@ -180,7 +245,7 @@ public class TerminDialog extends TitleAreaDialog {
 			}
 		});
 		tiBis = new TimeInput(topCenter, Messages.TerminDialog_endTime);
-		tiBis.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		tiBis.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 		tiBis.addListener(new TimeInputListener() {
 			public void changed(){
 				int mVon = tiVon.getTimeAsMinutes();
@@ -207,6 +272,7 @@ public class TerminDialog extends TitleAreaDialog {
 		
 		// oben rechts
 		Composite topRight = new Composite(topRow, SWT.NONE);
+		topRight.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		topRight.setLayout(new GridLayout(2, true));
 		Label sep = new Label(topRight, SWT.NONE);
 		sep.setText(" "); //$NON-NLS-1$
@@ -234,6 +300,7 @@ public class TerminDialog extends TitleAreaDialog {
 		bSerie.setText(Messages.TerminDialog_serie);
 		bSave = new Button(topRight, SWT.PUSH);
 		bSave.setText(Messages.TerminDialog_set);
+		bSave.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		bSave.setToolTipText(Messages.TerminDialog_createTermin);
 		bSave.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -243,12 +310,12 @@ public class TerminDialog extends TitleAreaDialog {
 		});
 		Point s = bSave.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		bChange = new Button(topRight, SWT.PUSH);
+		bChange.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		bChange.setText(Messages.TerminDialog_change);
 		bChange.setToolTipText(Messages.TerminDialog_changeTermin);
-		bChange.setLayoutData(new GridData(s.x, s.y));
 		bDelete = new Button(topRight, SWT.PUSH);
 		bDelete.setText(Messages.TerminDialog_delete);
-		bDelete.setLayoutData(new GridData(s.x, s.y));
+		bDelete.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		bDelete.setToolTipText(Messages.TerminDialog_deleteTermin);
 		bDelete.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -266,8 +333,9 @@ public class TerminDialog extends TitleAreaDialog {
 			
 		});
 		Button bSearch = new Button(topRight, SWT.PUSH);
+		bSearch.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
 		bSearch.setText(Messages.TerminDialog_find);
-		bSearch.setLayoutData(new GridData(s.x, s.y));
+
 		bSearch.setToolTipText(Messages.TerminDialog_findTermin);
 		bSearch.addSelectionListener(new SelectionAdapter() {
 			
@@ -298,7 +366,7 @@ public class TerminDialog extends TitleAreaDialog {
 		});
 		bPrint = new Button(topRight, SWT.PUSH);
 		bPrint.setText(Messages.TerminDialog_print);
-		bPrint.setLayoutData(new GridData(s.x, s.y));
+		bPrint.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		bPrint.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e){
@@ -310,10 +378,10 @@ public class TerminDialog extends TitleAreaDialog {
 		bFuture.setText(Messages.TerminDialog_past);
 		// Balken
 		Composite cBar = new Composite(ret, SWT.BORDER);
+		cBar.setLayoutData( new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		cBar.setLayout(new GridLayout());
-		cBar.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
-		dayBar = new dayOverview(cBar);
-		dayBar.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
+		dayBar = new DayOverview(cBar);
+		dayBar.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		slider = new Slider(dayBar);
 		
 		// unten
@@ -411,10 +479,8 @@ public class TerminDialog extends TitleAreaDialog {
 		cbStatus.setItems(Termin.TerminStatus);
 		Point pStatus = cbStatus.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		int xMax = Math.max(pTyp.x, pStatus.x);
-		GridData gdTyp = new GridData(xMax, SWT.DEFAULT);
-		GridData gdStatus = new GridData(xMax, SWT.DEFAULT);
-		cbTyp.setLayoutData(gdTyp);
-		cbStatus.setLayoutData(gdStatus);
+		cbTyp.setLayoutData(new GridData(xMax, SWT.DEFAULT));
+		cbStatus.setLayoutData(new GridData(xMax, SWT.DEFAULT));
 		StatusTypListener statusTypListener = new StatusTypListener();
 		cbTyp.addSelectionListener(statusTypListener);
 		cbStatus.addSelectionListener(statusTypListener);
@@ -606,14 +672,14 @@ public class TerminDialog extends TitleAreaDialog {
 	 * @author Gerry
 	 * 
 	 */
-	class dayOverview extends Composite implements PaintListener {
+	class DayOverview extends Composite implements PaintListener {
 		
 		Point d;
 		int sep;
 		
 		java.util.List<IPlannable> list;
 		
-		dayOverview(final Composite parent){
+		DayOverview(final Composite parent){
 			super(parent, SWT.NONE);
 			addPaintListener(this);
 			addMouseListener(new MouseAdapter() {
@@ -675,7 +741,7 @@ public class TerminDialog extends TitleAreaDialog {
 		
 		@Override
 		public Point computeSize(final int wHint, final int hHint, final boolean changed){
-			return new Point(getParent().getSize().x, 30);
+			return new Point(getParent().getSize().x, 40);
 		}
 		
 		/**

@@ -1,3 +1,5 @@
 2.1.4 - Original Version - G. Weirich
 2.1.5 - 12.1.2012 - M. Descher
 	- Update auf ical4j 1.0.1, siehe Ticket 730
+2.1.5.1 - 6.7.2012 - M. Descher
+	- Fix for wrong ui presentation of search field in Linux due to missing LayoutData
