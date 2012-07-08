@@ -602,4 +602,8 @@ public class Artikel extends VerrechenbarAdapter {
 		String ean = get(FLD_EAN);
 		return ean + "_" + pharmacode;
 	}
+
+	public boolean isDragOK(){
+		return isValid();
+	}
 }
