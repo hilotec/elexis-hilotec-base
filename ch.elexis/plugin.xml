@@ -395,6 +395,13 @@
       </view>
       <view
             category="ch.elexis.datenKategorie"
+            class="ch.elexis.views.PatientDetailView"
+            icon="rsc/person.ico"
+            id="ch.elexis.PatientDetailView"
+            name="%elexis.patDetailView">
+      </view>
+      <view
+            category="ch.elexis.datenKategorie"
             class="ch.elexis.views.PatientDetailView2"
             icon="rsc/person.ico"
             id="ch.elexis.PatDetail_v2"

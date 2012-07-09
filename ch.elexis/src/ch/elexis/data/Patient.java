@@ -17,6 +17,8 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.swt.widgets.Text;
+
 import ch.elexis.Hub;
 import ch.elexis.StringConstants;
 import ch.elexis.actions.ElexisEventDispatcher;
@@ -63,6 +65,10 @@ public class Patient extends Person {
 	public static final String FLD_PHONE1 = "Telefon1";
 	public static final String FLD_FAX = "Fax";
 	public static final String FLD_BALANCE = "Konto";
+	public static final String FLD_PERS_ANAMNESE = "PersAnamnese";
+	public static final String FLD_SYS_ANAMNESE = "SysAnamnese";
+	public static final String FLD_FAM_ANAMNESE = "FamilienAnamnese";
+	
 	public static final String[] DEFAULT_SORT = {
 		FLD_NAME, FLD_FIRSTNAME, FLD_DOB
 	};
@@ -347,6 +353,15 @@ public class Patient extends Person {
 	}
 	
 	/**
+	 * to be used by the platzhalter system, allows for presentation of the
+	 * current balance of this patient by using [Patient.Konto]
+	 * @return the current balance of the patient
+	 */
+	public String getBalance() {
+		return getKontostand().getAmountAsString();
+	}
+	
+	/**
 	 * Calculates a possibly available account excess. (This value may be added to a bill as
 	 * prepayment.)
 	 * <p>
@@ -584,4 +599,49 @@ public class Patient extends Person {
 		
 		return rechnungen;
 	}
+	
+	// PatientDetailView backport from 2.2 - databinding bean compatibility
+	public String getAllergies(){
+		return get(FLD_ALLERGIES);
+	}
+	
+	public void setAllergies(String allergien){
+		set(FLD_ALLERGIES, allergien);
+	}
+	
+	public String getPersonalAnamnese(){
+		return get(FLD_PERS_ANAMNESE);
+	}	
+	
+	public void setPersonalAnamnese(String anamnese){
+		set(FLD_PERS_ANAMNESE, anamnese);
+	}
+	
+	public String getComment(){
+		return get(FLD_REMARK);
+	}	
+	
+	public void setComment(String bemerkungen){
+		set(FLD_REMARK, bemerkungen);
+	}
+	
+	public String getFamilyAnamnese(){
+		return get(FLD_FAM_ANAMNESE);
+	}
+	
+	public void setFamilyAnamnese(String anamnese){
+		set(FLD_FAM_ANAMNESE, anamnese);
+	}
+	
+	public void setDiagnosen(String diagnosen){
+		set(FLD_DIAGNOSES, diagnosen);
+	}
+	
+	public String getRisk(){
+		return get(FLD_RISKS);
+	}
+	
+	public void setRisk(String risk){
+		set(FLD_RISKS, risk);
+	}	
 }

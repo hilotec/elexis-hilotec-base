@@ -151,6 +151,8 @@ public class Desk implements IApplication {
 	public static final String IMG_MOVETOLOWERLIST = "movetolowerlist"; // $NON_NLS-1$ //$NON-NLS-1$
 	/** clear input field */
 	public static final String IMG_CLEAR = "cross_small"; // $NON_NLS-1$ //$NON-NLS-1$
+	/** pencil 8px - edit representor **/
+	public static final String IMG_PENCIL_8PX = "8_em_pencil.png";
 	
 	public static final String CUR_HYPERLINK = "cursor_hyperlink"; //$NON-NLS-1$
 	
