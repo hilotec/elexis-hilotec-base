@@ -8,6 +8,7 @@ Bundle-Vendor: %Bundle-Vendor.0
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.expressions,
+ org.eclipse.core.databinding.beans,
  org.eclipse.ui,
  org.eclipse.ui.forms,
  ch.rgw.utility,
@@ -268,8 +269,3 @@ Export-Package: .,
    org.eclipse.jface.dialogs",
  com.tiff.common.ui.datepicker;uses:="org.eclipse.swt.events,org.eclipse.swt.graphics,org.eclipse.swt.widgets"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.eclipse.core.databinding,
- org.eclipse.core.databinding.beans,
- org.eclipse.core.databinding.observable,
- org.eclipse.core.databinding.observable.value,
- org.eclipse.jface.databinding.swt
