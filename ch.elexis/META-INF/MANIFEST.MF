@@ -8,7 +8,9 @@ Bundle-Vendor: %Bundle-Vendor.0
 Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.expressions,
+ org.eclipse.core.databinding,
  org.eclipse.core.databinding.beans,
+ org.eclipse.jface.databinding,
  org.eclipse.ui,
  org.eclipse.ui.forms,
  ch.rgw.utility,
