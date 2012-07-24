@@ -1,2 +1,4 @@
 3.5.2012 - 2.0.3 - M. Descher
 	- Removed ESRView3 according to #955
+24.7.2012 - 2.0.4 - M. Descher
+	- Implemented new grand-unified view ch.elexis.ebanking_ch.ESRView to supersede the other views, see #1085

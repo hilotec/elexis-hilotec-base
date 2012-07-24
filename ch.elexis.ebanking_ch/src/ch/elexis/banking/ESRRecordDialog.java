@@ -148,7 +148,7 @@ public class ESRRecordDialog extends TitleAreaDialog {
 		
 		};
 	
-	ESRRecordDialog(Shell shell, ESRRecord record){
+	public ESRRecordDialog(Shell shell, ESRRecord record){
 		super(shell);
 		rec = record;
 	}
