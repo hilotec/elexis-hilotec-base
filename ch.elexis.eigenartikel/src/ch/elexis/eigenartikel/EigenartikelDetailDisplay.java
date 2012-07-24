@@ -14,9 +14,19 @@
 package ch.elexis.eigenartikel;
 
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.forms.widgets.FormToolkit;
+import org.eclipse.ui.forms.widgets.ScrolledForm;
+import org.eclipse.ui.forms.widgets.TableWrapData;
+import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 import ch.elexis.Desk;
 import ch.elexis.actions.ElexisEventDispatcher;
@@ -28,18 +38,20 @@ import ch.elexis.util.LabeledInputField;
 import ch.elexis.util.LabeledInputField.InputData;
 import ch.elexis.util.LabeledInputField.InputData.Typ;
 import ch.elexis.views.IDetailDisplay;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
-import org.eclipse.ui.forms.widgets.TableWrapData;
-import org.eclipse.ui.forms.widgets.TableWrapLayout;
 
 public class EigenartikelDetailDisplay implements IDetailDisplay {
-
+	
+	private static InputData inoffPharmacode;
+	
 	static final public InputData[] getFieldDefs(final Shell shell){
+		inoffPharmacode =
+			new InputData(Messages.EigenartikelDisplay_Pharmacode, Artikel.FLD_SUB_ID, Typ.STRING,
+				null);
+		
 		InputData[] ret =
 			new InputData[] {
 				new InputData(Messages.EigenartikelDisplay_typ, Artikel.FLD_TYP, Typ.STRING, null),
+				inoffPharmacode,
 				new InputData(Messages.EigenartikelDisplay_group, Artikel.FLD_CODECLASS,
 					Typ.STRING, null),
 				new InputData(Messages.EigenartikelDisplay_buyPrice, Artikel.FLD_EK_PREIS,
@@ -102,19 +114,33 @@ public class EigenartikelDetailDisplay implements IDetailDisplay {
 		Composite ret = form.getBody();
 		TableWrapLayout twl = new TableWrapLayout();
 		ret.setLayout(twl);
+		
 		tblArtikel = new LabeledInputField.AutoForm(ret, getFieldDefs(parent.getShell()));
+		
+		LabeledInputField lif = inoffPharmacode.getWidget();
+		Text inoffPharmacodeText = (Text) lif.getControl();
+		inoffPharmacodeText.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e){
+				MessageDialog
+					.openInformation(
+						PlatformUI.getWorkbench().getDisplay().getActiveShell(),
+						Messages.Eigenartikel_WarningPharmacodeChange_Title,
+						Messages.Eigenartikel_WarningPharmacodeChange);
+			}
+		});
 		
 		TableWrapData twd = new TableWrapData(TableWrapData.FILL_GRAB);
 		twd.grabHorizontal = true;
 		tblArtikel.setLayoutData(twd);
 		return ret;
 	}
-
+	
 	@Override
 	public Class<? extends PersistentObject> getElementClass(){
 		return Eigenartikel.class;
 	}
-
+	
 	@Override
 	public void display(Object obj){
 		if (obj instanceof Eigenartikel) {
@@ -123,11 +149,10 @@ public class EigenartikelDetailDisplay implements IDetailDisplay {
 			tblArtikel.reload(m);
 		}
 	}
-
+	
 	@Override
 	public String getTitle(){
 		return Messages.EigenartikelDisplay_displayTitle;
 	}
-
 	
 }

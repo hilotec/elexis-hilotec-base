@@ -17,6 +17,9 @@ public class Messages extends NLS {
 	public static String EigenartikelDisplay_pleaseChooseDealer;
 	public static String EigenartikelDisplay_sellPrice;
 	public static String EigenartikelDisplay_typ;
+	public static String EigenartikelDisplay_Pharmacode;
+	public static String Eigenartikel_WarningPharmacodeChange_Title;
+	public static String Eigenartikel_WarningPharmacodeChange;
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

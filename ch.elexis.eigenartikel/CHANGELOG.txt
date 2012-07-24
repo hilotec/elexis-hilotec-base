@@ -10,3 +10,5 @@
 1.0.4 - 1.0.6 ??? No documentation made by changing user
 1.0.7 - 30.9.2011
 	- Fix for missing context menu in Selector View
+1.0.8 - 24.7.2012
+	- Support for "Pharmacode" value of Eigenartikel -> backed by warning dialog, see #612
