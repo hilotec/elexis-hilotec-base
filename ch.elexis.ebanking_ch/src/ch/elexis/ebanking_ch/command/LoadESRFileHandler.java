@@ -16,8 +16,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.menus.UIElement;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
-import ch.elexis.Images;
 import ch.elexis.banking.ESRFile;
 import ch.elexis.banking.ESRRecord;
 import ch.elexis.banking.Messages;
@@ -120,7 +120,7 @@ public class LoadESRFileHandler extends AbstractHandler implements IElementUpdat
 
 	@Override
 	public void updateElement(UIElement element, Map parameters){
-		element.setIcon(Images.IMG_IMPORT.getImageDescriptor());
+		element.setIcon(Desk.getImageDescriptor(Desk.IMG_IMPORT));
 		element.setTooltip(Messages.ESRView_read_ESR_explain);
 	}
 	
