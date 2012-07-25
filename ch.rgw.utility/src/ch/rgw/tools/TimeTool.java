@@ -22,6 +22,44 @@ public class TimeTool extends GregorianCalendar {
 		return "3.2.2";
 	}
 	
+	/** formally enumerated days **/
+	public enum DAYS {
+		MONDAY(Calendar.MONDAY, Messages.getString("TimeTool.monday"), Messages.getString("TimeTool.mo")),
+		TUESDAY(Calendar.TUESDAY, Messages.getString("TimeTool.tuesday"), Messages.getString("TimeTool.tu")),
+		WEDNESDAY(Calendar.WEDNESDAY, Messages.getString("TimeTool.wednesday"), Messages.getString("TimeTool.we")),
+		THURSDAY(Calendar.THURSDAY, Messages.getString("TimeTool.thursday"), Messages.getString("TimeTool.th")),
+		FRIDAY(Calendar.FRIDAY, Messages.getString("TimeTool.friday"), Messages.getString("TimeTool.fr")),
+		SATURDAY(Calendar.SATURDAY, Messages.getString("TimeTool.saturday"), Messages.getString("TimeTool.sa")),
+		SUNDAY(Calendar.SUNDAY, Messages.getString("TimeTool.sunday"), Messages.getString("TimeTool.su"));
+		
+		public int numericDayValue;
+		public String fullName;
+		public String abbreviatedName;
+		
+		private DAYS(int numericDayValue, String fullName, String abbreviatedName){
+			this.numericDayValue = numericDayValue;
+			this.fullName = fullName;
+			this.abbreviatedName = abbreviatedName;
+		}
+
+		public static DAYS valueOf(int dayValue){
+			switch (dayValue) {
+			case Calendar.MONDAY: return MONDAY;
+			case Calendar.TUESDAY: return TUESDAY;
+			case Calendar.WEDNESDAY: return WEDNESDAY;
+			case Calendar.THURSDAY: return THURSDAY;
+			case Calendar.FRIDAY: return FRIDAY;
+			case Calendar.SATURDAY: return SATURDAY;
+			case Calendar.SUNDAY: return SUNDAY;
+			default:
+				return null;
+			}
+		}
+		
+		
+	}
+	
+	
 	/** first day that can be set into a TimeTool */
 	public static final String BEGINNING_OF_UNIX_EPOCH = "19700101";
 	/** last date a TimeTool can be set to */
@@ -740,5 +778,4 @@ public class TimeTool extends GregorianCalendar {
 		}
 		return 0;
 	}
-	
 }
