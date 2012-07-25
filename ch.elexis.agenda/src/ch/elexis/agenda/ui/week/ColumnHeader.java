@@ -109,13 +109,22 @@ public class ColumnHeader extends Composite {
 		protected Control createDialogArea(Composite parent){
 			Composite ret = (Composite) super.createDialogArea(parent);
 			ret.setLayout(new GridLayout());
-			String[] days = view.getDisplayedDays();
-			for (String s : TimeTool.Wochentage) {
+			
+			String resources =
+				Hub.localCfg.get(PreferenceConstants.AG_DAYSTOSHOW,
+					StringTool.join(TimeTool.Wochentage, ",")); //$NON-NLS-1$
+			String[] daysSelected = resources.split(",");
+			
+			for (TimeTool.DAYS day : TimeTool.DAYS.values()) {
 				Button b = new Button(ret, SWT.CHECK);
-				b.setText(s);
-				if (StringTool.getIndex(days, s) != -1) {
-					b.setSelection(true);
+				b.setText(day.fullName);
+				b.setSelection(false);
+				b.setData(day.numericDayValue);
+				for (String string : daysSelected) {
+					if (string.toLowerCase().equalsIgnoreCase(day.fullName.toLowerCase()))
+						b.setSelection(true);
 				}
+				
 			}
 			return ret;
 		}
@@ -136,7 +145,8 @@ public class ColumnHeader extends Composite {
 			for (Control c : dlg.getChildren()) {
 				if (c instanceof Button) {
 					if (((Button) c).getSelection()) {
-						sel.add(((Button) c).getText());
+						int dayValue = (Integer) ((Button) c).getData();
+						sel.add(TimeTool.DAYS.valueOf(dayValue).fullName);
 					}
 				}
 			}

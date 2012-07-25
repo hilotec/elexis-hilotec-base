@@ -119,8 +119,8 @@ public class AgendaWeek extends BaseView {
 			return new String[0];
 		} else {
 			ArrayList<String> ret = new ArrayList<String>(resources.length());
-			for (String wd : TimeTool.Wochentage) {
-				if (resources.indexOf(wd) != -1) {
+			for (TimeTool.DAYS wd : TimeTool.DAYS.values()) {
+				if (resources.indexOf(wd.fullName) != -1) {
 					ret.add(ttMonday.toString(TimeTool.DATE_COMPACT));
 				}
 				ttMonday.addDays(1);

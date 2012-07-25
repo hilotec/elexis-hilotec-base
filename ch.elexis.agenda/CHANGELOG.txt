@@ -3,3 +3,5 @@
 	- Update auf ical4j 1.0.1, siehe Ticket 730
 2.1.5.1 - 6.7.2012 - M. Descher
 	- Fix for wrong ui presentation of search field in Linux due to missing LayoutData
+2.1.5.2	- 25.7.2012 - M. Descher
+	- Fix forr erroneuos synchronizatino of weekdays view selection and weekday presentation in Weekdays view -> see #999
