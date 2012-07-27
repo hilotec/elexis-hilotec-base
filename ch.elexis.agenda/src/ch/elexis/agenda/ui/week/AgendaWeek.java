@@ -48,7 +48,7 @@ public class AgendaWeek extends BaseView {
 	private ColumnHeader header;
 	
 	public AgendaWeek(){
-
+		
 	}
 	
 	public ColumnHeader getHeader(){
@@ -113,8 +113,8 @@ public class AgendaWeek extends BaseView {
 		ttMonday.set(TimeTool.DAY_OF_WEEK, TimeTool.MONDAY);
 		ttMonday.chop(3);
 		String resources =
-			Hub.localCfg.get(PreferenceConstants.AG_DAYSTOSHOW, StringTool.join(
-				TimeTool.Wochentage, ",")); //$NON-NLS-1$
+			Hub.localCfg.get(PreferenceConstants.AG_DAYSTOSHOW,
+				StringTool.join(TimeTool.Wochentage, ",")); //$NON-NLS-1$
 		if (resources == null) {
 			return new String[0];
 		} else {
@@ -214,11 +214,16 @@ public class AgendaWeek extends BaseView {
 			}
 			
 			private void fillMenu(){
+				String currentFactorString =
+					Hub.localCfg.get(PreferenceConstants.AG_PIXEL_PER_MINUTE, "0.4");
+				int currentFactor = (int) (Float.parseFloat(currentFactorString) * 100);
 				for (String s : new String[] {
 					"40", "60", "80", "100", "120", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 					"140", "160", "200", "300"}) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 					MenuItem it = new MenuItem(mine, SWT.RADIO);
 					it.setText(s + "%"); //$NON-NLS-1$
+					it.setData(s);
+					it.setSelection(Integer.parseInt(s) == currentFactor);
 					it.addSelectionListener(new SelectionAdapter() {
 						
 						@Override
@@ -226,8 +231,8 @@ public class AgendaWeek extends BaseView {
 							MenuItem mi = (MenuItem) e.getSource();
 							int scale = Integer.parseInt(mi.getText().split("%")[0]); //$NON-NLS-1$
 							double factor = scale / 100.0;
-							Hub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE, Double
-								.toString(factor));
+							Hub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE,
+								Double.toString(factor));
 							sheet.recalc();
 						}
 						

@@ -27,6 +27,9 @@ public class PreferenceConstants {
 	public static final String AG_SHOW_REASON = "agenda/show_reason"; //$NON-NLS-1$
 	public static final String AG_BEREICH = "agenda/bereich"; //$NON-NLS-1$
 	
+	public static final String AG_DAY_PRESENTATION_STARTS_AT = "agenda/beginnStundeTagesdarstellung";
+	public static final String AG_DAY_PRESENTATION_ENDS_AT = "agenda/endStundeTagesdarstellung";
+	
 	public static final String AG_PIXEL_PER_MINUTE = "agenda/proportional/pixelperminute"; //$NON-NLS-1$
 	public static final String AG_RESOURCESTOSHOW = "agenda/proportional/bereichezeigen"; //$NON-NLS-1$
 	public static final String AG_DAYSTOSHOW = "agenda/wochenanzeige/tagezeigen"; //$NON-NLS-1$

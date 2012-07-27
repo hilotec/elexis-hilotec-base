@@ -39,6 +39,7 @@ import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.acl.ACLContributor;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.dialogs.TerminDialog;
@@ -68,6 +69,7 @@ public class TerminLabel extends Composite {
 		lbl.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseDoubleClick(MouseEvent e){
+				System.out.println("doubleClick");
 				agenda.setActDate(t.getDay());
 				agenda.setActResource(t.getBereich());
 				new TerminDialog(t).open();
@@ -137,9 +139,56 @@ public class TerminLabel extends Composite {
 		int lx =
 			ial.getLeftOffset()
 				+ (int) Math.round(getColumn() * (ial.getWidthPerColumn() + ial.getPadding()));
-		int ly = (int) Math.round(t.getBeginn() * ial.getPixelPerMinute());
+		
+		String startOfDayTimeInMinutes = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "00:00");		
+		int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.split(":")[0]);
+		int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.split(":")[1]);
+		int sodtM = (sodtHours*60);
+		sodtM+=sodtMinutes;
+		
+		String endOfDayTimeInMinutes = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "23:59");
+		int eodtHours = Integer.parseInt(endOfDayTimeInMinutes.split(":")[0]);
+		int eodtMinutes = Integer.parseInt(endOfDayTimeInMinutes.split(":")[1]);
+		int eodtM = (eodtHours*60);
+		eodtM+=eodtMinutes;
+		
+		int dayLength = eodtM - sodtM;
+		
+		
+		if((t.getBeginn() < sodtM) && (t.getBeginn()+t.getDauer() < sodtM)) {
+			// skip this entry as  begin and end are not visible
+			setBounds(0,0,0,0);
+			return;
+		}
+		
+		if((t.getBeginn()>eodtM) && (t.getBeginn()+t.getDauer() > eodtM)) {
+			// skip this entry as begin and end are not visible
+			setBounds(0,0,0,0);
+			return;
+		}
+		
+		int ly = 0;
+		int lh = 0;
+		
+		if(t.getBeginn()<sodtM) {
+			ly = (int) Math.round(t.getBeginn() * ial.getPixelPerMinute());
+			int diff = ((t.getDauer()-sodtM) < 0) ? t.getDauer() : (t.getDauer()-sodtM);
+			
+			diff += ((t.getBeginn()+diff)>eodtM)  ? (t.getBeginn()+diff)-eodtM : 0;
+			
+			lh = (int) Math.round(diff * ial.getPixelPerMinute());
+			
+		} else {
+			int startMinute = t.getBeginn()-sodtM;
+			ly = (int) Math.round(startMinute * ial.getPixelPerMinute());
+			
+			int ends = t.getBeginn()+t.getDauer();
+			int heigthDiff = ends - eodtM;
+			if(heigthDiff<0) heigthDiff = 0;		
+			lh = (int) Math.round((t.getDauer()-heigthDiff) * ial.getPixelPerMinute());
+		}		
 		int lw = (int) Math.round(ial.getWidthPerColumn());
-		int lh = (int) Math.round(t.getDauer() * ial.getPixelPerMinute());
+
 		setBounds(lx, ly, lw, lh);
 		GridData gd = (GridData) state.getLayoutData();
 		gd.minimumWidth = 10;

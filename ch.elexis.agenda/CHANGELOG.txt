@@ -5,3 +5,7 @@
 	- Fix for wrong ui presentation of search field in Linux due to missing LayoutData
 2.1.5.2	- 25.7.2012 - M. Descher
 	- Fix forr erroneuos synchronizatino of weekdays view selection and weekday presentation in Weekdays view -> see #999
+2.1.6 - July 2012 - M. Descher
+	- Fix for null pointer bug
+	- Implement variable day start presentation -> see #1001
+	- show current zoom state in selection menu

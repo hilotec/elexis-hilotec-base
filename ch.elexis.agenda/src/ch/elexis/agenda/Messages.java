@@ -174,6 +174,12 @@ public final class Messages extends NLS {
 	public static String ICalTransfer_readError;
 	public static String ICalTransfer_until;
 	public static String MinutesFree;
+	public static String Tageseinteilung_lblDaysStartAt_text;
+	public static String Tageseinteilung_btnDaysStartAt_text;
+	public static String Tageseinteilung_btnCheckButton_text;
+	public static String Tageseinteilung_lblHours_text;
+	public static String Tageseinteilung_btnCheckButton_text_1;
+	public static String Tageseinteilung_lblHours_1_text;
 	
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);

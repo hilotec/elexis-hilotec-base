@@ -35,8 +35,11 @@ public class BereichSelectionHandler {
 	}
 	
 	public static void updateListeners(){
+		if (bereichSelectionEventListener == null)
+			return;
 		for (IBereichSelectionEvent listener : bereichSelectionEventListener) {
-			listener.bereichSelectionEvent(agenda.getActResource());
+			String actResource = agenda.getActResource();
+			listener.bereichSelectionEvent(actResource);
 		}
 	}
 	

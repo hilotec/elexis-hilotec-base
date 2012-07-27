@@ -41,8 +41,8 @@ import org.eclipse.swt.widgets.ScrollBar;
 import ch.elexis.Hub;
 import ch.elexis.actions.Activator;
 import ch.elexis.agenda.data.Termin;
+import ch.elexis.agenda.preferences.PreferenceConstants;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.data.PersistentObjectFactory;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.TerminDialog;
 import ch.elexis.util.PersistentObjectDropTarget;
@@ -207,7 +207,20 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 	void recalc(){
 		if (tlabels != null) {
 			ppm = AgendaParallel.getPixelPerMinute();
-			sheetHeight = (int) Math.round(ppm * 60 * 24);
+			
+			String startOfDayTimeInMinutes = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "00:00");		
+			int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.split(":")[0]);
+			int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.split(":")[1]);
+			int sodtM = (sodtHours*60);
+			sodtM+=sodtMinutes;
+			
+			String endOfDayTimeInMinutes = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "23:59");
+			int eodtHours = Integer.parseInt(endOfDayTimeInMinutes.split(":")[0]);
+			int eodtMinutes = Integer.parseInt(endOfDayTimeInMinutes.split(":")[1]);
+			int eodtM = (eodtHours*60);
+			eodtM+=eodtMinutes;
+					
+			sheetHeight = (int) Math.round(ppm * (eodtM-sodtM));
 			ScrolledComposite sc = (ScrolledComposite) getParent();
 			Point mySize = getSize();
 			
@@ -262,8 +275,11 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			gc.fillRectangle(e.x, e.y, e.width, e.height);
 			int y = 0;
 			TimeTool runner = new TimeTool();
-			runner.set("00:00"); //$NON-NLS-1$
-			TimeTool limit = new TimeTool("23:59"); //$NON-NLS-1$
+			String dayStartsAt = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "00:00");
+			runner.set(dayStartsAt); //$NON-NLS-1$
+			
+			String dayEndsAt = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "23:59");
+			TimeTool limit = new TimeTool(dayEndsAt); //$NON-NLS-1$
 			Point textSize = gc.textExtent("88:88"); //$NON-NLS-1$
 			int textwidth = textSize.x;
 			

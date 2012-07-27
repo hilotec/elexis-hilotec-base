@@ -56,7 +56,7 @@ public class AgendaParallel extends BaseView {
 	private Composite wrapper;
 	
 	public AgendaParallel(){
-
+		
 	}
 	
 	public ColumnHeader getHeader(){
@@ -105,8 +105,8 @@ public class AgendaParallel extends BaseView {
 	 */
 	public String[] getDisplayedResources(){
 		String resources =
-			Hub.localCfg.get(PreferenceConstants.AG_RESOURCESTOSHOW, StringTool.join(agenda
-				.getResources(), ",")); //$NON-NLS-1$
+			Hub.localCfg.get(PreferenceConstants.AG_RESOURCESTOSHOW,
+				StringTool.join(agenda.getResources(), ",")); //$NON-NLS-1$
 		if (resources == null) {
 			return new String[0];
 		} else {
@@ -208,19 +208,24 @@ public class AgendaParallel extends BaseView {
 				}
 				
 				private void fillMenu(){
+					String currentFactorString =
+						Hub.localCfg.get(PreferenceConstants.AG_PIXEL_PER_MINUTE, "0.4");
+					int currentFactor = (int) (Float.parseFloat(currentFactorString) * 100);
 					for (String s : new String[] {
 						"40", "60", "80", "100", "120", "140", "160", "200", "300"}) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
 						MenuItem it = new MenuItem(mine, SWT.RADIO);
 						it.setText(s + "%"); //$NON-NLS-1$
+						it.setData(s);
+						it.setSelection(Integer.parseInt(s) == currentFactor);
 						it.addSelectionListener(new SelectionAdapter() {
 							
 							@Override
 							public void widgetSelected(SelectionEvent e){
 								MenuItem mi = (MenuItem) e.getSource();
-								int scale = Integer.parseInt(mi.getText().split("%")[0]); //$NON-NLS-1$
+								int scale = Integer.parseInt((String) mi.getData()); //$NON-NLS-1$
 								double factor = scale / 100.0;
-								Hub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE, Double
-									.toString(factor));
+								Hub.localCfg.set(PreferenceConstants.AG_PIXEL_PER_MINUTE,
+									Double.toString(factor));
 								sheet.recalc();
 							}
 							

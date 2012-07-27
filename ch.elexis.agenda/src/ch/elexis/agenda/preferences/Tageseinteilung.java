@@ -19,13 +19,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
-import ch.elexis.agenda.Messages;
 
 import ch.elexis.Hub;
-import ch.elexis.agenda.preferences.PreferenceConstants;
+import ch.elexis.agenda.Messages;
 import ch.elexis.agenda.util.Plannables;
 import ch.elexis.util.SWTHelper;
 
@@ -33,6 +36,9 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 	Text tMo, tDi, tMi, tDo, tFr, tSa, tSo;
 	int actBereich;
 	String[] bereiche;
+	private Composite compositeDayBorders;
+	private Text sodt;
+	private Text eodt;
 	
 	public Tageseinteilung(){
 		super(Messages.Tageseinteilung_dayPlanning);
@@ -74,6 +80,32 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		tSo = new Text(grid, SWT.BORDER | SWT.MULTI);
 		tSo.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		cbBereich.select(actBereich);
+		
+		compositeDayBorders = new Composite(ret, SWT.NONE);
+		compositeDayBorders.setLayout(new GridLayout(2, false));
+		
+		Composite compositeStart = new Composite(compositeDayBorders, SWT.NONE);
+		compositeStart.setLayout(new GridLayout(3, false));
+		
+		Label btnDayStartHourIsSet = new Label(compositeStart, SWT.CHECK);
+		btnDayStartHourIsSet.setText(Messages.Tageseinteilung_btnCheckButton_text);
+		
+		sodt = new Text(compositeStart, SWT.BORDER);
+		
+		Label lblHours = new Label(compositeStart, SWT.NONE);
+		lblHours.setText(Messages.Tageseinteilung_lblHours_text);
+		
+		Composite compositeEnd = new Composite(compositeDayBorders, SWT.NONE);
+		compositeEnd.setLayout(new GridLayout(3, false));
+		
+		Label btnEndStartHourIsSet = new Label(compositeEnd, SWT.CHECK);
+		btnEndStartHourIsSet.setText(Messages.Tageseinteilung_btnCheckButton_text_1);
+		
+		eodt = new Text(compositeEnd, SWT.BORDER);
+		
+		Label lblHours_1 = new Label(compositeEnd, SWT.NONE);
+		lblHours_1.setText(Messages.Tageseinteilung_lblHours_1_text);
+
 		reload();
 		cbBereich.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -106,6 +138,12 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		tSa.setText(p == null ? "0000-0800\n1200-2359" : p); //$NON-NLS-1$
 		p = map.get(Messages.Tageseinteilung_su);
 		tSo.setText(p == null ? "0000-2359" : p); //$NON-NLS-1$
+		
+		String sodtString = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "00:00");
+		sodt.setText(sodtString);
+		String eodtString = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "23:59");
+		eodt.setText(eodtString);
+		
 	}
 	
 	void save(){
@@ -118,6 +156,9 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		map.put(Messages.Tageseinteilung_sa, tSa.getText());
 		map.put(Messages.Tageseinteilung_su, tSo.getText());
 		Plannables.setDayPrefFor(bereiche[actBereich], map);
+		
+		Hub.globalCfg.set(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, sodt.getText());
+		Hub.globalCfg.set(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, eodt.getText());
 	}
 	
 	public void init(IWorkbench workbench){
@@ -130,5 +171,4 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		save();
 		super.performApply();
 	}
-	
 }

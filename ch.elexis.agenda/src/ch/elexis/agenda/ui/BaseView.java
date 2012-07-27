@@ -130,12 +130,15 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 			int d = date.get(Calendar.DAY_OF_WEEK);
 			String ds = map.get(TimeTool.wdays[d - 1]);
 			if (StringTool.isNothing(ds)) {
+				// default für Tagesgrenzen falls nicht definiert
 				ds = "0000-0800\n1800-2359"; //$NON-NLS-1$
 			}
 			String[] flds = ds.split("\r*\n\r*"); //$NON-NLS-1$
 			for (String fld : flds) {
 				String from = fld.substring(0, 4);
 				String until = fld.replaceAll("-", "").substring(4); //$NON-NLS-1$ //$NON-NLS-2$
+				System.out.println("from:"+from+"/until:"+until);
+				// Lege Termine für die Tagesgrenzen an 
 				new Termin(resource, day, TimeTool.getMinutesFromTimeString(from), TimeTool
 					.getMinutesFromTimeString(until), Termin.typReserviert(), Termin.statusLeer());
 			}
