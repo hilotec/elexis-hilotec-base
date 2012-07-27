@@ -53,6 +53,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	public static final String FLD_TAG = "Tag"; //$NON-NLS-1$
 	public static final String FLD_LASTEDIT = "lastedit"; //$NON-NLS-1$
 	public static final String FLD_STATUSHIST = "StatusHistory"; //$NON-NLS-1$
+	public static final String TABLENAME = "AGNTERMINE";
 	public static final String VERSION = "1.2.5"; //$NON-NLS-1$
 	public static String[] TerminTypes;
 	public static String[] TerminStatus;
@@ -79,7 +80,7 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 		+ "INSERT INTO AGNTERMINE (ID) VALUES ('1');"; //$NON-NLS-1$
 	
 	private static final String upd122 = "ALTER TABLE AGNTERMINE MODIFY TerminTyp VARCHAR(50);" //$NON-NLS-1$
-		+ "ALTER TABLE AGNTERMINE MODIFY TerminStatus VARCHAR(50);"; //$NON-NLS-1$
+		+ "ALTER TABLE "+TABLENAME+"+ MODIFY TerminStatus VARCHAR(50);"; //$NON-NLS-1$
 	
 	private static final String upd124 = "ALTER TABLE AGNTERMINE ADD lastupdate BIGINT;"; //$NON-NLS-1$
 	private static final String upd125 = "ALTER TABLE AGNTERMINE ADD StatusHistory TEXT;"; //$NON-NLS-1$
@@ -952,6 +953,16 @@ public class Termin extends PersistentObject implements Cloneable, Comparable<Te
 	@Override
 	public boolean isDragOK(){
 		return true;
+	}
+	
+	public boolean crossesTimeFrame(int begin, int dauer){
+		int aMin = getBeginn();
+		int aMax = getBeginn()+getDauer();
+		
+		if ((aMax < begin) || ((begin+dauer) < aMin))
+			return false;
+		return true;
+		
 	}
 	
 }

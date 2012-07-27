@@ -12,25 +12,46 @@
  *******************************************************************************/
 package ch.elexis.agenda.preferences;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Hashtable;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ComboViewer;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.statushandlers.StatusManager;
 
+import ch.elexis.Desk;
 import ch.elexis.Hub;
+import ch.elexis.actions.Activator;
 import ch.elexis.agenda.Messages;
+import ch.elexis.agenda.data.Termin;
 import ch.elexis.agenda.util.Plannables;
+import ch.elexis.agenda.util.TermineLockedTimesUpdater;
 import ch.elexis.util.SWTHelper;
+import ch.rgw.tools.TimeTool;
+import ch.rgw.tools.TimeTool.DAYS;
 
 public class Tageseinteilung extends PreferencePage implements IWorkbenchPreferencePage {
 	Text tMo, tDi, tMi, tDo, tFr, tSa, tSo;
@@ -39,6 +60,15 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 	private Composite compositeDayBorders;
 	private Text sodt;
 	private Text eodt;
+	private ComboViewer comboViewerDayEditSelector;
+	private Button btnEditValuesFor;
+	private Label lblChangedValuesAre;
+	private DateTime dateTimeStartingFrom;
+	private Button btnApplyEdit;
+	private Composite compositeEditStarting;
+	private TimeTool.DAYS editSelection;
+	private Text editSelectionText;
+	private Color originalBackgroundColor;
 	
 	public Tageseinteilung(){
 		super(Messages.Tageseinteilung_dayPlanning);
@@ -55,6 +85,7 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		new Label(ret, SWT.None).setText(Messages.Tageseinteilung_enterPeriods);
 		final Combo cbBereich = new Combo(ret, SWT.READ_ONLY | SWT.SINGLE);
 		cbBereich.setItems(bereiche);
+		
 		Composite grid = new Composite(ret, SWT.BORDER);
 		grid.setLayout(new GridLayout(7, true));
 		grid.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
@@ -66,20 +97,151 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		new Label(grid, SWT.NONE).setText(Messages.Tageseinteilung_sa);
 		new Label(grid, SWT.NONE).setText(Messages.Tageseinteilung_so);
 		tMo = new Text(grid, SWT.BORDER | SWT.MULTI);
+		tMo.setEnabled(false);
 		tMo.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		originalBackgroundColor = tMo.getBackground();
 		tDi = new Text(grid, SWT.BORDER | SWT.MULTI);
 		tDi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		tDi.setEnabled(false);
 		tMi = new Text(grid, SWT.BORDER | SWT.MULTI);
 		tMi.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		tMi.setEnabled(false);
 		tDo = new Text(grid, SWT.BORDER | SWT.MULTI);
 		tDo.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		tDo.setEnabled(false);
 		tFr = new Text(grid, SWT.BORDER | SWT.MULTI);
 		tFr.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		tFr.setEnabled(false);
 		tSa = new Text(grid, SWT.BORDER | SWT.MULTI);
 		tSa.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		tSa.setEnabled(false);
 		tSo = new Text(grid, SWT.BORDER | SWT.MULTI);
 		tSo.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
+		tSo.setEnabled(false);
 		cbBereich.select(actBereich);
+		
+		Composite editDayComposite = new Composite(grid, SWT.None);
+		editDayComposite.setLayoutData(SWTHelper.getFillGridData(7, true, 1, false));
+		editDayComposite.setLayout(new GridLayout(3, false));
+		
+		btnEditValuesFor = new Button(editDayComposite, SWT.NONE);
+		btnEditValuesFor.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				StructuredSelection ss =
+					(StructuredSelection) comboViewerDayEditSelector.getSelection();
+				editSelection = (DAYS) ss.getFirstElement();
+				if (editSelection == null)
+					return;
+				
+				Text[] days = new Text[] {
+					tMo, tDi, tMi, tDo, tFr, tSa, tSo
+				};
+				for (Text text : days) {
+					text.setEnabled(false);
+					text.setBackground(originalBackgroundColor);
+				}
+				
+				switch (editSelection) {
+				case MONDAY:
+					editSelectionText = tMo;
+					break;
+				case TUESDAY:
+					editSelectionText = tDi;
+					break;
+				case FRIDAY:
+					editSelectionText = tFr;
+					break;
+				case SATURDAY:
+					editSelectionText = tSa;
+					break;
+				case SUNDAY:
+					editSelectionText = tSo;
+					break;
+				case THURSDAY:
+					editSelectionText = tDo;
+					break;
+				case WEDNESDAY:
+					editSelectionText = tMi;
+					break;
+				default:
+					break;
+				}
+				editSelectionText.setEnabled(true);
+				editSelectionText.setBackground(PlatformUI.getWorkbench().getDisplay()
+					.getSystemColor(SWT.COLOR_YELLOW));
+				btnApplyEdit.setEnabled(true);
+				dateTimeStartingFrom.setEnabled(true);
+				editSelectionText.setFocus();
+			}
+		});
+		btnEditValuesFor.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		btnEditValuesFor.setText(Messages.Tageseinteilung_lblEditValuesFor_text);
+		
+		comboViewerDayEditSelector = new ComboViewer(editDayComposite, SWT.NONE);
+		Combo comboDayEditSelector = comboViewerDayEditSelector.getCombo();
+		comboDayEditSelector.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		compositeEditStarting = new Composite(editDayComposite, SWT.NONE);
+		compositeEditStarting.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1));
+		GridLayout gl_compositeEditStarting = new GridLayout(3, false);
+		gl_compositeEditStarting.verticalSpacing = 0;
+		gl_compositeEditStarting.marginHeight = 0;
+		compositeEditStarting.setLayout(gl_compositeEditStarting);
+		
+		lblChangedValuesAre = new Label(compositeEditStarting, SWT.NONE);
+		lblChangedValuesAre.setText(Messages.Tageseinteilung_lblChangedValuesAre_text);
+		
+		dateTimeStartingFrom = new DateTime(compositeEditStarting, SWT.BORDER);
+		dateTimeStartingFrom.setEnabled(false);
+		
+		btnApplyEdit = new Button(compositeEditStarting, SWT.NONE);
+		btnApplyEdit.setText(Messages.Tageseinteilung_btnNewButton_text);
+		btnApplyEdit.setEnabled(false);
+		btnApplyEdit.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				// Apply the selected edits starting from the selected date
+				int day = dateTimeStartingFrom.getDay(); // Calendar.DAY_OF_MONTH
+				int month = dateTimeStartingFrom.getMonth(); // Calendar.MONTH
+				int year = dateTimeStartingFrom.getYear(); // Calendar.YEAR
+				String timeString =
+					String.format("%02d", day) + "." + String.format("%02d", month + 1) + "."
+						+ String.format("%04d", year);
+				ProgressMonitorDialog pmd = new ProgressMonitorDialog(Desk.getTopShell());
+				IRunnableWithProgress irp =
+					new TermineLockedTimesUpdater(new TimeTool(timeString), editSelection,
+						editSelectionText.getText(), Termin.TerminBereiche[actBereich]);
+				try {
+					pmd.run(false, false, irp);
+					editSelectionText.setBackground(originalBackgroundColor);
+					editSelectionText.setEnabled(false);
+				} catch (InvocationTargetException e1) {
+					Status status =
+						new Status(IStatus.WARNING, Activator.PLUGIN_ID, "Execution Error", e1);
+					StatusManager.getManager().handle(status, StatusManager.SHOW);
+				} catch (InterruptedException e1) {
+					Status status =
+						new Status(IStatus.WARNING, Activator.PLUGIN_ID, "Execution Error", e1);
+					StatusManager.getManager().handle(status, StatusManager.SHOW);
+				}
+				
+				dateTimeStartingFrom.setEnabled(false);
+				btnApplyEdit.setEnabled(false);
+			}
+		});
+		
+		comboViewerDayEditSelector.setContentProvider(ArrayContentProvider.getInstance());
+		comboViewerDayEditSelector.setLabelProvider(new LabelProvider() {
+			@Override
+			public String getText(Object element){
+				TimeTool.DAYS day = (TimeTool.DAYS) element;
+				return day.fullName;
+			}
+		});
+		TimeTool.DAYS[] days = TimeTool.DAYS.values();
+		comboViewerDayEditSelector.setInput(days);
+		comboViewerDayEditSelector.setSelection(new StructuredSelection(days[0]));
 		
 		compositeDayBorders = new Composite(ret, SWT.NONE);
 		compositeDayBorders.setLayout(new GridLayout(2, false));
@@ -105,7 +267,7 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		
 		Label lblHours_1 = new Label(compositeEnd, SWT.NONE);
 		lblHours_1.setText(Messages.Tageseinteilung_lblHours_1_text);
-
+		
 		reload();
 		cbBereich.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -139,9 +301,11 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		p = map.get(Messages.Tageseinteilung_su);
 		tSo.setText(p == null ? "0000-2359" : p); //$NON-NLS-1$
 		
-		String sodtString = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "00:00");
+		String sodtString =
+			Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "00:00");
 		sodt.setText(sodtString);
-		String eodtString = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "23:59");
+		String eodtString =
+			Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "23:59");
 		eodt.setText(eodtString);
 		
 	}
@@ -162,13 +326,19 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 	}
 	
 	public void init(IWorkbench workbench){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	@Override
 	protected void performApply(){
 		save();
 		super.performApply();
+	}
+	
+	@Override
+	public boolean performOk(){
+		save();
+		return super.performOk();
 	}
 }

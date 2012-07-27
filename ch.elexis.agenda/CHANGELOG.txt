@@ -9,3 +9,7 @@
 	- Fix for null pointer bug
 	- Implement variable day start presentation -> see #1001
 	- show current zoom state in selection menu
+2.1.7 - July 2012 - M. Descher
+	- Formal modification of reserved times -> see #1087
+	- Check whether a reserved time clashes with an appointment -> see #1087
+	- Wochentage view now refreshes on focus

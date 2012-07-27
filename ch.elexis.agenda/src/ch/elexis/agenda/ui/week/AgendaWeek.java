@@ -104,8 +104,7 @@ public class AgendaWeek extends BaseView {
 	
 	@Override
 	public void setFocus(){
-		sheet.setFocus();
-		
+		refresh();
 	}
 	
 	public String[] getDisplayedDays(){

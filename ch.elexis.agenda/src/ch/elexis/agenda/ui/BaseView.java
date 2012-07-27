@@ -17,8 +17,13 @@
 package ch.elexis.agenda.ui;
 
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.Hashtable;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
@@ -26,7 +31,9 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.part.ViewPart;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Desk;
 import ch.elexis.Hub;
@@ -48,7 +55,6 @@ import ch.elexis.agenda.util.Plannables;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
-import ch.elexis.dialogs.TagesgrenzenDialog;
 import ch.elexis.dialogs.TerminDialog;
 import ch.elexis.dialogs.TerminListeDruckenDialog;
 import ch.elexis.dialogs.TermineDruckenDialog;
@@ -63,6 +69,8 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public abstract class BaseView extends ViewPart implements HeartListener, IActivationListener {
+	public BaseView() {
+	}
 	private static final String DEFAULT_PIXEL_PER_MINUTE = "1.0"; //$NON-NLS-1$
 	
 	public IAction newTerminAction, blockAction;
@@ -71,22 +79,22 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 	MenuManager menu = new MenuManager();
 	protected Activator agenda = Activator.getDefault();
 	
-	private final ElexisEventListenerImpl eeli_termin =
-		new ElexisEventListenerImpl(Termin.class, ElexisEvent.EVENT_RELOAD) {
-			public void runInUi(ElexisEvent ev){
-				internalRefresh();
-			}
-		};
+	private final ElexisEventListenerImpl eeli_termin = new ElexisEventListenerImpl(Termin.class,
+		ElexisEvent.EVENT_RELOAD) {
+		public void runInUi(ElexisEvent ev){
+			internalRefresh();
+		}
+	};
 	
-	private final ElexisEventListenerImpl eeli_user =
-		new ElexisEventListenerImpl(Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
-			public void runInUi(ElexisEvent ev){
-				updateActions();
-				agenda.setActResource(Hub.userCfg.get(PreferenceConstants.AG_BEREICH, agenda
-					.getActResource()));
-				
-			}
-		};
+	private final ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(Anwender.class,
+		ElexisEvent.EVENT_USER_CHANGED) {
+		public void runInUi(ElexisEvent ev){
+			updateActions();
+			agenda.setActResource(Hub.userCfg.get(PreferenceConstants.AG_BEREICH,
+				agenda.getActResource()));
+			
+		}
+	};
 	
 	@Override
 	public void createPartControl(Composite parent){
@@ -137,10 +145,10 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 			for (String fld : flds) {
 				String from = fld.substring(0, 4);
 				String until = fld.replaceAll("-", "").substring(4); //$NON-NLS-1$ //$NON-NLS-2$
-				System.out.println("from:"+from+"/until:"+until);
-				// Lege Termine für die Tagesgrenzen an 
-				new Termin(resource, day, TimeTool.getMinutesFromTimeString(from), TimeTool
-					.getMinutesFromTimeString(until), Termin.typReserviert(), Termin.statusLeer());
+				// Lege Termine für die Tagesgrenzen an
+				new Termin(resource, day, TimeTool.getMinutesFromTimeString(from),
+					TimeTool.getMinutesFromTimeString(until), Termin.typReserviert(),
+					Termin.statusLeer());
 			}
 			
 		}
@@ -160,7 +168,7 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 	}
 	
 	public void activation(boolean mode){
-
+		
 	}
 	
 	public void visible(boolean mode){
@@ -196,9 +204,24 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 		dayLimitsAction = new Action(Messages.BaseView_dayLimits) {
 			@Override
 			public void run(){
-				new TagesgrenzenDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-					.getShell(), agenda.getActDate().toString(TimeTool.DATE_COMPACT), agenda
-					.getActResource()).open();
+// new TagesgrenzenDialog(PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+// .getShell(), agenda.getActDate().toString(TimeTool.DATE_COMPACT), agenda
+// .getActResource()).open();
+				ICommandService commandService =
+					(ICommandService) PlatformUI.getWorkbench().getService(ICommandService.class);
+				
+				Command cmd = commandService.getCommand("org.eclipse.ui.window.preferences");
+				try {
+					HashMap<String, String> hm = new HashMap<String, String>();
+					hm.put("preferencePageId", "ch.elexis.agenda.tageseinteilung");
+					ExecutionEvent ev = new ExecutionEvent(cmd, hm, null, null);
+					cmd.executeWithChecks(ev);
+				} catch (Exception exception) {
+					Status status =
+						new Status(IStatus.WARNING, Activator.PLUGIN_ID,
+							"Error opening preference page ch.elexis.agenda.tageseinteilung", exception);
+					StatusManager.getManager().handle(status, StatusManager.SHOW);
+				}
 				refresh();
 			}
 		};
@@ -267,8 +290,8 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 								PreferenceConstants.AG_PRINT_APPOINTMENTCARD_DIRECTPRINT_DEFAULT);
 						
 						TermineDruckenDialog dlg =
-							new TermineDruckenDialog(getViewSite().getShell(), list
-								.toArray(new Termin[0]));
+							new TermineDruckenDialog(getViewSite().getShell(),
+								list.toArray(new Termin[0]));
 						if (directPrint) {
 							dlg.setBlockOnOpen(false);
 							dlg.open();
