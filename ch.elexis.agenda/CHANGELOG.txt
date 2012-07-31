@@ -13,3 +13,5 @@
 	- Formal modification of reserved times -> see #1087
 	- Check whether a reserved time clashes with an appointment -> see #1087
 	- Wochentage view now refreshes on focus
+2.1.7.1 - 31. July 2012 - M. Descher
+	- fixed update of Tagesgrenzen for days with appointment only -> see #1087

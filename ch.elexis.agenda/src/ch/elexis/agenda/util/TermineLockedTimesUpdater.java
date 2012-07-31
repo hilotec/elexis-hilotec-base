@@ -76,16 +76,12 @@ public class TermineLockedTimesUpdater implements IRunnableWithProgress {
 							boolean clash = t.crossesTimeFrame(von, bis - von);
 							if (clash) {
 								boolean doNotUpdate =
-									MessageDialog
-										.openQuestion(
-											PlatformUI.getWorkbench().getActiveWorkbenchWindow()
-												.getShell(),
-											Messages.TermineLockedTimesUpdater_4,
-											Messages.TermineLockedTimesUpdater_5
-												+ t.getLabel()
-												+ Messages.TermineLockedTimesUpdater_6
-												+ s
-												+ Messages.TermineLockedTimesUpdater_7);
+									MessageDialog.openQuestion(PlatformUI.getWorkbench()
+										.getActiveWorkbenchWindow().getShell(),
+										Messages.TermineLockedTimesUpdater_4,
+										Messages.TermineLockedTimesUpdater_5 + t.getLabel()
+											+ Messages.TermineLockedTimesUpdater_6 + s + ". "
+											+ Messages.TermineLockedTimesUpdater_7);
 								if (doNotUpdate)
 									skipUpdate.add(t.getDay());
 							}

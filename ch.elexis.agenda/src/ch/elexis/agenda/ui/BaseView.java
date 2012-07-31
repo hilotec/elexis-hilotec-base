@@ -19,6 +19,7 @@ package ch.elexis.agenda.ui;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -69,8 +70,8 @@ import ch.rgw.tools.TimeTool;
  * 
  */
 public abstract class BaseView extends ViewPart implements HeartListener, IActivationListener {
-	public BaseView() {
-	}
+	public BaseView(){}
+	
 	private static final String DEFAULT_PIXEL_PER_MINUTE = "1.0"; //$NON-NLS-1$
 	
 	public IAction newTerminAction, blockAction;
@@ -131,28 +132,36 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 			resource = agenda.getActResource();
 		}
 		Query<Termin> qbe = new Query<Termin>(Termin.class);
-		qbe.add("Tag", "=", day);
-		qbe.add("BeiWem", "=", resource);
-		if (qbe.execute().isEmpty()) {
-			Hashtable<String, String> map = Plannables.getDayPrefFor(resource);
-			int d = date.get(Calendar.DAY_OF_WEEK);
-			String ds = map.get(TimeTool.wdays[d - 1]);
-			if (StringTool.isNothing(ds)) {
-				// default für Tagesgrenzen falls nicht definiert
-				ds = "0000-0800\n1800-2359"; //$NON-NLS-1$
-			}
-			String[] flds = ds.split("\r*\n\r*"); //$NON-NLS-1$
-			for (String fld : flds) {
-				String from = fld.substring(0, 4);
-				String until = fld.replaceAll("-", "").substring(4); //$NON-NLS-1$ //$NON-NLS-2$
-				// Lege Termine für die Tagesgrenzen an
-				new Termin(resource, day, TimeTool.getMinutesFromTimeString(from),
-					TimeTool.getMinutesFromTimeString(until), Termin.typReserviert(),
-					Termin.statusLeer());
-			}
-			
-		}
+		qbe.add(Termin.FLD_TAG, Query.EQUALS, day);
+		qbe.add(Termin.FLD_BEREICH, Query.EQUALS, resource);
 		
+		List<Termin> resList = qbe.execute();
+		// check whether the only entries are appointments if yes also check
+		// whether some "Tagesgrenzen" are missing
+		boolean onlyAppointments = true;
+		for (Termin termin : resList) {
+			if (termin.getType().equals(Termin.typReserviert()))
+				onlyAppointments = false;
+		}
+		if (!onlyAppointments)
+			return;
+		
+		Hashtable<String, String> map = Plannables.getDayPrefFor(resource);
+		int d = date.get(Calendar.DAY_OF_WEEK);
+		String ds = map.get(TimeTool.wdays[d - 1]);
+		if (StringTool.isNothing(ds)) {
+			// default für Tagesgrenzen falls nicht definiert
+			ds = "0000-0800\n1800-2359"; //$NON-NLS-1$
+		}
+		String[] flds = ds.split("\r*\n\r*"); //$NON-NLS-1$
+		for (String fld : flds) {
+			String from = fld.substring(0, 4);
+			String until = fld.replaceAll("-", "").substring(4); //$NON-NLS-1$ //$NON-NLS-2$
+			// Lege Termine für die Tagesgrenzen an
+			new Termin(resource, day, TimeTool.getMinutesFromTimeString(from),
+				TimeTool.getMinutesFromTimeString(until), Termin.typReserviert(),
+				Termin.statusLeer());
+		}
 	}
 	
 	protected void updateActions(){
@@ -219,7 +228,8 @@ public abstract class BaseView extends ViewPart implements HeartListener, IActiv
 				} catch (Exception exception) {
 					Status status =
 						new Status(IStatus.WARNING, Activator.PLUGIN_ID,
-							"Error opening preference page ch.elexis.agenda.tageseinteilung", exception);
+							"Error opening preference page ch.elexis.agenda.tageseinteilung",
+							exception);
 					StatusManager.getManager().handle(status, StatusManager.SHOW);
 				}
 				refresh();
