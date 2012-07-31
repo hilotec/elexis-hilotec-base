@@ -1,5 +1,6 @@
 package ch.elexis.views;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,7 +47,12 @@ public class RFEView extends ViewPart {
 	};
 	
 	private void adjustTable(Konsultation k){
-		List<RFE> rfeForKOns = RFE.getRfeForKons(k.getId());
+		List<RFE> rfeForKOns;
+		if (k != null)
+			rfeForKOns = RFE.getRfeForKons(k.getId());
+		else
+			rfeForKOns = Collections.emptyList();
+
 		CTabItem top = tabs.getSelection();
 		if (top != null) {
 			Control c = top.getControl();
