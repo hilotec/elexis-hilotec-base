@@ -95,6 +95,7 @@ public class RechnungsDrucker implements IRnOutputter {
 								rn.addTrace(Rechnung.OUTPUT, getDescription() + ": " //$NON-NLS-1$
 									+ RnStatus.getStatusText(rn.getStatus()));
 							} catch (Exception ex) {
+								ExHandler.handle(ex);
 								String msg = ex.getMessage();
 								if (msg == null) {
 									msg = Messages.RechnungsDrucker_MessageErrorInternal;
