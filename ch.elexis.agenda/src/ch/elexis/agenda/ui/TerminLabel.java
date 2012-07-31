@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009-2010, G. Weirich and Elexis
+ * Copyright (c) 2009-2012, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,7 @@
  * 
  * Contributors:
  *    G. Weirich - initial implementation
- *    
- *  $Id$
+ *    M. Descher - dynamic adaptation of font size
  *******************************************************************************/
 
 package ch.elexis.agenda.ui;
@@ -26,9 +25,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 
 import ch.elexis.Desk;
@@ -51,6 +54,8 @@ public class TerminLabel extends Composite {
 	private Termin t;
 	private int column;
 	private Composite state;
+	private int originalFontHeightPixel, originalFontHeightPoint;
+	private FontData lblFontData;
 	IAgendaLayout ial;
 	Activator agenda = Activator.getDefault();
 	private IAction terminKuerzenAction, terminVerlaengernAction, terminAendernAction;
@@ -64,6 +69,11 @@ public class TerminLabel extends Composite {
 		gl.marginWidth = 1;
 		setLayout(gl);
 		lbl = new Label(this, SWT.WRAP);
+		GC lblGc = new GC(lbl);
+		lblFontData = lbl.getFont().getFontData()[0];
+		originalFontHeightPoint = lblFontData.getHeight();
+		originalFontHeightPixel = lblGc.getFontMetrics().getHeight();
+		
 		state = new Composite(this, SWT.NONE);
 		state.setLayoutData(new GridData());
 		lbl.addMouseListener(new MouseAdapter() {
@@ -140,55 +150,71 @@ public class TerminLabel extends Composite {
 			ial.getLeftOffset()
 				+ (int) Math.round(getColumn() * (ial.getWidthPerColumn() + ial.getPadding()));
 		
-		String startOfDayTimeInMinutes = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "00:00");		
+		String startOfDayTimeInMinutes =
+			Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "00:00");
 		int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.split(":")[0]);
 		int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.split(":")[1]);
-		int sodtM = (sodtHours*60);
-		sodtM+=sodtMinutes;
+		int sodtM = (sodtHours * 60);
+		sodtM += sodtMinutes;
 		
-		String endOfDayTimeInMinutes = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "23:59");
+		String endOfDayTimeInMinutes =
+			Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "23:59");
 		int eodtHours = Integer.parseInt(endOfDayTimeInMinutes.split(":")[0]);
 		int eodtMinutes = Integer.parseInt(endOfDayTimeInMinutes.split(":")[1]);
-		int eodtM = (eodtHours*60);
-		eodtM+=eodtMinutes;
+		int eodtM = (eodtHours * 60);
+		eodtM += eodtMinutes;
 		
 		int dayLength = eodtM - sodtM;
 		
-		
-		if((t.getBeginn() < sodtM) && (t.getBeginn()+t.getDauer() < sodtM)) {
-			// skip this entry as  begin and end are not visible
-			setBounds(0,0,0,0);
+		if ((t.getBeginn() < sodtM) && (t.getBeginn() + t.getDauer() < sodtM)) {
+			// skip this entry as begin and end are not visible
+			setBounds(0, 0, 0, 0);
 			return;
 		}
 		
-		if((t.getBeginn()>eodtM) && (t.getBeginn()+t.getDauer() > eodtM)) {
+		if ((t.getBeginn() > eodtM) && (t.getBeginn() + t.getDauer() > eodtM)) {
 			// skip this entry as begin and end are not visible
-			setBounds(0,0,0,0);
+			setBounds(0, 0, 0, 0);
 			return;
 		}
 		
 		int ly = 0;
 		int lh = 0;
 		
-		if(t.getBeginn()<sodtM) {
+		if (t.getBeginn() < sodtM) {
 			ly = (int) Math.round(t.getBeginn() * ial.getPixelPerMinute());
-			int diff = ((t.getDauer()-sodtM) < 0) ? t.getDauer() : (t.getDauer()-sodtM);
+			int diff = ((t.getDauer() - sodtM) < 0) ? t.getDauer() : (t.getDauer() - sodtM);
 			
-			diff += ((t.getBeginn()+diff)>eodtM)  ? (t.getBeginn()+diff)-eodtM : 0;
+			diff += ((t.getBeginn() + diff) > eodtM) ? (t.getBeginn() + diff) - eodtM : 0;
 			
 			lh = (int) Math.round(diff * ial.getPixelPerMinute());
 			
 		} else {
-			int startMinute = t.getBeginn()-sodtM;
+			int startMinute = t.getBeginn() - sodtM;
 			ly = (int) Math.round(startMinute * ial.getPixelPerMinute());
 			
-			int ends = t.getBeginn()+t.getDauer();
+			int ends = t.getBeginn() + t.getDauer();
 			int heigthDiff = ends - eodtM;
-			if(heigthDiff<0) heigthDiff = 0;		
-			lh = (int) Math.round((t.getDauer()-heigthDiff) * ial.getPixelPerMinute());
-		}		
+			if (heigthDiff < 0)
+				heigthDiff = 0;
+			lh = (int) Math.round((t.getDauer() - heigthDiff) * ial.getPixelPerMinute());
+		}
 		int lw = (int) Math.round(ial.getWidthPerColumn());
-
+		
+		// dynamic font size adaption
+		int newHeight = originalFontHeightPoint;
+		if (originalFontHeightPixel >= lh) {
+			int diffPixel = originalFontHeightPixel - lh;
+			
+			int diffPoint = diffPixel * 72 / Display.getCurrent().getDPI().y;
+			
+			newHeight = originalFontHeightPoint - (diffPoint + 1);
+			if(newHeight <=0) newHeight = originalFontHeightPoint;
+			// non-nice constant 1 :( you got a better solution?
+		}
+		lblFontData.setHeight(newHeight);
+		lbl.setFont(new Font(Desk.getDisplay(), lblFontData));
+		
 		setBounds(lx, ly, lw, lh);
 		GridData gd = (GridData) state.getLayoutData();
 		gd.minimumWidth = 10;
