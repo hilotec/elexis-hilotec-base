@@ -10,12 +10,16 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.List;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
+
+import ch.elexis.Desk;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.LabItem;
 import ch.elexis.data.LabResult;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
+import ch.elexis.importers.dialog.QueryOverwriteDialog;
 import ch.elexis.util.ResultAdapter;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.Result;
@@ -36,8 +40,8 @@ public class HL7Parser {
 	public Result<Object> parse(final HL7 hl7, boolean createPatientIfNotFound){
 		Result<Kontakt> res = hl7.getLabor();
 		if (!res.isOK()) {
-			return new Result<Object>(Result.SEVERITY.ERROR, 1, Messages.HL7Parser_LabNotFound, hl7
-				.getFilename(), true);
+			return new Result<Object>(Result.SEVERITY.ERROR, 1, Messages.HL7Parser_LabNotFound,
+				hl7.getFilename(), true);
 		}
 		final Kontakt labor = res.get();
 		Result<Object> r2 = hl7.getPatient(createPatientIfNotFound);
@@ -51,6 +55,7 @@ public class HL7Parser {
 		int nummer = 0;
 		String dat = new TimeTool().toString(TimeTool.DATE_GER);
 		while (obr != null) {
+			boolean overWriteAll = false;
 			HL7.OBX obx = obr.firstOBX();
 			while (obx != null) {
 				String itemname = obx.getItemName();
@@ -67,10 +72,10 @@ public class HL7Parser {
 						typ = LabItem.typ.TEXT;
 					}
 					li =
-						new LabItem(obx.getItemCode(), itemname, labor, obx.getRefRange(), obx
-							.getRefRange(), obx.getUnits(), typ,
-							Messages.HL7Parser_AutomaticAddedGroup + dat, Integer
-								.toString(nummer++));
+						new LabItem(obx.getItemCode(), itemname, labor, obx.getRefRange(),
+							obx.getRefRange(), obx.getUnits(), typ,
+							Messages.HL7Parser_AutomaticAddedGroup + dat,
+							Integer.toString(nummer++));
 				} else {
 					li = list.get(0);
 				}
@@ -83,8 +88,21 @@ public class HL7Parser {
 				if (qrr.size() != 0) {
 					LabResult lrr = qrr.get(0);
 					
-					if (!SWTHelper.askYesNo(Messages.HL7Parser_LabAlreadyImported + pat.getLabel(),
-						lrr.getLabel() + Messages.HL7Parser_AskOverwrite)) {
+					if (overWriteAll) {
+						obx = obr.nextOBX(obx);
+						continue;
+					}
+					
+					QueryOverwriteDialog qod =
+						new QueryOverwriteDialog(Desk.getTopShell(),
+							Messages.HL7Parser_LabAlreadyImported + pat.getLabel(), lrr.getLabel()
+								+ Messages.HL7Parser_AskOverwrite);
+					int retVal = qod.open();
+					if (retVal == IDialogConstants.YES_ID) {
+						obx = obr.nextOBX(obx);
+						continue;
+					} else if (retVal == IDialogConstants.YES_TO_ALL_ID) {
+						overWriteAll = true;
 						obx = obr.nextOBX(obx);
 						continue;
 					}
@@ -103,8 +121,8 @@ public class HL7Parser {
 						.getResultValue() + "\n" + obx.getComment()); //$NON-NLS-1$
 				} else {
 					lr =
-						new LabResult(pat, obr.getDate(), li, obx.getResultValue(), obx
-							.getComment());
+						new LabResult(pat, obr.getDate(), li, obx.getResultValue(),
+							obx.getComment());
 				}
 				
 				if (obx.isPathologic()) {
