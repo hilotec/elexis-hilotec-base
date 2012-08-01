@@ -1250,7 +1250,7 @@ public class XMLExporter implements IRnOutputter {
 		
 		detail.addContent(services); // 20000
 		invoice.addContent(detail);
-		if (rn.setBetrag(mDue) == false) {
+		if (rn.setBetrag(mTotal) == false) {
 			rn.reject(RnStatus.REJECTCODE.SUM_MISMATCH, Messages.XMLExporter_SumMismatch);
 			
 		} else if (doVerify) {
