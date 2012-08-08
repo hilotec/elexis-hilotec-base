@@ -19,7 +19,6 @@ package ch.elexis.agenda.ui;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.part.ViewPart;
 
@@ -29,8 +28,8 @@ import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListener;
 import ch.elexis.actions.FlatDataLoader;
 import ch.elexis.actions.GlobalEventDispatcher;
-import ch.elexis.actions.PersistentObjectLoader;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.actions.PersistentObjectLoader;
 import ch.elexis.actions.PersistentObjectLoader.QueryFilter;
 import ch.elexis.agenda.data.Termin;
 import ch.elexis.data.Patient;
@@ -66,6 +65,7 @@ public class TerminListeView extends ViewPart implements IActivationListener, El
 					qbe.add(Termin.FLD_PATIENT, Query.EQUALS, "--"); //$NON-NLS-1$
 				} else {
 					qbe.add(Termin.FLD_PATIENT, Query.EQUALS, p.getId());
+					qbe.orderBy(false, Termin.FLD_TAG);
 				}
 			}
 		});
@@ -74,7 +74,6 @@ public class TerminListeView extends ViewPart implements IActivationListener, El
 			new ViewerConfigurer(fdl, new DefaultLabelProvider(), new SimpleWidgetProvider(
 				SimpleWidgetProvider.TYPE_LAZYLIST, SWT.NONE, cv));
 		cv.create(vc, body, SWT.NONE, this);
-		new Label(body, SWT.NONE).setText("bottom"); //$NON-NLS-1$
 		GlobalEventDispatcher.addActivationListener(this, this);
 	}
 	

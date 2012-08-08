@@ -17,3 +17,5 @@
 	- fixed update of Tagesgrenzen for days with appointment only -> see #1087
 2.1.7.2 - 31. July 2012 - M. Descher
 	- dynamic adaptation of font size for appointment labels -> see #696
+2.1.7.3 - 8. August 2012 - M. Descher
+	- termine view now sorts by date
