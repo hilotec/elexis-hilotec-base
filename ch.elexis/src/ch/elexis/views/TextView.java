@@ -23,6 +23,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
@@ -36,10 +37,12 @@ import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Brief;
+import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Person;
 import ch.elexis.dialogs.DocumentSelectDialog;
+import ch.elexis.dialogs.SelectFallDialog;
 import ch.elexis.text.ITextPlugin;
 import ch.elexis.text.TextContainer;
 import ch.elexis.util.Log;
@@ -111,10 +114,10 @@ public class TextView extends ViewPart implements IActivationListener {
 			setName();
 			String ext = MimeTool.getExtension(doc.getMimeType());
 			if (ext.length() == 0) {
-				ext = "ods";
+				ext = "ods"; //$NON-NLS-1$
 			}
 			try {
-				File tmp = File.createTempFile("elexis", "brief." + ext);
+				File tmp = File.createTempFile("elexis", "brief." + ext); //$NON-NLS-1$ //$NON-NLS-2$
 				tmp.deleteOnExit();
 				ByteArrayInputStream bais = new ByteArrayInputStream(doc.loadBinary());
 				FileOutputStream fos = new FileOutputStream(tmp);
@@ -242,20 +245,20 @@ public class TextView extends ViewPart implements IActivationListener {
 				public void run(){
 					try {
 						if (actBrief == null) {
-							SWTHelper.alert("Fehler",
-								"Es ist kein Dokument zum exportieren geladen");
+							SWTHelper.alert("Fehler", //$NON-NLS-1$
+								"Es ist kein Dokument zum exportieren geladen"); //$NON-NLS-1$
 						} else {
 							FileDialog fdl = new FileDialog(getViewSite().getShell(), SWT.SAVE);
 							fdl.setFilterExtensions(new String[] {
-								"*.odt", "*.xml", "*.*"
+								"*.odt", "*.xml", "*.*" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							});
 							fdl.setFilterNames(new String[] {
-								"OpenOffice.org Text", "XML File", "All files"
+								"OpenOffice.org Text", "XML File", "All files" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 							});
 							String filename = fdl.open();
 							if (filename != null) {
-								if (FileTool.getExtension(filename).equals("")) {
-									filename += ".odt";
+								if (FileTool.getExtension(filename).equals("")) { //$NON-NLS-1$
+									filename += ".odt"; //$NON-NLS-1$
 								}
 								File file = new File(filename);
 								byte[] contents = actBrief.loadBinary();
@@ -279,9 +282,41 @@ public class TextView extends ViewPart implements IActivationListener {
 				}
 				
 				public void run(){
-					actBrief = null;
-					setName();
-					txt.getPlugin().createEmptyDocument();
+					Patient pat = ElexisEventDispatcher.getSelectedPatient();
+					if (pat != null) {				
+						Fall selectedFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+						if (selectedFall == null) {
+							SelectFallDialog sfd = new SelectFallDialog(Desk.getTopShell());
+							sfd.open();
+							if (sfd.result != null) {
+								ElexisEventDispatcher.fireSelectionEvent(sfd.result);
+							} else {
+								MessageDialog
+									.openInformation(
+										Desk.getTopShell(),
+										Messages.getString("TextView.NoCaseSelected"), //$NON-NLS-1$
+										Messages.getString("TextView.SaveNotPossibleNoCaseAndKonsSelected")); //$NON-NLS-1$
+								return;
+							}
+						}
+						Konsultation selectedKonsultation =
+							(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+						if (selectedKonsultation == null) {
+							Konsultation k = pat.getLetzteKons(false);
+							if (k==null) {
+								k = ((Fall) ElexisEventDispatcher.getSelected(Fall.class)).neueKonsultation();
+								k.setMandant(Hub.actMandant);
+							}
+							ElexisEventDispatcher.fireSelectionEvent(k);
+						}
+						actBrief = null;
+						setName();
+						txt.getPlugin().createEmptyDocument();
+					} else {
+						MessageDialog.openInformation(Desk.getTopShell(),
+							Messages.getString("BriefAuswahlNoPatientSelected"), //$NON-NLS-1$
+							Messages.getString("BriefAuswahlNoPatientSelected")); //$NON-NLS-1$
+					}
 				}
 				
 			};
@@ -337,7 +372,7 @@ public class TextView extends ViewPart implements IActivationListener {
 	}
 	
 	public void visible(boolean mode){
-
+		
 	}
 	
 	void setName(){

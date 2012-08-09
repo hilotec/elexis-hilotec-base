@@ -36,8 +36,7 @@ public class SelectFallDialog extends TitleAreaDialog {
 	protected Control createDialogArea(Composite parent){
 		list = new org.eclipse.swt.widgets.List(parent, SWT.BORDER);
 		list.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-		Fall actFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
-		faelle = actFall.getPatient().getFaelle();
+		faelle = ElexisEventDispatcher.getSelectedPatient().getFaelle();
 		for (Fall f : faelle) {
 			list.add(f.getLabel());
 		}
@@ -57,8 +56,10 @@ public class SelectFallDialog extends TitleAreaDialog {
 		int sel = list.getSelectionIndex();
 		if (sel == -1) {
 			result = null;
+		} else {
+			result = faelle[sel];
 		}
-		result = faelle[sel];
+
 		super.okPressed();
 	}
 	

@@ -20,6 +20,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -43,9 +44,12 @@ import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.data.Brief;
+import ch.elexis.data.Fall;
+import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.DocumentSelectDialog;
+import ch.elexis.dialogs.SelectFallDialog;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
@@ -78,8 +82,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 	@Override
 	public void createPartControl(final Composite parent){
 		StringBuilder sb = new StringBuilder();
-		sb
-			.append(Messages.getString("BriefAuswahlAllLetters")).append(Brief.UNKNOWN).append(",").append(Brief.AUZ) //$NON-NLS-1$
+		sb.append(Messages.getString("BriefAuswahlAllLetters")).append(Brief.UNKNOWN).append(",").append(Brief.AUZ) //$NON-NLS-1$
 			.append(",").append(Brief.RP).append(",").append(Brief.LABOR);
 		String cats = Hub.globalCfg.get(PreferenceConstants.DOC_CATEGORY, sb.toString());
 		parent.setLayout(new GridLayout());
@@ -141,7 +144,7 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 	
 	@Override
 	public void setFocus(){
-
+		
 	}
 	
 	public void relabel(){
@@ -238,6 +241,43 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 		briefNeuAction = new Action(Messages.getString("BriefAuswahlNewButtonText")) { //$NON-NLS-1$
 				@Override
 				public void run(){
+					Patient pat = ElexisEventDispatcher.getSelectedPatient();
+					if (pat == null) {
+						MessageDialog.openInformation(Desk.getTopShell(),
+							Messages.getString("BriefAuswahlNoPatientSelected"),
+							Messages.getString("BriefAuswahlNoPatientSelected"));
+						return;
+					}
+					
+					Fall selectedFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+					if (selectedFall == null) {
+						SelectFallDialog sfd = new SelectFallDialog(Desk.getTopShell());
+						sfd.open();
+						if (sfd.result != null) {
+							ElexisEventDispatcher.fireSelectionEvent(sfd.result);
+						} else {
+							MessageDialog
+								.openInformation(Desk.getTopShell(), Messages
+									.getString("TextView.NoCaseSelected"), //$NON-NLS-1$
+									Messages
+										.getString("TextView.SaveNotPossibleNoCaseAndKonsSelected")); //$NON-NLS-1$
+							return;
+						}
+					}
+					
+					Konsultation selectedKonsultation =
+						(Konsultation) ElexisEventDispatcher.getSelected(Konsultation.class);
+					if (selectedKonsultation == null) {
+						Konsultation k = pat.getLetzteKons(false);
+						if (k == null) {
+							k =
+								((Fall) ElexisEventDispatcher.getSelected(Fall.class))
+									.neueKonsultation();
+							k.setMandant(Hub.actMandant);
+						}
+						ElexisEventDispatcher.fireSelectionEvent(k);
+					}
+					
 					TextView tv = null;
 					try {
 						tv = (TextView) getSite().getPage().showView(TextView.ID /*
@@ -295,8 +335,8 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 				public void run(){
 					CTabItem sel = ctab.getSelection();
 					if ((sel != null)
-						&& SWTHelper.askYesNo(Messages
-							.getString("BriefAuswahlDeleteConfirmHeading"), //$NON-NLS-1$
+						&& SWTHelper.askYesNo(
+							Messages.getString("BriefAuswahlDeleteConfirmHeading"), //$NON-NLS-1$
 							Messages.getString("BriefAuswahlDeleteConfirmText"))) { //$NON-NLS-1$
 						CommonViewer cv = (CommonViewer) sel.getData();
 						Object[] o = cv.getSelection();
@@ -319,8 +359,8 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 						if ((o != null) && (o.length > 0)) {
 							Brief brief = (Brief) o[0];
 							InputDialog id =
-								new InputDialog(getViewSite().getShell(), Messages
-									.getString("BriefAuswahlNewSubjectHeading"), //$NON-NLS-1$
+								new InputDialog(getViewSite().getShell(),
+									Messages.getString("BriefAuswahlNewSubjectHeading"), //$NON-NLS-1$
 									Messages.getString("BriefAuswahlNewSubjectText"), //$NON-NLS-1$
 									brief.getBetreff(), null);
 							if (id.open() == Dialog.OK) {
@@ -347,8 +387,8 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 	}
 	
 	public void activation(final boolean mode){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public void visible(final boolean mode){
@@ -393,9 +433,8 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 		relabel();
 	}
 	
-	private static ElexisEvent template =
-		new ElexisEvent(null, Patient.class, ElexisEvent.EVENT_SELECTED
-			| ElexisEvent.EVENT_DESELECTED);
+	private static ElexisEvent template = new ElexisEvent(null, Patient.class,
+		ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_DESELECTED);
 	
 	public ElexisEvent getElexisEventFilter(){
 		return template;
