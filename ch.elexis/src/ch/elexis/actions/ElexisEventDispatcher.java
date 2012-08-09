@@ -29,6 +29,8 @@ import org.eclipse.ui.services.ISourceProviderService;
 import ch.elexis.Desk;
 import ch.elexis.ElexisException;
 import ch.elexis.commands.sourceprovider.PatientSelectionStatus;
+import ch.elexis.data.Fall;
+import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.util.Log;
@@ -196,6 +198,14 @@ public final class ElexisEventDispatcher extends Job {
 				
 					((PatientSelectionStatus) sps
 						.getSourceProvider(PatientSelectionStatus.PATIENTACTIVE)).setState(true);
+
+					// [1103] assure that the current selections of Fall and Konsultation
+					// are not "inherited" by a prior patient selection
+					lastSelection.remove(Fall.class);
+					lastSelection.remove(Konsultation.class);
+					Patient pat = (Patient) ee.getObject();
+					if(pat.getFaelle().length>0) lastSelection.put(Fall.class, pat.getFaelle()[0]);
+					if(pat.getLetzteKons(false)!=null) lastSelection.put(Konsultation.class, pat.getLetzteKons(false));
 				}
 				
 				PersistentObject po = lastSelection.get(clazz);
