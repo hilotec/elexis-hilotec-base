@@ -219,7 +219,39 @@ h2. 9) Miscellaneous
 
 This list will probably become longer in the next revision of this guideline.
 
-h2. 10) Unwritten laws
+h2. 10) Database changes
+
+Changes in the database layout have a big potential to upset users and/or developers if suddenly fields change type, name or semantics or are dropped.
+
+Changes must be introduced in all affected branches, eg. 2.1.6 (Q-series), 2.1.7(next) and 2.2.dev (future).
+
+In a Q-series branches the following changes may be okay (but still must be announced with at least one week time for other developers to raise objections via the "Elexis Developer Mailing List":http://sourceforge.net/mailarchive/forum.php?forum_name=elexis-develop. The announcement should contain a patch (fragment) containing exactly the needed changes for the new layout.
+* Adding a new table
+* Adding a new field
+* Extending the size of a varchar field
+* Adding a new index
+All other changes should be avoided.
+
+Changing the layout must be done in one commit, containing the following changes:
+* in ch.elexis/src/ch/elexis/Hub.java
+** Change @public static final String DBVersion = "<newDbVersion>";@
+* in ch.elexis/rsc/createDB.script
+** The changes when creating a new database, adding a field definition like @"station VARCHAR(40),"@
+** @INSERT INTO CONFIG (param,wert) VALUES ('dbversion','<newDbVersion>');@
+** @INSERT INTO CONFIG (param,wert) VALUES('ElexisVersion','<newElexisVersion>');@ # if necessary
+* in ch.elexis/src/ch/elexis/util/DBUpdate.java
+** Add a new version to the @String[] versions@ variable
+** Add the changes to the @String[] cmds@ variable, e.g.
+bq.             // <newDbVersion>
+            "ALTER TABLE LOGS MODIFY station VARCHAR(40);",
+
+Notes:
+* newDbVersion and newElexisVersion must not match. But each newDbVersion should contain the same changes over all branches changed!
+* Make fields large enough, eg. use @VARCHAR(256)@ instead of @CHAR(16)@
+* SQL-Statements and upgrades must be tested under H2, MySQL and PostgreSQL
+* Consider creating a separate commit for the DB-changes, this make reviewing the commit much easier
+
+h2. 11) Unwritten laws
 
 The code follows the written (and sometimes unwritten) laws of the Elexis development team as defined by its leader Gerry Weirich. 
 

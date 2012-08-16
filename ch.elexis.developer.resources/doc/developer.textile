@@ -346,26 +346,28 @@ The following files belong to the plugin elexis-developer-resources:
 * Plugin.xml. This file is an eclipse requirement and contains all informations that are necessary to actually put the plugin together with the rest of the programm (and with all other plugins). Eclipse will create it automagically if needed.
 * META-INF/MANIFEST.MF: The standard OSGi-Bundle. It is created autimatically with the create plugin wizard of eclipse.
 * ch.elexis.developer.resources.view.Perspective: This file defines a perspective for the plugin.(Which is not really necessary in that case, but we want to show, how to do it)
-*  ch.elexis.developer.resources.model.SampleDataType: Definition of a data type. We create a subclass of PersistentObject and a table in the elexis database to store our values.
+* ch.elexis.developer.resources.model.SampleDataType: Definition of a data type. We create a subclass of PersistentObject and a table in the elexis database to store our values.
 * ch.elexis.developer.resources.model.SampleDataTypeFactory: A class that can create "SampleDataType" -objects and thus gives the elexis-kernel the possibility to create such objects in a controlled way..
 * ch.elexis.developer.resources.model.ACLContributor: This defines the privileges that are necessary to read, create, modify, and delete SampleDataType objects and includes the UI to grant or revoke these privileges in the Elexis preferences.  
 * ch.elexis.developer.resources.views.SampleView: A View to display our data
 * ch.elexis.developer.resources.views.SampleDataLabelProvider: A Class to create a human readable visual representation of a SampleDataType object.
 * Several .properties-files that contain il18n'ed Strings.
 
-h1. Testing and integration
+h1. Building, testing and integration
 
-Since April 2010 we are starting to use Hudson ("http://hudson-ci.org":http://hudson-ci.org) as a CI ("Continuos Integration":http://en.wikipedia.org/wiki/Continuous_integration) tool. It's output can be found at "http://ngiger.dyndns.org/hudson":http://ngiger.dyndns.org/hudson. It will probably take months if not several years to achieve a good coverage of the whole elexis code base.
+In April 2010 we started to use Jenkins ("http://jenkins-ci.org":http://jenkins-ci.org) as a CI ("Continuos Integration":http://en.wikipedia.org/wiki/Continuous_integration) tool. It's output can be found at "http://ngiger.dyndns.org/jenkins":http://ngiger.dyndns.org/jenkins. It will probably take months if not several years to achieve a good coverage of the whole elexis code base.
+
+It uses the "Elexis Bootstrap":https://ngiger@bitbucket.org/ngiger/elexis-bootstrap project, which provides an easy way to build Elexis. If you add a line like @HgRepos << 'http://myMercurial.server.ch/repositories/myplugins/'@" to the file @privateRepos.rb@ it will clone said repository and build all PDE plugins found therein, too!
+
+The "Elexis Vagrant":https://github.com/ngiger/elexis-vagrant allows the developer to generate a virtual machine (using VirtualBox, Vagrant, weevee) which downloads, compiles and tests a complete elexis version.
 
 An interesting strategy for developing good code is Test Driven Development ("TDD":http://en.wikipedia.org/wiki/Test-driven_development), where you write first tests, which will fail. Afterwards you fill in the code to make them pass. Writing tests allows you to specify use cases first.
 
-At the moment there is very little tested on each checking, as setting up an automated build process is quite a lot of work. At the moment it only generates the documentation.
+There are some Jubula GUI-tests in the project "Jubula-Elexis":https://bitbucket.org/ngiger/jubula-elexis
 
 Further steps will include:
 
 * Add JUnit tests, wherever we find time for it. We will focus on the areas where the benefit/cost-ratio is best.
-
-* GUI-testing. We might add GUIi tests, using a tool like SWTbot, but at the moment the cost is too high for us.
 
 * MacOSX. Add a MacOSX slave to run all tests for this target platform, too.
 
@@ -373,20 +375,20 @@ h2. Setup of the testing environment
 
 The Elexis CI-environment consists of several VMs (virtual machine). They run inside an "ArchivistaVM":http://www.archivista.ch/-server (AMD QuadCore, 8GB RAM, 1 TB HD).
 
-* Hudson-Master. The hudson master (running GNU/Debian/Linux Lenny) is responsible for checking continuosly (every hour) whether there are changes in the source repository. It is also responsible to display various pieces of interest to the developers, about failures, change history. It will also display some statistical values about how many lines of code are found.
-** The following Debian packages were needed: sun-java6-bin sun-java6-jdk hudson openssh-server subversion ant ruby-full texlive texlive-ang-german texlive-latex-extras makeself
+* jenkins-Master. The jenkins master (running GNU/Debian/Linux Lenny) is responsible for checking continuosly (every hour) whether there are changes in the source repository. It is also responsible to display various pieces of interest to the developers, about failures, change history. It will also display some statistical values about how many lines of code are found.
+** The following Debian packages were needed: sun-java6-bin sun-java6-jdk jenkins openssh-server subversion ant ruby-full texlive texlive-ang-german texlive-latex-extras makeself
 ** Some more packages were added for convenience:  etckeeper rsync  apt-listchanges apt-listbugs cron-apt anacron sudo vim dlocate
 
-* Hudson-Win-XP. A slave running the german version of Windows-XP.
-** The following programs were installed: SlikSvn-1.6.9 apache-ant-1.8.0 MikTex-2.8 Java-JDK 6u19 Hudson 1.353 OpenVPN-GUI 1.2.1 eclipse-3.5.2 GNUwinZip "makensis 2.4.6":http://nsis.sourceforge.net/
+* jenkins-Win-XP. A slave running the german version of Windows-XP.
+** The following programs were installed: SlikSvn-1.6.9 apache-ant-1.8.0 MikTex-2.8 Java-JDK 6u19 jenkins 1.353 OpenVPN-GUI 1.2.1 eclipse-3.5.2 GNUwinZip "makensis 2.4.6":http://nsis.sourceforge.net/
 ** Some more programs were installed for convenience: Notepad++  TortoiseSVN OpenSSH MWSnap FreeCommander MSyS
 
-* Hudson-Win7. A slave running the german version Windows Home 7. 
+* jenkins-Win7. A slave running the german version Windows Home 7. 
 ** Same programs installed as for Windows-XP
 
-* Hudson-Services: A Lenny system.
+* jenkins-Services: A Lenny system.
 ** Hosts the following services (Debian packages) OpenVPN vsftpd mysql-server
-** Same conveniences packets as Hudson-Master
+** Same conveniences packets as jenkins-Master
 
 h3. Further ideas
 
