@@ -144,6 +144,7 @@ CREATE TABLE ARTIKEL(
 	LastImport		CHAR(8),						# date of last import (yyyymmdd)
 	ValidFrom		CHAR(8),			
 	ValidTo			CHAR(8),
+	ATC_code		VARCHAR(255),
 	ExtInfo			BLOB							# additional informations (hashtable)
 );
 
