@@ -52,10 +52,8 @@ Our cycle mimicks a few aspects of the Linux kernel development cycle. We distin
 * bugfix
 * release freeze
 
-We strive to release a new version every 3 months. At the moment the following release dates are schedules: 
-* 2.1.5: end of June 2011
-* 2.1.6: end of September 2011 and 
-* 2.1.7: end of December 2011
+We strive to release a new bug-fix version every 3 months.
+The release plan is maintainded under "roadmap":http://sourceforge.net/apps/mediawiki/elexis/index.php?title=Roadmap
 
 h3. Feature merge period
 
