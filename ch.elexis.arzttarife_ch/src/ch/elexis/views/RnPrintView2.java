@@ -15,6 +15,8 @@ package ch.elexis.views;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -352,6 +354,30 @@ public class RnPrintView2 extends ViewPart {
 			text.replace("\\[F53\\]", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		
+		// lookup EAN numbers in services and set field 98
+		HashSet<String> eanUniqueSet = new HashSet<String>();
+		List allServices = detail.getChild(XMLExporter.ELEMENT_SERVICES, ns).getChildren(); //$NON-NLS-1$
+		for (Object object : allServices) {
+			if (object instanceof Element) {
+				Element service = (Element) object;
+				String tariftype = service.getAttributeValue("tariff_type");
+				// look into all tarmed 001 and physio 311 services
+				if (tariftype != null && (tariftype.equals("001") || tariftype.equals("311"))) {
+					String ean_responsible = service.getAttributeValue("ean_responsible");
+					if (ean_responsible != null && !ean_responsible.isEmpty()) {
+						eanUniqueSet.add(ean_responsible);
+					}
+					String ean_provider = service.getAttributeValue("ean_provider");
+					if (ean_provider != null && !ean_provider.isEmpty()) {
+						eanUniqueSet.add(ean_provider);
+					}
+				}
+			}
+		}
+		String[] eanArray = getEANArray(eanUniqueSet);
+		HashMap<String, String> eanMap = getEANHashMap(eanArray);
+		text.replace("\\[F98\\]", getEANList(eanArray));
+		
 		Kontakt zuweiser = fall.getRequiredContact("Zuweiser");
 		if (zuweiser != null) {
 			String ean = TarmedRequirements.getEAN(zuweiser);
@@ -419,7 +445,23 @@ public class RnPrintView2 extends ViewPart {
 			sb.append(val).append("\t"); //$NON-NLS-1$
 			sb.append(getValue(s, "unit.tt")).append("\t\t"); //$NON-NLS-1$ //$NON-NLS-2$
 			sb.append(getValue(s, "unit_factor.tt")).append("\t"); //$NON-NLS-1$ //$NON-NLS-2$
-			sb.append("1\t1\t"); //$NON-NLS-1$
+			
+			// set responsible (field 77) and provider (field 78)
+			String tariftype = s.getAttributeValue("tariff_type");
+			// look into all tarmed 001 and physio 311 services
+			if (tariftype != null && (tariftype.equals("001") || tariftype.equals("311"))) {
+				String ean_responsible = s.getAttributeValue("ean_responsible"); //$NON-NLS-1$
+				if (ean_responsible != null && !ean_responsible.isEmpty()) {
+					sb.append(eanMap.get(ean_responsible) + "\t"); //$NON-NLS-1$
+				}
+				String ean_provider = s.getAttributeValue("ean_provider"); //$NON-NLS-1$
+				if (ean_provider != null && !ean_provider.isEmpty()) {
+					sb.append(eanMap.get(ean_provider) + "\t"); //$NON-NLS-1$
+				}
+			} else {
+				sb.append("\t\t");
+			}
+			
 			String pfl = s.getAttributeValue("obligation"); //$NON-NLS-1$
 			String am = s.getAttributeValue(XMLExporter.ATTR_AMOUNT); //$NON-NLS-1$
 			// double dLine=Double.parseDouble(am);
@@ -614,6 +656,29 @@ public class RnPrintView2 extends ViewPart {
 		return true;
 	}
 	
+	private String getEANList(String[] eans){
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < eans.length; i++) {
+			if (i > 0)
+				sb.append("  ");
+			sb.append(Integer.toString(i + 1) + "/" + eans[i]);
+		}
+		return sb.toString();
+	}
+
+	private String[] getEANArray(HashSet<String> responsibleEANs){
+		String[] eans = responsibleEANs.toArray(new String[responsibleEANs.size()]);
+		return eans;
+	}
+	
+	private HashMap<String, String> getEANHashMap(String[] eans){
+		HashMap<String, String> ret = new HashMap<String, String>();
+		for (int i = 0; i < eans.length; i++) {
+			ret.put(eans[i], Integer.toString(i + 1));
+		}
+		return ret;
+	}
+
 	private void insertPage(final int page, final Kontakt adressat, final Rechnung rn){
 		createBrief("Tarmedrechnung_S2", adressat);
 		replaceHeaderFields(text, rn);

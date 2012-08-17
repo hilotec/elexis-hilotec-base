@@ -636,6 +636,7 @@ public class XMLExporter implements IRnOutputter {
 		TimeTool ttLast = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
 		int recordNumber = 1;
 		for (Konsultation b : lb) {
+			Mandant responsibleMandant = b.getMandant();
 			List<IDiagnose> ld = b.getDiagnosen();
 			for (IDiagnose dg : ld) {
 				String dgc = dg.getCode();
@@ -728,7 +729,7 @@ public class XMLExporter implements IRnOutputter {
 					}
 					el.setAttribute(ATTR_EAN_PROVIDER, TarmedRequirements.getEAN(actMandant
 						.getRechnungssteller())); // 22390
-					el.setAttribute(ATTR_EAN_RESPONSIBLE, TarmedRequirements.getEAN(actMandant)); // 22400
+					el.setAttribute(ATTR_EAN_RESPONSIBLE, TarmedRequirements.getEAN(responsibleMandant)); // 22400
 					el.setAttribute(ATTR_BILLING_ROLE, "both"); // 22410 //$NON-NLS-1$
 					el.setAttribute(ATTR_MEDICAL_ROLE, "self_employed"); // 22430 //$NON-NLS-1$
 					
@@ -870,7 +871,15 @@ public class XMLExporter implements IRnOutputter {
 					setVatAttribute(vv, mAmountLocal, el, vatSummer); // 28590
 					el.setAttribute(ATTR_OBLIGATION, TARMED_TRUE); // 28630
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 28620
-					el.setAttribute(ATTR_EAN_PROVIDER, TarmedRequirements.getProviderEAN(actFall));
+					// get EAN provider
+					String ean = TarmedRequirements.getEAN(actMandant.getRechnungssteller());
+					if (ean.equals(TarmedRequirements.EAN_PSEUDO))
+						ean = "unknown";
+					el.setAttribute(ATTR_EAN_PROVIDER, ean);
+					// get EAN resposible
+					ean = TarmedRequirements.getEAN(responsibleMandant);
+					if (ean.equals(TarmedRequirements.EAN_PSEUDO))
+						ean = "unknown";
 					el.setAttribute(ATTR_EAN_RESPONSIBLE, TarmedRequirements
 						.getResponsibleEAN(actFall));
 					
