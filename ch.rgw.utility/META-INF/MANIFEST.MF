@@ -154,6 +154,7 @@ Export-Package: .,
    javax.xml.transform.sax,
    org.xml.sax",
  org.jdom.xpath;uses:="org.jdom",
+ org.slf4j,
  org.slf4j.impl;uses:="org.slf4j.spi,org.slf4j.helpers,org.slf4j"
 Require-Bundle: ch.elexis.postgresql.connector;bundle-version="1.0.0";resolution:=optional,
  ch.elexis.mysql.connector;resolution:=optional,

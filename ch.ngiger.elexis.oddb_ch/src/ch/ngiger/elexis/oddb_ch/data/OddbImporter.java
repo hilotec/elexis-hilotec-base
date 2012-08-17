@@ -33,16 +33,16 @@ import ch.elexis.data.Query;
 import ch.elexis.util.ImporterPage;
 import ch.elexis.util.SWTHelper;
 import ch.rgw.tools.ExHandler;
-import ch.rgw.tools.Log;
 import ch.rgw.tools.Money;
 import ch.ngiger.elexis.oddb_ch.Messages;
-import ch.rgw.tools.Log;;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OddbImporter extends ImporterPage {
 	boolean bDelete = false;
 	Button bClear;
 	String mode;
-	public static final Log logger = Log.get(ImporterPage.class.toString());
+	public static final Logger logger = LoggerFactory.getLogger(ImporterPage.class);
 	
 	public OddbImporter(){}
 	
@@ -74,9 +74,9 @@ public class OddbImporter extends ImporterPage {
 		int cachetime = PersistentObject.getDefaultCacheLifetime();
 		PersistentObject.setDefaultCacheLifetime(2);
 		Import oddbImport = new Import();
-		logger.log(String.format("Mode %1$s: Starting import of %2$s", mode, results[0]), Log.INFOS);
+		logger.info(String.format("Mode %1$s: Starting import of %2$s", mode, results[0]));
 		File file = new File(results[0]);
-		logger.log(String.format("Size is %d kB", file.length() / 1024), Log.INFOS);
+		logger.info(String.format("Size is %d kB", file.length() / 1024));
 		Date d1 = new Date(System.currentTimeMillis());
 		nrImportedArticles = 0;
 		if (file.getName().toLowerCase().endsWith("csv")) { //$NON-NLS-1$
@@ -98,11 +98,11 @@ public class OddbImporter extends ImporterPage {
 					String msg = String.format("ODDB convert %1$d articles", nrArticles);//$NON-NLS-1$
 					monitor.beginTask(mainTask, nrArticles);
 					monitor.subTask(msg);
-					logger.log(msg, Log.INFOS);
+					logger.info(msg);
 					for (nrImportedArticles = 0; nrImportedArticles < nrArticles; nrImportedArticles++) {
 						Import.ElexisArtikel a = oddbImport.articles.get(nrImportedArticles);
 						if (nrImportedArticles % 10 == 0)
-							logger.log("j: " + nrImportedArticles + ":" + a.toString(), Log.INFOS);
+							logger.info("j: " + nrImportedArticles + ":" + a.toString());
 						OddbArtikel oddbA = null;
 						qbe.clear();
 						qbe.add("EAN", EQUALS, a.ean13);
@@ -115,7 +115,7 @@ public class OddbImporter extends ImporterPage {
 							oddbA = new OddbArtikel(a.name, a.ean13);
 						} else {
 							// TODO: handle duplicates
-							logger.log(String.format("ODDB-Duplikat ?? %1$s", a.ean13), Log.ERRORS);
+							logger.error(String.format("ODDB-Duplikat ?? %1$s", a.ean13));
 						}
 						if (a.EKPreis != null)
 							oddbA.setEKPreis(a.EKPreis);
@@ -138,8 +138,8 @@ public class OddbImporter extends ImporterPage {
 					}
 					
 				} catch (Exception ex) {
-					logger.log("Error converting articles: " + ex.getMessage()
-						+ ex.getStackTrace().toString(), Log.ERRORS);
+					logger.error("Error converting articles: " + ex.getMessage()
+						+ ex.getStackTrace().toString());
 					ExHandler.handle(ex);
 				}
 				PersistentObject.setDefaultCacheLifetime(cachetime);
@@ -148,8 +148,8 @@ public class OddbImporter extends ImporterPage {
 		}
 		Date d2 = new Date(System.currentTimeMillis());
 		long difference = d2.getTime() - d1.getTime();
-		logger.log(String.format("Elapsed %1$d.%2$d seconds. Converted %3$d articles",
-			difference / 1000, difference % 1000, nrImportedArticles), Log.INFOS);
+		logger.info(String.format("Elapsed %1$d.%2$d seconds. Converted %3$d articles",
+			difference / 1000, difference % 1000, nrImportedArticles));
 		PersistentObject.setDefaultCacheLifetime(cachetime);
 		monitor.done();
 		return status;
@@ -180,7 +180,7 @@ public class OddbImporter extends ImporterPage {
 		String[] line;
 		String ATC_code = "";
 		int nrArticles = (int) file.length() / 250; // avg length of an ODDB csv line
-		String msg = String.format("ODDB read about %1$d articles", (nrArticles / 100) * 100);
+		String msg = String.format("ODDB read aboud %1$d articles", (nrArticles / 100) * 100);//$NON-NLS-1$
 		monitor.beginTask(mainTask, nrArticles);
 		monitor.subTask(msg);
 		nrImportedArticles = 0;
@@ -217,13 +217,13 @@ public class OddbImporter extends ImporterPage {
 				ek_preis = new Money(line[12]);
 			} catch (ParseException e2) {
 				// Ignore errors
-				logger.log(ean13 + ": Could not convert " + line[12], Log.ERRORS);
+				logger.error(ean13 + ": Could not convert " + line[12]);
 			}
 			try {
 				vk_preis = new Money(line[13]);
 			} catch (ParseException e1) {
 				// Ignore errors
-				logger.log(ean13 + ": Could not convert " + line[13], Log.ERRORS);
+				logger.error(ean13 + ": Could not convert " + line[13]);
 				
 			}
 			OddbArtikel oddbA = null;
@@ -249,7 +249,7 @@ public class OddbImporter extends ImporterPage {
 				oddbA = (OddbArtikel) lArt.get(0);
 			} else {
 				// TODO: handle duplicates
-				logger.log(String.format("ODDB-Duplikat ?? %1$s", ean13), Log.ERRORS);
+				logger.error(String.format("ODDB-Duplikat ?? %1$s", ean13));
 			}
 			
 			oddbA.setEAN(ean13);
@@ -270,7 +270,7 @@ public class OddbImporter extends ImporterPage {
 				}
 			}
 		}
-		logger.log(String.format("Imported %d articles", nrImportedArticles), Log.INFOS);
+		logger.info(String.format("Imported %d articles", nrImportedArticles));
 		monitor.done();
 		return Status.OK_STATUS;
 	}

@@ -17,7 +17,6 @@ import ch.elexis.data.Artikel;
 public class OddbArtikel extends Artikel {
 	
 	public static final String ODDB_NAME = "ODDB";
-	public static final String ATC_CODE = "ATC_CODE";
 	
 	/*
 	 * @param text: Präparatname
@@ -32,22 +31,6 @@ public class OddbArtikel extends Artikel {
 			text, ODDB_NAME, "", OddbArtikel.class.getName()
 		}); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 		// setExt("FullText", text); //$NON-NLS-1$
-	}
-	/**
-	 * Den ATC_code setzen. Das sollte nur der Importer tun.
-	 * 
-	 * @param atc_code
-	 */
-	public void setATC_code(final String atc_code){
-		setExt(ATC_CODE, atc_code);
-	}
-	
-	public String getATC_code(){
-		return getExt(ATC_CODE);
-	}
-	
-	public void setPharmaCode(String pharma_code){
-		setExt(FLD_PHARMACODE, pharma_code);
 	}
 	
 	@Override

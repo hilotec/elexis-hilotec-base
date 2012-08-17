@@ -31,10 +31,11 @@ import org.oddb.ch.Address2;
 import org.oddb.ch.Company;
 
 import ch.rgw.tools.Money;
-import ch.rgw.tools.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Import {
-	public static final Log logger = Log.get(Import.class.toString());
+	public static final Logger logger = LoggerFactory.getLogger(Import.class);
 	
 	public class ElexisArtikel {
 		public String ean13;
@@ -135,7 +136,7 @@ public class Import {
 			for (int j = 0; j < corp.getRegistrations().length; j++) {
 				Registration registration = corp.getRegistrations()[j];
 				if (j < 3) {
-					logger.log(registration.toString(), Log.DEBUGMSG);
+					logger.debug(registration.toString());
 				}
 				
 				registrations.put(registration.getIksnr(), registration);
@@ -178,21 +179,21 @@ public class Import {
 					}
 				}
 			}
-			logger.log(corp.toString(),Log.INFOS);
+			logger.info(corp.toString());
 		}
 		Date d2 = new Date(System.currentTimeMillis());
 		long difference = d2.getTime() - d1.getTime();
 		String msg = String
 				.format("Elapsed %1$d.%2$d seconds. Ignoring %3$d exception(s)", difference / 1000, difference % 1000, nrExceptions); 
 		System.out.println(msg);
-		logger.log(msg, Log.INFOS);
+		logger.info(msg);
 		logger
-			.log(String
+			.info(String
 				.format(
 					"loaded %1$d companies, %2$d adress2 entities, %3$d sequences, %4$d packages and %5$d registrations",
 					companies.size(), Address2.counter, sequences.size(), packages.size(),
-					registrations.size()), Log.INFOS);
-		logger.log(String.format("loaded %1$d Registration entities", Registration.counter), Log.INFOS);
+					registrations.size()));
+		logger.info(String.format("loaded %1$d Registration entities", Registration.counter));
 		return true;
 	}
 	
@@ -209,7 +210,7 @@ public class Import {
 				result.put(corp.getOid(), corp);
 			}
 		} catch (Exception e) {
-			logger.log("GotException converting String " + e.getMessage(), Log.ERRORS);
+			logger.error("GotException converting String " + e.getMessage());
 			return null;
 		}
 		return result;

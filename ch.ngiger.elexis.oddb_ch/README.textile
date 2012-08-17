@@ -28,10 +28,6 @@ h2. Design-Entscheidungen
 ** partString
 * ch.ngiger.elexis.oddb_ch.data.OddbImporter benutzt org.oddb.ch.Import, um den Elexis-Import durchzuführen und die Objekte der Klasse ElexisArtikel in solche der Klasse ch.elexis.data.Artikel überzuführen.
 
-h2. Unschönheiten
-
-* UTF-8 Escape-Sequenzen werden nicht in korrekte String umgewandelt. Details http://code.google.com/p/snakeyaml/issues/detail?id=151. Lokaler Workaround in org.oddb.ch.Import  Funktion patchUtfEscape
-
 h2. Tests 
 
 * Siehe Plugin ch.ngiger.elexis.oddb_ch_test (JUnit)

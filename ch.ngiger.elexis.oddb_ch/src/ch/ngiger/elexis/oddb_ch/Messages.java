@@ -16,7 +16,6 @@ public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "ch.ngiger.elexis.oddb_ch.messages"; //$NON-NLS-1$
 	public static final String OddbImporter_WindowTitle = null;
 	public static String OddbImporter_ClearAllData;
-	public static String OddbImporter_ReadRecords;
 	public static String OddbImporter_ModeCreateNew;
 	public static String OddbImporter_ModeUpdateAdd;
 	public static String OddbImporter_PleaseSelectFile;
