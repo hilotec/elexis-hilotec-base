@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<service:service category="feature" id="ch.ngiger.elexis.oddb_ch" name="ODDB-Import der Artikel" provider="support@medelexis.ch" type="Organisation" version="2.0.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+  <service:conditions>
+  	<service:roles>
+                <service:role priceClass="free">
+                        <service:pricePerDB amount="120.00" currency="CHF" />
+                        <service:pricePerMandator amount="120.00" currency="CHF" />
+                </service:role>
+  	</service:roles>
+  </service:conditions>
+  <service:description>Importieren der Artikelliste von oddb.ch (CSV-Datei) inkl. ATC_code</service:description>
+  <service:depends>ch.medelexis.nucleus</service:depends>
+</service:service>
