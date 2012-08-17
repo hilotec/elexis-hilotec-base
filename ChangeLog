@@ -1,4 +1,86 @@
-hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.6
+hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.7
+
+Changelog für 2.1.7.rc0
+
+acfd3ff27383: 2012-08-17: thomashu: Ticket: #873 - added multi mandant bills to arzttarife_ch.
+07b26ea692a0: 2012-08-17: Niklaus Giger: Ticket #1078: Added medelexis.xml
+59481c1ab048: 2012-08-17: Niklaus Giger: Ticket #1078: Using slf4j. Cleanup
+e4a40b914b77: 2012-08-16: Niklaus Giger: Removed old, unused SWTBot-GUI tests
+c1599071fb17: 2012-08-16: Niklaus Giger: Ticket #1078: Initial import of ODDB-CSV
+865856ae43de: 2012-08-16: Niklaus Giger: Ticket #1078: Datenbankänderungen für ODDB-CSV-Import. ATC_code
+d18b9cbe668f: 2012-08-16: thomashu: Ticket: #1025 - fixed table names on update of Tarmed code system
+73edf8e4decc: 2012-08-16: thomashu: Ticket: #1025 - reworked Tarmed Importer, update of IDs is a user option now
+2122290303f8: 2012-08-16: Niklaus Giger: Updated developer documentation
+a98cd492e0b5: 2012-08-16: Niklaus Giger: Updated release plan
+382f480f2e79: 2012-08-09: marcode79: [610] Fix incorrect storage of letters
+ff0ebf3d93d9: 2012-08-09: marcode79: [1103] context sychronization issue -> patient, fall, kons
+5cb7bf1fc1e1: 2012-08-08: marcode79: [1099] ch.elexis.agenda v2.1.7.3
+(transplanted from e6e3c3785c27a80b20462a865728443394d5a435)
+345b8200ba31: 2012-08-01: thomashu: [1095] fixed problem with partially paid bills
+5058174fd8a6: 2012-07-31: marcode79: [696] ch.elexis.agenda v2.1.7.2
+f931a6914875: 2012-07-31: marcode79: [856] ch.elexis.importer.div v1.5.2
+(transplanted from db219d41b6d0b8824a0afff9200338312e57c08a)
+85bd3cf0b747: 2012-07-31: thomashu: [1092] ch.elexis.arzttarife_ch v2.0.15
+ad88171c862f: 2012-07-31: thomashu: more verbose logging on error in RechnungsDrucker
+693aa516129b: 2012-07-31: thomashu: [1092] fixed NPE when updating RFEView
+ad834bb59312: 2012-07-31: marcode79: [1087] ch.elexis.agenda v2.1.7.1
+(transplanted from 8c6e56250a40b56d2d1223f59fb3eaaa3d9c2c49)
+0010bc4eabb1: 2012-07-27: marcode79: [1087] ch.elexis.agenda v2.1.7
+* * *
+Erster graphischer Prototyp Preference-Page
+* * *
+1. funktionierende version
+* * *
+check for appointment clashes, refresh on focus of Wochentage view
+(transplanted from d4ce70dccf4acaf299fc07ac2b7f4ac81e5766ad)
+dff51296900a: 2012-07-27: marcode79: [1001] ch.elexis.agenda v2.1.6
+b855354d462f: 2012-07-25: marcode79: [951] Context menu in stickynotes does not activate copy/paste action
+4ae9a302d424: 2012-07-25: marcode79: [999] ch.rgw.utility v2.0.5.1
+0707269c2fb9: 2012-07-25: marcode79: [999] ch.elexis.agenda v2.1.5.2
+(transplanted from 4215c54c11d04a8d5742ef5c735f1be14a470f60)
+5159cc39147f: 2012-07-24: marcode79: [612] Eigenartikel v1.0.8
+d4fad7df0480: 2012-07-24: marcode79: [1085] ebanking_ch v2.0.4
+dbeccf58ba2d: 2012-07-24: marcode79: [1085] ebanking_ch v2.0.4
+(transplanted from 957b57559f5186d24ce43202c2f97b260b71e004)
+a4c3621f597d: 2012-07-20: marcode79: [1009] Fix for target
+f9be086fcfdd: 2012-07-12: Niklaus Giger: Ticket #1009: Fix for build problem with ant
+c562472a3761: 2012-07-09: marcode79: [1009] Backport (with some new features) of PatientDetailView from 2.2
+1b278c63aa63: 2012-07-08: Niklaus Giger: Ticket #1064: Anpassungen für Viollier OpenSource Plugin
+9638ef441ded: 2012-07-06: marcode79: [909] Agenda version 2.1.5.1
+b0a6dd559805: 2012-07-03: marcode79: Handle double parsing exception in MultiplikatorEditor
+761efe0d6c15: 2012-05-18: marcode79: Ticket #985: Rechnungs-Vorschlag (Zauberstab) funktioniert nicht mehr korrekt
+(transplanted from 0e35ba880ea01536c1b0fe45d36c79d0e5a6c902)
+(transplanted from 8acc47e342a21f93bb564957938f22d38fc2838d)
+8779248c37a1: 2012-06-05: thomashu: Ticket: #1022 - fixed Tarmed Zuschlag Kinder
+ba2540082c89: 2012-05-31: Niklaus Giger: Ticket #1008: Korrektur Tarmed-Import für Postgresql
+4eaf1b109077: 2012-05-29: marcode79: Ticket #918: Artikel CH v2.0.6
+(transplanted from 08b30fa2ebe0cae5c6482a3c3e7bc1a6636071f3)
+f4495973ce9a: 2012-05-21: thomashu: Ticket: #916 - added option to set a default diagnose for new consultations
+5f07c4175268: 2012-05-18: Niklaus Giger: RM: remove automatically generated BuildElexis/rsc/TargetPanel.txt
+3c40ff710234: 2012-04-30: thomashu: Ticket: #799 - fixed by making HistoryLoader thread save, using a new List for sorting
+c8c7d1de92c6: 2012-04-27: marcode79: Ticket #721: Missing sync of Faelle and Fall view
+729d3d7f9cb2: 2012-04-27: marcode79: Ticket #836: Wrong handling of ACE for change mandant
+f4f61a7a00f6: 2012-04-27: thomashu: Ticket: #791 - skipping konsultation with invalid mandant when creating rechnungslauf
+f7a14c3a846d: 2012-04-16: marcode79: Ticket #917: DBVersion 1.8.14
+a3cb5a298cfe: 2012-04-16: marcode79: Ticket #858: move orders into their own table
+(transplanted from 8f16df7fc4e3a2a373c502cdb6caeb3e86d6f9ad)
+559f08dca7e9: 2012-04-12: thomashu: Ticket: #886 - reworked vat rates on tarmed bills
+07a430c88579: 2012-04-02: marcode79: Ticket #480: mailto-funktion in 'patienten-datail'
+dbd8e1ab45e1: 2012-03-30: marcode79: Ticket #838: Leistungen, "teurer" als 9999.99 Fr.
+5ca31cc116f1: 2012-03-28: mdescher: Ticket #714: Weiblicher Patient erfassen
+046f33f8a0b5: 2012-01-26: marcode79: Ticket #13: Allow external access to the current Bestellung (see also Ticket #918)
+0c22c178e545: 2012-01-26: Niklaus Giger: Ticket #632: Merged changes from 2.1.6.2
+381b22dd1da2: 2012-01-19: Niklaus Giger: Merged changes from 2.1.6
+9bec5ba1e9ba: 2012-03-26: marcode79: Task #712: TP-Wert
+b98bd8c76499: 2012-05-18: Niklaus Giger: Tickt #651: Fix PDE-Test (Missing $user.home/elexis/messwerte_v2.xml)
+5bccb9116e08: 2012-05-18: Niklaus Giger: Hilotec Messwerte V2. Sponsor  Dr. Seidenberg
+1f632bcd4ee7: 2012-01-05: Niklaus Giger: Buildr. Change bin/, paths in MANIFEST.MF to bin
+2ef2f1657fd2: 2011-12-27: Niklaus Giger: Ticket: #371: Fixed problem with same name for several patient
+762dd24aa139: 2011-12-10: Niklaus Giger: Ticket: #371: Tests und Korrektur bei mehrere Patienten mit gleichem Namen und Vornamen
+1c1dea767d68: 2011-12-10: Niklaus Giger: Ticket: #371: Erlaube Patienten ohne Vornamen und Geburtsdatum
+18306886ebcd: 2011-12-10: Niklaus Giger: Ticket: #371: Update Plug-In Version to 2.0.0
+d00c0fb43da7: 2011-11-03: Niklaus Giger: Ticket: #371: externe dokumente überarbeiten
+a13a2e927c19: 2011-12-11: Niklaus Giger: Ticket 632: Started Changelog for 2.1.7
 
 Changelog für 2.1.6.4 (retagged on May 13)
 d29146ae7763: 2012-05-13: thomashu: Ticket: #738 - added update of TarmedLeistung in Leistungsblock
