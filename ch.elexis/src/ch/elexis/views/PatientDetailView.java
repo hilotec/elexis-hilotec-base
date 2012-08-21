@@ -21,8 +21,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -31,8 +29,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.ISelectionListener;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
@@ -44,10 +40,11 @@ import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
 import org.eclipse.ui.part.ViewPart;
 
-import ch.elexis.Desk;
 import ch.elexis.Hub;
 import ch.elexis.StringConstants;
+import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
+import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.actions.RestrictedAction;
 import ch.elexis.admin.AccessControlDefaults;
@@ -89,22 +86,18 @@ public class PatientDetailView extends ViewPart {
 	private IObservableValue patientObservable = new WritableValue(null,
 			Patient.class);
 
-	ISelectionListener patientSelectionListener = new ISelectionListener() {
-		@Override
-		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-			if (!(selection instanceof IStructuredSelection))
-				return;
-			IStructuredSelection ss = (IStructuredSelection) selection;
-			Object o = ss.getFirstElement();
-			if (!(o instanceof Patient))
-				return;
-			setPatient((Patient) o);
+	private ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
+		public void runInUi(ElexisEvent ev){
+			setPatient(ElexisEventDispatcher.getSelectedPatient());
 		}
 	};
+
+	private FixMediDisplay dmd;
 
 	public PatientDetailView() {
 		toolkit.setBorderStyle(SWT.NULL); // Deactivate borders for the widgets
 		makeActions();
+		ElexisEventDispatcher.getInstance().addListeners(eeli_pat);
 	}
 
 	void setPatient(Patient p) {
@@ -114,6 +107,11 @@ public class PatientDetailView extends ViewPart {
 				+ ")");
 		compClientCustomText.updateClientCustomArea();
 		stickerComposite.setPatient(p);
+		inpZusatzAdresse.clear();
+		for (BezugsKontakt za : p.getBezugsKontakte()) {
+			inpZusatzAdresse.add(za);
+		}
+		dmd.reload();
 		scrldfrm.reflow(true);
 	}
 
@@ -124,7 +122,7 @@ public class PatientDetailView extends ViewPart {
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		getSite().getPage().addSelectionListener(patientSelectionListener);
+//		getSite().getPage().addSelectionListener(patientSelectionListener);
 
 		parent.setLayout(new GridLayout(1, false));
 
@@ -377,7 +375,7 @@ public class PatientDetailView extends ViewPart {
 			ExpandableComposite ecdm = WidgetFactory.createExpandableComposite(
 					toolkit, scrldfrm, FIXMEDIKATION);
 			ecdm.addExpansionListener(new SectionExpansionHandler());
-			FixMediDisplay dmd = new FixMediDisplay(ecdm, getViewSite());
+			dmd = new FixMediDisplay(ecdm, getViewSite());
 			ecdm.setClient(dmd);
 		}
 
@@ -390,7 +388,7 @@ public class PatientDetailView extends ViewPart {
 	}
 
 	public void dispose() {
-		getSite().getPage().removeSelectionListener(patientSelectionListener);
+		ElexisEventDispatcher.getInstance().removeListeners(eeli_pat);
 		toolkit.dispose();
 		super.dispose();
 	}
