@@ -253,6 +253,7 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		btnDayStartHourIsSet.setText(Messages.Tageseinteilung_btnCheckButton_text);
 		
 		sodt = new Text(compositeStart, SWT.BORDER);
+		sodt.setTextLimit(4);
 		
 		Label lblHours = new Label(compositeStart, SWT.NONE);
 		lblHours.setText(Messages.Tageseinteilung_lblHours_text);
@@ -264,6 +265,7 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		btnEndStartHourIsSet.setText(Messages.Tageseinteilung_btnCheckButton_text_1);
 		
 		eodt = new Text(compositeEnd, SWT.BORDER);
+		eodt.setTextLimit(4);
 		
 		Label lblHours_1 = new Label(compositeEnd, SWT.NONE);
 		lblHours_1.setText(Messages.Tageseinteilung_lblHours_1_text);
@@ -302,10 +304,10 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		tSo.setText(p == null ? "0000-2359" : p); //$NON-NLS-1$
 		
 		String sodtString =
-			Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "00:00");
+			Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
 		sodt.setText(sodtString);
 		String eodtString =
-			Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "23:59");
+			Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
 		eodt.setText(eodtString);
 		
 	}

@@ -151,16 +151,16 @@ public class TerminLabel extends Composite {
 				+ (int) Math.round(getColumn() * (ial.getWidthPerColumn() + ial.getPadding()));
 		
 		String startOfDayTimeInMinutes =
-			Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "00:00");
-		int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.split(":")[0]);
-		int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.split(":")[1]);
+			Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+		int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
+		int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.substring(2));
 		int sodtM = (sodtHours * 60);
 		sodtM += sodtMinutes;
 		
 		String endOfDayTimeInMinutes =
-			Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "23:59");
-		int eodtHours = Integer.parseInt(endOfDayTimeInMinutes.split(":")[0]);
-		int eodtMinutes = Integer.parseInt(endOfDayTimeInMinutes.split(":")[1]);
+			Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+		int eodtHours = Integer.parseInt(endOfDayTimeInMinutes.substring(0,2));
+		int eodtMinutes = Integer.parseInt(endOfDayTimeInMinutes.substring(2));
 		int eodtM = (eodtHours * 60);
 		eodtM += eodtMinutes;
 		

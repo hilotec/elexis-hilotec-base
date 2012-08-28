@@ -19,3 +19,5 @@
 	- dynamic adaptation of font size for appointment labels -> see #696
 2.1.7.3 - 8. August 2012 - M. Descher
 	- termine view now sorts by date
+2.1.7.4 - 28. August 2012 - M. Descher
+	- [1001] fix for wrong parsing of tagesgrenzen
