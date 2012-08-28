@@ -7,8 +7,9 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    M. Descher - modifications for lazy search (Ticket #473)
  *    
- * $Id: SelectorPanel.java 5359 2009-06-16 20:13:48Z rgw_ch $
+ * $Id$
  *******************************************************************************/
 
 package ch.elexis.selectors;
@@ -51,6 +52,9 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	private ToolBarManager tActions;
 	private ToolBar tb;
 	private IAction aClr;
+	private IAction autoSearchActivatedAction;
+	private IAction performSearchAction;
+	private boolean autoSearchActivated = true;
 	
 	public SelectorPanel(Composite parent, IAction... actions){
 		super(parent, SWT.NONE);
@@ -75,6 +79,42 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 			}
 		};
 		tActions.add(aClr);
+		
+		autoSearchActivatedAction =
+			new Action(Messages.SelectorPanel_automaticSearch, Action.AS_CHECK_BOX) {
+				{
+					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_REFRESH));
+				}
+				
+				@Override
+				public void run(){
+					autoSearchActivated = !autoSearchActivated;
+					if (autoSearchActivated)
+						contentsChanged(null);
+					super.run();
+				}
+			};
+		autoSearchActivatedAction.setToolTipText(Messages.SelectorPanel_activateAutomaticSearch);
+		autoSearchActivatedAction.setChecked(autoSearchActivated);
+		tActions.add(autoSearchActivatedAction);
+		
+		performSearchAction = new Action(Messages.SelectorPanel_performSearch) {
+			{
+				setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_NEXT));
+			}
+			
+			@Override
+			public void run(){
+				boolean oldState = autoSearchActivated;
+				autoSearchActivated = true;
+				contentsChanged(null);
+				autoSearchActivated = oldState;
+				super.run();
+			}
+		};
+		performSearchAction.setToolTipText(Messages.SelectorPanel_performSearchTooltip);
+		tActions.add(performSearchAction);		
+		
 		for (IAction ac : actions) {
 			if (ac != null) {
 				tActions.add(ac);
@@ -220,6 +260,8 @@ public class SelectorPanel extends Composite implements ActiveControlListener {
 	 * notify the SelectorListeners attached to this panel
 	 */
 	public void contentsChanged(ActiveControl field){
+		if (!autoSearchActivated)
+			return;
 		if (!bCeaseFire) {
 			bCeaseFire = true;
 			
