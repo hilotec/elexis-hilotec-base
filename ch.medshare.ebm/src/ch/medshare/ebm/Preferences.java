@@ -3,6 +3,7 @@ package ch.medshare.ebm;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
@@ -22,6 +23,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	public static final String USER = "user";
 	public static final String PASS = "pass";
 	public static final String TITLE = "title";
+	public static final String EXTERN = "extern";
 	public static final String LOGGEDIN = "";
 	
 	public static class Defaults {
@@ -31,9 +33,11 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		public static final String USER = Messages.getString(DEFAULTS, Preferences.USER);
 		public static final String PASS = Messages.getString(DEFAULTS, Preferences.PASS);
 		public static final String LOGGEDIN = Messages.getString(DEFAULTS, Preferences.LOGGEDIN);
+		public static final boolean EXTERN = false;
 	}
 	
 	private Text url, user, pass;
+	private Button extern;
 	
 	public Preferences(){
 		super(Messages.getString(PREFERENCES, TITLE));
@@ -59,6 +63,11 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		pass = new Text(ret, SWT.BORDER);
 		pass.setText(Hub.userCfg.get(PASS, Defaults.PASS));
 		
+		extern = new Button(ret, SWT.CHECK);
+		extern.setSelection(Hub.userCfg.get(EXTERN, Defaults.EXTERN));
+		new Label(ret, SWT.NONE)
+			.setText("In externem Browser öffnen. (Benötigt Neustart von Elexis)");
+
 		return ret;
 	}
 	
@@ -71,6 +80,7 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 		Hub.userCfg.set(URL, url.getText());
 		Hub.userCfg.set(USER, user.getText());
 		Hub.userCfg.set(PASS, pass.getText());
+		Hub.userCfg.set(EXTERN, extern.getSelection());
 		Hub.userCfg.flush();
 		return super.performOk();
 	}
@@ -79,6 +89,8 @@ public class Preferences extends PreferencePage implements IWorkbenchPreferenceP
 	public void performDefaults(){
 		Hub.userCfg.set(URL, Defaults.URL);
 		url.setText(Defaults.URL);
+		Hub.userCfg.set(EXTERN, extern.getSelection());
+		extern.setSelection(Defaults.EXTERN);
 		performOk();
 	}
 }

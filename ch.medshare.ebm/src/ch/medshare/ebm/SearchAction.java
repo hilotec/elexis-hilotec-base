@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.swt.custom.StyleRange;
+import org.eclipse.swt.program.Program;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -91,16 +92,21 @@ public class SearchAction extends Action implements IKonsExtension, IHandler {
 					+ "\r\nUnbekannter Fehler");
 			}
 		} else {
-			try {
-				IWorkbenchPage wbPage =
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			if (Hub.userCfg.get(Preferences.EXTERN, Preferences.Defaults.EXTERN)) {
+				Hub.userCfg.set(Preferences.LOGGEDIN, url);
+				Program.launch(url);
+			} else {
 				try {
-					Hub.userCfg.set(Preferences.LOGGEDIN, url);
-					wbPage.showView(BrowserView.ID);
-				} catch (PartInitException e2) {
-					ExHandler.handle(e2);
-				}
-			} catch (Exception e) {}
+					IWorkbenchPage wbPage =
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+					try {
+						Hub.userCfg.set(Preferences.LOGGEDIN, url);
+						wbPage.showView(BrowserView.ID);
+					} catch (PartInitException e2) {
+						ExHandler.handle(e2);
+					}
+				} catch (Exception e) {}
+			}
 		}
 	}
 	
