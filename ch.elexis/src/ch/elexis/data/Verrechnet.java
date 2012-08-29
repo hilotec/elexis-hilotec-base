@@ -14,7 +14,6 @@
 package ch.elexis.data;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -54,6 +53,7 @@ public class Verrechnet extends PersistentObject {
 	public static final String COST_BUYING = "EK_Kosten";
 	public static final String COUNT = "Zahl";
 	public static final String CLASS = "Klasse";
+	public static final String USERID = "userID";
 	public static final String TABLENAME = "LEISTUNGEN";
 	
 	public static final String VATSCALE = "vat_scale";
@@ -64,7 +64,7 @@ public class Verrechnet extends PersistentObject {
 	static {
 		addMapping(TABLENAME, "Konsultation=Behandlung", LEISTG_TXT, LEISTG_CODE, CLASS, COUNT,
 			COST_BUYING, SCALE_TP_SELLING, SCALE_SELLING, PRICE_SELLING, SCALE, SCALE2,
-			"ExtInfo=Detail");
+			"ExtInfo=Detail", USERID);
 
 		List<IConfigurationElement> adjustersConfigurations = Extensions.getExtensions(IVerrechnetAdjuster.EXTENSIONPOINTID);
 		for(IConfigurationElement elem : adjustersConfigurations) {
@@ -90,11 +90,11 @@ public class Verrechnet extends PersistentObject {
 		long preis = Math.round(tp * factor);
 		set(new String[] {
 			KONSULTATION, LEISTG_TXT, LEISTG_CODE, CLASS, COUNT, COST_BUYING, SCALE_TP_SELLING,
-			SCALE_SELLING, PRICE_SELLING, SCALE, SCALE2
+			SCALE_SELLING, PRICE_SELLING, SCALE, SCALE2, USERID
 		}, new String[] {
 			kons.getId(), iv.getText(), iv.getId(), iv.getClass().getName(),
 			Integer.toString(zahl), iv.getKosten(dat).getCentsAsString(), Integer.toString(tp),
-			Double.toString(factor), Long.toString(preis), "100", "100"
+			Double.toString(factor), Long.toString(preis), "100", "100", Hub.actUser.getId()
 		});
 		if (iv instanceof Artikel) {
 			((Artikel) iv).einzelAbgabe(1);
