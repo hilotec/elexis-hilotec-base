@@ -114,6 +114,7 @@ public final class Messages extends NLS {
 	public static String Zeitvorgaben_praxis;
 	public static String Zeitvorgaben_terminTypes;
 	public static String AgendaDefinitionen_shortCutsForBer;
+	public static String Tageseinteilung_no_past_Date;
 	
 	public static String AgendaAnzeige_options;
 	public static String AgendaAnzeige_showReason;

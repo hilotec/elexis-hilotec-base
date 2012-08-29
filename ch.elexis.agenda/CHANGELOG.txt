@@ -21,3 +21,5 @@
 	- termine view now sorts by date
 2.1.7.4 - 28. August 2012 - M. Descher
 	- [1001] fix for wrong parsing of tagesgrenzen
+2.1.7.5 - 29. August 2012 - M. Descher
+	- [1087] wrong adaption of Sperrzeiten

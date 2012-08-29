@@ -193,6 +193,31 @@ public class Tageseinteilung extends PreferencePage implements IWorkbenchPrefere
 		lblChangedValuesAre.setText(Messages.Tageseinteilung_lblChangedValuesAre_text);
 		
 		dateTimeStartingFrom = new DateTime(compositeEditStarting, SWT.BORDER);
+		TimeTool tomorrow = new TimeTool();
+		tomorrow.addDays(1);
+		dateTimeStartingFrom.setDate(tomorrow.get(TimeTool.YEAR), tomorrow.get(TimeTool.MONTH),
+			tomorrow.get(TimeTool.DAY_OF_MONTH));
+		dateTimeStartingFrom.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				setErrorMessage(null);
+				DateTime dt = (DateTime) e.getSource();
+				int day = dateTimeStartingFrom.getDay(); // Calendar.DAY_OF_MONTH
+				int month = dateTimeStartingFrom.getMonth(); // Calendar.MONTH
+				int year = dateTimeStartingFrom.getYear(); // Calendar.YEAR
+				String timeString =
+					String.format("%02d", day) + "." + String.format("%02d", month + 1) + "."
+						+ String.format("%04d", year);
+				TimeTool tt = new TimeTool(timeString);
+				if (tt.isBefore(new TimeTool())) {
+					setErrorMessage(Messages.Tageseinteilung_no_past_Date);
+					TimeTool tomorrow = new TimeTool();
+					tomorrow.addDays(1);
+					dateTimeStartingFrom.setDate(tomorrow.get(TimeTool.YEAR),
+						tomorrow.get(TimeTool.MONTH), tomorrow.get(TimeTool.DAY_OF_MONTH));
+				}
+			}
+		});
 		dateTimeStartingFrom.setEnabled(false);
 		
 		btnApplyEdit = new Button(compositeEditStarting, SWT.NONE);
