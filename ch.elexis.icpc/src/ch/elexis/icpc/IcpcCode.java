@@ -142,6 +142,35 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 			Messages.IcpcCode_comp_7
 		};
 	
+	/**
+	 * Fetch a list of all IcpcCodes in the specified class and component.
+	 * 
+	 * @param cl
+	 *            Class
+	 * @param cmp
+	 *            Component
+	 * @param rev
+	 *            Reverse order
+	 * @return List of IcpcCodes.
+	 */
+	public static List<IcpcCode> loadAllFromComponent(String cl, String cmp, boolean rev){
+		Query<IcpcCode> qbe = new Query<IcpcCode>(IcpcCode.class);
+		qbe.add("component", StringTool.equals, cmp.substring(0, 1));
+		qbe.startGroup();
+		qbe.add("ID", "Like", "*%");
+		qbe.or();
+		qbe.add("ID", "Like", cl.substring(0, 1) + "%");
+		qbe.endGroup();
+		qbe.orderBy(rev, new String[] {
+			"ID"
+		});
+		List<IcpcCode> list = qbe.execute();
+		for (IcpcCode code : list) {
+			code.setLabel(cl.substring(0, 1) + code.getId().substring(1));
+		}
+		return list;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public static void reload(){
 		IcpcCode ic = IcpcCode.load("ver");
@@ -162,26 +191,15 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 			}
 		}
 		IcpcCode.root = new Tree(null, null);
-		Query<IcpcCode> qbe = new Query<IcpcCode>(IcpcCode.class);
+		
 		for (int i = classes.length - 1; i >= 0; i--) {
 			String cl = classes[i];
 			Tree tClass = new Tree(IcpcCode.root, cl);
 			for (int j = components.length - 1; j >= 0; j--) {
 				String cmp = components[j];
 				Tree tComp = new Tree(tClass, cmp);
-				qbe.clear();
-				qbe.add("component", StringTool.equals, cmp.substring(0, 1));
-				qbe.startGroup();
-				qbe.add("ID", "Like", "*%");
-				qbe.or();
-				qbe.add("ID", "Like", cl.substring(0, 1) + "%");
-				qbe.endGroup();
-				qbe.orderBy(true, new String[] {
-					"ID"
-				});
-				List<IcpcCode> list = qbe.execute();
+				List<IcpcCode> list = loadAllFromComponent(cl, cmp, true);
 				for (IcpcCode code : list) {
-					code.setLabel(cl.substring(0, 1) + code.getId().substring(1));
 					new Tree(tComp, code);
 				}
 			}

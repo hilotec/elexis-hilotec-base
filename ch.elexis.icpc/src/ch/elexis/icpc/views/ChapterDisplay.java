@@ -12,8 +12,6 @@
  *******************************************************************************/
 package ch.elexis.icpc.views;
 
-import java.util.List;
-
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -33,7 +31,6 @@ import ch.elexis.Desk;
 import ch.elexis.actions.CodeSelectorHandler;
 import ch.elexis.actions.ICodeSelectorTarget;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.data.Query;
 import ch.elexis.icpc.IcpcCode;
 import ch.elexis.preferences.UserSettings2;
 import ch.elexis.util.SWTHelper;
@@ -42,7 +39,6 @@ import ch.elexis.util.viewers.CommonViewer;
 import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
-import ch.rgw.tools.StringTool;
 
 public class ChapterDisplay extends Composite {
 	private static final String UC2_HEADING = "ICPCChapter/";
@@ -150,19 +146,7 @@ public class ChapterDisplay extends Composite {
 		}
 		
 		public Object[] getElements(Object inputElement){
-			Query<IcpcCode> qbe = new Query<IcpcCode>(IcpcCode.class);
-			qbe.startGroup();
-			qbe.add("ID", "Like", chapter.substring(0, 1) + "%");
-			qbe.or();
-			qbe.add("ID", "Like", "*%");
-			qbe.endGroup();
-			qbe.and();
-			qbe.add("component", StringTool.equals, component.substring(0, 1));
-			qbe.orderBy(false, new String[] {
-				"ID"
-			});
-			List<IcpcCode> codes = qbe.execute();
-			return codes.toArray();
+			return IcpcCode.loadAllFromComponent(chapter, component, false).toArray();
 		}
 		
 	}
