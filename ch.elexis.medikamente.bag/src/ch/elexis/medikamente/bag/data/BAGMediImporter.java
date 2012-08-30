@@ -130,11 +130,11 @@ public class BAGMediImporter extends ImporterPage {
 				log.log(Level.WARNING, "Pharmacode falsch: " + row[2]);
 			}
 			
-			qbe.clear();
+			qbe.clear(true);
 			qbe.add(Artikel.FLD_SUB_ID, "=", pharmacode);
 			qbe.or();
 			qbe.add(Artikel.FLD_SUB_ID, Query.EQUALS, row[2].trim());
-			List<Artikel> lArt = qbe.executeWithDeleted();
+			List<Artikel> lArt = qbe.execute();
 			if (lArt == null) {
 				throw new ElexisException(BAGMediImporter.class,
 					"Article list was null while scanning for " + pharmacode,
