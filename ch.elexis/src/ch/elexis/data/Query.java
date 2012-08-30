@@ -120,11 +120,14 @@ public class Query<T> {
 	}
 	
 	/**
-	 * This method allows to set a custom sql query string; 
-	 * E.g. The original Query does not support the usage of INNER JOINS, to use them
-	 * nevertheless we need to provide a direct method to set query strings
-	 * @param cl the persistent object to set the query for
-	 * @param string the SQL query string
+	 * This method allows to set a custom sql query string; E.g. The original Query does not support
+	 * the usage of INNER JOINS, to use them nevertheless we need to provide a direct method to set
+	 * query strings
+	 * 
+	 * @param cl
+	 *            the persistent object to set the query for
+	 * @param string
+	 *            the SQL query string
 	 * @author Marco Descher
 	 */
 	public Query(Class<? extends PersistentObject> cl, final String string){
@@ -139,24 +142,38 @@ public class Query<T> {
 			ordering = null;
 		} catch (Exception ex) {
 			ElexisStatus status =
-					new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
-						"Query: Konnte Methode load auf " + cl.getName() + " nicht auflösen", ex,
-						ElexisStatus.LOG_ERRORS);
-				throw new PersistenceException(status);
+				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
+					"Query: Konnte Methode load auf " + cl.getName() + " nicht auflösen", ex,
+					ElexisStatus.LOG_ERRORS);
+			throw new PersistenceException(status);
 		}
-
+		
 	}
-
+	
 	/**
-	 * Abfrage löschen, beispielsweise um dasselbe Query-Objekt für eine neue Abfrage zu verwenden.
+	 * Delete query to e.g. re-use the query for a new execution run
+	 * 
+	 * @see #clear(boolean)
 	 */
 	public void clear(){
+		clear(false);
+	}
+	
+	/**
+	 * Delete query to e.g. re-use the query for a new execution run
+	 * 
+	 * @param includeDeletedEntriesInQuery
+	 *            to include deleted elements in your query initialize your query with
+	 *            {@link #clear(boolean)} == <code>true</code>, the default as executed by
+	 *            {@link #clear()} is <code>false</code>
+	 */
+	public void clear(boolean includeDeletedEntriesInQuery){
 		sql = new StringBuilder(500);
 		String table = template.getTableName();
 		sql.append(left).append(table);
 		String cns = template.getConstraint();
 		if (cns.equals("")) {
-			if (PersistentObject.isShowDeleted()) {
+			if (includeDeletedEntriesInQuery) {
 				link = " WHERE ";
 			} else {
 				sql.append(" WHERE deleted=").append(JdbcLink.wrap("0"));
@@ -164,7 +181,7 @@ public class Query<T> {
 			}
 		} else {
 			sql.append(" WHERE ").append(cns);
-			if (!PersistentObject.isShowDeleted()) {
+			if (!includeDeletedEntriesInQuery) {
 				sql.append(" AND deleted=").append(JdbcLink.wrap("0"));
 			}
 			link = " AND ";
@@ -389,7 +406,7 @@ public class Query<T> {
 		} catch (Exception ex) {
 			ElexisStatus status =
 				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
-					"Fehler beim PreparedStatement "+ex.getMessage(), ex, ElexisStatus.LOG_ERRORS);
+					"Fehler beim PreparedStatement " + ex.getMessage(), ex, ElexisStatus.LOG_ERRORS);
 			throw new PersistenceException(status);
 		}
 	}
@@ -449,19 +466,6 @@ public class Query<T> {
 			sb.delete(sb.length() - 1, 10000);
 			ordering = sb.toString();
 		}
-	}
-	
-	/**
-	 * execute query and include elements that are marked deleted
-	 * 
-	 * @return
-	 */
-	public List<T> executeWithDeleted(){
-		boolean bShowDeleted = PersistentObject.isShowDeleted();
-		PersistentObject.setShowDeleted(true);
-		List<T> ret = execute();
-		PersistentObject.setShowDeleted(bShowDeleted);
-		return ret;
 	}
 	
 	/**
@@ -544,8 +548,8 @@ public class Query<T> {
 		} catch (Exception ex) {
 			ElexisStatus status =
 				new ElexisStatus(ElexisStatus.ERROR, Hub.PLUGIN_ID, ElexisStatus.CODE_NONE,
-					"Fehler bei Datenbankabfrage "+ex.getMessage(), ex, ElexisStatus.LOG_ERRORS);
-			log.log("Fehler bei Datenbankabfrage: "+ex.getMessage(), Log.WARNINGS);
+					"Fehler bei Datenbankabfrage " + ex.getMessage(), ex, ElexisStatus.LOG_ERRORS);
+			log.log("Fehler bei Datenbankabfrage: " + ex.getMessage(), Log.WARNINGS);
 			throw new PersistenceException(status);
 		} finally {
 			PersistentObject.getConnection().releaseStatement(stm);

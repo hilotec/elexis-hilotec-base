@@ -433,6 +433,12 @@ public class Xid extends PersistentObject implements IXid {
 		return domains.keySet();
 	}
 	
+	@Override
+	public boolean undelete() {
+		new DBLog(this, DBLog.TYP.UNDELETE);
+		return(set("deleted", "0"));
+	};
+	
 	public static class XIDDomain {
 		String domain_name;
 		String simple_name;

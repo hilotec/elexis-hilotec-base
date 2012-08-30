@@ -35,7 +35,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -74,7 +73,6 @@ import ch.elexis.util.SWTHelper;
 import ch.elexis.util.SqlWithUiRunner;
 import ch.elexis.wizards.DBConnectWizard;
 import ch.rgw.compress.CompEx;
-import ch.rgw.io.FileTool;
 import ch.rgw.io.Settings;
 import ch.rgw.io.SqlSettings;
 import ch.rgw.tools.ExHandler;
@@ -147,7 +145,6 @@ public abstract class PersistentObject implements IPersistentObject {
 	private static String pcname;
 	private static String tracetable;
 	protected static int default_lifetime;
-	private static boolean showDeleted = false;
 	private static boolean runningAsTest = false;
 	private static String dbUser;
 	private static String dbPw;
@@ -712,11 +709,8 @@ public abstract class PersistentObject implements IPersistentObject {
 					// 'deleted', the object exists anyway
 					return EXISTS;
 				}
-				if (showDeleted) {
-					return EXISTS;
-				} else {
-					return deleted.equals("1") ? DELETED : EXISTS;
-				}
+				return deleted.equals("1") ? DELETED : EXISTS;
+
 				
 			} else {
 				return INEXISTENT;
@@ -1174,7 +1168,9 @@ public abstract class PersistentObject implements IPersistentObject {
 	 *            Feldname der Hashtable
 	 * @return eine Hashtable (ggf. leer). Nie null.
 	 */
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({
+		"rawtypes", "unchecked"
+	})
 	public Map getMap(final String field){
 		String key = getKey(field);
 		Object o = cache.get(key);
@@ -1206,6 +1202,8 @@ public abstract class PersistentObject implements IPersistentObject {
 	/**
 	 * Eine 1:n Verknüpfung aus der Datenbank auslesen.
 	 * 
+	 * Does not include elements marked as deleted.
+	 * 
 	 * @param field
 	 *            das Feld, wie in der mapping-Deklaration angegeben
 	 * @param reverse
@@ -1223,9 +1221,9 @@ public abstract class PersistentObject implements IPersistentObject {
 				// String order=null;
 				
 				sql.append("SELECT ID FROM ").append(m[2]).append(" WHERE ");
-				if (showDeleted == false) {
-					sql.append("deleted=").append(JdbcLink.wrap("0")).append(" AND ");
-				}
+				
+				sql.append("deleted=").append(JdbcLink.wrap("0")).append(" AND ");
+
 				sql.append(m[1]).append("=").append(getWrappedId());
 				if (m.length > 3) {
 					sql.append(" ORDER by ").append(m[3]);
@@ -1391,6 +1389,7 @@ public abstract class PersistentObject implements IPersistentObject {
 	 * @param map
 	 * @return 0 bei Fehler
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void setMap(final String field, final Map<Object, Object> map){
 		if (map == null) {
@@ -1654,29 +1653,19 @@ public abstract class PersistentObject implements IPersistentObject {
 	 */
 	public boolean undelete(){
 		if (set("deleted", "0")) {
-			boolean oldShowDeleted = showDeleted;
-			showDeleted = true;
-			List<Xid> xids = new Query<Xid>(Xid.class, Xid.FLD_OBJECT, getId()).execute();
+			Query<Xid> qbe = new Query<Xid>(Xid.class);
+			qbe.clear(true);
+			qbe.add(Xid.FLD_OBJECT, Query.EQUALS, getId());		
+			List<Xid> xids = qbe.execute();
 			for (Xid xid : xids) {
 				xid.undelete();
 			}
-			showDeleted = oldShowDeleted;
 			new DBLog(this, DBLog.TYP.UNDELETE);
 			ElexisEventDispatcher.getInstance().fire(
 				new ElexisEvent(this, getClass(), ElexisEvent.EVENT_CREATE));
 			return true;
 		}
 		return false;
-	}
-	
-	/**
-	 * Eine zur konkreten Klasse des aufrufenden Objekts passende Query zurückliefern
-	 * 
-	 * @return leere Query für die Klasse dieses Objekts.
-	 */
-	@SuppressWarnings("unchecked")
-	public Query getQuery(){
-		return new Query(getClass());
 	}
 	
 	/**
@@ -2223,14 +2212,6 @@ public abstract class PersistentObject implements IPersistentObject {
 		return default_lifetime;
 	}
 	
-	public static boolean isShowDeleted(){
-		return showDeleted;
-	}
-	
-	public static void setShowDeleted(final boolean showDeleted){
-		PersistentObject.showDeleted = showDeleted;
-	}
-	
 	/**
 	 * Utility function to create or modify a table consistently. Should be used by all plugins that
 	 * contribute data types derived from PersistentObject
@@ -2305,7 +2286,9 @@ public abstract class PersistentObject implements IPersistentObject {
 	 * @param name
 	 *            the name of the table
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({
+		"unchecked", "rawtypes"
+	})
 	protected static void removeTable(final String name, final Class oclas){
 		Query qbe = new Query(oclas);
 		for (Object o : qbe.execute()) {
