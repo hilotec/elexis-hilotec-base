@@ -184,11 +184,19 @@ public class Optifier implements IOptifier {
 	}
 	
 	private Verrechnet doCreate(Konsultation kons, String code) throws Exception{
-		String z =
-			new Query<Labor2009Tarif>(Labor2009Tarif.class).findSingle(Labor2009Tarif.FLD_CODE,
-				Query.EQUALS, code);
-		if (z != null) {
-			return new Verrechnet(Labor2009Tarif.load(z), kons, 1);
+		Query<Labor2009Tarif> query = new Query<Labor2009Tarif>(Labor2009Tarif.class);
+		query.add(Labor2009Tarif.FLD_CODE, Query.EQUALS, code);
+		List<Labor2009Tarif> list = query.execute();
+		Labor2009Tarif tarif = null;
+		for (Labor2009Tarif labor2009Tarif : list) {
+			if (labor2009Tarif.isValidOn(new TimeTool(kons.getDatum()))) {
+				tarif = labor2009Tarif;
+				break;
+			}
+		}
+
+		if (tarif != null) {
+			return new Verrechnet(tarif, kons, 1);
 		} else {
 			throw new Exception("Tariff not installed correctly"); //$NON-NLS-1$
 		}

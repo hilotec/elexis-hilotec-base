@@ -9,6 +9,9 @@ package ch.elexis.labortarif2009.data;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -262,7 +265,8 @@ public class Importer extends ImporterPage {
 		String code = convertCodeString(StringTool.getSafe(line, 2));
 
 		importedValues.put(Labor2009Tarif.FLD_CODE, code);
-		importedValues.put(Labor2009Tarif.FLD_TP, StringTool.getSafe(line, 3));
+		importedValues.put(Labor2009Tarif.FLD_TP,
+			convertLocalizedNumericString(StringTool.getSafe(line, 3)).toString());
 		importedValues.put(Labor2009Tarif.FLD_NAME,
 			StringTool.limitLength(StringTool.getSafe(line, 4), 254));
 		importedValues.put(Labor2009Tarif.FLD_LIMITATIO, StringTool.getSafe(line, 5));
@@ -276,7 +280,8 @@ public class Importer extends ImporterPage {
 		String code = convertCodeString(StringTool.getSafe(line, 2));
 
 		importedValues.put(Labor2009Tarif.FLD_CODE, code);
-		importedValues.put(Labor2009Tarif.FLD_TP, StringTool.getSafe(line, 3));
+		importedValues.put(Labor2009Tarif.FLD_TP,
+			convertLocalizedNumericString(StringTool.getSafe(line, 3)).toString());
 		importedValues.put(Labor2009Tarif.FLD_NAME,
 			StringTool.limitLength(StringTool.getSafe(line, 4), 254));
 		importedValues.put(Labor2009Tarif.FLD_LIMITATIO, StringTool.getSafe(line, 5));
@@ -300,6 +305,20 @@ public class Importer extends ImporterPage {
 			sb.append("0");
 		
 		return sb.toString();
+	}
+
+	private String convertLocalizedNumericString(String localized){
+		DecimalFormat df = (DecimalFormat) NumberFormat.getInstance();
+		Number number = new Integer(0);
+		try {
+			number = df.parse(localized);
+		} catch (ParseException pe) { /* ignore and return default 0 */}
+		// cut off decimals if there are none
+		if ((number.doubleValue() % 1.0) > 0) {
+			return Double.toString(number.doubleValue());
+		} else {
+			return Integer.toString(number.intValue());
+		}
 	}
 
 	int getFormatYear(String[] line){

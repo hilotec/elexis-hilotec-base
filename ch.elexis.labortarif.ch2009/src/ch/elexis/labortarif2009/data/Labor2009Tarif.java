@@ -83,9 +83,30 @@ public class Labor2009Tarif extends VerrechenbarAdapter {
 	public String getLabel(){
 		String code = getCode();
 		if (!StringTool.isNothing(code)) {
-			return new StringBuilder(code).append(" ").append(getText()) //$NON-NLS-1$
-				.append(" (").append(get(FLD_FACHBEREICH)).append(")") //$NON-NLS-1$ //$NON-NLS-2$
-				.toString();
+			StringBuilder sb = new StringBuilder(code).append(" ").append(getText()) //$NON-NLS-1$
+				.append(" (").append(get(FLD_FACHBEREICH)).append(")"); //$NON-NLS-1$ //$NON-NLS-2$
+			
+			TimeTool validFrom = null;
+			TimeTool validTo = null;
+			String validFromString = get(Labor2009Tarif.FLD_GUELTIG_VON);
+			String validToString = get(Labor2009Tarif.FLD_GUELTIG_BIS);
+			if (validFromString != null && validFromString.trim().length() > 0) {
+				validFrom = new TimeTool(validFromString);
+			}
+			if (validToString != null && validToString.trim().length() > 0) {
+				validTo = new TimeTool(validToString);
+			}
+			
+			if (validFrom != null) {
+				sb.append(" (").append(validFrom.toString(TimeTool.DATE_GER));
+				if (validTo != null) {
+					sb.append("-").append(validTo.toString(TimeTool.DATE_GER)).append(")");
+				} else {
+					sb.append("-").append(" ").append(")");
+				}
+			}
+
+			return sb.toString();
 		} else {
 			return "?"; //$NON-NLS-1$
 		}
