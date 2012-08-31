@@ -205,7 +205,6 @@ public final class ElexisEventDispatcher extends Job {
 					lastSelection.remove(Konsultation.class);
 					Patient pat = (Patient) ee.getObject();
 					if(pat.getFaelle().length>0) lastSelection.put(Fall.class, pat.getFaelle()[0]);
-					if(pat.getLetzteKons(false)!=null) lastSelection.put(Konsultation.class, pat.getLetzteKons(false));
 				}
 				
 				PersistentObject po = lastSelection.get(clazz);
