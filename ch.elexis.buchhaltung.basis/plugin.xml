@@ -39,6 +39,11 @@
             class="ch.elexis.buchhaltung.model.FakturaJournalDetail"
             name="GarantJournal">
       </DataProvider>
+      <DataProvider
+            category="ch.elexis.buchhaltung.ProviderCategory"
+            class="ch.elexis.buchhaltung.model.AlleLeistungen"
+            name="Alle Leistungen">
+      </DataProvider>
    </extension>
 
 </plugin>
