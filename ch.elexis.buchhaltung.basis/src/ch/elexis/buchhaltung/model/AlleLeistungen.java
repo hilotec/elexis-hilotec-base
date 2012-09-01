@@ -104,7 +104,7 @@ public class AlleLeistungen extends AbstractTimeSeries {
 					row[index++] = mandant.getRechnungssteller().getLabel();
 					row[index++] = mandant.getMandantLabel();
 					if (elexisVersion.isNewer("2.1.6")) { //$NON-NLS-1$
-						String userid = verrechnet.get(Verrechnet.USERID);
+						String userid = verrechnet.get("userID");
 						Kontakt user = Kontakt.load(userid);
 						if (user.exists())
 							row[index++] = user.getLabel();
