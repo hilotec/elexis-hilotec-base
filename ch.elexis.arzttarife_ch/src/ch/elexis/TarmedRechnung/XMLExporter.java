@@ -697,7 +697,7 @@ public class XMLExporter implements IRnOutputter {
 					double secondaryScale = vv.getSecondaryScaleFactor();
 					
 					double tlTl, tlAL, mult;
-					if (arzl != null) {
+					if ((arzl != null && !arzl.isEmpty()) && (tecl != null && !tecl.isEmpty())) {
 						tlTl = Double.parseDouble(tecl);
 						mult = PersistentObject.checkZeroDouble(vv.get(VK_SCALE)); // Taxpunkt
 						tlAL = Double.parseDouble(arzl);
