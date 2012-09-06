@@ -43,7 +43,7 @@ public class KompendiumView extends ViewPart implements ISaveablePart2 {
 			}
 			
 		});
-		browser.setUrl("http://www.kompendium.ch/Search.aspx"); //$NON-NLS-1$
+		browser.setUrl("http://www.compendium.ch/search/de"); //$NON-NLS-1$
 		
 	}
 	
