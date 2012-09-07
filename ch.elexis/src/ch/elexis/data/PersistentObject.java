@@ -438,7 +438,9 @@ public abstract class PersistentObject implements IPersistentObject {
 		if (vi.isNewerMinor(v2)) {
 			SWTHelper.showError("Verbindung nicht möglich: Version zu alt",
 				"Die Datenbank ist für eine neuere Elexisversion. Bitte machen Sie ein Update.");
-			log.log("Datenbank zu neu", Log.FATALS);
+						"Die Datenbank %1s ist für eine neuere Elexisversion '%2s' als die aufgestartete '%3s'. Bitte machen Sie ein Update.",
+						jd.getConnectString(), vi.version().toString(), v2.version().toString());
+			log.log(msg, Log.FATALS);
 			System.exit(2);
 		}
 		// Wenn trace global eingeschaltet ist, gilt es für alle
