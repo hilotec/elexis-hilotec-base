@@ -28,11 +28,13 @@ import ch.unibe.iam.scg.archie.model.AbstractTimeSeries;
 
 public class AlleLeistungen extends AbstractTimeSeries {
 	private static final String NAME = Messages.AlleLeistungen_Title;
-	VersionInfo elexisVersion = null;
 	
+	private boolean hasUserId;
+
 	public AlleLeistungen(){
 		super(NAME);
-		elexisVersion = new VersionInfo(Hub.Version);
+		VersionInfo elexisVersion = new VersionInfo(Hub.Version);
+		hasUserId = !elexisVersion.isOlder("2.1.7");
 	}
 	
 	@Override
@@ -45,7 +47,7 @@ public class AlleLeistungen extends AbstractTimeSeries {
 		List<String> ret = new ArrayList<String>();
 		ret.add(Messages.AlleLeistungen_InvoicingParty);
 		ret.add(Messages.AlleLeistungen_Mandator);
-		if (elexisVersion.isNewer("2.1.6")) { //$NON-NLS-1$
+		if (hasUserId) { //$NON-NLS-1$
 			ret.add(Messages.AlleLeistungen_User);
 		}
 		ret.add(Messages.AlleLeistungen_TreatmentDate);
@@ -103,7 +105,7 @@ public class AlleLeistungen extends AbstractTimeSeries {
 					int index = 0;
 					row[index++] = mandant.getRechnungssteller().getLabel();
 					row[index++] = mandant.getMandantLabel();
-					if (elexisVersion.isNewer("2.1.6")) { //$NON-NLS-1$
+					if (hasUserId) { //$NON-NLS-1$
 						String userid = verrechnet.get("userID");
 						Kontakt user = Kontakt.load(userid);
 						if (user.exists())
