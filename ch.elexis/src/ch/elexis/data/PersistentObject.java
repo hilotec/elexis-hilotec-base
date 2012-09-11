@@ -378,9 +378,8 @@ public abstract class PersistentObject implements IPersistentObject {
 							Person.NAME, Person.FIRSTNAME, Person.TITLE, Person.SEX,
 							Person.FLD_E_MAIL, Person.FLD_PHONE1, Person.FLD_FAX,
 							Kontakt.FLD_STREET, Kontakt.FLD_ZIP, Kontakt.FLD_PLACE
-						}, "Bond", "James", "Dr. med.", Person.MALE, clientEmail,
-							"0061 555 55 55", "0061 555 55 56", "10, Baker Street", "9999",
-							"Elexikon");
+						}, "Bond", "James", "Dr. med.", Person.MALE, clientEmail, "0061 555 55 55",
+							"0061 555 55 56", "10, Baker Street", "9999", "Elexikon");
 						String gprs = m.getInfoString(AccessControl.KEY_GROUPS); //$NON-NLS-1$
 						gprs = StringConstants.ROLE_ADMIN + "," + StringConstants.ROLE_USERS;
 						m.setInfoElement(AccessControl.KEY_GROUPS, gprs);
@@ -436,11 +435,13 @@ public abstract class PersistentObject implements IPersistentObject {
 		log.log("Vorhandene Elexis-Version: " + Hub.Version, Log.INFOS);
 		VersionInfo v2 = new VersionInfo(Hub.Version);
 		if (vi.isNewerMinor(v2)) {
-			SWTHelper.showError("Verbindung nicht möglich: Version zu alt",
-				"Die Datenbank ist für eine neuere Elexisversion. Bitte machen Sie ein Update.");
+			String msg =
+				String
+					.format(
 						"Die Datenbank %1s ist für eine neuere Elexisversion '%2s' als die aufgestartete '%3s'. Bitte machen Sie ein Update.",
 						jd.getConnectString(), vi.version().toString(), v2.version().toString());
 			log.log(msg, Log.FATALS);
+			SWTHelper.showError("Verbindung nicht möglich: Aufstartete Elexis-Version zu alt", msg);
 			System.exit(2);
 		}
 		// Wenn trace global eingeschaltet ist, gilt es für alle
@@ -712,7 +713,6 @@ public abstract class PersistentObject implements IPersistentObject {
 					return EXISTS;
 				}
 				return deleted.equals("1") ? DELETED : EXISTS;
-
 				
 			} else {
 				return INEXISTENT;
@@ -1225,7 +1225,7 @@ public abstract class PersistentObject implements IPersistentObject {
 				sql.append("SELECT ID FROM ").append(m[2]).append(" WHERE ");
 				
 				sql.append("deleted=").append(JdbcLink.wrap("0")).append(" AND ");
-
+				
 				sql.append(m[1]).append("=").append(getWrappedId());
 				if (m.length > 3) {
 					sql.append(" ORDER by ").append(m[3]);
@@ -1395,7 +1395,8 @@ public abstract class PersistentObject implements IPersistentObject {
 	@Override
 	public void setMap(final String field, final Map<Object, Object> map){
 		if (map == null) {
-			throw new PersistenceException(new ElexisStatus(Status.ERROR,Hub.PLUGIN_ID,ElexisStatus.CODE_NONE,"Attempt to store Null map",null));
+			throw new PersistenceException(new ElexisStatus(Status.ERROR, Hub.PLUGIN_ID,
+				ElexisStatus.CODE_NONE, "Attempt to store Null map", null));
 		}
 		byte[] bin = flatten((Hashtable) map);
 		cache.put(getKey(field), map, getCacheTime());
@@ -1438,8 +1439,9 @@ public abstract class PersistentObject implements IPersistentObject {
 			stm.executeUpdate();
 		} catch (Exception ex) {
 			log.log("Fehler beim Ausführen der Abfrage " + cmd, Log.ERRORS);
-			throw new PersistenceException(new ElexisStatus(Status.ERROR,Hub.PLUGIN_ID,ElexisStatus.CODE_NONE,"setBytes: Es trat ein Fehler beim Schreiben auf. "
-				+ ex.getMessage(),ex,Log.ERRORS));
+			throw new PersistenceException(new ElexisStatus(Status.ERROR, Hub.PLUGIN_ID,
+				ElexisStatus.CODE_NONE, "setBytes: Es trat ein Fehler beim Schreiben auf. "
+					+ ex.getMessage(), ex, Log.ERRORS));
 		} finally {
 			try {
 				stm.close();
@@ -1657,7 +1659,7 @@ public abstract class PersistentObject implements IPersistentObject {
 		if (set("deleted", "0")) {
 			Query<Xid> qbe = new Query<Xid>(Xid.class);
 			qbe.clear(true);
-			qbe.add(Xid.FLD_OBJECT, Query.EQUALS, getId());		
+			qbe.add(Xid.FLD_OBJECT, Query.EQUALS, getId());
 			List<Xid> xids = qbe.execute();
 			for (Xid xid : xids) {
 				xid.undelete();
@@ -2139,7 +2141,8 @@ public abstract class PersistentObject implements IPersistentObject {
 			return 0;
 		}
 		try {
-			return Integer.parseInt(((String) in).trim());	// We're sure in is a String at this point
+			return Integer.parseInt(((String) in).trim()); // We're sure in is a String at this
+// point
 		} catch (NumberFormatException ex) {
 			ExHandler.handle(ex);
 			return 0;
