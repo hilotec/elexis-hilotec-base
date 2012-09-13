@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<service:service category="feature" id="ch.medshare.elexis_directories" name="medshare Directories" provider="support@medelexis.net" type="Datenaustausch" version="1.4.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+<service:service category="feature" id="ch.medshare.elexis_directories" name="medshare Directories" provider="info@jsigle.com" type="Datenaustausch" version="1.4.3" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
   <service:conditions>
   	<service:roles>
   		<service:role available="true" priceClass="fixed-basic">
