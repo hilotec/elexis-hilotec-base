@@ -76,6 +76,10 @@
 				<include name="plugins/org.apache*"/>
 				<include name="plugins/com.ibm*"/>
 				<include name="plugins/javax*"/>
+				<include name="plugins/ch.qos.logback.classic_*"/>
+				<include name="plugins/ch.qos.logback.core_*"/>
+				<include name="plugins/org.slf4j.api_*"/>
+				<include name="plugins/org.slf4j.jul_*"/>
 			</fileset>
 			<executable os="linux" targetfile="$INSTALL_PATH/elexis" keep="true"/>
 		</pack>
