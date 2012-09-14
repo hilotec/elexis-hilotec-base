@@ -1,5 +1,45 @@
 hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.7
 
+Changelog für 2.1.7.rc1
+b427dbcff53c: 2012-09-14: Niklaus Giger: #785: izpack installer.xml um LogBack erweitert
+1689d8133cca: 2012-09-14: thomashu: updated core.extlib.feature due to new logging libs
+95e8525408d4: 2012-09-13: Niklaus Giger: # 1153: Anpassungen WeisseSeiten von Jörg Sigle
+530bd0d55af6: 2012-09-12: thomashu: updated target and ch.rgw.utility manifest due to new logging libs
+b398984e0516: 2012-09-11: Niklaus Giger: #785: Fixed build error in META-INF
+7c2ceef3e07e: 2012-09-11: Niklaus Giger: Logback auf 1.0.0 gesetzt
+349d40924f8f: 2012-09-11: tschaller: Provider ausgefüllt im Manifest
+0bb4708fc7b0: 2012-09-11: tschaller: pdfFileName gemäss Filesystem übernehmen
+7bc6baf0ea81: 2012-09-11: tschaller: Wenn kein ORC Segment vorhanden ist, Datum aus MSH nehmen
+77e0197ef8b7: 2012-09-11: L.Millet: Disabled the Ant-Builder: referenced build file does not exist
+8b31971d86ab: 2012-09-11: L.Millet: Automatic import of PDF file into Omnivore
+- implemented import of PDF file matching HL7 file into Omnivore
+- switched plug-in dependences from ch.elexis.hl7.v26 to ch.elexis.hl7.v2x
+22b478f4e012: 2012-09-11: L.Millet: Added output folder to Mercurial's ignore list
+50845b8de976: 2012-09-11: L.Millet: Corrected ant build file
+4bb0c83e9aa1: 2012-09-11: Niklaus Giger: #785: Fix merge error for new logging framework
+b95313eb3edd: 2012-09-07: Niklaus Giger: #785: New logging framework
+87a1c6a85ccf: 2012-08-18: AntoineKaufmann: Ticket #975: Konsultationsliste aktualisieren, auch wenn Konsultation neu erfasst oder gelöscht
+00b2713424ef: 2012-09-07: thomashu: [1091] fixed Elexis version check
+c4c996a9dae2: 2012-09-06: thomashu: [1137] changed Kompendium URL
+c6491386dcd8: 2012-09-06: thomashu: [1112] fixed Tarmed XML output with incomplete ExtInfo entry
+fbdb0e7fd61a: 2012-09-01: thomashu: [1091] removed elexis 2.1.7 specific code buchhaltung.basis v2.0.2
+c233985cd74f: 2012-09-01: thomashu: [1091] added all activities analysis to buchhaltung.basis v2.0.2
+b4bda7f2a208: 2012-08-31: marcode79: [1126] Konsultationsview was not updated on Patient change
+(transplanted from b4cf145f30ca08b79f2d4ed04e44dd94f0408754)
+cac8abf6a41f: 2012-08-30: thomashu: [1122] added valid time to Labor2009Tarif Optifier and label, fixed importer with none de_CH locale
+4d89bf24e3ae: 2012-08-30: marcode79: [476] ch.elexis.medikamente.bag importer fix
+39aa8b14e637: 2012-08-30: marcode79: [476] Query.executeWithDeleted() has no function
+882f1ba179b2: 2012-08-29: marcode79: [976] ICPC refactoring
+a6b49cae5a3b: 2012-08-29: marcode79: [1087] ch.elexis.agenda v2.1.7.5
+(transplanted from 84e65926cf089c32f9853e7e31ca2335e36c25b3)
+1bec702a6118: 2012-08-29: thomashu: [1091] added user id to verrechnet, making financial statistics per user possible, db version 1.8.16
+65210e94466e: 2012-08-28: thomashu: [1116] added option to open ebm search result in external browser, v1.0.2
+fee85f21264a: 2012-08-28: thomashu: [1116] added wikipedia search option to consultation text
+041a4d8dfaba: 2012-08-28: marcode79: [473] Durchsuche Tarmed (missing port)
+15fece27148c: 2012-08-28: marcode79: [1001] ch.elexis.agenda v2.1.7.4
+(transplanted from a6401f6c08c8833c2881fd671b4e9f06ed106aec)
+ad7ec6e1c0c6: 2012-08-21: marcode79: [1009] PatientenDetailView, several fixes
+
 Changelog für 2.1.7.rc0
 
 acfd3ff27383: 2012-08-17: thomashu: Ticket: #873 - added multi mandant bills to arzttarife_ch.
