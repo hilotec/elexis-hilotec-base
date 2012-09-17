@@ -27,6 +27,9 @@ public class Bestellung extends PersistentObject {
 	public static final String VERSION = "1.0.0";
 	private static final String FLD_ITEMS = "Liste"; //$NON-NLS-1$
 	private static final String TABLENAME = "BESTELLUNGEN"; //$NON-NLS-1$
+	
+	public static final String ISORDERED = "ch.elexis.data.Bestellung.isOrdered"; //$NON-NLS-1$
+
 	private List<Item> alItems;
 	
 	private static Log logger = Log.get(Bestellung.class.getName());

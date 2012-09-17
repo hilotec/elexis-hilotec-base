@@ -56,10 +56,10 @@ import ch.elexis.Hub;
 import ch.elexis.actions.GlobalActions;
 import ch.elexis.data.Artikel;
 import ch.elexis.data.Bestellung;
+import ch.elexis.data.Bestellung.Item;
 import ch.elexis.data.Kontakt;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
-import ch.elexis.data.Bestellung.Item;
 import ch.elexis.dialogs.OrderImportDialog;
 import ch.elexis.exchange.IDataSender;
 import ch.elexis.exchange.XChangeException;
@@ -157,6 +157,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 					PersistentObject dropped = Hub.poFactory.createFromString(obj);
 					if (dropped instanceof Artikel) {
 						actBestellung.addItem((Artikel) dropped, 1);
+						((Artikel) dropped).setExt(Bestellung.ISORDERED, "true");
 					}
 				}
 				tv.refresh();
@@ -238,6 +239,9 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 					if ((sel != null) && (!sel.isEmpty())) {
 						if (actBestellung != null) {
 							actBestellung.removeItem((Item) sel.getFirstElement());
+							
+							((Item) sel.getFirstElement()).art
+								.setExt(Bestellung.ISORDERED, "false");
 						}
 						tv.refresh();
 					}
@@ -286,9 +290,12 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 							order = (ist < min);
 						}
 						if (order) {
+							Boolean alreadyOrdered =
+								a.getExt(Bestellung.ISORDERED).equalsIgnoreCase("true");
 							int toOrder = max - ist;
-							if (toOrder > 0) {
+							if (toOrder > 0 && !alreadyOrdered) {
 								actBestellung.addItem(a, toOrder);
+								a.setExt(Bestellung.ISORDERED, "true");
 							}
 						}
 					}

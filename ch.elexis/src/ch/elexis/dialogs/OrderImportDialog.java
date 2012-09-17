@@ -405,6 +405,13 @@ public class OrderImportDialog extends TitleAreaDialog {
 					int newAmount = oldAmount + diff;
 					artikel.setIstbestand(newAmount);
 					
+					// reset ordered information
+					Boolean alreadyOrdered =
+						artikel.getExt(Bestellung.ISORDERED).equalsIgnoreCase("true");
+					if (alreadyOrdered) {
+						artikel.setExt(Bestellung.ISORDERED, "false");
+					}
+
 					// reset amount
 					orderElement.setAmount(0);
 					orderElement.setVerified(false);

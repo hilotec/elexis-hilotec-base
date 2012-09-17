@@ -42,13 +42,13 @@ import ch.elexis.actions.GlobalEventDispatcher;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.commands.EditEigenartikelUi;
 import ch.elexis.data.Artikel;
+import ch.elexis.data.Bestellung;
 import ch.elexis.data.PersistentObject;
-import ch.elexis.dialogs.ArtikelDetailDialog;
 import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
 import ch.elexis.util.viewers.DefaultContentProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
-import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
 import ch.elexis.util.viewers.ViewerConfigurer.WidgetProvider;
 
 public class LagerView extends ViewPart implements DoubleClickListener, ISaveablePart2,
@@ -170,7 +170,12 @@ public class LagerView extends ViewPart implements DoubleClickListener, ISaveabl
 					}
 					
 					if (order) {
-						return Desk.getColor(Desk.COL_RED);
+						Boolean alreadyOrdered =
+							art.getExt(Bestellung.ISORDERED).equalsIgnoreCase("true");
+						if (alreadyOrdered)
+							return Desk.getColor(Desk.COL_SKYBLUE);
+						else
+							return Desk.getColor(Desk.COL_RED);
 					} else {
 						return Desk.getColor(Desk.COL_BLUE);
 					}
