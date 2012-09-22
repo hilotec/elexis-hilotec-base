@@ -9,5 +9,4 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui,
  ch.elexis
 Eclipse-LazyStart: true
-Bundle-ClassPath: itext-2.0.4.jar,
- .
+Bundle-ClassPath: .

@@ -11,8 +11,7 @@ Require-Bundle: ch.rgw.utility,
  org.eclipse.ui,
  org.eclipse.ui.forms,
  ch.elexis.core;bundle-version="0.0.2"
-Bundle-ClassPath: bin,
- .
+Bundle-ClassPath: .
 Bundle-Activator: ch.elexis.artikel_at.Activator
 Bundle-ActivationPolicy: lazy
 Export-Package: ch.elexis.artikel_at.data

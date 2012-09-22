@@ -14,8 +14,7 @@ Require-Bundle: ch.elexis;bundle-version="2.1.6",
  ch.elexis.core;bundle-version="0.0.2"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
-Bundle-ClassPath: bin/,
- lib/snakeyaml-1.10.jar,
+Bundle-ClassPath: lib/snakeyaml-1.10.jar,
  .
 Export-Package: ch.ngiger.elexis.oddb_ch,
  ch.ngiger.elexis.oddb_ch.data,
