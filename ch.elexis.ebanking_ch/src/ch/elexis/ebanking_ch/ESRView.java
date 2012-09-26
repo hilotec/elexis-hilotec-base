@@ -322,7 +322,6 @@ public class ESRView extends ViewPart {
 					qbe.add(ESRRecord.FLD_ID, Query.NOT_EQUAL, StringConstants.ONE);
 					qbe.add(ESRRecord.FLD_DATE, Query.GREATER_OR_EQUAL, startDate.toDBString(true));
 					qbe.add(ESRRecord.FLD_DATE, Query.LESS_OR_EQUAL, endDate.toDBString(true));
-					System.out.println("Querying " + qbe.getActualQuery());
 					List<ESRRecord> res = qbe.execute();
 					tableViewer.setInput(res);
 				}
