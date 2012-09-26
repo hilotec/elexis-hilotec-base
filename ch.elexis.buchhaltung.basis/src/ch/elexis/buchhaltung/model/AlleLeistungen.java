@@ -18,6 +18,7 @@ import ch.elexis.data.Kontakt;
 import ch.elexis.data.Mandant;
 import ch.elexis.data.Patient;
 import ch.elexis.data.Query;
+import ch.elexis.data.RnStatus;
 import ch.elexis.data.TarmedLeistung;
 import ch.elexis.data.Verrechnet;
 import ch.elexis.status.ElexisStatus;
@@ -34,7 +35,7 @@ public class AlleLeistungen extends AbstractTimeSeries {
 	public AlleLeistungen(){
 		super(NAME);
 		VersionInfo elexisVersion = new VersionInfo(Hub.Version);
-		hasUserId = !elexisVersion.isOlder("2.1.7");
+		hasUserId = !elexisVersion.isOlder("2.1.7"); //$NON-NLS-1$
 	}
 	
 	@Override
@@ -63,11 +64,13 @@ public class AlleLeistungen extends AbstractTimeSeries {
 		ret.add(Messages.AlleLeistungen_TarmedAL);
 		ret.add(Messages.AlleLeistungen_TarmedTL);
 		ret.add(Messages.AlleLeistungen_TariffType);
+		ret.add(Messages.AlleLeistungen_TaxPointValue);
 		ret.add(Messages.AlleLeistungen_Quantity);
 		ret.add(Messages.AlleLeistungen_PurchaseCosts);
 		ret.add(Messages.AlleLeistungen_SaleCosts);
 		ret.add(Messages.AlleLeistungen_Sales);
 		ret.add(Messages.AlleLeistungen_VAT);
+		ret.add(Messages.AlleLeistungen_BillState);
 		return ret;
 	}
 	
@@ -97,6 +100,11 @@ public class AlleLeistungen extends AbstractTimeSeries {
 		for (Konsultation cons : consultations) {
 			Patient patient = cons.getFall().getPatient();
 			Mandant mandant = cons.getMandant();
+			String billState = cons.getStatusText();
+			if (cons.getStatus() >= RnStatus.VON_HEUTE
+				&& cons.getStatus() <= RnStatus.NICHT_VON_IHNEN)
+				billState = Messages.AlleLeistungen_NoBill;
+
 			List<Verrechnet> activities = cons.getLeistungen();
 			if (mandant != null && patient != null && activities != null && !activities.isEmpty()) {
 				for (Verrechnet verrechnet : activities) {
@@ -106,7 +114,7 @@ public class AlleLeistungen extends AbstractTimeSeries {
 					row[index++] = mandant.getRechnungssteller().getLabel();
 					row[index++] = mandant.getMandantLabel();
 					if (hasUserId) { //$NON-NLS-1$
-						String userid = verrechnet.get("userID");
+						String userid = verrechnet.get("userID"); //$NON-NLS-1$
 						Kontakt user = Kontakt.load(userid);
 						if (user.exists())
 							row[index++] = user.getLabel();
@@ -122,6 +130,7 @@ public class AlleLeistungen extends AbstractTimeSeries {
 					row[index++] = patient.getAnschrift().getPlz();
 					row[index++] = patient.getAnschrift().getOrt();
 					row[index++] = verrechnet.getText();
+					
 					if (verrechenbar != null) {
 						try {
 							row[index++] = verrechenbar.getCode();
@@ -154,6 +163,7 @@ public class AlleLeistungen extends AbstractTimeSeries {
 						row[index++] = ""; //$NON-NLS-1$
 					}
 					row[index++] = getClassName(verrechnet);
+					row[index++] = verrechnet.getTPW();
 					// include partial quantity info in secondary scale
 					row[index++] = verrechnet.getZahl() * verrechnet.getSecondaryScaleFactor();
 					row[index++] = verrechnet.getKosten();
@@ -161,6 +171,8 @@ public class AlleLeistungen extends AbstractTimeSeries {
 					row[index++] = getSales(verrechnet);
 					row[index++] = getVatScale(verrechnet);
 					
+					row[index++] = billState;
+
 					if (monitor.isCanceled()) {
 						return Status.CANCEL_STATUS;
 					}

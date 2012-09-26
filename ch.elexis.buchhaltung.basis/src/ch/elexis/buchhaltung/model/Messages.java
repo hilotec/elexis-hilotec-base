@@ -5,9 +5,11 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "ch.elexis.buchhaltung.model.messages"; //$NON-NLS-1$
 	public static String AlleLeistungen_ActivityText;
+	public static String AlleLeistungen_BillState;
 	public static String AlleLeistungen_Description;
 	public static String AlleLeistungen_InvoicingParty;
 	public static String AlleLeistungen_Mandator;
+	public static String AlleLeistungen_NoBill;
 	public static String AlleLeistungen_PatientCity;
 	public static String AlleLeistungen_PatientDateOfBirth;
 	public static String AlleLeistungen_PatientFirstname;
@@ -24,6 +26,7 @@ public class Messages extends NLS {
 	public static String AlleLeistungen_TarmedCode;
 	public static String AlleLeistungen_TarmedMissing;
 	public static String AlleLeistungen_TarmedTL;
+	public static String AlleLeistungen_TaxPointValue;
 	public static String AlleLeistungen_Title;
 	public static String AlleLeistungen_TreatmentDate;
 	public static String AlleLeistungen_User;
