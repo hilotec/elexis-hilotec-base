@@ -14,6 +14,7 @@
 package ch.elexis.views.codesystems;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -28,6 +29,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.FillLayout;
@@ -35,6 +37,8 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IViewSite;
 
 import ch.elexis.Desk;
@@ -47,6 +51,7 @@ import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.ICodeSelectorTarget;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.ICodeElement;
+import ch.elexis.data.Kontakt;
 import ch.elexis.data.Patient;
 import ch.elexis.data.PersistentObject;
 import ch.elexis.data.PersistentObjectFactory;
@@ -56,8 +61,8 @@ import ch.elexis.util.Log;
 import ch.elexis.util.PersistentObjectDragSource;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.viewers.CommonViewer;
-import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
+import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.StringTool;
 
@@ -280,6 +285,9 @@ public abstract class CodeSelectorFactory implements IExecutableExtension {
 			doubleClickEnable(lbUserMFU);
 			doubleClickEnable(lbPatientMFU);
 			
+			addUserPopupMenu(lbUserMFU);
+			addPatientPopupMenu(lbPatientMFU);
+
 			// dragEnable(lbUser);
 			// dragEnable(lbPatient);
 			new PersistentObjectDragSource(lbUserMFU, new DragEnabler(lbUserMFU));
@@ -364,6 +372,61 @@ public abstract class CodeSelectorFactory implements IExecutableExtension {
 			
 		}
 		
+		private void addUserPopupMenu(final List list){
+			Menu menu = new Menu(list.getShell(), SWT.POP_UP);
+			MenuItem item = new MenuItem(menu, SWT.PUSH);
+			item.setText(Messages.getString("CodeSelectorFactory.resetStatistic"));
+			
+			item.addSelectionListener(new SelectionAdapter() {
+				@SuppressWarnings({
+					"rawtypes", "unchecked"
+				})
+				@Override
+				public void widgetSelected(SelectionEvent e){
+					Map exi = Hub.actUser.getMap(Kontakt.FLD_EXTINFO);
+					// get list of type
+					java.util.List statList =
+						(java.util.List) exi.get(template.getClass().getName());
+					if (statList != null) {
+						// clear existing statistics
+						statList.clear();
+						exi.put(template.getClass().getName(), statList);
+						Hub.actUser.setMap(Kontakt.FLD_EXTINFO, exi);
+					}
+					refresh();
+				}
+			});
+			list.setMenu(menu);
+		}
+		
+		private void addPatientPopupMenu(final List list){
+			Menu menu = new Menu(list.getShell(), SWT.POP_UP);
+			MenuItem item = new MenuItem(menu, SWT.PUSH);
+			item.setText(Messages.getString("CodeSelectorFactory.resetStatistic"));
+			
+			item.addSelectionListener(new SelectionAdapter() {
+				@SuppressWarnings({
+					"rawtypes", "unchecked"
+				})
+				@Override
+				public void widgetSelected(SelectionEvent e){
+					Patient patient = ElexisEventDispatcher.getSelectedPatient();
+					
+					Map exi = patient.getMap(Kontakt.FLD_EXTINFO);
+					// get list of type
+					java.util.List statList =
+						(java.util.List) exi.get(template.getClass().getName());
+					if (statList != null) {
+						// clear existing statistics
+						statList.clear();
+						exi.put(template.getClass().getName(), statList);
+						patient.setMap(Kontakt.FLD_EXTINFO, exi);
+					}
+					refresh();
+				}
+			});
+			list.setMenu(menu);
+		}
 	}
 	
 	static class DragEnabler implements PersistentObjectDragSource.ISelectionRenderer {
