@@ -23,93 +23,68 @@ public class ESRLabelProvider extends LabelProvider implements ITableLabelProvid
 	public String getColumnText(Object element, int columnIndex){
 		String text = ""; //$NON-NLS-1$
 		
-		if (element instanceof ESRRecord) {
-			ESRRecord rec = (ESRRecord) element;
-			
-			if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
-				switch (columnIndex) {
-				case ESRView.DATUM_INDEX:
-					text = rec.get("Datum"); //$NON-NLS-1$
-					break;
-				case ESRView.RN_NUMMER_INDEX:
-					text = "Summe"; //$NON-NLS-1$
-					break;
-				case ESRView.BETRAG_INDEX:
-					text = rec.getBetrag().getAmountAsString();
-					break;
-				case ESRView.DATEI_INDEX:
-					text = rec.getFile();
-					break;
-				}
-			} else {
-				switch (columnIndex) {
-				case ESRView.DATUM_INDEX:
-					text = rec.get("Datum"); //$NON-NLS-1$
-					break;
-				case ESRView.RN_NUMMER_INDEX:
-					Rechnung rn = rec.getRechnung();
-					if (rn != null) {
-						text = rn.getNr();
-					}
-					break;
-				case ESRView.BETRAG_INDEX:
-					text = rec.getBetrag().getAmountAsString();
-					break;
-				case ESRView.EINGELESEN_INDEX:
-					text = rec.getEinlesedatatum();
-					break;
-				case ESRView.VERRECHNET_INDEX:
-					text = rec.getVerarbeitungsdatum();
-					break;
-				case ESRView.GUTGESCHRIEBEN_INDEX:
-					text = rec.getValuta();
-					break;
-				case ESRView.PATIENT_INDEX:
-					text = rec.getPatient().getLabel();
-					break;
-				case ESRView.BUCHUNG_INDEX:
-					String dat = rec.getGebucht();
-					if (StringTool.isNothing(dat)) {
-						text = Messages.ESRView2_notbooked;
-					} else {
-						text = new TimeTool(dat).toString(TimeTool.DATE_GER);
-					}
-					break;
-				case ESRView.DATEI_INDEX:
-					text = rec.getFile();
-					break;
-				}
+		ESRRecord rec = (ESRRecord) element;
+		
+		switch (columnIndex) {
+		case ESRView.DATUM_INDEX:
+			text = rec.get("Datum"); //$NON-NLS-1$
+			break;
+		case ESRView.RN_NUMMER_INDEX:
+			Rechnung rn = rec.getRechnung();
+			if (rn != null) {
+				text = rn.getNr();
 			}
+			break;
+		case ESRView.BETRAG_INDEX:
+			text = rec.getBetrag().getAmountAsString();
+			break;
+		case ESRView.EINGELESEN_INDEX:
+			text = rec.getEinlesedatatum();
+			break;
+		case ESRView.VERRECHNET_INDEX:
+			text = rec.getVerarbeitungsdatum();
+			break;
+		case ESRView.GUTGESCHRIEBEN_INDEX:
+			text = rec.getValuta();
+			break;
+		case ESRView.PATIENT_INDEX:
+			text = rec.getPatient().getLabel();
+			break;
+		case ESRView.BUCHUNG_INDEX:
+			String dat = rec.getGebucht();
+			if (StringTool.isNothing(dat)) {
+				text = Messages.ESRView2_notbooked;
+			} else {
+				text = new TimeTool(dat).toString(TimeTool.DATE_GER);
+			}
+			break;
+		case ESRView.DATEI_INDEX:
+			text = rec.getFile();
+			break;
 		}
 		
 		return text;
 	}
 	
 	public Color getForeground(Object element, int columnIndex){
-		return Desk.getColor(Desk.COL_BLACK);
+		return null;
 	}
 	
 	public Color getBackground(Object element, int columnIndex){
-		if (element instanceof ESRRecord) {
-			ESRRecord rec = (ESRRecord) element;
-			if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
-				return Desk.getColor(Desk.COL_GREEN);
+		ESRRecord rec = (ESRRecord) element;
+		
+		if (rec.getRejectCode().equals(ESRRecord.REJECT.OK)) {
+			if (StringTool.isNothing(rec.getGebucht())) {
+				return Desk.getColor(Desk.COL_GREY);
 			}
-			String buch = rec.getGebucht();
-			if (rec.getRejectCode().equals(ESRRecord.REJECT.OK)) {
-				if (StringTool.isNothing(buch)) {
-					return Desk.getColor(Desk.COL_GREY);
-				}
-				return Desk.getColor(Desk.COL_WHITE);
-			}
+			return Desk.getColor(Desk.COL_WHITE);
+		} else {
 			return Desk.getColor(Desk.COL_RED);
 		}
-		return Desk.getColor(Desk.COL_SKYBLUE);
 	}
 	
 	@Override
 	public Image getColumnImage(Object element, int columnIndex){
-		// TODO Auto-generated method stub
 		return null;
 	}
 	

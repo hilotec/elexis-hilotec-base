@@ -1,7 +1,9 @@
 package ch.elexis.ebanking_ch;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -12,52 +14,69 @@ import org.eclipse.swt.widgets.Label;
 import ch.elexis.Hub;
 import ch.elexis.admin.ACE;
 import ch.elexis.banking.ESRRecord;
+import ch.rgw.tools.Money;
 
 public class ESRContentProvider extends ArrayContentProvider {
 	
 	private Label _lblSUMME;
-	private Label _lblREADDATE;
 	private ACE _rights;
+	private Money sum;
+	private ESRRecord sumRecord;
 	
-	public ESRContentProvider(Label lblSUMME, Label lblREADDATE, ACE rights){
+	private List<Object> retList;
+	
+	public ESRContentProvider(Label lblSUMME, ACE rights){
 		_lblSUMME = lblSUMME;
-		_lblREADDATE = lblREADDATE;
 		_rights = rights;
 	}
 	
 	@Override
 	public Object[] getElements(Object inputElement){
-		Object ret[] = super.getElements(inputElement);
-		
+		// Insufficient rights, return with empty list, and show status
 		if (Hub.acl.request(_rights) == false) {
+			Display.getCurrent().asyncExec(new Runnable() {		
+				@Override
+				public void run(){
+					_lblSUMME.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_RED));
+					_lblSUMME.setText("Insufficient rights");
+				}
+			});
 			return Collections.emptyList().toArray();
 		}
 		
-		List<ESRRecord> retList = new ArrayList<ESRRecord>();
+		retList = new ArrayList<Object>(Arrays.asList(super.getElements(inputElement)));
 		
-		for (Object object : ret) {
-			ESRRecord rec = (ESRRecord) object;
-			if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
-				final ESRRecord amount = rec;
-				Display.getCurrent().asyncExec(new Runnable() {					
-					@Override
-					public void run(){
-						_lblSUMME.setText(amount.getBetrag()+"");
-						if(amount.getBetrag().isNegative()) {
-							_lblSUMME.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
-						} else {
-							_lblSUMME.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
-						}
-						_lblREADDATE.setText(amount.get("Datum"));
-					}
-				});
-				continue;
+		sum = new Money();
+		
+		Display.getCurrent().syncExec(new Runnable() {
+			@Override
+			public void run(){
+			_lblSUMME.setText("");
 			}
-			if (rec.getId().equals("1"))
+		});
+		
+		for (Iterator<Object> iterator = retList.iterator(); iterator.hasNext();) {
+			ESRRecord rec = (ESRRecord) iterator.next();
+			if (rec.getTyp().equals(ESRRecord.MODE.Summenrecord)) {
+				sumRecord = rec;
+				iterator.remove();
 				continue;
-			
-			retList.add(rec);
+			} else {
+				sum.addMoney(rec.getBetrag());
+			}
 		}
+		
+		Display.getCurrent().syncExec(new Runnable() {					
+			@Override
+			public void run(){
+				_lblSUMME.setText(sum+"");
+				if(sum.isNegative()) {
+					_lblSUMME.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+				} else {
+					_lblSUMME.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
+				}
+			}
+		});
 		
 		return retList.toArray();
 	}

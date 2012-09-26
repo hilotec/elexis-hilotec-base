@@ -1,10 +1,13 @@
 package ch.elexis.ebanking_ch;
 
+import java.text.ParseException;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 import ch.elexis.banking.ESRRecord;
 import ch.elexis.data.Rechnung;
+import ch.rgw.tools.Money;
 
 public class FilterSearchField extends ViewerFilter {
 	
@@ -23,36 +26,62 @@ public class FilterSearchField extends ViewerFilter {
 	
 	@Override
 	public boolean select(Viewer viewer, Object parentElement, Object element){
-		if (searchString == null)
+		if (searchString == null || searchString.length()<1)
 			return true;
 		ESRRecord e = (ESRRecord) element;
 		
-		String datum = e.get("Datum");
-		String betrag = e.getBetrag().getAmountAsString();
-		String patLabel = e.getPatient().getLabel().toLowerCase();
-		
-		if(datum.matches(".*" + searchString + ".*")) return true;
-		if(betrag.matches(".*" + searchString + ".*")) return true;
-		if(patLabel.matches(".*" + searchString + ".*")) return true;
-		if(e.getEinlesedatatum().matches(".*" + searchString + ".*")) return true;
-		if(e.getVerarbeitungsdatum().matches(".*" + searchString + ".*")) return true;
-		
-		Rechnung rn = e.getRechnung();
-		if (rn != null) {
-			String rgNr = rn.getNr();
-			if(rgNr.matches(".*" + searchString + ".*")) return true;
+		char c = searchString.charAt(0);
+		String useSearchString = searchString.substring(1);
+		if(useSearchString.length()<1) return false;
+		switch (c) {
+		case '#':
+			Rechnung rn = e.getRechnung();
+			if (rn != null) {
+				String rgNr = rn.getNr();
+				if(rgNr.matches(".*" + useSearchString + ".*")) return true;
+			}
+			return false;
+		case '$':
+			Money betrag = e.getBetrag();
+			char d = useSearchString.charAt(0);
+			Money moreThan;
+			switch (d) {
+			case '>':
+				try {
+					moreThan = new Money(useSearchString.substring(1));
+					if(betrag.getCents()>=moreThan.getCents()) return true;
+				} catch (ParseException e1) {
+					return false;
+				}
+				break;
+			case '<':
+				try {
+					moreThan = new Money(useSearchString.substring(1));
+					if(betrag.getCents()<=moreThan.getCents()) return true;
+				} catch (ParseException e1) {
+					return false;
+				}
+				break;
+			default:
+				if(betrag.getAmountAsString().matches(".*" + useSearchString + ".*")) return true;
+			}
+			return false;
+		default:
+			String patLabel = e.getPatient().getLabel().toLowerCase();
+			if(patLabel.matches(".*" + useSearchString + ".*")) return true;
+			if(e.getEinlesedatatum().matches(".*" + useSearchString + ".*")) return true;
+			if(e.getVerarbeitungsdatum().matches(".*" + useSearchString + ".*")) return true;
+			return false;
 		}
-		
-		return false;
 	}
 	
 	public void setSearchText(String s){
-		if (s == null || s.length() == 0 || s.startsWith("#"))
-			searchString = s;
+		if (s == null || s.length() == 0)
+			searchString = null;
 		else
 			searchString = s.toLowerCase(); //$NON-NLS-1$ //$NON-NLS-2$
 		// filter "dirty" characters
 		if (searchString != null)
-			searchString = searchString.replaceAll("[^#\\.$, a-zA-Z0-9]", "");
+			searchString = searchString.replaceAll("[^#<>\\.$, a-zA-Z0-9]", "");
 	}
 }

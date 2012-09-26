@@ -79,6 +79,7 @@ public class ESRRecord extends PersistentObject {
 	static {
 		addMapping(
 			TABLENAME,
+			FLD_ID,
 			PersistentObject.DATE_COMPOUND,
 			"Eingelesen=S:D:EINGELESEN", //$NON-NLS-1$
 			"Verarbeitet=S:D:VERARBEITET", //$NON-NLS-1$

@@ -2,7 +2,10 @@ package ch.elexis.ebanking_ch;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.List;
 
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -18,9 +21,9 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
@@ -44,15 +47,17 @@ import ch.elexis.banking.Messages;
 import ch.elexis.core.data.IPersistentObject;
 import ch.elexis.data.Anwender;
 import ch.elexis.data.Query;
+import ch.rgw.tools.TimeTool;
 
 public class ESRView extends ViewPart {
-	
 	public static final String ID = "ch.elexis.ebanking_ch.ESRView"; //$NON-NLS-1$
 	private Table table;
 	private Text txtFilter;
 	private Label lblSUMME;
-	private Label lblREADDATE;
 	private TableViewer tableViewer;
+	
+	private TimeTool startDate;
+	private TimeTool endDate;
 	
 	protected final SimpleDateFormat sdf = (SimpleDateFormat) DateFormat
 		.getDateInstance(DateFormat.MEDIUM);
@@ -67,7 +72,6 @@ public class ESRView extends ViewPart {
 		public void catchElexisEvent(ElexisEvent ev){
 			updateView();
 		}
-		
 	};
 	
 	static final int DATUM_INDEX = 0;
@@ -91,9 +95,12 @@ public class ESRView extends ViewPart {
 		Messages.ESRView2_booking, // BUCHUNG_INDEX
 		Messages.ESRView2_file, // DATEI_INDEX
 	};
+	private Button datePeriod;
 	
 	public ESRView(){
-		ElexisEventDispatcher.getInstance().addListeners(eeli_user);
+		endDate = new TimeTool();
+		startDate = new TimeTool();
+		startDate.add(Calendar.MONTH, -3);
 	}
 	
 	/**
@@ -108,22 +115,38 @@ public class ESRView extends ViewPart {
 		GC gc = new GC(parent);
 		FontMetrics fm = gc.getFontMetrics();
 		int dateLength = (sdf.toPattern().length() + 2) * fm.getAverageCharWidth();
-		System.out.println("dateLength " + dateLength);
 		
 		Composite headerContainer = new Composite(parent, SWT.NONE);
-		headerContainer.setLayout(new FillLayout(SWT.HORIZONTAL));
+		headerContainer.setLayout(new GridLayout(2, false));
 		headerContainer.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		txtFilter = new Text(headerContainer, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH | SWT.CANCEL);
-		txtFilter.setMessage("Search");
+		txtFilter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		txtFilter.setMessage("Suche - #RechnungsNr, $Betrag, Text zB $>100 für alle Beträge größer 100");
+		
+		datePeriod = new Button(headerContainer, SWT.FLAT);
+		datePeriod.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e){
+				DatePeriodSelectorDialog dpsd =
+					new DatePeriodSelectorDialog(Display.getCurrent().getActiveShell(), startDate,
+						endDate);
+				int retVal = dpsd.open();
+				if (retVal == Dialog.OK) {
+					updateView();
+				}
+			}
+		});
 		
 		Composite tableViewerComposite = new Composite(parent, SWT.NONE);
 		tableViewerComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 		TableColumnLayout tcl_tableViewerComposite = new TableColumnLayout();
 		tableViewerComposite.setLayout(tcl_tableViewerComposite);
 		
-		tableViewer = new TableViewer(tableViewerComposite, SWT.BORDER | SWT.FULL_SELECTION);
+		tableViewer =
+			new TableViewer(tableViewerComposite, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL);
 		table = tableViewer.getTable();
+		tableViewer.setUseHashlookup(true);
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		
@@ -224,25 +247,16 @@ public class ESRView extends ViewPart {
 		tblclmnDatei.setText(COLUMN_TEXTS[8]);
 		
 		Composite footerComposite = new Composite(parent, SWT.NONE);
-		footerComposite.setLayout(new GridLayout(4, false));
+		footerComposite.setLayout(new GridLayout(2, false));
 		footerComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		Label lblSumme = new Label(footerComposite, SWT.NONE);
 		lblSumme.setFont(SWTResourceManager.getFont("Lucida Grande", 11, SWT.BOLD));
 		lblSumme.setBounds(0, 0, 59, 14);
-		lblSumme.setText("Summe");
+		lblSumme.setText("Summe über gewählten Zeitraum ");
 		
 		lblSUMME = new Label(footerComposite, SWT.NONE);
 		lblSUMME.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		
-		Label lblReadDate = new Label(footerComposite, SWT.NONE);
-		lblReadDate.setFont(SWTResourceManager.getFont("Lucida Grande", 11, SWT.ITALIC));
-		lblReadDate.setText("Datei eingelesen am");
-		
-		lblREADDATE = new Label(footerComposite, SWT.NONE);
-		GridData gd_lblREADDATE = new GridData();
-		gd_lblREADDATE.widthHint = dateLength;
-		lblREADDATE.setLayoutData(gd_lblREADDATE);
 		
 		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
 			@Override
@@ -260,7 +274,7 @@ public class ESRView extends ViewPart {
 		});
 		
 		tableViewer.setLabelProvider(new ESRLabelProvider());
-		tableViewer.setContentProvider(new ESRContentProvider(lblSUMME, lblREADDATE, DISPLAY_ESR));
+		tableViewer.setContentProvider(new ESRContentProvider(lblSUMME, DISPLAY_ESR));
 		
 		ViewerFilter[] filters = new ViewerFilter[] {
 			FilterSearchField.getInstance()
@@ -272,41 +286,50 @@ public class ESRView extends ViewPart {
 			public void widgetDefaultSelected(SelectionEvent e){
 				if (e.detail == SWT.CANCEL) {
 					FilterSearchField.getInstance().setSearchText(null);
-					updateView();
+					tableViewer.refresh();
 				}
 			}
 		});
 		
 		updateView();
-	}
-	
-	@Override
-	public void setFocus(){
-		updateView();
+		
+		ElexisEventDispatcher.getInstance().addListeners(eeli_user);
 	}
 	
 	public void updateView(){
+		datePeriod.setText("Zeitraum: " + sdf.format(startDate.getTime()) + " - "
+			+ sdf.format(endDate.getTime()));
+		
 		if (Hub.acl.request(DISPLAY_ESR) == true) {
-			lblSUMME.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
-			
-			Query<ESRRecord> qbe = new Query<ESRRecord>(ESRRecord.class);
-			if (Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
-				if (Hub.actMandant != null) {
-					qbe.startGroup();
-					qbe.add(ESRRecord.MANDANT_ID, Query.EQUALS, Hub.actMandant.getId());
-					qbe.or();
-					qbe.add(ESRRecord.MANDANT_ID, StringConstants.EMPTY, null);
-					qbe.add(ESRRecord.FLD_REJECT_CODE, Query.NOT_EQUAL, StringConstants.ZERO);
-					qbe.endGroup();
-					qbe.and();
-				} else {
-					qbe.insertFalse();
+			Runnable loadingArticles = new Runnable() {
+				public void run(){
+					
+					Query<ESRRecord> qbe = new Query<ESRRecord>(ESRRecord.class);
+					if (Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
+						if (Hub.actMandant != null) {
+							qbe.startGroup();
+							qbe.add(ESRRecord.MANDANT_ID, Query.EQUALS, Hub.actMandant.getId());
+							qbe.or();
+							qbe.add(ESRRecord.MANDANT_ID, StringConstants.EMPTY, null);
+							qbe.add(ESRRecord.FLD_REJECT_CODE, Query.NOT_EQUAL,
+								StringConstants.ZERO);
+							qbe.endGroup();
+							qbe.and();
+						} else {
+							qbe.insertFalse();
+						}
+					}
+					qbe.add(ESRRecord.FLD_ID, Query.NOT_EQUAL, StringConstants.ONE);
+					qbe.add(ESRRecord.FLD_DATE, Query.GREATER_OR_EQUAL, startDate.toDBString(true));
+					qbe.add(ESRRecord.FLD_DATE, Query.LESS_OR_EQUAL, endDate.toDBString(true));
+					System.out.println("Querying " + qbe.getActualQuery());
+					List<ESRRecord> res = qbe.execute();
+					tableViewer.setInput(res);
 				}
-			}
-			tableViewer.setInput(qbe.execute());
+			};
+			Display.getCurrent().asyncExec(loadingArticles);
 		} else {
-			lblSUMME.setText("Insufficient rights");
-			lblSUMME.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_RED));
+			tableViewer.setInput(null);
 		}
 	}
 	
@@ -315,5 +338,8 @@ public class ESRView extends ViewPart {
 		super.dispose();
 		ElexisEventDispatcher.getInstance().removeListeners(eeli_user);
 	}
+	
+	@Override
+	public void setFocus(){}
 	
 }
