@@ -53,6 +53,12 @@ public class BlockExporter extends XChangeExporter {
 	}
 	
 	public XChangeElement store(Object output) throws XChangeException{
+		// create ServiceBlocksElement and attach it to the root of the container
+		if (lbs == null) {
+			lbs = (ServiceBlocksElement) new ServiceBlocksElement().asExporter(this);
+			getContainer().getRoot().addContent(lbs.getElement());
+		}
+
 		if (output instanceof Leistungsblock) {
 			ServiceBlockElement sbe =
 				new ServiceBlockElement().asExporter(this, (Leistungsblock) output);
