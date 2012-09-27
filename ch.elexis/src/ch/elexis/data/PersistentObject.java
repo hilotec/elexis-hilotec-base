@@ -212,7 +212,7 @@ public abstract class PersistentObject implements IPersistentObject {
 			runningAsTest = true;
 		}
 		File base = new File(Hub.getBasePath());
-		File demo = new File(base.getParentFile().getParent() + "/demoDB");
+		File demo = new File(System.getProperty("user.home") + File.separator + "elexis" + File.separator + "demoDB");
 		log.log("Verzeichnis Demo-Datenbank: " + demo.getAbsolutePath(), Log.INFOS);
 		if (demo.exists() && demo.isDirectory()) {
 			j = JdbcLink.createH2Link(demo.getAbsolutePath() + File.separator + "db");
