@@ -21,6 +21,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Method;
+import java.net.URI;
 import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -212,8 +213,16 @@ public abstract class PersistentObject implements IPersistentObject {
 			runningAsTest = true;
 		}
 		File base = new File(Hub.getBasePath());
-		File demo = new File(System.getProperty("user.home") + File.separator + "elexis" + File.separator + "demoDB");
-		log.log("Verzeichnis Demo-Datenbank: " + demo.getAbsolutePath(), Log.INFOS);
+		File demo = new File(base.getParentFile().getParent()+ File.separator +"demoDB");
+        log.log("Verzeichnis Demo-Datenbank via Hub.getBasePath(): " + demo.getAbsolutePath(), Log.INFOS);
+        log.log("osgi.install.area: " + System.getProperty("osgi.install.area"), Log.INFOS);
+
+        if (!demo.exists()) 
+        {
+            URI demoName = URI.create( System.getProperty("osgi.install.area"));
+        	demo = new File(demoName.getPath()+ File.separator +"demoDB");
+            log.log("Verzeichnis Demo-Datenbank via osgi.install.area: " + demo.getAbsolutePath(), Log.INFOS);
+        }
 		if (demo.exists() && demo.isDirectory()) {
 			j = JdbcLink.createH2Link(demo.getAbsolutePath() + File.separator + "db");
 			try {
