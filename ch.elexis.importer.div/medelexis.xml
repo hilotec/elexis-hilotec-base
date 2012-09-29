@@ -1,8 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<service:service category="feature" id="ch.elexis.importer.div" name="elexis-importer"
-	provider="weirich@elexis.ch" type="Basis-System" version="2.0.0"
-	xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+<?xml version='1.0' encoding='UTF-8'?>
+<service:service category='feature' id='ch.elexis.importer.div' name='elexis-importer' provider='weirich@elexis.ch' xsi:schemaLocation='http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ' xmlns:service='http://www.medelexis.ch/services' type='Basis-System' version='2.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
 	<service:description>Basisfunktionen für Importer</service:description>
 	<service:depends>ch.rgw.utility ch.elexis</service:depends>
-</service:service>
+<service:docURL>http://www.medelexis.ch/plugins_doc/2.1.7/elexis-importer/import.pdf</service:docURL></service:service>

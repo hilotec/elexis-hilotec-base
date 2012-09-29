@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<service:service category="feature" id="ch.elexis.laborimport_analytica" name="Laborimport Analytica" provider="support@medelexis.ch" type="Laboranbindung" version="0.1" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+<?xml version='1.0' encoding='UTF-8'?>
+<service:service category='feature' id='ch.elexis.laborimport_analytica' name='Laborimport Analytica' provider='support@medelexis.ch' xsi:schemaLocation='http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ' xmlns:service='http://www.medelexis.ch/services' type='Laboranbindung' version='0.1' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
   <service:conditions>
   	<service:roles>
-  		<service:role priceClass="fixed-low">
-  			<service:pricePerDB amount="5.50"></service:pricePerDB>
-  			<service:pricePerMandator amount="2.50" />
+  		<service:role priceClass='fixed-low'>
+  			<service:pricePerDB amount='5.50'/>
+  			<service:pricePerMandator amount='2.50'/>
   		</service:role>
   	</service:roles>
   </service:conditions>
-  <service:docURL>http://www.medelexis.ch/index.php?id=64</service:docURL>
+  <service:docURL>http://www.medelexis.ch/plugins_doc/2.1.7/Laborimport_Analytica/ch.elexis.laborimport.analytica.pdf</service:docURL>
   <service:description>Import von Laborresultaten vom Labor Analytica</service:description>
   <service:depends>ch.medelexis.nucleus ch.elexis.importer.div ch.ngiger.utilities.comm</service:depends>
 </service:service>

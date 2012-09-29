@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<service:service category="feature" id="ch.elexis.medikamente.bag" name="Medikamente SL" provider="weirich@elexis.ch" type="Basis-System" version="2.0.4" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
+<?xml version='1.0' encoding='UTF-8'?>
+<service:service category='feature' id='ch.elexis.medikamente.bag' name='Medikamente SL' provider='weirich@elexis.ch' xsi:schemaLocation='http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ' xmlns:service='http://www.medelexis.ch/services' type='Basis-System' version='2.0.4' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
   <service:conditions>
   	<service:roles>
-  		<service:role priceClass="fixed-basic">
-  			<service:pricePerMandator amount="5.00" currency="CHF" />
+  		<service:role priceClass='fixed-basic'>
+  			<service:pricePerMandator amount='5.00' currency='CHF'/>
   		</service:role>
   	</service:roles>
   </service:conditions>
-  <service:docURL>http://www.medelexis.ch/unsere-produkte/elexis-plugins/plugins-sonstige/medikamente-sl.html</service:docURL>
+  <service:docURL>http://www.medelexis.ch/plugins_doc/2.1.7/Medikamente_SL/ch.elexis.medikamente.bag.pdf</service:docURL>
   <service:description>Medikamentenauswahl basierend auf der Spezialitätenliste</service:description>
 </service:service>
