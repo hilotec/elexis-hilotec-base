@@ -205,12 +205,13 @@ public class AlleLeistungen extends AbstractTimeSeries {
 		} catch (NumberFormatException ne) {/* just leave 0.0 as value */}
 		double vk_scale = 1.0;
 		try {
-			Double.parseDouble(verrechnet.get(Verrechnet.SCALE_SELLING));
+			vk_scale = Double.parseDouble(verrechnet.get(Verrechnet.SCALE_SELLING));
 		} catch (NumberFormatException ne) {/* just leave 1.0 as value */}
 		double scale1 = verrechnet.getPrimaryScaleFactor();
 		double scale2 = verrechnet.getSecondaryScaleFactor();
 		// get sales for the verrechnet including all scales and quantity
-		return new Money((int) (vk_tp * vk_scale * scale1 * scale2 * verrechnet.getZahl()));
+		return new Money(
+			(int) (Math.round(vk_tp * vk_scale) * scale1 * scale2 * verrechnet.getZahl()));
 	}
 
 	private String getVatScale(Verrechnet verrechnet){
