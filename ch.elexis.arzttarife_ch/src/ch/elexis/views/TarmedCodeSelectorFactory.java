@@ -31,14 +31,13 @@ public class TarmedCodeSelectorFactory extends CodeSelectorFactory {
 	SelectorPanelProvider slp;
 	ReadOnceTreeLoader tdl;
 	CommonViewer cv;
-	FieldDescriptor<?>[] fields =
-		{
-			new FieldDescriptor<TarmedLeistung>("Ziffer", "Code", Typ.STRING, null),
-			new FieldDescriptor<TarmedLeistung>("Text", TarmedLeistung.FLD_TEXT, null)
-		};
+	FieldDescriptor<?>[] fields = {
+		new FieldDescriptor<TarmedLeistung>("Ziffer", TarmedLeistung.FLD_CODE, Typ.STRING, null),
+		new FieldDescriptor<TarmedLeistung>("Text", TarmedLeistung.FLD_TEXT, null)
+	};
 	
 	public TarmedCodeSelectorFactory(){
-
+		
 	}
 	
 	@Override

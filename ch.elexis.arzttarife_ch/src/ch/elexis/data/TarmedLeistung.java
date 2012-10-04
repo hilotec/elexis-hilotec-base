@@ -45,14 +45,14 @@ import ch.rgw.tools.VersionInfo;
  * 
  */
 public class TarmedLeistung extends VerrechenbarAdapter {
-	private static final String FLD_CODE = "code";
-	private static final String FLD_GUELTIG_BIS = "GueltigBis";
-	private static final String FLD_GUELTIG_VON = "GueltigVon";
-	private static final String FLD_TP_TL = "TP_TL";
-	private static final String FLD_TP_AL = "TP_AL";
-	private static final String FLD_SPARTE = "Sparte";
-	private static final String FLD_DIGNI_QUANTI = "DigniQuanti";
-	private static final String FLD_DIGNI_QUALI = "DigniQuali";
+	public static final String FLD_CODE = "code";
+	public static final String FLD_GUELTIG_BIS = "GueltigBis";
+	public static final String FLD_GUELTIG_VON = "GueltigVon";
+	public static final String FLD_TP_TL = "TP_TL";
+	public static final String FLD_TP_AL = "TP_AL";
+	public static final String FLD_SPARTE = "Sparte";
+	public static final String FLD_DIGNI_QUANTI = "DigniQuanti";
+	public static final String FLD_DIGNI_QUALI = "DigniQuali";
 	public static final String FLD_TEXT = "Text";
 	public static final String FLD_NICK = "Nick";
 	public static final String XIDDOMAIN = "www.xid.ch/id/tarmedsuisse";
@@ -98,7 +98,8 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 			}
 			
 		}
-		addMapping("TARMED", FLD_CODE, "Parent", FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		addMapping(
+			"TARMED", "Ziffer=" + FLD_CODE, FLD_CODE, "Parent", FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			FLD_SPARTE, "Text=tx255", "Name=tx255", "Nick=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			"GueltigVon=S:D:GueltigVon", "GueltigBis=S:D:GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
 		);
