@@ -253,7 +253,12 @@ public class LabItem extends PersistentObject implements Comparable<LabItem> {
 		}
 		
 		Interpreter scripter = Script.getInterpreterFor(formel);
-		return scripter.run(sb.toString(), false).toString();
+		try {
+			String result = scripter.run(sb.toString(), false).toString();
+			return result;
+		} catch (ElexisException e) {
+			return "?formel?";
+		}
 	}
 	
 	/**
