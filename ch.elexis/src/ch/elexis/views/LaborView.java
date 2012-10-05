@@ -479,6 +479,7 @@ public class LaborView extends ViewPart implements IActivationListener, ISaveabl
 							if (t.length() == 0) {
 								lr.delete();
 							} else {
+								lr.undelete();
 								lr.setResult(text.getText());
 							}
 						}
@@ -1113,7 +1114,7 @@ public class LaborView extends ViewPart implements IActivationListener, ISaveabl
 	
 	public void reloadContents(final Class clazz){
 		if (clazz.equals(LabItem.class)) {
-
+			
 		}
 	}
 	
