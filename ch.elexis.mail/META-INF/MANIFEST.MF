@@ -14,9 +14,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.ui.forms,
  ch.rgw.utility,
  ch.elexis;bundle-version="2.1.0"
-Bundle-ClassPath: activation.jar,
+Bundle-ClassPath: .,
  mail.jar,
- .
+ activation.jar
 Export-Package: ch.elexis.mail,
  com.sun.activation.registries,
  com.sun.activation.viewers,
