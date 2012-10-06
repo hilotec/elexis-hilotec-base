@@ -1,5 +1,28 @@
 hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.7
 
+Changelog für 2.1.7.rc2
+d2580a776e47: 2012-10-05: marcode79: [1179] Setting "" to a LabValue deletes it
+8495ebaf384a: 2012-10-04: marcode79: [1178] Errors shown in LaborView when values for formula are missing
+e038c68c28bd: 2012-10-04: marcode79: [1083] arzttarife_ch v2.0.17
+cd97c90d3d9e: 2012-10-03: thomashu: [1091] fixed sales calculation
+a27cb08922e3: 2012-09-30: Niklaus Giger: #632: Remove unused elexis*.xml
+f33dc8353622: 2012-09-30: Niklaus Giger: #632: Bring build.properties in sync with Gerry's ant
+dbf41ce7544c: 2012-09-30: Niklaus Giger: RM: Added forgotten copyright
+c533db66b40f: 2012-09-29: Niklaus Giger: #1172: Fixed docURL in medelexis.xml
+9c931f510cff: 2012-09-28: Niklaus Giger: RM: demoDB auf zwei Arten im Installationspfad suchen
+073cff646a59: 2012-09-27: Niklaus Giger: demoDB unter /home/niklaus/elexis suchen, damit Elexis auch schreibgeschützt installiert werden kann
+ba57c89b569b: 2012-09-27: thomashu: [762] fixed service blocks exporter
+57658973bae6: 2012-09-26: marcode79: [1085] ebanking_ch v2.0.5 - Debug removal
+(transplanted from 78049db7fda0d285bc5cf06f81834d5a41406b8f)
+ae7b4fbb6d0a: 2012-09-26: marcode79: [1085] ebanking_ch v2.0.5
+(transplanted from 8d56c6955e4b7df007f6929793efe27ad9a3537f)
+b3eaac4181b3: 2012-09-26: thomashu: [1074] added context menu to reset codesystem statistics
+d91807c1f01d: 2012-09-26: thomashu: [1091] added bill state and tax point value
+562db1f0a3e9: 2012-09-24: thomas: added Bundle-ClassPath for '.' and '/bin' to ch.elexis, PDE build does not work without
+6329aff2c658: 2012-09-24: thomas: completely removed Bundle-ClassPath as '.' caused ClassNotFound errors
+4b77397acd24: 2012-09-22: Niklaus Giger: RM: Cleanup unused bin/*.jar in Bundle-Classpath
+1ca5f4e36922: 2012-09-17: thomashu: [1152] added isOrdered state for articles which are ordered, but not yet delivered
+
 Changelog für 2.1.7.rc1
 b427dbcff53c: 2012-09-14: Niklaus Giger: #785: izpack installer.xml um LogBack erweitert
 1689d8133cca: 2012-09-14: thomashu: updated core.extlib.feature due to new logging libs
