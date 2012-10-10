@@ -186,4 +186,13 @@ public class Labor2009Tarif extends VerrechenbarAdapter {
 		return l09optifier;
 	}
 	
+	@Override
+	@SuppressWarnings("rawtypes")
+	public VatInfo getVatInfo(){
+		// Code Mehrwertsteuer (CMWS) - 1stellig
+		// 1: voller MWSt-Satz (zur Zeit 6.5%)
+		// 2: reduzierter MWSt-Satz (zur Zeit 2%)
+		// 3: von der MWSt befreit
+		return VatInfo.VAT_NONE;
+	}
 }
