@@ -6,26 +6,21 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * Listener for the txtFilter text control. Updates the search text filter
- * in {@link ContactSelectorTextFieldViewerFilter} on key press.
+ * Listener for the txtFilter text control. Updates the search text filter in
+ * {@link ContactSelectorTextFieldViewerFilter} on key press.
  */
 public class FilterKeyListener extends KeyAdapter {
 	private Text text;
 	private StructuredViewer viewer;
-
-	FilterKeyListener(Text filterTxt, StructuredViewer viewer) {
+	
+	FilterKeyListener(Text filterTxt, StructuredViewer viewer){
 		text = filterTxt;
 		this.viewer = viewer;
 	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		text.setMessage("");
-	}
-
-	public void keyReleased(KeyEvent ke) {
+	
+	public void keyReleased(KeyEvent ke){
 		String txt = text.getText();
-
+		
 		if (txt.length() > 1) {
 			FilterSearchField.getInstance().setSearchText(txt);
 			viewer.getControl().setRedraw(false);

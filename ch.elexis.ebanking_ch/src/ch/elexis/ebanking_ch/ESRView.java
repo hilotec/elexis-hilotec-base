@@ -122,7 +122,8 @@ public class ESRView extends ViewPart {
 		
 		txtFilter = new Text(headerContainer, SWT.BORDER | SWT.H_SCROLL | SWT.SEARCH | SWT.CANCEL);
 		txtFilter.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		txtFilter.setMessage("Suche - #RechnungsNr, $Betrag, Text zB $>100 für alle Beträge größer 100");
+		txtFilter
+			.setMessage("Suche - #RechnungsNr, $Betrag, Text zB $>100 für alle Beträge größer 100");
 		
 		datePeriod = new Button(headerContainer, SWT.FLAT);
 		datePeriod.addSelectionListener(new SelectionAdapter() {

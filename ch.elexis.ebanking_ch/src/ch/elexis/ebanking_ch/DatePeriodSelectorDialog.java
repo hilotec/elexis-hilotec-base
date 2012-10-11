@@ -16,7 +16,7 @@ import ch.rgw.tools.TimeTool;
 import com.ibm.icu.util.Calendar;
 
 public class DatePeriodSelectorDialog extends TitleAreaDialog {
-
+	
 	private TimeTool _startDate;
 	private TimeTool _endDate;
 	private DateTime startDateTime;
@@ -27,9 +27,10 @@ public class DatePeriodSelectorDialog extends TitleAreaDialog {
 		_startDate = startDate;
 		_endDate = endDate;
 	}
-
+	
 	/**
 	 * Create contents of the dialog.
+	 * 
 	 * @param parent
 	 */
 	@Override
@@ -40,14 +41,15 @@ public class DatePeriodSelectorDialog extends TitleAreaDialog {
 		Composite container = new Composite(area, SWT.NONE);
 		container.setLayout(new GridLayout(2, false));
 		container.setLayoutData(new GridData(GridData.FILL_BOTH));
-			
-		startDateTime = new DateTime(container, SWT.CALENDAR);
-		startDateTime.setDate(_startDate.get(Calendar.YEAR), _startDate.get(Calendar.MONTH), _startDate.get(Calendar.DAY_OF_MONTH));
-		startDateTime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));	
-
 		
-		endDateTime = new DateTime(container, SWT.BORDER | SWT.CALENDAR);
-		endDateTime.setDate(_endDate.get(Calendar.YEAR), _endDate.get(Calendar.MONTH), _endDate.get(Calendar.DAY_OF_MONTH));
+		startDateTime = new DateTime(container, SWT.CALENDAR);
+		startDateTime.setDate(_startDate.get(Calendar.YEAR), _startDate.get(Calendar.MONTH),
+			_startDate.get(Calendar.DAY_OF_MONTH));
+		startDateTime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		endDateTime = new DateTime(container, SWT.CALENDAR);
+		endDateTime.setDate(_endDate.get(Calendar.YEAR), _endDate.get(Calendar.MONTH),
+			_endDate.get(Calendar.DAY_OF_MONTH));
 		endDateTime.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		return area;
@@ -55,6 +57,7 @@ public class DatePeriodSelectorDialog extends TitleAreaDialog {
 	
 	/**
 	 * Create contents of the button bar.
+	 * 
 	 * @param parent
 	 */
 	@Override
@@ -79,6 +82,7 @@ public class DatePeriodSelectorDialog extends TitleAreaDialog {
 	 */
 	@Override
 	protected Point getInitialSize(){
-		return new Point(294, 299);
+		Point p = startDateTime.computeSize(SWT.DEFAULT, SWT.DEFAULT);
+		return new Point(p.y * 2, 300);
 	}
 }
