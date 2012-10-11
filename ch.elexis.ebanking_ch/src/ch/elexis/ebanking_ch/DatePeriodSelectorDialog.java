@@ -83,6 +83,6 @@ public class DatePeriodSelectorDialog extends TitleAreaDialog {
 	@Override
 	protected Point getInitialSize(){
 		Point p = startDateTime.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		return new Point(p.y * 2, 300);
+		return new Point((p.x * 2) + 10, 300);
 	}
 }
