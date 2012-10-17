@@ -23,6 +23,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
@@ -35,8 +36,8 @@ import ch.elexis.actions.ElexisEvent;
 import ch.elexis.actions.ElexisEventDispatcher;
 import ch.elexis.actions.ElexisEventListenerImpl;
 import ch.elexis.actions.GlobalEventDispatcher;
-import ch.elexis.actions.ObjectFilterRegistry;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
+import ch.elexis.actions.ObjectFilterRegistry;
 import ch.elexis.actions.ObjectFilterRegistry.IObjectFilterProvider;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
@@ -58,24 +59,27 @@ public class FaelleView extends ViewPart implements IActivationListener {
 	private final ElexisEventListenerImpl eeli_pat = new ElexisEventListenerImpl(Patient.class) {
 		public void runInUi(ElexisEvent ev){
 			tv.refresh();
+			Fall currentFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+			if (currentFall != null)
+				tv.setSelection(new StructuredSelection(currentFall));
 		}
 	};
 	
-	private final ElexisEventListenerImpl eeli_fall =
-		new ElexisEventListenerImpl(Fall.class, ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_DELETE
-			| ElexisEvent.EVENT_RELOAD | ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_UPDATE) {
-			
-			public void runInUi(final ElexisEvent ev){
-				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-					tv.refresh(true);
-					if (konsFilterAction.isChecked()) {
-						filter.setFall((Fall) ev.getObject());
-					}
-				} else {
-					tv.refresh(true);
+	private final ElexisEventListenerImpl eeli_fall = new ElexisEventListenerImpl(Fall.class,
+		ElexisEvent.EVENT_CREATE | ElexisEvent.EVENT_DELETE | ElexisEvent.EVENT_RELOAD
+			| ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_UPDATE) {
+		
+		public void runInUi(final ElexisEvent ev){
+			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+				tv.refresh(true);
+				if (konsFilterAction.isChecked()) {
+					filter.setFall((Fall) ev.getObject());
 				}
+			} else {
+				tv.refresh(true);
 			}
-		};
+		}
+	};
 	
 	public FaelleView(){
 		makeActions();
@@ -106,8 +110,10 @@ public class FaelleView extends ViewPart implements IActivationListener {
 	
 	@Override
 	public void setFocus(){
-	// TODO Auto-generated method stub
-	
+		Fall currentFall = (Fall) ElexisEventDispatcher.getSelected(Fall.class);
+		if (currentFall != null) {
+			tv.setSelection(new StructuredSelection(currentFall));
+		}
 	}
 	
 	class FaelleLabelProvider extends DefaultLabelProvider {
@@ -140,18 +146,18 @@ public class FaelleView extends ViewPart implements IActivationListener {
 		}
 		
 		public void dispose(){
-		// TODO Auto-generated method stub
-		
+			// TODO Auto-generated method stub
+			
 		}
 		
 		public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput){
-
+			
 		}
 		
 	}
 	
 	public void activation(final boolean mode){
-
+		
 	}
 	
 	public void visible(final boolean mode){
@@ -203,7 +209,7 @@ public class FaelleView extends ViewPart implements IActivationListener {
 		}
 		
 		public void changed(){
-		// don't mind
+			// don't mind
 		}
 		
 		public void deactivate(){

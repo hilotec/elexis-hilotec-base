@@ -193,18 +193,36 @@ public final class ElexisEventDispatcher extends Job {
 				if (clazz.equals(Patient.class)) {
 					if (sps == null)
 						sps =
-							(ISourceProviderService) PlatformUI.getWorkbench()
-								.getService(ISourceProviderService.class);
-				
+							(ISourceProviderService) PlatformUI.getWorkbench().getService(
+								ISourceProviderService.class);
+					
 					((PatientSelectionStatus) sps
 						.getSourceProvider(PatientSelectionStatus.PATIENTACTIVE)).setState(true);
-
+					
 					// [1103] assure that the current selections of Fall and Konsultation
 					// are not "inherited" by a prior patient selection
 					lastSelection.remove(Fall.class);
 					lastSelection.remove(Konsultation.class);
 					Patient pat = (Patient) ee.getObject();
-					if(pat.getFaelle().length>0) lastSelection.put(Fall.class, pat.getFaelle()[0]);
+					// [1103] 17.10.2012
+					// Wird Patient gewechselt ist der neue Standard-Fall der Fall der letzten
+					// Konsultation; gibt es diese nicht wird der erste aus der Liste als
+					// Standard-Fall gesetzt
+					Konsultation kons = pat.getLetzteKons(false);
+					Fall selectedFall = null;
+					if (kons != null) {
+						selectedFall = kons.getFall();
+					}
+					// "can't be sure" if the last kons had a fall, don't rely on it
+					if (selectedFall == null) {
+						if (pat.getFaelle().length > 0)
+							selectedFall = pat.getFaelle()[0];
+					}
+					if (selectedFall != null) {
+						lastSelection.put(Fall.class, selectedFall);
+					} else {
+						log.log("No default Fall for Patient found: " + pat, Log.ERRORS);
+					}
 				}
 				
 				PersistentObject po = lastSelection.get(clazz);
