@@ -8,7 +8,7 @@
 # * Contributors:
 # *    G. Weirich - initial implementation
 # *    
-# * $Id: createDB.script 4337 2008-09-01 15:41:59Z rgw_ch $
+# * $Id$
 # *******************************************************************************
 
 # Universelles create-Script für Elexis.
@@ -39,7 +39,7 @@ CREATE TABLE KONTAKT(
 	Geburtsdatum	CHAR(8),					# bithdate as yyyymmdd
 	Geschlecht		CHAR(1),					# sex m or w
 	TITEL			VARCHAR(255),				# title
-	TitelSuffix		VARCHAR(255),
+	TitelSuffix		VARCHAR(255),				# title suffix
 	Bezeichnung1	VARCHAR(255),				# name1
 	Bezeichnung2	VARCHAR(255),				# name2
 	Bezeichnung3	VARCHAR(255),				# name3

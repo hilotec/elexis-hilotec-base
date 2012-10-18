@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005-2011, G. Weirich and Elexis
+ * Copyright (c) 2005-2012, G. Weirich and Elexis
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *    G. Weirich - initial implementation
+ *    MEDEVIT - several contributions
  *******************************************************************************/
 
 package ch.elexis.util;
@@ -273,10 +274,8 @@ public class DBUpdate {
 			
 			// 1.8.10
 			// Gerry Weirich in einem Mail vom 26.06.2011
-			// In früheren Elexis-Versionen wurden Formeln direkt im Feld
-			// abgelegt,
-			// aktuell sind es Scripts (Also Objekte vom typ
-			// ch.elexis.data.Script)
+			// In früheren Elexis-Versionen wurden Formeln direkt im Feld abgelegt,
+			// aktuell sind es Scripts (Also Objekte vom typ ch.elexis.data.Script)
 			// und das Feld muss nur noch den Namen des Scripts halten.
 			"DELETE FROM LABORITEMS where length(RefFrauOrTx) > 256;"
 				+ "ALTER TABLE LABORITEMS MODIFY RefFrauOrTx VARCHAR(256);"
@@ -294,9 +293,7 @@ public class DBUpdate {
 				+ "ALTER TABLE KONTAKT MODIFY Bezeichnung3 VARCHAR(255);"
 				+ "ALTER TABLE KONTAKT MODIFY Strasse VARCHAR(255);"
 				+ "ALTER TABLE KONTAKT MODIFY Ort VARCHAR(255);"
-				// (please try
-				// Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch
-				// :-)
+				// (please try Llanfairpwllgwyngyllgogerychwyrndrobwllllantysiliogogogoch :-)
 				+ "ALTER TABLE KONTAKT MODIFY Email VARCHAR(255);"
 				+ "ALTER TABLE KONTAKT MODIFY Website VARCHAR(255);"
 				+ "ALTER TABLE KONTAKT MODIFY Titel VARCHAR(255);"
