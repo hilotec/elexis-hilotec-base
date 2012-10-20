@@ -40,13 +40,25 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	Brief actBrief;
 	
 	public RezeptBlatt(){
-
+		
 	}
 	
 	@Override
 	public void dispose(){
 		GlobalEventDispatcher.removeActivationListener(this, this);
 		super.dispose();
+	}
+	
+	/**
+	 * load a Rezept from the database
+	 * 
+	 * @param brief
+	 *            the Brief for the Rezept to be shown
+	 */
+	public void loadRezeptFromDatabase(Rezept rp, Brief brief){
+		actBrief = brief;
+		text.open(brief);
+		rp.setBrief(actBrief);
 	}
 	
 	@Override
@@ -58,14 +70,15 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	
 	@Override
 	public void setFocus(){
-	// TODO Automatisch erstellter Methoden-Stub
-	
+		// TODO Automatisch erstellter Methoden-Stub
+		
 	}
 	
 	public boolean createList(Rezept rp, String template, String replace){
 		actBrief =
 			text.createFromTemplateName(Konsultation.getAktuelleKons(), template, Brief.RP,
-				(Patient) ElexisEventDispatcher.getSelected(Patient.class), null);
+				(Patient) ElexisEventDispatcher.getSelected(Patient.class),
+				template + " " + rp.getDate());
 		List<Prescription> lines = rp.getLines();
 		String[][] fields = new String[lines.size()][];
 		int[] wt = new int[] {
@@ -137,7 +150,7 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 	}
 	
 	public void visible(boolean mode){
-
+		
 	}
 	
 	public String getOutputterDescription(){

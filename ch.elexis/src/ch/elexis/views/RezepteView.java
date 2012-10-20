@@ -22,6 +22,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -55,6 +57,7 @@ import ch.elexis.actions.RestrictedAction;
 import ch.elexis.actions.GlobalEventDispatcher.IActivationListener;
 import ch.elexis.admin.AccessControlDefaults;
 import ch.elexis.data.Artikel;
+import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.ICodeElement;
 import ch.elexis.data.Konsultation;
@@ -119,21 +122,20 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 		}
 	};
 	
-	private final ElexisEventListenerImpl eeli_rp =
-		new ElexisEventListenerImpl(Rezept.class, ElexisEvent.EVENT_SELECTED
-			| ElexisEvent.EVENT_UPDATE) {
-			
-			public void runInUi(ElexisEvent ev){
-				if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
-					actPatient = ((Rezept) ev.getObject()).getPatient();
-					refresh();
-				} else if (ev.getType() == ElexisEvent.EVENT_UPDATE) {
-					actPatient = ((Rezept) ev.getObject()).getPatient();
-					tv.refresh(true);
-				}
-				
+	private final ElexisEventListenerImpl eeli_rp = new ElexisEventListenerImpl(Rezept.class,
+		ElexisEvent.EVENT_SELECTED | ElexisEvent.EVENT_UPDATE) {
+		
+		public void runInUi(ElexisEvent ev){
+			if (ev.getType() == ElexisEvent.EVENT_SELECTED) {
+				actPatient = ((Rezept) ev.getObject()).getPatient();
+				refresh();
+			} else if (ev.getType() == ElexisEvent.EVENT_UPDATE) {
+				actPatient = ((Rezept) ev.getObject()).getPatient();
+				tv.refresh(true);
 			}
-		};
+			
+		}
+	};
 	
 	@Override
 	public void createPartControl(final Composite parent){
@@ -256,8 +258,8 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 				} else if (o instanceof Prescription) {
 					Prescription pre = (Prescription) o;
 					Prescription now =
-						new Prescription(pre.getArtikel(), actR.getPatient(), pre.getDosis(), pre
-							.getBemerkung());
+						new Prescription(pre.getArtikel(), actR.getPatient(), pre.getDosis(),
+							pre.getBemerkung());
 					now.setBeginDate(null);
 					actR.addPrescription(now);
 					refresh();
@@ -280,12 +282,32 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 		addLineAction.setEnabled(false);
 		printAction.setEnabled(false);
 		GlobalEventDispatcher.addActivationListener(this, this);
+		tv.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
+			public void doubleClick(DoubleClickEvent event){
+				try {
+					RezeptBlatt rp = (RezeptBlatt) getViewSite().getPage().showView(RezeptBlatt.ID);
+					Rezept actR = (Rezept) ElexisEventDispatcher.getSelected(Rezept.class);
+					Brief rpBrief = actR.getBrief();
+					if (rpBrief != null) {
+						// existing - just reads prescriptiom and opens RezeptBlatt
+						rp.loadRezeptFromDatabase(actR, rpBrief);
+					} else {
+						// not existing - create prescription and opens RezeptBlatt
+						rp.createRezept(actR);
+					}
+				} catch (Throwable ex) {
+					ExHandler.handle(ex);
+				}
+			}
+			
+		});
 	}
 	
 	@Override
 	public void setFocus(){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	@Override
@@ -345,11 +367,12 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 				@Override
 				public void run(){
 					Rezept rp = (Rezept) ElexisEventDispatcher.getSelected(Rezept.class);
-					if (MessageDialog.openConfirm(getViewSite().getShell(), Messages
-						.getString("RezepteView.deletePrescriptionActiom"), //$NON-NLS-1$
-						MessageFormat.format(Messages
-							.getString("RezepteView.deletePrescriptionConfirm"), rp //$NON-NLS-1$
-							.getDate()))) {
+					if (MessageDialog.openConfirm(
+						getViewSite().getShell(),
+						Messages.getString("RezepteView.deletePrescriptionActiom"), //$NON-NLS-1$
+						MessageFormat.format(
+							Messages.getString("RezepteView.deletePrescriptionConfirm"), rp //$NON-NLS-1$
+								.getDate()))) {
 						rp.delete();
 						tv.refresh();
 					}
@@ -398,15 +421,44 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 						RezeptBlatt rp =
 							(RezeptBlatt) getViewSite().getPage().showView(RezeptBlatt.ID);
 						Rezept actR = (Rezept) ElexisEventDispatcher.getSelected(Rezept.class);
-						rp.createRezept(actR);
+						Brief rpBrief = actR.getBrief();
+						if (rpBrief == null)
+							// not yet created - just create a new Rezept
+							rp.createRezept(actR);
+						else {
+							// Brief for Rezept already exists:
+							// ask if it should be recreated or just shown
+							String[] dialogButtonLabels =
+								{
+									Messages.getString("RezepteView.RecreatePrescription"), Messages.getString("RezepteView.ShowPrescription"), Messages.getString("RezepteView.PrescriptionCancel") //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+								};
+							MessageDialog msg =
+								new MessageDialog(null,
+									Messages.getString("RezepteView.CreatePrescription"), //$NON-NLS-1$
+									null,
+									Messages
+										.getString("RezepteView.ReallyWantToRecreatePrescription"), //$NON-NLS-1$
+									MessageDialog.WARNING, dialogButtonLabels, 2);
+							int result = msg.open();
+							switch (result) {
+							case 0: // recreate rezept
+								rp.createRezept(actR);
+								break;
+							case 1: // open rezept
+								rp.loadRezeptFromDatabase(actR, rpBrief);
+								break;
+							case 2: // cancel or closebox - do nothing
+								break;
+							}
+						}
 					} catch (Exception ex) {
 						ExHandler.handle(ex);
 					}
 				}
 			};
 		changeMedicationAction =
-			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY, Messages
-				.getString("RezepteView.ChangeLink")) { //$NON-NLS-1$
+			new RestrictedAction(AccessControlDefaults.MEDICATION_MODIFY,
+				Messages.getString("RezepteView.ChangeLink")) { //$NON-NLS-1$
 				{
 					setImageDescriptor(Desk.getImageDescriptor(Desk.IMG_EDIT));
 					setToolTipText(Messages.getString("RezepteView.ChangeTooltip")); //$NON-NLS-1$
@@ -428,8 +480,8 @@ public class RezepteView extends ViewPart implements IActivationListener, ISavea
 	}
 	
 	public void activation(final boolean mode){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public void visible(final boolean mode){
