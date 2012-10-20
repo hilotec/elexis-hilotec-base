@@ -21,6 +21,8 @@ import static ch.elexis.actions.GlobalActions.reopenFallAction;
 
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IFilter;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -29,6 +31,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
@@ -45,6 +48,7 @@ import ch.elexis.data.Patient;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.viewers.DefaultLabelProvider;
+import ch.rgw.tools.ExHandler;
 
 /**
  * Eine alternative, platzsparendere Fälle-View
@@ -100,6 +104,17 @@ public class FaelleView extends ViewPart implements IActivationListener {
 			makeBillAction);
 		GlobalEventDispatcher.addActivationListener(this, this);
 		tv.setInput(getViewSite());
+		tv.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
+			public void doubleClick(DoubleClickEvent event){
+				try {
+					FallDetailView pdv =
+						(FallDetailView) getSite().getPage().showView(FallDetailView.ID);
+				} catch (PartInitException e) {
+					ExHandler.handle(e);
+				}
+			}
+		});
 	}
 	
 	@Override

@@ -31,6 +31,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.ViewPart;
@@ -58,11 +59,13 @@ import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
 import ch.elexis.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
+import ch.rgw.tools.ExHandler;
 
 /**
  * Display of Patients
@@ -83,13 +86,13 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 	PatListeContentProvider plcp;
 	Composite parent;
 	
-	ElexisEventListenerImpl eeli_user =
-		new ElexisEventListenerImpl(Anwender.class, ElexisEvent.EVENT_USER_CHANGED) {
-			
-			public void runInUi(ElexisEvent ev){
-				UserChanged();
-			}
-		};
+	ElexisEventListenerImpl eeli_user = new ElexisEventListenerImpl(Anwender.class,
+		ElexisEvent.EVENT_USER_CHANGED) {
+		
+		public void runInUi(ElexisEvent ev){
+			UserChanged();
+		}
+	};
 	
 	@Override
 	public void dispose(){
@@ -157,14 +160,14 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 		vc =
 			new ViewerConfigurer(
 			// new LazyContentProvider(cv,loader,
-				// AccessControlDefaults.PATIENT_DISPLAY),
-				plcp, new PatLabelProvider(), new DefaultControlFieldProvider(cv, fields
-					.toArray(new String[0])), new ViewerConfigurer.DefaultButtonProvider(), // cv,Patient.class),
+			// AccessControlDefaults.PATIENT_DISPLAY),
+				plcp, new PatLabelProvider(), new DefaultControlFieldProvider(cv,
+					fields.toArray(new String[0])), new ViewerConfigurer.DefaultButtonProvider(), // cv,Patient.class),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.SINGLE, cv));
 		cv.create(vc, parent, SWT.NONE, getViewSite());
 		// let user select patient by pressing ENTER in the control fields
-		cv.getConfigurer().getControlFieldProvider().addChangeListener(
-			new ControlFieldSelectionListener());
+		cv.getConfigurer().getControlFieldProvider()
+			.addChangeListener(new ControlFieldSelectionListener());
 		cv.getViewerWidget().getControl()
 			.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
 		
@@ -181,15 +184,31 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 			
 			@Override
 			public void doubleClick(DoubleClickEvent event){
-				PropertyDialogAction pdAction = new PropertyDialogAction(new SameShellProvider(parent),
-				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart().getSite().getSelectionProvider());
-
+				PropertyDialogAction pdAction =
+					new PropertyDialogAction(new SameShellProvider(parent), PlatformUI
+						.getWorkbench().getActiveWorkbenchWindow().getActivePage().getActivePart()
+						.getSite().getSelectionProvider());
+				
 				if (pdAction.isApplicableForSelection())
-				    pdAction.run();
+					pdAction.run();
 			}
 		});
 		getSite().registerContextMenu(menus.getContextMenu(), viewer);
 		getSite().setSelectionProvider(viewer);
+		
+		// // ****DoubleClick Version Marlovits -> öffnet bei DoubleClick die
+// Patienten-Detail-Ansicht
+		// cv.addDoubleClickListener(new DoubleClickListener() {
+		// @Override
+		// public void doubleClicked(PersistentObject obj, CommonViewer cv){
+		// try {
+		// PatientDetailView2 pdv =
+		// (PatientDetailView2) getSite().getPage().showView(PatientDetailView2.ID);
+		// } catch (PartInitException e) {
+		// ExHandler.handle(e);
+		// }
+		// }
+		// });
 	}
 	
 	public PatListeContentProvider getContentProvider(){
@@ -213,7 +232,7 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 				}
 				ISticker et = pat.getSticker();
 				Image im = null;
-				if (et != null && (im = ((Sticker)et).getImage()) != null) {
+				if (et != null && (im = ((Sticker) et).getImage()) != null) {
 					return im;
 				} else {
 					if (pat.getGeschlecht().equals(Person.MALE)) {
@@ -232,7 +251,7 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 				Patient pat = (Patient) element;
 				ISticker et = pat.getSticker();
 				if (et != null) {
-					return ((Sticker)et).getBackground();
+					return ((Sticker) et).getBackground();
 				}
 			}
 			return null;
@@ -243,7 +262,7 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 				Patient pat = (Patient) element;
 				ISticker et = pat.getSticker();
 				if (et != null) {
-					return ((Sticker)et).getForeground();
+					return ((Sticker) et).getForeground();
 				}
 			}
 			
@@ -347,8 +366,8 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 	}
 	
 	public void visible(final boolean mode){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	/*
@@ -389,11 +408,11 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 	 */
 	class ControlFieldSelectionListener implements ControlFieldListener {
 		public void changed(HashMap<String, String> values){
-		// nothing to do (handled by LazyContentProvider)
+			// nothing to do (handled by LazyContentProvider)
 		}
 		
 		public void reorder(final String field){
-		// nothing to do (handled by LazyContentProvider)
+			// nothing to do (handled by LazyContentProvider)
 		}
 		
 		/**
@@ -424,8 +443,8 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 		if (!initiated)
 			SWTHelper.reloadViewPart(PatientenListeView.ID);
 		if (!cv.getViewerWidget().getControl().isDisposed()) {
-			cv.getViewerWidget().getControl().setFont(
-				Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
+			cv.getViewerWidget().getControl()
+				.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
 			cv.notify(CommonViewer.Message.update);
 		}
 	}

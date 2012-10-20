@@ -41,6 +41,8 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISaveablePart2;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
@@ -75,6 +77,7 @@ import ch.elexis.util.PersistentObjectDropTarget;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
 import ch.elexis.util.viewers.DefaultContentProvider;
 import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
@@ -113,14 +116,14 @@ public class PatHeuteView extends ViewPart implements IActivationListener, ISave
 	// private double sumSelected;
 	private final Query<Konsultation> qbe;
 	Composite parent;
-	private final ElexisEventListenerImpl eeli_kons =
-		new ElexisEventListenerImpl(Konsultation.class) {
+	private final ElexisEventListenerImpl eeli_kons = new ElexisEventListenerImpl(
+		Konsultation.class) {
+		
+		public void runInUi(ElexisEvent ev){
+			selection((Konsultation) ev.getObject());
 			
-			public void runInUi(ElexisEvent ev){
-				selection((Konsultation) ev.getObject());
-				
-			}
-		};
+		}
+	};
 	
 	public PatHeuteView(){
 		super();
@@ -283,6 +286,21 @@ public class PatHeuteView extends ViewPart implements IActivationListener, ISave
 		GlobalEventDispatcher.addActivationListener(this, this);
 		kload.schedule();
 		
+		cv.addDoubleClickListener(new DoubleClickListener() {
+			@Override
+			public void doubleClicked(PersistentObject obj, CommonViewer cv){
+				Konsultation k = (Konsultation) obj;
+				ElexisEventDispatcher.fireSelectionEvent(k);
+				ElexisEventDispatcher.fireSelectionEvent(k.getFall());
+				ElexisEventDispatcher.fireSelectionEvent(k.getFall().getPatient());
+				try {
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+						.showView(KonsDetailView.ID);
+				} catch (PartInitException e) {
+					ExHandler.handle(e);
+				}
+			}
+		});
 	}
 	
 	@Override
@@ -472,8 +490,8 @@ public class PatHeuteView extends ViewPart implements IActivationListener, ISave
 			}
 			monitor.beginTask(Messages.getString("PatHeuteView.loadKons"), 1000); //$NON-NLS-1$
 			qbe.clear();
-			qbe.add(Konsultation.DATE, Query.GREATER_OR_EQUAL, datVon
-				.toString(TimeTool.DATE_COMPACT));
+			qbe.add(Konsultation.DATE, Query.GREATER_OR_EQUAL,
+				datVon.toString(TimeTool.DATE_COMPACT));
 			qbe.add(Konsultation.DATE, Query.LESS_OR_EQUAL, datBis.toString(TimeTool.DATE_COMPACT));
 			if (Hub.acl.request(AccessControlDefaults.ACCOUNTING_GLOBAL) == false) {
 				if (Hub.actMandant == null) {
@@ -759,8 +777,7 @@ public class PatHeuteView extends ViewPart implements IActivationListener, ISave
 					sb.append(num).append(" ").append(v.getLabel()).append(" ") //$NON-NLS-1$ //$NON-NLS-2$
 						.append(preis.getAmountAsString()).append("\n"); //$NON-NLS-1$
 				}
-				sb
-					.append(Messages.getString("PatHeuteView.total")).append(subsum.getAmountAsString()); //$NON-NLS-1$
+				sb.append(Messages.getString("PatHeuteView.total")).append(subsum.getAmountAsString()); //$NON-NLS-1$
 				total.addMoney(subsum);
 				table[i + 1][1] = sb.toString();
 			}
@@ -772,8 +789,7 @@ public class PatHeuteView extends ViewPart implements IActivationListener, ISave
 					table[kons.length + 2 + i] = new String[2];
 					table[kons.length + 2 + i][0] = lfiltered[i].getCode();
 					StringBuilder sb = new StringBuilder();
-					sb
-						.append(Messages.getString("PatHeuteView.billedTotal")).append(numLeistung[i]).append( //$NON-NLS-1$
+					sb.append(Messages.getString("PatHeuteView.billedTotal")).append(numLeistung[i]).append( //$NON-NLS-1$
 							Messages.getString("PatHeuteView.times")).append( //$NON-NLS-1$
 							perLeistung[i].getAmountAsString());
 					table[kons.length + 2 + i][1] = sb.toString();
@@ -804,8 +820,8 @@ public class PatHeuteView extends ViewPart implements IActivationListener, ISave
 		}
 		
 		public void save(){
-		// TODO Auto-generated method stub
-		
+			// TODO Auto-generated method stub
+			
 		}
 		
 		public boolean saveAs(){

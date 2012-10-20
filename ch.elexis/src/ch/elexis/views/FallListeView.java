@@ -45,6 +45,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.part.ViewPart;
@@ -64,12 +66,14 @@ import ch.elexis.data.PersistentObject;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.viewers.CommonContentProviderAdapter;
 import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
 import ch.elexis.util.viewers.DefaultContentProvider;
 import ch.elexis.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.util.viewers.ViewerConfigurer.ButtonProvider;
+import ch.rgw.tools.ExHandler;
 import ch.rgw.tools.IFilter;
 
 /**
@@ -262,6 +266,28 @@ public class FallListeView extends ViewPart implements IActivationListener, ISav
 		createContextMenu();
 		((DefaultContentProvider) fallCf.getContentProvider()).startListening();
 		
+		fallViewer.addDoubleClickListener(new DoubleClickListener() {
+			@Override
+			public void doubleClicked(PersistentObject obj, CommonViewer cv){
+				try {
+					FallDetailView pdv =
+						(FallDetailView) getSite().getPage().showView(FallDetailView.ID);
+				} catch (PartInitException e) {
+					ExHandler.handle(e);
+				}
+			}
+		});
+		behandlViewer.addDoubleClickListener(new DoubleClickListener() {
+			@Override
+			public void doubleClicked(PersistentObject obj, CommonViewer cv){
+				try {
+					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
+						.showView(KonsDetailView.ID);
+				} catch (PartInitException e) {
+					ExHandler.handle(e);
+				}
+			}
+		});
 	}
 	
 	private void createContextMenu(){
@@ -313,8 +339,8 @@ public class FallListeView extends ViewPart implements IActivationListener, ISav
 	
 	@Override
 	public void setFocus(){
-	// TODO Auto-generated method stub
-	
+		// TODO Auto-generated method stub
+		
 	}
 	
 	public void setFall(Fall f, Konsultation b){
@@ -366,7 +392,7 @@ public class FallListeView extends ViewPart implements IActivationListener, ISav
 	}
 	
 	public void activation(boolean mode){
-	// TODO Auto-generated method stub
+		// TODO Auto-generated method stub
 	}
 	
 	public void visible(boolean mode){

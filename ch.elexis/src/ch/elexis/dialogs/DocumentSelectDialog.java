@@ -20,6 +20,8 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -51,12 +53,12 @@ import ch.rgw.tools.StringTool;
  * 
  */
 public class DocumentSelectDialog extends TitleAreaDialog {
-	private static final String DELETE_DOCUMENT =
-		Messages.getString("DocumentSelectDialog.deleteDocument"); //$NON-NLS-1$
-	private static final String DELETE_TEMPLATE =
-		Messages.getString("DocumentSelectDialog.deleteTemplate"); //$NON-NLS-1$
-	private static final String OPEN_DOCUMENT =
-		Messages.getString("DocumentSelectDialog.openDocument"); //$NON-NLS-1$
+	private static final String DELETE_DOCUMENT = Messages
+		.getString("DocumentSelectDialog.deleteDocument"); //$NON-NLS-1$
+	private static final String DELETE_TEMPLATE = Messages
+		.getString("DocumentSelectDialog.deleteTemplate"); //$NON-NLS-1$
+	private static final String OPEN_DOCUMENT = Messages
+		.getString("DocumentSelectDialog.openDocument"); //$NON-NLS-1$
 	/**
 	 * select an existing document out of the list of all documtents of the given mandator
 	 */
@@ -174,6 +176,12 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 		tv.getControl().setMenu(menu.createContextMenu(tv.getControl()));
 		tv.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tv.setInput(this);
+		tv.addDoubleClickListener(new IDoubleClickListener() {
+			@Override
+			public void doubleClick(DoubleClickEvent event){
+				okPressed();
+			}
+		});
 		return ret;
 	}
 	
@@ -205,7 +213,7 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 			new Action(Messages.getString("DocumentSelectDialog.changeSubjectAction")) { //$NON-NLS-1$
 				@Override
 				public void run(){
-
+					
 				}
 			};
 		deleteTemplateAction = new Action(DELETE_TEMPLATE) {
@@ -241,8 +249,8 @@ public class DocumentSelectDialog extends TitleAreaDialog {
 					Brief sel =
 						(Brief) ((IStructuredSelection) tv.getSelection()).getFirstElement();
 					InputDialog inp =
-						new InputDialog(getShell(), Messages
-							.getString("DocumentSelectDialog.changeSubjectAction"), //$NON-NLS-1$
+						new InputDialog(getShell(),
+							Messages.getString("DocumentSelectDialog.changeSubjectAction"), //$NON-NLS-1$
 							Messages.getString("DocumentSelectDialog.changeSubjectAction"), //$NON-NLS-1$
 							sel.getBetreff(), null);
 					int inputResult = inp.open();

@@ -47,6 +47,7 @@ import ch.elexis.data.Brief;
 import ch.elexis.data.Fall;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
+import ch.elexis.data.PersistentObject;
 import ch.elexis.data.Query;
 import ch.elexis.dialogs.DocumentSelectDialog;
 import ch.elexis.dialogs.SelectFallDialog;
@@ -54,6 +55,7 @@ import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.viewers.CommonViewer;
+import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
 import ch.elexis.util.viewers.DefaultContentProvider;
 import ch.elexis.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.util.viewers.DefaultLabelProvider;
@@ -115,6 +117,12 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 			menus.createViewerContextMenu(page.cv.getViewerWidget(), editNameAction, deleteAction);
 			ct.setData(page.cv);
 			ct.setControl(page);
+			page.cv.addDoubleClickListener(new DoubleClickListener() {
+				@Override
+				public void doubleClicked(PersistentObject obj, CommonViewer cv){
+					briefLadenAction.run();
+				}
+			});
 		}
 		
 		ctab.addSelectionListener(new SelectionAdapter() {
