@@ -81,6 +81,12 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 	
 	static void createTables(){
 		TarmedLeistung version = load("Version");
+		addMapping(
+			"TARMED", "Ziffer=" + FLD_CODE, FLD_CODE, "Parent", FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			FLD_SPARTE, "Text=tx255", "Name=tx255", "Nick=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			"GueltigVon=S:D:GueltigVon", "GueltigBis=S:D:GueltigBis", //$NON-NLS-1$ //$NON-NLS-2$
+			"deleted"  //$NON-NLS-1$ 
+		);
 		if (!version.exists()) {
 			String filepath =
 				PlatformHelper.getBasePath("ch.elexis.arzttarife_ch") + File.separator
@@ -98,11 +104,6 @@ public class TarmedLeistung extends VerrechenbarAdapter {
 			}
 			
 		}
-		addMapping(
-			"TARMED", "Ziffer=" + FLD_CODE, FLD_CODE, "Parent", FLD_DIGNI_QUALI, FLD_DIGNI_QUANTI, //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			FLD_SPARTE, "Text=tx255", "Name=tx255", "Nick=Nickname", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-			"GueltigVon=S:D:GueltigVon", "GueltigBis=S:D:GueltigBis" //$NON-NLS-1$ //$NON-NLS-2$
-		);
 		TarmedLeistung tlv = TarmedLeistung.load("Version");
 		if (!tlv.exists()) {
 			tlv = new TarmedLeistung();
