@@ -163,7 +163,7 @@ public class KonsZumVerrechnenView extends ViewPart implements ISaveablePart2 {
 		Composite cRight = right.getBody();
 		right.setText(Messages.getString("KonsZumVerrechnenView.selected")); //$NON-NLS-1$
 		cRight.setLayout(new GridLayout());
-		tvSel = new TreeViewer(cRight, SWT.V_SCROLL);
+		tvSel = new TreeViewer(cRight, SWT.V_SCROLL | SWT.MULTI);
 		// tvSel.getControl().setLayoutData(SWTHelper.getFillGridData(1,true,t,true));
 		tvSel.getControl().setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		tvSel.setContentProvider(new BasicTreeContentProvider());
