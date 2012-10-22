@@ -19,7 +19,7 @@ public class RFE extends PersistentObject {
 				"01", "01- Kontakt auf Wunsch des Patienten", "01-Wunsch"
 			},
 			{
-				"02", "02- Notfallkonsultation", "02-NF"
+				"02", "02- Notfallkonsultation (vor 1.6.2012)", "02-NF"
 			},
 			{
 				"03", "03- Kontakt auf Zuweisung", "03-Zuweis."
@@ -82,7 +82,7 @@ public class RFE extends PersistentObject {
 	public static void clear(Konsultation k){
 		getConnection().exec("DELETE FROM " + TABLENAME + " WHERE KonsID=" + k.getWrappedId());
 	}
-	
+
 	public String getText(){
 		String code = getCode();
 		return rfeHash.get(code);

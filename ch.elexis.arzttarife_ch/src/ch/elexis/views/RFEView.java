@@ -35,6 +35,7 @@ public class RFEView extends ViewPart {
 	boolean bDaempfung = false;
 	HashMap<String, Integer> mapCodeToIndex = new HashMap<String, Integer>();
 	HashMap<Integer, String> mapIndexToCode = new HashMap<Integer, String>();
+	static final int No_More_Valid = 1;
 	
 	ElexisEventListenerImpl eeli_kons = new ElexisEventListenerImpl(Konsultation.class) {
 		
@@ -69,7 +70,8 @@ public class RFEView extends ViewPart {
 					TableItem item = table.getItem(idx);
 					// item.setBackground(Desk.getColor(Desk.COL_SKYBLUE));
 					// item.setForeground(Desk.getColor(Desk.COL_RED));
-					item.setImage(Desk.getImage(Desk.IMG_TICK));
+					if (item.getChecked())
+						item.setImage(Desk.getImage(Desk.IMG_TICK));
 					// table.select(idx);
 				}
 			}
@@ -82,11 +84,11 @@ public class RFEView extends ViewPart {
 		tabs.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		CTabItem ctLong = new CTabItem(tabs, SWT.NONE);
 		ctLong.setText("lang");
-		longTable = new Table(tabs, SWT.MULTI | SWT.FULL_SELECTION);
+		longTable = new Table(tabs, SWT.MULTI | SWT.FULL_SELECTION | SWT.CHECK);
 		ctLong.setControl(longTable);
 		CTabItem ctMedium = new CTabItem(tabs, SWT.NONE);
 		ctMedium.setText("kurz");
-		mediumTable = new Table(tabs, SWT.MULTI | SWT.FULL_SELECTION);
+		mediumTable = new Table(tabs, SWT.MULTI | SWT.FULL_SELECTION | SWT.CHECK);
 		ctMedium.setControl(mediumTable);
 		
 		CTabItem ctStat = new CTabItem(tabs, SWT.NONE);
@@ -131,18 +133,23 @@ public class RFEView extends ViewPart {
 			}
 			
 		});
-		// table.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		int i = 0;
 		for (String[] t : RFE.getRFEDescriptions()) {
-			new TableItem(longTable, SWT.NONE).setText(t[1]);
-			// new TableItem(shortTable, SWT.NONE).setText(t[0]);
-			new TableItem(mediumTable, SWT.NONE).setText(t[2]);
+			TableItem longItem = new TableItem(longTable, SWT.NONE);
+			longItem.setText(t[2]);
+			TableItem mediumItem = new TableItem(mediumTable, SWT.NONE);
+			mediumItem.setText(t[1]);
 			mapCodeToIndex.put(t[0], i);
 			mapIndexToCode.put(i, t[0]);
+			if (i== No_More_Valid){
+				mediumItem.setBackground(Desk.getColor(Desk.COL_LIGHTGREY));
+				mediumItem.setGrayed(true);
+				longItem.setBackground(Desk.getColor(Desk.COL_LIGHTGREY));
+				longItem.setGrayed(true);
+			}
 			i++;
 		}
 		longTable.addSelectionListener(new ClickListener(longTable));
-		// shortTable.addSelectionListener(new ClickListener(shortTable));
 		mediumTable.addSelectionListener(new ClickListener(mediumTable));
 		ElexisEventDispatcher.getInstance().addListeners(eeli_kons);
 	}
@@ -174,6 +181,10 @@ public class RFEView extends ViewPart {
 					RFE.clear(k);
 					
 					for (int s : sel) {
+						if (s == No_More_Valid)
+						{
+							break;
+						}
 						String code = mapIndexToCode.get(s);
 						new RFE(k.getId(), code);
 					}
