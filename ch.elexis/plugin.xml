@@ -832,5 +832,12 @@
             name="ch.elexis.util.WikipediaSearchAction">
       </Link>
    </extension>
+   <extension
+         point="ch.elexis.DataAccess">
+      <DataAccess
+            class="ch.elexis.util.AllDataAccessor"
+            name="Alle">
+      </DataAccess>
+   </extension>
 
 </plugin>
