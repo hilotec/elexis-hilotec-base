@@ -9,7 +9,7 @@ import ch.rgw.tools.TimeTool;
 public class TarmedValidDateFilter extends ViewerFilter {
 	
 	private TimeTool validDate;
-	private boolean doFilter = false;
+	private boolean doFilter = true;
 	
 	/**
 	 * Show only positions valid at date. Set date to null to show all.
