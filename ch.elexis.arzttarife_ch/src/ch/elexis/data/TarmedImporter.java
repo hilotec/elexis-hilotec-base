@@ -186,10 +186,13 @@ public class TarmedImporter extends ImporterPage {
 	public IStatus doImport(final IProgressMonitor monitor) throws Exception{
 		count = 0;
 		pj = PersistentObject.getConnection();
-		if (pj.DBFlavor.equals("h2") || pj.DBFlavor.equals("hsql"))
+		if (pj.DBFlavor.equals("h2") || pj.DBFlavor.equals("hsql")) {
 			cacheDb = pj;
-		else
+			cacheDb.connect("", "");
+		} else {
 			cacheDb = new JdbcLink("org.h2.Driver", "jdbc:h2:mem:tarmed_import", "hsql");
+			cacheDb.connect("", "");
+		}
 		cacheDb.connect("", "");
 		if (openAccessDatabase(monitor, results[0]) != Status.OK_STATUS
 			|| deleteCachedAccessTables(monitor) != Status.OK_STATUS
@@ -514,7 +517,7 @@ public class TarmedImporter extends ImporterPage {
 				}
 			}
 		}
-
+		
 		// update existing ids of Leistungsblock
 		try {
 			Query<Leistungsblock> lQuery = new Query<Leistungsblock>(Leistungsblock.class);
@@ -557,8 +560,7 @@ public class TarmedImporter extends ImporterPage {
 					}
 					// write the updated String back
 					setBinaryRaw(Leistungsblock.LEISTUNGEN, Leistungsblock.TABLENAME,
-						block.getId(),
-						CompEx.Compress(newCodes.toString(), CompEx.ZIP));
+						block.getId(), CompEx.Compress(newCodes.toString(), CompEx.ZIP));
 				}
 			}
 		} catch (UnsupportedEncodingException e) {
@@ -639,21 +641,20 @@ public class TarmedImporter extends ImporterPage {
 	public Composite createPage(final Composite parent){
 		FileBasedImporter fis = new ImporterPage.FileBasedImporter(parent, this);
 		fis.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
-
+		
 		Composite updateIDsComposite = new Composite(fis, SWT.NONE);
 		updateIDsComposite.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		updateIDsComposite.setLayout(new FormLayout());
 		
 		Label lbl = new Label(updateIDsComposite, SWT.NONE);
 		lbl.setText(Messages.TarmedImporter_updateOldIDEntries);
-		final Button updateIDsBtn =
-			new Button(updateIDsComposite, SWT.CHECK);
-			
+		final Button updateIDsBtn = new Button(updateIDsComposite, SWT.CHECK);
+		
 		FormData fd = new FormData();
 		fd.top = new FormAttachment(0, 0);
 		fd.left = new FormAttachment(0, 0);
 		lbl.setLayoutData(fd);
-
+		
 		fd = new FormData();
 		fd.top = new FormAttachment(0, 0);
 		fd.left = new FormAttachment(lbl, 5);
@@ -663,13 +664,13 @@ public class TarmedImporter extends ImporterPage {
 			public void widgetSelected(SelectionEvent e){
 				updateIDs = updateIDsBtn.getSelection();
 			}
-
+			
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e){
 				updateIDs = updateIDsBtn.getSelection();
 			}
 		});
-
+		
 		return fis;
 	}
 	
