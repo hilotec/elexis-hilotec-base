@@ -28,8 +28,8 @@ import ch.elexis.data.Brief;
 import ch.elexis.data.Konsultation;
 import ch.elexis.data.Patient;
 import ch.elexis.text.ITextPlugin;
-import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
+import ch.elexis.text.TextContainer;
 
 public class LaborblattView extends ViewPart implements ICallback {
 	public static final String ID = "ch.elexis.Laborblatt"; //$NON-NLS-1$
@@ -88,8 +88,10 @@ public class LaborblattView extends ViewPart implements ICallback {
 			}
 		}
 		String[][] fld = usedRows.toArray(new String[0][]);
-		return text.getPlugin().insertTable("[Laborwerte]", //$NON-NLS-1$
+		boolean ret = text.getPlugin().insertTable("[Laborwerte]", //$NON-NLS-1$
 			ITextPlugin.FIRST_ROW_IS_HEADER, fld, colsizes);
+		text.saveBrief(br, Brief.LABOR);
+		return ret;
 	}
 	
 	@SuppressWarnings("unchecked")

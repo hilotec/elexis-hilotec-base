@@ -30,8 +30,8 @@ import ch.elexis.data.Patient;
 import ch.elexis.data.Prescription;
 import ch.elexis.data.Rezept;
 import ch.elexis.exchange.IOutputter;
-import ch.elexis.text.TextContainer;
 import ch.elexis.text.ITextPlugin.ICallback;
+import ch.elexis.text.TextContainer;
 import ch.rgw.tools.StringTool;
 
 public class RezeptBlatt extends ViewPart implements ICallback, IActivationListener, IOutputter {
@@ -103,8 +103,10 @@ public class RezeptBlatt extends ViewPart implements ICallback, IActivationListe
 				text.getPlugin().print(null, null, true);
 				getSite().getPage().hideView(this);
 			}
+			text.saveBrief(actBrief, Brief.RP);
 			return true;
 		}
+		text.saveBrief(actBrief, Brief.RP);
 		return false;
 	}
 	
