@@ -202,7 +202,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 	
 	@Override
 	public void setFocus(){
-
+		
 	}
 	
 	class BestellungLabelProvider extends LabelProvider implements ITableLabelProvider {
@@ -263,7 +263,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 					 * Query<Artikel> qbe=new Query<Artikel>(Artikel.class);
 					 * qbe.add("Minbestand","<>","0"); List<Artikel> l=qbe.execute();
 					 */
-
+					
 					int trigger =
 						Hub.globalCfg.get(PreferenceConstants.INVENTORY_ORDER_TRIGGER,
 							PreferenceConstants.INVENTORY_ORDER_TRIGGER_DEFAULT);
@@ -310,8 +310,8 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 						Item it = (Item) sel.getFirstElement();
 						int old = it.num;
 						InputDialog in =
-							new InputDialog(getViewSite().getShell(), Messages
-								.getString("BestellView.ChangeNumber"), //$NON-NLS-1$
+							new InputDialog(getViewSite().getShell(),
+								Messages.getString("BestellView.ChangeNumber"), //$NON-NLS-1$
 								Messages.getString("BestellView.EnterNewNumber"), //$NON-NLS-1$
 								Integer.toString(old), null);
 						if (in.open() == Dialog.OK) {
@@ -368,6 +368,8 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 		sendAction = new Action(Messages.getString("BestellView.SendOrder")) { //$NON-NLS-1$
 				@Override
 				public void run(){
+					if (actBestellung == null)
+						return;
 					actBestellung.save();
 					List<IConfigurationElement> list =
 						Extensions.getExtensions("ch.elexis.Transporter"); //$NON-NLS-1$
@@ -381,8 +383,8 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 								
 								sender.store(actBestellung);
 								sender.finalizeExport();
-								SWTHelper.showInfo(Messages
-									.getString("BestellView.OrderSentCaption"), //$NON-NLS-1$
+								SWTHelper.showInfo(
+									Messages.getString("BestellView.OrderSentCaption"), //$NON-NLS-1$
 									Messages.getString("BestellView.OrderSentBody")); //$NON-NLS-1$
 								tv.refresh();
 								
@@ -541,11 +543,11 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 	public boolean isSaveOnCloseNeeded(){
 		return true;
 	}
-
+	
 	/**
 	 * @return the current defined {@link Bestellung} in this view
 	 */
-	public Bestellung getActBestellung() {
+	public Bestellung getActBestellung(){
 		return actBestellung;
 	}
 }
