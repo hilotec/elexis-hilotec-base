@@ -12,3 +12,5 @@
 	- Fix for missing context menu in Selector View
 1.0.8 - 24.7.2012
 	- Support for "Pharmacode" value of Eigenartikel -> backed by warning dialog, see #612
+1.0.9 - 26.10.2012
+	- Make warning dialog less aggressive	

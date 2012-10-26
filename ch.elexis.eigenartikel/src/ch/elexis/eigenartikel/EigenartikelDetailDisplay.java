@@ -42,6 +42,7 @@ import ch.elexis.views.IDetailDisplay;
 public class EigenartikelDetailDisplay implements IDetailDisplay {
 	
 	private static InputData inoffPharmacode;
+	private static boolean warningAccepted = false;
 	
 	static final public InputData[] getFieldDefs(final Shell shell){
 		inoffPharmacode =
@@ -118,15 +119,17 @@ public class EigenartikelDetailDisplay implements IDetailDisplay {
 		tblArtikel = new LabeledInputField.AutoForm(ret, getFieldDefs(parent.getShell()));
 		
 		LabeledInputField lif = inoffPharmacode.getWidget();
-		Text inoffPharmacodeText = (Text) lif.getControl();
+		final Text inoffPharmacodeText = (Text) lif.getControl();
 		inoffPharmacodeText.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusGained(FocusEvent e){
-				MessageDialog
-					.openInformation(
-						PlatformUI.getWorkbench().getDisplay().getActiveShell(),
-						Messages.Eigenartikel_WarningPharmacodeChange_Title,
-						Messages.Eigenartikel_WarningPharmacodeChange);
+				if (warningAccepted)
+					return;
+				MessageDialog.openInformation(PlatformUI.getWorkbench().getDisplay()
+					.getActiveShell(), Messages.Eigenartikel_WarningPharmacodeChange_Title,
+					Messages.Eigenartikel_WarningPharmacodeChange);
+				warningAccepted = true;
+				inoffPharmacodeText.setFocus();
 			}
 		});
 		
