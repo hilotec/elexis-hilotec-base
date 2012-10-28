@@ -29,16 +29,15 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Desk;
@@ -66,7 +65,7 @@ public class VerrechnungsDisplay extends Composite {
 	Table tVerr;
 	TableViewer viewer;
 	MenuManager contextMenuManager;
-	private final Hyperlink hVer;
+	private final Button hVer;
 	private final PersistentObjectDropTarget dropTarget;
 	private IAction chPriceAction, chCountAction, chTextAction, removeAction, removeAllAction;
 	private static final String CHPRICE = Messages.getString("VerrechnungsDisplay.changePrice"); //$NON-NLS-1$
@@ -79,12 +78,12 @@ public class VerrechnungsDisplay extends Composite {
 		super(parent, style);
 		setLayout(new GridLayout());
 		hVer =
-			Desk.getToolkit().createHyperlink(this,
-				Messages.getString("VerrechnungsDisplay.billing"), SWT.NONE); //$NON-NLS-1$
+			Desk.getToolkit().createButton(this,
+				Messages.getString("VerrechnungsDisplay.billing"), SWT.FLAT); //$NON-NLS-1$
 		hVer.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
-		hVer.addHyperlinkListener(new HyperlinkAdapter() {
-			@Override
-			public void linkActivated(HyperlinkEvent e){
+		hVer.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
 				try {
 					if (StringTool.isNothing(LeistungenView.ID)) {
 						SWTHelper.alert(
@@ -100,6 +99,8 @@ public class VerrechnungsDisplay extends Composite {
 					StatusManager.getManager().handle(status, StatusManager.SHOW);
 				}
 			}
+
+			public void widgetDefaultSelected(SelectionEvent e) { }
 		});
 		makeActions();
 		tVerr = Desk.getToolkit().createTable(this, SWT.SINGLE);

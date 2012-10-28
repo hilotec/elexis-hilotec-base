@@ -21,17 +21,16 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.DropTargetEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 import ch.elexis.Desk;
@@ -53,7 +52,7 @@ import ch.rgw.tools.ExHandler;
 
 public class DiagnosenDisplay extends Composite implements ISelectionRenderer {
 	Table tDg;
-	private final Hyperlink hDg;
+	private final Button hDg;
 	private final Log log = Log.get("DiagnosenDisplay"); //$NON-NLS-1$
 	private final PersistentObjectDropTarget dropTarget;
 	
@@ -61,12 +60,12 @@ public class DiagnosenDisplay extends Composite implements ISelectionRenderer {
 		super(parent, style);
 		setLayout(new GridLayout());
 		hDg =
-			Desk.getToolkit().createHyperlink(this,
-				Messages.getString("DiagnosenDisplay.Diagnoses"), SWT.NONE); //$NON-NLS-1$
+			Desk.getToolkit().createButton(this,
+				Messages.getString("DiagnosenDisplay.Diagnoses"), SWT.FLAT); //$NON-NLS-1$
 		hDg.setLayoutData(new GridData(GridData.FILL_HORIZONTAL | GridData.GRAB_HORIZONTAL));
-		hDg.addHyperlinkListener(new HyperlinkAdapter() {
-			@Override
-			public void linkActivated(final HyperlinkEvent e){
+		hDg.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
 				try {
 					page.showView(DiagnosenView.ID);
 					CodeSelectorHandler.getInstance().setCodeSelectorTarget(dropTarget);
@@ -78,6 +77,8 @@ public class DiagnosenDisplay extends Composite implements ISelectionRenderer {
 					StatusManager.getManager().handle(status, StatusManager.SHOW);
 				}
 			}
+
+			public void widgetDefaultSelected(SelectionEvent e) { }
 		});
 		tDg = Desk.getToolkit().createTable(this, SWT.SINGLE | SWT.WRAP);
 		tDg.setLayoutData(new GridData(GridData.FILL_BOTH));

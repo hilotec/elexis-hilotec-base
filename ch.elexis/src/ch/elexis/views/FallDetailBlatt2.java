@@ -48,10 +48,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 import ch.elexis.Desk;
@@ -110,7 +107,7 @@ public class FallDetailBlatt2 extends Composite {
 	Combo cAbrechnung, cReason;
 	DatePickerCombo dpVon, dpBis;
 	Text tBezeichnung, tGarant;
-	Hyperlink autoFill;
+	Button autoFill;
 	List<Control> lReqs = new ArrayList<Control>();
 	
 	public FallDetailBlatt2(final Composite parent){
@@ -129,12 +126,10 @@ public class FallDetailBlatt2 extends Composite {
 		cpAbrechnung.setLayout(grid);
 		cAbrechnung = new Combo(cpAbrechnung, SWT.READ_ONLY);
 		autoFill =
-			tk.createHyperlink(cpAbrechnung,
-				Messages.getString("FallDetailBlatt2.ApplyData"), SWT.NONE); //$NON-NLS-1$
-		autoFill.addHyperlinkListener(new HyperlinkAdapter() {
-			
-			@Override
-			public void linkActivated(final HyperlinkEvent e){
+			tk.createButton(cpAbrechnung,
+				Messages.getString("FallDetailBlatt2.ApplyData"), SWT.FLAT); //$NON-NLS-1$
+		autoFill.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
 				Fall f = getFall();
 				if (f == null) {
 					return;
@@ -184,6 +179,8 @@ public class FallDetailBlatt2 extends Composite {
 				}
 				setFall(f);
 			}
+
+			public void widgetDefaultSelected(SelectionEvent e) { }
 		});
 		cAbrechnung.setItems(Abrechnungstypen);
 		
@@ -309,26 +306,26 @@ public class FallDetailBlatt2 extends Composite {
 		lbReq.setLayoutData(SWTHelper.getFillGridData(2, true, 1, false));
 		lbReq.setText(ch.elexis.preferences.Messages.Leistungscodes_necessaryData);
 		
-		Hyperlink hlGarant = tk.createHyperlink(top, RECHNUNGSEMPFAENGER, SWT.NONE);
-		hlGarant.addHyperlinkListener(new HyperlinkAdapter() {
-			@Override
-			public void linkActivated(final HyperlinkEvent e){
+		Button btn = tk.createButton(top, RECHNUNGSEMPFAENGER, SWT.FLAT);
+		btn.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
 				KontaktSelektor ksl =
-					new KontaktSelektor(
-						getShell(),
-						Kontakt.class,
-						Messages.getString("FallDetailBlatt2.SelectGuarantorCaption"), //$NON-NLS-1$
-						Messages.getString("FallDetailBlatt2.SelectGuarantorBody"), true, Kontakt.DEFAULT_SORT); //$NON-NLS-1$
-				if (ksl.open() == Dialog.OK) {
-					Kontakt sel = (Kontakt) ksl.getSelection();
-					Fall fall = getFall();
-					if (fall != null) {
-						fall.setGarant(sel);
-						setFall(fall);
-						ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
+						new KontaktSelektor(
+							getShell(),
+							Kontakt.class,
+							Messages.getString("FallDetailBlatt2.SelectGuarantorCaption"), //$NON-NLS-1$
+							Messages.getString("FallDetailBlatt2.SelectGuarantorBody"), true, Kontakt.DEFAULT_SORT); //$NON-NLS-1$
+					if (ksl.open() == Dialog.OK) {
+						Kontakt sel = (Kontakt) ksl.getSelection();
+						Fall fall = getFall();
+						if (fall != null) {
+							fall.setGarant(sel);
+							setFall(fall);
+							ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
+						}
 					}
-				}
 			}
+			public void widgetDefaultSelected(SelectionEvent e) { }
 		});
 		
 		tGarant = tk.createText(top, StringTool.leer);
@@ -814,10 +811,10 @@ public class FallDetailBlatt2 extends Composite {
 			String val = f.getInfoString(r[0]);
 			
 			// *** create label or hyperlink for this field
-			Hyperlink hl = null;
+			Button btn = null;
 			if (r[1].equals("K")) { //$NON-NLS-1$  // *** Kontakt
-				hl = tk.createHyperlink(form.getBody(), r[0], SWT.NONE);
-				lReqs.add(hl);
+				btn = tk.createButton(form.getBody(), r[0], SWT.FLAT);
+				lReqs.add(btn);
 				if (!val.startsWith("**ERROR")) { //$NON-NLS-1$
 					Kontakt k = Kontakt.load(val);
 					val = k.getLabel();
@@ -885,30 +882,31 @@ public class FallDetailBlatt2 extends Composite {
 				dataField = dp;
 			} else if (r[1].equals("K")) { //$NON-NLS-1$  // *** Kontakt
 				dataField = tk.createText(subParent, val);
-				hl.addHyperlinkListener(new HyperlinkAdapter() {
-					@Override
-					public void linkActivated(final HyperlinkEvent e){
+				btn.addSelectionListener(new SelectionListener() {
+					public void widgetSelected(SelectionEvent e) {
 						KontaktSelektor ksl =
-							new KontaktSelektor(getShell(), Kontakt.class, SELECT_CONTACT_CAPTION,
-								MessageFormat.format(SELECT_CONTACT_BODY, new Object[] {
-									r[0]
-								}), true, Kontakt.DEFAULT_SORT);
-						// "Bitte wählen Sie den Kontakt für " + r[0] +
-						// " aus", true);
-						if (ksl.open() == Dialog.OK) {
-							Kontakt sel = (Kontakt) ksl.getSelection();
-							Fall fall = getFall();
-							if (fall != null) {
-								if (sel != null) {
-									fall.setInfoString(r[0], sel.getId());
-								} else {
-									fall.setInfoString(r[0], StringTool.leer);
+								new KontaktSelektor(getShell(), Kontakt.class, SELECT_CONTACT_CAPTION,
+									MessageFormat.format(SELECT_CONTACT_BODY, new Object[] {
+										r[0]
+									}), true, Kontakt.DEFAULT_SORT);
+							// "Bitte wählen Sie den Kontakt für " + r[0] +
+							// " aus", true);
+							if (ksl.open() == Dialog.OK) {
+								Kontakt sel = (Kontakt) ksl.getSelection();
+								Fall fall = getFall();
+								if (fall != null) {
+									if (sel != null) {
+										fall.setInfoString(r[0], sel.getId());
+									} else {
+										fall.setInfoString(r[0], StringTool.leer);
+									}
+									setFall(fall);
+									ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
 								}
-								setFall(fall);
-								ElexisEventDispatcher.fireSelectionEvent(fall.getPatient());
-							}
-						}
+							}						
 					}
+					
+					public void widgetDefaultSelected(SelectionEvent e) { }
 				});
 				((Text) dataField).setEditable(false);
 				dataField.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));

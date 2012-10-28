@@ -24,11 +24,13 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -37,11 +39,8 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.forms.events.HyperlinkAdapter;
-import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.Hyperlink;
 import org.eclipse.ui.part.ViewPart;
 
 import ch.elexis.Desk;
@@ -94,7 +93,7 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener, IAc
 	Hashtable<String, IKonsExtension> hXrefs;
 	EnhancedTextField text;
 	private Label lBeh, lVersion;
-	Hyperlink hlMandant;
+	Button hlMandant;
 	Combo cbFall;
 	private Konsultation actKons;
 	FormToolkit tk;
@@ -179,23 +178,22 @@ public class KonsDetailView extends ViewPart implements ElexisEventListener, IAc
 		lBeh.setFont(emFont);
 		defaultBackground = p.getBackground();
 		// lBeh.setBackground();
-		hlMandant = tk.createHyperlink(cDesc, "--", SWT.NONE); //$NON-NLS-1$
-		hlMandant.addHyperlinkListener(new HyperlinkAdapter() {
-			
-			@Override
-			public void linkActivated(HyperlinkEvent e){
+		hlMandant = tk.createButton(cDesc, "--", SWT.FLAT); //$NON-NLS-1$
+		hlMandant.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
 				KontaktSelektor ksl =
-					new KontaktSelektor(getSite().getShell(), Mandant.class, Messages
-						.getString("KonsDetailView.SelectMandatorCaption"), //$NON-NLS-1$
-						Messages.getString("KonsDetailView.SelectMandatorBody"), new String[] {
-							Mandant.FLD_SHORT_LABEL, Mandant.FLD_NAME1, Mandant.FLD_NAME2
-						}); //$NON-NLS-1$
-				if (ksl.open() == Dialog.OK) {
-					actKons.setMandant((Mandant) ksl.getSelection());
-					setKons(actKons);
-				}
+						new KontaktSelektor(getSite().getShell(), Mandant.class, Messages
+							.getString("KonsDetailView.SelectMandatorCaption"), //$NON-NLS-1$
+							Messages.getString("KonsDetailView.SelectMandatorBody"), new String[] {
+								Mandant.FLD_SHORT_LABEL, Mandant.FLD_NAME1, Mandant.FLD_NAME2
+							}); //$NON-NLS-1$
+					if (ksl.open() == Dialog.OK) {
+						actKons.setMandant((Mandant) ksl.getSelection());
+						setKons(actKons);
+					}
 			}
-			
+
+			public void widgetDefaultSelected(SelectionEvent e) { }
 		});
 		hlMandant.setBackground(p.getBackground());
 		
