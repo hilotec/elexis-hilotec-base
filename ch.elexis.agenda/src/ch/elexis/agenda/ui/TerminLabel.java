@@ -142,7 +142,11 @@ public class TerminLabel extends Composite {
 		StringBuilder sb = new StringBuilder();
 		sb.append(t.getLabel()).append("\n").append(t.getGrund()); //$NON-NLS-1$
 		sb.append("\n--------\n").append(t.getStatusHistoryDesc()); //$NON-NLS-1$
-		lbl.setText(t.getTitle());
+		String grund = t.getGrund();
+		if (grund != null && !grund.isEmpty())
+			lbl.setText(t.getTitle() + ", " + grund);
+		else
+			lbl.setText(t.getTitle());
 		lbl.setLayoutData(SWTHelper.getFillGridData(1, true, 1, true));
 		lbl.setToolTipText(sb.toString());
 		
