@@ -30,7 +30,6 @@ public class PreferenceConstants {
 	// Ablauf
 	public static final String ABL_LANGUAGE = "ablauf/sprache"; //$NON-NLS-1$
 	public static final String ABL_LOGFILE = "ablauf/Log-Datei"; //$NON-NLS-1$
-	public static final String ABL_LOGFILE_MAX_SIZE = "ablauf/logfile_max_size"; //$NON-NLS-1$
 	public static final String ABL_LOGLEVEL = "ablauf/LogLevel"; //$NON-NLS-1$
 	public static final String ABL_LOGALERT = "ablauf/LogAlertLevel"; //$NON-NLS-1$
 	public static final String ABL_TRACE = "ablauf/Trace"; //$NON-NLS-1$

@@ -162,28 +162,9 @@ public class Hub extends AbstractUIPlugin {
 	 * the workbench
 	 */
 	private static void initializeLog(final Settings cfg){
-		String logfileName = cfg.get(PreferenceConstants.ABL_LOGFILE, null);
-		int maxLogfileSize = -1;
-		String logPath;
-		if (logfileName == null) {
-			logPath = new File(userDir, "elexis.log").getAbsolutePath(); //$NON-NLS-1$
-		} else if (logfileName.equalsIgnoreCase("none")) { //$NON-NLS-1$
-			logPath = "none"; //$NON-NLS-1$
-		} else {
-			logPath = new File(logfileName).getAbsolutePath();
-		}
-		try {
-			String defaultValue = new Integer(Log.DEFAULT_LOGFILE_MAX_SIZE).toString();
-			String value = cfg.get(PreferenceConstants.ABL_LOGFILE_MAX_SIZE, defaultValue);
-			maxLogfileSize = Integer.parseInt(value.trim());
-		} catch (NumberFormatException ex) {
-			// do nothing
-		}
+		// Not much to be done, as we use now ch.qos.logback and its configuration/logback.xml
 		Log.setLevel(cfg.get(PreferenceConstants.ABL_LOGLEVEL, Log.ERRORS));
 		Log.setAlertLevel(cfg.get(PreferenceConstants.ABL_LOGALERT, Log.FATALS));
-		// Exception handler initialiseren, Output wie log, auf eigene Klassen
-		// begrenzen
-		ExHandler.setOutput(logPath);
 		ExHandler.setClasses(mine);
 		
 	}

@@ -55,8 +55,6 @@ public class Log {
 	/** Immer auszugebende Meldungen, automatisch mit einem Timestamp versehen */
 	public static final int SYNCMARK = -1;
 	
-	public static final int DEFAULT_LOGFILE_MAX_SIZE = 200000;
-	
 	private static String[] Levels = {
 		"OK", "FATAL", "ERROR", "WARNING", "INFO", "DEBUG", "TRACE"
 	};

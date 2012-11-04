@@ -69,12 +69,8 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 		if (!userhome.exists()) {
 			userhome.mkdirs();
 		}
-		localstore.setDefault(PreferenceConstants.ABL_LOGFILE, userhome.getAbsolutePath()
-			+ File.separator + "elexis.log"); //$NON-NLS-1$
-		localstore.setDefault(PreferenceConstants.ABL_LOGFILE_MAX_SIZE, new Integer(
-			Log.DEFAULT_LOGFILE_MAX_SIZE).toString());
-		localstore.setDefault(PreferenceConstants.ABL_LOGLEVEL, 2);
 		localstore.setDefault(PreferenceConstants.ABL_LOGALERT, 1);
+		localstore.setDefault(PreferenceConstants.ABL_LOGLEVEL, 2);
 		localstore.setDefault(PreferenceConstants.ABL_TRACE, "none"); //$NON-NLS-1$
 		localstore.setDefault(PreferenceConstants.ABL_BASEPATH, userhome.getAbsolutePath());
 		localstore.setDefault(PreferenceConstants.ABL_CACHELIFETIME,
