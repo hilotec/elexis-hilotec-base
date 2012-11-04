@@ -1,5 +1,30 @@
 hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.7
 
+Changelog für 2.1.7.rc3
+200203017801: 2012-11-04: Niklaus Giger: #1197: Neues logging framework. Removed cruft, which generated elexis.log
+4c657434b376: 2012-11-02: thomashu: [1219] added Grund of Termin in week view of agenda
+4f8b65478f21: 2012-10-26: marcode79: Merge with b129c10a4a35cf5c7dcba48038ce76e5b0ff5d47
+a5a8faa70ec8: 2012-10-26: marcode79: [612] ch.elexis.eigenartikel v1.0.9
+93a8e3d6bd10: 2012-10-26: marcode79: [1141] fix for minor NPE
+b129c10a4a35: 2012-10-25: Niklaus Giger: RM: remove intermediate texi2pdf files
+31661f2d9a68: 2012-10-25: Niklaus Giger: RM: Fix error, thanks to Bruno Büchel for his translation
+955e42bc97ca: 2012-10-25: thomashu: [1183] added additional save after inserting the table on Labor and Rezept print
+6c95a263801d: 2012-10-23: thomashu: [1213] added placeholder for printing all consultations of the selected patient
+412ab537e755: 2012-10-24: marcode79: [1175] Tarmed importer problem on existing h2 connection
+468b2c6d0cbb: 2012-10-23: thomashu: [1212] consultation date filter is now enabled per default for Tarmed and EAL code selectors
+be355f47ac24: 2012-10-20: marlovitsh: DoubleClick-Action for RezepteView, improved handling for creating prescription, show creationDate of prescription in BriefeView
+e84463ec7dc7: 2012-10-20: marlovitsh: DoubleClick Actions for DocumentSelectDialog, BriefAuswahl, FaelleView, FallListeView, PatHeuteView, PatientenListeView
+7e9b6ed73194: 2012-10-22: Niklaus Giger: #1208: Im Verrechnungs-Vorschlag sollen mehrere Rechnungen aufs Mal ausgewählt werden können
+1464078b822c: 2012-10-22: Niklaus Giger: #979: Neue RFE Version
+352002aa9427: 2012-10-22: Niklaus Giger: #1207: Fix missing mapping in TarmedLeistung (NPE)
+83ba7caceb30: 2012-10-18: marcode79: [1125] DB Version synchronization -> 1.8.16
+7e0e7a947e16: 2012-10-17: marcode79: [1103] Fall selection and presentation of selection in Faelle view
+76d263c4d3e4: 2012-10-16: thomashu: [1196] added libraries for REST access to target
+c8cef3016b64: 2012-10-11: marcode79: [1085] ch.elexis.ebanking_ch v2.0.6.1
+3e62e56f9dde: 2012-10-11: marcode79: [1085] ch.elexis.ebanking_ch v2.0.6.1
+6d7c4f1eaf9e: 2012-10-11: marcode79: [1085] ch.elexis.ebanking_ch v2.0.6
+057c609fe50a: 2012-10-10: thomashu: [1187] added info that labortarif has no VAT
+
 Changelog für 2.1.7.rc2
 d2580a776e47: 2012-10-05: marcode79: [1179] Setting "" to a LabValue deletes it
 8495ebaf384a: 2012-10-04: marcode79: [1178] Errors shown in LaborView when values for formula are missing
