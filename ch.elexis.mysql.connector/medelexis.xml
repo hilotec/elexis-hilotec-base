@@ -1,6 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<service:service category='feature' id='ch.elexis.mysql.connector' name='Datenbankanbindung an MySQL' provider='weirich@elexis.ch' xsi:schemaLocation='http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ' xmlns:service='http://www.medelexis.ch/services' type='Datenbankanbindung' version='2.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
-  <service:docURL>http://www.medelexis.ch/plugins_doc/2.1.7/Datenbankanbindung_an_MySQL/connector-j.pdf</service:docURL>
-  <service:description>Verbindung mit einem MySQL-Server</service:description>
-  <service:depends>ch.medelexis.nucleus</service:depends>
-</service:service>

@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<service:service category="invisible" id="ch.medshare.base.external" name="medshare Base external plugin" provider="support@medshare.ch" type="Basis-System" version="2.0.0" xmlns:service="http://www.medelexis.ch/services" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ">
-  <service:description>Basiskomponenten für medshare Plugins</service:description>
-  <service:depends>ch.medelexis.nucleus</service:depends>
-</service:service>

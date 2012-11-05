@@ -1,4 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<service:service category='feature' id='ch.elexis.eigenartikel' name='Elexis Eigenartikel' provider='weirich@elexis.ch' xsi:schemaLocation='http://www.medelexis.ch/services ../medelexis-commons/rsc/service.xsd ' xmlns:service='http://www.medelexis.ch/services' type='Basis-System' version='2.0.0' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'>
-	<service:description>Eigenartikel-Verwaltung</service:description>
-<service:docURL>http://www.medelexis.ch/plugins_doc/2.1.7/Elexis_Eigenartikel/readme.pdf</service:docURL></service:service>
