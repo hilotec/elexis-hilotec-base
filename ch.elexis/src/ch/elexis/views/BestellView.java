@@ -157,7 +157,6 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 					PersistentObject dropped = Hub.poFactory.createFromString(obj);
 					if (dropped instanceof Artikel) {
 						actBestellung.addItem((Artikel) dropped, 1);
-						((Artikel) dropped).setExt(Bestellung.ISORDERED, "true");
 					}
 				}
 				tv.refresh();
@@ -239,9 +238,6 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 					if ((sel != null) && (!sel.isEmpty())) {
 						if (actBestellung != null) {
 							actBestellung.removeItem((Item) sel.getFirstElement());
-							
-							((Item) sel.getFirstElement()).art
-								.setExt(Bestellung.ISORDERED, "false");
 						}
 						tv.refresh();
 					}
@@ -295,7 +291,6 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 							int toOrder = max - ist;
 							if (toOrder > 0 && !alreadyOrdered) {
 								actBestellung.addItem(a, toOrder);
-								a.setExt(Bestellung.ISORDERED, "true");
 							}
 						}
 					}
@@ -334,6 +329,9 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 				public void run(){
 					if (actBestellung != null) {
 						actBestellung.save();
+						// make backup of list
+						Item[] bkpList = actBestellung.asList().toArray(new Item[0]);
+
 						List<Item> list = actBestellung.asList();
 						ArrayList<Item> best = new ArrayList<Item>();
 						Kontakt adressat = null;
@@ -358,6 +356,8 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 								(BestellBlatt) getViewSite().getPage().showView(BestellBlatt.ID);
 							bb.createOrder(adressat, best);
 							tv.refresh();
+							// mark ordered articles
+							Bestellung.markAsOrdered(bkpList);
 						} catch (PartInitException e) {
 							ExHandler.handle(e);
 							
@@ -371,6 +371,9 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 					if (actBestellung == null)
 						return;
 					actBestellung.save();
+					// make backup of list
+					Item[] bkpList = actBestellung.asList().toArray(new Item[0]);
+
 					List<IConfigurationElement> list =
 						Extensions.getExtensions("ch.elexis.Transporter"); //$NON-NLS-1$
 					for (IConfigurationElement ic : list) {
@@ -387,7 +390,8 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 									Messages.getString("BestellView.OrderSentCaption"), //$NON-NLS-1$
 									Messages.getString("BestellView.OrderSentBody")); //$NON-NLS-1$
 								tv.refresh();
-								
+								// mark ordered articles
+								Bestellung.markAsOrdered(bkpList);
 							} catch (CoreException ex) {
 								ExHandler.handle(ex);
 							} catch (XChangeException xx) {

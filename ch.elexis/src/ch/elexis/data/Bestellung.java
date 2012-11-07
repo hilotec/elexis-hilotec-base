@@ -199,4 +199,11 @@ public class Bestellung extends PersistentObject {
 		public Artikel art;
 		public int num;
 	}
+	
+	public static void markAsOrdered(Item[] list){
+		for (Item item : list) {
+			if (item.art != null)
+				item.art.setExt(Bestellung.ISORDERED, "true");
+		}
+	}
 }
