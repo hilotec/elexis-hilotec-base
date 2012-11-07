@@ -394,8 +394,7 @@ public class BestellView extends ViewPart implements ISaveablePart2 {
 								SWTHelper
 									.showError(
 										Messages.getString("BestellView.OrderNotPossible"), //$NON-NLS-1$
-										Messages
-											.getString("BestellView.NoAutomaticOrderAvailable " + xx.getMessage())); //$NON-NLS-1$
+										Messages.getString("BestellView.NoAutomaticOrderAvailable") + xx.getLocalizedMessage()); //$NON-NLS-1$
 								
 							}
 						}
