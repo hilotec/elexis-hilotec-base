@@ -1,6 +1,10 @@
 hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.7
 
 Changelog für 2.1.7.rc3
+990b5b874b03: 2012-11-07: thomashu: [1152] changed when articels are marked as ordered
+e24a39725fc2: 2012-11-07: marcode79: [1141] BestellView exception message translation error
+269c2a89faa9: 2012-11-05: Niklaus Giger: #1222: Moved info for p2 into p2_site.yml. Removed medelexis.xml
+cee993e99e35: 2012-11-04: Niklaus Giger: #1237: Version im medelexis auf die gleiche wie im META-INF/MANIFEST.MF (2.0.18) gesetzt
 200203017801: 2012-11-04: Niklaus Giger: #1197: Neues logging framework. Removed cruft, which generated elexis.log
 4c657434b376: 2012-11-02: thomashu: [1219] added Grund of Termin in week view of agenda
 4f8b65478f21: 2012-10-26: marcode79: Merge with b129c10a4a35cf5c7dcba48038ce76e5b0ff5d47
