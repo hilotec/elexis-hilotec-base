@@ -635,6 +635,11 @@ public class XMLExporter implements IRnOutputter {
 		TimeTool ttFirst = new TimeTool(TimeTool.END_OF_UNIX_EPOCH);
 		TimeTool ttLast = new TimeTool(TimeTool.BEGINNING_OF_UNIX_EPOCH);
 		int recordNumber = 1;
+		
+		// use double to sum AL and TL protion -> more accurate result than using Money
+		double sumTarmedAL = 0.0;
+		double sumTarmedTL = 0.0;
+
 		for (Konsultation b : lb) {
 			Mandant responsibleMandant = b.getMandant();
 			List<IDiagnose> ld = b.getDiagnosen();
@@ -707,18 +712,26 @@ public class XMLExporter implements IRnOutputter {
 						tlAL = tl.getAL();
 						mult = tl.getVKMultiplikator(tt, actFall);
 					}
-					tpTarmedTL += tlTl * zahl;
-					tpTarmedAL += tlAL * zahl;
+					// build monetary values of this TarmedLeistung
 					Money mAL =
 						new Money((int) Math.round(tlAL * mult * zahl * primaryScale
 							* secondaryScale));
 					Money mTL =
 						new Money((int) Math.round(tlTl * mult * zahl * primaryScale
 							* secondaryScale));
+					Money mAmountLocal =
+						new Money((int) Math.round((tlAL + tlTl) * mult * zahl * primaryScale
+							* secondaryScale));
 					
-					mTarmedAL.addCent(mAL.getCents());
-					mTarmedTL.addCent(mTL.getCents());
+					// sum tax points and monetary value
+					tpTarmedTL += tlTl * zahl;
+					tpTarmedAL += tlAL * zahl;
 					
+					sumTarmedAL += tlAL * mult * zahl * primaryScale * secondaryScale;
+					sumTarmedTL += tlTl * mult * zahl * primaryScale * secondaryScale;
+
+					mTarmed.addCent(mAmountLocal.getCents());
+
 					el = new Element(ELEMENT_RECORD_TARMED, ns); // 22000
 					el.setAttribute(ATTR_TREATMENT, "ambulatory"); // 22050 //$NON-NLS-1$
 					el.setAttribute(ATTR_TARIFF_TYPE, "001"); // 22060 //$NON-NLS-1$
@@ -753,8 +766,6 @@ public class XMLExporter implements IRnOutputter {
 					el.setAttribute(ATTR_EXTERNAL_FACTOR_TT, XMLTool.doubleToXmlDouble(
 						secondaryScale, 1)); // 22550
 					el.setAttribute(ATTR_AMOUNT_TT, XMLTool.moneyToXmlDouble(mTL)); // 22560
-					Money mAmountLocal = new Money(mAL);
-					mAmountLocal.addMoney(mTL);
 					el.setAttribute(ATTR_AMOUNT, XMLTool.moneyToXmlDouble(mAmountLocal)); // 22570
 					setVatAttribute(vv, mAmountLocal, el, vatSummer); // 22590 //$NON-NLS-1$
 					el.setAttribute(ATTR_VALIDATE, TARMED_TRUE); // 22620
@@ -910,7 +921,7 @@ public class XMLExporter implements IRnOutputter {
 				services.addContent(el);
 			}
 		}
-		mTotal.addMoney(mTarmedAL).addMoney(mTarmedTL).addMoney(mAnalysen).addMoney(mMedikament)
+		mTotal.addMoney(mTarmed).addMoney(mAnalysen).addMoney(mMedikament)
 			.addMoney(mUebrige).addMoney(mKant).addMoney(mPhysio).addMoney(mMigel);
 		
 		Element balance = new Element(ELEMENT_BALANCE, ns); // 10300
@@ -922,8 +933,11 @@ public class XMLExporter implements IRnOutputter {
 		mDue.subtractMoney(mPaid);
 		mDue.roundTo5();
 		
+		// round and create Money from sumTarmed double values
+		mTarmedAL = new Money((int) Math.round(sumTarmedAL));
+		mTarmedTL = new Money((int) Math.round(sumTarmedTL));
+
 		// chfDue=Math.round(chfDue*20.0)/20.0;
-		mTarmed.addMoney(mTarmedAL).addMoney(mTarmedTL);
 		balance.setAttribute(ATTR_AMOUNT_DUE, XMLTool.moneyToXmlDouble(mDue)); // 10340
 		balance.setAttribute(ATTR_AMOUNT_TARMED, XMLTool.moneyToXmlDouble(mTarmed)); // 10341
 		balance.setAttribute(ATTR_UNIT_TARMED_MT, XMLTool.doubleToXmlDouble(tpTarmedAL / 100.0, 2)); // 10348
@@ -1259,7 +1273,7 @@ public class XMLExporter implements IRnOutputter {
 		
 		detail.addContent(services); // 20000
 		invoice.addContent(detail);
-		if (rn.setBetrag(mTotal) == false) {
+		if (rn.setBetrag(mTotal.roundTo5()) == false) {
 			rn.reject(RnStatus.REJECTCODE.SUM_MISMATCH, Messages.XMLExporter_SumMismatch);
 			
 		} else if (doVerify) {
