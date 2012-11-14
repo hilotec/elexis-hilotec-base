@@ -618,6 +618,6 @@ CREATE TABLE DBIMAGE (
 CREATE INDEX DBIMAGE1 on DBIMAGE(Title);  
             
 
-INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.11');
+INSERT INTO CONFIG (param,wert) VALUES ('dbversion','1.8.16');
 INSERT INTO CONFIG (param,wert) VALUES ('ElexisVersion','2.1.6');
 
