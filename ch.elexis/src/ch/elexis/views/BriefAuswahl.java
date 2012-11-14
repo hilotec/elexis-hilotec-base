@@ -21,6 +21,8 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -62,6 +64,7 @@ import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.rgw.tools.ExHandler;
+import ch.rgw.tools.TimeTool;
 
 public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActivationListener,
 		ISaveablePart2 {
@@ -216,6 +219,17 @@ public class BriefAuswahl extends ViewPart implements ElexisEventListener, IActi
 				}), new ViewerConfigurer.DefaultButtonProvider(), new SimpleWidgetProvider(
 					SimpleWidgetProvider.TYPE_LIST, SWT.V_SCROLL, cv));
 			cv.create(vc, this, SWT.NONE, getViewSite());
+			cv.getViewerWidget().setComparator(new ViewerComparator() {
+				@Override
+				public int compare(Viewer viewer, Object e1, Object e2){
+					if (e1 instanceof Brief && e2 instanceof Brief) {
+						TimeTool bt1 = new TimeTool(((Brief) e1).getDatum());
+						TimeTool bt2 = new TimeTool(((Brief) e2).getDatum());
+						return bt2.compareTo(bt1);
+					}
+					return 0;
+				}
+			});
 			vc.getContentProvider().startListening();
 			Button bLoad =
 				tk.createButton(this, Messages.getString("BriefAuswahlLoadButtonText"), SWT.PUSH); //$NON-NLS-1$
