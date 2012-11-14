@@ -23,3 +23,5 @@
 	- [1001] fix for wrong parsing of tagesgrenzen
 2.1.7.5 - 29. August 2012 - M. Descher
 	- [1087] wrong adaption of Sperrzeiten
+2.1.7.6 - 14. Nov 2012 - M. Descher
+	- [1220] Bereich wird bei grafischer Agenda nicht korrekt gesetzt

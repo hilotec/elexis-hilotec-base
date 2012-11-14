@@ -76,15 +76,6 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			
 			@Override
 			public void mouseDoubleClick(MouseEvent e){
-				String resource = ""; //$NON-NLS-1$
-				for (int i = 0; i < resources.length; i++) {
-					double lower = left_offset + i * (widthPerColumn + padding);
-					double upper = lower + widthPerColumn;
-					if (isBetween(e.x, lower, upper)) {
-						resource = resources[i];
-						break;
-					}
-				}
 				int minute = (int) Math.round(e.y / ppm);
 				TimeTool tt = new TimeTool(Activator.getDefault().getActDate());
 				int hour = minute / 60;
@@ -94,22 +85,17 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 				tt.set(TimeTool.AM_PM, TimeTool.AM);
 				tt.set(TimeTool.HOUR, hour);
 				tt.set(TimeTool.MINUTE, minute);
-				if (resource.length() > 0) {
-					Activator.getDefault().setActResource(resource);
-				}
 				
 				TerminDialog dlg = new TerminDialog(null);
 				dlg.create();
 				dlg.setTime(tt);
 				if (dlg.open() == Dialog.OK) {
-					
 					refresh();
 				}
 			}
 			
 			@Override
 			public void mouseDown(MouseEvent e){
-				System.out.println("mousdown"); //$NON-NLS-1$
 				super.mouseDown(e);
 			}
 			
@@ -179,19 +165,21 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 		if (tlabels != null) {
 			ppm = BaseView.getPixelPerMinute();
 			
-			String startOfDayTimeInMinutes = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");		
+			String startOfDayTimeInMinutes =
+				Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
 			int sodtHours = Integer.parseInt(startOfDayTimeInMinutes.substring(0, 2));
 			int sodtMinutes = Integer.parseInt(startOfDayTimeInMinutes.substring(2));
-			int sodtM = (sodtHours*60);
-			sodtM+=sodtMinutes;
+			int sodtM = (sodtHours * 60);
+			sodtM += sodtMinutes;
 			
-			String endOfDayTimeInMinutes = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+			String endOfDayTimeInMinutes =
+				Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
 			int eodtHours = Integer.parseInt(endOfDayTimeInMinutes.substring(0, 2));
 			int eodtMinutes = Integer.parseInt(endOfDayTimeInMinutes.substring(2));
-			int eodtM = (eodtHours*60);
-			eodtM+=eodtMinutes;
-					
-			sheetHeight = (int) Math.round(ppm * (eodtM-sodtM));
+			int eodtM = (eodtHours * 60);
+			eodtM += eodtMinutes;
+			
+			sheetHeight = (int) Math.round(ppm * (eodtM - sodtM));
 			ScrolledComposite sc = (ScrolledComposite) getParent();
 			Point mySize = getSize();
 			
@@ -249,10 +237,12 @@ public class ProportionalSheet extends Composite implements IAgendaLayout {
 			int y = 0;
 			TimeTool runner = new TimeTool();
 			
-			String dayStartsAt = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
+			String dayStartsAt =
+				Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_STARTS_AT, "0000");
 			runner.set(dayStartsAt); //$NON-NLS-1$
 			
-			String dayEndsAt = Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
+			String dayEndsAt =
+				Hub.globalCfg.get(PreferenceConstants.AG_DAY_PRESENTATION_ENDS_AT, "2359");
 			TimeTool limit = new TimeTool(dayEndsAt); //$NON-NLS-1$
 			Point textSize = gc.textExtent("88:88"); //$NON-NLS-1$
 			int textwidth = textSize.x;
