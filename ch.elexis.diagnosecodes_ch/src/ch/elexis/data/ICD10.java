@@ -30,10 +30,11 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 	public static final String FLD_CODE = "Code";
 	public static final String FLD_TEXT = "Text";
 	
-	static final String create = "DROP INDEX icd1;" + //$NON-NLS-1$
-		"DROP INDEX icd2;" + //$NON-NLS-1$
-		"DROP TABLE ICD10;" + //$NON-NLS-1$
-		"CREATE TABLE ICD10 (" + //$NON-NLS-1$
+	static final String drop ="DROP INDEX icd1;" + //$NON-NLS-1$
+			"DROP INDEX icd2;" + //$NON-NLS-1$
+			"DROP TABLE ICD10;"; //$NON-NLS-1$
+
+	static final String create = "CREATE TABLE ICD10 (" + //$NON-NLS-1$
 		"ID       VARCHAR(25) primary key, " + //$NON-NLS-1$
 		"lastupdate BIGINT," + "deleted  CHAR(1) default '0'," + //$NON-NLS-1$
 		"parent   VARCHAR(25)," + //$NON-NLS-1$
@@ -46,7 +47,12 @@ public class ICD10 extends PersistentObject implements IDiagnose {
 		"INSERT INTO " + TABLENAME + " (ID,ICDTxt) VALUES ('1'," + JdbcLink.wrap(VERSION) + ");";
 	
 	public static void initialize(){
+		if (PersistentObject.tableExists("ICD10"))
+		{
+			createOrModifyTable(drop);
+		}
 		createOrModifyTable(create);
+		
 	}
 	
 	static {
