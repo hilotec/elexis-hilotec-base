@@ -5,36 +5,6 @@ import org.eclipse.osgi.util.NLS;
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "ch.elexis.icpc.messages"; //$NON-NLS-1$
 	
-	public static String IcpcCode_69;
-	
-	public static String IcpcCode_70;
-	
-	public static String IcpcCode_71;
-	
-	public static String IcpcCode_72;
-	
-	public static String IcpcCode_73;
-	
-	public static String IcpcCode_74;
-	
-	public static String IcpcCode_75;
-	
-	public static String IcpcCode_76;
-	
-	public static String IcpcCode_77;
-	
-	public static String IcpcCode_78;
-	
-	public static String IcpcCode_79;
-	
-	public static String IcpcCode_80;
-	
-	public static String IcpcCode_81;
-	
-	public static String IcpcCode_82;
-	
-	public static String IcpcCode_83;
-	
 	public static String IcpcCode_class_A;
 	
 	public static String IcpcCode_class_B;

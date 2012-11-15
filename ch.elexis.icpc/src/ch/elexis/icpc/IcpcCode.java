@@ -45,11 +45,9 @@ public class IcpcCode extends PersistentObject implements IDiagnose {
 			"exclusion", "consider", "note", "synonyms");
 		IcpcCode ver = IcpcCode.load("ver");
 		if (!ver.exists()) {
-			try {
+			if (PersistentObject.tableExists(TABLENAME)) {
 				createOrModifyTable("DROP TABLE " + TABLENAME);
-			} catch (Exception e) {
-				// janusode
-			}
+			} 
 			createOrModifyTable(createDB);
 		}
 		VersionInfo vi = new VersionInfo(ver.get("text"));
