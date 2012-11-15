@@ -100,7 +100,6 @@ public class Messages extends NLS {
 	public static String TarmedDetailDisplay_TPTec;
 	
 	public static String TarmedImporter_couldntConnect;
-	public static String TarmedImporter_ImporterCaption;
 	public static String TarmedImporter_convertTable;
 	public static String TarmedImporter_importLstg;
 	public static String TarmedImporter_connecting;
