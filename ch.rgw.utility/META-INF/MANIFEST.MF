@@ -2,11 +2,12 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Systemunabhängige Utilities
 Bundle-SymbolicName: ch.rgw.utility
-Bundle-Version: 2.0.8
+Bundle-Version: 2.0.8.1
 Bundle-ClassPath: .,
  lib/jdom.jar,
  lib/bcprov-jdk15-140.jar
 Bundle-Vendor: G. Weirich
+Eclipse-BuddyPolicy: registered
 Export-Package: .,
  ch.rgw.compress,
  ch.rgw.crypt,

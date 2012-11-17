@@ -212,19 +212,19 @@ public class JdbcLink {
 			return true;
 		} catch (ClassNotFoundException ex) {
 			lastErrorCode = CONNECT_CLASSNOTFOUND;
-			lastErrorString = ex.getMessage();
+			lastErrorString = "Class not found exception: " + ex.getMessage();
 			cause = ex;
 		} catch (SQLException ex) {
 			lastErrorCode = CONNECT_FAILED;
-			lastErrorString = ex.getMessage();
+			lastErrorString = "SQL exception: " + ex.getMessage();
 			cause = ex;
 		} catch (InstantiationException e) {
 			lastErrorCode = CONNECT_UNKNOWN_ERROR;
-			lastErrorString = e.getMessage();
+			lastErrorString = "Instantiation exception: " + e.getMessage();
 			cause = e;
 		} catch (IllegalAccessException e) {
 			lastErrorCode = CONNECT_UNKNOWN_ERROR;
-			lastErrorString = e.getMessage();
+			lastErrorString = "Illegal access exception: " + e.getMessage();
 			cause = e;
 		}
 		throw JdbcLinkExceptionTranslation.translateException("Connect failed: " + lastErrorString,
