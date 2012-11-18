@@ -15,3 +15,4 @@ Bundle-ClassPath: .
 Bundle-Activator: ch.elexis.artikel_at.Activator
 Bundle-ActivationPolicy: lazy
 Export-Package: ch.elexis.artikel_at.data
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
