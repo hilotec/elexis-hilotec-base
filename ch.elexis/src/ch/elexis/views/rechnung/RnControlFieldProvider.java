@@ -120,8 +120,10 @@ class RnControlFieldProvider implements ViewerConfigurer.ControlFieldProvider {
 			}
 		};
 		new Label(ret, SWT.NONE).setText(Messages.getString("RnControlFieldProvider.state")); //$NON-NLS-1$
-		SWTHelper.createHyperlink(ret,
-			Messages.getString("RnControlFieldProvider.patient2"), hlPatient); //$NON-NLS-1$
+		Label lbl =
+			SWTHelper.createHyperlink(ret,
+				Messages.getString("RnControlFieldProvider.patient2"), hlPatient); //$NON-NLS-1$
+		lbl.setForeground(Desk.getColorRegistry().get(Desk.COL_BLUE));
 		new Label(ret, SWT.NONE)
 			.setText(Messages.getString("RnControlFieldProvider.PaymentSystem")); //$NON-NLS-1$
 		new Label(ret, SWT.NONE).setText(Messages.getString("RnControlFieldProvider.invoideNr")); //$NON-NLS-1$
