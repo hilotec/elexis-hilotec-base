@@ -1,5 +1,20 @@
 hg log --template '{node|short}: {date|shortdate}: {author|person}: {desc}\n' -b 2.1.7
 
+Changelog fo 2.1.7.0
+ccfdbcd9ce57: 2012-11-22: marcode79: ch.elexis.developer.resources add code formatter off possibility
+2de8cce78e00: 2012-11-19: thomashu: [1261] highlight hyperlink in blue
+4fcdf406ba62: 2012-11-18: marcode79: ch.elexis.artikel_at set execution environment to JavaSE-1.6
+a554bc257df9: 2012-11-17: marcode79: [1271] postgres jdbc update 9.2-1002 (includes ch.rgw.utility buddy classloading)
+e2c7883f262b: 2012-11-15: Niklaus Giger: [1265]ICD-10 does not drop non existant table anymore. Removed unused messages
+b41d475cf9e5: 2012-11-15: Niklaus Giger: [1265] ICPC does not drop non existant table anymore. Removed unused messages_id
+dddf1eaa6876: 2012-11-15: thomashu: [1265] reworked some NLS messages in ch.elexis.preferences and ch.elexis.arzttarife_schweiz
+1b5b05924cf0: 2012-11-14: marcode79: [1220] ch.elexis.agenda v2.1.7.6
+c1f914780386: 2012-11-14: marcode79: [1260] BriefAuswahl View nach Datum sortieren
+6b3e65dd6c63: 2012-11-14: marcode79: [1250] Erroneous intial db version
+5491b0c9f28a: 2012-11-13: Niklaus Giger: Detail: Fix Text processort -> processor
+b4903eb2347c: 2012-11-12: thomashu: [1253] fixed problems with rounding on tarmed bills, ch.elexis.arzttarife_ch v2.0.19
+7ca308f14ffe: 2012-11-10: Niklaus Giger: #1247: Add missing plugin*.properties to build.properties
+
 Changelog für 2.1.7.rc3
 990b5b874b03: 2012-11-07: thomashu: [1152] changed when articels are marked as ordered
 e24a39725fc2: 2012-11-07: marcode79: [1141] BestellView exception message translation error
