@@ -23,6 +23,8 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 
 import ch.elexis.Hub;
+import ch.elexis.data.Patient;
+import ch.elexis.preferences.inputs.ComboFieldEditor;
 import ch.elexis.preferences.inputs.MultilineFieldEditor;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.views.PatientenListeView;
@@ -42,6 +44,10 @@ public class UserSettings2 extends FieldEditorPreferencePage implements IWorkben
 	
 	private SettingsPreferenceStore prefs = new SettingsPreferenceStore(Hub.userCfg);
 	
+	private static final String[] patlistFocusFields = {
+		Patient.FLD_PATID, Patient.FLD_NAME, Patient.FLD_FIRSTNAME,
+		Patient.BIRTHDATE, };
+
 	public UserSettings2(){
 		super(GRID);
 		setPreferenceStore(prefs);
@@ -76,6 +82,8 @@ public class UserSettings2 extends FieldEditorPreferencePage implements IWorkben
 			Messages.UserSettings2_PatientFirstname, getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.USR_PATLIST_SHOWDOB,
 			Messages.UserSettings2_Birthdate, getFieldEditorParent()));
+		addField(new ComboFieldEditor(PreferenceConstants.USR_PATLIST_FOCUSFIELD,
+			"Fokusfeld", patlistFocusFields, getFieldEditorParent()));
 		new Label(getFieldEditorParent(), SWT.SEPARATOR | SWT.HORIZONTAL).setLayoutData(SWTHelper
 			.getFillGridData(2, true, 1, false));
 		new Label(getFieldEditorParent(), SWT.NONE)

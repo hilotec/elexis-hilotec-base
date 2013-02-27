@@ -27,11 +27,11 @@ import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart2;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.ViewPart;
@@ -59,13 +59,12 @@ import ch.elexis.preferences.PreferenceConstants;
 import ch.elexis.util.SWTHelper;
 import ch.elexis.util.ViewMenus;
 import ch.elexis.util.viewers.CommonViewer;
-import ch.elexis.util.viewers.CommonViewer.DoubleClickListener;
 import ch.elexis.util.viewers.DefaultControlFieldProvider;
 import ch.elexis.util.viewers.DefaultLabelProvider;
 import ch.elexis.util.viewers.SimpleWidgetProvider;
 import ch.elexis.util.viewers.ViewerConfigurer;
 import ch.elexis.util.viewers.ViewerConfigurer.ControlFieldListener;
-import ch.rgw.tools.ExHandler;
+
 
 /**
  * Display of Patients
@@ -81,7 +80,6 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 	private ViewMenus menus;
 	private IAction filterAction, newPatAction;
 	private Patient actPatient;
-	private boolean initiated = false;
 	PatListFilterBox plfb;
 	PatListeContentProvider plcp;
 	Composite parent;
@@ -123,7 +121,10 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 	}
 	
 	@Override
-	public void createPartControl(final Composite parent){
+	public void createPartControl(final Composite op){
+		op.setLayout(new FillLayout());
+		final Composite parent = new Composite(op, SWT.NONE);
+
 		GridLayout layout = new GridLayout();
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -134,7 +135,6 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 		
 		cv = new CommonViewer();
 		ArrayList<String> fields = new ArrayList<String>();
-		initiated = !("".equals(Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWPATNR, "")));
 		if (Hub.userCfg.get(PreferenceConstants.USR_PATLIST_SHOWPATNR, false)) {
 			fields.add(Patient.FLD_PATID + Query.EQUALS
 				+ Messages.getString("PatientenListeView.PatientNr")); //$NON-NLS-1$
@@ -157,12 +157,18 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 		plfb.setLayoutData(SWTHelper.getFillGridData(1, true, 1, false));
 		((GridData) plfb.getLayoutData()).heightHint = 0;
 		
+		DefaultControlFieldProvider dcfp = new DefaultControlFieldProvider(cv,
+				fields.toArray(new String[0]));
+		String ff = Hub.userCfg.get(
+				PreferenceConstants.USR_PATLIST_FOCUSFIELD, null);
+		if (ff != null)
+			dcfp.setFocusField(ff);
 		vc =
 			new ViewerConfigurer(
 			// new LazyContentProvider(cv,loader,
 			// AccessControlDefaults.PATIENT_DISPLAY),
-				plcp, new PatLabelProvider(), new DefaultControlFieldProvider(cv,
-					fields.toArray(new String[0])), new ViewerConfigurer.DefaultButtonProvider(), // cv,Patient.class),
+				plcp, new PatLabelProvider(), dcfp,
+				new ViewerConfigurer.DefaultButtonProvider(), // cv,Patient.class),
 				new SimpleWidgetProvider(SimpleWidgetProvider.TYPE_LAZYLIST, SWT.SINGLE, cv));
 		cv.create(vc, parent, SWT.NONE, getViewSite());
 		// let user select patient by pressing ENTER in the control fields
@@ -440,13 +446,15 @@ public class PatientenListeView extends ViewPart implements IActivationListener,
 	}
 	
 	public void UserChanged(){
-		if (!initiated)
-			SWTHelper.reloadViewPart(PatientenListeView.ID);
-		if (!cv.getViewerWidget().getControl().isDisposed()) {
-			cv.getViewerWidget().getControl()
-				.setFont(Desk.getFont(PreferenceConstants.USR_DEFAULTFONT));
-			cv.notify(CommonViewer.Message.update);
-		}
+		/*
+		 * Not really pretty, but should do the job, basically we just
+		 * throw the out view content away and recreate it with the
+		 * appropriate settings.
+		 */
+		Composite par = parent.getParent();
+		parent.dispose();
+		createPartControl(par);
+		par.layout(true);
 	}
 	
 }
